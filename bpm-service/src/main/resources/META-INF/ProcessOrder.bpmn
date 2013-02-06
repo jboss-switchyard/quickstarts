@@ -3,10 +3,12 @@
   <itemDefinition id="_contentInputItem"/>
   <itemDefinition id="_contentOutputItem"/>
   <itemDefinition id="_messageIdItem" structureRef="String"/>
+  <itemDefinition id="_userNameItem" structureRef="String"/>
   <process id="ProcessOrder" tns:packageName="org.switchyard.demo.openshift" name="ProcessOrder" isExecutable="true" processType="Private">
     <property id="contentInput" itemSubjectRef="_contentInputItem"/>
     <property id="contentOutput" itemSubjectRef="_contentOutputItem"/>
     <property id="messageId" itemSubjectRef="_messageIdItem"/>
+    <property id="userName" itemSubjectRef="_userNameItem"/>
     <startEvent id="_1" name="Start">
       <outgoing>_1-_8</outgoing>
     </startEvent>
@@ -17,7 +19,7 @@
     <task id="_8" tns:taskName="SwitchYard Service" name="Inventory">
       <extensionElements>
         <tns:onEntry-script tns:scriptFormat="http://www.java.com/java">
-          <tns:script>System.out.println(&quot;********** Inventory incoming messageId: &quot; + messageId + &quot; **********&quot;);</tns:script>
+          <tns:script>System.out.println(&quot;********** Inventory user: &quot; + userName + &quot; / incoming messageId: &quot; + messageId + &quot; **********&quot;);</tns:script>
         </tns:onEntry-script>
       </extensionElements>
       <incoming>_1-_8</incoming>
@@ -25,6 +27,7 @@
       <ioSpecification id="InputOutputSpecification_1">
         <dataInput id="_8_contentInputInput" name="contentInput"/>
         <dataInput id="_8_messageIdInput" name="messageId"/>
+        <dataInput id="_8_userNameInput" name="userName"/>
         <dataInput id="_8_ServiceNameInput" name="ServiceName"/>
         <dataInput id="_8_ContentOutputNameInput" name="ContentOutputName"/>
         <dataInput id="_8_ServiceOperationNameInput" name="ServiceOperationName"/>
@@ -34,6 +37,7 @@
         <inputSet id="InputSet_1">
           <dataInputRefs>_8_contentInputInput</dataInputRefs>
           <dataInputRefs>_8_messageIdInput</dataInputRefs>
+          <dataInputRefs>_8_userNameInput</dataInputRefs>
           <dataInputRefs>_8_ServiceNameInput</dataInputRefs>
           <dataInputRefs>_8_ContentOutputNameInput</dataInputRefs>
           <dataInputRefs>_8_ServiceOperationNameInput</dataInputRefs>
@@ -53,34 +57,38 @@
         <targetRef>_8_messageIdInput</targetRef>
       </dataInputAssociation>
       <dataInputAssociation id="DataInputAssociation_3">
+        <sourceRef>userName</sourceRef>
+        <targetRef>_8_userNameInput</targetRef>
+      </dataInputAssociation>
+      <dataInputAssociation id="DataInputAssociation_4">
         <targetRef>_8_ServiceNameInput</targetRef>
         <assignment id="Assignment_1">
           <from xsi:type="tFormalExpression" id="FormalExpression_1">Inventory</from>
           <to xsi:type="tFormalExpression" id="FormalExpression_2">_8_ServiceNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_4">
+      <dataInputAssociation id="DataInputAssociation_5">
         <targetRef>_8_ContentOutputNameInput</targetRef>
         <assignment id="Assignment_2">
           <from xsi:type="tFormalExpression" id="FormalExpression_3"/>
           <to xsi:type="tFormalExpression" id="FormalExpression_4">_8_ContentOutputNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_5">
+      <dataInputAssociation id="DataInputAssociation_6">
         <targetRef>_8_ServiceOperationNameInput</targetRef>
         <assignment id="Assignment_3">
           <from xsi:type="tFormalExpression" id="FormalExpression_5">checkAvailability</from>
           <to xsi:type="tFormalExpression" id="FormalExpression_6">_8_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_6">
+      <dataInputAssociation id="DataInputAssociation_7">
         <targetRef>_8_OutputMessageVariableInput</targetRef>
         <assignment id="Assignment_4">
           <from xsi:type="tFormalExpression" id="FormalExpression_7">item-available</from>
           <to xsi:type="tFormalExpression" id="FormalExpression_8">_8_OutputMessageVariableInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_7">
+      <dataInputAssociation id="DataInputAssociation_8">
         <targetRef>_8_ContentInputNameInput</targetRef>
         <assignment id="Assignment_5">
           <from xsi:type="tFormalExpression" id="FormalExpression_9"/>
@@ -113,32 +121,32 @@
           <dataOutputRefs>_9_contentOutputOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
-      <dataInputAssociation id="DataInputAssociation_8">
+      <dataInputAssociation id="DataInputAssociation_9">
         <sourceRef>contentInput</sourceRef>
         <targetRef>_9_contentInputInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_9">
+      <dataInputAssociation id="DataInputAssociation_10">
         <targetRef>_9_ServiceNameInput</targetRef>
         <assignment id="Assignment_6">
           <from xsi:type="tFormalExpression" id="FormalExpression_11">Shipping</from>
           <to xsi:type="tFormalExpression" id="FormalExpression_12">_9_ServiceNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_10">
+      <dataInputAssociation id="DataInputAssociation_11">
         <targetRef>_9_ContentOutputNameInput</targetRef>
         <assignment id="Assignment_7">
           <from xsi:type="tFormalExpression" id="FormalExpression_13"/>
           <to xsi:type="tFormalExpression" id="FormalExpression_14">_9_ContentOutputNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_11">
+      <dataInputAssociation id="DataInputAssociation_12">
         <targetRef>_9_ServiceOperationNameInput</targetRef>
         <assignment id="Assignment_8">
           <from xsi:type="tFormalExpression" id="FormalExpression_15">ship</from>
           <to xsi:type="tFormalExpression" id="FormalExpression_16">_9_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_12">
+      <dataInputAssociation id="DataInputAssociation_13">
         <targetRef>_9_ContentInputNameInput</targetRef>
         <assignment id="Assignment_9">
           <from xsi:type="tFormalExpression" id="FormalExpression_17"/>
@@ -171,32 +179,32 @@
           <dataOutputRefs>_10_contentOutputOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
-      <dataInputAssociation id="DataInputAssociation_13">
+      <dataInputAssociation id="DataInputAssociation_14">
         <sourceRef>contentInput</sourceRef>
         <targetRef>_10_contentInputInput</targetRef>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_14">
+      <dataInputAssociation id="DataInputAssociation_15">
         <targetRef>_10_ServiceNameInput</targetRef>
         <assignment id="Assignment_10">
           <from xsi:type="tFormalExpression" id="FormalExpression_19">BackOrder</from>
           <to xsi:type="tFormalExpression" id="FormalExpression_20">_10_ServiceNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_15">
+      <dataInputAssociation id="DataInputAssociation_16">
         <targetRef>_10_ContentOutputNameInput</targetRef>
         <assignment id="Assignment_11">
           <from xsi:type="tFormalExpression" id="FormalExpression_21"/>
           <to xsi:type="tFormalExpression" id="FormalExpression_22">_10_ContentOutputNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_16">
+      <dataInputAssociation id="DataInputAssociation_17">
         <targetRef>_10_ServiceOperationNameInput</targetRef>
         <assignment id="Assignment_12">
           <from xsi:type="tFormalExpression" id="FormalExpression_23">hold</from>
           <to xsi:type="tFormalExpression" id="FormalExpression_24">_10_ServiceOperationNameInput</to>
         </assignment>
       </dataInputAssociation>
-      <dataInputAssociation id="DataInputAssociation_17">
+      <dataInputAssociation id="DataInputAssociation_18">
         <targetRef>_10_ContentInputNameInput</targetRef>
         <assignment id="Assignment_13">
           <from xsi:type="tFormalExpression" id="FormalExpression_25"/>

@@ -1,24 +1,31 @@
-<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="rules-interview-container">
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="Interview" targetNamespace="urn:switchyard-quickstart:rules-interview-container:0.1.0">
-        <sca:service xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="Interview" promote="Interview">
-            <sca:interface.java interface="org.switchyard.quickstarts.rules.interview.Interview"/>
-        </sca:service>
-        <component name="Interview">
-            <implementation.rules xmlns="urn:switchyard-component-rules:config:1.0">
-                <actions>
-                    <action operation="verify" type="EXECUTE">
-                        <globals>
-                            <mapping expression="exchange.provider.name.localPart" variable="service"/>
-                        </globals>
-                    </action>
-                </actions>
-                <manifest>
-                    <container sessionName="rules-interview-container"/>
-                </manifest>
-            </implementation.rules>
-            <service name="Interview">
-                <interface.java interface="org.switchyard.quickstarts.rules.interview.Interview"/>
-            </service>
-        </component>
-    </composite>
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:rules="urn:switchyard-component-rules:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="rules-interview-container">
+  <sca:composite name="Interview" targetNamespace="urn:switchyard-quickstart:rules-interview-container:0.1.0">
+    <sca:service name="Interview" promote="Interview/Interview">
+      <sca:interface.java interface="org.switchyard.quickstarts.rules.interview.Interview"/>
+    </sca:service>
+    <sca:component name="Interview">
+      <rules:implementation.rules>
+        <rules:actions>
+          <rules:action operation="verify" type="EXECUTE">
+            <rules:globals>
+              <rules:mapping expression="exchange.provider.name.localPart" variable="serviceName"/>
+              <rules:mapping expression="userName" variable="userName"/>
+            </rules:globals>
+          </rules:action>
+        </rules:actions>
+        <rules:manifest>
+          <rules:container sessionName="rules-interview-container"/>
+        </rules:manifest>
+      </rules:implementation.rules>
+      <sca:service name="Interview">
+        <sca:interface.java interface="org.switchyard.quickstarts.rules.interview.Interview"/>
+      </sca:service>
+    </sca:component>
+  </sca:composite>
+  <domain>
+    <properties>
+      <property name="userName" value="${user.name}"/>
+    </properties>
+  </domain>
 </switchyard>
