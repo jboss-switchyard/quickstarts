@@ -19,10 +19,10 @@ public class WebServiceTest {
 
     @Test
     public void sayHello() throws Exception {
-    	// Send a SOAP request and verify the SOAP reply is what we expected
+        // Send a SOAP request and verify the SOAP reply is what we expected
         httpMixIn.postResourceAndTestXML(
-        		"http://localhost:18001/SayHelloService",
-        		"/xml/soap-request.xml",
-        		"/xml/soap-response.xml");
+                "http://localhost:18001/SayHelloService",
+                "/xml/soap-request.xml",
+                "/xml/soap-response.xml");
     }
 }

@@ -1,0 +1,5 @@
+<ns1:request xmlns:ns1="http://example.com/loan-approval/loanService/">
+   <ns1:firstName>Fred</ns1:firstName>
+   <ns1:name>Bloggs</ns1:name>
+   <ns1:amount>100</ns1:amount>
+</ns1:request>

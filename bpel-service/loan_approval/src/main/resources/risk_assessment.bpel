@@ -60,9 +60,9 @@
 			        <assign validate="no" name="AssignName">
 			            <copy>
 			                <from><literal><tns:CheckResponse xmlns:tns="http://example.com/loan-approval/loanService/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-			  <tns:level>low</tns:level>
-			</tns:CheckResponse>
-			</literal></from>
+  <tns:level>low</tns:level>
+</tns:CheckResponse>
+</literal></from>
 			                <to variable="checkResponse" part="parameter"></to>
 			            </copy>
 				    <copy>

@@ -1,0 +1,6 @@
+<helloMessage xmlns="http://www.jboss.org/bpel/examples/simple_correlation/">
+  <sessionId>
+    <id>1</id>
+  </sessionId>
+  <parameter>BPEL</parameter>
+</helloMessage>

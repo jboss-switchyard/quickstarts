@@ -63,12 +63,12 @@
       <assign name="assignHelloMesg">
           <copy>
               <from><literal><helloMessage xmlns="http://www.jboss.org/bpel/examples/simple_correlation/" >
-	<sessionId>
-	  <id></id>
-	</sessionId>
-	<parameter></parameter>
-	</helloMessage>
-	</literal></from>
+  <sessionId>
+    <id></id>
+  </sessionId>
+  <parameter></parameter>
+</helloMessage>
+</literal></from>
               <to variable="helloResponse" part="parameters" />
           </copy>
 
@@ -115,12 +115,12 @@
       <assign name="assignGoodbyeMesg">
           <copy>
               <from><literal><goodbyeMessage xmlns="http://www.jboss.org/bpel/examples/simple_correlation/" >
-	<sessionId>
-	  <id></id>
-	</sessionId>
-	<parameter></parameter>
-	</goodbyeMessage>
-	</literal></from>
+  <sessionId>
+    <id></id>
+  </sessionId>
+  <parameter></parameter>
+</goodbyeMessage>
+</literal></from>
               <to variable="goodbyeResponse" part="parameters" />
           </copy>
 
