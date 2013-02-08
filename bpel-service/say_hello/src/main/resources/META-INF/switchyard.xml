@@ -8,7 +8,7 @@
              xmlns:sh="http://www.jboss.org/bpel/examples"
              targetNamespace="urn:switchyard-quickstart:bpel-say-hello:0.1.0"
              name="sayhello">
-     <sca:composite name="sayhello" targetNamespace="urn:bpel:test:1.0">
+     <sca:composite name="sayhello" targetNamespace="urn:switchyard-quickstart:bpel-say-hello:0.1.0">
         <sca:service name="SayHelloService" promote="SayHelloService">
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
                 <wsdl>SayHelloArtifacts.wsdl</wsdl>

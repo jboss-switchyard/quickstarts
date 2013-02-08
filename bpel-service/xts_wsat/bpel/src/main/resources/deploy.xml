@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03"
-	xmlns:examples="http://www.jboss.org/bpel/examples" xmlns:airport="http://www.jboss.org/bpel/examples/airport">
+	xmlns:examples="http://www.jboss.org/bpel/examples" xmlns:domain="urn:switchyard-quickstart:wstdemo:0.1.0">
 	<process name="examples:BusinessTravel">
 		<active>true</active>
 		<retired>false</retired>
 		<process-events generate="all" />
 		<provide partnerLink="client">
-			<service name="examples:BusinessTravelService" port="BusinessTravelPort" />
+			<service name="domain:BusinessTravelService" port="ignored" />
 		</provide>
 		<invoke partnerLink="airport">
-			<service name="airport:AirportService" port="AirportServicePort" />
+			<service name="domain:AirportService" port="ignored" />
 		</invoke>
 	</process>
 </deploy>

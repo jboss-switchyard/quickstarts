@@ -19,17 +19,17 @@
 	xmlns:ls="http://example.com/loan-approval/loanService/" 
 	xmlns:ra="http://example.com/loan-approval/riskAssessment/"
 	xmlns:examples="http://www.jboss.org/bpel/examples"
-    >
+    xmlns:domain="urn:switchyard-quickstart:bpel-loan-approval:0.1.0">
 
 	<!-- loan_approval/loanService example -->
 	<process name="ls:loanApprovalProcess">
 		<active>true</active>
         	<process-events generate="all"/>
 		<provide partnerLink="customer">
-			<service name="ls:loanService" port="loanService_Port"/>
+			<service name="domain:loanService" port="ignored"/>
 		</provide>
 		<invoke partnerLink="assessor" usePeer2Peer="false">
-			<service name="ra:riskAssessor" port="riskAssessor_Port"/>
+			<service name="domain:riskAssessor" port="ignored"/>
 		</invoke>
 	</process>
 	
@@ -38,7 +38,7 @@
 		<active>true</active>
         	<process-events generate="all"/>
 		<provide partnerLink="assessor">
-			<service name="ra:riskAssessor" port="riskAssessor_Port"/>
+			<service name="domain:riskAssessor" port="ignored"/>
 		</provide>
 	</process>
 	

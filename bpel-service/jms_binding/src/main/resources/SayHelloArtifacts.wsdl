@@ -68,23 +68,4 @@
         <plnk:role name="SayHelloProvider" portType="tns:SayHello"/>
     </plnk:partnerLinkType>
     
-    <binding name="SayHelloBinding" type="tns:SayHello">
-    	<soap:binding style="document"
-    		transport="http://schemas.xmlsoap.org/soap/http" />
-    	<operation name="sayHello">
-    		<soap:operation
-    			soapAction="http://www.jboss.org/bpel/examples/sayHello" />
-    		<input>
-    			<soap:body use="literal" />
-    		</input>
-    		<output>
-    			<soap:body use="literal" />
-    		</output>
-    	</operation>
-    </binding>
-    <service name="SayHelloService">
-    	<port name="SayHelloPort" binding="tns:SayHelloBinding">
-    		<soap:address location="http://localhost:8080/SayHelloProcess" />
-    	</port>
-    </service>
 </definitions>

@@ -59,29 +59,4 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
 		<plnk:role name="assessor" portType="tns:riskAssessmentPT" />
 	</plnk:partnerLinkType>
 	
-    <wsdl:binding name="riskAssessor_Binding" type="tns:riskAssessmentPT">
-    	<soap:binding style="document"
-    		transport="http://schemas.xmlsoap.org/soap/http" />
-    	<wsdl:operation name="check">
-    		<soap:operation
-    			soapAction="http://example.com/loan-approval/wsdl/check" />
-    		<wsdl:input>
-    			<soap:body use="literal"
-    				namespace="http://example.com/loan-approval/wsdl/" />
-    		</wsdl:input>
-    		<wsdl:output>
-    			<soap:body use="literal"
-    				namespace="http://example.com/loan-approval/wsdl/" />
-    		</wsdl:output>
-    		<wsdl:fault name="loanProcessFault">
-    			<soap:fault use="literal" name="loanProcessFault" />
-    		</wsdl:fault>
-    	</wsdl:operation>
-    </wsdl:binding>
-    
-    <wsdl:service name="riskAssessor">
-    	<wsdl:port name="riskAssessor_Port" binding="tns:riskAssessor_Binding">
-    		<soap:address location="http://127.0.0.1:8080/Quickstart_bpel_loan_approval/RiskAssessment" />
-    	</wsdl:port>
-    </wsdl:service>
 </wsdl:definitions>

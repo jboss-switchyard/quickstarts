@@ -8,7 +8,7 @@
              xmlns:sh="http://www.jboss.org/bpel/examples"
              targetNamespace="urn:switchyard-quickstart:bpel-simple-correlation:0.1.0"
              name="simplecorrelation">
-     <sca:composite name="simplecorrelation" targetNamespace="urn:bpel:test:1.0">
+     <sca:composite name="simplecorrelation" targetNamespace="urn:switchyard-quickstart:bpel-simple-correlation:0.1.0">
         <sca:service name="simpleCorrelationService" promote="simpleCorrelationService">
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
                 <wsdl>HelloGoodbye.wsdl</wsdl>
