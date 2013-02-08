@@ -18,13 +18,13 @@
   -->
 <deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03"
 	xmlns:bpl="http://www.jboss.org/bpel/examples/simple_correlation/"
-	xmlns:intf="http://www.jboss.org/bpel/examples/simple_correlation/">
+	xmlns:domain="urn:switchyard-quickstart:bpel-simple-correlation:0.1.0">
 
 	<process name="bpl:HelloGoodbye">
 		<active>true</active>
         <process-events generate="all"/>
 		<provide partnerLink="helloGoodbyePartnerLink">
-			<service name="intf:HelloGoodbyeService" port="HelloGoodbyePort"/>
+			<service name="domain:simpleCorrelationService" port="ignored"/>
 		</provide>
 	</process>
 </deploy>

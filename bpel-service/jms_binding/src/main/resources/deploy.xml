@@ -16,8 +16,8 @@
  * MA  02110-1301, USA.
  -->
 <deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03"
-	xmlns:examples="http://www.jboss.org/bpel/examples"
-    >
+    xmlns:examples="http://www.jboss.org/bpel/examples"
+    xmlns:domain="urn:switchyard-quickstart:bpel-say-hello:0.1.0">
 
 	<!-- say_hello example -->
 	<process name="examples:SayHello">
@@ -25,7 +25,7 @@
 		<retired>false</retired>
 		<process-events generate="all"/>
 		<provide partnerLink="client">
-			<service name="examples:SayHelloService" port="SayHelloPort"/>
+			<service name="domain:SayHelloService" port="ingored"/>
 		</provide>
 	</process>
 	

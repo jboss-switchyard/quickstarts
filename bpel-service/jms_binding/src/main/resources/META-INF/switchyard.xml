@@ -27,7 +27,7 @@
     xmlns:jms="urn:switchyard-component-camel-jms:config:1.0"
     targetNamespace="urn:switchyard-quickstart:bpel-say-hello:0.1.0" name="sayhello">
 
-    <sca:composite name="sayhello" targetNamespace="urn:bpel:test:1.0">
+    <sca:composite name="sayhello" targetNamespace="urn:switchyard-quickstart:bpel-say-hello:0.1.0">
         <sca:service name="SayHelloService" promote="SayHelloService">
             <jms:binding.jms>
                 <jms:queue>HelloRequestQueue</jms:queue>

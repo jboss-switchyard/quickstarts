@@ -10,7 +10,7 @@
              xmlns:ra="http://example.com/loan-approval/riskAssessment/"
              targetNamespace="urn:switchyard-quickstart:bpel-loan-approval:0.1.0"
              name="loanapproval">
-     <sca:composite name="loanservice" targetNamespace="urn:bpel:test:1.0">
+     <sca:composite name="loanservice" targetNamespace="urn:switchyard-quickstart:bpel-loan-approval:0.1.0">
         <sca:service name="loanService" promote="loanService">
             <soap:binding.soap>
         	<soap:contextMapper includes=".*" soapHeadersType="DOM"/>
