@@ -34,8 +34,9 @@
     <description>SwitchYard Core</description>
     <modules>
         <module>build</module>
-        <module>common</module>
-        <module>common-camel</module>
+        <module>common/core</module>
+        <module>common/cdi</module>
+        <module>common/camel</module>
         <module>config</module>
         <module>api</module>
         <module>serial/base</module>

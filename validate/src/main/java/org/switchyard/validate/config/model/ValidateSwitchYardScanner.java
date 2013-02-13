@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import org.switchyard.common.cdi.CDIUtil;
 import org.switchyard.common.type.classpath.AbstractTypeFilter;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.config.model.Scannable;
@@ -59,7 +60,12 @@ public class ValidateSwitchYardScanner implements Scanner<SwitchYardModel> {
             for (ValidatorTypes supportedValidate : supportedValidators) {
                 JavaValidateModel validateModel = new V1JavaValidateModel();
 
-                validateModel.setClazz(validator.getName());
+                String bean = CDIUtil.getNamedAnnotationValue(validator);
+                if (bean != null) {
+                    validateModel.setBean(bean);
+                } else {
+                    validateModel.setClazz(validator.getName());
+                }
                 validateModel.setName(supportedValidate.getName());
 
                 if (validatesModel == null) {

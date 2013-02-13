@@ -25,6 +25,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.config.model.ScannerInput;
@@ -32,6 +34,7 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.transform.config.model.transformers.ATransformer;
 import org.switchyard.transform.config.model.transformers.BTransformer;
+import org.switchyard.transform.config.model.transformers.BeanTransformer;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -51,9 +54,10 @@ public class TransformSwitchYardScannerTest {
         SwitchYardModel switchyard = scanner.scan(input).getModel();
         List<TransformModel> models = switchyard.getTransforms().getTransforms();
 
-        Assert.assertEquals(10, models.size());
+        Assert.assertEquals(11, models.size());
         assertModelInstanceOK((JavaTransformModel) models.get(0));
         assertModelInstanceOK((JavaTransformModel) models.get(1));
+        assertModelInstanceOK((JavaTransformModel) models.get(2));
     }
 
     private void assertModelInstanceOK(JavaTransformModel model) {
@@ -63,6 +67,10 @@ public class TransformSwitchYardScannerTest {
         } else if (model.getFrom().toString().equals("{urn:switchyard-transform:test-transformers:1.0}b")) {
             Assert.assertEquals(BTransformer.class.getName(), model.getClazz());
             Assert.assertEquals("{urn:switchyard-transform:test-transformers:1.0}c", model.getTo().toString());
+        } else if (model.getFrom().toString().equals("{urn:switchyard-transform:test-transformers:1.0}c")) {
+            Assert.assertEquals(BeanTransformer.class.getAnnotation(Named.class).value(), model.getBean());
+            Assert.assertNull(model.getClazz());
+            Assert.assertEquals("{urn:switchyard-transform:test-transformers:1.0}a", model.getTo().toString());
         }
     }
 }

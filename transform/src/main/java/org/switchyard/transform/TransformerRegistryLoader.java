@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.switchyard.common.cdi.CDIUtil;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.transform.TransformModel;
@@ -181,13 +182,28 @@ public class TransformerRegistryLoader {
         Collection<Transformer<?, ?>> transformers = null;
 
         if (transformModel instanceof JavaTransformModel) {
-            String className = ((JavaTransformModel) transformModel).getClazz();
+            JavaTransformModel javaTransformModel = JavaTransformModel.class.cast(transformModel);
+            String bean = javaTransformModel.getBean();
+            if (bean != null) {
+                if (CDIUtil.lookupBeanManager() == null) {
+                    throw new SwitchYardException("CDI BeanManager couldn't be found. A Java transformer class name must be specified if CDI is not enabled.");
+                }
+                Object transformer = CDIUtil.lookupBean(bean);
+                if (transformer == null) {
+                    throw new SwitchYardException("The Java transformer bean '" + bean + "' couldn't be found in CDI registry.");
+                }
+                transformers = TransformerUtil.newTransformers(transformer, transformModel.getFrom(), transformModel.getTo());
+            } else {
+                String className = ((JavaTransformModel) transformModel).getClazz();
+                if (className == null) {
+                    throw new SwitchYardException("'bean' or 'class' must be specified for Java transformer definition");
+                }
                 Class<?> transformClass = Classes.forName(className, TransformerUtil.class);
                 if (transformClass == null) {
                     throw new SwitchYardException("Unable to load transformer class " + className);
                 }
                 transformers = TransformerUtil.newTransformers(transformClass, transformModel.getFrom(), transformModel.getTo());
-            
+            }
         } else {
             TransformerFactory factory = getTransformerFactory(transformModel);
 

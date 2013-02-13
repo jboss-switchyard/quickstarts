@@ -34,6 +34,9 @@ public interface JavaTransformModel extends TransformModel {
     /** The "class" name. */
     public static final String CLASS = "class";
 
+    /** The "bean" name. */
+    public static final String BEAN = "bean";
+    
     /**
      * Gets the class attribute.
      * @return the class attribute
@@ -47,4 +50,16 @@ public interface JavaTransformModel extends TransformModel {
      */
     public JavaTransformModel setClazz(String clazz);
 
+    /**
+     * Gets the bean attribute.
+     * @return the bean attribute
+     */
+    public String getBean();
+    
+    /**
+     * Sets the bean attribute.
+     * @param bean the bean attribute
+     * @return this JavaTransformModel (useful for chaining)
+     */
+    public JavaTransformModel setBean(String bean);
 }

@@ -25,6 +25,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.config.model.ScannerInput;
@@ -32,6 +34,7 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.validate.config.model.validators.AValidator;
 import org.switchyard.validate.config.model.validators.BValidator;
+import org.switchyard.validate.config.model.validators.BeanValidator;
 
 /**
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
@@ -51,9 +54,10 @@ public class ValidateSwitchYardScannerTest {
         SwitchYardModel switchyard = scanner.scan(input).getModel();
         List<ValidateModel> models = switchyard.getValidates().getValidates();
 
-        Assert.assertEquals(8, models.size());
+        Assert.assertEquals(9, models.size());
         assertModelInstanceOK((JavaValidateModel) models.get(0));
         assertModelInstanceOK((JavaValidateModel) models.get(1));
+        assertModelInstanceOK((JavaValidateModel) models.get(2));
     }
 
     private void assertModelInstanceOK(JavaValidateModel model) {
@@ -61,6 +65,9 @@ public class ValidateSwitchYardScannerTest {
             Assert.assertEquals(AValidator.class.getName(), model.getClazz());
         } else if (model.getName().toString().equals("{urn:switchyard-validate:test-validators:1.0}b")) {
             Assert.assertEquals(BValidator.class.getName(), model.getClazz());
+        } else if (model.getName().toString().equals("{urn:switchyard-validate:test-validators:1.0}c")) {
+            Assert.assertEquals(BeanValidator.class.getAnnotation(Named.class).value(), model.getBean());
+            Assert.assertNull(model.getClazz());
         }
     }
 }

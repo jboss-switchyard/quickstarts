@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import org.switchyard.common.cdi.CDIUtil;
 import org.switchyard.common.type.classpath.AbstractTypeFilter;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.config.model.Scannable;
@@ -59,7 +60,12 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
             for (TransformerTypes supportedTransform : supportedTransforms) {
                 JavaTransformModel transformModel = new V1JavaTransformModel();
 
-                transformModel.setClazz(transformer.getName());
+                String bean = CDIUtil.getNamedAnnotationValue(transformer);
+                if (bean != null) {
+                    transformModel.setBean(bean);
+                } else {
+                    transformModel.setClazz(transformer.getName());
+                }
                 transformModel.setFrom(supportedTransform.getFrom());
                 transformModel.setTo(supportedTransform.getTo());
 

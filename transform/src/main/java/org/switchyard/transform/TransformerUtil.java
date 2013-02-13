@@ -75,18 +75,31 @@ public final class TransformerUtil {
             throw new SwitchYardException("Invalid Transformer class '" + clazz.getName() + "'.  Must implement the Transformer interface, or have methods annotated with the @Transformer annotation.");
         }
 
-        boolean fromIsWild = isWildcardType(from);
-        boolean toIsWild = isWildcardType(to);
-        Collection<Transformer<?, ?>> transformers = new ArrayList<Transformer<?, ?>>();
         final Object transformerObject;
-
         try {
             transformerObject = clazz.newInstance();
         } catch (Exception e) {
             throw new SwitchYardException("Error constructing Transformer instance for class '" + clazz.getName() + "'.  Class must have a public default constructor.", e);
         }
 
-        Method[] publicMethods = clazz.getMethods();
+        return TransformerUtil.newTransformers(transformerObject, from, to);
+    }
+    
+    /**
+     * Create a Collection of {@link Transformer} instances from the supplied
+     * object and supporting the specified from and to.
+     * @param transformerObject The Transformer instance
+     * @param from The from type.
+     * @param to The to type.
+     * @return The collection of Transformer instances.
+     * @see #isTransformer(Class)
+     */
+    public static Collection<Transformer<?, ?>> newTransformers(Object transformerObject, QName from, QName to) {
+        boolean fromIsWild = isWildcardType(from);
+        boolean toIsWild = isWildcardType(to);
+        Collection<Transformer<?, ?>> transformers = new ArrayList<Transformer<?, ?>>();
+
+        Method[] publicMethods = transformerObject.getClass().getMethods();
         for (Method publicMethod : publicMethods) {
             org.switchyard.annotations.Transformer transformerAnno = publicMethod.getAnnotation(org.switchyard.annotations.Transformer.class);
             if (transformerAnno != null) {
@@ -123,7 +136,7 @@ public final class TransformerUtil {
         }
 
         if (transformers.isEmpty()) {
-            throw new SwitchYardException("Error constructing Transformer instance for class '" + clazz.getName() + "'.  Class does not support a transformation from type '" + from + "' to type '" + to + "'.");
+            throw new SwitchYardException("Error constructing Transformer instance for class '" + transformerObject.getClass().getName() + "'.  Class does not support a transformation from type '" + from + "' to type '" + to + "'.");
         }
 
         return transformers;

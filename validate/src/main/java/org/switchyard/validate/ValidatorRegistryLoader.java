@@ -88,11 +88,11 @@ public class ValidatorRegistryLoader {
                     if (_validatorRegistry.hasValidator(validator.getName())) {
                         Validator<?> registeredValidator = _validatorRegistry.getValidator(validator.getName());
                         throw new DuplicateValidatorException("Failed to register Validator '" + toDescription(validator)
-                                + "'.  A Transformer for these types is already registered: '"
+                                + "'.  A Validator for these types is already registered: '"
                                 + toDescription(registeredValidator) + "'.");
                     }
 
-                    _log.debug("Adding transformer =>"
+                    _log.debug("Adding validator =>"
                             + ", Name:" + validator.getName());
                     _validatorRegistry.addValidator(validator);
                     _validators.add(validator);

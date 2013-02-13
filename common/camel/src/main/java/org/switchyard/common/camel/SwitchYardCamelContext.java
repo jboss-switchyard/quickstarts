@@ -35,10 +35,10 @@ import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
-import org.apache.deltaspike.core.api.provider.BeanManagerProvider;
 import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.camel.event.CamelEventBridge;
+import org.switchyard.common.cdi.CDIUtil;
 
 /**
  * Extension of default camel context. Supports access to mutable registry and
@@ -167,13 +167,7 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
         if (!_cdiIntegration) {
             return false;
         }
-        try {
-            BeanManagerProvider.getInstance();
-            return true;
-        } catch (IllegalStateException e) {
-            e.getMessage(); // keeps checkstyle happy
-        }
-        return false;
+        return CDIUtil.lookupBeanManager() != null;
     }
 
     /**

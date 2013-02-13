@@ -31,6 +31,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
+import org.switchyard.common.cdi.CDIUtil;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.config.model.validate.ValidateModel;
@@ -70,13 +71,29 @@ public final class ValidatorUtil {
         Collection<Validator<?>> validators = null;
 
         if (validateModel instanceof JavaValidateModel) {
-            String className = ((JavaValidateModel) validateModel).getClazz();
-            try {
-                Class<?> validateClass = Classes.forName(className, ValidatorUtil.class);
+            JavaValidateModel javaValidateModel = JavaValidateModel.class.cast(validateModel);
+            String bean = javaValidateModel.getBean();
+            if (bean != null) {
+                if (CDIUtil.lookupBeanManager() == null) {
+                    throw new SwitchYardException("CDI BeanManager couldn't be found. A Java validator class name must be specified if CDI is not enabled.");
+                }
+                Object validator = CDIUtil.lookupBean(bean);
+                if (validator == null) {
+                    throw new SwitchYardException("The Java validator bean '" + bean + "' couldn't be found in CDI registry.");
+                }
+                validators = newValidators(validator, validateModel.getName());
 
-                validators = newValidators(validateClass, validateModel.getName());
-            } catch (Exception e) {
-                throw new SwitchYardException("Error constructing Validator instance for class '" + className + "'.", e);
+            } else {
+                String className = ((JavaValidateModel) validateModel).getClazz();
+                if (className == null) {
+                    throw new SwitchYardException("'bean' or 'class' must be specified for Java validator definition.");
+                }
+                try {
+                    Class<?> validateClass = Classes.forName(className, ValidatorUtil.class);
+                    validators = newValidators(validateClass, validateModel.getName());
+                } catch (Exception e) {
+                    throw new SwitchYardException("Error constructing Validator instance for class '" + className + "'.", e);
+                }
             }
         } else {
             ValidatorFactory factory = newValidatorFactory(validateModel);
@@ -117,8 +134,6 @@ public final class ValidatorUtil {
             throw new SwitchYardException("Invalid Validator class '" + clazz.getName() + "'.  Must implement the Validator interface, or have methods annotated with the @Validator annotation.");
         }
 
-        boolean nameIsWild = isWildcardType(name);
-        Collection<Validator<?>> validators = new ArrayList<Validator<?>>();
         final Object validatorObject;
 
         try {
@@ -127,7 +142,22 @@ public final class ValidatorUtil {
             throw new SwitchYardException("Error constructing Validator instance for class '" + clazz.getName() + "'.  Class must have a public default constructor.", e);
         }
 
-        Method[] publicMethods = clazz.getMethods();
+        return newValidators(validatorObject, name);
+    }
+    
+    /**
+     * Create a Collection of {@link Validator} instances from the supplied
+     * object and supporting the specified name.
+     * @param validatorObject The Validator instance
+     * @param name The name of type.
+     * @return The collection of Validator instances.
+     * @see #isValidator(Class)
+     */
+    public static Collection<Validator<?>> newValidators(Object validatorObject, QName name) {
+        boolean nameIsWild = isWildcardType(name);
+        Collection<Validator<?>> validators = new ArrayList<Validator<?>>();
+
+        Method[] publicMethods = validatorObject.getClass().getMethods();
         for (Method publicMethod : publicMethods) {
             org.switchyard.annotations.Validator validatorAnno = publicMethod.getAnnotation(org.switchyard.annotations.Validator.class);
             if (validatorAnno != null) {
@@ -160,7 +190,7 @@ public final class ValidatorUtil {
         }
 
         if (validators.isEmpty()) {
-            throw new SwitchYardException("Error constructing Validator instance for class '" + clazz.getName() + "'.  Class does not support a validation for type '" + name + "'.");
+            throw new SwitchYardException("Error constructing Validator instance for class '" + validatorObject.getClass().getName() + "'.  Class does not support a validation for type '" + name + "'.");
         }
 
         return validators;

@@ -37,6 +37,10 @@
         <!-- internal dependencies -->
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-common-cdi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-config</artifactId>
         </dependency>
         <dependency>

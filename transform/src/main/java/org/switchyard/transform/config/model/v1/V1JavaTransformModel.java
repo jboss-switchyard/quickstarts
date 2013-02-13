@@ -67,4 +67,21 @@ public class V1JavaTransformModel extends V1BaseTransformModel implements JavaTr
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getBean() {
+        return getModelAttribute(BEAN);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JavaTransformModel setBean(String bean) {
+        setModelAttribute(BEAN, bean);
+        return this;
+    }
+
 }

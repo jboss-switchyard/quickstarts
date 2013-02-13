@@ -67,4 +67,21 @@ public class V1JavaValidateModel extends V1BaseValidateModel implements JavaVali
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getBean() {
+        return getModelAttribute(BEAN);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JavaValidateModel setBean(String bean) {
+        setModelAttribute(BEAN, bean);
+        return this;
+    }
+
 }

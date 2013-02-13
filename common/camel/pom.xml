@@ -43,8 +43,8 @@
             <artifactId>camel-cdi</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.deltaspike.core</groupId>
-            <artifactId>deltaspike-core-api</artifactId>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-common-cdi</artifactId>
         </dependency>
     </dependencies>
 </project>

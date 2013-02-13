@@ -68,10 +68,17 @@ MA  02110-1301, USA.
         </annotation>
         <complexContent>
             <extension base="swyd:ValidateType">
-                <attribute name="class" type="string" use="required">
+                <attribute name="class" type="string" use="optional">
                     <annotation>
                         <documentation xml:lang="en">
                             The name of the Java Validator implementation class.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="bean" type="string" use="optional">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            The name of the Java Validator CDI bean.
                         </documentation>
                     </annotation>
                 </attribute>

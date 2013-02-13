@@ -34,6 +34,9 @@ public interface JavaValidateModel extends ValidateModel {
     /** The "class" name. */
     public static final String CLASS = "class";
 
+    /** The "bean" name. */
+    public static final String BEAN = "bean";
+
     /**
      * Gets the class attribute.
      * @return the class attribute
@@ -47,4 +50,16 @@ public interface JavaValidateModel extends ValidateModel {
      */
     public JavaValidateModel setClazz(String clazz);
 
+    /**
+     * Gets the bean attribute.
+     * @return the bean attribute
+     */
+    public String getBean();
+    
+    /**
+     * Sets the bean attribute.
+     * @param bean the bean attribute
+     * @return this JavaValidateModel (useful for chaining)
+     */
+    public JavaValidateModel setBean(String bean);
 }
