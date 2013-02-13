@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+JBoss, Home of Professional Open Source
+Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+as indicated by the @authors tag. All rights reserved.
+See the copyright.txt in the distribution for a
+full listing of individual contributors.
+
+This copyrighted material is made available to anyone wishing to use,
+modify, copy, or redistribute it subject to the terms and conditions
+of the GNU Lesser General Public License, v. 2.1.
+This program is distributed in the hope that it will be useful, but WITHOUT A
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
+You should have received a copy of the GNU Lesser General Public License,
+v.2.1 along with this distribution; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA  02110-1301, USA.
+-->
+<sca:composite xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+        targetNamespace="urn:m1app:example:1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:bean="urn:switchyard-config:test-bean:1.0"
+        xsi:schemaLocation="urn:switchyard-config:test-bean:1.0 ../composite/test/bean/bean.xsd"
+        name="m1app">
+    <sca:service name="M1AppService" promote="SimpleService">
+        <sca:binding.sca>
+            <clustered/>
+        </sca:binding.sca>
+    </sca:service>
+    <sca:reference name="M1AppReference" multiplicity="0..1" promote="SimpleService/anotherService">
+        <sca:binding.sca>
+            <endpoint target="somethingElse" targetNamespace="urn:another:uri"/>
+            <clustered strategy="RoundRobin"/>
+        </sca:binding.sca>
+    </sca:reference>
+    <sca:component name="SimpleService">
+        <bean:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>
+        <sca:service name="SimpleService">
+            <sca:interface.java interface="org.switchyard.example.m1app.SimpleService"/>
+        </sca:service>
+        <sca:reference name="anotherService">
+            <sca:interface.java interface="org.switchyard.example.m1app.AnotherService"/>
+        </sca:reference>
+    </sca:component>
+</sca:composite>

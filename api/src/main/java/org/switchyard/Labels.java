@@ -16,25 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
 package org.switchyard;
 
-import org.switchyard.internal.ExchangeImpl;
-
 /**
- * Dumb implementation of Exchange meant for unit testing. 
+ * This class contains constant declarations for well-known context property labels.
  */
-public class MockExchange extends ExchangeImpl {
+public final class Labels {
+
+    /** 
+     * Properties labeled as transient are not serialized and are not preserved in 
+     * a copy of the exchange via Context.copy().
+     */
+    public static final String TRANSIENT = "org.switchyard.labels.transient";
     
-    public MockExchange() {
-        super(new MockDomain());
-    }
-    
-    public void setPhase(ExchangePhase phase) {
-        super.setPhase(phase);
-    }
-    
-    public void setMessage(Message message) {
-        super.setMessage(message);
+    /**
+     *  Prevent instantiation of this class
+     */
+    private Labels() {
+        
     }
 }

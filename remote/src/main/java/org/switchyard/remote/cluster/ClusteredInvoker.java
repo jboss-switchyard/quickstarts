@@ -41,17 +41,19 @@ public class ClusteredInvoker implements RemoteInvoker {
      * @param registry remote registry
      */
     public ClusteredInvoker(RemoteRegistry registry) {
-        this(new RoundRobinStrategy(registry));
+        this(registry, new RoundRobinStrategy());
     }
     
     /**
      * Create a new ClusteredInvoker with the specified load balance strategy.
+     * @param registry remote registry
      * @param loadBalancer load balance strategy
      */
-    public ClusteredInvoker(LoadBalanceStrategy loadBalancer) {
+    public ClusteredInvoker(RemoteRegistry registry, LoadBalanceStrategy loadBalancer) {
         _loadBalancer = loadBalancer;
+        _loadBalancer.setRegistry(registry);
     }
-
+    
     @Override
     public void invoke(Exchange exchange) throws SwitchYardException {
         RemoteEndpoint ep = _loadBalancer.selectEndpoint(exchange.getProvider().getName());

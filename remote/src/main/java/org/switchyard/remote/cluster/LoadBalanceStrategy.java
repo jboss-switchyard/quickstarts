@@ -43,4 +43,10 @@ public interface LoadBalanceStrategy {
      * @return remote registry
      */
     RemoteRegistry getRegistry();
+    
+    /**
+     * Specifies the remote registry used by the load balancing strategy.
+     * @param registry remote registry
+     */
+    void setRegistry(RemoteRegistry registry);
 }

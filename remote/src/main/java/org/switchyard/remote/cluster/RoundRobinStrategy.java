@@ -23,7 +23,6 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.switchyard.remote.RemoteEndpoint;
-import org.switchyard.remote.RemoteRegistry;
 
 /**
  * Round Robin load balancing strategy.  The algorithm used here is pretty naive in that the 
@@ -38,10 +37,9 @@ public class RoundRobinStrategy extends BaseStrategy {
     
     /**
      * Create a new RoundRobin strategy.
-     * @param registry remote registry
      */
-    public RoundRobinStrategy(RemoteRegistry registry) {
-        super(registry);
+    public RoundRobinStrategy() {
+        super();
     }
 
     @Override

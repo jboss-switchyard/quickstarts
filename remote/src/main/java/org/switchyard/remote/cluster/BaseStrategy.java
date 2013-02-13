@@ -27,13 +27,13 @@ public abstract class BaseStrategy implements LoadBalanceStrategy {
     
     private RemoteRegistry _registry;
     
-    protected BaseStrategy(RemoteRegistry registry) {
-        _registry = registry;
-    }
-    
     @Override
     public RemoteRegistry getRegistry() {
         return _registry;
     }
 
+    @Override
+    public void setRegistry(RemoteRegistry registry) {
+        _registry = registry;
+    }
 }

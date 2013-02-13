@@ -24,6 +24,8 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.Context;
+import org.switchyard.Labels;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 
@@ -126,11 +128,44 @@ public class DefaultContextTest {
     }
     
     @Test
+    public void testGetPropertyLabel() {
+        _context.setProperty("a", "a", Scope.IN).addLabels(Labels.TRANSIENT);
+        _context.setProperty("b", "b", Scope.OUT).addLabels(Labels.TRANSIENT);
+        _context.setProperty("c", "c", Scope.EXCHANGE).addLabels(Labels.TRANSIENT);
+        _context.setProperty("d", "d", Scope.IN).addLabels("foo");
+        Assert.assertEquals(3, _context.getProperties(Labels.TRANSIENT).size());
+        Assert.assertEquals(1, _context.getProperties("foo").size());
+    }
+    
+    @Test
+    public void testRemovePropertyLabel() {
+        _context.setProperty("a", "a", Scope.IN).addLabels(Labels.TRANSIENT);
+        _context.setProperty("b", "b", Scope.OUT).addLabels(Labels.TRANSIENT);
+        _context.setProperty("c", "c", Scope.EXCHANGE).addLabels(Labels.TRANSIENT);
+        _context.setProperty("d", "d", Scope.IN).addLabels("foo");
+        
+        _context.removeProperties(Labels.TRANSIENT);
+        Assert.assertEquals(0, _context.getProperties(Labels.TRANSIENT).size());
+        Assert.assertEquals(1, _context.getProperties("foo").size());
+    }
+    
+    @Test
+    public void testCopyClean() {
+        _context.setProperty("a", "a", Scope.IN).addLabels(Labels.TRANSIENT);
+        _context.setProperty("b", "b", Scope.OUT);
+        _context.setProperty("c", "c", Scope.EXCHANGE).addLabels(Labels.TRANSIENT);
+        
+        Context newCtx = _context.copy();
+        Assert.assertEquals(0, newCtx.getProperties(Labels.TRANSIENT).size());
+        Assert.assertEquals(1, newCtx.getProperties().size());
+    }
+    
+    @Test
     public void testCopy() {
         _context.setProperty("exchange", "val", Scope.EXCHANGE);
         _context.setProperty("in", "val", Scope.IN);
         _context.setProperty("out", "val", Scope.OUT);
-        DefaultContext ctx = _context.copy();
+        Context ctx = _context.copy();
         // verify that all fields were copied
         Assert.assertEquals(
                 _context.getProperty("exchange", Scope.EXCHANGE),

@@ -24,7 +24,6 @@ import java.util.Random;
 import javax.xml.namespace.QName;
 
 import org.switchyard.remote.RemoteEndpoint;
-import org.switchyard.remote.RemoteRegistry;
 
 /**
  * Random endpoint selection strategy which uses a Java Random with default seed to select an 
@@ -36,10 +35,9 @@ public class RandomStrategy extends BaseStrategy {
     
     /**
      * Create a new RandomStrategy.
-     * @param registry remote registry
      */
-    public RandomStrategy(RemoteRegistry registry) {
-        super(registry);
+    public RandomStrategy() {
+        super();
     }
 
     @Override

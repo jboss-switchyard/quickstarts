@@ -19,9 +19,11 @@
 
 package org.switchyard.internal;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.switchyard.Context;
+import org.switchyard.Labels;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.serial.graph.AccessType;
@@ -117,13 +119,30 @@ public class DefaultContext implements Context {
         return p;
     }
     
-    /**
-     * Provides a shallow copy of the context so that additions and removals
-     * to the copied reference are not reflected in the original (and vice
-     * versa, natch).
-     * @return shallow copy of this context
-     */
-    public DefaultContext copy() {
-        return new DefaultContext(_properties.copy());
+    @Override
+    public Context copy() {
+        Context ctx = new DefaultContext(_properties.copy());
+        ctx.removeProperties(Labels.TRANSIENT);
+        return ctx;
+    }
+
+    @Override
+    public Set<Property> getProperties(String label) {
+        Set<Property> props = new HashSet<Property>();
+        for (Property p : getProperties()) {
+            if (p.hasLabel(label)) {
+                props.add(p);
+            }
+        }
+        return props;
+    }
+
+    @Override
+    public void removeProperties(String label) {
+        for (Property p : getProperties()) {
+            if (p.hasLabel(label)) {
+                removeProperty(p);
+            }
+        }
     }
 }

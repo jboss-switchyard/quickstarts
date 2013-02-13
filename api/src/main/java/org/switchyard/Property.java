@@ -1,6 +1,3 @@
-package org.switchyard;
-
-import java.util.Set;
 /* 
  * JBoss, Home of Professional Open Source 
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
@@ -20,11 +17,15 @@ import java.util.Set;
  * MA  02110-1301, USA.
  */
 
+package org.switchyard;
+
+import java.util.Set;
+
 /**
  * Represents a context property consisting of a name, scope, and value.
  */
 public interface Property {
-
+    
     /**
      * The scope of the property.
      * @return property scope

@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.remote.RemoteEndpoint;
 import org.switchyard.remote.RemoteRegistry;
@@ -30,8 +31,13 @@ public class RoundRobinStrategyTest {
     
     private static final QName TEST_SERVICE = new QName("RoundRobinStrategy");
     private RemoteRegistry registry = new MockRegistry();
-    private RoundRobinStrategy robin = new RoundRobinStrategy(registry);
+    private RoundRobinStrategy robin = new RoundRobinStrategy();
 
+    @Before
+    public void setUp() throws Exception {
+        robin.setRegistry(registry);
+    }
+    
     @Test
     public void noEndpoints() {
         Assert.assertNull(robin.selectEndpoint(TEST_SERVICE));

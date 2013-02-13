@@ -30,6 +30,7 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.composite.SCABindingModel;
 import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.property.v1.V1PropertyModel;
 
@@ -67,7 +68,11 @@ public class V1CompositeMarshaller extends BaseMarshaller {
                 }
             }
         } else if (name.startsWith(BindingModel.BINDING)) {
-            return new V1BindingModel(config, desc);
+            if (name.endsWith("." + SCABindingModel.SCA)) {
+                return new V1SCABindingModel(config, desc);
+            } else {
+                return new V1BindingModel(config, desc);
+            }
         } else if (name.equals(ComponentModel.COMPONENT)) {
             return new V1ComponentModel(config, desc);
         } else if (name.startsWith(ComponentImplementationModel.IMPLEMENTATION)) {
@@ -92,6 +97,7 @@ public class V1CompositeMarshaller extends BaseMarshaller {
         } else if (name.equals(PropertyModel.PROPERTY)) {
             return new V1PropertyModel(config,desc);
         }
+        
         return null;
     }
 

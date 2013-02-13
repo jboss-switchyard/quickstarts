@@ -36,6 +36,14 @@ public class MockContext implements Context {
     private final Map<String,Property> _outProperties = Collections.synchronizedMap(new HashMap<String,Property>());
 
     public MockContext() {}
+    
+    private MockContext(Map<String, Property> exchangeProps,
+            Map<String, Property> inProps,
+            Map<String, Property> outProps) {
+        _exchangeProperties.putAll(exchangeProps);
+        _inProperties.putAll(inProps);
+        _outProperties.putAll(outProps);
+    }
 
     private Map<String,Property> getPropertiesMap(Scope scope) {
         switch (scope) {
@@ -151,6 +159,33 @@ public class MockContext implements Context {
             setProperty(property.getName(), property.getValue(), property.getScope());
         }
         return this;
+    }
+
+    @Override
+    public Context copy() {
+        MockContext ctx = new MockContext(_exchangeProperties, _inProperties, _outProperties);
+        ctx.removeProperties(Labels.TRANSIENT);
+        return ctx;
+    }
+
+    @Override
+    public Set<Property> getProperties(String label) {
+        Set<Property> props = new HashSet<Property>();
+        for (Property p : getProperties()) {
+            if (p.hasLabel(label)) {
+                props.add(p);
+            }
+        }
+        return props;
+    }
+
+    @Override
+    public void removeProperties(String label) {
+        for (Property p : getProperties()) {
+            if (p.hasLabel(label)) {
+                removeProperty(p);
+            }
+        }
     }
 
 }

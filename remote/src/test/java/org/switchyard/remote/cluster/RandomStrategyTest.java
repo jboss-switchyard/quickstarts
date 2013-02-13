@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.remote.RemoteEndpoint;
 import org.switchyard.remote.RemoteRegistry;
@@ -34,7 +35,12 @@ public class RandomStrategyTest {
     
     private static final QName TEST_SERVICE = new QName("RandomStrategy");
     private RemoteRegistry registry = new MockRegistry();
-    private RandomStrategy random = new RandomStrategy(registry);
+    private RandomStrategy random = new RandomStrategy();
+    
+    @Before
+    public void setUp() throws Exception {
+        random.setRegistry(registry);
+    }
 
     @Test
     public void noEndpoints() {

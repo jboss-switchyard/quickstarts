@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
+import org.switchyard.Labels;
 import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.Scope;
@@ -124,7 +125,8 @@ public class ValidateHandler extends BaseHandler {
                         + ") with name '" + validator.getName() + "' using validator type '" + validator.getType() + "'.");
             }
        }
-        exchange.getContext().setProperty(KEY_VALIDATED_TYPE, validator.getType(), Scope.activeScope(exchange));
+        exchange.getContext().setProperty(
+                KEY_VALIDATED_TYPE, validator.getType(), Scope.activeScope(exchange)).addLabels(Labels.TRANSIENT);
         return validated;
     }
 }

@@ -27,6 +27,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
+import org.switchyard.Labels;
 import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.Scope;
@@ -71,7 +72,7 @@ public final class TransformSequence implements Serializable {
      */
     public void associateWith(Exchange exchange, Scope scope) {
         exchange.getContext().setProperty(
-                TransformSequence.class.getName(), this, scope);
+                TransformSequence.class.getName(), this, scope).addLabels(Labels.TRANSIENT);
     }
 
     /**

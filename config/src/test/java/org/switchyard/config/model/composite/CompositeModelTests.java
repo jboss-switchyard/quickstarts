@@ -59,6 +59,7 @@ public class CompositeModelTests {
     private static final String COMPLETE_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Complete.xml";
     private static final String EXTENDED_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Extended.xml";
     private static final String EXTENSION_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Extension.xml";
+    private static final String SCA_BINDING_XML = "/org/switchyard/config/model/composite/CompositeModelTests-SCABinding.xml";
 
     private static ModelPuller<CompositeModel> _puller;
 
@@ -261,6 +262,21 @@ public class CompositeModelTests {
         assertEquals("extension", extension.getType());
         assertEquals("Bar", extension.getGroup());
         assertEquals("Foo", extension.getName());
+    }
+    
+    @Test
+    public void testSCABinding() throws Exception {
+        CompositeModel composite = _puller.pull(SCA_BINDING_XML, getClass());
+        
+        // test binding.sca on composite service
+        CompositeServiceModel compositeService = composite.getServices().get(0);
+        BindingModel sb = compositeService.getBindings().get(0);
+        assertTrue(sb instanceof SCABindingModel);
+        
+        // test binding.sca on composite reference
+        CompositeReferenceModel compositeReference = composite.getReferences().get(0);
+        BindingModel rb = compositeReference.getBindings().get(0);
+        assertTrue(sb instanceof SCABindingModel);
     }
 
     @Test

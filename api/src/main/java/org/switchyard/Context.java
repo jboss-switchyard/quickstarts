@@ -26,6 +26,13 @@ import java.util.Set;
  * service consumer and provider.
  */
 public interface Context {
+    
+    /**
+     * Creates a shallow copy of the existing Context including all properties in all scopes.
+     * Properties with a label of Labels.TRANSIENT are not included in the copy.
+     * @return a copy of this context
+     */
+    Context copy();
 
     /**
      * Retrieves the named property within this context, regardless
@@ -74,6 +81,13 @@ public interface Context {
      * scope.  If there are no properties in the scope, an empty set is returned.
      */
     Set<Property> getProperties(Scope scope);
+    
+    /**
+     * Get all properties with a given label.
+     * @param label the label each property must have
+     * @return set of properties with the specified label
+     */
+    Set<Property> getProperties(String label);
 
     /**
      * Removes the named property from this context.
@@ -92,6 +106,12 @@ public interface Context {
      * @param scope scope of the properties to remove
      */
     void removeProperties(Scope scope);
+    
+    /**
+     * Remove all properties with a given label.
+     * @param label the label each property must have
+     */
+    void removeProperties(String label);
 
     /**
      * Sets the named context property with the specified value.  If the context

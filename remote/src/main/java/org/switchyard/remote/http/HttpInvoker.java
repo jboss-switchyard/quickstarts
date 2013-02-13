@@ -28,15 +28,11 @@ import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
-import org.switchyard.Property;
-import org.switchyard.Scope;
-import org.switchyard.internal.DefaultContext;
 import org.switchyard.remote.RemoteInvoker;
 import org.switchyard.remote.RemoteMessage;
 import org.switchyard.serial.FormatType;
 import org.switchyard.serial.Serializer;
 import org.switchyard.serial.SerializerFactory;
-import org.switchyard.transform.TransformSequence;
 
 /**
  * Remote service invoker which uses HTTP as a transport.
@@ -114,8 +110,10 @@ public class HttpInvoker implements RemoteInvoker {
         OutputStream os = conn.getOutputStream();
         
         // Sanitize context properties
-        Context ctx = cloneContext(request.getContext());
-        request.setContext(ctx);
+        if (request.getContext() != null) {
+            Context ctx = request.getContext().copy();
+            request.setContext(ctx);
+        }
         
         // Write the request message
         _serializer.serialize(request, RemoteMessage.class, os);
@@ -131,27 +129,6 @@ public class HttpInvoker implements RemoteInvoker {
         }
         
         return reply;
-    }
-    
-    // Remove troublesome context properties from remote message.
-    private Context cloneContext(Context context) {
-        Context newCtx = new DefaultContext();
-        // return empty context if context to clone is null
-        if (context == null) {
-            return newCtx;
-        }
-        
-        newCtx.setProperties(context.getProperties());
-        Property inTransform = newCtx.getProperty(TransformSequence.class.getName(), Scope.IN);
-        Property outTransform = newCtx.getProperty(TransformSequence.class.getName(), Scope.OUT);
-        if (inTransform != null) {
-            newCtx.removeProperty(inTransform);
-        }
-        if (outTransform != null) {
-            newCtx.removeProperty(outTransform);
-        }
-        
-        return newCtx;
     }
     
     private boolean isInOut(Exchange exchange) {
