@@ -92,6 +92,21 @@ public class ContextProxy implements Context {
         return getContext().setProperties(properties);
     }
 
+    @Override
+    public Context copy() {
+        return getContext().copy();
+    }
+
+    @Override
+    public Set<Property> getProperties(String label) {
+        return getContext().getProperties(label);
+    }
+
+    @Override
+    public void removeProperties(String label) {
+        getContext().removeProperties(label);
+    }
+
     /**
      * Set the {@link Context} for the current thread.
      * @param context The context.
@@ -117,4 +132,5 @@ public class ContextProxy implements Context {
 
         return context;
     }
+
 }

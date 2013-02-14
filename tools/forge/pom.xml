@@ -45,7 +45,7 @@
         <module>http</module>
         <module>jca</module>
         <module>hornetq</module>
-        <module>remote</module>
+        <module>sca</module>
     </modules>
     <profiles>
         <profile>

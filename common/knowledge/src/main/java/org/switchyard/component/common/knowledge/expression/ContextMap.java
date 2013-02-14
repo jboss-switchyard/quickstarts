@@ -148,6 +148,21 @@ public class ContextMap implements Context, Map<String, Object> {
         return this;
     }
 
+    @Override
+    public Context copy() {
+        return _context.copy();
+    }
+
+    @Override
+    public Set<Property> getProperties(String label) {
+        return _context.getProperties(label);
+    }
+
+    @Override
+    public void removeProperties(String label) {
+        _context.removeProperties(label);
+    }
+
     /**
      * {@inheritDoc}
      */   
