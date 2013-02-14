@@ -30,13 +30,10 @@
         <module name="javax.api"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
-        <module name="org.switchyard.common-camel"/>
+        <module name="org.switchyard.common.camel"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>
         <module name="org.switchyard.jaxb-impl"/>
-        <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common-camel"/>
-        <module name="org.switchyard.config"/>
         <module name="org.apache.camel.core"/>
         <module name="org.apache.camel.quartz" export="true" optional="true">
             <imports>

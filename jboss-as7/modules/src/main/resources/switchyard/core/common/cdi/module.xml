@@ -22,34 +22,16 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.switchyard.transform">
+<module xmlns="urn:jboss:module:1.0" name="org.switchyard.common.cdi">
 
     <resources>
-        <resource-root path="switchyard-transform-${project.version}.jar"/>
+        <resource-root path="switchyard-common-cdi-${project.version}.jar"/>
     </resources>
 
     <dependencies>
-        <module name="javax.api"/>
+        <module name="javax.api" />
+        <module name="javax.enterprise.api"/>
         <module name="org.apache.log4j"/>
-        <module name="org.apache.xerces" services="export" export="true"/>
-        <module name="org.codehaus.jackson.jackson-core-asl"/>
-        <module name="org.codehaus.jackson.jackson-mapper-asl"/>
-        <module name="org.switchyard.api"/>
-        <module name="org.switchyard.common"/>
-        <module name="org.switchyard.common.cdi"/>
-        <module name="org.switchyard.config"/>
-        <module name="org.switchyard.jaxb-impl"/>
-        <module name="org.milyn" export="true">
-            <imports>
-                <include path="META-INF/schema"/>
-                <include path="META-INF/xsd/smooks"/>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </imports>
-            <exports>
-                <include path="META-INF/schema"/>
-                <include path="META-INF/xsd/smooks"/>
-                <include path="META-INF/services/org/apache/camel/component"/>
-            </exports>
-        </module>
+        <module name="org.apache.deltaspike.core-api"/>
     </dependencies>
 </module>

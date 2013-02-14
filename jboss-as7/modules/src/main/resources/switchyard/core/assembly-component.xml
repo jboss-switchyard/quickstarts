@@ -41,8 +41,13 @@
             <filtered>true</filtered>
         </file>
         <file>
-            <source>src/main/resources/switchyard/core/common-camel/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/common-camel/main</outputDirectory>
+            <source>src/main/resources/switchyard/core/common/camel/module.xml</source>
+            <outputDirectory>/modules/org/switchyard/common/camel/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
+            <source>src/main/resources/switchyard/core/common/cdi/module.xml</source>
+            <outputDirectory>/modules/org/switchyard/common/cdi/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
@@ -134,7 +139,16 @@
             <includes>
                 <include>org.switchyard:switchyard-common-camel</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/common-camel/main</outputDirectory>
+            <outputDirectory>/modules/org/switchyard/common/camel/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.switchyard:switchyard-common-cdi</include>
+            </includes>
+            <outputDirectory>/modules/org/switchyard/common/cdi/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>

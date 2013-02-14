@@ -36,7 +36,7 @@
         <module name="org.apache.camel.core"/>
         <module name="org.apache.camel.spring"/>
         <module name="org.switchyard.common"/>
-        <module name="org.switchyard.common-camel"/>
+        <module name="org.switchyard.common.camel"/>
         <module name="org.switchyard.component.common"/>
     </dependencies>
 </module>

@@ -43,7 +43,7 @@ public class SwitchYardDependencyProcessor implements DeploymentUnitProcessor {
     private static final ModuleIdentifier SWITCHYARD_ID = ModuleIdentifier.create("org.switchyard");
     private static final ModuleIdentifier SWITCHYARD_API_ID = ModuleIdentifier.create("org.switchyard.api");
     private static final ModuleIdentifier SWITCHYARD_COMMON_ID = ModuleIdentifier.create("org.switchyard.common");
-    private static final ModuleIdentifier SWITCHYARD_COMMON_CAMEL_ID = ModuleIdentifier.create("org.switchyard.common-camel");
+    private static final ModuleIdentifier SWITCHYARD_COMMON_CAMEL_ID = ModuleIdentifier.create("org.switchyard.common.camel");
     private static final ModuleIdentifier SWITCHYARD_BUS_CAMEL = ModuleIdentifier.create("org.switchyard.bus.camel");
     private static final ModuleIdentifier SWITCHYARD_CONFIG_ID = ModuleIdentifier.create("org.switchyard.config");
     private static final ModuleIdentifier SWITCHYARD_RUNTIME_ID = ModuleIdentifier.create("org.switchyard.runtime");

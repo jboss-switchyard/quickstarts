@@ -35,7 +35,7 @@
         <module name="org.switchyard.api.extensions.wsdl"/>
         <module name="org.switchyard.bus.camel"/>
         <module name="org.switchyard.common"/>
-        <module name="org.switchyard.common-camel"/>
+        <module name="org.switchyard.common.camel"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.runtime"/>
         <module name="org.switchyard.security" export="true"/>
