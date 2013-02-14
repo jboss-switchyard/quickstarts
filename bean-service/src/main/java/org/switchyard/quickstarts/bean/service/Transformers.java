@@ -19,6 +19,7 @@
 
 package org.switchyard.quickstarts.bean.service;
 
+import javax.inject.Named;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamSource;
@@ -30,6 +31,7 @@ import org.w3c.dom.NodeList;
 
 import java.io.StringReader;
 
+@Named("Transformers")
 public class Transformers {
 
     // Element names in XML document

@@ -67,4 +67,6 @@ Expected Output
 </SOAP-ENV:Envelope>
 ```
 
+## Further Reading
 
+1. [Validation Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Validation)
