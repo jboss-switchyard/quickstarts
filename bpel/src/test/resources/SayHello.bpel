@@ -63,8 +63,9 @@
                 <bpel:to variable="ReplySayHelloVar" part="parameters"></bpel:to>
             </bpel:copy>
             <bpel:copy>
-                <bpel:from>
-                    <![CDATA[concat('Hello ', $ReceiveSayHelloVar.parameters/tns:input)]]>
+                <bpel:from xmlns:property="java:org.switchyard.component.bpel.riftsaw.SwitchYardPropertyFunction"
+                           expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0">
+                    <![CDATA[concat(property:resolveProperty('Greeting'), $ReceiveSayHelloVar.parameters/tns:input)]]>
                 </bpel:from>
                 <bpel:to part="parameters" variable="ReplySayHelloVar">
                     <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[tns:result]]></bpel:query>

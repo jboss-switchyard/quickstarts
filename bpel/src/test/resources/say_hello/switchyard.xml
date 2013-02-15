@@ -22,6 +22,7 @@
              <sca:service name="SayHelloService">
                  <sca:interface.wsdl interface="SayHelloArtifacts.wsdl#wsdl.porttype(SayHello)"/>
              </sca:service>
+             <sca:property name="Greeting" value="Hello "/>
          </sca:component>
      </sca:composite>
 </switchyard>

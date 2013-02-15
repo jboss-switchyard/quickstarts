@@ -65,6 +65,7 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
 
     private BPELEngine _engine = null;
     private QName _serviceName = null;
+    private QName _processName = null;
     private javax.wsdl.Definition _wsdl = null;
     private javax.wsdl.PortType _portType = null;
     private long _undeployDelay=UNDEPLOY_DELAY;
@@ -96,6 +97,8 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
         _portType = WSDLHelper.getPortType(intf, _wsdl);
 
         _serviceName = qname;
+        
+        _processName = model.getProcessQName();
         
         // Setup configuration
         if (config.containsKey("bpel.undeploy.delay")) {
@@ -132,6 +135,7 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
             }
         }
 
+        SwitchYardPropertyFunction.setPropertyResolver(_processName, model.getModelConfiguration().getPropertyResolver());
         _serviceRefToCompositeMap.put(qname, compositeName);
     }
 
@@ -364,6 +368,7 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
                 _deployed.remove(_serviceName);
                 _undeployed.remove(_serviceName);
             }
+            SwitchYardPropertyFunction.removePropertyResolver(_processName);
         }
     }
 
