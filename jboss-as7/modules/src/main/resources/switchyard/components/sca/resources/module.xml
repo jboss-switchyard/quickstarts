@@ -19,10 +19,10 @@
   ~ MA  02110-1301, USA.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.remote">
+<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.sca">
 
     <resources>
-        <resource-root path="switchyard-component-remote-${project.version}.jar"/>
+        <resource-root path="switchyard-component-sca-${project.version}.jar"/>
     </resources>
 
     <dependencies>

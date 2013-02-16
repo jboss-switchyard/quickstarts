@@ -83,7 +83,7 @@
                 <module identifier="org.switchyard.component.bpel" implClass="org.switchyard.component.bpel.deploy.BPELComponent"/>
                 <module identifier="org.switchyard.component.http" implClass="org.switchyard.component.http.deploy.HttpComponent"/>
                 <module identifier="org.switchyard.component.jca" implClass="org.switchyard.component.jca.deploy.JCAComponent"/>
-                <module identifier="org.switchyard.component.remote" implClass="org.switchyard.component.remote.deploy.RemoteComponent">
+                <module identifier="org.switchyard.component.sca" implClass="org.switchyard.component.sca.deploy.SCAComponent">
                     <properties>
                         <cache-name>cluster</cache-name>
                     </properties>

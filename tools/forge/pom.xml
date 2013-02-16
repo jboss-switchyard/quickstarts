@@ -81,7 +81,7 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-forge-remote-plugin</artifactId>
+            <artifactId>switchyard-forge-sca-plugin</artifactId>
         </dependency>
         <!-- dependencies -->
         <dependency>

@@ -59,8 +59,8 @@
         <module name="org.switchyard.security" export="true"/>
         <module name="org.switchyard.component.common" export="true"/>
         <module name="org.switchyard.component.http"/>
-        <module name="org.switchyard.component.remote"/>
         <module name="org.switchyard.component.resteasy"/>
+        <module name="org.switchyard.component.sca"/>
         <module name="org.jboss.resteasy.resteasy-jaxrs"/>
     </dependencies>
 </module>

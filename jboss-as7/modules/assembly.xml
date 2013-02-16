@@ -48,7 +48,7 @@
       <componentDescriptor>src/main/resources/switchyard/components/camel/sql/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/switchyard/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/http/assembly-component.xml</componentDescriptor>
-      <componentDescriptor>src/main/resources/switchyard/components/remote/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/sca/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/resteasy/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/rules/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/soap/assembly-component.xml</componentDescriptor>

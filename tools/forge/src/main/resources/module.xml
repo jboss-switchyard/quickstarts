@@ -12,7 +12,7 @@
 	<resource-root path="switchyard-forge-camel-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-http-plugin-${project.version}.jar"/>
 	<resource-root path="switchyard-forge-jca-plugin-${project.version}.jar"/>
-	<resource-root path="switchyard-forge-remote-plugin-${project.version}.jar"/>
+	<resource-root path="switchyard-forge-sca-plugin-${project.version}.jar"/>
   </resources>
   
   <dependencies>

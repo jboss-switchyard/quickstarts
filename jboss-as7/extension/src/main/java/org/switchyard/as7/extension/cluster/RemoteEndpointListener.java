@@ -42,8 +42,8 @@ import org.jboss.as.web.deployment.WebCtxLoader;
 import org.jboss.logging.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.as7.extension.util.ServerUtil;
-import org.switchyard.component.remote.RemoteEndpointPublisher;
-import org.switchyard.component.remote.SwitchYardRemotingServlet;
+import org.switchyard.component.sca.RemoteEndpointPublisher;
+import org.switchyard.component.sca.SwitchYardRemotingServlet;
 
 /**
  * Publishes standalone HTTP endpoint.

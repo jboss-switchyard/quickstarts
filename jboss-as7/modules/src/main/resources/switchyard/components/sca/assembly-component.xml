@@ -22,8 +22,8 @@
 
     <files>
         <file>
-            <source>src/main/resources/switchyard/components/remote/resources/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/component/remote/main</outputDirectory>
+            <source>src/main/resources/switchyard/components/sca/resources/module.xml</source>
+            <outputDirectory>/modules/org/switchyard/component/sca/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
@@ -31,9 +31,9 @@
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
-                <include>org.switchyard.components:switchyard-component-remote</include>
+                <include>org.switchyard.components:switchyard-component-sca</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/remote/main</outputDirectory>
+            <outputDirectory>/modules/org/switchyard/component/sca/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
     </dependencySets>
