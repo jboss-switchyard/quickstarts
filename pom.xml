@@ -774,7 +774,7 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
-                <artifactId>switchyard-forge-remote-plugin</artifactId>
+                <artifactId>switchyard-forge-sca-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -800,6 +800,12 @@
             <dependency>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-runtime</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-runtime</artifactId>
+                <type>test-jar</type>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -960,7 +966,7 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.components</groupId>
-                <artifactId>switchyard-component-remote</artifactId>
+                <artifactId>switchyard-component-sca</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
