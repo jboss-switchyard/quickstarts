@@ -17,28 +17,22 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.deploy.internal.validators;
-
-import org.switchyard.validate.BaseValidator;
-import org.switchyard.validate.ValidationResult;
-
-import javax.xml.namespace.QName;
+package org.switchyard.validate;
 
 /**
- * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
+ * Represents message validation result which contains error details if it failed.
  */
-public class BValidator extends BaseValidator {
-
-    public BValidator() {
-        super(new QName("B"));
-    }
-
-    @Override
-    public ValidationResult validate(Object obj) {
-        if (obj != null) {
-            return validResult();
-        } else {
-            return invalidResult("obj == null");
-        }
-    }
+public interface ValidationResult {
+    
+    /**
+     * Return whether the validation succeeded or not.
+     * @return true if it succeeded
+     */
+    boolean isValid();
+    
+    /**
+     * Return error details if it failed.
+     * @return error message
+     */
+    String getDetail();
 }

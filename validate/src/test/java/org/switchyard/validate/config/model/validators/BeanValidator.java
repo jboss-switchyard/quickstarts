@@ -23,14 +23,19 @@ import javax.inject.Named;
 import javax.xml.namespace.QName;
 
 import org.switchyard.validate.BaseValidator;
+import org.switchyard.validate.ValidationResult;
 
 @SuppressWarnings("rawtypes")
 @Named("BeanValidator")
 public class BeanValidator extends BaseValidator {
 
     @Override
-    public boolean validate(Object obj) {
-        return obj instanceof Object;
+    public ValidationResult validate(Object obj) {
+        if (obj instanceof Object) {
+            return validResult();
+        } else {
+            return invalidResult("not Object");
+        }
     }
 
     @Override

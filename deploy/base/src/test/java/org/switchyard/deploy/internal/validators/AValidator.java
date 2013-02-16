@@ -22,6 +22,7 @@ package org.switchyard.deploy.internal.validators;
 import javax.xml.namespace.QName;
 
 import org.switchyard.validate.BaseValidator;
+import org.switchyard.validate.ValidationResult;
 
 /**
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
@@ -33,7 +34,11 @@ public class AValidator extends BaseValidator {
     }
 
     @Override
-    public boolean validate(Object obj) {
-        return obj != null;
+    public ValidationResult validate(Object obj) {
+        if (obj != null) {
+            return validResult();
+        } else {
+            return invalidResult("obj == null");
+        }
     }
 }

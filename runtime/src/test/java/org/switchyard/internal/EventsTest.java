@@ -45,6 +45,7 @@ import org.switchyard.metadata.InOutService;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
 import org.switchyard.validate.BaseValidator;
+import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;
 
 /**
@@ -81,8 +82,15 @@ public class EventsTest {
         _domain.addEventObserver(_observer, ValidatorAddedEvent.class)
             .addEventObserver(_observer, ValidatorRemovedEvent.class);
         Validator<String> t = new BaseValidator<String>() {
-            public boolean validate(String name) {
-                return false;
+            public ValidationResult validate(String name) {
+                return new ValidationResult() {
+                    public boolean isValid() {
+                        return false;
+                    }
+                    public String getDetail() {
+                        return "error";
+                    }
+                };
             }
         };
         _domain.getValidatorRegistry().addValidator(t);

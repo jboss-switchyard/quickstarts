@@ -24,6 +24,8 @@ import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.config.model.validate.v1.V1BaseValidateModel;
 import org.switchyard.validate.ValidatorFactoryClass;
+import org.switchyard.validate.config.model.SchemaCatalogsModel;
+import org.switchyard.validate.config.model.SchemaFilesModel;
 import org.switchyard.validate.config.model.XmlSchemaType;
 import org.switchyard.validate.config.model.XmlValidateModel;
 import org.switchyard.validate.xml.XmlValidatorFactory;
@@ -37,6 +39,9 @@ import javax.xml.namespace.QName;
 @ValidatorFactoryClass(XmlValidatorFactory.class)
 public class V1XmlValidateModel extends V1BaseValidateModel implements XmlValidateModel {
 
+    private SchemaFilesModel _schemaList;
+    private SchemaCatalogsModel _catalogList;
+    
     /**
      * Constructs a new V1XmlValidateModel.
      */
@@ -51,6 +56,7 @@ public class V1XmlValidateModel extends V1BaseValidateModel implements XmlValida
      */
     public V1XmlValidateModel(Configuration config, Descriptor desc) {
         super(config, desc);
+        setModelChildrenOrder(SchemaFilesModel.SCHEMA_FILES, SchemaCatalogsModel.SCHEMA_CATALOGS);
     }
 
     /**
@@ -75,16 +81,59 @@ public class V1XmlValidateModel extends V1BaseValidateModel implements XmlValida
      * {@inheritDoc}
      */
     @Override
-    public String getSchemaFile() {
-        return getModelAttribute(SCHEMA_FILE_URI);
+    public boolean namespaceAware() {
+        String na = getModelAttribute(NAMESPACE_AWARE);
+        return Boolean.parseBoolean(na);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public XmlValidateModel setNamespaceAware(boolean namespaceAware) {
+        setModelAttribute(NAMESPACE_AWARE, Boolean.toString(namespaceAware));
+        return this;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SchemaFilesModel getSchemaFiles() {
+        if (_schemaList == null) {
+            _schemaList = (SchemaFilesModel)getFirstChildModelStartsWith(SchemaFilesModel.SCHEMA_FILES);
+        }
+        return _schemaList;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public XmlValidateModel setSchemaFile(String file) {
-        setModelAttribute(SCHEMA_FILE_URI, file);
+    public XmlValidateModel setSchemaFiles(SchemaFilesModel schemas) {
+        setChildModel(schemas);
+        _schemaList = schemas;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SchemaCatalogsModel getSchemaCatalogs() {
+        if (_catalogList == null) {
+            _catalogList = (SchemaCatalogsModel)getFirstChildModelStartsWith(SchemaCatalogsModel.SCHEMA_CATALOGS);
+        }
+        return _catalogList;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public XmlValidateModel setSchemaCatalogs(SchemaCatalogsModel catalogs) {
+        setChildModel(catalogs);
+        _catalogList = catalogs;
         return this;
     }
 

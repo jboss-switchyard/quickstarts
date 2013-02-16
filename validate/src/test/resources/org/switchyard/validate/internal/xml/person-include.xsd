@@ -18,11 +18,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema">
-    <include schemaLocation="person-include.xsd"/>
-    
-    <element name="person">
+    <element name="person2">
         <complexType>
-            <attribute name="name" type="string" use="required"/>
+            <attribute name="firstName" type="string" use="required"/>
+            <attribute name="lastName" type="string" use="required"/>
             <attribute name="age" type="string" use="required"/>
         </complexType>
     </element>

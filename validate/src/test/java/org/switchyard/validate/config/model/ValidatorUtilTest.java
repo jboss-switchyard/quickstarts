@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.switchyard.annotations.Validator;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.validate.BaseValidator;
+import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.ValidatorTypes;
 import org.switchyard.validate.ValidatorUtil;
 
@@ -53,7 +54,9 @@ public class ValidatorUtilTest {
         org.switchyard.validate.Validator validator = ValidatorUtil.newValidator(TestValidator.class, JavaService.toMessageType(A.class));
 
         Assert.assertTrue(validator instanceof TestValidator);
-        Assert.assertTrue(validator.validate(new A()));
+        ValidationResult result = validator.validate(new A());
+        Assert.assertTrue(result.isValid());
+        Assert.assertNull(result.getDetail());
     }
 
     @Test
@@ -61,7 +64,9 @@ public class ValidatorUtilTest {
         org.switchyard.validate.Validator validator = ValidatorUtil.newValidator(TestValidator.class, JavaService.toMessageType(B.class));
 
         Assert.assertTrue(!(validator instanceof TestValidator));
-        Assert.assertTrue(validator.validate(new B()));
+        ValidationResult result = validator.validate(new B());
+        Assert.assertTrue(result.isValid());
+        Assert.assertNull(result.getDetail());
         Assert.assertEquals(B.class, validator.getType());
     }
 
@@ -82,7 +87,9 @@ public class ValidatorUtilTest {
         org.switchyard.validate.Validator validator = ValidatorUtil.newValidator(TestValidator.class, QName.valueOf("X"));
 
         Assert.assertTrue(!(validator instanceof TestValidator));
-        Assert.assertTrue(validator.validate("X"));
+        ValidationResult result = validator.validate("X");
+        Assert.assertTrue(result.isValid());
+        Assert.assertNull(result.getDetail());
     }
 
 
@@ -101,23 +108,39 @@ public class ValidatorUtilTest {
         }
 
         @Override
-        public boolean validate(Object obj) {
-            return obj instanceof Object;
+        public ValidationResult validate(Object obj) {
+            if (obj instanceof Object) {
+                return validResult();
+            } else {
+                return invalidResult("not Object");
+            }
         }
 
         @Validator
-        public boolean validateB(B b) {
-            return b instanceof B;
+        public ValidationResult validateB(B b) {
+            if (b instanceof B) {
+                return validResult();
+            } else {
+                return invalidResult("b is not B");
+            }
         }
 
         @Validator(name = "X")
-        public boolean validateX(String x) {
-            return x.equals("X");
+        public ValidationResult validateX(String x) {
+            if (x.equals("X")) {
+                return validResult();
+            } else {
+                return invalidResult("x is not 'X'");
+            }
         }
 
         @Validator(name = "Z")
-        public boolean validateZ(B z) {
-            return z instanceof B;
+        public ValidationResult validateZ(B z) {
+            if (z instanceof B) {
+                return validResult();
+            } else {
+                return invalidResult("z is not B");
+            }
         }
 
     }
@@ -125,8 +148,12 @@ public class ValidatorUtilTest {
     public static class NSdTestValidator {
 
         @Validator(name = "{http://b}B")
-        public boolean validateB(B b) {
-            return b instanceof B;
+        public ValidationResult validateB(B b) {
+            if (b instanceof B) {
+                return BaseValidator.validResult();
+            } else {
+                return BaseValidator.invalidResult("b is not B");
+            }
         }
     }
 

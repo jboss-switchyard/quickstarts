@@ -287,11 +287,15 @@ public final class ValidatorUtil {
     }
 
     private static Validator newValidator(final Object validatorObject, final Method publicMethod, QName name) {
+        if (!ValidationResult.class.isAssignableFrom(publicMethod.getReturnType())) {
+            throw new SwitchYardException("Invalid method signature: @Validator method '" + publicMethod.getName() + "' on class '" + publicMethod.getDeclaringClass().getName() + "' must return org.switchyard.validate.ValidationResult.");
+        }
+        
         Validator validator = new BaseValidator(name) {
             @Override
-            public boolean validate(Object subject) {
+            public ValidationResult validate(Object subject) {
                 try {
-                    return Boolean.parseBoolean(publicMethod.invoke(validatorObject, subject).toString());
+                    return ValidationResult.class.cast(publicMethod.invoke(validatorObject, subject));
                 } catch (InvocationTargetException e) {
                     throw new SwitchYardException("Error executing @Validator method '" + publicMethod.getName() + "' on class '" + publicMethod.getDeclaringClass().getName() + "'.", e.getCause());
                 } catch (Exception e) {

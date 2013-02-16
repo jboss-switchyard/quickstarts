@@ -34,17 +34,14 @@ MA  02110-1301, USA.
         </annotation>
         <complexContent>
             <extension base="swyd:ValidateType">
+                <sequence>
+                    <element name="schemaFiles" type="vldt:schemaFilesType" minOccurs="0" maxOccurs="1"/>
+                    <element name="schemaCatalogs" type="vldt:schemaCatalogsType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
                 <attribute name="schemaType" type="vldt:xmlSchemaType" use="required">
                     <annotation>
                         <documentation xml:lang="en">
                             XML schema type.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="schemaFile" type="string" use="required">
-                    <annotation>
-                        <documentation xml:lang="en">
-                            Path to a file containing the XSL schema definition.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -55,8 +52,39 @@ MA  02110-1301, USA.
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="namespaceAware" type="string" use="optional">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            whether the validator should be namespace aware or not.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
+    </complexType>
+
+    <complexType name="schemaFilesType">
+        <annotation>
+            <documentation xml:lang="en">
+                Schema file configuration.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="entry" type="vldt:fileEntryType" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+    <complexType name="schemaCatalogsType">
+        <annotation>
+            <documentation xml:lang="en">
+                Schema catalog configuration.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="entry" type="vldt:fileEntryType" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+    <complexType name="fileEntryType">
+        <attribute name="file" type="string" use="required"/>
     </complexType>
     
     <element name="validate.java" type="vldt:JavaValidateType" substitutionGroup="swyd:validate" />

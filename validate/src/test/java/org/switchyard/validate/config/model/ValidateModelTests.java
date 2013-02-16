@@ -38,7 +38,9 @@ import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.config.model.validate.v1.V1ValidatesModel;
+import org.switchyard.validate.config.model.v1.V1FileEntryModel;
 import org.switchyard.validate.config.model.v1.V1JavaValidateModel;
+import org.switchyard.validate.config.model.v1.V1SchemaFilesModel;
 import org.switchyard.validate.config.model.v1.V1XmlValidateModel;
 
 /**
@@ -78,7 +80,10 @@ public class ValidateModelTests {
         XmlValidateModel xmlValidate = new V1XmlValidateModel();
         xmlValidate.setName(new QName("msgB"));
         xmlValidate.setSchemaType(XmlSchemaType.XML_SCHEMA);
-        xmlValidate.setSchemaFile("/validates/xxx.xml");
+        FileEntryModel entry = new V1FileEntryModel().setFile("/validates/xxx.xml");
+        SchemaFilesModel schemaFiles = new V1SchemaFilesModel();
+        schemaFiles.addEntry(entry);
+        xmlValidate.setSchemaFiles(schemaFiles);
         xmlValidate.setFailOnWarning(true);
         validates.addValidate(xmlValidate);
         switchyard.setValidates(validates);
@@ -98,7 +103,7 @@ public class ValidateModelTests {
         Assert.assertEquals("org.examples.validate.AValidate", java_validate.getClazz());
         XmlValidateModel xml_validate = (XmlValidateModel)validates.getValidates().get(1);
         Assert.assertEquals("msgB", xml_validate.getName().getLocalPart());
-        Assert.assertEquals("/validates/xxx.xml", xml_validate.getSchemaFile());
+        Assert.assertEquals("/validates/xxx.xml", xml_validate.getSchemaFiles().getEntries().get(0).getFile());
 
     }
 

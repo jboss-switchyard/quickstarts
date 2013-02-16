@@ -20,6 +20,10 @@ MA  02110-1301, USA.
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0">
     <validates>
         <validate.java xmlns="urn:switchyard-config:validate:1.0" name="msgA" class="org.examples.validate.AValidate"/>
-        <validate.xml xmlns="urn:switchyard-config:validate:1.0" schemaType="XML_SCHEMA" name="msgB" schemaFile="/validates/xxx.xml" failOnWarning="true"/>
+        <validate.xml xmlns="urn:switchyard-config:validate:1.0" schemaType="XML_SCHEMA" name="msgB" failOnWarning="true">
+            <schemaFiles>
+                <entry file="/validates/xxx.xml"/>
+            </schemaFiles>
+        </validate.xml>
     </validates>
 </switchyard>

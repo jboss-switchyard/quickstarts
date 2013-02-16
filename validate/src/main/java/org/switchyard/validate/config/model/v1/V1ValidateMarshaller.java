@@ -24,7 +24,10 @@ import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.validate.ValidateModel;
+import org.switchyard.validate.config.model.FileEntryModel;
 import org.switchyard.validate.config.model.JavaValidateModel;
+import org.switchyard.validate.config.model.SchemaCatalogsModel;
+import org.switchyard.validate.config.model.SchemaFilesModel;
 import org.switchyard.validate.config.model.XmlValidateModel;
 
 /**
@@ -57,6 +60,12 @@ public class V1ValidateMarshaller extends BaseMarshaller {
             return new V1JavaValidateModel(config, desc);
         } else if (name.equals(VALIDATE_XML)) {
             return new V1XmlValidateModel(config, desc);
+        } else if (name.equals(SchemaFilesModel.SCHEMA_FILES)) {
+            return new V1SchemaFilesModel(config, desc);
+        } else if (name.equals(SchemaCatalogsModel.SCHEMA_CATALOGS)) {
+            return new V1SchemaCatalogsModel(config, desc);
+        } else if (name.equals(FileEntryModel.ENTRY)) {
+            return new V1FileEntryModel(config, desc);
         }
 
         return null;

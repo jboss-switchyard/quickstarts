@@ -39,7 +39,10 @@ public interface XmlValidateModel extends ValidateModel {
     
     /** whether a warning should be reported as Exception or just log. */
     public static final String FAIL_ON_WARNING = "failOnWarning";
-            
+    
+    /** whether the validator should be namespace aware or not. */
+    public static final String NAMESPACE_AWARE = "namespaceAware";
+    
     /**
      * Return whether a warning should be reported as an SwitchYardException.
      * If failOnWarning attribute is "true", then a warning should be reported
@@ -58,22 +61,52 @@ public interface XmlValidateModel extends ValidateModel {
     XmlValidateModel setFailOnWarning(boolean failOnWarning);
     
     /**
-     * @return schema file
+     * Return whether the validator should be namespace aware or not.
+     * @return true if namespace aware
      */
-    String getSchemaFile();
-
-    /**
-     * @param file schema file
-     * @return model representation
-     */
-    XmlValidateModel setSchemaFile(String file);
+    boolean namespaceAware();
     
     /**
+     * Set whether the validator should be namespace aware or not.
+     * @param namespaceAware true if namespace aware
+     * @return model representation
+     */
+    XmlValidateModel setNamespaceAware(boolean namespaceAware);
+    
+    /**
+     * Get a SchemaFiles model.
+     * @return a SchemaFiles model
+     */
+    SchemaFilesModel getSchemaFiles();
+
+    /**
+     * Set a SchemaFiles model.
+     * @param schemaFiles a SchemaFiles model
+     * @return model representation
+     */
+    XmlValidateModel setSchemaFiles(SchemaFilesModel schemaFiles);
+    
+    /**
+     * Get a SchemaCatalogs model.
+     * @return a SchemaCatalogs model
+     */
+    SchemaCatalogsModel getSchemaCatalogs();
+    
+    /**
+     * Set a SchemaCatalogs model.
+     * @param schemaCatalogs a SchemaCatalogs model
+     * @return model representation
+     */
+    XmlValidateModel setSchemaCatalogs(SchemaCatalogsModel schemaCatalogs);
+
+    /**
+     * Get schema type.
      * @return schema type
      */
     XmlSchemaType getSchemaType();
     
     /**
+     * Set schema type.
      * @param type schema type
      * @return model representation
      */

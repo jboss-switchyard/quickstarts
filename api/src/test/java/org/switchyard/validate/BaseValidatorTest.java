@@ -45,14 +45,28 @@ public class BaseValidatorTest {
 }
 
 class StringValidator extends BaseValidator<String> {
-    public boolean validate(String num) {
-        return false;
+    public ValidationResult validate(String num) {
+        return new ValidationResult() {
+            public boolean isValid() {
+                return false;
+            }
+            public String getDetail() {
+                return "error";
+            }
+        };
     }
 }
 
 class UntypedValidator extends BaseValidator {
-    public boolean validate(Object obj) {
-        return false;
+    public ValidationResult validate(Object obj) {
+        return new ValidationResult() {
+            public boolean isValid() {
+                return false;
+            }
+            public String getDetail() {
+                return "error";
+            }
+        };
     }
 }
 
@@ -74,8 +88,16 @@ class ImplementsValidator implements Validator {
     }
 
     @Override
-    public boolean validate(Object name) {
-        return false;
+    public ValidationResult validate(Object name) {
+        return new ValidationResult() {
+            public boolean isValid() {
+                return false;
+            }
+            public String getDetail() {
+                return "error";
+            }
+        };
     }
     
 }
+

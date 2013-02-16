@@ -20,7 +20,6 @@
 package org.switchyard.validate;
 
 import org.switchyard.Message;
-import org.switchyard.transform.BaseTransformer;
 
 /**
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
@@ -30,9 +29,13 @@ public class MessageValidator<T> extends BaseValidator<Message> {
     private Message _message;
 
     @Override
-    public boolean validate(Message message) {
+    public ValidationResult validate(Message message) {
         this._message = message;
-        return message != null;
+        if (message != null) {
+            return validResult();
+        } else {
+            return invalidResult("Message is null");
+        }
     }
 
     public Message getMessage() {

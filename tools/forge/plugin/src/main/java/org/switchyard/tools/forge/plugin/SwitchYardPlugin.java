@@ -90,10 +90,16 @@ import org.switchyard.transform.config.model.v1.V1JSONTransformModel;
 import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
 import org.switchyard.transform.config.model.v1.V1SmooksTransformModel;
 import org.switchyard.transform.config.model.v1.V1XsltTransformModel;
+import org.switchyard.validate.config.model.FileEntryModel;
 import org.switchyard.validate.config.model.JavaValidateModel;
+import org.switchyard.validate.config.model.SchemaCatalogsModel;
+import org.switchyard.validate.config.model.SchemaFilesModel;
 import org.switchyard.validate.config.model.XmlSchemaType;
 import org.switchyard.validate.config.model.XmlValidateModel;
+import org.switchyard.validate.config.model.v1.V1FileEntryModel;
 import org.switchyard.validate.config.model.v1.V1JavaValidateModel;
+import org.switchyard.validate.config.model.v1.V1SchemaCatalogsModel;
+import org.switchyard.validate.config.model.v1.V1SchemaFilesModel;
 import org.switchyard.validate.config.model.v1.V1XmlValidateModel;
 
 /**
@@ -669,8 +675,23 @@ public class SwitchYardPlugin implements Plugin {
             XmlValidateModel xmlValidate = new V1XmlValidateModel();
             XmlSchemaType schemaType = _shell.promptChoiceTyped("Schema type", Arrays.asList(XmlSchemaType.values()));
             xmlValidate.setSchemaType(schemaType);
-            String schemaFile = _shell.promptCommon("Schema file location", PromptType.ANY);
-            xmlValidate.setSchemaFile(schemaFile);
+
+            String schemaCatalog = _shell.promptCommon("Schema catalog file location (if needed)", PromptType.ANY);
+            if (schemaCatalog != null && schemaCatalog.trim().length() > 0) {
+                FileEntryModel entry = new V1FileEntryModel().setFile(schemaCatalog);
+                SchemaCatalogsModel catalogs = new V1SchemaCatalogsModel().addEntry(entry);
+                xmlValidate.setSchemaCatalogs(catalogs);
+            }
+            
+            if (XmlSchemaType.DTD != schemaType) {
+                String schemaFile = _shell.promptCommon("Schema file location", PromptType.ANY);
+                FileEntryModel entry = new V1FileEntryModel().setFile(schemaFile);
+                SchemaFilesModel files = new V1SchemaFilesModel().addEntry(entry);
+                xmlValidate.setSchemaFiles(files);
+                boolean namespaceAware = _shell.promptBoolean("Namespace aware?");
+                xmlValidate.setNamespaceAware(namespaceAware);
+            }
+            
             boolean failOnWarn = _shell.promptBoolean("Fail on warning?");
             xmlValidate.setFailOnWarning(failOnWarn);
             validate = xmlValidate;

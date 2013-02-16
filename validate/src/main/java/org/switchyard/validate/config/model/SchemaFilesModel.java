@@ -1,7 +1,7 @@
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
+ * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -17,31 +17,31 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.validate;
+package org.switchyard.validate.config.model;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.switchyard.Message;
-import org.switchyard.internal.DefaultMessage;
+import java.util.List;
 
-import javax.xml.namespace.QName;
-import java.io.IOException;
+import org.switchyard.config.model.Model;
 
 /**
- * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
+ * A "schemaFiles" configuration model.
  */
-public class MessageValidatorTest {
+public interface SchemaFilesModel extends Model {
 
-    @Test
-    public void test() throws IOException {
-        final QName A = new QName("a");
+    /** schema file. */
+    public static final String SCHEMA_FILES = "schemaFiles";
+    
+    /**
+     * Get file entries.
+     * @return file entries
+     */
+    List<FileEntryModel> getEntries();
 
-        DefaultMessage message = new DefaultMessage().setContent(A);
-        MessageValidator<Message> validator = new MessageValidator<Message>();
-
-        ValidationResult result = validator.validate(message);
-        Assert.assertTrue(result.isValid());
-        Assert.assertNull(result.getDetail());
-        Assert.assertEquals(message, validator.getMessage());
-    }
+    /**
+     * Set a file entry.
+     * @param entry file entry
+     * @return model representation
+     */
+    SchemaFilesModel addEntry(FileEntryModel entry);
+    
 }

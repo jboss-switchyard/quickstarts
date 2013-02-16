@@ -17,13 +17,18 @@ v.2.1 along with this distribution; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema">
-    <include schemaLocation="person-include.xsd"/>
-    
-    <element name="person">
-        <complexType>
-            <attribute name="name" type="string" use="required"/>
-            <attribute name="age" type="string" use="required"/>
-        </complexType>
-    </element>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="switchyard-validate-test:import:1.0"
+        xmlns:import="switchyard-validate-test:import:1.0"
+        xmlns:base="switchyard-validate-test:base:1.0">
+    <import namespace="switchyard-validate-test:base:1.0" schemaLocation="person-namespace-base.xsd"/>
+    <element name="person.2" type="import:person2Type" substitutionGroup="base:person"/>
+    <complexType name="person2Type">
+        <complexContent>
+            <extension base="base:personType">
+                <attribute name="firstName" type="string" use="required"/>
+                <attribute name="lastName" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
 </schema>

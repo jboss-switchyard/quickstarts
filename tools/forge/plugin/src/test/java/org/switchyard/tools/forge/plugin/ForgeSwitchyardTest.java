@@ -231,7 +231,7 @@ public class ForgeSwitchyardTest extends GenericTestForge {
         queueInputLines("1", this.getClass().getName());
         getShell().execute("switchyard add-validator --type" + type);
         // XML
-        queueInputLines("2", "2", "/xsd/orders.xsd", "Y");
+        queueInputLines("2", "2", "/xsd/catalog.xml", "/xsd/orders.xsd", "Y", "Y");
         getShell().execute("switchyard add-validator --type" + type);
 
         // Verify generated validators
@@ -244,8 +244,10 @@ public class ForgeSwitchyardTest extends GenericTestForge {
             } else if (validate instanceof XmlValidateModel) {
                 XmlValidateModel xml = XmlValidateModel.class.cast(validate);
                 Assert.assertEquals(XmlSchemaType.XML_SCHEMA, xml.getSchemaType());
-                Assert.assertEquals("/xsd/orders.xsd", xml.getSchemaFile());
+                Assert.assertEquals("/xsd/orders.xsd", xml.getSchemaFiles().getEntries().get(0).getFile());
+                Assert.assertEquals("/xsd/catalog.xml", xml.getSchemaCatalogs().getEntries().get(0).getFile());
                 Assert.assertEquals(true, xml.failOnWarning());
+                Assert.assertEquals(true, xml.namespaceAware());
                 expected.remove("XML");
             }
         }

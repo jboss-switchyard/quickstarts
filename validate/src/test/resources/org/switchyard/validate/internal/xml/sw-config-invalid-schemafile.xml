@@ -19,6 +19,10 @@
   -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0">
     <validates>
-        <validate.xml xmlns="urn:switchyard-config:validate:1.0" schemaType="XML_SCHEMA" name="A" schemaFile="/org/switchyard/validate/internal/xml/person-invalid.xsd"/>
+        <validate.xml xmlns="urn:switchyard-config:validate:1.0" schemaType="XML_SCHEMA" name="A" >
+            <schemaFiles>
+                <entry file="/org/switchyard/validate/internal/xml/person-invalid.xsd"/>
+            </schemaFiles>
+        </validate.xml>
     </validates>
 </switchyard>

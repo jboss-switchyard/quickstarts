@@ -69,6 +69,7 @@
     <trfm:transform.java from="java:javax.xml.transform.dom.DOMSource" to="java:org.w3c.dom.Node" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
     <trfm:transform.java from="java:javax.xml.transform.dom.DOMSource" to="java:org.w3c.dom.Element" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
     <trfm:transform.java from="java:javax.xml.transform.dom.DOMSource" to="java:java.lang.String" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
+    <trfm:transform.java from="java:javax.xml.transform.dom.DOMSource" to="java:org.xml.sax.InputSource" class="org.switchyard.transform.ootb.xml.BasicDOMTransformer"/>
 
     <!-- String transforms... -->
     <trfm:transform.java from="java:java.lang.String" to="*" class="org.switchyard.transform.ootb.lang.StringTransforms" />

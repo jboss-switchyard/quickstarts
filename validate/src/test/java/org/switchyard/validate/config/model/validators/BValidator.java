@@ -22,6 +22,7 @@ package org.switchyard.validate.config.model.validators;
 import javax.xml.namespace.QName;
 
 import org.switchyard.validate.BaseValidator;
+import org.switchyard.validate.ValidationResult;
 
 /**
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
@@ -30,8 +31,12 @@ import org.switchyard.validate.BaseValidator;
 public class BValidator extends BaseValidator {
 
     @Override
-    public boolean validate(Object obj) {
-        return obj instanceof Object;
+    public ValidationResult validate(Object obj) {
+        if (obj instanceof Object) {
+            return validResult();
+        } else {
+            return invalidResult("not Object");
+        }
     }
 
     @Override

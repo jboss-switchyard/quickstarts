@@ -21,10 +21,13 @@
 
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0">
     <validates>
-        <validate.xml xmlns="urn:switchyard-config:validate:1.0" schemaType="XML_SCHEMA" name="A">
+        <validate.xml xmlns="urn:switchyard-config:validate:1.0" schemaType="XML_SCHEMA" name="A" namespaceAware="true">
             <schemaFiles>
-                <entry file="/org/switchyard/validate/internal/xml/person.xsd"/>
+                <entry file="/org/switchyard/validate/internal/xml/person-namespace-catalog.xsd"/>
             </schemaFiles>
+            <schemaCatalogs>
+                <entry file="/org/switchyard/validate/internal/xml/catalog.xml"/>
+            </schemaCatalogs>
         </validate.xml>
     </validates>
 </switchyard>

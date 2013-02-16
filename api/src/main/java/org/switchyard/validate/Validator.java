@@ -37,7 +37,7 @@ public interface Validator<T> {
      * @param content the content to be validated
      * @return true if the content is valid, otherwise false
      */
-    boolean validate(T content);
+    ValidationResult validate(T content);
 
     /**
      * Set the name of the subject for validation.

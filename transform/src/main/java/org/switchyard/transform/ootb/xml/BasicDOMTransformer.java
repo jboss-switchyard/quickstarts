@@ -144,6 +144,8 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
                 return null;
             }
             return writer.toString();
+        } else if (getTo().equals(TYPE_INPUTSOURCE)) {
+            return new InputSource(new StringReader(serialize(source.getNode())));
         } else {
             return null;
         }

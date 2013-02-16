@@ -33,6 +33,7 @@ import org.switchyard.MockHandler;
 import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.validate.BaseValidator;
+import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;
 
 /**
@@ -65,8 +66,12 @@ public class ValidationTest {
         // Define the validation and register it
         Validator<String> helloValidate = 
                 new BaseValidator<String>(typeName) {
-            public boolean validate(String obj) {
-                return obj.equals("Hello");
+            public ValidationResult validate(String obj) {
+                if (obj.equals("Hello")) {
+                    return validResult();
+                } else {
+                    return invalidResult("obj.equals(\"Hello\") was false");
+                }
             }
         };
         _domain.getValidatorRegistry().addValidator(helloValidate);
@@ -110,8 +115,8 @@ public class ValidationTest {
         // Define the validation which always fail and register it
         Validator<String> failValidate = 
                 new BaseValidator<String>(typeName) {
-            public boolean validate(String obj) {
-                return false;
+            public ValidationResult validate(String obj) {
+                return invalidResult("validation fail test");
             }
         };
         _domain.getValidatorRegistry().addValidator(failValidate);
@@ -137,6 +142,7 @@ public class ValidationTest {
         invokerHandler.waitForFaultMessage();
         Object content = invokerHandler.getFaults().poll().getMessage().getContent();
         Assert.assertTrue(content instanceof HandlerException);
-        Assert.assertEquals("Validator 'org.switchyard.tests.ValidationTest$2' returned false.  Check input payload matches requirements of the Validator implementation.", ((HandlerException)content).getMessage());
+        Assert.assertEquals("Validator 'org.switchyard.tests.ValidationTest$2' failed: validation fail test", ((HandlerException)content).getMessage());
     }
+    
 }

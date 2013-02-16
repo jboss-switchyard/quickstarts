@@ -75,9 +75,31 @@ public abstract class BaseValidator<T> implements Validator<T> {
         }
     }
 
-    @Override
-    public abstract boolean validate(T subject);
-
+    /**
+     * Create validation result which indicates valid result.
+     * @return valid result
+     */
+    public static ValidationResult validResult() {
+        return new DefaultValidationResult(true, null);
+    }
+    
+    /**
+     * Create validation result which indicates invalid result.
+     * @param error error message
+     * @return invalid result
+     */
+    public static ValidationResult invalidResult(String error) {
+        return new DefaultValidationResult(false, error);
+    }
+    
+    /**
+     * Create validation result which indicates invalid result.
+     * @return invalid result
+     */
+    public static ValidationResult invalidResult() {
+        return invalidResult(null);
+    }
+    
     /**
      * Get the type QName for the specified Java type.
      * <p/>
@@ -90,4 +112,22 @@ public abstract class BaseValidator<T> implements Validator<T> {
         return JavaService.toMessageType(type);
     }
 
+    protected static class DefaultValidationResult implements ValidationResult {
+        private boolean _valid;
+        private String _detail;
+
+        public DefaultValidationResult(boolean valid, String detail) {
+            _valid = valid;
+            _detail = detail;
+        }
+        
+        public boolean isValid() {
+            return _valid;
+        }
+        
+        public String getDetail() {
+            return _detail;
+        }
+    }
+    
 }

@@ -30,6 +30,7 @@ import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.ValidatorRegistry;
 
@@ -69,9 +70,9 @@ public class ValidateHandler extends BaseHandler {
         Validator<?> validator = get(exchange);
         if (validator != null) {
             try {
-                if (!applyValidator(exchange, validator)) {
-                    throw new HandlerException("Validator '" + validator.getClass().getName()
-                            + "' returned false.  Check input payload matches requirements of the Validator implementation.");
+                ValidationResult result = applyValidator(exchange, validator);
+                if (!result.isValid()) {
+                    throw new HandlerException("Validator '" + validator.getClass().getName() + "' failed: " + result.getDetail());
                 }
             } catch (SwitchYardException syEx) {
                 // Validators which throw SwitchYardException should be reported as HandlerException
@@ -84,9 +85,9 @@ public class ValidateHandler extends BaseHandler {
     public void handleFault(Exchange exchange) {
         Validator<?> validator = get(exchange);
         if (validator != null) {
-            if (!applyValidator(exchange, validator)) {
-                _logger.warn("Validator '" + validator.getClass().getName()
-                        + "' returned false.  Check input payload matches requirements of the Validator implementation.");
+            ValidationResult result = applyValidator(exchange, validator);
+            if (!result.isValid()) {
+                _logger.warn("Validator '" + validator.getClass().getName() + "' failed: " + result.getDetail());
             }
         }
     }
@@ -110,16 +111,16 @@ public class ValidateHandler extends BaseHandler {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private boolean applyValidator(Exchange exchange, Validator validator) {
+    private ValidationResult applyValidator(Exchange exchange, Validator validator) {
         Message message = exchange.getMessage();
-        boolean validated = false;
+        ValidationResult validationResult = null;
         if (Message.class.isAssignableFrom(validator.getType())) {
-            validated = validator.validate(message);
+            validationResult = validator.validate(message);
         } else {
-            validated = validator.validate(message.getContent(validator.getType()));
+            validationResult = validator.validate(message.getContent(validator.getType()));
         }
 
-        if (validated) {
+        if (validationResult.isValid()) {
             if (_logger.isDebugEnabled()) {
                 _logger.debug("Validated Message (" + System.identityHashCode(message)
                         + ") with name '" + validator.getName() + "' using validator type '" + validator.getType() + "'.");
@@ -127,7 +128,7 @@ public class ValidateHandler extends BaseHandler {
        }
         exchange.getContext().setProperty(
                 KEY_VALIDATED_TYPE, validator.getType(), Scope.activeScope(exchange)).addLabels(Labels.TRANSIENT);
-        return validated;
+        return validationResult;
     }
 }
 
