@@ -4,4 +4,5 @@
     "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 <suppressions>
     <suppress checks="ParameterNumber" files="org/switchyard/tools/forge/bpm/BPMServicePlugin.java"/>
+    <suppress checks="[a-zA-Z0-9]*" files="NettyJaxrsServer\.java"/>
 </suppressions>
