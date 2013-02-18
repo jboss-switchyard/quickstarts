@@ -1897,6 +1897,11 @@
                 <version>${version.resteasy}</version>
             </dependency>
             <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-netty</artifactId>
+                <version>${version.resteasy}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jboss.soa.bpel</groupId>
                 <artifactId>riftsaw-agents</artifactId>
                 <version>${version.riftsaw.ode}</version>
