@@ -93,7 +93,6 @@ public class RESTEasyResourcePublisher implements ResourcePublisher {
         List<Class<?>> classes = new ArrayList<Class<?>>();
         // Add as singleton instance
         for (Object instance : instances) {
-            LOG.debug("Publishing ... " + instance);
             registry.addSingletonResource(instance);
             classes.add(instance.getClass());
         }
