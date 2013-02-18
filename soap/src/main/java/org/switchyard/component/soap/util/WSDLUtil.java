@@ -53,6 +53,7 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.PortName;
+import org.switchyard.exception.SwitchYardException;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -235,14 +236,44 @@ public final class WSDLUtil {
      * @param port The WSDL port.
      * @return The style, can be 'document' or 'rpc'.
      */
+    @SuppressWarnings("unchecked")
     public static String getStyle(Port port) {
-        String style = DOCUMENT;
-        for (ExtensibilityElement element : (List<ExtensibilityElement>)port.getBinding().getExtensibilityElements()) {
+        String portStyle = null;
+        for (ExtensibilityElement element : (List<ExtensibilityElement>) port.getBinding().getExtensibilityElements()) {
             if (element instanceof SOAPBinding) {
-                style = ((SOAPBinding)element).getStyle().toLowerCase();
+                String bindingStyle = ((SOAPBinding) element).getStyle();
+                if (bindingStyle != null) {
+                    portStyle = bindingStyle.toLowerCase();
+                }
             }
         }
-        return style;
+
+        String operationStyle = null;
+        for (BindingOperation operation : (List<BindingOperation>) port.getBinding().getBindingOperations()) {
+            for (ExtensibilityElement element : (List<ExtensibilityElement>) operation.getExtensibilityElements()) {
+                if (element instanceof SOAPOperation) {
+                    String currentOperationStyle = ((SOAPOperation) element).getStyle();
+                    if (currentOperationStyle != null) {
+                        if (operationStyle != null && !currentOperationStyle.equals(operationStyle)) {
+                            throw new SwitchYardException("Incompatible style of soap operation level bindings detected");
+                        }
+                        operationStyle = currentOperationStyle;
+                    }
+                }
+            }
+        }
+
+        if (operationStyle != null && portStyle != null) {
+            if (!portStyle.equals(operationStyle)) {
+                throw new SwitchYardException("Detected mixing different soap binding style on port type and operation level");
+            }
+            return portStyle;
+        } else if (portStyle != null) {
+            return portStyle;
+        } else if (operationStyle != null) {
+            return operationStyle;
+        }
+        return DOCUMENT; //default
     }
 
     /**
