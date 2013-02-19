@@ -25,7 +25,11 @@
         </component>
     </composite>
     <transforms>
-        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.bean.service.Transformers" from="java:org.switchyard.quickstarts.bean.service.OrderAck" to="{urn:switchyard-quickstart:bean-service:1.0}submitOrderResponse"/>
-        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.bean.service.Transformers" from="{urn:switchyard-quickstart:bean-service:1.0}submitOrder" to="java:org.switchyard.quickstarts.bean.service.Order"/>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" bean="Transformers" from="java:org.switchyard.quickstarts.bean.service.OrderAck" to="{urn:switchyard-quickstart:bean-service:1.0}submitOrderResponse"/>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" bean="Transformers" from="{urn:switchyard-quickstart:bean-service:1.0}submitOrder" to="java:org.switchyard.quickstarts.bean.service.Order"/>
     </transforms>
+    <validates>
+        <validate.java xmlns="urn:switchyard-config:validate:1.0" bean="Validators" name="java:org.switchyard.quickstarts.bean.service.Order"/>
+        <validate.java xmlns="urn:switchyard-config:validate:1.0" bean="Validators" name="java:org.switchyard.quickstarts.bean.service.OrderAck"/>
+    </validates>
 </switchyard>

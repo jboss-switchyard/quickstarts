@@ -117,7 +117,7 @@
                 <configuration>
                     <scannerClassNames>
                         <param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>
-                        <param>org.switchyard.transform.config.model.ValidateSwitchYardScanner</param>
+                        <param>org.switchyard.validate.config.model.ValidateSwitchYardScanner</param>
                     </scannerClassNames>
                 </configuration>
                 <executions>
