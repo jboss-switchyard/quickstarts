@@ -604,6 +604,11 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-common-cdi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-config</artifactId>
                 <version>${project.version}</version>
             </dependency>
