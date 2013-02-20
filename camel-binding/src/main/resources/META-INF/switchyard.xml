@@ -5,7 +5,8 @@
                 <file:directory>target/input</file:directory>
                 <file:fileName>test.txt</file:fileName>
                 <file:consume>
-                    <file:initialDelay>50</file:initialDelay>
+                    <file:initialDelay>10</file:initialDelay>
+                    <file:delay>10</file:delay>
                     <file:delete>true</file:delete>
                 </file:consume>
             </file:binding.file>

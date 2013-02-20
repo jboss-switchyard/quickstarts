@@ -48,9 +48,11 @@ public class CamelBindingTest {
 
         assertTrue(destFile.exists());
         // Wait a spell so that the file component polls and picks up the file
-        Thread.sleep(500);
 
         // File should have been picked up and output displayed via the console
+        while (destFile.exists()) {
+            Thread.sleep(50);
+        }
         assertFalse(destFile.exists());
     }
 }
