@@ -21,6 +21,7 @@ package org.switchyard.common.lang;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static org.switchyard.common.lang.Strings.repeat;
 import static org.switchyard.common.lang.Strings.splitTrimToNull;
 import static org.switchyard.common.lang.Strings.splitTrimToNullArray;
 import static org.switchyard.common.lang.Strings.trimToNull;
@@ -71,6 +72,23 @@ public class StringsTests {
             //System.out.println("original=[" + original + "], expected=[" + expected + "], actual=[" + actual + "]");
             assertEquals(expected, actual);
         }
+    }
+
+    @Test
+    public void testRepeatEmptyString() {
+        assertEquals("", repeat("", 10));
+    }
+
+    @Test
+    public void testRepeatZeroTimes() {
+        assertEquals("", repeat("a", 0));
+        assertEquals("", repeat("a", -1));
+    }
+
+    @Test
+    public void testRepeating() {
+        assertEquals("a", repeat("a", 1));
+        assertEquals("aa", repeat("a", 2));
     }
 
     @Test

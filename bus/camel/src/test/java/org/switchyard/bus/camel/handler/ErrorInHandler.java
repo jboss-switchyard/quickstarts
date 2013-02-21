@@ -32,7 +32,9 @@ public class ErrorInHandler extends BaseHandler {
 
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
-        throw new HandlerException("Domain handler is not implemented");
+        NullPointerException firstCause = new NullPointerException();
+        IllegalArgumentException secondCause = new IllegalArgumentException("Not implemented", firstCause);
+        throw new HandlerException(secondCause);
     }
 
 }

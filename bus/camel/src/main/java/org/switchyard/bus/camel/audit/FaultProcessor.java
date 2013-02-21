@@ -35,6 +35,7 @@ import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.bus.camel.CamelHelper;
 import org.switchyard.bus.camel.ErrorListener;
+import org.switchyard.common.lang.Strings;
 
 /**
  * Processor which catches {@link HandlerException} before calling processor.
@@ -81,6 +82,7 @@ public class FaultProcessor extends DelegateAsyncProcessor {
      */
     protected void handle(Throwable throwable, Exchange camel, org.switchyard.Exchange exchange) {
         if (ExchangeState.OK == exchange.getState()) {
+            dumpExceptionContents(throwable);
             notifyListeners(camel.getContext(), exchange, throwable);
             Throwable content = detectHandlerException(throwable);
             exchange.sendFault(exchange.createMessage().setContent(content));
@@ -93,6 +95,26 @@ public class FaultProcessor extends DelegateAsyncProcessor {
                 + "exceptions in your handler logic", throwable);
             ExchangeHelper.setFailureHandled(camel);
         }
+    }
+
+    protected void dumpExceptionContents(Throwable throwable) {
+        if (_logger.isDebugEnabled()) {
+            String message = "Caught exception of type %s with message: %s";
+            String causeTrace = "";
+
+            if (throwable.getCause() != null) {
+                String causedBy = "\n%sCaused by exception of type %s, message: %s";
+                Throwable cause = throwable.getCause();
+                int depth = 0;
+                while (cause != null) {
+                    causeTrace += String.format(causedBy, Strings.repeat("  ", ++depth), cause.getClass().getName(), cause.getMessage());
+                    cause = cause.getCause();
+                }
+            }
+
+            _logger.debug(String.format(message, throwable.getClass().getName(), throwable.getMessage()) + causeTrace, throwable);
+        }
+
     }
 
     protected void notifyListeners(CamelContext context, org.switchyard.Exchange exchange, Throwable exception) {
@@ -119,4 +141,5 @@ public class FaultProcessor extends DelegateAsyncProcessor {
     public String toString() {
         return "FaultProcessor [" + getProcessor() + "]";
     }
+
 }

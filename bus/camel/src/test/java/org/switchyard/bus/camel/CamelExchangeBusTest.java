@@ -121,7 +121,7 @@ public class CamelExchangeBusTest {
         ServiceReference ref = registerInOutService("inOut");
         Exchange exchange = sendMessage(ref, TEST_CONTENT);
 
-        assertNoCause("Domain handler is not implemented", exchange);
+        assertCause("Not implemented", exchange);
     }
 
     /**

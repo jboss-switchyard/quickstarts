@@ -66,6 +66,24 @@ public final class Strings {
     }
 
     /**
+     * Repeats the specified String given number of times.
+     * @param str String to repeat.
+     * @param repeatCount Number of repetitions
+     * @return The repeated String.
+     */
+    public static String repeat(String str, int repeatCount) {
+        String repeated = "";
+        if (str.isEmpty() || repeatCount <= 0) {
+            return repeated;
+        }
+
+        do {
+            repeated += str;
+        } while (--repeatCount > 0);
+        return repeated;
+    }
+
+    /**
      * Cleanses a String using the default cleanse regex replacments.
      * @param str the String
      * @return the cleansed String
