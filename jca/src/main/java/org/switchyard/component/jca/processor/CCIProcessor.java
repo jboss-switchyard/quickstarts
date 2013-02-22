@@ -115,7 +115,11 @@ public class CCIProcessor extends AbstractOutboundProcessor {
         Connection connection = null;
         Interaction interaction = null;
         try {
-            connection = _connectionFactory.getConnection(_connectionSpec);
+            if (_connectionSpec != null) {
+                connection = _connectionFactory.getConnection(_connectionSpec);
+            } else {
+                connection = _connectionFactory.getConnection();
+            }
             interaction = connection.createInteraction();
             return _recordHandler.handle(exchange, _recordFactory, _interactionSpec, connection, interaction);
         } catch (Exception e) {
