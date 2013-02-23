@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:switchyard-quickstart:validate-xml-base:0.1.0"
+        xmlns:base="urn:switchyard-quickstart:validate-xml-base:0.1.0">
+
+        <element name="order.base" type="base:orderBaseType" abstract="true"/>
+        <complexType name="orderBaseType" abstract="true"/>
+
+        <element name="orderAck.base" type="base:orderAckBaseType" abstract="true"/>
+        <complexType name="orderAckBaseType" abstract="true"/>
+</schema>

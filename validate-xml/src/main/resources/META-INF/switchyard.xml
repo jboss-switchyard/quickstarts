@@ -19,6 +19,13 @@
         <transform.xslt xmlns="urn:switchyard-config:transform:1.0" from="{urn:switchyard-quickstart:validate-xml:0.1.0}order" to="{urn:switchyard-quickstart:validate-xml:0.1.0}orderAck" xsltFile="xslt/order.xslt"/>
     </transforms>
     <validates>
-        <validate.xml xmlns="urn:switchyard-config:validate:1.0" name="{urn:switchyard-quickstart:validate-xml:0.1.0}order" schemaFile="/xsd/orders.xsd" schemaType="XML_SCHEMA"/>
+        <validate.xml xmlns="urn:switchyard-config:validate:1.0" name="{urn:switchyard-quickstart:validate-xml:0.1.0}order" schemaType="XML_SCHEMA" namespaceAware="true">
+            <schemaFiles>
+                <entry file="/xsd/orders.xsd"/>
+            </schemaFiles>
+            <schemaCatalogs>
+                <entry file="/xsd/catalog.xml"/>
+            </schemaCatalogs>
+        </validate.xml>
     </validates>
 </switchyard>
