@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
-        targetNamespace="urn:switchyard-quickstart:validate-xml:0.1.0" 
+        targetNamespace="urn:switchyard-quickstart:validate-xml:0.1.0"
+        xmlns:base="urn:switchyard-quickstart:validate-xml-base:0.1.0"
         xmlns:orders="urn:switchyard-quickstart:validate-xml:0.1.0">
-        <element name="order" type="orders:order"/>
-        <complexType name="order">
-            <sequence>
-                <element name="orderId" type="string"/>
-                <element name="itemId" type="string"/>
-                <element name="quantity" type="int"/>
-            </sequence>
+        <import namespace="urn:switchyard-quickstart:validate-xml-base:0.1.0" schemaLocation="orders.base"/>
+
+        <element name="order" type="orders:orderType" substitutionGroup="base:order.base"/>
+        <complexType name="orderType">
+            <complexContent>
+                <extension base="base:orderBaseType">
+                    <sequence>
+                        <element name="orderId" type="string"/>
+                        <element name="itemId" type="string"/>
+                        <element name="quantity" type="int"/>
+                    </sequence>
+                </extension>
+            </complexContent>
         </complexType>
-        <element name="orderAck" type="orders:orderAck"/>
-        <complexType name="orderAck">
-            <sequence>
-                <element name="orderId" type="string"/>
-                <element name="accepted" type="boolean"/>
-                <element name="status" type="string"/>
-            </sequence>
+        <element name="orderAck" type="orders:orderAckType" substitutionGroup="base:orderAck.base"/>
+        <complexType name="orderAckType">
+            <complexContent>
+                <extension base="base:orderAckBaseType">
+                    <sequence>
+                        <element name="orderId" type="string"/>
+                        <element name="accepted" type="boolean"/>
+                        <element name="status" type="string"/>
+                    </sequence>
+                </extension>
+            </complexContent>
         </complexType>
 </schema>

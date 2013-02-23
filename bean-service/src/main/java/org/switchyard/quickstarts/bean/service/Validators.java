@@ -21,6 +21,8 @@ package org.switchyard.quickstarts.bean.service;
 
 import javax.inject.Named;
 import org.switchyard.annotations.Validator;
+import org.switchyard.validate.ValidationResult;
+import org.switchyard.validate.BaseValidator;
 
 @Named("Validators")
 public class Validators {
@@ -28,26 +30,26 @@ public class Validators {
     /**
      * Validates Order object.
      * @param order Order object.
-     * @return true if valid
+     * @return validation result
      */
     @Validator
-    public boolean validate(Order order) {
+    public ValidationResult validate(Order order) {
         System.out.println("|--- Validating Order object:[OrderID=" + order.getOrderId() + ", ItemID=" + order.getItemId() + ", quantity=" + order.getQuantity() + "] ---|");
         if (order.getQuantity() > 1000) {
-            return false;
+            return BaseValidator.invalidResult("Too many order quantity: " + order.getQuantity());
         }
-        return true;
+        return BaseValidator.validResult();
     }
 
     /**
      * Validates OrderAck object.
      * @param orderAck OrderAck object.
-     * @return true if valid
+     * @return validation result
      */
     @Validator
-    public boolean validate(OrderAck orderAck) {
+    public ValidationResult validate(OrderAck orderAck) {
         System.out.println("|--- Validating OrderAck object:[OrderID=" + orderAck.getOrderId() + ", accepted=" + orderAck.isAccepted() + ", status=" + orderAck.getStatus() + "] ---|");
-        return true;
+        return BaseValidator.validResult();
     }
 
 }

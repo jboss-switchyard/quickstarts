@@ -46,7 +46,7 @@ public class WebServiceTest {
     public void invokeOrderWebServiceValidationFail() throws Exception {
         String response = httpMixIn.
                 postResource("http://localhost:18001/quickstart-validate-xml/OrderService", "/xml/soap-request-with-invalid-element.xml");
-        Assert.assertTrue(response.contains("<faultstring>Error during validation with '/xsd/orders.xsd' as 'XML_SCHEMA'.</faultstring>"));
+        Assert.assertTrue(response.contains("Invalid content was found starting with element 'invalid-element'. No child element is expected at this point."));
     }
     
     /*
