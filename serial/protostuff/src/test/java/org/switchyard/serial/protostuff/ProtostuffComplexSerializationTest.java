@@ -21,8 +21,11 @@ package org.switchyard.serial.protostuff;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -34,6 +37,7 @@ import org.switchyard.serial.Serializer;
 import org.switchyard.serial.SerializerFactory;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Car;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.CustomPart;
+import org.switchyard.serial.protostuff.ProtostuffSerializationData.ExpiredPart;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Part;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Person;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Wheel;
@@ -84,6 +88,37 @@ public final class ProtostuffComplexSerializationTest {
         List<Part> list = new ArrayList<Part>(car.getExpensiveParts());
         Assert.assertEquals(true, list.get(3).isReplaceable());
         Assert.assertEquals(false, list.get(4).isReplaceable());
+    }
+
+    @Test
+    public void testUnsupportedTypeArray() throws Exception {
+        Car car = new Car();
+        car.setCheapParts(new Part[] {new Wheel(), new ExpiredPart(new Date())});
+        car = serDeser(car, Car.class);
+        Assert.assertEquals(1, car.getCheapParts().length);
+    }
+
+    @Test
+    public void testUnsupportedTypeCollection() throws Exception {
+        Car car = new Car();
+        Collection<Part> ep = new ArrayList<Part>();
+        for (int i=0; i < 4; i++) {
+            ep.add(new Wheel());
+        }
+        ep.add(new ExpiredPart(new Date()));
+        car.setExpensiveParts(ep);
+        car = serDeser(car, Car.class);
+        Assert.assertEquals(4, car.getExpensiveParts().size());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUnsupportedTypeMap() throws Exception {
+        Map<String, Part> map = new HashMap<String, Part>();
+        map.put("wheel", new Wheel());
+        map.put("crank", new ExpiredPart(new Date()));
+        map = serDeser(map, Map.class);
+        Assert.assertEquals(1, map.size());
     }
 
     @Test

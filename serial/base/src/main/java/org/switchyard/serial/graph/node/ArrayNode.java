@@ -18,6 +18,9 @@
  */
 package org.switchyard.serial.graph.node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.switchyard.serial.graph.Graph;
 
 /**
@@ -57,10 +60,14 @@ public class ArrayNode implements Node {
     @Override
     public void compose(Object obj, Graph graph) {
         Object[] array = (Object[])obj;
-        _ids = new Integer[array.length];
+        List<Integer> ids = new ArrayList<Integer>();
         for (int i=0; i < array.length; i++) {
-            _ids[i] = NodeBuilder.build(array[i], graph);
+            Integer id = NodeBuilder.build(array[i], graph);
+            if (!(graph.getReference(id) instanceof NoopNode)) {
+                ids.add(id);
+            }
         }
+        _ids = ids.toArray(new Integer[ids.size()]);
     }
 
     /**

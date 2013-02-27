@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 
 import org.w3c.dom.Element;
 
@@ -121,6 +122,22 @@ public final class JacksonSerializationData {
         }
         public String toString() {
             return "CustomPart(replaceable=" + isReplaceable() + ")";
+        }
+    }
+
+    public static final class ExpiredPart implements Part {
+        private Date _expiredDate;
+        public ExpiredPart(Date expiredDate) {
+            _expiredDate = expiredDate;
+        }
+        public boolean isReplaceable() {
+            return false;
+        }
+        public Date getExpiredDate() {
+            return _expiredDate;
+        }
+        public String toString() {
+            return "BadPart(replaceable=" + isReplaceable() + ", " + getExpiredDate() + ")";
         }
     }
 

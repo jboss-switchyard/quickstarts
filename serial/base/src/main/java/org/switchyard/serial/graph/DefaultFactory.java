@@ -27,7 +27,7 @@ import org.switchyard.common.type.reflect.Construction;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class DefaultFactory<T> implements Factory<T> {
+public class DefaultFactory<T> extends BaseFactory<T> {
 
     /**
      * {@inheritDoc}
@@ -35,6 +35,30 @@ public class DefaultFactory<T> implements Factory<T> {
     @Override
     public T create(Class<T> type) {
         return Construction.construct(type);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean supports(Class<?> type) {
+        try {
+            if (type.getDeclaredConstructor() != null) {
+                return true;
+            }
+        } catch (NoSuchMethodException nsme1) {
+            // keep checkstyle happy (at least one statement)
+            nsme1.getMessage();
+        }
+        try {
+            if (type.getConstructor() != null) {
+                return true;
+            }
+        } catch (NoSuchMethodException nsme2) {
+            // keep checkstyle happy (at least one statement)
+            nsme2.getMessage();
+        }
+        return false;
     }
 
 }

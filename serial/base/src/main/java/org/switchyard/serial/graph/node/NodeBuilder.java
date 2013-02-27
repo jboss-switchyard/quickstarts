@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.activation.DataSource;
 import javax.xml.namespace.QName;
 
+import org.switchyard.serial.graph.Factory;
 import org.switchyard.serial.graph.Graph;
 
 /**
@@ -103,10 +104,12 @@ public final class NodeBuilder {
             Node node = new StackTraceElementNode();
             graph.putReference(id, node);
             node.compose(obj, graph);
-        } else {
+        } else if (isAccessible(clazz)) {
             Node node = new AccessNode();
             graph.putReference(id, node);
             node.compose(obj, graph);
+        } else {
+            graph.putReference(id, NoopNode.INSTANCE);
         }
         return id;
     }
@@ -161,6 +164,10 @@ public final class NodeBuilder {
 
     static boolean isThrowable(Class<?> clazz) {
         return Throwable.class.isAssignableFrom(clazz);
+    }
+
+    static boolean isAccessible(Class<?> clazz) {
+        return Factory.getFactory(clazz).supports(clazz);
     }
 
     private NodeBuilder() {}

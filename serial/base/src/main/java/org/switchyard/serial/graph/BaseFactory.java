@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -18,31 +18,21 @@
  */
 package org.switchyard.serial.graph;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 /**
- * The strategy the AccessNode will use.
+ * A base Factory implementation.
+ * 
+ * @param <T> the factory type
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-@Target(TYPE)
-@Retention(RUNTIME)
-@Documented
-public @interface Strategy {
+public abstract class BaseFactory<T> extends Factory<T> {
 
-    /** The type of access. */
-    AccessType access() default AccessType.BEAN;
-
-    /** The type of coverage. */
-    CoverageType coverage() default CoverageType.INCLUSIVE;
-
-    /** The factory to create new objects. */
-    @SuppressWarnings("rawtypes")
-    Class<? extends Factory> factory() default DefaultFactory.class;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean supports(Class<?> type) {
+        return true;
+    }
 
 }

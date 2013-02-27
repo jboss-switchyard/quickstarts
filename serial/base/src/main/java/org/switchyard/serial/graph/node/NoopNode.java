@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -18,71 +18,55 @@
  */
 package org.switchyard.serial.graph.node;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
 import org.switchyard.serial.graph.Graph;
 
 /**
- * A node representing a Collection.
+ * A node representing a noop.
+ * 
+ * Note that there is a noop property, however it isn't used.  It only exists so serializer implementations (like Jackson or Protostuff) don't complain about "no properties".
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 @SuppressWarnings("serial")
-public final class CollectionNode implements Node {
-
-    private LinkedList<Integer> _ids;
+public class NoopNode implements Node {
 
     /**
-     * Default constructor.
+     * A single instance of NoopNode.
      */
-    public CollectionNode() {}
+    public static final NoopNode INSTANCE = new NoopNode();
+
+    private String _noop;
 
     /**
-     * Gets the ids.
-     * @return the ids
+     * Gets the noop.
+     * @return the noop
      */
-    public LinkedList<Integer> getIds() {
-        return _ids;
+    public String getNoop() {
+        return _noop;
     }
 
     /**
-     * Sets the ids.
-     * @param ids the ids
+     * Sets the noop.
+     * @param noop the noop
      */
-    public void setIds(LinkedList<Integer> ids) {
-        _ids = ids;
+    public void setNoop(String noop) {
+        _noop = noop;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("rawtypes")
     public void compose(Object obj, Graph graph) {
-        _ids = new LinkedList<Integer>();
-        Collection coll = (Collection)obj;
-        for (Object o : coll) {
-            Integer id = NodeBuilder.build(o, graph);
-            if (!(graph.getReference(id) instanceof NoopNode)) {
-                _ids.add(NodeBuilder.build(o, graph));
-            }
-        }
+        // noop
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Object decompose(Graph graph) {
-        if (_ids != null) {
-            Collection coll = new LinkedList();
-            for (Integer id : _ids) {
-                coll.add(graph.decomposeReference(id));
-            }
-            return coll;
-        }
+        // noop
         return null;
     }
 

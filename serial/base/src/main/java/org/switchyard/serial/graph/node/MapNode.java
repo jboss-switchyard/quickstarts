@@ -63,8 +63,14 @@ public final class MapNode implements Node {
         _ids = new LinkedHashMap<Integer, Integer>();
         Map map = (Map)obj;
         for (Object key : map.keySet()) {
-            Object val = map.get(key);
-            _ids.put(NodeBuilder.build(key, graph), NodeBuilder.build(val, graph));
+            Integer key_id = NodeBuilder.build(key, graph);
+            if (!(graph.getReference(key_id) instanceof NoopNode)) {
+                Object val = map.get(key);
+                Integer val_id = NodeBuilder.build(val, graph);
+                if (!(graph.getReference(val_id) instanceof NoopNode)) {
+                    _ids.put(key_id, val_id);
+                }
+            }
         }
     }
 

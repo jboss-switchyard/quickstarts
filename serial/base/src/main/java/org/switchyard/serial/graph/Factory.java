@@ -18,6 +18,8 @@
  */
 package org.switchyard.serial.graph;
 
+import org.switchyard.common.type.reflect.Construction;
+
 /**
  * The factory the AccessNode will use.
  * 
@@ -25,13 +27,35 @@ package org.switchyard.serial.graph;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface Factory<T> {
+public abstract class Factory<T> {
 
     /**
      * Creates a new object of the specified type.
      * @param type the type
      * @return the object
      */
-    public T create(Class<T> type);
+    public abstract T create(Class<T> type);
+
+    /**
+     * Whether this factory supports the specified type.
+     * @param type the type
+     * @return if the type is supported
+     */
+    public abstract boolean supports(Class<?> type);
+
+    /**
+     * Gets the factory for the specified type.
+     * @param <T> the factory type
+     * @param type the type
+     * @return the factory
+     */
+    @SuppressWarnings("unchecked")
+    public static final <T> Factory<T> getFactory(Class<T> type) {
+        Strategy strategy = type.getAnnotation(Strategy.class);
+        if (strategy != null) {
+            return Construction.construct(strategy.factory());
+        }
+        return new DefaultFactory<T>();
+    }
 
 }

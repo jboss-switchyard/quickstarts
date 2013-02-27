@@ -37,11 +37,9 @@ import java.util.Set;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.reflect.Access;
 import org.switchyard.common.type.reflect.BeanAccess;
-import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.serial.graph.AccessType;
 import org.switchyard.serial.graph.CoverageType;
-import org.switchyard.serial.graph.DefaultFactory;
 import org.switchyard.serial.graph.Exclude;
 import org.switchyard.serial.graph.Factory;
 import org.switchyard.serial.graph.Graph;
@@ -114,7 +112,10 @@ public final class AccessNode implements Node {
                     if (_ids == null) {
                         _ids = new LinkedHashMap<String, Integer>();
                     }
-                   _ids.put(access.getName(), NodeBuilder.build(value, graph));
+                    Integer id = NodeBuilder.build(value, graph);
+                    if (id != null) {
+                        _ids.put(access.getName(), id);
+                    }
                 }
             }
         }
@@ -129,9 +130,10 @@ public final class AccessNode implements Node {
         if (_type == null) {
             return null;
         }
-        Class clazz = Classes.forName(_type, getClass());
-        final Object obj = getFactory(clazz).create(clazz);
-        if (_ids != null) {
+        final Class clazz = Classes.forName(_type, getClass());
+        final Factory factory = Factory.getFactory(clazz);
+        final Object obj = factory.supports(clazz) ? factory.create(clazz) : null;
+        if (obj != null && _ids != null) {
             for (final Access access : getAccessList(clazz)) {
                 final Integer id = _ids.get(access.getName());
                 if (id != null) {
@@ -222,15 +224,6 @@ public final class AccessNode implements Node {
                 break;
         }
         return accessList;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> Factory<T> getFactory(Class<T> clazz) {
-        Strategy strategy = clazz.getAnnotation(Strategy.class);
-        if (strategy != null) {
-            return Construction.construct(strategy.factory());
-        }
-        return new DefaultFactory<T>();
     }
 
 }

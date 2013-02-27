@@ -28,7 +28,7 @@ import org.switchyard.Scope;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.internal.ContextProperty.ContextPropertyFactory;
 import org.switchyard.serial.graph.AccessType;
-import org.switchyard.serial.graph.Factory;
+import org.switchyard.serial.graph.BaseFactory;
 import org.switchyard.serial.graph.Strategy;
 
 /**
@@ -142,7 +142,6 @@ public class ContextProperty implements Property {
         if (!(obj instanceof ContextProperty)) {
             return false;
         }
-        
         ContextProperty comp = (ContextProperty)obj;
         return _name.equals(comp.getName()) 
                 && _scope.equals(comp.getScope())
@@ -169,7 +168,7 @@ public class ContextProperty implements Property {
     /**
      * The serialization factory for context properties.
      */
-    public static final class ContextPropertyFactory implements Factory<ContextProperty> {
+    public static final class ContextPropertyFactory extends BaseFactory<ContextProperty> {
         /**
          * {@inheritDoc}
          */
