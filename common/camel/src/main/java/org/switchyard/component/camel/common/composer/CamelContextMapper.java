@@ -50,7 +50,7 @@ public class CamelContextMapper extends BaseRegexContextMapper<CamelBindingData>
         Scope scope;
         Message message = source.getMessage();
         Exchange exchange = message.getExchange();
-        if (exchange.getIn() == source) {
+        if (exchange.getIn() == message) {
             scope = IN;
         } else {
             scope = OUT;
