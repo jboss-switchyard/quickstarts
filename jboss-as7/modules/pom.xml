@@ -631,10 +631,6 @@
             <artifactId>drools-persistence-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>kie-ci</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-bam</artifactId>
         </dependency>
@@ -669,6 +665,10 @@
         <dependency>
             <groupId>org.kie</groupId>
             <artifactId>kie-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-ci</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kie</groupId>
