@@ -45,6 +45,7 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.TRANSFORMERS
 import static org.switchyard.as7.extension.SwitchYardModelConstants.URL;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.VALIDATORS;
 
+import java.math.BigDecimal;
 import org.jboss.dmr.ModelNode;
 import org.switchyard.admin.Application;
 import org.switchyard.admin.Binding;
@@ -461,7 +462,7 @@ final public class ModelNodeCreationUtil {
         node.get(SUCCESS_COUNT).set(metrics.getSuccessCount());
         node.get(FAULT_COUNT).set(metrics.getFaultCount());
         node.get(TOTAL_COUNT).set(metrics.getTotalCount());
-        node.get(AVERAGE_TIME).set(metrics.getAverageProcessingTime());
+        node.get(AVERAGE_TIME).set(BigDecimal.valueOf(metrics.getAverageProcessingTime()));
         node.get(MIN_TIME).set(metrics.getMinProcessingTime());
         node.get(MAX_TIME).set(metrics.getMaxProcessingTime());
         node.get(TOTAL_TIME).set(metrics.getTotalProcessingTime());

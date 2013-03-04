@@ -39,7 +39,7 @@
 <xsl:template match="node()[name(.)='resources']">
     <xsl:copy>
         <xsl:apply-templates select="@*|node()"/>
-        <resource-root path="switchyard-console-application.war"/>
+        <resource-root path="switchyard-console-application-resources.jar"/>
     </xsl:copy>
 </xsl:template>
 

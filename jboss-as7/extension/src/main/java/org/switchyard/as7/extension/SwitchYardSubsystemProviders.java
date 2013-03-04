@@ -498,7 +498,7 @@ final class SwitchYardSubsystemProviders {
             op.get(REPLY_PROPERTIES, VALUE_TYPE, TOTAL_COUNT, TYPE).set(ModelType.INT);
             op.get(REPLY_PROPERTIES, VALUE_TYPE, TOTAL_COUNT, DESCRIPTION).set(
                     bundle.getString("switchyard.show-metrics.reply.totalCount"));
-            op.get(REPLY_PROPERTIES, VALUE_TYPE, AVERAGE_TIME, TYPE).set(ModelType.DOUBLE);
+            op.get(REPLY_PROPERTIES, VALUE_TYPE, AVERAGE_TIME, TYPE).set(ModelType.BIG_DECIMAL);
             op.get(REPLY_PROPERTIES, VALUE_TYPE, AVERAGE_TIME, DESCRIPTION).set(
                     bundle.getString("switchyard.show-metrics.reply.averageTime"));
             op.get(REPLY_PROPERTIES, VALUE_TYPE, MIN_TIME, TYPE).set(ModelType.INT);

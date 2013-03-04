@@ -116,7 +116,7 @@
         <condition property="sy.console.not.available">
            <and>
              <not>
-               <available file="res/switchyard-console-application.war"/>
+               <available file="res/switchyard-console-application-resources.jar"/>
              </not>
              <isset property="installSYConsole"/>
            </and>
@@ -248,7 +248,7 @@
         </condition>
         <condition property="switchyardConsoleAlreadyInstalled">
           <or>
-            <available file="switchyard-console-application.war" filepath="${INSTALL_PATH}/modules/org/jboss/as/console/main" />
+            <available file="switchyard-console-application-resources.jar" filepath="${INSTALL_PATH}/modules/org/jboss/as/console/main" />
             <isset property="SKIP_CONSOLE"/>
           </or>
         </condition>
@@ -395,7 +395,7 @@
     </target>
 
     <target name="install-sy-console" if="installSYConsole" depends="request-sy-console-install, download-sy-console">
-    	<copy todir="${INSTALL_PATH}/modules/org/jboss/as/console/main" overwrite="true" file="res/switchyard-console-application.war"/>
+    	<copy todir="${INSTALL_PATH}/modules/org/jboss/as/console/main" overwrite="true" file="res/switchyard-console-application-resources.jar"/>
 		<antcall target="transform-console-module" />
 	</target>
 

@@ -317,7 +317,7 @@
         <dependency>
             <groupId>org.switchyard.console</groupId>
             <artifactId>switchyard-console-application</artifactId>
-            <type>war</type>
+            <classifier>resources</classifier>
         </dependency>
         <!--
         H2Database...

@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.switchyard.console</groupId>
             <artifactId>switchyard-console-application</artifactId>
-            <type>war</type>
+            <classifier>resources</classifier>
         </dependency>
         <dependency>
             <groupId>org.riftsaw.console</groupId>
