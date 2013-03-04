@@ -8,12 +8,14 @@
         </sca:service>
         <sca:service xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="WarehouseService" promote="WarehouseService/WarehouseService">
             <rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:1.0">
+                <rest:messageComposer class="org.switchyard.quickstarts.rest.binding.CustomComposer"/>
                 <rest:interfaces>org.switchyard.quickstarts.rest.binding.WarehouseResource</rest:interfaces>
                 <rest:contextPath>rest-binding</rest:contextPath>
             </rest:binding.rest>
         </sca:service>
         <sca:reference xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" multiplicity="1..1" name="Warehouse" promote="OrderService/Warehouse">
             <rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:1.0">
+                <rest:messageComposer class="org.switchyard.quickstarts.rest.binding.CustomComposer"/>
                 <rest:interfaces>org.switchyard.quickstarts.rest.binding.WarehouseResource</rest:interfaces>
                 <rest:contextPath>rest-binding</rest:contextPath>
             </rest:binding.rest>

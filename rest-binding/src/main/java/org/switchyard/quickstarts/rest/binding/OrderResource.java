@@ -48,6 +48,7 @@ public interface OrderResource {
 
     @PUT
     @Path("/item")
+    @Consumes({"text/xml"})
     public String addItems(Order order);
 
     @DELETE

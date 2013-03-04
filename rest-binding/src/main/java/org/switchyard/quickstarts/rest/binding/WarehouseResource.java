@@ -42,9 +42,8 @@ public interface WarehouseResource {
     public Item getItem(@PathParam("itemId") Integer itemId);
 
     @PUT
-    @Path("/")
-    @Consumes({"text/xml"})
-    public String addItem(Item item) throws Exception;
+    @Path("{itemId}/{desc}")
+    public String addItem(@PathParam("itemId") Integer itemId, @PathParam("desc") String description) throws Exception;
 
     @POST
     @Path("/")
