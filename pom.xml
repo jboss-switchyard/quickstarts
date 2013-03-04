@@ -77,7 +77,7 @@
         <version.commons.net>2.2</version.commons.net>
         <version.commons.ssl>0.3.9</version.commons.ssl>
         <version.deltaspike>0.2-incubating</version.deltaspike>
-        <version.drools>6.0.0.Alpha6</version.drools>
+        <version.drools>6.0.0.Alpha9</version.drools>
         <version.ecj>3.5.1</version.ecj>
         <version.forge>1.0.2.Final</version.forge>
         <version.freemarker>2.3.15</version.freemarker>
@@ -100,14 +100,14 @@
         <!-- Override versions for OpenShift. May use the same version as AS but -->
         <!-- maintaining this override for future flexibility -->
         <version.jbossas.openshift>7.1.0.Final</version.jbossas.openshift>
-        <version.jbpm>6.0.0.Alpha6</version.jbpm>
+        <version.jbpm>6.0.0.Alpha9</version.jbpm>
         <version.jettison>1.2</version.jettison>
         <version.jta>1.1</version.jta>
         <version.jsch>0.1.48</version.jsch>
         <version.junit>4.10</version.junit>
         <version.jruby>1.7.2</version.jruby>
         <version.jython>2.5.3</version.jython>
-        <version.kie>6.0.0.Alpha6</version.kie>
+        <version.kie>6.0.0.Alpha9</version.kie>
         <version.maven.archetype.plugin>2.0</version.maven.archetype.plugin>
         <version.maven.exec.plugin>1.2</version.maven.exec.plugin>
         <version.maven.gwt.plugin>2.5.0</version.maven.gwt.plugin>
@@ -116,7 +116,7 @@
         <version.mina>2.0.4</version.mina>
         <version.milyn>1.5.1</version.milyn>
         <version.mock.javamail>1.9</version.mock.javamail>
-        <version.mvel>2.1.3.Final</version.mvel>
+        <version.mvel>2.1.4.Final</version.mvel>
         <!--
         <version.mysql-connector-java>5.1.19</version.mysql-connector-java>
         -->
@@ -1754,11 +1754,6 @@
                 <version>${version.drools}</version>
             </dependency>
             <dependency>
-                <groupId>org.drools</groupId>
-                <artifactId>kie-ci</artifactId>
-                <version>${version.kie}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.eclipse.jdt.core.compiler</groupId>
                 <artifactId>ecj</artifactId>
                 <version>${version.ecj}</version>
@@ -2071,6 +2066,11 @@
             <dependency>
                 <groupId>org.kie</groupId>
                 <artifactId>kie-api</artifactId>
+                <version>${version.kie}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kie</groupId>
+                <artifactId>kie-ci</artifactId>
                 <version>${version.kie}</version>
             </dependency>
             <dependency>
