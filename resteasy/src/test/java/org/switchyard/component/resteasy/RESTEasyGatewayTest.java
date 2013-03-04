@@ -102,6 +102,7 @@ public class RESTEasyGatewayTest {
 
     @Test
     public void restGatewayServiceTest() throws Exception {
+        _httpMixIn.setContentType("text/plain");
         String response = _httpMixIn.sendString("http://localhost:8080/greeters/magesh", "", HTTPMixIn.HTTP_PUT);
         Assert.assertEquals(1, mockService.getMessages().size());
         Assert.assertEquals("magesh", response);

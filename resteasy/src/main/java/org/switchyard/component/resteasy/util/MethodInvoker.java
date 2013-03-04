@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -17,43 +17,25 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.component.common.rest.support;
+package org.switchyard.component.resteasy.util;
+
+import javax.ws.rs.core.MultivaluedMap;
+
+import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 
 /**
- * Item for WarehouseService.
+ * Client Invoker interface for RESTEasy.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
-public class Item {
-    private Integer _itemId;
-    private String _name;
+public interface MethodInvoker {
 
-    public Item(Integer itemId, String name) {
-        _itemId = itemId;
-        _name = name;
-    }
-
-    public Integer getItemId() {
-        return _itemId;
-    }
-
-    public void setItemId(Integer itemId) {
-        _itemId = itemId;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public void setName(String name) {
-        _name = name;
-    }
-
-    public String toString() {
-        return "[" + _itemId + ":" +_name + "]";
-    }
-
-    public boolean equals(Item item) {
-        return (_itemId == item.getItemId()) && (_name.equals(item.getName()));
-    }
+    /**
+     * Invokes the JAX-RS method.
+     *
+     * @param args the method arguments
+     * @param headers the HTTP headers to be set on the request
+     * @return the method's response entity and headers wrapped in RESTEasyBindingData
+     */
+    RESTEasyBindingData invoke(Object[] args, MultivaluedMap<String, String> headers);
 }

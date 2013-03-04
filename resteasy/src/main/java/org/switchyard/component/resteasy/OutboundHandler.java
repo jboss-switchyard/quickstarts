@@ -19,27 +19,24 @@
  
 package org.switchyard.component.resteasy;
 
-import java.io.StringWriter;
-import java.io.Writer;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-
-import javax.ws.rs.core.MediaType;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.composer.MessageComposer;
-import org.switchyard.component.common.rest.RsMethod;
-import org.switchyard.component.common.rest.RsMethodUtil;
 import org.switchyard.component.resteasy.composer.RESTEasyComposition;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
+import org.switchyard.component.resteasy.resource.ResourcePublisherFactory;
+import org.switchyard.component.resteasy.util.ClientInvoker;
+import org.switchyard.component.resteasy.util.MethodInvoker;
 import org.switchyard.deploy.BaseServiceHandler;
 
 /**
@@ -50,11 +47,13 @@ import org.switchyard.deploy.BaseServiceHandler;
 public class OutboundHandler extends BaseServiceHandler {
 
     private static final Logger LOGGER = Logger.getLogger(OutboundHandler.class);
+    private static final Class<?>[] CLASS_ARG_ARRAY = {Class.class};
 
     private final RESTEasyBindingModel _config;
     private String _baseAddress = "http://localhost:8080";
-    private Map<String, RsMethod> _resourcePaths;
+    private Map<String, MethodInvoker> _methodMap = new HashMap<String, MethodInvoker>();
     private MessageComposer<RESTEasyBindingData> _messageComposer;
+
 
     /**
      * Constructor.
@@ -71,10 +70,25 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     public void start() throws RESTEasyConsumeException {
         String resourceIntfs = _config.getInterfaces();
-        _resourcePaths = RsMethodUtil.parseResources(resourceIntfs);
         String address = _config.getAddress();
         if (address != null) {
             _baseAddress = address;
+        }
+        String path = _baseAddress;
+        String contextPath = _config.getContextPath();
+        if ((contextPath != null) && !ResourcePublisherFactory.ignoreContext()) {
+            path = path + "/" + contextPath;
+        }
+        StringTokenizer st = new StringTokenizer(resourceIntfs, ",");
+        while (st.hasMoreTokens()) {
+            String className = st.nextToken().trim();
+            Class<?> clazz = Classes.forName(className);
+            for (Method method : clazz.getMethods()) {
+                // ignore the as method to allow declaration in client interfaces
+                if (!("as".equals(method.getName()) && Arrays.equals(method.getParameterTypes(), CLASS_ARG_ARRAY))) {
+                    _methodMap.put(method.getName(), new ClientInvoker(path, clazz, method));
+                }
+            }
         }
         // Create and configure the RESTEasy message composer
         _messageComposer = RESTEasyComposition.getMessageComposer(_config);
@@ -94,80 +108,32 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
-        final RsMethod restMethod = _resourcePaths.get(exchange.getContract().getProviderOperation().toString());
         final String opName = exchange.getContract().getProviderOperation().getName();
-        if (restMethod == null) {
-            throw new RuntimeException("Could not map " + opName + " to any RESTEasy method.");
-        }
+
+        RESTEasyBindingData restRequest = null;
         try {
-            String path = RsMethodUtil.getPath(restMethod, exchange);
-            String contextPath = _config.getContextPath();
-
-            if (contextPath != null) {
-                path = "/" + contextPath + path;
-            }
-
-            // Support for proxy client may be added later, please do not remove this commented code, which is for reference.
-            /*Object restProxy = ProxyFactory.create(restMethod.getResource(), _baseAddress);
-            Method method = null;
-            Object response = null;
-            if (restMethod.getRequestType() != null) {
-                method = restMethod.getResource().getMethod(opName, restMethod.getRequestType());
-                response = method.invoke(restProxy, content);
-            } else {
-                method = restMethod.getResource().getMethod(opName);
-                method.invoke(restProxy);
-            }
-            Message out = exchange.createMessage();
-            out.setContent(response);
-            exchange.send(out);*/
-
-            // Support for manual client
-            ClientRequest request = new ClientRequest(_baseAddress + path);
-            RESTEasyBindingData restRequest = _messageComposer.decompose(exchange, new RESTEasyBindingData());
-            Object content = restRequest.getContent();
-            if ((restMethod.getRequestType() != null) && (content != null) && !restMethod.hasParam()) {
-                // Factor based on media type
-                if (restMethod.getConsumes().contains(MediaType.TEXT_PLAIN_TYPE)) {
-                    request.body(MediaType.TEXT_PLAIN, content);
-                } else if (restMethod.getConsumes().contains(MediaType.APPLICATION_XML_TYPE) || restMethod.getConsumes().contains(MediaType.WILDCARD_TYPE)) {
-                    JAXBContext jaxbContext = JAXBContext.newInstance(restMethod.getRequestType());
-                    Marshaller marshaller = jaxbContext.createMarshaller();
-                    Writer sw = new StringWriter();
-                    marshaller.marshal(content, sw);
-                    request.body(MediaType.APPLICATION_XML, sw.toString());
-                } else if (restMethod.getConsumes().contains(MediaType.TEXT_XML_TYPE)) {
-                    JAXBContext jaxbContext = JAXBContext.newInstance(restMethod.getRequestType());
-                    Marshaller marshaller = jaxbContext.createMarshaller();
-                    Writer sw = new StringWriter();
-                    marshaller.marshal(content, sw);
-                    request.body(MediaType.TEXT_XML, sw.toString());
-                } else if (restMethod.getConsumes().contains(MediaType.APPLICATION_JSON_TYPE)) {
-                    ObjectMapper mapper = new ObjectMapper();
-                    Writer sw = new StringWriter();
-                    mapper.writeValue(sw, content);
-                    request.body(MediaType.APPLICATION_JSON, sw.toString());
-                }
-                // Other types coming soon
-            } else if (restMethod.hasQueryParam()) {
-                request.queryParameter(restMethod.getParamName(), content);
-            } else if (restMethod.hasPathParam()) {
-                request.pathParameters(content);
-            } else if (restMethod.hasMatrixParam()) {
-                request.matrixParameter(restMethod.getParamName(), content);
-            }
-            request.getHeaders().putAll(restRequest.getHeaders());
-            ClientResponse<?> response = request.httpMethod(restMethod.getMethod(), restMethod.getResponseType());
-            if (response.getStatus() == 200) {
-                RESTEasyBindingData restResponse = new RESTEasyBindingData();
-                restResponse.setContent(response.getEntity());
-                restResponse.setHeaders(response.getHeaders());
-                Message out = _messageComposer.compose(restResponse, exchange, true);
-                // Our transformer magic transforms the entity appropriately here :)
-                exchange.send(out);
-            }
+            restRequest = _messageComposer.decompose(exchange, new RESTEasyBindingData());
         } catch (Exception e) {
-            final String m = "Unexpected exception handling outbound REST request";
+            final String m = "Unexpected exception composing outbound REST request";
+            LOGGER.error(m, e);
+            throw new HandlerException(m, e);
+        }
+
+        Object response = null;
+        MethodInvoker methodInvoker = _methodMap.get(opName);
+        if (methodInvoker == null) {
+            final String m = "Unable to map " + opName + " among resources " + _methodMap.keySet();
+            throw new HandlerException(m);
+        }
+        RESTEasyBindingData restResponse = methodInvoker.invoke(restRequest.getParameters(), restRequest.getHeaders());
+
+        try {
+            restResponse.setOperationName(opName);
+            Message out = _messageComposer.compose(restResponse, exchange, true);
+            // Our transformer magic transforms the entity appropriately here :)
+            exchange.send(out);
+        } catch (Exception e) {
+            final String m = "Unexpected exception composing inbound Message";
             LOGGER.error(m, e);
             throw new HandlerException(m, e);
         }

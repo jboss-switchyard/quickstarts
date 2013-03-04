@@ -20,7 +20,8 @@
 package org.switchyard.component.resteasy.resource;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
+import java.net.InetSocketAddress; 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -54,7 +55,12 @@ public class StandaloneResourcePublisher implements ResourcePublisher {
      * {@inheritDoc}
      */
     public Resource publish(String context, List<Object> instances) throws Exception {
-        if (_contextBuilder.getPath().equals(context)) {
+        List<Object> resourceInstances = new ArrayList<Object>();
+        String path = _contextBuilder.getPath();
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        if (path.equals(context)) {
             _contextBuilder.cleanup();
             try {
                 _httpServer.removeContext(_contextBuilder.getPath());
@@ -63,13 +69,15 @@ public class StandaloneResourcePublisher implements ResourcePublisher {
                     LOGGER.debug(iae);
                 }
             }
+            resourceInstances = _contextBuilder.getDeployment().getResources();
             _contextBuilder.getDeployment().getDefaultContextObjects().clear();
-            _contextBuilder.setPath(context);
         }
         // Add as singleton instance
         for (Object instance : instances) {
-            _contextBuilder.getDeployment().getResources().add(instance);
+            resourceInstances.add(instance);
         }
+        _contextBuilder.getDeployment().setResources(resourceInstances);
+        _contextBuilder.setPath(context);
         _contextBuilder.bind(_httpServer);
         return new StandaloneResource();
     }

@@ -34,6 +34,7 @@ import javax.ws.rs.PUT;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
 @Path("/warehouse")
+@Consumes({"application/xml","application/json"})
 public interface WarehouseResource {
 
     @GET

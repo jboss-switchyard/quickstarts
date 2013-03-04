@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.resteasy.composer;
 
-
+import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.component.common.composer.BaseMessageComposer;
@@ -27,8 +27,11 @@ import org.switchyard.component.common.composer.BaseMessageComposer;
  * Composes/decomposes RESTEasy messages.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
 public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyBindingData> {
+
+    private static final Logger LOGGER = Logger.getLogger(RESTEasyMessageComposer.class);
 
     /**
      * {@inheritDoc}
@@ -37,7 +40,15 @@ public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyBinding
     public Message compose(RESTEasyBindingData source, Exchange exchange, boolean create) throws Exception {
         final Message message = create ? exchange.createMessage() : exchange.getMessage();
         getContextMapper().mapFrom(source, exchange.getContext());
-        message.setContent(source.getContent());
+        Object content = null;
+        if (source.getParameters().length > 0) {
+            content = source.getParameters()[0];
+        }
+        message.setContent(content);
+
+        if (source.getParameters().length > 1) {
+            LOGGER.warn("Default RESTEasy Message Composer doesn't handle multiple input parameters.");
+        }
         return message;
     }
 
@@ -46,7 +57,11 @@ public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyBinding
      */
     @Override
     public RESTEasyBindingData decompose(Exchange exchange, RESTEasyBindingData target) throws Exception {
-        target.setContent(exchange.getMessage().getContent());
+        Object content = exchange.getMessage().getContent();
+        target.setOperationName(exchange.getContract().getProviderOperation().getName());
+        if (content != null) {
+            target.setParameters(new Object[]{content});
+        }
         getContextMapper().mapTo(exchange.getContext(), target);
         return target;
     }

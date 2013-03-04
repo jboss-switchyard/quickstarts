@@ -37,7 +37,6 @@
         <module>camel</module>
         <module>common</module>
         <module>knowledge</module>
-        <module>rest</module>
     </modules>
     <build>
         <plugins>

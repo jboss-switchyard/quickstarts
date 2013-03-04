@@ -32,8 +32,30 @@ public final class ResourcePublisherFactory {
 
     private static final ResourcePublisher PUBLISHER;
 
+    private static Boolean IGNORE_CONTEXT = false;
+
+    static {
+        try {
+            PUBLISHER = ServiceLoader.load(ResourcePublisher.class).iterator().next();
+        } catch (Exception e) {
+            throw new RESTEasyPublishException(e);
+        }
+        if (PUBLISHER instanceof NettyResourcePublisher) {
+            // Context paths are irrelevent for NettyJaxrs server
+            IGNORE_CONTEXT = true;
+        }
+    }
 
     private ResourcePublisherFactory() {
+    }
+
+    /**
+     * Should the context path be ignored?
+     *
+     * @return true if using NettyJaxrsServer
+     */
+    public static Boolean ignoreContext() {
+        return IGNORE_CONTEXT;
     }
 
     /**
@@ -42,13 +64,5 @@ public final class ResourcePublisherFactory {
      */
     public static ResourcePublisher getPublisher() {
         return PUBLISHER;
-    }
-
-    static {
-        try {
-            PUBLISHER = ServiceLoader.load(ResourcePublisher.class).iterator().next();
-        } catch (Exception e) {
-            throw new RESTEasyPublishException(e);
-        }
     }
 }

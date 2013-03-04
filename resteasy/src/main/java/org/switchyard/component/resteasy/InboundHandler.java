@@ -73,7 +73,7 @@ public class InboundHandler extends BaseServiceHandler {
             _service = _domain.getServiceReference(_config.getServiceName());
             List<Object> instances = ClassUtil.generateSingletons(resourceIntfs, this);
             String contextPath = _config.getContextPath();
-            if (contextPath == null) {
+            if ((contextPath == null) || (ResourcePublisherFactory.ignoreContext())) {
                 contextPath = "/";
             }
             // Add as singleton instances
@@ -88,27 +88,31 @@ public class InboundHandler extends BaseServiceHandler {
     /**
      * Invokes the SwitchYard service.
      *
-     * @param operationName the name of the service operation
      * @param restMessageRequest the request RESTEasyMessage
      * @param oneWay true of this is a oneway request
      * @return the response from invocation
      */
-    public RESTEasyBindingData invoke(final String operationName, final RESTEasyBindingData restMessageRequest, final boolean oneWay) {
+    public RESTEasyBindingData invoke(final RESTEasyBindingData restMessageRequest, final boolean oneWay) {
         RESTEasyBindingData output = new RESTEasyBindingData();
+        SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
+        Exchange exchange = _service.createExchange(restMessageRequest.getOperationName(), inOutHandler);
+        Message message = null;
         try {
-            SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
-            Exchange exchange = _service.createExchange(operationName, inOutHandler);
-            Message message = _messageComposer.compose(restMessageRequest, exchange, true);
-            if (oneWay) {
-                exchange.send(message);
-            } else {
-                exchange.send(message);
-                exchange = inOutHandler.waitForOut();
-                output = _messageComposer.decompose(exchange, output);
-            }
+            message = _messageComposer.compose(restMessageRequest, exchange, true);
         } catch (Exception e) {
-            LOGGER.error("Unexpected exception handling inbound REST request", e);
-            output.setContent(null);
+            LOGGER.error("Unexpected exception composing inbound Message", e);
+            return output;
+        }
+        if (oneWay) {
+            exchange.send(message);
+        } else {
+            exchange.send(message);
+            exchange = inOutHandler.waitForOut();
+            try {
+                output = _messageComposer.decompose(exchange, output);
+            } catch (Exception e) {
+                LOGGER.error("Unexpected exception composing outbound REST response", e);
+            }
         }
         return output;
     }
