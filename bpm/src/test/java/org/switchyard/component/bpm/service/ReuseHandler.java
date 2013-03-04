@@ -16,12 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.work;
+package org.switchyard.component.bpm.service;
 
 import org.kie.runtime.process.WorkItem;
 import org.kie.runtime.process.WorkItemHandler;
 import org.kie.runtime.process.WorkItemManager;
-import org.switchyard.component.bpm.work.BPMWorkTests.Holder;
+import org.switchyard.component.bpm.service.BPMServiceTests.Holder;
 
 /**
  * An example handler being reused.

@@ -1,6 +1,6 @@
 package org.switchyard.component.bpm
 
-import org.switchyard.component.bpm.work.BPMWorkTests.Holder
+import org.switchyard.component.bpm.service.BPMServiceTests.Holder
 
 rule "RulesFired Rule"
     ruleflow-group "RulesFired Group"

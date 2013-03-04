@@ -172,7 +172,7 @@ public final class Listeners {
             }
         } else if (runtimeEventManager instanceof CommandBasedStatefulKnowledgeSession) {
             CommandBasedStatefulKnowledgeSession cbsks = (CommandBasedStatefulKnowledgeSession)runtimeEventManager;
-            ReteooWorkingMemoryInterface rwmi = ((StatefulKnowledgeSessionImpl)((KnowledgeCommandContext)cbsks.getCommandService().getContext()).getStatefulKnowledgesession()).session;
+            ReteooWorkingMemoryInterface rwmi = ((StatefulKnowledgeSessionImpl)((KnowledgeCommandContext)cbsks.getCommandService().getContext()).getKieSession()).session;
             if (listener instanceof WorkingMemoryEventListener) {
                 rwmi.addEventListener((WorkingMemoryEventListener)listener);
             } else if (listener instanceof org.kie.event.rule.WorkingMemoryEventListener) {

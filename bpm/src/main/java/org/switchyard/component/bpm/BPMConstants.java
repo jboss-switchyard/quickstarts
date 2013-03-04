@@ -35,6 +35,11 @@ public final class BPMConstants {
     /** {urn:switchyard-component-bpm:bpm:1.0}processInstanceId . */
     public static final String PROCESSS_INSTANCE_ID_PROPERTY = new QName(BPM_NAMESPACE, PROCESS_INSTANCE_ID).toString();
 
+    /** correlationKey . */
+    public static final String CORRELATION_KEY = "correlationKey";
+    /** {urn:switchyard-component-bpm:bpm:1.0}correlationKey . */
+    public static final String CORRELATION_KEY_PROPERTY = new QName(BPM_NAMESPACE, CORRELATION_KEY).toString();
+
     /** sessionId . */
     public static final String SESSION_ID = "sessionId";
     /** {urn:switchyard-component-bpm:bpm:1.0}sessionId . */

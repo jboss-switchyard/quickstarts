@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.jboss.org/drools" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="Definitions_1" targetNamespace="http://www.jboss.org/drools">
+  <bpmn2:itemDefinition id="ItemDefinition_1" itemKind="Physical" structureRef="org.switchyard.component.bpm.work.BPMDroolsTests.Holder"/>
   <bpmn2:process id="RulesFired" tns:version="1" tns:packageName="org.switchyard.component.bpm" name="RulesFired">
     <bpmn2:property id="holder" itemSubjectRef="ItemDefinition_1"/>
     <bpmn2:endEvent id="EndEvent_1">
@@ -21,7 +22,6 @@
     </bpmn2:startEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_4" tns:priority="1" name="" sourceRef="StartEvent_1" targetRef="ScriptTask_2"/>
   </bpmn2:process>
-  <bpmn2:itemDefinition id="ItemDefinition_1" itemKind="Physical" structureRef="org.switchyard.component.bpm.work.BPMDroolsTests.Holder"/>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1" name="Default Process Diagram">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="RulesFired">
       <bpmndi:BPMNShape id="BPMNShape_1" bpmnElement="StartEvent_1">

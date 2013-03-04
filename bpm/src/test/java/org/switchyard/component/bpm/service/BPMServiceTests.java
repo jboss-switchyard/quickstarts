@@ -16,8 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.work;
+package org.switchyard.component.bpm.service;
 
+import static org.switchyard.component.bpm.BPMConstants.CORRELATION_KEY_PROPERTY;
 import static org.switchyard.component.bpm.BPMConstants.PROCESSS_INSTANCE_ID_PROPERTY;
 
 import javax.xml.namespace.QName;
@@ -39,6 +40,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.Scope;
+import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.bpm.annotation.BPM;
@@ -48,30 +50,30 @@ import org.switchyard.component.bpm.annotation.WorkItemHandler;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.BPMSwitchYardScanner;
 import org.switchyard.component.bpm.exchange.BPMExchangeHandler;
-import org.switchyard.component.bpm.service.SwitchYardServiceWorkItemHandler;
 import org.switchyard.component.common.knowledge.annotation.Manifest;
 import org.switchyard.component.common.knowledge.annotation.Mapping;
 import org.switchyard.component.common.knowledge.annotation.Resource;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
+import org.switchyard.metadata.java.JavaService;
 import org.switchyard.test.SwitchYardRunner;
 
 /**
- * Tests the Drools BPM implementation.
+ * Tests the BPM implementation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @RunWith(SwitchYardRunner.class)
-public class BPMWorkTests {
+public class BPMServiceTests {
 
-    private static final String CALL_SERVICE_BPMN = "org/switchyard/component/bpm/work/BPMWorkTests-CallService.bpmn";
-    private static final String CONTROL_PROCESS_BPMN = "org/switchyard/component/bpm/work/BPMWorkTests-ControlProcess.bpmn";
-    private static final String FAULT_RESULT_PROCESS_BPMN = "org/switchyard/component/bpm/work/BPMWorkTests-FaultResultProcess.bpmn";
-    private static final String FAULT_EVENT_PROCESS_BPMN = "org/switchyard/component/bpm/work/BPMWorkTests-FaultEventProcess.bpmn";
-    private static final String REUSE_HANDLER_BPMN = "org/switchyard/component/bpm/work/BPMWorkTests-ReuseHandler.bpmn";
-    private static final String RULES_FIRED_BPMN = "org/switchyard/component/bpm/work/BPMWorkTests-RulesFired.bpmn";
-    private static final String RULES_FIRED_DRL = "org/switchyard/component/bpm/work/BPMWorkTests-RulesFired.drl";
+    private static final String CALL_SERVICE_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-CallService.bpmn";
+    private static final String CONTROL_PROCESS_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-ControlProcess.bpmn";
+    private static final String FAULT_RESULT_PROCESS_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-FaultResultProcess.bpmn";
+    private static final String FAULT_EVENT_PROCESS_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-FaultEventProcess.bpmn";
+    private static final String REUSE_HANDLER_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-ReuseHandler.bpmn";
+    private static final String RULES_FIRED_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-RulesFired.bpmn";
+    private static final String RULES_FIRED_DRL = "org/switchyard/component/bpm/service/BPMServiceTests-RulesFired.drl";
 
     private ServiceDomain serviceDomain;
 
@@ -101,7 +103,7 @@ public class BPMWorkTests {
     @BPM(processId="ControlProcess", manifest=@Manifest(resources=@Resource(location=CONTROL_PROCESS_BPMN, type="BPMN2")))
     public interface ControlProcess {
         @StartProcess
-        public void process(Object content);
+        public Object process(Object content);
         @SignalEvent(id="test")
         public void signal(Object content);
     }
@@ -109,26 +111,52 @@ public class BPMWorkTests {
     @Test
     public void testControlProcess() throws Exception {
         final Holder holder = new Holder();
-        serviceDomain.registerService(new QName("CallService"), new InOnlyService(), new BaseHandler(){
+        Service callService = serviceDomain.registerService(new QName("CallService"), new InOnlyService(), new BaseHandler(){
             public void handleMessage(Exchange exchange) throws HandlerException {
                 holder.setValue("message handled");
             }
         });
-        serviceDomain.registerServiceReference(new QName("CallService"), new InOnlyService());
-        ServiceReference processServiceRef = serviceDomain.registerServiceReference(new QName("ControlProcess"), new InOnlyService("process"));
-        ServiceReference signalServiceRef = serviceDomain.registerServiceReference(new QName("ControlProcess"), new InOnlyService("signal"));
+        serviceDomain.registerServiceReference(callService.getName(), callService.getInterface(), callService.getProviderHandler());
         BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(ControlProcess.class).getImplementation();
         BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain);
-        serviceDomain.registerService(new QName("ControlProcess"), new InOnlyService(), handler);
+        Service controlService = serviceDomain.registerService(new QName("ControlProcess"), JavaService.fromClass(ControlProcess.class), handler);
+        ServiceReference controlReference = serviceDomain.registerServiceReference(controlService.getName(), controlService.getInterface(), controlService.getProviderHandler());
         handler.start();
-        Exchange exchange = processServiceRef.createExchange();
+        Exchange exchange = controlReference.createExchange("process");
         Context context = exchange.getContext();
         exchange.send(exchange.createMessage());
-        Property property = context.getProperty(PROCESSS_INSTANCE_ID_PROPERTY, Scope.EXCHANGE);
+        Property property = context.getProperty(PROCESSS_INSTANCE_ID_PROPERTY, Scope.OUT);
         Long processInstanceId = property != null ? (Long)property.getValue() : null;
-        exchange = signalServiceRef.createExchange();
+        exchange = controlReference.createExchange("signal");
         context = exchange.getContext();
-        context.setProperty(PROCESSS_INSTANCE_ID_PROPERTY, processInstanceId, Scope.EXCHANGE);
+        context.setProperty(PROCESSS_INSTANCE_ID_PROPERTY, processInstanceId, Scope.IN);
+        exchange.send(exchange.createMessage());
+        handler.stop();
+        Assert.assertEquals("message handled", holder.getValue());
+    }
+
+    @Test
+    public void testCorrelateProcess() throws Exception {
+        final String correlationKey = "ABC 123";
+        final Holder holder = new Holder();
+        Service callService = serviceDomain.registerService(new QName("CallService"), new InOnlyService(), new BaseHandler(){
+            public void handleMessage(Exchange exchange) throws HandlerException {
+                holder.setValue("message handled");
+            }
+        });
+        serviceDomain.registerServiceReference(callService.getName(), callService.getInterface(), callService.getProviderHandler());
+        BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(ControlProcess.class).getImplementation();
+        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain);
+        Service controlService = serviceDomain.registerService(new QName("ControlProcess"), JavaService.fromClass(ControlProcess.class), handler);
+        ServiceReference controlReference = serviceDomain.registerServiceReference(controlService.getName(), controlService.getInterface(), controlService.getProviderHandler());
+        handler.start();
+        Exchange exchange = controlReference.createExchange("process");
+        Context context = exchange.getContext();
+        context.setProperty(CORRELATION_KEY_PROPERTY, correlationKey, Scope.IN);
+        exchange.send(exchange.createMessage());
+        exchange = controlReference.createExchange("signal");
+        context = exchange.getContext();
+        context.setProperty(CORRELATION_KEY_PROPERTY, correlationKey, Scope.IN);
         exchange.send(exchange.createMessage());
         handler.stop();
         Assert.assertEquals("message handled", holder.getValue());

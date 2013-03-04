@@ -21,9 +21,9 @@ package org.switchyard.component.common.knowledge.session;
 import java.util.Map;
 import java.util.Properties;
 
-import org.drools.persistence.jpa.KnowledgeStoreServiceImpl;
 import org.kie.KieBase;
 import org.kie.KieBaseConfiguration;
+import org.kie.KieServices;
 import org.kie.KnowledgeBase;
 import org.kie.KnowledgeBaseFactory;
 import org.kie.builder.KnowledgeBuilder;
@@ -89,9 +89,7 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
      */
     @Override
     public KnowledgeSession getPersistentSession(Map<String, Object> environmentOverrides, Integer sessionId) {
-        // TODO: change back once KieServicesImpl.getStoreServices() stops failing trying to get an UNREGISTERED KieStoreServices.
-        //KieStoreServices kieStoreServices = KieServices.Factory.get().getStoreServices();
-        KieStoreServices kieStoreServices = new KnowledgeStoreServiceImpl();
+        KieStoreServices kieStoreServices = KieServices.Factory.get().getStoreServices();
         Environment env = Environments.getEnvironment(environmentOverrides);
         KieSession stateful = null;
         if (sessionId != null) {
