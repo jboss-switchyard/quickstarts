@@ -27,12 +27,13 @@ import org.junit.runner.RunWith;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
+import org.switchyard.component.resteasy.resource.ResourcePublisherFactory;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 
 /**
- * Tests for Camel CXFRS binding.
+ * Tests for RESTEasy binding.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
@@ -47,20 +48,20 @@ public class RESTEasyBindingTest {
     private HTTPMixIn http;
 
     /**
-     * Ignore until this is fixed https://issues.jboss.org/browse/RESTEASY-734
+     * This Quickstart test exclusively uses Netty server due to buggy JDK HttpServer.
+     * See https://issues.jboss.org/browse/RESTEASY-734
      */
-    @Ignore
     @Test
     public void orderServiceRESTEndpoint() throws Exception {
         // Create our inventory
         String response = null;
-        //response = http.sendString(BASE_URL + "/inventory/create", "", HTTPMixIn.HTTP_OPTIONS);
-        //Assert.assertEquals(SUCCESS, response);
-        WarehouseResource warehouseProxy = ProxyFactory.create(WarehouseResource.class, BASE_URL);
+        response = http.sendString(BASE_URL + "/inventory/create", "", HTTPMixIn.HTTP_OPTIONS);
+        Assert.assertEquals(SUCCESS, response);
+        /* WarehouseResource warehouseProxy = ProxyFactory.create(WarehouseResource.class, BASE_URL);
         warehouseProxy.addItem(new Item(1, "Hydrogen Atom - No, we are not kidding!"));
         warehouseProxy.addItem(new Item(2, "Handcrafted Copper Plate"));
         warehouseProxy.addItem(new Item(3, "Einstein's Bust - Talks about your future :)"));
-        warehouseProxy.addItem(new Item(4, "Time Machine"));
+        warehouseProxy.addItem(new Item(4, "Time Machine"));*/
 
         // Create an order
         response = http.sendString(BASE_URL + "/order", "", HTTPMixIn.HTTP_POST);
@@ -100,7 +101,15 @@ public class RESTEasyBindingTest {
         Assert.assertEquals(SUCCESS, response);
     }
 
-    private static final String BASE_URL = "http://localhost:8080/rest-binding";
+    private static String BASE_URL = "http://localhost:8080/rest-binding";
+
+    static {
+        if (ResourcePublisherFactory.ignoreContext()) {
+            // Context paths are irrelevent for NettyJaxrs server
+            BASE_URL = "http://localhost:8080";
+        }
+    }
+
     private static final String SUCCESS = "SUCCESS";
     private static final String ORDER = "<order>"
                                        + "    <orderId>1</orderId>"
