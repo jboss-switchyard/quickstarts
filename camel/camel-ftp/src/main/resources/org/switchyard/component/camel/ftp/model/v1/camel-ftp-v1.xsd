@@ -35,8 +35,8 @@ MA  02110-1301, USA.
                     <group ref="tns:CamelRemoteBindingType" minOccurs="1" maxOccurs="1"/>
 
                     <element name="passiveMode" type="boolean" minOccurs="0" maxOccurs="1"/>
-                    <element name="timeout" type="int" minOccurs="0" maxOccurs="1"/>
-                    <element name="soTimeout" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="timeout" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
+                    <element name="soTimeout" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
                     <element name="siteCommand" type="string" minOccurs="0" maxOccurs="1"/>
 
                     <choice minOccurs="0" maxOccurs="1">
@@ -55,7 +55,7 @@ MA  02110-1301, USA.
                 <sequence>
                     <element name="securityProtocol" type="string" minOccurs="0" maxOccurs="1" />
                     <element name="isImplicit" type="boolean" minOccurs="0" maxOccurs="1" />
-                    <element name="execPbsz" type="long" minOccurs="0" maxOccurs="1" />
+                    <element name="execPbsz" type="switchyard:propLong" minOccurs="0" maxOccurs="1" />
                     <element name="execProt" type="string" minOccurs="0" maxOccurs="1" />
                     <element name="disableSecureDataChannelDefaults" type="boolean" minOccurs="0" maxOccurs="1" />
                 </sequence>

@@ -181,7 +181,7 @@ MA  02110-1301, USA.
     <complexType name="LoggerType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
-                <attribute name="interval" type="integer" use="optional"/>
+                <attribute name="interval" type="swyd:propInteger" use="optional"/>
                 <attribute name="log" type="string" use="optional"/>
                 <attribute name="type" type="bpm:loggerType" use="optional"/>
             </extension>

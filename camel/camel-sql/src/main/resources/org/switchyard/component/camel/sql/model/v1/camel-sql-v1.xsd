@@ -38,7 +38,7 @@ MA  02110-1301, USA.
                 </sequence>
                 <attribute name="timerName" type="string" />
                 <attribute name="period" type="string" />
-                <attribute name="initialDelay" type="long" />
+                <attribute name="initialDelay" type="switchyard:propLong" />
             </extension>
         </complexContent>
     </complexType>

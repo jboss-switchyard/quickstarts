@@ -182,8 +182,8 @@
       <anyAttribute namespace="##other" processContents="lax" />
    </complexType>
    <complexType name="batchCommit">
-      <attribute name="batchSize" type="positiveInteger" use="required"/>
-      <attribute name="batchTimeout" type="positiveInteger" use="required"/>
+      <attribute name="batchSize" type="swyd:propInteger" use="required"/>
+      <attribute name="batchTimeout" type="swyd:propInteger" use="required"/>
    </complexType>
    <complexType name="Processor">
       <sequence>

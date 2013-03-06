@@ -32,10 +32,10 @@ MA  02110-1301, USA.
             <extension base="tns:BaseCamelBinding">
                 <sequence>
                     <element name="host" type="string" />
-                    <element name="port" type="int" minOccurs="0" maxOccurs="1"/>
+                    <element name="port" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
                     <element name="username" type="string" minOccurs="0" maxOccurs="1"/>
                     <element name="password" type="string" minOccurs="0" maxOccurs="1"/>
-                    <element name="connectionTimeout" type="integer" minOccurs="0" maxOccurs="1"/>
+                    <element name="connectionTimeout" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
                     <choice minOccurs="0" maxOccurs="1">
                         <element name="consume" type="tns:CamelMailConsumerType"/>
                         <element name="produce" type="tns:CamelMailProducerType"/>
@@ -63,7 +63,7 @@ MA  02110-1301, USA.
             <group ref="tns:ScheduledBatchPollConsumerType" minOccurs="0" maxOccurs="1" />
 
             <element name="folderName" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="fetchSize" type="integer" minOccurs="0" maxOccurs="1"/>
+            <element name="fetchSize" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
             <element name="unseen" type="boolean" minOccurs="0" maxOccurs="1"/>
             <element name="delete" type="boolean" minOccurs="0" maxOccurs="1"/>
             <element name="copyTo" type="string" minOccurs="0" maxOccurs="1"/>

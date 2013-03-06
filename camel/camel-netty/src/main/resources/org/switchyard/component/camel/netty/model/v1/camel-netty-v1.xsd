@@ -54,9 +54,9 @@ MA  02110-1301, USA.
             <extension base="tns:BaseCamelBinding">
                 <sequence>
                     <element name="host" type="string" />
-                    <element name="port" type="int" />
-                    <element name="receiveBufferSize" type="long" minOccurs="0" maxOccurs="1"/>
-                    <element name="sendBufferSize" type="long" minOccurs="0" maxOccurs="1"/>
+                    <element name="port" type="switchyard:propInteger" />
+                    <element name="receiveBufferSize" type="switchyard:propLong" minOccurs="0" maxOccurs="1"/>
+                    <element name="sendBufferSize" type="switchyard:propLong" minOccurs="0" maxOccurs="1"/>
                     <element name="ssl" type="boolean" minOccurs="0" maxOccurs="1" />
                     <element name="sslHandler" type="string" minOccurs="0" maxOccurs="1" />
                     <choice minOccurs="0" maxOccurs="1">
@@ -73,7 +73,7 @@ MA  02110-1301, USA.
                     <element name="encoders" type="string" minOccurs="0" maxOccurs="1" />
                     <element name="decoders" type="string"  minOccurs="0" maxOccurs="1" />
                     <element name="allowDefaultCodec" type="boolean" minOccurs="0" maxOccurs="1" />
-                    <element name="workerCount" type="int" minOccurs="0" maxOccurs="1" />
+                    <element name="workerCount" type="switchyard:propInteger" minOccurs="0" maxOccurs="1" />
                     <element name="sync" type="boolean" minOccurs="0" maxOccurs="1" />
                     <element name="disconnect" type="boolean" minOccurs="0" maxOccurs="1" />
                 </sequence>

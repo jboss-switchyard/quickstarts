@@ -62,7 +62,7 @@ MA  02110-1301, USA.
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="wsdl" type="anyURI" minOccurs="1" maxOccurs="1">
+                    <element name="wsdl" type="string" minOccurs="1" maxOccurs="1">
                         <annotation>
                             <documentation>
                                 A WSDL file name that can be found in classpath else can be a file://, http:// or https:// URL location.
