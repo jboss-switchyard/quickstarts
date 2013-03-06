@@ -47,7 +47,7 @@ import org.switchyard.component.bpm.BPMActionType;
 import org.switchyard.component.bpm.BPMConstants;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.transaction.AS7TransactionHelper;
-import org.switchyard.component.bpm.work.WorkItemHandlers;
+import org.switchyard.component.bpm.util.WorkItemHandlers;
 import org.switchyard.component.common.knowledge.KnowledgeConstants;
 import org.switchyard.component.common.knowledge.exchange.KnowledgeAction;
 import org.switchyard.component.common.knowledge.exchange.KnowledgeExchangeHandler;

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.work;
+package org.switchyard.component.bpm.util;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -36,6 +36,9 @@ import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.WorkItemHandlerModel;
 import org.switchyard.component.bpm.config.model.WorkItemHandlersModel;
+import org.switchyard.component.bpm.service.SwitchYardServiceTaskHandler;
+import org.switchyard.component.bpm.service.SwitchYardServiceWorkItemHandler;
+import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -81,16 +84,15 @@ public final class WorkItemHandlers {
                 }
                 WorkItemHandler workItemHandler = newWorkItemHandler(workItemHandlerClass, runtime);
                 String name = workItemHandlerModel.getName();
-                if (workItemHandler instanceof SwitchYardWorkItemHandler) {
-                    SwitchYardWorkItemHandler sywih = (SwitchYardWorkItemHandler)workItemHandler;
+                if (workItemHandler instanceof SwitchYardServiceWorkItemHandler) {
+                    SwitchYardServiceWorkItemHandler syswih = (SwitchYardServiceWorkItemHandler)workItemHandler;
                     if (name != null) {
-                        sywih.setName(name);
+                        syswih.setName(name);
                     } else {
-                        name = sywih.getName();
+                        name = syswih.getName();
                     }
-                    sywih.setProcessRuntime(runtime);
-                    sywih.setServiceDomain(domain);
-                    sywih.setTargetNamespace(tns);
+                    syswih.setInvoker(new SwitchYardServiceInvoker(domain, tns));
+                    syswih.setProcessRuntime(runtime);
                 }
                 if (name == null && workItemHandler instanceof AbstractHTWorkItemHandler) {
                     name = HUMAN_TASK;
@@ -106,12 +108,11 @@ public final class WorkItemHandlers {
             String name = entry.getKey();
             if (!registeredNames.contains(name)) {
                 WorkItemHandler defaultHandler = newWorkItemHandler(entry.getValue(), runtime);
-                if (defaultHandler instanceof SwitchYardWorkItemHandler) {
-                    SwitchYardWorkItemHandler sywih = (SwitchYardWorkItemHandler)defaultHandler;
-                    sywih.setName(name);
-                    sywih.setProcessRuntime(runtime);
-                    sywih.setServiceDomain(domain);
-                    sywih.setTargetNamespace(tns);
+                if (defaultHandler instanceof SwitchYardServiceWorkItemHandler) {
+                    SwitchYardServiceWorkItemHandler syswih = (SwitchYardServiceWorkItemHandler)defaultHandler;
+                    syswih.setName(name);
+                    syswih.setInvoker(new SwitchYardServiceInvoker(domain, tns));
+                    syswih.setProcessRuntime(runtime);
                 }
                 runtime.getWorkItemManager().registerWorkItemHandler(name, defaultHandler);
                 registeredNames.add(name);

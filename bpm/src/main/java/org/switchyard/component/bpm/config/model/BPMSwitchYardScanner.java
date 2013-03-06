@@ -42,8 +42,8 @@ import org.switchyard.component.bpm.config.model.v1.V1BPMActionModel;
 import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlerModel;
 import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlersModel;
-import org.switchyard.component.bpm.work.SwitchYardWorkItemHandler;
-import org.switchyard.component.bpm.work.WorkItemHandlers;
+import org.switchyard.component.bpm.service.SwitchYardServiceWorkItemHandler;
+import org.switchyard.component.bpm.util.WorkItemHandlers;
 import org.switchyard.component.common.knowledge.annotation.Mapping;
 import org.switchyard.component.common.knowledge.config.model.ActionModel;
 import org.switchyard.component.common.knowledge.config.model.ActionsModel;
@@ -206,10 +206,10 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
             String name = workItemHandlerAnnotation.name();
             if (UNDEFINED.equals(name)) {
                 org.kie.runtime.process.WorkItemHandler wih = WorkItemHandlers.newWorkItemHandler(clazz, null);
-                if (wih instanceof SwitchYardWorkItemHandler) {
-                    SwitchYardWorkItemHandler sywih = (SwitchYardWorkItemHandler)wih;
-                    if (sywih.getName() != null) {
-                        name = sywih.getName();
+                if (wih instanceof SwitchYardServiceWorkItemHandler) {
+                    SwitchYardServiceWorkItemHandler syswih = (SwitchYardServiceWorkItemHandler)wih;
+                    if (syswih.getName() != null) {
+                        name = syswih.getName();
                     }
                 } else if (wih instanceof AbstractHTWorkItemHandler) {
                     name = "Human Task";

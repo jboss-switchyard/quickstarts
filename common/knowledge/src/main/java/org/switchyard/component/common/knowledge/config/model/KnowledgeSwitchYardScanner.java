@@ -30,8 +30,6 @@ import org.switchyard.component.common.knowledge.annotation.Manifest;
 import org.switchyard.component.common.knowledge.annotation.Mapping;
 import org.switchyard.component.common.knowledge.annotation.Property;
 import org.switchyard.component.common.knowledge.annotation.Resource;
-import org.switchyard.component.common.knowledge.channel.SwitchYardChannel;
-import org.switchyard.component.common.knowledge.channel.SwitchYardServiceChannel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ChannelModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ChannelsModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ContainerModel;
@@ -43,6 +41,7 @@ import org.switchyard.component.common.knowledge.config.model.v1.V1ManifestModel
 import org.switchyard.component.common.knowledge.config.model.v1.V1MappingModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1MappingsModel;
 import org.switchyard.component.common.knowledge.expression.ExpressionType;
+import org.switchyard.component.common.knowledge.service.SwitchYardServiceChannel;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
@@ -91,10 +90,10 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
             String name = channelAnnotation.name();
             if (UNDEFINED.equals(name)) {
                 org.kie.runtime.Channel c = Construction.construct(clazz);
-                if (c instanceof SwitchYardChannel) {
-                    SwitchYardChannel syc = (SwitchYardChannel)c;
-                    if (syc.getName() != null) {
-                        name = syc.getName();
+                if (c instanceof SwitchYardServiceChannel) {
+                    SwitchYardServiceChannel sysc = (SwitchYardServiceChannel)c;
+                    if (sysc.getName() != null) {
+                        name = sysc.getName();
                     }
                 }
             }

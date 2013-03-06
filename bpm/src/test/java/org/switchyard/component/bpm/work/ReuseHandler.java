@@ -19,6 +19,7 @@
 package org.switchyard.component.bpm.work;
 
 import org.kie.runtime.process.WorkItem;
+import org.kie.runtime.process.WorkItemHandler;
 import org.kie.runtime.process.WorkItemManager;
 import org.switchyard.component.bpm.work.BPMWorkTests.Holder;
 
@@ -27,13 +28,9 @@ import org.switchyard.component.bpm.work.BPMWorkTests.Holder;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class ReuseHandler extends BaseSwitchYardWorkItemHandler {
+public class ReuseHandler implements WorkItemHandler {
 
     static Holder _holder = new Holder();
-
-    public ReuseHandler() {
-        setName("ReuseHandler");
-    }
 
     @Override
     public void executeWorkItem(WorkItem workItem, WorkItemManager workItemManager) {

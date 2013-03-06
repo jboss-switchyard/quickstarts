@@ -18,19 +18,16 @@
  */
 package org.switchyard.component.common.knowledge.util;
 
-import javax.xml.namespace.QName;
-
 import org.kie.runtime.Channel;
 import org.kie.runtime.KieRuntime;
 import org.switchyard.ServiceDomain;
-import org.switchyard.ServiceReference;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.component.common.knowledge.channel.SwitchYardChannel;
-import org.switchyard.component.common.knowledge.channel.SwitchYardServiceChannel;
 import org.switchyard.component.common.knowledge.config.model.ChannelModel;
 import org.switchyard.component.common.knowledge.config.model.ChannelsModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
+import org.switchyard.component.common.knowledge.service.SwitchYardServiceChannel;
+import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -59,17 +56,16 @@ public final class Channels {
                 }
                 Channel channel = Construction.construct(channelClass);
                 String name = channelModel.getName();
-                if (channel instanceof SwitchYardChannel) {
-                    SwitchYardChannel syc = (SwitchYardChannel)channel;
+                if (channel instanceof SwitchYardServiceChannel) {
+                    SwitchYardServiceChannel sysc = (SwitchYardServiceChannel)channel;
                     if (name != null) {
-                        syc.setName(name);
+                        sysc.setName(name);
                     } else {
-                        name = syc.getName();
+                        name = sysc.getName();
                     }
-                    syc.setOperation(channelModel.getOperation());
-                    QName qname = XMLHelper.createQName(tns, channelModel.getReference());
-                    ServiceReference reference = domain.getServiceReference(qname);
-                    syc.setReference(reference);
+                    sysc.setInvoker(new SwitchYardServiceInvoker(domain, tns));
+                    sysc.setServiceName(XMLHelper.createQName(channelModel.getReference()));
+                    sysc.setServiceOperationName(channelModel.getOperation());
                 }
                 if (name == null) {
                     throw new SwitchYardException("Could not use null name to register channel: " + channel.getClass().getName());
