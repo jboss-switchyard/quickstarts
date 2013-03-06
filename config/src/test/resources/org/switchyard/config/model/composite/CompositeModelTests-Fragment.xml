@@ -27,6 +27,7 @@ MA  02110-1301, USA.
        <soap:binding.soap>
            <soap:port secure="true">MyWebService/SOAPPort</soap:port>
            <soap:wsdl description="foobar">service.wsdl</soap:wsdl>
+           <soap:portNum>${foo:5500}</soap:portNum>
        </soap:binding.soap>
     </service>
     <reference name="SomeOtherService" promote="SimpleService/AnotherService" multiplicity="1..1">

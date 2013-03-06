@@ -34,25 +34,31 @@ import org.switchyard.config.model.composite.v1.V1BindingModel;
 public class SOAPBindingModel extends V1BindingModel {
 
     public static final String SOAP = "soap";
+    public static final String PORT_NUM = "portNum";
 
     private PortModel _port;
     private WSDLModel _wsdl;
 
     public SOAPBindingModel() {
         super(SOAP);
-        setModelChildrenOrder(PORT, WSDL);
+        setModelChildrenOrder(PORT, WSDL, PORT_NUM);
     }
 
     public SOAPBindingModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(PORT, WSDL);
+        setModelChildrenOrder(PORT, WSDL, PORT_NUM);
     }
 
     public PortModel getPort() {
         if (_port == null) {
-            _port = (PortModel)getFirstChildModelStartsWith(PORT);
+            _port = (PortModel)getFirstChildModel(PORT);
         }
         return _port;
+    }
+    
+    public Integer getPortNum() {
+        Configuration config = getModelConfiguration().getFirstChild(PORT_NUM);
+        return config != null ? Integer.valueOf(config.getValue()) : null;
     }
 
     public SOAPBindingModel setPort(PortModel port) {
@@ -60,7 +66,7 @@ public class SOAPBindingModel extends V1BindingModel {
         _port = port;
         return this;
     }
-
+    
     public WSDLModel getWSDL() {
         if (_wsdl == null) {
             _wsdl = (WSDLModel)getFirstChildModelStartsWith(WSDL);

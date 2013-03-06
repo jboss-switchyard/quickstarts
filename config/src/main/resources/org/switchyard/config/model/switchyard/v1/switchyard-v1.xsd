@@ -253,5 +253,24 @@ MA  02110-1301, USA.
     <attribute name="targetNamespace" type="string"/>
     <attribute name="clustered" type="boolean"/>
     <attribute name="loadBalance" type="string"/>
+    
+    <!-- Support for using ${property} values in non-string content -->
+    <simpleType name="propInteger">
+        <union memberTypes="integer swyd:propertyValue"/>
+    </simpleType>
+    
+    <simpleType name="propLong">
+        <union memberTypes="long swyd:propertyValue"/>
+    </simpleType>
+    
+    <simpleType name="propBoolean">
+        <union memberTypes="boolean swyd:propertyValue"/>
+    </simpleType>
+    
+    <simpleType name="propertyValue">
+        <restriction base="string">
+            <pattern value="\$\{([a-zA-Z0-9])*(:([a-zA-Z0-9])*)?\}"/>
+        </restriction>
+    </simpleType>
    
 </schema>

@@ -35,11 +35,12 @@ MA  02110-1301, USA.
                 <sequence>
                     <element name="port" type="soap:PortType" minOccurs="0" maxOccurs="1"/>
                     <element name="wsdl" type="soap:WsdlType" minOccurs="0" maxOccurs="1"/>
+                    <element name="portNum" type="swyd:propInteger" minOccurs="0" maxOccurs="1"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-
+    
     <element name="port" type="soap:PortType"/>
     <complexType name="PortType">
         <simpleContent>
