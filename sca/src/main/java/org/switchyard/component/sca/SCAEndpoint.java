@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.composite.SCABindingModel;
@@ -36,6 +37,8 @@ import org.switchyard.remote.RemoteRegistry;
  * Represents a service endpoint binding using <binding.sca>.
  */
 public class SCAEndpoint extends BaseServiceHandler {
+    
+    private static Logger _log = Logger.getLogger(SCAEndpoint.class);
     
     private RemoteEndpointPublisher _endpointPublisher;
     private ServiceDomain _domain;
@@ -70,15 +73,21 @@ public class SCAEndpoint extends BaseServiceHandler {
         }
         
         if (_bindingModel.isClustered()) {
-            _endpoint = RemoteEndpoint.fromService(services.get(0));
-            _endpoint.setEndpoint(_endpointPublisher.getAddress());
-            _registry.addEndpoint(_endpoint);
+            // The registry can be null in test environments or if the cache is misconfigured
+            if (_registry != null) {
+                _endpoint = RemoteEndpoint.fromService(services.get(0));
+                _endpoint.setEndpoint(_endpointPublisher.getAddress());
+                _registry.addEndpoint(_endpoint);
+            } else {
+                _log.warn("Cannot enable clustered SCA binding for " + serviceName
+                        + ".  No distributed cache is avaialble.");
+            }
         }
     }
     
     @Override
     public void stop() {
-        if (_bindingModel.isClustered()) {
+        if (_bindingModel.isClustered() && _registry != null) {
             _registry.removeEndpoint(_endpoint);
         }
         _endpointPublisher.removeService(_bindingModel.getService().getQName(), _domain);

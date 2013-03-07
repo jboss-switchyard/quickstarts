@@ -40,6 +40,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.common.type.Classes;
 import org.switchyard.deploy.internal.Deployment;
+import org.switchyard.exception.SwitchYardException;
 import org.switchyard.remote.RemoteMessage;
 import org.switchyard.remote.http.HttpInvoker;
 import org.switchyard.serial.FormatType;
@@ -62,16 +63,15 @@ public class SwitchYardRemotingServlet extends HttpServlet {
      * {@inheritDoc}
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Grab the right service domain based on the service header
-        ServiceDomain domain = getDomain(request);
-        if (domain == null) {
-            throw new ServletException("Required 'switchyard-service' header is missing or empty");
-        }
-        // Set our TCCL to the domain's deployment loader
-        ClassLoader loader = (ClassLoader) domain.getProperties().get(Deployment.CLASSLOADER_PROPERTY);
-        ClassLoader setTCCL = Classes.setTCCL(loader);
+        ClassLoader setTCCL = null;
         
         try {
+            // Grab the right service domain based on the service header
+            ServiceDomain domain = findDomain(request);
+            // Set our TCCL to the domain's deployment loader
+            ClassLoader loader = (ClassLoader) domain.getProperties().get(Deployment.CLASSLOADER_PROPERTY);
+            setTCCL = Classes.setTCCL(loader);
+            
             RemoteMessage msg = _serializer.deserialize(request.getInputStream(), RemoteMessage.class);
             if (_log.isDebugEnabled()) {
                 _log.debug("Remote servlet received request for service " + msg.getService());
@@ -109,17 +109,34 @@ public class SwitchYardRemotingServlet extends HttpServlet {
                 }
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
+        } catch (SwitchYardException syEx) {
+            if (_log.isDebugEnabled()) {
+                _log.debug("Failed to process remote invocation", syEx);
+            }
+            RemoteMessage reply = new RemoteMessage();
+            reply.setFault(true);
+            reply.setContent(syEx);
+            _serializer.serialize(reply, RemoteMessage.class, response.getOutputStream());
+            response.getOutputStream().flush();
         } finally {
-            Classes.setTCCL(setTCCL);
+            if (setTCCL != null) {
+                Classes.setTCCL(setTCCL);
+            }
         }
     }
     
-    private ServiceDomain getDomain(HttpServletRequest request) {
+    private ServiceDomain findDomain(HttpServletRequest request) throws SwitchYardException {
         ServiceDomain domain = null;
         String service = request.getHeader(HttpInvoker.SERVICE_HEADER);
         
-        if (service != null) {
-            domain = _endpointPublisher.getDomain(QName.valueOf(service));
+        if (service == null || service.trim().length() == 0) {
+            throw new SwitchYardException("Required '" + HttpInvoker.SERVICE_HEADER + "' header is missing or empty");
+        }
+
+        domain = _endpointPublisher.getDomain(QName.valueOf(service));
+        if (domain == null) {
+            throw new SwitchYardException("Unable to find ServiceDomain for service: " + service 
+                    + ". Verify the service name and namespace are registered in the runtime.");
         }
         return domain;
     }

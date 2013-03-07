@@ -32,7 +32,6 @@ import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.SCABindingModel;
 import org.switchyard.deploy.BaseActivator;
 import org.switchyard.deploy.ServiceHandler;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.remote.RemoteRegistry;
 import org.switchyard.remote.infinispan.InfinispanRegistry;
 
@@ -80,10 +79,6 @@ public class SCAActivator extends BaseActivator {
     @Override
     public ServiceHandler activateBinding(QName name, BindingModel config) {
         SCABindingModel scab = (SCABindingModel)config;
-        if (scab.isClustered() && _registry == null) {
-            throw new SwitchYardException("Cannot enable clustered SCA binding for " + name
-                    + ".  No distributed cache is avaialble.");
-        }
         if (scab.isServiceBinding()) {
             return new SCAEndpoint(scab, super.getServiceDomain(), _endpointPublisher, _registry);
         } else {
