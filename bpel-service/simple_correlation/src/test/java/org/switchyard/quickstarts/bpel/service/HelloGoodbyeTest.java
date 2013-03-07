@@ -19,7 +19,6 @@
 
 package org.switchyard.quickstarts.bpel.service;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
@@ -46,16 +45,12 @@ public class HelloGoodbyeTest {
     @Test
     public void testHelloGoodbye() throws Exception {
         String requestTxt = testKit.readResourceString("xml/xml-hello_request1.xml");
-        String replyTxt = testKit.readResourceString("xml/xml-hello_response1.xml");
-        
         String replyMsg = correlationHello.sendInOut(requestTxt).getContent(String.class);
-        Assert.assertEquals(replyTxt, replyMsg);
+        testKit.compareXMLToResource(replyMsg, "xml/xml-hello_response1.xml");
 
         requestTxt = testKit.readResourceString("xml/xml-goodbye_request1.xml");
-        replyTxt = testKit.readResourceString("xml/xml-goodbye_response1.xml");
-        
         replyMsg = correlationGoodbye.sendInOut(requestTxt).getContent(String.class);
-        Assert.assertEquals(replyTxt, replyMsg);
+        testKit.compareXMLToResource(replyMsg, "xml/xml-goodbye_response1.xml");
     }
     
 }

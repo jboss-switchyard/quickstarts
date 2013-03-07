@@ -19,7 +19,6 @@
 
 package org.switchyard.quickstarts.bpel.service;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
@@ -43,10 +42,8 @@ public class RiskAssessmentTest {
     @Test
     public void testRiskAssessment1() throws Exception {
         String requestTxt = testKit.readResourceString("xml/xml-riskreq1.xml");
-        String replyTxt = testKit.readResourceString("xml/xml-riskresp1.xml");
-        
         String replyMsg = riskAssessor.sendInOut(requestTxt).getContent(String.class);
-        Assert.assertEquals(replyTxt, replyMsg);
+        testKit.compareXMLToResource(replyMsg, "xml/xml-riskresp1.xml");
     }
     
     @Test(expected=org.switchyard.test.InvocationFaultException.class)
