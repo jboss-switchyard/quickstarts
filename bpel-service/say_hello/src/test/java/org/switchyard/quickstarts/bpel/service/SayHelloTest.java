@@ -19,7 +19,6 @@
 
 package org.switchyard.quickstarts.bpel.service;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
@@ -43,10 +42,8 @@ public class SayHelloTest {
     @Test
     public void testHello() throws Exception {
         String requestTxt = testKit.readResourceString("xml/xml-request.xml");
-        String replyTxt = testKit.readResourceString("xml/xml-response.xml");
-        
         String replyMsg = sayHello.sendInOut(requestTxt).getContent(String.class);
-        Assert.assertEquals(replyTxt, replyMsg);
+        testKit.compareXMLToResource(replyMsg, "xml/xml-response.xml");
     }
     
 }
