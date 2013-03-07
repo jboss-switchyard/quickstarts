@@ -1,0 +1,19 @@
+package org.switchyard.quickstarts.remoteinvoker
+import org.switchyard.Message
+global Message message
+
+rule "ApproveCredit"
+    when
+        app : Application(creditScore >= 600)
+    then
+        System.out.println("Approving credit for " + app.getName());
+        app.setApproved(true);
+end
+
+rule "DenyCredit"
+    when
+        app : Application(creditScore < 600)
+    then
+        System.out.println("Denying credit for " + app.getName());
+        app.setApproved(false);
+end

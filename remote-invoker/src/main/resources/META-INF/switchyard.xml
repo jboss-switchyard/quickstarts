@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:rules="urn:switchyard-component-rules:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="switchyard-quickstart-remote-invoker" targetNamespace="urn:com.example.switchyard:switchyard-quickstart-remote-invoker:1.0">
+  <sca:composite name="switchyard-quickstart-remote-invoker" targetNamespace="urn:com.example.switchyard:switchyard-quickstart-remote-invoker:1.0">
+    <sca:service name="Dealer" promote="DealerBean/Dealer">
+      <sca:interface.java interface="org.switchyard.quickstarts.remoteinvoker.Dealer"/>
+      <sca:binding.sca/>
+    </sca:service>
+    <sca:component name="DealerBean">
+      <bean:implementation.bean class="org.switchyard.quickstarts.remoteinvoker.DealerBean"/>
+      <sca:service name="Dealer">
+        <sca:interface.java interface="org.switchyard.quickstarts.remoteinvoker.Dealer"/>
+      </sca:service>
+      <sca:reference name="CreditCheck">
+        <sca:interface.java interface="org.switchyard.quickstarts.remoteinvoker.CreditCheck"/>
+      </sca:reference>
+    </sca:component>
+    <sca:component name="RulesComponent">
+      <rules:implementation.rules>
+        <rules:actions>
+          <rules:action operation="checkCredit" type="EXECUTE">
+            <rules:inputs>
+              <rules:mapping expression="message.content.application" expressionType="MVEL"/>
+            </rules:inputs>
+            <rules:outputs>
+              <rules:mapping expression="message.content.application" expressionType="MVEL"/>
+            </rules:outputs>
+          </rules:action>
+        </rules:actions>
+        <rules:manifest>
+          <rules:resources>
+            <rules:resource location="RulesComponent.drl" type="DRL"/>
+          </rules:resources>
+        </rules:manifest>
+      </rules:implementation.rules>
+      <sca:service name="CreditCheck">
+        <sca:interface.java interface="org.switchyard.quickstarts.remoteinvoker.CreditCheck"/>
+      </sca:service>
+    </sca:component>
+  </sca:composite>
+  <!-- Uncomment this section to trace message exchange activity
+  <domain>
+      <handlers>
+          <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
+      </handlers>
+  </domain>
+  -->
+</switchyard>
