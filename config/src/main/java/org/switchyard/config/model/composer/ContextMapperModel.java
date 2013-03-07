@@ -20,6 +20,7 @@
 package org.switchyard.config.model.composer;
 
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * The "contextMapper" configuration model.
@@ -30,6 +31,12 @@ public interface ContextMapperModel extends Model {
 
     /** contextMapper variable. */
     public static final String CONTEXT_MAPPER = "contextMapper";
+
+    /**
+     * Gets the parent binding model.
+     * @return the parent binding model
+     */
+    public BindingModel getBindingModel();
 
     /**
      * Gets the fully qualified class name of ContextMapper.

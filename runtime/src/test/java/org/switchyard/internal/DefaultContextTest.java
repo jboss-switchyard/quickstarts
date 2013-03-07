@@ -25,15 +25,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.Context;
-import org.switchyard.Labels;
 import org.switchyard.Property;
 import org.switchyard.Scope;
+import org.switchyard.label.BehaviorLabel;
 
 /**
  *  Tests for context-related operations.
  */
 public class DefaultContextTest {
     
+    private static final String TRANSIENT = BehaviorLabel.TRANSIENT.label();
     private static final String PROP_NAME = "foo";
     private static final String PROP_VAL= "bar";
     private DefaultContext _context;
@@ -129,34 +130,34 @@ public class DefaultContextTest {
     
     @Test
     public void testGetPropertyLabel() {
-        _context.setProperty("a", "a", Scope.IN).addLabels(Labels.TRANSIENT);
-        _context.setProperty("b", "b", Scope.OUT).addLabels(Labels.TRANSIENT);
-        _context.setProperty("c", "c", Scope.EXCHANGE).addLabels(Labels.TRANSIENT);
+        _context.setProperty("a", "a", Scope.IN).addLabels(TRANSIENT);
+        _context.setProperty("b", "b", Scope.OUT).addLabels(TRANSIENT);
+        _context.setProperty("c", "c", Scope.EXCHANGE).addLabels(TRANSIENT);
         _context.setProperty("d", "d", Scope.IN).addLabels("foo");
-        Assert.assertEquals(3, _context.getProperties(Labels.TRANSIENT).size());
+        Assert.assertEquals(3, _context.getProperties(TRANSIENT).size());
         Assert.assertEquals(1, _context.getProperties("foo").size());
     }
     
     @Test
     public void testRemovePropertyLabel() {
-        _context.setProperty("a", "a", Scope.IN).addLabels(Labels.TRANSIENT);
-        _context.setProperty("b", "b", Scope.OUT).addLabels(Labels.TRANSIENT);
-        _context.setProperty("c", "c", Scope.EXCHANGE).addLabels(Labels.TRANSIENT);
+        _context.setProperty("a", "a", Scope.IN).addLabels(TRANSIENT);
+        _context.setProperty("b", "b", Scope.OUT).addLabels(TRANSIENT);
+        _context.setProperty("c", "c", Scope.EXCHANGE).addLabels(TRANSIENT);
         _context.setProperty("d", "d", Scope.IN).addLabels("foo");
         
-        _context.removeProperties(Labels.TRANSIENT);
-        Assert.assertEquals(0, _context.getProperties(Labels.TRANSIENT).size());
+        _context.removeProperties(TRANSIENT);
+        Assert.assertEquals(0, _context.getProperties(TRANSIENT).size());
         Assert.assertEquals(1, _context.getProperties("foo").size());
     }
     
     @Test
     public void testCopyClean() {
-        _context.setProperty("a", "a", Scope.IN).addLabels(Labels.TRANSIENT);
+        _context.setProperty("a", "a", Scope.IN).addLabels(TRANSIENT);
         _context.setProperty("b", "b", Scope.OUT);
-        _context.setProperty("c", "c", Scope.EXCHANGE).addLabels(Labels.TRANSIENT);
+        _context.setProperty("c", "c", Scope.EXCHANGE).addLabels(TRANSIENT);
         
         Context newCtx = _context.copy();
-        Assert.assertEquals(0, newCtx.getProperties(Labels.TRANSIENT).size());
+        Assert.assertEquals(0, newCtx.getProperties(TRANSIENT).size());
         Assert.assertEquals(1, newCtx.getProperties().size());
     }
     

@@ -26,6 +26,7 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composer.ContextMapperModel;
+import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
@@ -57,6 +58,14 @@ public class V1ContextMapperModel extends BaseModel implements ContextMapperMode
      */
     public V1ContextMapperModel(Configuration config, Descriptor desc) {
         super(config, desc);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BindingModel getBindingModel() {
+        return (BindingModel)getModelParent();
     }
 
     /**

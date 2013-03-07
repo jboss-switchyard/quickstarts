@@ -23,8 +23,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.switchyard.Exchange;
-import org.switchyard.Labels;
 import org.switchyard.Property;
+import org.switchyard.label.BehaviorLabel;
 
 /**
  * Used to set policy details on a message exchange.  Provided policy represents
@@ -49,7 +49,7 @@ public final class PolicyUtil {
     public static void provide(Exchange exchange, Policy policy) {
         Set<Policy> provided = getPolicies(exchange, PROVIDED_PROPERTY);
         provided.add(policy);
-        exchange.getContext().setProperty(PROVIDED_PROPERTY, provided).addLabels(Labels.TRANSIENT);
+        exchange.getContext().setProperty(PROVIDED_PROPERTY, provided).addLabels(BehaviorLabel.TRANSIENT.label());
     }
     
     /**
@@ -79,7 +79,7 @@ public final class PolicyUtil {
     public static void require(Exchange exchange, Policy policy) {
         Set<Policy> required = getPolicies(exchange, REQUIRED_PROPERTY);
         required.add(policy);
-        exchange.getContext().setProperty(REQUIRED_PROPERTY, required).addLabels(Labels.TRANSIENT);
+        exchange.getContext().setProperty(REQUIRED_PROPERTY, required).addLabels(BehaviorLabel.TRANSIENT.label());
     }
     
     /**

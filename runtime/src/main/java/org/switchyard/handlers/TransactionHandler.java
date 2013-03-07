@@ -29,8 +29,8 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
-import org.switchyard.Labels;
 import org.switchyard.Property;
+import org.switchyard.label.BehaviorLabel;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 
@@ -78,7 +78,7 @@ public class TransactionHandler implements ExchangeHandler {
             // OUT phase in IN_OUT exchange or 2nd invocation in IN_ONLY exchange
             handleAfter(exchange);
         } else {
-            exchange.getContext().setProperty(BEFORE_INVOKED_PROPERTY, Boolean.TRUE).addLabels(Labels.TRANSIENT);
+            exchange.getContext().setProperty(BEFORE_INVOKED_PROPERTY, Boolean.TRUE).addLabels(BehaviorLabel.TRANSIENT.label());
             handleBefore(exchange);
         }
     }
@@ -272,7 +272,7 @@ public class TransactionHandler implements ExchangeHandler {
             } catch (Exception e) {
                 throw new HandlerException("Failed to create new transaction", e);
             }
-            exchange.getContext().setProperty(INITIATED_TRANSACTION_PROPERTY, transaction).addLabels(Labels.TRANSIENT);
+            exchange.getContext().setProperty(INITIATED_TRANSACTION_PROPERTY, transaction).addLabels(BehaviorLabel.TRANSIENT.label());
         } else {
             throw new HandlerException("Transaction already exists");
         }
@@ -315,7 +315,7 @@ public class TransactionHandler implements ExchangeHandler {
             _log.error("Failed to suspend transaction on exchange.", sysEx);
         }
         if (transaction != null) {
-            exchange.getContext().setProperty(SUSPENDED_TRANSACTION_PROPERTY, transaction).addLabels(Labels.TRANSIENT);
+            exchange.getContext().setProperty(SUSPENDED_TRANSACTION_PROPERTY, transaction).addLabels(BehaviorLabel.TRANSIENT.label());
         }
     }
     

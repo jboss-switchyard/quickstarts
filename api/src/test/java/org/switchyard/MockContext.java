@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.switchyard.label.BehaviorLabel;
+
 /**
  * MockContext.
  *
@@ -164,7 +166,7 @@ public class MockContext implements Context {
     @Override
     public Context copy() {
         MockContext ctx = new MockContext(_exchangeProperties, _inProperties, _outProperties);
-        ctx.removeProperties(Labels.TRANSIENT);
+        ctx.removeProperties(BehaviorLabel.TRANSIENT.label());
         return ctx;
     }
 

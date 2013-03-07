@@ -23,9 +23,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.switchyard.Context;
-import org.switchyard.Labels;
 import org.switchyard.Property;
 import org.switchyard.Scope;
+import org.switchyard.label.BehaviorLabel;
 import org.switchyard.serial.graph.AccessType;
 import org.switchyard.serial.graph.Strategy;
 
@@ -122,7 +122,7 @@ public class DefaultContext implements Context {
     @Override
     public Context copy() {
         Context ctx = new DefaultContext(_properties.copy());
-        ctx.removeProperties(Labels.TRANSIENT);
+        ctx.removeProperties(BehaviorLabel.TRANSIENT.label());
         return ctx;
     }
 

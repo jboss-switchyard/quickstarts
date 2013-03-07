@@ -25,11 +25,11 @@ import org.apache.log4j.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
-import org.switchyard.Labels;
 import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.label.BehaviorLabel;
 import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.ValidatorRegistry;
@@ -127,7 +127,7 @@ public class ValidateHandler extends BaseHandler {
             }
        }
         exchange.getContext().setProperty(
-                KEY_VALIDATED_TYPE, validator.getType(), Scope.activeScope(exchange)).addLabels(Labels.TRANSIENT);
+                KEY_VALIDATED_TYPE, validator.getType(), Scope.activeScope(exchange)).addLabels(BehaviorLabel.TRANSIENT.label());
         return validationResult;
     }
 }

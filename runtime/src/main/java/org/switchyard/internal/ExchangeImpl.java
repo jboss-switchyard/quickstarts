@@ -31,13 +31,13 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
-import org.switchyard.Labels;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
@@ -114,7 +114,7 @@ public class ExchangeImpl implements SecurityExchange {
             initOutContentType();
             // set relatesTo header on OUT context
             _context.setProperty(RELATES_TO, _context.getProperty(
-                    MESSAGE_ID, Scope.IN).getValue(), Scope.OUT).addLabels(Labels.TRANSIENT);
+                    MESSAGE_ID, Scope.IN).getValue(), Scope.OUT).addLabels(BehaviorLabel.TRANSIENT.label());
         } else {
             throw new IllegalStateException(
                     "Send message not allowed for exchange in phase " + _phase);
@@ -138,7 +138,7 @@ public class ExchangeImpl implements SecurityExchange {
         
         // set relatesTo header on OUT context
         _context.setProperty(RELATES_TO, _context.getProperty(
-                MESSAGE_ID, Scope.IN).getValue(), Scope.OUT).addLabels(Labels.TRANSIENT);
+                MESSAGE_ID, Scope.IN).getValue(), Scope.OUT).addLabels(BehaviorLabel.TRANSIENT.label());
 
         sendInternal(message);
     }
@@ -186,7 +186,7 @@ public class ExchangeImpl implements SecurityExchange {
         
         _message = message;
         // assign messageId
-        _context.setProperty(MESSAGE_ID, UUID.randomUUID().toString(), Scope.activeScope(this)).addLabels(Labels.TRANSIENT);
+        _context.setProperty(MESSAGE_ID, UUID.randomUUID().toString(), Scope.activeScope(this)).addLabels(BehaviorLabel.TRANSIENT.label());
 
         if (_log.isDebugEnabled()) {
             _log.debug("Sending " + _phase + " Message (" + System.identityHashCode(message) + ") on " 
@@ -220,7 +220,7 @@ public class ExchangeImpl implements SecurityExchange {
         if (isDone(sendPhase)) {
             long duration = System.nanoTime() - _startTime;
             getContext().setProperty(ExchangeCompletionEvent.EXCHANGE_DURATION, 
-                    TimeUnit.MILLISECONDS.convert(duration, TimeUnit.NANOSECONDS)).addLabels(Labels.TRANSIENT);
+                    TimeUnit.MILLISECONDS.convert(duration, TimeUnit.NANOSECONDS)).addLabels(BehaviorLabel.TRANSIENT.label());
             _domain.getEventPublisher().publish(new ExchangeCompletionEvent(this));
         }
     }
@@ -302,7 +302,7 @@ public class ExchangeImpl implements SecurityExchange {
         QName exchangeInputType = _contract.getConsumerOperation().getInputType();
 
         if (exchangeInputType != null) {
-            _context.setProperty(Exchange.CONTENT_TYPE, exchangeInputType, Scope.IN).addLabels(Labels.TRANSIENT);
+            _context.setProperty(Exchange.CONTENT_TYPE, exchangeInputType, Scope.IN).addLabels(BehaviorLabel.TRANSIENT.label());
         }
     }
 
@@ -310,7 +310,7 @@ public class ExchangeImpl implements SecurityExchange {
         
         QName serviceOperationOutputType = _contract.getProviderOperation().getOutputType();
         if (serviceOperationOutputType != null) {
-            _context.setProperty(Exchange.CONTENT_TYPE, serviceOperationOutputType, Scope.OUT).addLabels(Labels.TRANSIENT);
+            _context.setProperty(Exchange.CONTENT_TYPE, serviceOperationOutputType, Scope.OUT).addLabels(BehaviorLabel.TRANSIENT.label());
         }
     }
 
@@ -318,7 +318,7 @@ public class ExchangeImpl implements SecurityExchange {
         if (_contract.getProviderOperation() != null) {
             QName serviceOperationFaultType = _contract.getProviderOperation().getFaultType();
             if (serviceOperationFaultType != null) {
-                _context.setProperty(Exchange.CONTENT_TYPE, serviceOperationFaultType, Scope.OUT).addLabels(Labels.TRANSIENT);
+                _context.setProperty(Exchange.CONTENT_TYPE, serviceOperationFaultType, Scope.OUT).addLabels(BehaviorLabel.TRANSIENT.label());
             }
         }
     }
