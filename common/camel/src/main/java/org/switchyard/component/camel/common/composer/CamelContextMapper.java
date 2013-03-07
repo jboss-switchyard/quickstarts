@@ -18,12 +18,8 @@
  */
 package org.switchyard.component.camel.common.composer;
 
-import static org.switchyard.Scope.EXCHANGE;
-import static org.switchyard.Scope.IN;
-import static org.switchyard.Scope.OUT;
-import static org.switchyard.component.camel.common.composer.CamelComposition.CAMEL_EXCHANGE_PROPERTY;
-import static org.switchyard.component.camel.common.composer.CamelComposition.CAMEL_MESSAGE_HEADER;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -32,6 +28,10 @@ import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.component.common.composer.BaseRegexContextMapper;
+import org.switchyard.component.common.label.ComponentLabel;
+import org.switchyard.component.common.label.EndpointLabel;
+import org.switchyard.config.model.composer.ContextMapperModel;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * CamelContextMapper.
@@ -40,28 +40,46 @@ import org.switchyard.component.common.composer.BaseRegexContextMapper;
  */
 public class CamelContextMapper extends BaseRegexContextMapper<CamelBindingData> {
 
-    private static final Scope[] IN_OUT = new Scope[]{IN, OUT};
+    private String[] _camelLabels = null;
+
+    private String[] getCamelLabels() {
+        if (_camelLabels == null) {
+            List<String> list = new ArrayList<String>();
+            list.add(ComponentLabel.CAMEL.label());
+            ContextMapperModel cm_model = getModel();
+            if (cm_model != null) {
+                BindingModel b_model = cm_model.getBindingModel();
+                if (b_model != null) {
+                    String e_label = EndpointLabel.toLabel(b_model.getType());
+                    if (e_label != null) {
+                        list.add(e_label);
+                    }
+                }
+            }
+            _camelLabels = list.toArray(new String[list.size()]);
+        }
+        return _camelLabels;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void mapFrom(CamelBindingData source, Context context) throws Exception {
-        Scope scope;
         Message message = source.getMessage();
         Exchange exchange = message.getExchange();
+        Scope scope;
         if (exchange.getIn() == message) {
-            scope = IN;
+            scope = Scope.IN;
         } else {
-            scope = OUT;
+            scope = Scope.OUT;
         }
         for (Map.Entry<String,Object> header : message.getHeaders().entrySet()) {
             String name = header.getKey();
             if (matches(name)) {
                 Object value = header.getValue();
                 if (value != null) {
-                    // Camel Message headers -> Context ${scope} properties
-                    context.setProperty(name, value, scope).addLabels(CAMEL_MESSAGE_HEADER);
+                    context.setProperty(name, value, scope).addLabels(getCamelLabels());
                 }
             }
         }
@@ -71,8 +89,7 @@ public class CamelContextMapper extends BaseRegexContextMapper<CamelBindingData>
                 if (matches(name)) {
                     Object value = property.getValue();
                     if (value != null) {
-                        // Camel Exchange properties -> Context EXCHANGE properties
-                        context.setProperty(name, value, EXCHANGE).addLabels(CAMEL_EXCHANGE_PROPERTY);
+                        context.setProperty(name, value, Scope.EXCHANGE).addLabels(getCamelLabels());
                     }
                 }
             }
@@ -86,25 +103,27 @@ public class CamelContextMapper extends BaseRegexContextMapper<CamelBindingData>
     public void mapTo(Context context, CamelBindingData target) throws Exception {
         Message message = target.getMessage();
         Exchange exchange = message.getExchange();
-        for (Scope scope : IN_OUT) {
-            for (Property property : context.getProperties(scope)) {
-                String name = property.getName();
-                if (matches(name)) {
-                    Object value = property.getValue();
-                    if (value != null) {
-                        // Context ${scope} properties -> Camel Message headers
-                        message.setHeader(name, value);
-                    }
+        Scope scope;
+        if (exchange.getIn() == message) {
+            scope = Scope.IN;
+        } else {
+            scope = Scope.OUT;
+        }
+        for (Property property : context.getProperties(scope)) {
+            String name = property.getName();
+            if (matches(name)) {
+                Object value = property.getValue();
+                if (value != null) {
+                    message.setHeader(name, value);
                 }
             }
         }
         if (exchange != null) {
-            for (Property property : context.getProperties(EXCHANGE)) {
+            for (Property property : context.getProperties(Scope.EXCHANGE)) {
                 String name = property.getName();
                 if (matches(name)) {
                     Object value = property.getValue();
                     if (value != null) {
-                        // Context EXCHANGE properties -> Camel Exchange properties
                         exchange.setProperty(name, value);
                     }
                 }

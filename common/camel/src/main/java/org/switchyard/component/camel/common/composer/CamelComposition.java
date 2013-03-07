@@ -31,12 +31,6 @@ import org.switchyard.config.model.composer.MessageComposerModel;
  */
 public final class CamelComposition {
 
-    /** The "camel_exchange_property" context property label. */
-    public static final String CAMEL_EXCHANGE_PROPERTY = "camel_exchange_property";
-
-    /** The "camel_message_header" context property label. */
-    public static final String CAMEL_MESSAGE_HEADER = "camel_message_header";
-
     /**
      * Uses the {@link Composition} class to create a Camel-specific MessageComposer.
      * @return the MessageComposer

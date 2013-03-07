@@ -31,9 +31,6 @@ import org.switchyard.config.model.composer.MessageComposerModel;
  */
 public final class RESTEasyComposition {
 
-    /** The "http_header" context property label. */
-    public static final String HTTP_HEADER = "jaxrs_http_header";
-
     /**
      * Uses the {@link Composition} class to create a RESTEasy-specific MessageComposer.
      * @return the MessageComposer

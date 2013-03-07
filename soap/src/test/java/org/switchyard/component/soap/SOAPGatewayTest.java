@@ -53,7 +53,7 @@ import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.net.SocketAddr;
-import org.switchyard.component.soap.composer.SOAPFaultInfo;
+import org.switchyard.component.soap.composer.SOAPComposition;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.config.model.ModelPuller;
@@ -367,7 +367,7 @@ public class SOAPGatewayTest {
         Message requestMsg = ex.createMessage().setContent(input);
         ex.send(requestMsg);
         handler.waitForFaultMessage();
-        Object faultInfo = ctx.getProperty("fault_info", Scope.IN).getValue();
+        Object faultInfo = ctx.getProperty(SOAPComposition.SOAP_FAULT_INFO, Scope.IN).getValue();
         Assert.assertNotNull(faultInfo);
         Assert.assertEquals(faultStr, faultInfo.toString());
     }

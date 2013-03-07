@@ -63,6 +63,7 @@ public abstract class ContextMapperFactory<D extends BindingData> {
         ContextMapperFactory<D> contextMapperFactory = ContextMapperFactory.getContextMapperFactory(getBindingDataClass());
         if (model != null) {
             contextMapper = contextMapperFactory.newContextMapper((Class<ContextMapper<D>>)Classes.forName(model.getClazz()));
+            contextMapper.setModel(model);
             if (contextMapper instanceof RegexContextMapper) {
                 RegexContextMapper<D> regexContextMapper = (RegexContextMapper<D>)contextMapper;
                 regexContextMapper.setIncludes(model.getIncludes());

@@ -24,6 +24,8 @@ import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.component.common.composer.BaseRegexContextMapper;
+import org.switchyard.component.common.label.ComponentLabel;
+import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.component.jca.JCAConstants;
 
 /**
@@ -34,6 +36,8 @@ import org.switchyard.component.jca.JCAConstants;
  */
 public class IndexedRecordContextMapper extends BaseRegexContextMapper<IndexedRecordBindingData> {
 
+    private static final String[] INDEXED_RECORD_LABELS = new String[]{ComponentLabel.JCA.label(), EndpointLabel.JCA.label()};
+
     /**
      * {@inheritDoc}
      */
@@ -42,13 +46,11 @@ public class IndexedRecordContextMapper extends BaseRegexContextMapper<IndexedRe
         IndexedRecord record = source.getRecord();
         String recordName = record.getRecordName();
         if (recordName != null) {
-            context.setProperty(JCAConstants.CCI_RECORD_NAME_KEY, recordName, Scope.EXCHANGE)
-                    .addLabels(JCAComposition.JCA_MESSAGE_PROPERTY);
+            context.setProperty(JCAConstants.CCI_RECORD_NAME_KEY, recordName, Scope.IN).addLabels(INDEXED_RECORD_LABELS);
         }
         String recordDescription = record.getRecordShortDescription();
         if (recordDescription != null) {
-            context.setProperty(JCAConstants.CCI_RECORD_SHORT_DESC_KEY, recordDescription, Scope.EXCHANGE)
-                    .addLabels(JCAComposition.JCA_MESSAGE_PROPERTY);
+            context.setProperty(JCAConstants.CCI_RECORD_SHORT_DESC_KEY, recordDescription, Scope.IN).addLabels(INDEXED_RECORD_LABELS);
         }
     }
 
@@ -59,13 +61,12 @@ public class IndexedRecordContextMapper extends BaseRegexContextMapper<IndexedRe
     @Override
     public void mapTo(Context context, IndexedRecordBindingData target) throws Exception {
         IndexedRecord record = target.getRecord();
-        for (Property property : context.getProperties(Scope.EXCHANGE)) {
+        for (Property property : context.getProperties(Scope.OUT)) {
             String name = property.getName();
             Object value = property.getValue();
             if (value == null) {
                 continue;
             }
-            
             if (name.equals(JCAConstants.CCI_RECORD_NAME_KEY)) {
                 record.setRecordName(value.toString());
             } else if (name.equals(JCAConstants.CCI_RECORD_SHORT_DESC_KEY)) {

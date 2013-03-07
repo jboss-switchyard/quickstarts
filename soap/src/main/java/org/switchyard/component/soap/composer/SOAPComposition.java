@@ -34,14 +34,8 @@ import org.switchyard.component.soap.config.model.SOAPMessageComposerModel;
  */
 public final class SOAPComposition {
 
-    /** The "soap_message_header" context property label. */
-    public static final String SOAP_MESSAGE_HEADER = "soap_message_header";
-
-    /** The "soap_message_mime_header" context property label. */
-    public static final String SOAP_MESSAGE_MIME_HEADER = "soap_message_mime_header";
-
-    /** The SOAP Fault details. */
-    public static final String SOAP_FAULT_INFO = "fault_info";
+    /** The soap_fault_info property name. */
+    public static final String SOAP_FAULT_INFO = "soap_fault_info";
 
     /**
      * Uses the {@link Composition} class to create a SOAP-specific MessageComposer.

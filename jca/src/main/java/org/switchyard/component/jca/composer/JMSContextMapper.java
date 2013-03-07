@@ -27,14 +27,18 @@ import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.component.common.composer.BaseRegexContextMapper;
+import org.switchyard.component.common.label.ComponentLabel;
+import org.switchyard.component.common.label.EndpointLabel;
 
 /**
- * JCAJMSContextMapper.
+ * JMSContextMapper.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
 public class JMSContextMapper extends BaseRegexContextMapper<JMSBindingData> {
+
+    private static final String[] JMS_RECORD_LABELS = new String[]{ComponentLabel.JCA.label(), EndpointLabel.JMS.label()};
 
     /**
      * {@inheritDoc}
@@ -54,9 +58,7 @@ public class JMSContextMapper extends BaseRegexContextMapper<JMSBindingData> {
                     pce.getMessage();
                 }
                 if (value != null) {
-                    // JMS Message properties -> Context EXCHANGE properties
-                    context.setProperty(key, value, Scope.EXCHANGE)
-                            .addLabels(JCAComposition.JCA_MESSAGE_PROPERTY);
+                    context.setProperty(key, value, Scope.IN).addLabels(JMS_RECORD_LABELS);
                 }
             }
         }
@@ -68,13 +70,12 @@ public class JMSContextMapper extends BaseRegexContextMapper<JMSBindingData> {
     @Override
     public void mapTo(Context context, JMSBindingData target) throws Exception {
         Message message = target.getMessage();
-        for (Property property : context.getProperties(Scope.EXCHANGE)) {
+        for (Property property : context.getProperties(Scope.OUT)) {
             String name = property.getName();
             if (matches(name)) {
                 Object value = property.getValue();
                 if (value != null) {
                     try {
-                        // Context EXCHANGE properties -> JMS Message properties
                         message.setObjectProperty(name, value);
                     } catch (Throwable t) {
                         // ignore and keep going (here just to keep checkstyle happy)

@@ -64,7 +64,6 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>

@@ -34,7 +34,9 @@ import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
+import org.switchyard.component.http.composer.HttpComposition;
 import org.switchyard.component.http.config.model.HttpBindingModel;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
@@ -47,7 +49,6 @@ import org.switchyard.test.Invoker;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
  * Contains tests for HTTP Gateway.
@@ -135,7 +136,7 @@ public class HttpGatewayTest {
         Message requestMsg = ex.createMessage().setContent("magesh");
         ex.send(requestMsg);
         handler.waitForOKMessage();
-        Assert.assertEquals(200, ctx.getProperty("status", Scope.IN).getValue());
+        Assert.assertEquals(200, ctx.getProperty(HttpComposition.HTTP_RESPONSE_STATUS, Scope.OUT).getValue());
     }
 
     @Test
@@ -146,7 +147,7 @@ public class HttpGatewayTest {
         Message requestMsg = ex.createMessage().setContent("magesh");
         ex.send(requestMsg);
         handler.waitForFaultMessage();
-        Assert.assertEquals(404, ctx.getProperty("status", Scope.IN).getValue());
+        Assert.assertEquals(404, ctx.getProperty(HttpComposition.HTTP_RESPONSE_STATUS, Scope.OUT).getValue());
     }
 
     private static class HelloInterface extends BaseService {

@@ -31,9 +31,6 @@ import org.switchyard.config.model.composer.MessageComposerModel;
  */
 public final class HornetQComposition {
 
-    /** The "hornetq_message_property" context property label. */
-    public static final String HORNETQ_MESSAGE_PROPERTY = "hornetq_message_property";
-
     /**
      * Uses the {@link Composition} class to create a HornetQ-specific MessageComposer.
      * @return the MessageComposer

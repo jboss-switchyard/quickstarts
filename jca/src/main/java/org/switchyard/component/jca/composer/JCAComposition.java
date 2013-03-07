@@ -31,9 +31,6 @@ import org.switchyard.config.model.composer.MessageComposerModel;
  */
 public final class JCAComposition {
 
-    /** The "jca_message_property" context property label. */
-    public static final String JCA_MESSAGE_PROPERTY = "jca_message_property";
-
     /**
      * Uses the {@link Composition} class to create a JCA-specific MessageComposer.
      * @param bindingDataType {@link Class} for binding data type

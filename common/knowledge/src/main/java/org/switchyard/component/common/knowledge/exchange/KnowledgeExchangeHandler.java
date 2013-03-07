@@ -25,10 +25,12 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.switchyard.BaseHandler;
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.Property;
+import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
@@ -241,10 +243,11 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * Gets a primitive boolean context property.
      * @param exchange the exchange
      * @param name the name
+     * @param scope the scope
      * @return the property
      */
-    protected boolean isBoolean(Exchange exchange, String name) {
-        Boolean b = getBoolean(exchange, name);
+    protected boolean isBoolean(Exchange exchange, String name, Scope scope) {
+        Boolean b = getBoolean(exchange, name, scope);
         return b != null && b.booleanValue();
     }
 
@@ -252,10 +255,11 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * Gets a Boolean context property.
      * @param exchange the exchange
      * @param name the name
+     * @param scope the scope
      * @return the property
      */
-    protected Boolean getBoolean(Exchange exchange, String name) {
-        Object value = getObject(exchange, name);
+    protected Boolean getBoolean(Exchange exchange, String name, Scope scope) {
+        Object value = getObject(exchange, name, scope);
         if (value instanceof Boolean) {
             return (Boolean)value;
         } else if (value instanceof String) {
@@ -268,10 +272,11 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * Gets an Integer context property.
      * @param exchange the exchange
      * @param name the name
+     * @param scope the scope
      * @return the property
      */
-    protected Integer getInteger(Exchange exchange, String name) {
-        Object value = getObject(exchange, name);
+    protected Integer getInteger(Exchange exchange, String name, Scope scope) {
+        Object value = getObject(exchange, name, scope);
         if (value instanceof Integer) {
             return (Integer)value;
         } else if (value instanceof Number) {
@@ -286,10 +291,11 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * Gets a Long context property.
      * @param exchange the exchange
      * @param name the name
+     * @param scope the scope
      * @return the property
      */
-    protected Long getLong(Exchange exchange, String name) {
-        Object value = getObject(exchange, name);
+    protected Long getLong(Exchange exchange, String name, Scope scope) {
+        Object value = getObject(exchange, name, scope);
         if (value instanceof Long) {
             return (Long)value;
         } else if (value instanceof Number) {
@@ -304,10 +310,11 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * Gets a String context property.
      * @param exchange the exchange
      * @param name the name
+     * @param scope the scope
      * @return the property
      */
-    protected String getString(Exchange exchange, String name) {
-        Object value = getObject(exchange, name);
+    protected String getString(Exchange exchange, String name, Scope scope) {
+        Object value = getObject(exchange, name, scope);
         if (value instanceof String) {
             return (String)value;
         } else if (value != null) {
@@ -320,10 +327,15 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * Gets an Object context property.
      * @param exchange the exchange
      * @param name the name
+     * @param scope the scope
      * @return the property
      */
-    protected Object getObject(Exchange exchange, String name) {
-        Property property = exchange.getContext().getProperty(name);
+    protected Object getObject(Exchange exchange, String name, Scope scope) {
+        Context context = exchange.getContext();
+        Property property = context.getProperty(name, scope);
+        if (property == null && !Scope.EXCHANGE.equals(scope)) {
+            property = context.getProperty(name, Scope.EXCHANGE);
+        }
         return property != null ? property.getValue() : null;
     }
 

@@ -35,6 +35,8 @@ import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.composer.BaseRegexContextMapper;
+import org.switchyard.component.common.label.ComponentLabel;
+import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.ConfigurationPuller;
 import org.w3c.dom.Element;
@@ -47,6 +49,9 @@ import org.w3c.dom.Node;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
 public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
+
+    private static final String[] SOAP_HEADER_LABELS = new String[]{ComponentLabel.SOAP.label(), EndpointLabel.SOAP.label()};
+    private static final String[] SOAP_MIME_LABELS = new String[]{ComponentLabel.SOAP.label(), EndpointLabel.HTTP.label()};
 
     private SOAPHeadersType _soapHeadersType = null;
 
@@ -74,11 +79,9 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
     @Override
     public void mapFrom(SOAPBindingData source, Context context) throws Exception {
         SOAPMessage soapMessage = source.getSOAPMessage();
-
         if (soapMessage.getSOAPBody().hasFault() && (source.getSOAPFaultInfo() != null)) {
-            context.setProperty(SOAPComposition.SOAP_FAULT_INFO, source.getSOAPFaultInfo(), Scope.IN).addLabels(SOAPComposition.SOAP_MESSAGE_HEADER);
+            context.setProperty(SOAPComposition.SOAP_FAULT_INFO, source.getSOAPFaultInfo(), Scope.IN).addLabels(SOAP_HEADER_LABELS);
         }
-
         @SuppressWarnings("unchecked")
         Iterator<MimeHeader> mimeHeaders = soapMessage.getMimeHeaders().getAllHeaders();
         while (mimeHeaders.hasNext()) {
@@ -87,8 +90,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
             if (matches(name)) {
                 String value = mimeHeader.getValue();
                 if (value != null) {
-                    // SOAPMessage MIME headers -> Context IN properties
-                    context.setProperty(name, value, Scope.IN).addLabels(SOAPComposition.SOAP_MESSAGE_MIME_HEADER);
+                    context.setProperty(name, value, Scope.IN).addLabels(SOAP_MIME_LABELS);
                 }
             }
         }
@@ -98,7 +100,6 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
             SOAPHeaderElement soapHeader = soapHeaders.next();
             QName qname = soapHeader.getElementQName();
             if (matches(qname)) {
-                // SOAPMessage SOAP headers -> Context EXCHANGE properties
                 final Object value;
                 switch (_soapHeadersType != null ? _soapHeadersType : SOAPHeadersType.VALUE) {
                     case CONFIG:
@@ -118,7 +119,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
                 }
                 if (value != null) {
                     String name = qname.toString();
-                    context.setProperty(name, value, Scope.EXCHANGE).addLabels(SOAPComposition.SOAP_MESSAGE_HEADER);
+                    context.setProperty(name, value, Scope.IN).addLabels(SOAP_HEADER_LABELS);
                 }
             }
         }
@@ -131,39 +132,40 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
     public void mapTo(Context context, SOAPBindingData target) throws Exception {
         SOAPMessage soapMessage = target.getSOAPMessage();
         MimeHeaders mimeHeaders = soapMessage.getMimeHeaders();
-        for (Property property : context.getProperties(Scope.OUT)) {
-            String name = property.getName();
-            if (matches(name)) {
-                Object value = property.getValue();
-                if (value != null) {
-                    // Context OUT properties -> SOAPMessage MIME headers
-                    mimeHeaders.addHeader(name, String.valueOf(value));
-                }
-            }
-        }
         SOAPHeader soapHeader = soapMessage.getSOAPHeader();
-        for (Property property : context.getProperties(Scope.EXCHANGE)) {
-            String name = property.getName();
-            QName qname = XMLHelper.createQName(name);
-            boolean qualifiedForSoapHeader = Strings.trimToNull(qname.getNamespaceURI()) != null;
-            if (qualifiedForSoapHeader && matches(qname)) {
-                // Context EXCHANGE properties -> SOAPMessage SOAP headers
-                Object value = property.getValue();
-                if (value instanceof Node) {
-                    Node domNode = soapHeader.getOwnerDocument().importNode((Node)value, true);
-                    soapHeader.appendChild(domNode);
-                } else if (value instanceof Configuration) {
-                    Element configElement = new ElementPuller().pull(new StringReader(value.toString()));
-                    Node configNode = soapHeader.getOwnerDocument().importNode(configElement, true);
-                    soapHeader.appendChild(configNode);
-                } else if (value != null) {
-                    String v = String.valueOf(value);
-                    if (SOAPHeadersType.XML.equals(_soapHeadersType)) {
-                        Element xmlElement = new ElementPuller().pull(new StringReader(v));
-                        Node xmlNode = soapHeader.getOwnerDocument().importNode(xmlElement, true);
-                        soapHeader.appendChild(xmlNode);
-                    } else {
-                        soapHeader.addChildElement(qname).setValue(v);
+        for (Property property : context.getProperties(Scope.OUT)) {
+            Object value = property.getValue();
+            if (value != null) {
+                String name = property.getName();
+                if (property.hasLabel(EndpointLabel.HTTP.label())) {
+                    if (matches(name)) {
+                        mimeHeaders.addHeader(name, String.valueOf(value));
+                    }
+                } else {
+                    QName qname = XMLHelper.createQName(name);
+                    boolean qualifiedForSoapHeader = Strings.trimToNull(qname.getNamespaceURI()) != null;
+                    if (qualifiedForSoapHeader && matches(qname)) {
+                        if (value instanceof Node) {
+                            Node domNode = soapHeader.getOwnerDocument().importNode((Node)value, true);
+                            soapHeader.appendChild(domNode);
+                        } else if (value instanceof Configuration) {
+                            Element configElement = new ElementPuller().pull(new StringReader(value.toString()));
+                            Node configNode = soapHeader.getOwnerDocument().importNode(configElement, true);
+                            soapHeader.appendChild(configNode);
+                        } else {
+                            String v = value.toString();
+                            if (SOAPHeadersType.XML.equals(_soapHeadersType)) {
+                                try {
+                                    Element xmlElement = new ElementPuller().pull(new StringReader(v));
+                                    Node xmlNode = soapHeader.getOwnerDocument().importNode(xmlElement, true);
+                                    soapHeader.appendChild(xmlNode);
+                                } catch (Throwable t) {
+                                    soapHeader.addChildElement(qname).setValue(v);
+                                }
+                            } else {
+                                soapHeader.addChildElement(qname).setValue(v);
+                            }
+                        }
                     }
                 }
             }

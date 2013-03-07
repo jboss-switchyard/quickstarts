@@ -41,6 +41,7 @@ import org.switchyard.Scope;
 import org.switchyard.component.bpel.BPELFault;
 import org.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandler;
+import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.exception.SwitchYardException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -52,9 +53,6 @@ import org.w3c.dom.Node;
 public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExchangeHandler {
     
     private static final int UNDEPLOY_DELAY = 10000;
-
-    /** Context property label for SOAP message headers. */
-    public static final String SOAP_MESSAGE_HEADER = "soap_message_header";
 
     private static final String VFS_SCHEME = "vfs";
 
@@ -253,10 +251,10 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
         Node request = exchange.getMessage().getContent(Node.class);
 
         java.util.Map<String, Object> headers = new HashMap<String, Object>();
-        Iterator<Property> h = exchange.getContext().getProperties(Scope.EXCHANGE).iterator();
+        Iterator<Property> h = exchange.getContext().getProperties(Scope.IN).iterator();
         while (h.hasNext()) {
             Property p = h.next();
-            if (p.hasLabel(SOAP_MESSAGE_HEADER)) {
+            if (p.hasLabel(EndpointLabel.SOAP.label())) {
                 headers.put(p.getName(), p.getValue());
             }
         }
@@ -290,7 +288,7 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
                 // Set header parts for a response message
                 Set<String> keys = headers.keySet(); // headers are set by invoke method !!!
                 for (String key : keys) {
-                    exchange.getContext().setProperty(key,headers.get(key)).addLabels(SOAP_MESSAGE_HEADER);
+                    exchange.getContext().setProperty(key,headers.get(key), Scope.OUT).addLabels(EndpointLabel.SOAP.label());
                 }
 
                 exchange.send(message);

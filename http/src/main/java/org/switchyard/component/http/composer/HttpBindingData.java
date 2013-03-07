@@ -23,7 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream; 
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -47,8 +47,6 @@ public abstract class HttpBindingData implements BindingData {
     private Map<String, List<String>> _headers;
     private byte[] _body;
     private ContentType _contentType;
-    private ByteArrayInputStream _content;
-    private long _contentLength;
 
     /**
      * Get the HTTP headers map.

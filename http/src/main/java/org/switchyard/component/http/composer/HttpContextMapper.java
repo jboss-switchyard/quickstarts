@@ -27,6 +27,8 @@ import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.component.common.composer.BaseRegexContextMapper;
+import org.switchyard.component.common.label.ComponentLabel;
+import org.switchyard.component.common.label.EndpointLabel;
 
 /**
  * HttpContextMapper.
@@ -36,31 +38,32 @@ import org.switchyard.component.common.composer.BaseRegexContextMapper;
  */
 public class HttpContextMapper extends BaseRegexContextMapper<HttpBindingData> {
 
+    private static final String[] HTTP_LABELS = new String[]{ComponentLabel.HTTP.label(), EndpointLabel.HTTP.label()};
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void mapFrom(HttpBindingData source, Context context) throws Exception {
-        Iterator<Map.Entry<String, List<String>>> entries = source.getHeaders().entrySet().iterator();
         if (source instanceof HttpResponseBindingData) {
             HttpResponseBindingData response = (HttpResponseBindingData) source;
-            context.setProperty(HttpComposition.HTTP_STATUS, response.getStatus(), Scope.IN).addLabels(HttpComposition.HTTP_HEADER);
+            context.setProperty(HttpComposition.HTTP_RESPONSE_STATUS, response.getStatus(), Scope.OUT).addLabels(HTTP_LABELS);
         } else {
             HttpRequestBindingData request = (HttpRequestBindingData) source;
             if (request.getRequestInfo() != null) {
-                context.setProperty(HttpComposition.HTTP_REQUEST_INFO, request.getRequestInfo(), Scope.IN).addLabels(HttpComposition.HTTP_HEADER);
+                context.setProperty(HttpComposition.HTTP_REQUEST_INFO, request.getRequestInfo(), Scope.IN).addLabels(HTTP_LABELS);
             }
         }
-
+        Iterator<Map.Entry<String, List<String>>> entries = source.getHeaders().entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry<String, List<String>> entry = entries.next();
             String name = entry.getKey();
             if (matches(name)) {
                 List<String> values = entry.getValue();
                 if ((values != null) && (values.size() == 1)) {
-                    context.setProperty(name, values.get(0), Scope.IN).addLabels(HttpComposition.HTTP_HEADER);
+                    context.setProperty(name, values.get(0), Scope.IN).addLabels(HTTP_LABELS);
                 } else if ((values != null) && (values.size() > 1)) {
-                    context.setProperty(name, values, Scope.IN).addLabels(HttpComposition.HTTP_HEADER);
+                    context.setProperty(name, values, Scope.IN).addLabels(HTTP_LABELS);
                 }
             }
         }
@@ -70,14 +73,15 @@ public class HttpContextMapper extends BaseRegexContextMapper<HttpBindingData> {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void mapTo(Context context, HttpBindingData target) throws Exception {
         Map<String, List<String>> httpHeaders = target.getHeaders();
         for (Property property : context.getProperties(Scope.OUT)) {
-            if (property.hasLabel(HttpComposition.HTTP_HEADER)) {
+            if (property.hasLabel(EndpointLabel.HTTP.label())) {
                 String name = property.getName();
                 Object value = property.getValue();
-                if (HttpComposition.HTTP_STATUS.equalsIgnoreCase(name) && (target instanceof HttpResponseBindingData)) {
-                    HttpResponseBindingData response = (HttpResponseBindingData) target;
+                if (HttpComposition.HTTP_RESPONSE_STATUS.equalsIgnoreCase(name) && (target instanceof HttpResponseBindingData)) {
+                    HttpResponseBindingData response = (HttpResponseBindingData)target;
                     if (value instanceof String) {
                         response.setStatus(Integer.valueOf((String) value).intValue());
                     } else if (value instanceof Integer) {
@@ -88,7 +92,7 @@ public class HttpContextMapper extends BaseRegexContextMapper<HttpBindingData> {
                 if (matches(name)) {
                     if (value != null) {
                         if (value instanceof List) {
-                            httpHeaders.put(name, (List)value);
+                            httpHeaders.put(name, (List<String>)value);
                         } else if (value instanceof String) {
                             List<String> list = new ArrayList<String>();
                             list.add(String.valueOf(value));

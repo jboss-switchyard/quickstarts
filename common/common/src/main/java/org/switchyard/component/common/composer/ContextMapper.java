@@ -19,6 +19,7 @@
 package org.switchyard.component.common.composer;
 
 import org.switchyard.Context;
+import org.switchyard.config.model.composer.ContextMapperModel;
 
 /**
  * Maps context properties from and to a source or target object.
@@ -28,6 +29,18 @@ import org.switchyard.Context;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
 public interface ContextMapper<D extends BindingData> {
+
+    /**
+     * Gets the model.
+     * @return the model
+     */
+    public ContextMapperModel getModel();
+
+    /**
+     * Sets the model.
+     * @param model the model
+     */
+    public void setModel(ContextMapperModel model);
 
     /**
      * Maps a source object's properties to the context.

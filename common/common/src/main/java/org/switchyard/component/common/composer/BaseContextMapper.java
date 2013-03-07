@@ -19,6 +19,7 @@
 package org.switchyard.component.common.composer;
 
 import org.switchyard.Context;
+import org.switchyard.config.model.composer.ContextMapperModel;
 
 /**
  * Base class for ContextMapper, no-op'ing the required methods in case the extender only needs to override one of them.
@@ -28,6 +29,24 @@ import org.switchyard.Context;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
 public class BaseContextMapper<D extends BindingData> implements ContextMapper<D> {
+
+    private ContextMapperModel _model;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ContextMapperModel getModel() {
+        return _model;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setModel(ContextMapperModel model) {
+        _model = model;
+    }
 
     /**
      * {@inheritDoc}

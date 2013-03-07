@@ -18,15 +18,15 @@
  */
 package org.switchyard.component.hornetq.composer;
 
-import static org.switchyard.Scope.EXCHANGE;
-import static org.switchyard.component.hornetq.composer.HornetQComposition.HORNETQ_MESSAGE_PROPERTY;
-
 import org.hornetq.api.core.PropertyConversionException;
 import org.hornetq.api.core.SimpleString;
 import org.hornetq.api.core.client.ClientMessage;
 import org.switchyard.Context;
 import org.switchyard.Property;
+import org.switchyard.Scope;
 import org.switchyard.component.common.composer.BaseRegexContextMapper;
+import org.switchyard.component.common.label.ComponentLabel;
+import org.switchyard.component.common.label.EndpointLabel;
 
 /**
  * HornetQContextMapper.
@@ -34,6 +34,8 @@ import org.switchyard.component.common.composer.BaseRegexContextMapper;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class HornetQContextMapper extends BaseRegexContextMapper<HornetQBindingData> {
+
+    private static final String[] HORNETQ_LABELS = new String[]{ComponentLabel.HORNETQ.label(), EndpointLabel.JMS.label()};
 
     /**
      * {@inheritDoc}
@@ -46,8 +48,7 @@ public class HornetQContextMapper extends BaseRegexContextMapper<HornetQBindingD
             if (matches(name)) {
                 Object value = clientMessage.getObjectProperty(key);
                 if (value != null) {
-                    // HornetQ ClientMessage properties -> Context EXCHANGE properties
-                    context.setProperty(name, value, EXCHANGE).addLabels(HORNETQ_MESSAGE_PROPERTY);
+                    context.setProperty(name, value, Scope.IN).addLabels(HORNETQ_LABELS);
                 }
             }
         }
@@ -59,13 +60,12 @@ public class HornetQContextMapper extends BaseRegexContextMapper<HornetQBindingD
     @Override
     public void mapTo(Context context, HornetQBindingData target) throws Exception {
         ClientMessage clientMessage = target.getClientMessage();
-        for (Property property : context.getProperties(EXCHANGE)) {
+        for (Property property : context.getProperties(Scope.OUT)) {
             String name = property.getName();
             if (matches(name)) {
                 Object value = property.getValue();
                 if (value != null) {
                     try {
-                        // Context EXCHANGE properties -> HornetQ ClientMessage properties
                         clientMessage.putObjectProperty(name, value);
                     } catch (PropertyConversionException pce) {
                         // ignore and keep going (here just to keep checkstyle happy)
