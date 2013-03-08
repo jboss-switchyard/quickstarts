@@ -306,6 +306,7 @@
                 <module identifier="org.switchyard.component.bpel" implClass="org.switchyard.component.bpel.deploy.BPELComponent"/>
                 <module identifier="org.switchyard.component.resteasy" implClass="org.switchyard.component.resteasy.deploy.RESTEasyComponent"/>
                 <module identifier="org.switchyard.component.http" implClass="org.switchyard.component.http.deploy.HttpComponent"/>
+                <module identifier="org.switchyard.component.sca" implClass="org.switchyard.component.sca.deploy.SCAComponent"/>
             </modules>
         </subsystem>
     </profile>

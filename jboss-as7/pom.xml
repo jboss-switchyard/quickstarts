@@ -172,6 +172,11 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-quickstart-remote-invoker</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstart-rest-binding</artifactId>
             <scope>test</scope>
         </dependency>

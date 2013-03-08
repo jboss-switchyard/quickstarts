@@ -39,6 +39,10 @@
             <artifactId>switchyard-test</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-remote</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-test-mixin-bpm</artifactId>
         </dependency>
