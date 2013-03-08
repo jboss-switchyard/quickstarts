@@ -29,12 +29,15 @@ import java.util.Set;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
 
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.component.common.composer.BaseMessageComposer;
 import org.switchyard.metadata.ServiceOperation;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 /**
  * The Camel implementation of MessageComposer.
@@ -62,7 +65,12 @@ public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> 
         } else if (QNameUtil.isJavaMessageType(msgType)) {
             content = sourceMessage.getBody(QNameUtil.toJavaMessageType(msgType));
         } else {
-            content = sourceMessage.getBody(InputStream.class);
+            content = sourceMessage.getBody();
+            if (!(content instanceof String) && !(content instanceof Node)
+                    && !(content instanceof InputSource) && !(content instanceof Source)) {
+                // named binary content - content is not String nor XML, but has type name other than "java:*"
+                content = sourceMessage.getBody(InputStream.class);
+            }
         }
         message.setContent(content);
 
