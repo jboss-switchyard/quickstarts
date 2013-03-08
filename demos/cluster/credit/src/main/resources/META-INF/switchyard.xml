@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:sy="urn:switchyard-config:switchyard:1.0" xmlns:rules="urn:switchyard-component-rules:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="switchyard-quickstart-demo-cluster-credit" targetNamespace="urn:switchyard-quickstart-demo-cluster-credit:1.0">
+  <sca:composite name="switchyard-quickstart-demo-cluster-credit" targetNamespace="urn:switchyard-quickstart-demo-cluster-credit:1.0">
+    <sca:component name="RulesComponent">
+      <rules:implementation.rules>
+        <rules:actions>
+          <rules:action operation="checkCredit" type="EXECUTE">
+            <rules:inputs>
+              <rules:mapping expression="message.content.application" expressionType="MVEL"/>
+            </rules:inputs>
+            <rules:outputs>
+              <rules:mapping expression="message.content.application" expressionType="MVEL"/>
+            </rules:outputs>
+          </rules:action>
+        </rules:actions>
+        <rules:manifest>
+          <rules:resources>
+            <rules:resource location="RulesComponent.drl" type="DRL"/>
+          </rules:resources>
+        </rules:manifest>
+      </rules:implementation.rules>
+      <sca:service name="CreditCheck">
+        <sca:interface.java interface="org.switchyard.quickstarts.demo.cluster.CreditCheck"/>
+      </sca:service>
+    </sca:component>
+    <sca:service name="CreditCheck" promote="RulesComponent/CreditCheck">
+      <sca:interface.java interface="org.switchyard.quickstarts.demo.cluster.CreditCheck"/>
+      <sca:binding.sca sy:clustered="true"/>
+    </sca:service>
+  </sca:composite>
+</switchyard>
