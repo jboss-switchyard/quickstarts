@@ -10,4 +10,5 @@ core/bin/
 *.iml
 *.ipr
 *.iws
+.xml
 .DS_Store
