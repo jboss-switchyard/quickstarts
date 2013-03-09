@@ -288,6 +288,16 @@
               basedir="${AS7_PATH}/standalone/configuration"
               destdir="${AS7_PATH}/standalone/configuration"
               includes="standalone.xml,standalone-preview.xml,standalone-full.xml,standalone-ha.xml"/>
+        <xslt style="res/domain.xsl"
+              basedir="${AS7_PATH}/domain/configuration"
+              destdir="${AS7_PATH}/domain/configuration"
+              includes="domain.xml"/>
+        <move overwrite="true" todir="${INSTALL_PATH}/domain/configuration">
+          <filelist dir="${AS7_PATH}/domain/configuration">
+            <file name="domain.html"/>
+          </filelist>
+          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
           <filelist dir="${AS7_PATH}/standalone/configuration">
             <file name="standalone.html"/>
