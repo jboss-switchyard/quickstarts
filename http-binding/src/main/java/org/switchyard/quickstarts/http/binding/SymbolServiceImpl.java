@@ -25,6 +25,7 @@ import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.component.bean.Service;
+import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.component.http.composer.HttpComposition;
 import org.switchyard.component.http.composer.HttpRequestInfo;
 
@@ -44,7 +45,7 @@ public class SymbolServiceImpl implements SymbolService {
         if (companyName.equals("headers")) {
             StringBuffer headers = new StringBuffer();
             for (Property property : context.getProperties(Scope.IN)) {
-                if (property.hasLabel(HttpComposition.HTTP_HEADER) && (property.getValue() instanceof String)) {
+                if (property.hasLabel(EndpointLabel.HTTP.label()) && (property.getValue() instanceof String)) {
                     headers.append(property.getName());
                     headers.append("=");
                     headers.append(property.getValue());
