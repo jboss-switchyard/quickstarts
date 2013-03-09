@@ -18,21 +18,12 @@
  */
 package org.switchyard.remote;
 
-import org.switchyard.Exchange;
 
 /**
- * Client contract for remote service invocation.  The invoker handles IN and OUT phases for an 
- * exchange with a single call to invoke.  If the MEP for the exchange is IN_OUT, the exchange
- * will contain an out/fault corresponding to the reply after the invoke method returns.
+ * Client contract for remote service invocation.
  */
 public interface RemoteInvoker {
 
-    /**
-     * Invoke a remote service using the specified Exchange.
-     * @param exchange exchange
-     */
-    public void invoke(Exchange exchange);
-    
     /**
      * Invoke a remote service using the specified RemoteMessage.
      * @param request message

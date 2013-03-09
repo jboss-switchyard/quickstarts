@@ -21,11 +21,12 @@ package org.switchyard.test;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+import junit.framework.TestCase;
+
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
+import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
-
-import junit.framework.TestCase;
 
 /**
  * Mock Handler.
@@ -33,6 +34,13 @@ import junit.framework.TestCase;
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 public class MockHandler extends BaseHandler {
+    
+    private enum Behavior {
+        FORWARD_IN_TO_OUT,     // send the in message as a reply
+        FORWARD_IN_TO_FAULT,   // send the in message as a fault
+        REPLY_WITH_OUT,        // reply with a specific message as out
+        REPLY_WITH_FAULT};     // reply with a specific message as fault
+    
     /**
      * Messages.
      */
@@ -60,14 +68,15 @@ public class MockHandler extends BaseHandler {
     private long _waitTimeout = DEFAULT_WAIT_TIMEOUT; // default of 5 seconds
 
     /**
-     * Forward input to output flag.
+     * Specific content for reply messages/faults.
      */
-    private boolean _forwardInToOut = false;
+    private Object _replyContent;
+    
     /**
-     * Forward input to fault flag.
+     * Handler behavior for replies.
      */
-    private boolean _forwardInToFault = false;
-
+    private Behavior _behavior;
+    
     /**
      * Constructor.
      */
@@ -109,9 +118,7 @@ public class MockHandler extends BaseHandler {
      * @return MockHandler mockhandler
      */
     public MockHandler forwardInToOut() {
-        // An enum would be nicer here !!
-        _forwardInToOut = true;
-        _forwardInToFault = false;
+        _behavior = Behavior.FORWARD_IN_TO_OUT;
         return this;
     }
 
@@ -120,19 +127,53 @@ public class MockHandler extends BaseHandler {
      * @return MockHandler mockhandler
      */
     public MockHandler forwardInToFault() {
-        // An enum would be nicer here !!
-        _forwardInToOut = false;
-        _forwardInToFault = true;
+        _behavior = Behavior.FORWARD_IN_TO_FAULT;
+        return this;
+    }
+    
+    /**
+     * Reply with an out message using the specified content.
+     * @param content content to reply with
+     * @return this handler
+     */
+    public MockHandler replyWithOut(Object content) {
+        _behavior = Behavior.REPLY_WITH_OUT;
+        _replyContent = content;
+        return this;
+    }
+    
+    /**
+     * Reply with a fault message using the specified content.
+     * @param content content to reply with
+     * @return this handler
+     */
+    public MockHandler replyWithFault(Object content) {
+        _behavior = Behavior.REPLY_WITH_FAULT;
+        _replyContent = content;
         return this;
     }
 
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
         _messages.offer(exchange);
-        if (_forwardInToOut) {
+        
+        if (_behavior == null || exchange.getContract().getProviderOperation().getExchangePattern().equals(ExchangePattern.IN_ONLY)) {
+            return;
+        }
+        
+        switch (_behavior) {
+        case FORWARD_IN_TO_OUT :
             exchange.send(exchange.getMessage());
-        } else if (_forwardInToFault) {
-            exchange.sendFault(exchange.createMessage());
+            break;
+        case FORWARD_IN_TO_FAULT :
+            exchange.sendFault(exchange.getMessage());
+            break;
+        case REPLY_WITH_OUT :
+            exchange.send(exchange.createMessage().setContent(_replyContent));
+            break;
+        case REPLY_WITH_FAULT :
+            exchange.sendFault(exchange.createMessage().setContent(_replyContent));
+            break;
         }
     }
 

@@ -20,7 +20,6 @@ package org.switchyard.remote.cluster;
 
 import java.io.IOException;
 
-import org.switchyard.Exchange;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.remote.RemoteEndpoint;
 import org.switchyard.remote.RemoteInvoker;
@@ -54,16 +53,6 @@ public class ClusteredInvoker implements RemoteInvoker {
         _loadBalancer.setRegistry(registry);
     }
     
-    @Override
-    public void invoke(Exchange exchange) throws SwitchYardException {
-        RemoteEndpoint ep = _loadBalancer.selectEndpoint(exchange.getProvider().getName());
-        if (ep == null) {
-            throw new SwitchYardException("No remote endpoints found for service " 
-                    + exchange.getProvider().getName());
-        }
-        new HttpInvoker(ep.getEndpoint()).invoke(exchange);
-    }
-
     @Override
     public RemoteMessage invoke(RemoteMessage request) throws IOException {
         RemoteEndpoint ep = _loadBalancer.selectEndpoint(request.getService());

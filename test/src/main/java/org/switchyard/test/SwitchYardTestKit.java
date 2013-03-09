@@ -227,7 +227,7 @@ public class SwitchYardTestKit {
     public List<Activator> getActivators() {
         return _activators;
     }
-
+    
     /**
      * Create and initialise the deployment.
      * @throws Exception creating the deployment.
@@ -390,6 +390,76 @@ public class SwitchYardTestKit {
      */
     public void registerInOnlyService(String serviceName, ExchangeHandler serviceHandler) {
         getServiceDomain().registerService(createQName(serviceName), new InOnlyService(), serviceHandler);
+    }
+    
+    /**
+     * Replaces an existing service registration (e.g. reference binding) with a test handler using
+     * the same contract as the existing service provider.  If multiple services are registered with
+     * the specified name, the first one found is used.  Generally speaking, it's not a good idea 
+     * to use this method if you have multiple services registered with the same name.  In that 
+     * situation, use the removeService() and registerService() methods instead.
+     * @param name name of the service to replace
+     * @return mock service handler representing the service provider
+     * @throws SwitchYardException if a service with the specified name does not exist
+     */
+    public MockHandler replaceService(String name) throws SwitchYardException {
+        return replaceService(createQName(name));
+    }
+    
+    /**
+     * Replaces an existing service registration (e.g. reference binding) with a test handler using
+     * the same contract as the existing service provider.  If multiple services are registered with
+     * the specified name, the first one found is used.  Generally speaking, it's not a good idea 
+     * to use this method if you have multiple services registered with the same name.  In that 
+     * situation, use the removeService() and registerService() methods instead.
+     * @param name name of the service to replace
+     * @param handler implementation to use as the service provider
+     * @throws SwitchYardException if a service with the specified name does not exist
+     */
+    public void replaceService(String name, ExchangeHandler handler) throws SwitchYardException {
+        replaceService(createQName(name), handler);
+    }
+    
+    /**
+     * Replaces an existing service registration (e.g. reference binding) with a test handler using
+     * the same contract as the existing service provider.  If multiple services are registered with
+     * the specified name, the first one found is used.  Generally speaking, it's not a good idea 
+     * to use this method if you have multiple services registered with the same name.  In that 
+     * situation, use the removeService() and registerService() methods instead.
+     * @param name name of the service to replace
+     * @return mock service handler representing the service provider
+     * @throws SwitchYardException if a service with the specified name does not exist
+     */
+    public MockHandler replaceService(QName name) throws SwitchYardException {
+        MockHandler handler = new MockHandler();
+        replaceService(name, handler);
+        return handler;
+    }
+
+    /**
+     * Replaces an existing service registration (e.g. reference binding) with a test handler using
+     * the same contract as the existing service provider.  If multiple services are registered with
+     * the specified name, the first one found is used.  Generally speaking, it's not a good idea 
+     * to use this method if you have multiple services registered with the same name.  In that 
+     * situation, use the removeService() and registerService() methods instead.
+     * @param name name of the service to replace
+     * @param handler implementation to use as the service provider
+     * @throws SwitchYardException if a service with the specified name does not exist
+     */
+    public void replaceService(QName name, ExchangeHandler handler) throws SwitchYardException {
+        List<Service> services = getServiceDomain().getServices(name);
+        if (services.isEmpty()) {
+            throw new SwitchYardException("Failed to replace service: " + name 
+                    + ".  No service is registered with that name.");
+        }
+        
+        // select the service to replace
+        Service replacedService = services.get(0);
+        replacedService.unregister();
+        
+        // add the replacement service
+        getServiceDomain().registerService(name, replacedService.getInterface(), handler, 
+                replacedService.getRequiredPolicies(), replacedService.getProviderMetadata());
     }
     
     /**

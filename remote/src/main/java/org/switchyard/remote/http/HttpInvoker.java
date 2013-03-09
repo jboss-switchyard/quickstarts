@@ -25,9 +25,6 @@ import java.net.URL;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Context;
-import org.switchyard.Exchange;
-import org.switchyard.ExchangePattern;
-import org.switchyard.Message;
 import org.switchyard.remote.RemoteInvoker;
 import org.switchyard.remote.RemoteMessage;
 import org.switchyard.serial.FormatType;
@@ -70,30 +67,6 @@ public class HttpInvoker implements RemoteInvoker {
     }
 
     @Override
-    public void invoke(Exchange exchange) {
-        RemoteMessage request = new RemoteMessage()
-        .setDomain(exchange.getProvider().getDomain().getName())
-        .setService(exchange.getProvider().getName())
-        .setContent(exchange.getMessage().getContent())
-        .setContext(exchange.getContext());
-        
-        try {
-            RemoteMessage reply = invoke(request);
-            if (isInOut(exchange) && reply != null) {
-                Message msg = exchange.getMessage().setContent(reply.getContent());
-                if (reply.isFault()) {
-                    exchange.sendFault(msg);
-                } else {
-                    exchange.send(msg);
-                }
-            }
-        } catch (java.io.IOException ioEx) {
-            ioEx.printStackTrace();
-            exchange.sendFault(exchange.createMessage().setContent(ioEx));
-        }
-    }
-    
-    @Override
     public RemoteMessage invoke(RemoteMessage request) throws java.io.IOException {
         RemoteMessage reply = null;
         HttpURLConnection conn = null;
@@ -129,10 +102,5 @@ public class HttpInvoker implements RemoteInvoker {
         }
         
         return reply;
-    }
-    
-    private boolean isInOut(Exchange exchange) {
-        return ExchangePattern.IN_OUT.equals(
-                exchange.getContract().getConsumerOperation().getExchangePattern());
     }
 }
