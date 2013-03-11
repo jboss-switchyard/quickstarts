@@ -58,6 +58,8 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
     private String _contextName;
     private StandardContext _serverContext;
     private Map<QName, ServiceDomain> _services = new ConcurrentHashMap<QName, ServiceDomain>();
+    
+    private boolean _started;
 
     /**
      * Constructor.
@@ -72,6 +74,10 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
 
     @Override
     public synchronized void start() throws Exception {
+        // If the remote listener is already started, just return.
+        if (_started) {
+            return;
+        }
         
         Host host = ServerUtil.getDefaultHost().getHost();
         _serverContext = (StandardContext) host.findChild("/" + _contextName);
@@ -108,6 +114,8 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
             SwitchYardRemotingServlet remotingServlet = (SwitchYardRemotingServlet) wrapper.getServlet();
             remotingServlet.setEndpointPublisher(this);
             _log.info("Published Remote Service Endpoint " + _serverContext.getPath());
+            
+            _started = true;
         } else {
             throw new RuntimeException("Context " + _contextName + " already exists!");
         }
