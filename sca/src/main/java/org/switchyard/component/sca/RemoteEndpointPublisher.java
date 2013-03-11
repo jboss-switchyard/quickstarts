@@ -38,7 +38,8 @@ public interface RemoteEndpointPublisher {
     void init(String context);
     
     /**
-     * Start the endpoint.
+     * Start the endpoint.  Multiple calls to start() should be safe and be considered a NOP by
+     * implementations.
      * @throws Exception failed to start
      */
     void start() throws Exception;

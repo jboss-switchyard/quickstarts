@@ -20,6 +20,7 @@ package org.switchyard.component.sca.deploy;
 
 import java.util.ServiceLoader;
 
+import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.sca.RemoteEndpointPublisher;
 import org.switchyard.deploy.Activator;
@@ -31,6 +32,7 @@ import org.switchyard.deploy.BaseComponent;
 public class SCAComponent extends BaseComponent {
     
     private static final String CONTEXT_PATH = "switchyard-remote";
+    private static Logger _log = Logger.getLogger(SCAComponent.class);
     private RemoteEndpointPublisher _endpointPublisher;
 
     /**
@@ -42,9 +44,8 @@ public class SCAComponent extends BaseComponent {
         try {
             _endpointPublisher = ServiceLoader.load(RemoteEndpointPublisher.class).iterator().next();
             _endpointPublisher.init(CONTEXT_PATH);
-            _endpointPublisher.start();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            _log.warn("Failed to initialize remote endpoint publisher", ex);
         }
     }
     
@@ -56,4 +57,12 @@ public class SCAComponent extends BaseComponent {
         return activator;
     }
 
+    @Override
+    public synchronized void destroy() {
+        try {
+            _endpointPublisher.stop();
+        } catch (Exception ex) {
+            _log.warn("Failed to destroy remote endpoint publisher", ex);
+        }
+    }
 }

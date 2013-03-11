@@ -45,7 +45,7 @@ public class SCAActivator extends BaseActivator {
     private static final String CACHE_NAME_PROPERTY = "cache-name";
     static final String[] TYPES = new String[] {"sca"};
 
-    private static Logger _log = Logger.getLogger(RemoteRegistry.class);
+    private static Logger _log = Logger.getLogger(SCAActivator.class);
     private RemoteRegistry _registry;
     private RemoteEndpointPublisher _endpointPublisher;
     
@@ -57,6 +57,7 @@ public class SCAActivator extends BaseActivator {
         super(TYPES);
         String cacheName = "cluster";
         
+        // Initialize the registry
         try {
             // Attempt to resolve the cache container to use for the distributed registry
             Configuration cacheConfig = environment.getFirstChild(CACHE_NAME_PROPERTY);
@@ -78,6 +79,14 @@ public class SCAActivator extends BaseActivator {
     
     @Override
     public ServiceHandler activateBinding(QName name, BindingModel config) {
+        // Signal the remote endpoint publisher to start. Multiple calls to start are harmless.
+        try {
+            // Note that stop() occurs as part of the SCAComponent lifecycle.
+            _endpointPublisher.start();
+        } catch (Exception ex) {
+            _log.warn("Failed to start remote endpoint listener for SCA endpoints.", ex);
+        }
+        
         SCABindingModel scab = (SCABindingModel)config;
         if (scab.isServiceBinding()) {
             return new SCAEndpoint(scab, super.getServiceDomain(), _endpointPublisher, _registry);
