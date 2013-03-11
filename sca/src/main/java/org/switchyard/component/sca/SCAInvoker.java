@@ -30,6 +30,7 @@ import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.config.model.composite.SCABindingModel;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.remote.RemoteMessage;
 import org.switchyard.remote.RemoteRegistry;
 import org.switchyard.remote.cluster.ClusteredInvoker;
 import org.switchyard.remote.cluster.LoadBalanceStrategy;
@@ -71,7 +72,7 @@ public class SCAInvoker extends BaseServiceHandler {
     public void handleMessage(Exchange exchange) throws HandlerException {
         try {
             if (_config.isClustered()) {
-                _invoker.invoke(exchange);
+                invokeRemote(exchange);
             } else {
                 invokeLocal(exchange);
             }
@@ -82,12 +83,9 @@ public class SCAInvoker extends BaseServiceHandler {
     
     private void invokeLocal(Exchange exchange) {
         // Figure out the QName for the service were invoking
-        QName service = exchange.getProvider().getName();
-        String targetName = _config.hasTarget() ? _config.getTarget() : service.getLocalPart();
-        String targetNS = _config.hasTargetNamespace() ? _config.getTargetNamespace() : service.getNamespaceURI();
-        
+        QName serviceName = getTargetServiceName(exchange);
         // Get a handle for the reference and use a copy of the exchange to invoke it
-        ServiceReference ref = exchange.getProvider().getDomain().getServiceReference(new QName(targetNS, targetName));
+        ServiceReference ref = exchange.getProvider().getDomain().getServiceReference(serviceName);
         SynchronousInOutHandler replyHandler = new SynchronousInOutHandler();
         Exchange ex = ref.createExchange(exchange.getContract().getProviderOperation().getName(), replyHandler);
         ex.send(exchange.getMessage());
@@ -102,6 +100,41 @@ public class SCAInvoker extends BaseServiceHandler {
             
         }
     }
+    
+    private void invokeRemote(Exchange exchange) {
+        // Figure out the QName for the service were invoking
+        QName serviceName = getTargetServiceName(exchange);
+        
+        RemoteMessage request = new RemoteMessage()
+            .setDomain(exchange.getProvider().getDomain().getName())
+            .setService(serviceName)
+            .setContent(exchange.getMessage().getContent())
+            .setContext(exchange.getContext());
+        
+        try {
+            RemoteMessage reply = _invoker.invoke(request);
+            if (isInOut(exchange) && reply != null) {
+                Message msg = exchange.getMessage().setContent(reply.getContent());
+                if (reply.isFault()) {
+                    exchange.sendFault(msg);
+                } else {
+                    exchange.send(msg);
+                }
+            }
+        } catch (java.io.IOException ioEx) {
+            ioEx.printStackTrace();
+            exchange.sendFault(exchange.createMessage().setContent(ioEx));
+        }
+    }
+    
+    private QName getTargetServiceName(Exchange exchange) {
+        // Figure out the QName for the service were invoking
+        QName service = exchange.getProvider().getName();
+        String targetName = _config.hasTarget() ? _config.getTarget() : service.getLocalPart();
+        String targetNS = _config.hasTargetNamespace() ? _config.getTargetNamespace() : service.getNamespaceURI();
+        return new QName(targetNS, targetName);
+    }
+    
     
     LoadBalanceStrategy createLoadBalancer(String strategy) {
         if (RoundRobinStrategy.class.getSimpleName().equals(strategy)) {
