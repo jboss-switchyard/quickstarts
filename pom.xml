@@ -76,6 +76,7 @@
         <module>demos/policy-security-cert</module>
         <module>demos/policy-security-saml</module>
         <module>demos/policy-transaction</module>
+        <module>demos/cluster</module>
     </modules>
     <!-- Conditionally include the assembly module.  It's not always present e.g. in the quickstarts distro. -->
     <profiles>

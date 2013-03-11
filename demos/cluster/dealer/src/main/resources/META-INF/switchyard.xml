@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:sy="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:rules="urn:switchyard-component-rules:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="switchyard-quickstart-demo-cluster-dealer" targetNamespace="urn:switchyard-quickstart-demo-cluster-dealer:1.0">
+  <sca:composite name="switchyard-quickstart-demo-cluster-dealer" targetNamespace="urn:switchyard-quickstart-demo-cluster-dealer:1.0">
+    <sca:service name="Dealer" promote="DealerBean/Dealer">
+      <sca:interface.java interface="org.switchyard.quickstarts.demo.cluster.Dealer"/>
+      <sca:binding.sca/>
+    </sca:service>
+    <sca:component name="DealerBean">
+      <bean:implementation.bean class="org.switchyard.quickstarts.demo.cluster.DealerBean"/>
+      <sca:service name="Dealer">
+        <sca:interface.java interface="org.switchyard.quickstarts.demo.cluster.Dealer"/>
+      </sca:service>
+      <sca:reference name="CreditCheck">
+        <sca:interface.java interface="org.switchyard.quickstarts.demo.cluster.CreditCheck"/>
+      </sca:reference>
+    </sca:component>
+    <sca:reference name="CreditCheck" multiplicity="0..1" promote="DealerBean/CreditCheck">
+      <sca:interface.java interface="org.switchyard.quickstarts.demo.cluster.CreditCheck"/>
+      <sca:binding.sca sy:clustered="true" sy:loadBalance="RoundRobinStrategy" sy:targetNamespace="urn:switchyard-quickstart-demo-cluster-credit:1.0"/>
+    </sca:reference>
+  </sca:composite>
+  <!--
+  <domain>
+    <handlers>
+      <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
+    </handlers>
+  </domain>
+  -->
+</switchyard>
