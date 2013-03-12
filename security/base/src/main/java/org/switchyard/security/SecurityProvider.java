@@ -18,8 +18,10 @@
  */
 package org.switchyard.security;
 
+import java.util.Iterator;
 import java.util.ServiceLoader;
 
+import org.apache.log4j.Logger;
 import org.switchyard.ServiceSecurity;
 
 /**
@@ -29,10 +31,22 @@ import org.switchyard.ServiceSecurity;
  */
 public abstract class SecurityProvider {
 
+    private static final Logger LOGGER = Logger.getLogger(SecurityProvider.class);
+
     private static final SecurityProvider INSTANCE;
     static {
-        ServiceLoader<SecurityProvider> services = ServiceLoader.load(SecurityProvider.class, SecurityProvider.class.getClassLoader());
-        INSTANCE = services.iterator().next();
+        SecurityProvider instance;
+        try {
+            ServiceLoader<SecurityProvider> services = ServiceLoader.load(SecurityProvider.class, SecurityProvider.class.getClassLoader());
+            Iterator<SecurityProvider> iterator = services.iterator();
+            instance = iterator.hasNext() ? iterator.next() : null;
+        } catch (Throwable t) {
+            instance = null;
+        }
+        INSTANCE = instance != null ? instance : new JaasSecurityProvider();
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Using SecurityProvider implementation: " + INSTANCE.getClass().getName());
+        }
     }
 
    /**
@@ -44,10 +58,26 @@ public abstract class SecurityProvider {
    public abstract boolean authenticate(ServiceSecurity serviceSecurity, SecurityContext securityContext);
 
    /**
+    * Propagates any existing container-specific (most likely thread-local) security information into the SecurityContext.
+    * @param serviceSecurity the ServiceSecurity
+    * @param securityContext the SecurityContext
+    * @return whether propagation was successful
+    */
+   public abstract boolean propagate(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+
+   /**
+     * Adds the ServiceSecurity's runAs Role to the SecurityContext's Subject.
+     * @param serviceSecurity the ServiceSecurity
+     * @param securityContext the SecurityContext
+     * @return whether adding the runAs Role was successful
+    */
+   public abstract boolean addRunAs(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+
+   /**
     * Checks if the Subject associated in the SecurityContext has at least one of the allowed roles in the ServiceSecurity.
     * @param serviceSecurity the ServiceSecurity
     * @param securityContext the SecurityContext
-    * @return successful roles allowed check
+    * @return whether the allowed roles check was successful
     */
    public abstract boolean checkRolesAllowed(ServiceSecurity serviceSecurity, SecurityContext securityContext);
 

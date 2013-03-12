@@ -66,6 +66,9 @@ public class AuthorizationHeaderCredentialExtractorTests {
 
     @Test
     public void testDigest() throws Exception {
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // https://issues.jboss.org/browse/SWITCHYARD-1082
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         String source = new StringPuller().pull(DIGEST_TXT, AuthorizationHeaderCredentialExtractorTests.class);
         Set<Credential> creds = new AuthorizationHeaderCredentialExtractor().extract(source);
         boolean foundName = false;
@@ -79,7 +82,7 @@ public class AuthorizationHeaderCredentialExtractorTests {
         if (!foundName) {
             Assert.fail("name not found");
         }
-        // TODO: password?
+        // TODO: complete per SWITCHYARD-1082
     }
 
 }

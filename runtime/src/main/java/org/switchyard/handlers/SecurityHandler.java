@@ -68,15 +68,24 @@ public class SecurityHandler extends BaseHandler {
                     provide(exchange, CONFIDENTIALITY);
                 }
             }
+            boolean success = false;
             if (isRequired(exchange, CLIENT_AUTHENTICATION) && !isProvided(exchange, CLIENT_AUTHENTICATION)) {
                 if (isClientAuthenticationProvided(securityContext)) {
                     provide(exchange, CLIENT_AUTHENTICATION);
+                    success = true;
                 } else {
-                    boolean success = _securityProvider.authenticate(_serviceSecurity, securityContext);
-                    if (success) {
+                    boolean authenticated = _securityProvider.authenticate(_serviceSecurity, securityContext);
+                    if (authenticated) {
                         provide(exchange, CLIENT_AUTHENTICATION);
+                        success = true;
                     }
                 }
+            } else {
+                success = true;
+            }
+            if (success) {
+                _securityProvider.propagate(_serviceSecurity, securityContext);
+                _securityProvider.addRunAs(_serviceSecurity, securityContext);
             }
             if (isRequired(exchange, AUTHORIZATION) && !isProvided(exchange, AUTHORIZATION)) {
                 if (isAuthorizationProvided(securityContext)) {

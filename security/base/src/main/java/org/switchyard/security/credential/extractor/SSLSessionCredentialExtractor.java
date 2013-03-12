@@ -30,19 +30,27 @@ import org.switchyard.security.credential.Credential;
 import org.switchyard.security.credential.PrincipalCredential;
 
 /**
- * Extractor which will try to obtain {@link Credential} from given {@link SSLSession}.
+ * CredentialExtractor which extracts {@link Credential}s from a given {@link SSLSession}.
  */
-public class SslSessionCredentialExtractor implements CredentialExtractor<SSLSession> {
+public class SSLSessionCredentialExtractor implements CredentialExtractor<SSLSession> {
 
+    /**
+     * Constructs a new SSLSessionCredentialExtractor.
+     */
+    public SSLSessionCredentialExtractor() {}
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Set<Credential> extract(SSLSession session) {
+    public Set<Credential> extract(SSLSession source) {
         Set<Credential> credentials = new HashSet<Credential>();
         try {
-            credentials.add(new ConfidentialityCredential(session.isValid()));
-            credentials.add(new PrincipalCredential(session.getPeerPrincipal()));
-            credentials.add(new CertificateCredential(session.getPeerCertificates()[0]));
+            credentials.add(new ConfidentialityCredential(source.isValid()));
+            credentials.add(new PrincipalCredential(source.getPeerPrincipal()));
+            credentials.add(new CertificateCredential(source.getPeerCertificates()[0]));
         } catch (SSLPeerUnverifiedException e) {
-            throw new RuntimeException("Unable to retrieve credentials from SSL session", e);
+            throw new RuntimeException("Unable to extract Credentials from SSLSession: " + e.getMessage(), e);
         }
         return credentials;
     }

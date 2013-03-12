@@ -105,6 +105,9 @@ public class AuthorizationHeaderCredentialExtractor implements CredentialExtract
                     }
                 }
             } else if (source.startsWith("Digest ")) {
+                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                // https://issues.jboss.org/browse/SWITCHYARD-1082
+                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 Map<String,String> map = new HashMap<String,String>();
                 String everything = source.substring(6, source.length()).trim();
                 List<String> list = Strings.splitTrimToNull(everything, ",\n");
@@ -123,7 +126,7 @@ public class AuthorizationHeaderCredentialExtractor implements CredentialExtract
                 if (username != null) {
                     credentials.add(new NameCredential(username));
                 }
-                // TODO: password?
+                // TODO: complete per SWITCHYARD-1082
             }
         }
         return credentials;

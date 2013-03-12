@@ -64,14 +64,52 @@ public class JaasSecurityProvider extends SecurityProvider {
             sych.setProperties(serviceSecurity.getProperties());
             sych.setCredentials(securityContext.getCredentials());
         }
-        String domain = getDomain(serviceSecurity);
-        Subject subject = securityContext.getSubject(domain);
+        String securityDomain = getSecurityDomain(serviceSecurity);
+        Subject subject = securityContext.getSubject(securityDomain);
         try {
-            new LoginContext(domain, subject, ch).login();
-            addRunAs(serviceSecurity.getRunAs(), subject);
+            new LoginContext(securityDomain, subject, ch).login();
             success = true;
         } catch (LoginException le) {
             LOGGER.error("authenticate LoginException: " + le.getMessage(), le);
+        }
+        return success;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean propagate(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
+        // Override in sub-class if desired.
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean addRunAs(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
+        boolean success = true;
+        String runAs = Strings.trimToNull(serviceSecurity.getRunAs());
+        if (runAs != null) {
+            success = false;
+            Role runAsRole = new Role(runAs);
+            String securityDomain = getSecurityDomain(serviceSecurity);
+            Subject subject = securityContext.getSubject(securityDomain);
+            Set<Group> groups = subject.getPrincipals(Group.class);
+            if (groups.isEmpty()) {
+                Group rolesGroup = new Group(Group.ROLES);
+                rolesGroup.addMember(runAsRole);
+                subject.getPrincipals().add(rolesGroup);
+                success = true;
+            } else {
+                for (Group group : groups) {
+                    if (Group.ROLES.equals(group.getName())) {
+                        group.addMember(runAsRole);
+                        success = true;
+                    }
+                }
+            }
         }
         return success;
     }
@@ -85,9 +123,9 @@ public class JaasSecurityProvider extends SecurityProvider {
         if (rolesAllowed.isEmpty()) {
             return true;
         }
-        String domain = getDomain(serviceSecurity);
+        String securityDomain = getSecurityDomain(serviceSecurity);
         for (String roleName : rolesAllowed) {
-            boolean isInRole = securityContext.isCallerInRole(roleName, domain);
+            boolean isInRole = securityContext.isCallerInRole(roleName, securityDomain);
             if (isInRole) {
                 return true;
             }
@@ -95,30 +133,17 @@ public class JaasSecurityProvider extends SecurityProvider {
         return false;
     }
 
-    private void addRunAs(String runAs, Subject subject) {
-        if (runAs != null) {
-            Role runAsRole = new Role(runAs);
-            Set<Group> groups = subject.getPrincipals(Group.class);
-            if (groups.isEmpty()) {
-                Group rolesGroup = new Group(Group.ROLES);
-                rolesGroup.addMember(runAsRole);
-                subject.getPrincipals().add(rolesGroup);
-            } else {
-                for (Group group : groups) {
-                    if (Group.ROLES.equals(group.getName())) {
-                        group.addMember(runAsRole);
-                    }
-                }
-            }
+    /**
+     * Gets the security domain from the ServiceSecurity.
+     * @param serviceSecurity the ServiceSecurity
+     * @return the security domain
+     */
+    protected String getSecurityDomain(ServiceSecurity serviceSecurity) {
+        String securityDomain = Strings.trimToNull(serviceSecurity.getModuleName());
+        if (securityDomain == null) {
+            securityDomain = "other";
         }
-    }
-
-    private String getDomain(ServiceSecurity serviceSecurity) {
-        String domain = Strings.trimToNull(serviceSecurity.getModuleName());
-        if (domain == null) {
-            domain = "other";
-        }
-        return domain;
+        return securityDomain;
     }
 
 }
