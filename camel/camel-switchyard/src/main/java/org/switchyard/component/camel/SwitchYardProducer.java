@@ -122,7 +122,7 @@ public class SwitchYardProducer extends DefaultProducer {
     private String getOperationName(org.apache.camel.Exchange exchange) {
         OperationSelector<CamelBindingData> selector = exchange.getIn().getHeader(CamelConstants.OPERATION_SELETOR_HEADER, OperationSelector.class);
         if (selector == null) {
-            return _operationName;
+            return _operationName == null ? exchange.getIn().getHeader(Exchange.OPERATION_NAME, String.class) : _operationName;
         }
         try {
             return selector.selectOperation(new CamelBindingData(exchange.getIn())).getLocalPart();
@@ -160,11 +160,7 @@ public class SwitchYardProducer extends DefaultProducer {
     }
 
     private String lookupOperationNameFor(final org.apache.camel.Exchange camelExchange, final ServiceReference serviceRef) {
-        // TODO: make this a factory
-        // For CXFRS exchanges
-        String operationName = (String) camelExchange.getIn().getHeader("operationName");
-
-        operationName = getOperationName(camelExchange);
+        String operationName = getOperationName(camelExchange);
 
         // From Service Interface
         if (operationName == null) {
