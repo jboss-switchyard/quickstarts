@@ -23,6 +23,19 @@
                 <xs:element name="text" type="xs:string" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
+
+        <xs:element name="upper" type="tns:upperType" />
+        <xs:complexType name="upperType">
+            <xs:sequence>
+                <xs:element name="text" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:element name="upperResponse" type="tns:upperResponseType" />
+        <xs:complexType name="upperResponseType">
+            <xs:sequence>
+                <xs:element name="text" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
     </xsd:schema>
   </types>
   
@@ -32,17 +45,36 @@
   <message name="reverseResponse">
     <part name="parameters" element="tns:reverseResponse"/>
   </message>
+  <message name="upper">
+    <part name="parameters" element="tns:upper"/>
+  </message>
+  <message name="upperResponse">
+    <part name="parameters" element="tns:upperResponse"/>
+  </message>
   
   <portType name="ReverseService">
     <operation name="reverse">
       <input message="tns:reverse"/>
       <output message="tns:reverseResponse"/>
     </operation>
+    <operation name="upperCase">
+      <input message="tns:upper"/>
+      <output message="tns:upperResponse"/>
+    </operation>
   </portType>
   
   <binding name="ReverseServiceBinding" type="tns:ReverseService">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
     <operation name="reverse">
+      <soap:operation soapAction="urn:switchyard-quickstart:camel-soap-proxy:1.0"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="upperCase">
       <soap:operation soapAction="urn:switchyard-quickstart:camel-soap-proxy:1.0"/>
       <input>
         <soap:body use="literal"/>
