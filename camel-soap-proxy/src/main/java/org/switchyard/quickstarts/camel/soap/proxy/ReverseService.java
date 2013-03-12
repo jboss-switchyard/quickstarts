@@ -40,4 +40,10 @@ public class ReverseService {
         return new StringBuilder(text).reverse().toString();
     }
 
+    @WebMethod
+    @WebResult(name="text")
+    public String upper(@WebParam(name="text") String text) {
+        return text.toUpperCase();
+    }
+
 }

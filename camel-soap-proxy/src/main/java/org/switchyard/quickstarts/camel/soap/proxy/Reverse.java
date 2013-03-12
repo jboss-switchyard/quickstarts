@@ -32,4 +32,9 @@ public interface Reverse {
             out = "{urn:switchyard-quickstart:camel-soap-proxy:1.0}reverseResponse")
     Source reverse(Source text);
 
+    @OperationTypes(
+            in = "{urn:switchyard-quickstart:camel-soap-proxy:1.0}upper",
+            out = "{urn:switchyard-quickstart:camel-soap-proxy:1.0}upperResponse")
+    Source upper(Source text);
+
 }
