@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.soap.composer.SOAPBindingData;
 import org.switchyard.component.soap.composer.SOAPComposition;
@@ -60,7 +61,7 @@ public class OutboundHandler extends BaseServiceHandler {
     private Dispatch<SOAPMessage> _dispatcher;
     private Port _wsdlPort;
     private String _bindingId;
-    private Boolean _documentStyle;
+    //private Boolean _documentStyle;
 
     /**
      * Constructor.
@@ -76,7 +77,7 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     public void start() throws WebServiceConsumeException {
         if (_dispatcher == null) {
-            ClassLoader origLoader = Thread.currentThread().getContextClassLoader();
+            ClassLoader origLoader = Classes.getTCCL();
             try {
                 PortName portName = _config.getPort();
                 javax.wsdl.Service wsdlService = WSDLUtil.getService(_config.getWsdl(), portName);
@@ -86,15 +87,15 @@ public class OutboundHandler extends BaseServiceHandler {
                 portName.setName(_wsdlPort.getName());
 
                 _bindingId = WSDLUtil.getBindingId(_wsdlPort);
-                String style = WSDLUtil.getStyle(_wsdlPort);
-                _documentStyle = style.equals("document") ? true : false;
+                //String style = WSDLUtil.getStyle(_wsdlPort);
+                //_documentStyle = style.equals("document") ? true : false;
 
                 _messageComposer = SOAPComposition.getMessageComposer(_config, _wsdlPort);
 
                 URL wsdlUrl = WSDLUtil.getURL(_config.getWsdl());
                 LOGGER.info("Creating dispatch with WSDL " + wsdlUrl);
                 // make sure we don't pollute the class loader used by the WS subsystem
-                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                Classes.setTCCL(getClass().getClassLoader());
                 Service service = Service.create(wsdlUrl, portName.getServiceQName());
                 _dispatcher = service.createDispatch(portName.getPortQName(), SOAPMessage.class, Service.Mode.MESSAGE, new AddressingFeature(false, false));
                 // this does not return a proper qualified Fault element and has no Detail so deferring for now
@@ -111,7 +112,7 @@ public class OutboundHandler extends BaseServiceHandler {
             } catch (WSDLException wsdle) {
                 throw new WebServiceConsumeException(wsdle);
             } finally {
-                Thread.currentThread().setContextClassLoader(origLoader);
+                Classes.setTCCL(origLoader);
             }
         }
     }

@@ -25,15 +25,17 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.soap.SOAPBinding;
 
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.soap.InboundHandler;
-
 
 /**
  * This is the abstract base class for a SOAP messages.
@@ -42,6 +44,7 @@ import org.switchyard.component.soap.InboundHandler;
  */
 @WebServiceProvider
 @ServiceMode(Mode.MESSAGE)
+@BindingType(SOAPBinding.SOAP12HTTP_BINDING) // Actually accepts both 1.1 and 1.2; needs to be present for ws-security to work.
 public class BaseWebService implements Provider<SOAPMessage> {
 
     private static String ACTION_EQUALS = "action=";
@@ -90,10 +93,10 @@ public class BaseWebService implements Provider<SOAPMessage> {
             if (mimeContentTypes != null)  {
                 String mimeContentType = mimeContentTypes[0];
                 if ((mimeContentType != null) && (mimeContentType.indexOf(ACTION_EQUALS) == -1)) {
-                    Map headers = (Map) _wsContext.getMessageContext().get(MessageContext.HTTP_REQUEST_HEADERS);
-                    List<String> contentTypes = (List) headers.get(CONTENT_TYPE_L);
+                    Map headers = (Map)_wsContext.getMessageContext().get(MessageContext.HTTP_REQUEST_HEADERS);
+                    List<String> contentTypes = (List)headers.get(CONTENT_TYPE_L);
                     if ((contentTypes == null) || (contentTypes.size() == 0)) {
-                        contentTypes = (List) headers.get(CONTENT_TYPE);
+                        contentTypes = (List)headers.get(CONTENT_TYPE);
                     }
                     if ((contentTypes != null) && (contentTypes.size() > 0)) {
                         int idx =  contentTypes.get(0).indexOf(ACTION_EQUALS);
@@ -107,12 +110,11 @@ public class BaseWebService implements Provider<SOAPMessage> {
         }
 
         SOAPMessage response = null;
-        ClassLoader original = Thread.currentThread().getContextClassLoader();
+        ClassLoader original = Classes.setTCCL(_invocationClassLoader);
         try {
-            Thread.currentThread().setContextClassLoader(_invocationClassLoader);
             response = _serviceConsumer.invoke(request, _wsContext);
         } finally {
-            Thread.currentThread().setContextClassLoader(original);
+            Classes.setTCCL(original);
         }
         return response;
     }

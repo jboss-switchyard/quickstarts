@@ -19,6 +19,8 @@
 
 package org.switchyard.component.soap.config.model.v1;
 
+import org.switchyard.component.soap.config.model.InterceptorModel;
+import org.switchyard.component.soap.config.model.InterceptorsModel;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
@@ -60,6 +62,10 @@ public class V1SOAPMarshaller extends BaseMarshaller {
             return new V1SOAPContextMapperModel(config, desc);
         } else if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
             return new V1SOAPMessageComposerModel(config, desc);
+        } else if (name.equals(InterceptorsModel.IN_INTERCEPTORS) || name.equals(InterceptorsModel.OUT_INTERCEPTORS)) {
+            return new V1InterceptorsModel(config, desc);
+        } else if (name.equals(InterceptorModel.INTERCEPTOR)) {
+            return new V1InterceptorModel(config, desc);
         }
         return null;
     }

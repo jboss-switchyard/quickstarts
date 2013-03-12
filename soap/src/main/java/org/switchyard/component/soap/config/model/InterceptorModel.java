@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -18,25 +18,32 @@
  */
 package org.switchyard.component.soap.config.model;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
-import org.switchyard.config.model.ModelPuller;
+import org.switchyard.config.model.NamedModel;
 
 /**
- * Test of SOAP binding model.
+ * A Interceptor Model.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public class SOAPBindingModelTest {
+public interface InterceptorModel extends NamedModel {
 
-    private static final String SOAP_BINDING = "soap-binding-reference.xml";
+    /**
+     * The interceptor XML element.
+     */
+    public static final String INTERCEPTOR = "interceptor";
 
-    @Test
-    public void testReadConfigBinding() throws Exception {
-        ModelPuller<SOAPBindingModel> puller = new ModelPuller<SOAPBindingModel>();
-        SOAPBindingModel model = puller.pull(SOAP_BINDING, getClass());
-        Assert.assertTrue(model.isModelValid());
-        Assert.assertEquals("Missing endpoint address", model.getEndpointAddress(), "http://modified.com/phantom");
-    }
+    /**
+     * Gets the Interceptor class.
+     * @param loader the ClassLoader to use
+     * @return the Interceptor class
+     */
+    public Class<?> getClazz(ClassLoader loader);
+
+    /**
+     * Sets the Interceptor class.
+     * @param clazz the Interceptor class
+     * @return this InterceptorModel (useful for chaining)
+     */
+    public InterceptorModel setClazz(Class<?> clazz);
+
 }

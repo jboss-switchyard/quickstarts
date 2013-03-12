@@ -93,11 +93,52 @@ MA  02110-1301, USA.
                     <element name="endpointAddress" type="string" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>
-                                The enpoint address override
+                                The endpoint address override
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="securityAction" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                The security action, valid values being a blank separated list of actions as specified in
+                                org.apache.ws.security.handler.WSHandlerConstants
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="inInterceptors" type="soap:InterceptorsType" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                The Apache CXF InInterceptors to add
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="outInterceptors" type="soap:InterceptorsType" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                The Apache CXF OutInterceptors to add
                             </documentation>
                         </annotation>
                     </element>
                 </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="InterceptorsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="soap:interceptor" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="interceptor" type="soap:InterceptorType"/>
+    <complexType name="InterceptorType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="class" type="string" use="required"/>
             </extension>
         </complexContent>
     </complexType>

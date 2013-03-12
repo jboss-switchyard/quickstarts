@@ -28,7 +28,7 @@ import org.jboss.netty.handler.ssl.SslHandler;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.common.composer.SecurityBindingData;
 import org.switchyard.security.credential.Credential;
-import org.switchyard.security.credential.extractor.SslSessionCredentialExtractor;
+import org.switchyard.security.credential.extractor.SSLSessionCredentialExtractor;
 
 /**
  * Extension of {@link CamelBindingData} which provides {@link SecurityBindingData}
@@ -52,7 +52,7 @@ public class NettyBindingData extends CamelBindingData implements SecurityBindin
         if (handlerContext != null) {
             SslHandler sslHandler = handlerContext.getPipeline().get(SslHandler.class);
             if (sslHandler != null) {
-                credentials.addAll(new SslSessionCredentialExtractor().extract(sslHandler.getEngine().getSession()));
+                credentials.addAll(new SSLSessionCredentialExtractor().extract(sslHandler.getEngine().getSession()));
             }
         }
         return credentials;

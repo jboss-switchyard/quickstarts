@@ -19,6 +19,9 @@
 
 package org.switchyard.component.soap.config.model;
 
+import static org.switchyard.component.soap.config.model.InterceptorsModel.IN_INTERCEPTORS;
+import static org.switchyard.component.soap.config.model.InterceptorsModel.OUT_INTERCEPTORS;
+
 import javax.xml.namespace.QName;
 
 import org.switchyard.common.net.SocketAddr;
@@ -55,6 +58,7 @@ public class SOAPBindingModel extends V1BindingModel {
     private static final String CONTEXT_PATH = "contextPath";
     private static final String SOCKET_ADDRESS = "socketAddr";
     private static final String ENDPOINT_ADDRESS = "endpointAddress";
+    private static final String SECURITY_ACTION = "securityAction";
 
     private PortName _port;
     private String _wsdl;
@@ -63,6 +67,9 @@ public class SOAPBindingModel extends V1BindingModel {
     private String _contextPath;
     private Boolean _publishAsWS = false;
     private String _endpointAddress;
+    private String _securityAction;
+    private InterceptorsModel _inInterceptors;
+    private InterceptorsModel _outInterceptors;
     
     private Configuration _environment = Configurations.emptyConfig();
     /**
@@ -70,7 +77,7 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public SOAPBindingModel() {
         super(SOAP, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(WSDL, PORT, SOCKET_ADDRESS, ENDPOINT_ADDRESS);
+        setModelChildrenOrder(WSDL, PORT, SOCKET_ADDRESS, CONTEXT_PATH, ENDPOINT_ADDRESS, SECURITY_ACTION, IN_INTERCEPTORS, OUT_INTERCEPTORS);
     }
 
     /**
@@ -81,7 +88,7 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public SOAPBindingModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(WSDL, PORT, SOCKET_ADDRESS);
+        setModelChildrenOrder(WSDL, PORT, SOCKET_ADDRESS, CONTEXT_PATH, ENDPOINT_ADDRESS, SECURITY_ACTION, IN_INTERCEPTORS, OUT_INTERCEPTORS);
     }
 
     /**
@@ -307,6 +314,84 @@ public class SOAPBindingModel extends V1BindingModel {
      */
     public Boolean getPublishAsWS() {
         return _publishAsWS;
+    }
+
+    /**
+     * Gets the target security action of the WebService.
+     * 
+     * @return the security action
+     */
+    public String getSecurityAction() {
+        if (_securityAction == null) {
+            Configuration childConfig = getModelConfiguration().getFirstChild(SECURITY_ACTION);
+            if (childConfig != null) {
+                _securityAction = childConfig.getValue();
+            }
+        }
+        return _securityAction;
+    }
+
+    /**
+     * Sets the target security action of the WebService.
+     * 
+     * @param securityAction the security action to set
+     */
+    public void setSecurityAction(String securityAction) {
+        this._securityAction = securityAction;
+    }
+
+    /**
+     * Gets the inInterceptors.
+     * @return the inInterceptors
+     */
+    public InterceptorsModel getInInterceptors() {
+        if (_inInterceptors == null) {
+            _inInterceptors = (InterceptorsModel)getFirstChildModel(IN_INTERCEPTORS);
+        }
+        return _inInterceptors;
+    }
+
+    /**
+     * Sets the inInterceptors.
+     * @param inInterceptors the inInterceptors
+     * @return this SOAPBindingModel (useful for chaining)
+     */
+    public SOAPBindingModel setInInterceptors(InterceptorsModel inInterceptors) {
+        if (inInterceptors != null) {
+            if (!IN_INTERCEPTORS.equals(inInterceptors.getModelConfiguration().getName())) {
+                throw new IllegalArgumentException("not " + IN_INTERCEPTORS);
+            }
+        }
+        setChildModel(inInterceptors);
+        _inInterceptors = inInterceptors;
+        return this;
+    }
+
+    /**
+     * Gets the outInterceptors.
+     * @return the outInterceptors
+     */
+    public InterceptorsModel getOutInterceptors() {
+        if (_outInterceptors == null) {
+            _outInterceptors = (InterceptorsModel)getFirstChildModel(OUT_INTERCEPTORS);
+        }
+        return _outInterceptors;
+    }
+
+    /**
+     * Sets the outInterceptors.
+     * @param outInterceptors the outInterceptors
+     * @return this SOAPBindingModel (useful for chaining)
+     */
+    public SOAPBindingModel setOutInterceptors(InterceptorsModel outInterceptors) {
+        if (outInterceptors != null) {
+            if (!OUT_INTERCEPTORS.equals(outInterceptors.getModelConfiguration().getName())) {
+                throw new IllegalArgumentException("not " + OUT_INTERCEPTORS);
+            }
+        }
+        setChildModel(outInterceptors);
+        _outInterceptors = outInterceptors;
+        return this;
     }
 
     /**

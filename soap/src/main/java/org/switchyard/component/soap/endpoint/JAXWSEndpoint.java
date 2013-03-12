@@ -21,6 +21,7 @@ package org.switchyard.component.soap.endpoint;
 
 import javax.xml.ws.Endpoint;
 
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.soap.InboundHandler;
 
 /**
@@ -38,7 +39,7 @@ public class JAXWSEndpoint implements WSEndpoint {
      */
     public JAXWSEndpoint(final String bindingId, final InboundHandler handler) {
         BaseWebService wsProvider = new BaseWebService();
-        wsProvider.setInvocationClassLoader(Thread.currentThread().getContextClassLoader());
+        wsProvider.setInvocationClassLoader(Classes.getTCCL());
         // Hook the handler
         wsProvider.setConsumer(handler);
         _endpoint = Endpoint.create(bindingId, wsProvider);

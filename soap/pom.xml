@@ -43,6 +43,29 @@
                     </delimiters>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExclude>org.apache.cxf:cxf-rt-frontend-jaxws</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.apache.cxf:cxf-api</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.apache.cxf:cxf-rt-bindings-soap</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.apache.cxf:cxf-rt-bindings-xml</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.apache.cxf:cxf-rt-ws-security</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.apache.cxf:cxf-common-utilities</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.jboss.ws:jbossws-spi</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.jboss.ws:jbossws-api</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.jboss.ws.cxf:jbossws-cxf-server</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.jboss.ws.cxf:jbossws-cxf-client</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.jboss.ws:jbossws-common-tools</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.jboss.ws.cxf:jbossws-cxf-transports-httpserver</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.jboss.ws.projects:jaxws-jboss-httpserver-httpspi</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.jboss.ws:jbossws-common</classpathDependencyExclude>
+                        <classpathDependencyExclude>org.jboss.ws.cxf:jbossws-cxf-factories</classpathDependencyExclude>
+                    </classpathDependencyExcludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -68,8 +91,33 @@
             <artifactId>servlet-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-security</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.security</groupId>
+            <artifactId>wss4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.ws</groupId>
             <artifactId>jbossws-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.ws.cxf</groupId>
+            <artifactId>jbossws-cxf-server</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.picketbox</groupId>
+            <artifactId>picketbox</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

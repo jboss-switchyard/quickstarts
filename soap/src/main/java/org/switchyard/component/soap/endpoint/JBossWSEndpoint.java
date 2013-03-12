@@ -29,8 +29,11 @@ import org.jboss.wsf.spi.metadata.webservices.WebservicesMetaData;
 import org.jboss.wsf.spi.publish.Context;
 import org.jboss.wsf.spi.publish.EndpointPublisher;
 import org.jboss.wsf.spi.publish.EndpointPublisherFactory;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.WebServicePublishException;
+import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.interceptor.Interceptors;
 
 /**
  * Wrapper for JBossWS endpoints.
@@ -66,13 +69,16 @@ public class JBossWSEndpoint implements WSEndpoint {
     /**
      * {@inheritDoc}
      */
-    public void publish(String contextRoot, Map<String, String> urlPatternToClassNameMap, WebservicesMetaData metadata, InboundHandler handler) throws Exception {
-        _context = _publisher.publish(contextRoot, Thread.currentThread().getContextClassLoader(), urlPatternToClassNameMap, metadata);
+    public void publish(String contextRoot, Map<String, String> urlPatternToClassNameMap, WebservicesMetaData wsMetadata, SOAPBindingModel bindingModel, InboundHandler handler) throws Exception {
+        ClassLoader tccl = Classes.getTCCL();
+        _context = _publisher.publish(contextRoot, tccl, urlPatternToClassNameMap, wsMetadata);
         for (Endpoint ep : _context.getEndpoints()) {
-            BaseWebService wsProvider = (BaseWebService) ep.getInstanceProvider().getInstance(BaseWebService.class.getName()).getValue();
-            wsProvider.setInvocationClassLoader(Thread.currentThread().getContextClassLoader());
+            BaseWebService wsProvider = (BaseWebService)ep.getInstanceProvider().getInstance(BaseWebService.class.getName()).getValue();
+            wsProvider.setInvocationClassLoader(tccl);
             // Hook the handler
             wsProvider.setConsumer(handler);
+            // Hook the interceptors
+            Interceptors.addInterceptors(ep, bindingModel, tccl);
         }
     }
 
