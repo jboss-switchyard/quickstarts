@@ -1212,6 +1212,11 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.quickstarts.demos</groupId>
+                <artifactId>switchyard-quickstart-demo-policy-security-wss-username</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts.demos</groupId>
                 <artifactId>switchyard-quickstart-demo-policy-transaction</artifactId>
                 <version>${project.version}</version>
             </dependency>
