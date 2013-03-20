@@ -1,4 +1,4 @@
-            <wsse:BinarySecurityToken EncodingType='wsse:Base64Binary' ValueType='wsse:X509v3'>MIICTTCCAbagAwIBAgIEUQGHtTANBgkqhkiG9w0BAQUFADBrMRAwDgYDVQQGEwdVbmtub3duMRAw
+<wsse:BinarySecurityToken EncodingType='wsse:Base64Binary' ValueType='wsse:X509v3'>MIICTTCCAbagAwIBAgIEUQGHtTANBgkqhkiG9w0BAQUFADBrMRAwDgYDVQQGEwdVbmtub3duMRAw
 DgYDVQQIEwdVbmtub3duMRAwDgYDVQQHEwdVbmtub3duMRAwDgYDVQQKEwdVbmtub3duMRAwDgYD
 VQQLEwdVbmtub3duMQ8wDQYDVQQDEwZrZXJtaXQwHhcNMTMwMTI0MTkxMjUzWhcNMTMwNDI0MTkx
 MjUzWjBrMRAwDgYDVQQGEwdVbmtub3duMRAwDgYDVQQIEwdVbmtub3duMRAwDgYDVQQHEwdVbmtu
