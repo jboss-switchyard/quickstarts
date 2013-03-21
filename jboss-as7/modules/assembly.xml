@@ -58,7 +58,6 @@
       <componentDescriptor>src/main/resources/switchyard/components/common/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/common/camel/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/common/knowledge/assembly-component.xml</componentDescriptor>
-      <componentDescriptor>src/main/resources/switchyard/components/common/rest/assembly-component.xml</componentDescriptor>
 
       <componentDescriptor>src/main/resources/switchyard/console/assembly-component.xml</componentDescriptor>
 
