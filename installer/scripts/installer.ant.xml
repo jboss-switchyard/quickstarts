@@ -21,10 +21,9 @@
 
 	<!--  The following -D properties can be used to control install behavior:
 	         o AS7_PATH = path to AS7 install - prevents input prompt
-	         o SKIP_CONSOLE = do not install console
 			 o SKIP_BPEL_CONSOLE = do not install BPEL console
 	         o SKIP_FORGE = do not install forge
-                 o SKIP_AS7 = do not install SwitchYard to AS7
+             o SKIP_AS7 = do not install SwitchYard to AS7
 	 -->
 
     <property file="installer.properties"/>
@@ -52,7 +51,6 @@
           <and>
             <or>
               <isset property="installForge"/>
-              <isset property="installSYConsole"/>
               <isset property="installBPELConsole"/>
             </or>
             <not>
@@ -68,12 +66,6 @@
     </target>
 
     <target name="extract-sy-tools-forge" depends="download-sy-tools" if="installForge">
-        <unzip src="res/switchyard-tools.zip" dest="res/" overwrite="true">
-            <mapper type="flatten"/>
-        </unzip>
-    </target>
-
-    <target name="extract-sy-tools-console" depends="download-sy-tools" if="installSYConsole">
         <unzip src="res/switchyard-tools.zip" dest="res/" overwrite="true">
             <mapper type="flatten"/>
         </unzip>
@@ -112,20 +104,6 @@
     <target name="download-sy-forge-module" depends="download-sy-forge-module-check, extract-sy-tools-forge" if="sy.forge.module.not.available">
     </target>
 
-    <target name="download-sy-console-check">
-        <condition property="sy.console.not.available">
-           <and>
-             <not>
-               <available file="res/switchyard-console-application-resources.jar"/>
-             </not>
-             <isset property="installSYConsole"/>
-           </and>
-        </condition>
-    </target>
-
-    <target name="download-sy-console" depends="download-sy-console-check, extract-sy-tools-console" if="sy.console.not.available">
-    </target>
-
     <target name="download-bpel-console-check">
         <condition property="bpel.console.not.available">
            <and>
@@ -151,16 +129,6 @@
         </condition>
     </target>
 
-    <target name="request-sy-console-install" unless="switchyardConsoleAlreadyInstalled">
-        <input message="Would you like to install the SwitchYard Console (y/n)?" addproperty="install.sy.console.question" validargs="y,n" defaultvalue="y" />
-
-        <condition property="installSYConsole">
-           <and>
-              <isset property="install.sy.console.question" />
-              <equals arg1="${install.sy.console.question}" arg2="y" />
-           </and>
-        </condition>
-    </target>
 
     <target name="request-bpel-console-install" unless="BPELConsoleAlreadyInstalled">
         <input message="Would you like to install the BPEL Console (y/n)?" addproperty="install.bpel.console.question" validargs="y,n" defaultvalue="y" />
@@ -246,12 +214,6 @@
             <isset property="SKIP_AS7"/>
           </or>
         </condition>
-        <condition property="switchyardConsoleAlreadyInstalled">
-          <or>
-            <available file="switchyard-console-application-resources.jar" filepath="${INSTALL_PATH}/modules/org/jboss/as/console/main" />
-            <isset property="SKIP_CONSOLE"/>
-          </or>
-        </condition>
         <condition property="BPELConsoleAlreadyInstalled">
           <or>
             <available file="switchyard-bpel-console.war" filepath="${INSTALL_PATH}/standalone/deployments" />
@@ -267,13 +229,10 @@
         </antcall>
         <antcall target="install-forge">
             <param name="AS7_PATH" value="${AS7_PATH}"/>
-	</antcall>
-        <antcall target="install-sy-console">
-            <param name="AS7_PATH" value="${AS7_PATH}"/>
-	</antcall>
+        </antcall>
 		<antcall target="install-bpel-console">
             <param name="AS7_PATH" value="${AS7_PATH}"/>
-	</antcall>
+	    </antcall>
     </target>
 
     <target name="unzipSwitchyardResources" unless="switchyardResourcesAlreadyInstalled">
@@ -339,25 +298,9 @@
     <target name="notAS7" unless="isAS7">
         <echo>The specified path '${AS7_PATH}' is not a path to a valid JBoss AS7 installation."</echo>
 
-        <input message="Would you like to download an AS7 distribution (y/n)?"          addproperty="install.sy.console.question" validargs="y,n" defaultvalue="y" />
+        <input message="Would you like to download an AS7 distribution (y/n)?"  validargs="y,n" defaultvalue="y" />
 
-        <condition property="installSYConsole">
-           <and>
-              <isset property="install.sy.console.question" />
-              <equals arg1="${install.sy.console.question}" arg2="y" />
-           </and>
-        </condition>
-
-        <fail message="Please install AS7 or run this installer again and download an AS7 distribution.">
-            <condition>
-                <and>
-                   <isset property="install.sy.console.question"/>
-                   <equals arg1="${install.sy.console.question}" arg2="n"/>
-                </and>
-	    </condition>
-        </fail>
-
-	<antcall target="download-as7"/>
+        <antcall target="download-as7"/>
     </target>
 
     <target name="check-forge-home">
@@ -394,10 +337,6 @@
         </pathconvert>
     </target>
 
-    <target name="install-sy-console" if="installSYConsole" depends="request-sy-console-install, download-sy-console">
-    	<copy todir="${INSTALL_PATH}/modules/org/jboss/as/console/main" overwrite="true" file="res/switchyard-console-application-resources.jar"/>
-		<antcall target="transform-console-module" />
-	</target>
 
 	<target name="transform-console-module">
         <xslt style="res/console_module.xsl"
