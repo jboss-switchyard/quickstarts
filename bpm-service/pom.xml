@@ -25,14 +25,14 @@
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
         <artifactId>switchyard-quickstart-parent</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.8.0.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-quickstart-bpm-service</artifactId>
     <name>Quickstart : BPM Service</name>
     <packaging>jar</packaging>
     <properties>
-        <switchyard.version>0.8.0-SNAPSHOT</switchyard.version>
+        <switchyard.version>0.8.0.Final</switchyard.version>
     </properties>
     <dependencies>
         <dependency>

@@ -20,47 +20,46 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-      <groupId>org.switchyard.quickstarts</groupId>
-      <artifactId>switchyard-quickstart-parent</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
-      <relativePath>../../../pom.xml</relativePath>
-  </parent>
-  <groupId>org.switchyard.quickstarts.demos</groupId>
-  <artifactId>switchyard-quickstart-demo-cluster-client</artifactId>
-  <packaging>jar</packaging>
-  <name>Quickstart Demo: Cluster - Client</name>
-  <dependencies>
-    <dependency>
-      <groupId>org.switchyard</groupId>
-      <artifactId>switchyard-remote</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  <build>
-      <finalName>${project.artifactId}</finalName>
-      <plugins>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <configuration>
-                  <source>1.6</source>
-                  <target>1.6</target>
-                  <debug>true</debug>
-                  <showWarnings>true</showWarnings>
-                  <showDeprecation>true</showDeprecation>
-              </configuration>
-          </plugin>
-          <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>exec-maven-plugin</artifactId>
-              <configuration>
-                  <mainClass>org.switchyard.quickstarts.demo.cluster.RemoteClient</mainClass>
-              </configuration>
-          </plugin>
-      </plugins>
-  </build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.switchyard.quickstarts</groupId>
+        <artifactId>switchyard-quickstart-parent</artifactId>
+        <version>0.8.0.Final</version>
+        <relativePath>../../../pom.xml</relativePath>
+    </parent>
+    <groupId>org.switchyard.quickstarts.demos</groupId>
+    <artifactId>switchyard-quickstart-demo-cluster-client</artifactId>
+    <packaging>jar</packaging>
+    <name>Quickstart Demo: Cluster - Client</name>
+    <dependencies>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-remote</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <debug>true</debug>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>org.switchyard.quickstarts.demo.cluster.RemoteClient</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
