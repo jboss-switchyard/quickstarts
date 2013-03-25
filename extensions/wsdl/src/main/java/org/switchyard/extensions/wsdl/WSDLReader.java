@@ -80,6 +80,32 @@ public class WSDLReader {
      * @throws WSDLReaderException if the wsdl cannot be read or is improper
      */
     public HashSet<ServiceOperation> readWSDL(final String wsdlURI, final String portName) throws WSDLReaderException {
+
+        Element defEl = readWSDL(wsdlURI);
+        Map<String, String> namespaces = parseNamespaces(defEl);
+        Map<QName, QName> parts = getParts(defEl, namespaces);
+        Element portType = getPortType(defEl, portName);
+        if (portType == null) {
+            throw new WSDLReaderException("Unable to find portType with name " + portName);
+        }
+        HashSet<ServiceOperation> ops = new HashSet<ServiceOperation>();
+        List<Element> operations = getOperations(portType);
+        int size = operations.size();
+        for (int i = 0; i < size; i++) {
+            ops.add(createServiceOperation(operations.get(i), parts, namespaces));
+        }
+
+        return ops;
+    }
+
+    /**
+     * Obtains the WSDL document located at the URI.
+     *
+     * @param wsdlURI a URI (can be a filename or URL) pointing to a WSDL XML definition.
+     * @return the WSDL document
+     * @throws WSDLReaderException if the wsdl cannot be read or is improper
+     */
+    public Element readWSDL(final String wsdlURI) throws WSDLReaderException {
         try {
             LOGGER.trace("Retrieving document at '" + wsdlURI + "'");
 
@@ -91,21 +117,8 @@ public class WSDLReader {
 
             inputStream.close();
 
-            Element defEl = doc.getDocumentElement();
-            Map<String, String> namespaces = parseNamespaces(defEl);
-            Map<QName, QName> parts = getParts(defEl, namespaces);
-            Element portType = getPortType(defEl, portName);
-            if (portType == null) {
-                throw new WSDLReaderException("Unable to find portType with name " + portName);
-            }
-            HashSet<ServiceOperation> ops = new HashSet<ServiceOperation>();
-            List<Element> operations = getOperations(portType);
-            int size = operations.size();
-            for (int i = 0; i < size; i++) {
-                ops.add(createServiceOperation(operations.get(i), parts, namespaces));
-            }
+            return doc.getDocumentElement();
 
-            return ops;
         } catch (IOException e) {
             throw new WSDLReaderException("Unable to resolve WSDL document at " + wsdlURI, e);
         } catch (ParserConfigurationException pce) {

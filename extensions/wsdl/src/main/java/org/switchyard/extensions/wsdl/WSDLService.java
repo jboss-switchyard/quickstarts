@@ -22,6 +22,8 @@ package org.switchyard.extensions.wsdl;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.ServiceOperation;
 
@@ -48,6 +50,9 @@ public final class WSDLService extends BaseService {
     
     // WSDL location used to create this ServiceInterface
     private String _wsdlLocation;
+    
+    // The port type for the ServiceInterface
+    private QName _portType;
 
     /**
      * Private constructor for creating a new ServiceInterface.  Clients of the API
@@ -56,8 +61,9 @@ public final class WSDLService extends BaseService {
      * @param operations list of operations on the service interface
      * @param wsdlLocation the WSDL location used to derive the interface
      */
-    private WSDLService(final Set<ServiceOperation> operations, final String wsdlLocation) {
+    private WSDLService(QName portType, final Set<ServiceOperation> operations, final String wsdlLocation) {
         super(operations, TYPE);
+        _portType = portType;
         _wsdlLocation = wsdlLocation;
     }
 
@@ -97,15 +103,28 @@ public final class WSDLService extends BaseService {
     public static WSDLService fromWSDL(final String wsdlLocation, final String portName) throws WSDLReaderException {
         WSDLReader reader = new WSDLReader();
         HashSet<ServiceOperation> ops = reader.readWSDL(wsdlLocation, portName);
-        return new WSDLService(ops, wsdlLocation);
+        org.w3c.dom.Element wsdl = reader.readWSDL(wsdlLocation);
+        
+        QName portType = new QName(wsdl.getAttribute("targetNamespace"), portName);
+        
+        return new WSDLService(portType, ops, wsdlLocation);
     }
 
     /**
      * Returns the WSDL location used to create this ServiceInterface.
-     * representation
-     * @return Java class or interface
+     *
+     * @return WSDL definition location
      */
     public String getWSDLLocation() {
         return _wsdlLocation;
+    }
+    
+    /**
+     * Returns the Port Type associated with this ServiceInterface.
+     * 
+     * @return Port type
+     */
+    public QName getPortType() {
+        return _portType;
     }
 }

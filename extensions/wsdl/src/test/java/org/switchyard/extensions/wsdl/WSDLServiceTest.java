@@ -42,6 +42,9 @@ public class WSDLServiceTest {
     @Test
     public void interfaceWSDLService() throws Exception {
         WSDLService wsdlService = WSDLService.fromWSDL("HelloWebService.wsdl", "HelloWebService");
+        
+        Assert.assertEquals("{urn:switchyard-metadata-wsdl}HelloWebService", wsdlService.getPortType().toString());
+        
         // There should be two operations
         Assert.assertEquals(2, wsdlService.getOperations().size());
         
@@ -62,6 +65,9 @@ public class WSDLServiceTest {
     @Test
     public void interfaceWSDLServiceNoPortName() throws Exception {
         WSDLService wsdlService = WSDLService.fromWSDL("HelloWebService.wsdl#wsdl.porttype(HelloWebService)");
+
+        Assert.assertEquals("{urn:switchyard-metadata-wsdl}HelloWebService", wsdlService.getPortType().toString());
+        
         // There should be two operations
         Assert.assertEquals(2, wsdlService.getOperations().size());
     }
