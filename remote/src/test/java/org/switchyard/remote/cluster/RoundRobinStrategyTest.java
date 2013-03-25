@@ -29,7 +29,9 @@ import org.switchyard.remote.RemoteRegistry;
 
 public class RoundRobinStrategyTest {
     
-    private static final QName TEST_SERVICE = new QName("RoundRobinStrategy");
+    private static final QName TEST_SERVICE1 = new QName("RoundRobinStrategy1");
+    private static final QName TEST_SERVICE2 = new QName("RoundRobinStrategy2");
+    
     private RemoteRegistry registry = new MockRegistry();
     private RoundRobinStrategy robin = new RoundRobinStrategy();
 
@@ -40,26 +42,32 @@ public class RoundRobinStrategyTest {
     
     @Test
     public void noEndpoints() {
-        Assert.assertNull(robin.selectEndpoint(TEST_SERVICE));
+        Assert.assertNull(robin.selectEndpoint(TEST_SERVICE1));
     }
     
     @Test
     public void oneEndpoint() {
-        registry.addEndpoint(new RemoteEndpoint().setServiceName(TEST_SERVICE));
-        Assert.assertNotNull(robin.selectEndpoint(TEST_SERVICE));
+        registry.addEndpoint(new RemoteEndpoint().setServiceName(TEST_SERVICE1));
+        Assert.assertNotNull(robin.selectEndpoint(TEST_SERVICE1));
     }
     
     @Test
     public void multipleEndpoints() {
-        // register two endpoints for the same service
-        RemoteEndpoint ep1 = new RemoteEndpoint().setServiceName(TEST_SERVICE).setEndpoint("ep1");
-        RemoteEndpoint ep2 = new RemoteEndpoint().setServiceName(TEST_SERVICE).setEndpoint("ep2");
+        // register endpoints for each service
+        RemoteEndpoint ep1 = new RemoteEndpoint().setServiceName(TEST_SERVICE1).setEndpoint("ep1");
+        RemoteEndpoint ep2 = new RemoteEndpoint().setServiceName(TEST_SERVICE1).setEndpoint("ep2");
+        RemoteEndpoint ep3 = new RemoteEndpoint().setServiceName(TEST_SERVICE2).setEndpoint("ep3");
+        RemoteEndpoint ep4 = new RemoteEndpoint().setServiceName(TEST_SERVICE2).setEndpoint("ep4");
         registry.addEndpoint(ep1);
         registry.addEndpoint(ep2);
+        registry.addEndpoint(ep3);
+        registry.addEndpoint(ep4);
         
         // check to see we get round robin behavior
-        Assert.assertEquals(ep1, robin.selectEndpoint(TEST_SERVICE));
-        Assert.assertEquals(ep2, robin.selectEndpoint(TEST_SERVICE));
-        Assert.assertEquals(ep1, robin.selectEndpoint(TEST_SERVICE));
+        Assert.assertEquals(ep1, robin.selectEndpoint(TEST_SERVICE1));
+        Assert.assertEquals(ep3, robin.selectEndpoint(TEST_SERVICE2));
+        Assert.assertEquals(ep2, robin.selectEndpoint(TEST_SERVICE1));
+        Assert.assertEquals(ep4, robin.selectEndpoint(TEST_SERVICE2));
+        Assert.assertEquals(ep1, robin.selectEndpoint(TEST_SERVICE1));
     }
 }

@@ -19,6 +19,9 @@
 package org.switchyard.remote.cluster;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.namespace.QName;
 
@@ -33,7 +36,7 @@ import org.switchyard.remote.RemoteEndpoint;
  */
 public class RoundRobinStrategy extends BaseStrategy {
     
-    private int _endpointIdx;
+    private ConcurrentMap<QName, AtomicInteger> _endpointIdxs = new ConcurrentHashMap<QName, AtomicInteger>();
     
     /**
      * Create a new RoundRobin strategy.
@@ -47,13 +50,15 @@ public class RoundRobinStrategy extends BaseStrategy {
         if (getRegistry() == null) {
             return null;
         }
-        
         RemoteEndpoint selectedEp = null;
         List<RemoteEndpoint> eps = getRegistry().getEndpoints(serviceName);
         if (!eps.isEmpty()) {
-            _endpointIdx %= eps.size();
-            selectedEp = eps.get(_endpointIdx);
-            _endpointIdx++;
+            _endpointIdxs.putIfAbsent(serviceName, new AtomicInteger(0));
+            AtomicInteger idx = _endpointIdxs.get(serviceName);
+            synchronized (idx) {
+                idx.set(idx.get() % eps.size());
+                selectedEp = eps.get(idx.getAndIncrement());
+            }
         }
         
         return selectedEp;

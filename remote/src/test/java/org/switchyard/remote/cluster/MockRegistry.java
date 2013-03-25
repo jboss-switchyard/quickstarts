@@ -19,7 +19,9 @@
 package org.switchyard.remote.cluster;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -31,11 +33,18 @@ import org.switchyard.remote.RemoteRegistry;
  */
 public class MockRegistry implements RemoteRegistry {
     
-    private List<RemoteEndpoint> endpoints = new ArrayList<RemoteEndpoint>();
+    private Map<QName, List<RemoteEndpoint>> endpoints = new HashMap<QName, List<RemoteEndpoint>>();
 
     @Override
     public void addEndpoint(RemoteEndpoint endpoint) {
-        endpoints.add(endpoint);
+        List<RemoteEndpoint> eps = endpoints.get(endpoint.getServiceName());
+        if (eps == null) {
+            endpoints.put(endpoint.getServiceName(),
+                    new ArrayList<RemoteEndpoint>());
+            endpoints.get(endpoint.getServiceName()).add(endpoint);
+        } else {
+            endpoints.get(endpoint.getServiceName()).add(endpoint);
+        }
     }
 
     @Override
@@ -45,7 +54,11 @@ public class MockRegistry implements RemoteRegistry {
 
     @Override
     public List<RemoteEndpoint> getEndpoints(QName serviceName) {
-        return endpoints;
+        List<RemoteEndpoint> eps = endpoints.get(serviceName);
+        if (eps == null) {
+            return new ArrayList<RemoteEndpoint>();
+        }
+        return eps;
     }
 
 }
