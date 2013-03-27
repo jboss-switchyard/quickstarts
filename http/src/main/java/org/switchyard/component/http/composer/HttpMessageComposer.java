@@ -19,8 +19,8 @@
  
 package org.switchyard.component.http.composer;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +47,7 @@ public class HttpMessageComposer extends BaseMessageComposer<HttpBindingData> {
     public Message compose(HttpBindingData source, Exchange exchange, boolean create) throws Exception {
         final Message message = create ? exchange.createMessage() : exchange.getMessage();
 
-        getContextMapper().mapFrom(source, exchange.getContext());
+        getContextMapper().mapFrom(source, exchange.getContext(message));
 
         message.setContent(source.getBody());
 

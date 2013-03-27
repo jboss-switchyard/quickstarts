@@ -26,6 +26,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 
 import org.hornetq.api.core.TransportConfiguration;
 import org.hornetq.api.core.client.ClientConsumer;
@@ -58,8 +59,8 @@ public class OutboundHandlerTest {
 
     @BeforeClass
     public static void setupHornetQ() {
-		_hornetQMixIn = new HornetQMixIn();
-		_hornetQMixIn.initialize();
+        _hornetQMixIn = new HornetQMixIn();
+        _hornetQMixIn.initialize();
     }
 
     @Test
@@ -98,10 +99,12 @@ public class OutboundHandlerTest {
     private Exchange createExchange(final String content) {
         final Exchange exchange = mock(Exchange.class);
         final Message message = mock(Message.class);
-        final Context context = mock(Context.class);
+        final Context exchangeContext = mock(Context.class);
+        final Context messageContext = mock(Context.class);
         when(message.getContent(byte[].class)).thenReturn(content.getBytes());
         when(exchange.getMessage()).thenReturn(message);
-        when(exchange.getContext()).thenReturn(context);
+        when(exchange.getContext(any(Message.class))).thenReturn(messageContext);
+        when(exchange.getContext()).thenReturn(exchangeContext);
         return exchange;
     }
     

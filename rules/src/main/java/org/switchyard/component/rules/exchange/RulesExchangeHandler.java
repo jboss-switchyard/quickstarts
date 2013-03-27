@@ -34,7 +34,6 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
@@ -179,7 +178,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
     */
 
     private boolean isDispose(Exchange exchange) {
-        return isBoolean(exchange, RulesConstants.DISPOSE_PROPERTY, Scope.IN);
+        return isBoolean(exchange, RulesConstants.DISPOSE_PROPERTY);
     }
 
     private final class FireUntilHalt implements Runnable, KnowledgeDisposal {

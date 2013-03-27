@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.common.knowledge.expression;
 
-import static org.switchyard.Scope.IN;
+import static org.switchyard.Scope.MESSAGE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,7 +46,7 @@ public class ContextMap implements Context, Map<String, Object> {
      * @param context the specified context
      */
     public ContextMap(Context context) {
-        this(context, IN);
+        this(context, MESSAGE);
     }
 
     /**
@@ -79,7 +79,7 @@ public class ContextMap implements Context, Map<String, Object> {
      * {@inheritDoc}
      */
     @Override
-    public Object getPropertyValue(String name) {
+    public <T> T getPropertyValue(String name) {
         return _context.getPropertyValue(name);
     }
 

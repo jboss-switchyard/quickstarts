@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
@@ -59,6 +60,7 @@ import org.switchyard.selector.OperationSelector;
  */
 public class SwitchYardProducer extends DefaultProducer {
 
+    private final static Logger LOG = Logger.getLogger(SwitchYardProducer.class);
     private String _namespace;
     private String _operationName;
     private final MessageComposer<CamelBindingData> _messageComposer;
@@ -127,7 +129,7 @@ public class SwitchYardProducer extends DefaultProducer {
             try {
                 operationName = selector.selectOperation(new CamelBindingData(exchange.getIn())).getLocalPart();
             } catch (Exception e) {
-                log.error("Cannot lookup operation using custom operation selector. Returning empty name", e);
+                LOG.error("Cannot lookup operation using custom operation selector. Returning empty name", e);
             }
         }
         return operationName;

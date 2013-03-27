@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.switchyard.Exchange;
+import org.switchyard.Message;
 import org.switchyard.component.common.composer.BaseMessageComposer;
 
 /**
@@ -39,7 +40,7 @@ public class MappedRecordMessageComposer extends BaseMessageComposer<MappedRecor
     public org.switchyard.Message compose(MappedRecordBindingData source, Exchange exchange, boolean create) throws Exception {
         
         final org.switchyard.Message message = create ? exchange.createMessage() : exchange.getMessage();
-        getContextMapper().mapFrom(source, exchange.getContext());
+        getContextMapper().mapFrom(source, exchange.getContext(message));
         Map<Object,Object> m = new HashMap<Object,Object>();
         m.putAll(source.getRecord());
         message.setContent(m);
@@ -52,9 +53,10 @@ public class MappedRecordMessageComposer extends BaseMessageComposer<MappedRecor
     @SuppressWarnings("unchecked")
     @Override
     public MappedRecordBindingData decompose(Exchange exchange, MappedRecordBindingData target) throws Exception {
+        Message sourceMessage = exchange.getMessage();
 
         getContextMapper().mapTo(exchange.getContext(), target);
-        final Map<?,?> content = exchange.getMessage().getContent(Map.class);
+        final Map<?,?> content = sourceMessage.getContent(Map.class);
         target.getRecord().putAll(content);
         return target;
     }

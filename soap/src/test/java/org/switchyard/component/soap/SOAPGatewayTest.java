@@ -47,10 +47,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
-import org.switchyard.Scope;
+import org.switchyard.Property;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.composer.SOAPComposition;
@@ -363,13 +362,14 @@ public class SOAPGatewayTest {
 
         MockHandler handler = new MockHandler();
         Exchange ex = _consumerService11.operation("sayHello").createExchange(handler);
-        Context ctx = ex.getContext();
+
         Message requestMsg = ex.createMessage().setContent(input);
         ex.send(requestMsg);
         handler.waitForFaultMessage();
-        Object faultInfo = ctx.getProperty(SOAPComposition.SOAP_FAULT_INFO, Scope.IN).getValue();
-        Assert.assertNotNull(faultInfo);
-        Assert.assertEquals(faultStr, faultInfo.toString());
+        Exchange exchange = handler.getFaults().iterator().next();
+        Property faultInfoProperty = exchange.getContext().getProperty(SOAPComposition.SOAP_FAULT_INFO);
+        Assert.assertNotNull(faultInfoProperty);
+        Assert.assertEquals(faultStr, faultInfoProperty.getValue().toString());
     }
 
     @Test

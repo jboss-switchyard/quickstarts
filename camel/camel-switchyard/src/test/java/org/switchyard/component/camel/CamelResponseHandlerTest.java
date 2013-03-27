@@ -37,11 +37,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.Service;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.camel.common.composer.CamelComposition;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.internal.DefaultContext;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.metadata.java.JavaService;
@@ -77,6 +79,7 @@ public class CamelResponseHandlerTest {
             @Override
             public Message create() {
                 Message message = mock(Message.class);
+                when(message.getContext()).thenReturn(new DefaultContext(Scope.MESSAGE));
                 when(message.getContent(Integer.class)).thenReturn(10);
                 return message;
             }
@@ -97,6 +100,7 @@ public class CamelResponseHandlerTest {
             @Override
             public Message create() {
                 Message message = mock(Message.class);
+                when(message.getContext()).thenReturn(new DefaultContext(Scope.MESSAGE));
                 when(message.getContent()).thenReturn(fault);
                 return message;
             }

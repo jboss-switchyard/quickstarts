@@ -20,7 +20,6 @@ package org.switchyard.component.jca.composer;
 
 import org.switchyard.Context;
 import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.component.common.composer.BaseRegexContextMapper;
 import org.switchyard.component.common.label.ComponentLabel;
 import org.switchyard.component.common.label.EndpointLabel;
@@ -46,11 +45,11 @@ public class StreamableRecordContextMapper extends BaseRegexContextMapper<Stream
         StreamableRecord record = source.getRecord();
         String recordName = record.getRecordName();
         if (recordName != null) {
-            context.setProperty(JCAConstants.CCI_RECORD_NAME_KEY, recordName, Scope.IN).addLabels(STREAMABLE_RECORD_LABELS);
+            context.setProperty(JCAConstants.CCI_RECORD_NAME_KEY, recordName).addLabels(STREAMABLE_RECORD_LABELS);
         }
         String recordDescription = record.getRecordShortDescription();
         if (recordDescription != null) {
-            context.setProperty(JCAConstants.CCI_RECORD_SHORT_DESC_KEY, recordDescription, Scope.IN).addLabels(STREAMABLE_RECORD_LABELS);
+            context.setProperty(JCAConstants.CCI_RECORD_SHORT_DESC_KEY, recordDescription).addLabels(STREAMABLE_RECORD_LABELS);
         }
     }
 
@@ -60,7 +59,7 @@ public class StreamableRecordContextMapper extends BaseRegexContextMapper<Stream
     @Override
     public void mapTo(Context context, StreamableRecordBindingData target) throws Exception {
         StreamableRecord record = target.getRecord();
-        for (Property property : context.getProperties(Scope.OUT)) {
+        for (Property property : context.getProperties()) {
             String name = property.getName();
             Object value = property.getValue();
             if (value == null) {

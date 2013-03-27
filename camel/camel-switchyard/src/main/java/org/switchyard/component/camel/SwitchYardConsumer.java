@@ -115,14 +115,14 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
 
     private void sendResponse(org.apache.camel.Exchange camelExchange, final Exchange switchyardExchange) {
         final org.apache.camel.Message camelMessage;
-        if (camelExchange.getOut().getBody() != null) {
+        if (camelExchange.hasOut()) {
             camelMessage = camelExchange.getOut();
         } else {
             camelMessage = camelExchange.getIn();
         }
         Message switchyardMessage;
         try {
-            switchyardMessage = _messageComposer.compose(new CamelBindingData(camelMessage), switchyardExchange, false);
+            switchyardMessage = _messageComposer.compose(new CamelBindingData(camelMessage), switchyardExchange, true);
         } catch (Exception e) {
             throw new SwitchYardException(e);
         }

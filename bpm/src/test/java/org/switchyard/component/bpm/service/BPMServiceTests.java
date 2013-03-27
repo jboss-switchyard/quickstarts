@@ -39,7 +39,6 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
@@ -125,12 +124,13 @@ public class BPMServiceTests {
         Exchange exchange = controlReference.createExchange("process");
         Context context = exchange.getContext();
         exchange.send(exchange.createMessage());
-        Property property = context.getProperty(PROCESSS_INSTANCE_ID_PROPERTY, Scope.OUT);
+        Property property = context.getProperty(PROCESSS_INSTANCE_ID_PROPERTY);
         Long processInstanceId = property != null ? (Long)property.getValue() : null;
         exchange = controlReference.createExchange("signal");
         context = exchange.getContext();
-        context.setProperty(PROCESSS_INSTANCE_ID_PROPERTY, processInstanceId, Scope.IN);
-        exchange.send(exchange.createMessage());
+        Message message = exchange.createMessage();
+        message.getContext().setProperty(PROCESSS_INSTANCE_ID_PROPERTY, processInstanceId);
+        exchange.send(message);
         handler.stop();
         Assert.assertEquals("message handled", holder.getValue());
     }
@@ -151,13 +151,13 @@ public class BPMServiceTests {
         ServiceReference controlReference = serviceDomain.registerServiceReference(controlService.getName(), controlService.getInterface(), controlService.getProviderHandler());
         handler.start();
         Exchange exchange = controlReference.createExchange("process");
-        Context context = exchange.getContext();
-        context.setProperty(CORRELATION_KEY_PROPERTY, correlationKey, Scope.IN);
-        exchange.send(exchange.createMessage());
+        Message message = exchange.createMessage();
+        message.getContext().setProperty(CORRELATION_KEY_PROPERTY, correlationKey);
+        exchange.send(message);
         exchange = controlReference.createExchange("signal");
-        context = exchange.getContext();
-        context.setProperty(CORRELATION_KEY_PROPERTY, correlationKey, Scope.IN);
-        exchange.send(exchange.createMessage());
+        message = exchange.createMessage();
+        message.getContext().setProperty(CORRELATION_KEY_PROPERTY, correlationKey);
+        exchange.send(message);
         handler.stop();
         Assert.assertEquals("message handled", holder.getValue());
     }

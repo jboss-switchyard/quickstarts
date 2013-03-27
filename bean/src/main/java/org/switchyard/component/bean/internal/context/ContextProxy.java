@@ -48,7 +48,7 @@ public class ContextProxy implements Context {
     }
 
     @Override
-    public Object getPropertyValue(String name) {
+    public <T> T getPropertyValue(String name) {
         return getContext().getPropertyValue(name);
     }
 

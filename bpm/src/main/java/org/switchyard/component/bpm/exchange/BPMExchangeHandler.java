@@ -41,12 +41,10 @@ import org.kie.process.CorrelationKey;
 import org.kie.process.CorrelationKeyFactory;
 import org.kie.runtime.EnvironmentName;
 import org.kie.runtime.process.ProcessInstance;
-import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.bpm.BPMActionType;
@@ -236,7 +234,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
     private KnowledgeSession getBPMSession(Exchange exchange) {
         KnowledgeSession session;
         if (_persistent) {
-            Integer sessionId = getInteger(exchange, BPMConstants.SESSION_ID_PROPERTY, Scope.IN);
+            Integer sessionId = getInteger(exchange, BPMConstants.SESSION_ID_PROPERTY);
             session = getPersistentSession(sessionId);
         } else {
             session = getStatefulSession();
@@ -246,7 +244,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
     }
 
     private Long getProcessInstanceId(Exchange exchange, KnowledgeSession session) {
-        Long processInstanceId = getLong(exchange, BPMConstants.PROCESSS_INSTANCE_ID_PROPERTY, Scope.IN);
+        Long processInstanceId = getLong(exchange, BPMConstants.PROCESSS_INSTANCE_ID_PROPERTY);
         if (processInstanceId == null) {
             CorrelationKey correlationKey = getCorrelationKey(exchange);
             if (correlationKey != null) {
@@ -263,7 +261,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
     }
 
     private CorrelationKey getCorrelationKey(Exchange exchange) {
-        String ckp = getString(exchange, BPMConstants.CORRELATION_KEY_PROPERTY, Scope.IN);
+        String ckp = getString(exchange, BPMConstants.CORRELATION_KEY_PROPERTY);
         if (ckp != null) {
             List<String> properties = Strings.splitTrimToNull(ckp, " \t\n\r\f");
             if (properties.size() > 0) {
@@ -274,7 +272,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
     }
 
     private Object getSignalEvent(Exchange exchange) {
-        Object signalEvent = getObject(exchange, BPMConstants.SIGNAL_EVENT_PROPERTY, Scope.IN);
+        Object signalEvent = getObject(exchange, BPMConstants.SIGNAL_EVENT_PROPERTY);
         if (signalEvent == null) {
             signalEvent = exchange.getMessage().getContent();
         }
@@ -282,7 +280,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
     }
 
     private String getSignalId(Exchange exchange, KnowledgeAction action) {
-        String signalId = getString(exchange, BPMConstants.SIGNAL_ID_PROPERTY, Scope.IN);
+        String signalId = getString(exchange, BPMConstants.SIGNAL_ID_PROPERTY);
         if (signalId == null) {
             signalId = action.getId();
         }
@@ -291,16 +289,15 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
 
     private Message handleOutput(Exchange exchange, KnowledgeAction action, KnowledgeSession session, ProcessInstance processInstance) {
         Message outputMessage = exchange.createMessage();
-        Context context = exchange.getContext();
         Integer sessionId = session.getId();
         if (sessionId != null && sessionId.intValue() > 0) {
-            context.setProperty(BPMConstants.SESSION_ID_PROPERTY, sessionId, Scope.OUT);
+            exchange.getContext(outputMessage).setProperty(BPMConstants.SESSION_ID_PROPERTY, sessionId);
         }
         Map<String, Object> expressionVariables = new HashMap<String, Object>();
         if (processInstance != null) {
             long processInstanceId = processInstance.getId();
             if (processInstanceId > 0) {
-                context.setProperty(BPMConstants.PROCESSS_INSTANCE_ID_PROPERTY, Long.valueOf(processInstanceId), Scope.OUT);
+                exchange.getContext(outputMessage).setProperty(BPMConstants.PROCESSS_INSTANCE_ID_PROPERTY, Long.valueOf(processInstanceId));
             }
             if (processInstance instanceof WorkflowProcessInstanceImpl) {
                 Map<String, Object> processInstanceVariables = ((WorkflowProcessInstanceImpl)processInstance).getVariables();
@@ -317,7 +314,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                 if (KnowledgeConstants.CONTENT_OUTPUT.equals(key)) {
                     outputMessage.setContent(value);
                 } else {
-                    context.setProperty(key, value, Scope.OUT);
+                    exchange.getContext(outputMessage).setProperty(key, value);
                 }
             }
         }

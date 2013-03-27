@@ -29,10 +29,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
-import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.http.composer.HttpComposition;
 import org.switchyard.component.http.config.model.HttpBindingModel;
@@ -131,23 +129,21 @@ public class HttpGatewayTest {
     public void httpStatus() throws Exception {
         MockHandler handler = new MockHandler();
         Exchange ex = _consumerService.operation("sayHello").createExchange(handler);
-        Context ctx = ex.getContext();
-        ctx.setProperty("SomeRequestHeader", "BAR");
         Message requestMsg = ex.createMessage().setContent("magesh");
+        requestMsg.getContext().setProperty("SomeRequestHeader", "BAR");
         ex.send(requestMsg);
         handler.waitForOKMessage();
-        Assert.assertEquals(200, ctx.getProperty(HttpComposition.HTTP_RESPONSE_STATUS, Scope.OUT).getValue());
+        Assert.assertEquals(200, ex.getContext().getProperty(HttpComposition.HTTP_RESPONSE_STATUS).getValue());
     }
 
     @Test
     public void httpFault() throws Exception {
         MockHandler handler = new MockHandler();
         Exchange ex = _consumerService2.operation("sayHello").createExchange(handler);
-        Context ctx = ex.getContext();
         Message requestMsg = ex.createMessage().setContent("magesh");
         ex.send(requestMsg);
         handler.waitForFaultMessage();
-        Assert.assertEquals(404, ctx.getProperty(HttpComposition.HTTP_RESPONSE_STATUS, Scope.OUT).getValue());
+        Assert.assertEquals(404, ex.getContext().getProperty(HttpComposition.HTTP_RESPONSE_STATUS).getValue());
     }
 
     private static class HelloInterface extends BaseService {

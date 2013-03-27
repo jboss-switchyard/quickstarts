@@ -51,13 +51,14 @@ public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> 
      */
     @Override
     public Message compose(CamelBindingData source, Exchange exchange, boolean create) throws Exception {
+        Message message = create ? exchange.createMessage() : exchange.getMessage();
+
         // map context properties
-        getContextMapper().mapFrom(source, exchange.getContext());
+        getContextMapper().mapFrom(source, exchange.getContext(message));
 
         org.apache.camel.Message sourceMessage = source.getMessage();
 
         // map content
-        Message message = create ? exchange.createMessage() : exchange.getMessage();
         QName msgType = getMessageType(exchange);
         Object content;
         if (msgType == null) {
@@ -89,9 +90,9 @@ public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> 
      */
     @Override
     public CamelBindingData decompose(Exchange exchange, CamelBindingData target) throws Exception {
+        Message sourceMessage = exchange.getMessage();
         getContextMapper().mapTo(exchange.getContext(), target);
 
-        Message sourceMessage = exchange.getMessage();
         org.apache.camel.Message targetMessage = target.getMessage();
 
         if (!sourceMessage.getAttachmentMap().isEmpty()) {

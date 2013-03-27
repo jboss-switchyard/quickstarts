@@ -27,10 +27,10 @@ MA  02110-1301, USA.
                             <mapping expression="context['foobar']" scope="EXCHANGE" variable="exchangeVar"/>
                         </globals>
                         <inputs>
-                            <mapping expression="message.content.nested" scope="IN" variable="inputVar"/>
+                            <mapping expression="message.content.nested" scope="MESSAGE" variable="inputVar"/>
                         </inputs>
                         <outputs>
-                            <mapping expression="message.content" scope="OUT" variable="outputVar"/>
+                            <mapping expression="message.content" scope="MESSAGE" variable="outputVar"/>
                         </outputs>
                     </action>
                 </actions>

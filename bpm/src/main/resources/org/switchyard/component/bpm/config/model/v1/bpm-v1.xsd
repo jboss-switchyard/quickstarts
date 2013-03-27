@@ -109,8 +109,7 @@ MA  02110-1301, USA.
 
     <simpleType name="scopeType">
         <restriction base="string">
-            <enumeration value="IN"/>
-            <enumeration value="OUT"/>
+            <enumeration value="MESSAGE"/>
             <enumeration value="EXCHANGE"/>
         </restriction>
     </simpleType>

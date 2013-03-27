@@ -28,6 +28,7 @@ import java.io.StringReader;
 
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
+import org.switchyard.Message;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.clojure.config.model.ClojureComponentImplementationModel;
 import org.switchyard.component.clojure.config.model.ClojureScriptModel;
@@ -91,8 +92,8 @@ public class ClojureHandler implements ServiceHandler {
                     ? _var.invoke(exchange)
                     : _var.invoke(exchange.getMessage().getContent());
             if (response != null) {
-                exchange.getMessage().setContent(response);
-                exchange.send(exchange.getMessage());
+                Message message = exchange.createMessage().setContent(response);
+                exchange.send(message);
             }
                 
         } catch (final Exception e) {

@@ -36,7 +36,7 @@ public class HornetQMessageComposer extends BaseMessageComposer<HornetQBindingDa
     @Override
     public Message compose(HornetQBindingData source, Exchange exchange, boolean create) throws Exception {
         final Message message = create ? exchange.createMessage() : exchange.getMessage();
-        getContextMapper().mapFrom(source, exchange.getContext());
+        getContextMapper().mapFrom(source, exchange.getContext(message));
         message.setContent(HornetQUtil.readBytes(source.getClientMessage()));
         return message;
     }
@@ -46,8 +46,10 @@ public class HornetQMessageComposer extends BaseMessageComposer<HornetQBindingDa
      */
     @Override
     public HornetQBindingData decompose(Exchange exchange, HornetQBindingData target) throws Exception {
+        Message sourceMessage = exchange.getMessage();
+
         getContextMapper().mapTo(exchange.getContext(), target);
-        final byte[] content = exchange.getMessage().getContent(byte[].class);
+        final byte[] content = sourceMessage.getContent(byte[].class);
         target.getClientMessage().getBodyBuffer().writeBytes(content);
         return target;
     }

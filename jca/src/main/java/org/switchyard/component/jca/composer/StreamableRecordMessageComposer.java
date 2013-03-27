@@ -41,7 +41,7 @@ public class StreamableRecordMessageComposer extends BaseMessageComposer<Streama
     @Override
     public Message compose(StreamableRecordBindingData source, Exchange exchange, boolean create) throws Exception {
         final org.switchyard.Message message = create ? exchange.createMessage() : exchange.getMessage();
-        getContextMapper().mapFrom(source, exchange.getContext());
+        getContextMapper().mapFrom(source, exchange.getContext(message));
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
         source.getRecord().write(baos);
@@ -54,9 +54,10 @@ public class StreamableRecordMessageComposer extends BaseMessageComposer<Streama
      */
     @Override
     public StreamableRecordBindingData decompose(Exchange exchange, StreamableRecordBindingData target) throws Exception {
-        getContextMapper().mapTo(exchange.getContext(), target);
+        Message sourceMessage = exchange.getMessage();
 
-        final InputStream content = exchange.getMessage().getContent(InputStream.class);
+        getContextMapper().mapTo(exchange.getContext(), target);
+        final InputStream content = sourceMessage.getContent(InputStream.class);
         target.getRecord().read(content);
         return target;
     }

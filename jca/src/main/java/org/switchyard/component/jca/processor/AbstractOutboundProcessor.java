@@ -23,6 +23,9 @@ import java.util.Properties;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.jca.composer.JCABindingData;
+import org.switchyard.component.jca.composer.JCAComposition;
 import org.switchyard.component.jca.config.model.JCABindingModel;
 
 /**
@@ -152,4 +155,7 @@ public abstract class AbstractOutboundProcessor {
         return _jcaBindingModel;
     }
     
+    protected <D extends JCABindingData> MessageComposer<D> getMessageComposer(Class<D> clazz) {
+        return JCAComposition.getMessageComposer(_jcaBindingModel, clazz);
+    }
 }

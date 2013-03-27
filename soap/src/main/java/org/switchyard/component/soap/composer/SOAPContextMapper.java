@@ -30,7 +30,6 @@ import javax.xml.soap.SOAPMessage;
 
 import org.switchyard.Context;
 import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
@@ -80,7 +79,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
     public void mapFrom(SOAPBindingData source, Context context) throws Exception {
         SOAPMessage soapMessage = source.getSOAPMessage();
         if (soapMessage.getSOAPBody().hasFault() && (source.getSOAPFaultInfo() != null)) {
-            context.setProperty(SOAPComposition.SOAP_FAULT_INFO, source.getSOAPFaultInfo(), Scope.IN).addLabels(SOAP_HEADER_LABELS);
+            context.setProperty(SOAPComposition.SOAP_FAULT_INFO, source.getSOAPFaultInfo()).addLabels(SOAP_HEADER_LABELS);
         }
         @SuppressWarnings("unchecked")
         Iterator<MimeHeader> mimeHeaders = soapMessage.getMimeHeaders().getAllHeaders();
@@ -90,7 +89,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
             if (matches(name)) {
                 String value = mimeHeader.getValue();
                 if (value != null) {
-                    context.setProperty(name, value, Scope.IN).addLabels(SOAP_MIME_LABELS);
+                    context.setProperty(name, value).addLabels(SOAP_MIME_LABELS);
                 }
             }
         }
@@ -119,7 +118,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
                 }
                 if (value != null) {
                     String name = qname.toString();
-                    context.setProperty(name, value, Scope.IN).addLabels(SOAP_HEADER_LABELS);
+                    context.setProperty(name, value).addLabels(SOAP_HEADER_LABELS);
                 }
             }
         }
@@ -133,7 +132,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
         SOAPMessage soapMessage = target.getSOAPMessage();
         MimeHeaders mimeHeaders = soapMessage.getMimeHeaders();
         SOAPHeader soapHeader = soapMessage.getSOAPHeader();
-        for (Property property : context.getProperties(Scope.OUT)) {
+        for (Property property : context.getProperties()) {
             Object value = property.getValue();
             if (value != null) {
                 String name = property.getName();

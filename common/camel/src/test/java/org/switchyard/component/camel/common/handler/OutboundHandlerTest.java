@@ -42,6 +42,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.camel.SwitchYardCamelContext;
@@ -116,13 +117,18 @@ public class OutboundHandlerTest extends CamelTestSupport {
         final String propertyKey = "testProp";
         final String propertyValue = "dummyValue";
         final Exchange exchange = _service.createExchange();
-        exchange.getContext().setProperty(propertyKey, propertyValue);
+        exchange.getContext().setProperty(propertyKey, propertyValue, Scope.EXCHANGE);
 
-        exchange.send(exchange.createMessage());
+        Message message = exchange.createMessage();
+        message.getContext().setProperty(propertyValue, propertyKey);
+        exchange.send(message);
 
         assertThat(camelEndpoint.getReceivedCounter(), is(1));
-        final String actualPropertyValue = (String) camelEndpoint.getReceivedExchanges().get(0).getProperty(propertyKey);
+        org.apache.camel.Exchange ex = camelEndpoint.getReceivedExchanges().get(0);
+        final String actualPropertyValue = (String) ex.getProperty(propertyKey);
+        final String actualPropertyKey = (String) ex.getIn().getHeader(propertyValue);
         assertThat(actualPropertyValue, is(propertyValue));
+        assertThat(actualPropertyKey, is(propertyKey));
     }
 
     private Message createMessageWithBody(final Exchange exchange, final Object body) {

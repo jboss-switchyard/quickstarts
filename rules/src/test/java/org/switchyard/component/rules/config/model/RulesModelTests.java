@@ -127,13 +127,13 @@ public class RulesModelTests {
         Expression inputExpression = ExpressionFactory.instance().create(inputMapping);
         Assert.assertEquals("message.content.nested", inputExpression.getExpression());
         Assert.assertEquals(ExpressionType.MVEL, inputExpression.getType());
-        Assert.assertEquals(Scope.IN, inputMapping.getScope());
+        Assert.assertEquals(Scope.MESSAGE, inputMapping.getScope());
         Assert.assertEquals("inputVar", inputMapping.getVariable());
         MappingModel outputMapping = action.getOutputs().getMappings().get(0);
         Expression outputExpression = ExpressionFactory.instance().create(outputMapping);
         Assert.assertEquals("message.content", outputExpression.getExpression());
         Assert.assertEquals(ExpressionType.MVEL, outputExpression.getType());
-        Assert.assertEquals(Scope.OUT, outputMapping.getScope());
+        Assert.assertEquals(Scope.MESSAGE, outputMapping.getScope());
         Assert.assertEquals("outputVar", outputMapping.getVariable());
         ChannelModel channel = rules.getChannels().getChannels().get(0);
         Assert.assertEquals(TestChannel.class, channel.getClazz(loader));

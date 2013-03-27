@@ -33,8 +33,6 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
-import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
@@ -46,7 +44,6 @@ import org.switchyard.remote.http.HttpInvoker;
 import org.switchyard.serial.FormatType;
 import org.switchyard.serial.Serializer;
 import org.switchyard.serial.SerializerFactory;
-import org.switchyard.transform.TransformSequence;
 
 /**
  * HTTP servlet which handles inbound remote communication for remote service endpoints.
@@ -151,11 +148,11 @@ public class SwitchYardRemotingServlet extends HttpServlet {
     
     RemoteMessage createReplyMessage(Exchange exchange) {
         RemoteMessage reply = new RemoteMessage();
-        cleanContext(exchange);
-        reply.setContext(exchange.getContext())
-            .setDomain(exchange.getProvider().getDomain().getName())
+        reply.setDomain(exchange.getProvider().getDomain().getName())
             .setOperation(exchange.getContract().getConsumerOperation().getName())
             .setService(exchange.getConsumer().getName());
+        reply.setContext(exchange.getContext());
+
         if (exchange.getMessage() != null) {
             reply.setContent(exchange.getMessage().getContent());
         }
@@ -164,17 +161,5 @@ public class SwitchYardRemotingServlet extends HttpServlet {
         }
         return reply;
     }
-    
-    private void cleanContext(Exchange exchange) {
-        Property inTransform = exchange.getContext().getProperty(
-                TransformSequence.class.getName(), Scope.IN);
-        Property outTransform = exchange.getContext().getProperty(
-                TransformSequence.class.getName(), Scope.OUT);
-        if (inTransform != null) {
-            exchange.getContext().removeProperty(inTransform);
-        }
-        if (outTransform != null) {
-            exchange.getContext().removeProperty(outTransform);
-        }
-    }
+
 }

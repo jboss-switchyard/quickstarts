@@ -33,7 +33,6 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.component.common.composer.MessageComposer;
-import org.switchyard.component.jca.composer.JCAComposition;
 import org.switchyard.component.jca.composer.JMSBindingData;
 import org.switchyard.exception.SwitchYardException;
 
@@ -65,6 +64,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     private int _ackMode;
     private ConnectionFactory _connectionFactory;
     private Destination _jmsDestination;
+    private MessageComposer<JMSBindingData> _composer;
     
     @Override
     public AbstractOutboundProcessor setConnectionSpec(String name, Properties props) {
@@ -91,6 +91,8 @@ public class JMSProcessor extends AbstractOutboundProcessor {
         if (_destination == null) {
             throw new SwitchYardException("destination property must be specified in Processor properties");
         }
+        
+        _composer = getMessageComposer(JMSBindingData.class);
         
         try {
             InitialContext ic = new InitialContext();
@@ -123,8 +125,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             MessageProducer producer = session.createProducer(_jmsDestination);
 
             Message msg = session.createObjectMessage();
-            MessageComposer<JMSBindingData> composer = JCAComposition.getMessageComposer(getJCABindingModel(), JMSBindingData.class);
-            producer.send(composer.decompose(exchange, new JMSBindingData(msg)).getMessage());
+            producer.send(_composer.decompose(exchange, new JMSBindingData(msg)).getMessage());
             return null;
         } catch (Exception e) {
             throw new HandlerException("Failed to process JMS outbound interaction", e);

@@ -248,13 +248,13 @@ public class RiftsawServiceLocator implements ServiceLocator {
             // Need to create an exchange
             SynchronousInOutHandler rh = new SynchronousInOutHandler();
             Exchange exchange=_serviceReference.createExchange(operationName, rh);
-            
-            Message req=exchange.createMessage();            
+
+            Message req = exchange.createMessage();
             req.setContent(mesg);
             if (headers != null) {
                 Set<String> keys = headers.keySet();
                 for (String key : keys) {
-                    exchange.getContext().setProperty(key,headers.get(key), Scope.IN).addLabels(EndpointLabel.SOAP.label());
+                    exchange.getContext(req).setProperty(key,headers.get(key)).addLabels(EndpointLabel.SOAP.label());
                 }
 
                 // Clear the headers in preparation for response headers
@@ -262,7 +262,7 @@ public class RiftsawServiceLocator implements ServiceLocator {
             }
             
             exchange.send(req);
-            
+
             try {
                 exchange = rh.waitForOut(_waitTimeout);
             } catch (DeliveryException e) {
@@ -280,7 +280,7 @@ public class RiftsawServiceLocator implements ServiceLocator {
             }
             
             // Process header values associated with the response
-            for (org.switchyard.Property p : exchange.getContext().getProperties(Scope.OUT)) {
+            for (org.switchyard.Property p : exchange.getContext().getProperties(Scope.MESSAGE)) {
                 if (p.hasLabel(EndpointLabel.SOAP.label())) {
                     headers.put(p.getName(), p.getValue());
                 }

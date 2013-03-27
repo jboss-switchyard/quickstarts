@@ -52,8 +52,8 @@ public interface DoStuffRules extends DoStuff {
     @FireUntilHalt(
         id="theId",
         globals=@Mapping(expression="context['foobar']", scope=Scope.EXCHANGE, variable="exchangeVar"),
-        inputs=@Mapping(expression="message.content.nested", scope=Scope.IN, variable="inputVar"),
-        outputs=@Mapping(expression="message.content", scope=Scope.OUT, variable="outputVar")
+        inputs=@Mapping(expression="message.content.nested", scope=Scope.MESSAGE, variable="inputVar"),
+        outputs=@Mapping(expression="message.content", scope=Scope.MESSAGE, variable="outputVar")
     )
     public void process(Object stuff);
 

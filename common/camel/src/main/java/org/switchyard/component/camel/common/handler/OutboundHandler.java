@@ -151,8 +151,7 @@ public class OutboundHandler extends BaseServiceHandler {
     }
 
     private void sendResponseToSwitchyard(final Exchange switchyardExchange, final Object payload) {
-        switchyardExchange.getMessage().setContent(payload);
-        switchyardExchange.send(switchyardExchange.getMessage());
+        switchyardExchange.send(switchyardExchange.createMessage().setContent(payload));
     }
 
     private Processor createProcessor(final Exchange switchyardExchange) {

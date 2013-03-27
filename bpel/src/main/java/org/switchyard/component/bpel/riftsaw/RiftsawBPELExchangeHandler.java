@@ -18,9 +18,13 @@
  */
 package org.switchyard.component.bpel.riftsaw;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
+import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.xml.namespace.QName;
@@ -37,7 +41,6 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.component.bpel.BPELFault;
 import org.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandler;
@@ -68,12 +71,12 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
     private javax.wsdl.PortType _portType = null;
     private long _undeployDelay=UNDEPLOY_DELAY;
     
-    private static java.util.Map<QName, QName> _serviceRefToCompositeMap=
-                new java.util.HashMap<QName, QName>();
-    private static java.util.Map<QName, DeploymentRef> _deployed=
-                        new java.util.HashMap<QName, DeploymentRef>();
-    private static java.util.Timer _timer=new java.util.Timer();
-    private static java.util.List<QName> _undeployed=new java.util.ArrayList<QName>();
+    private static Map<QName, QName> _serviceRefToCompositeMap=
+                new HashMap<QName, QName>();
+    private static Map<QName, DeploymentRef> _deployed=
+                        new HashMap<QName, DeploymentRef>();
+    private static Timer _timer=new Timer();
+    private static List<QName> _undeployed=new ArrayList<QName>();
 
     /**
      * Constructs a new RiftSaw BPEL ExchangeHandler within the specified ServiceDomain.
@@ -86,7 +89,7 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
      * {@inheritDoc}
      */
     public void init(QName qname, BPELComponentImplementationModel model,
-                 String intf, BPELEngine engine, java.util.Properties config) {
+                 String intf, BPELEngine engine, Properties config) {
 
         _engine = engine;
 
@@ -204,7 +207,7 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
                     org.jboss.vfs.VirtualFile vfile=org.jboss.vfs.VFS.getChild(url.toURI());
                     
                     // Recursively get all files
-                    java.util.List<org.jboss.vfs.VirtualFile> children=vfile.getParent().getChildrenRecursively();
+                    List<org.jboss.vfs.VirtualFile> children=vfile.getParent().getChildrenRecursively();
                     for (org.jboss.vfs.VirtualFile child : children) {
                         // Need to request the physical file to have it expanded
                         // on the file system
@@ -248,17 +251,16 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
      * {@inheritDoc}
      */
     public void handleMessage(final Exchange exchange) throws HandlerException {
-        Node request = exchange.getMessage().getContent(Node.class);
+        Message message = exchange.getMessage();
+        Node request = message.getContent(Node.class);
 
-        java.util.Map<String, Object> headers = new HashMap<String, Object>();
-        Iterator<Property> h = exchange.getContext().getProperties(Scope.IN).iterator();
-        while (h.hasNext()) {
-            Property p = h.next();
+        Map<String, Object> headers = new HashMap<String, Object>();
+        for (Property p : exchange.getContext().getProperties()) {
             if (p.hasLabel(EndpointLabel.SOAP.label())) {
                 headers.put(p.getName(), p.getValue());
             }
         }
-        
+
         try {
             // Find part name associated with operation on port type
             javax.wsdl.Operation operation =
@@ -279,19 +281,19 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
             if (exchange.getContract().getProviderOperation().
                     getExchangePattern().equals(ExchangePattern.IN_OUT)) {
 
-                Message message = exchange.createMessage();
+                Message reply = exchange.createMessage();
 
                 // Strip off wrapper and part to just return
                 // the part contents
-                message.setContent(WSDLHelper.unwrapMessagePart(response));
+                reply.setContent(WSDLHelper.unwrapMessagePart(response));
                 
                 // Set header parts for a response message
                 Set<String> keys = headers.keySet(); // headers are set by invoke method !!!
                 for (String key : keys) {
-                    exchange.getContext().setProperty(key,headers.get(key), Scope.OUT).addLabels(EndpointLabel.SOAP.label());
+                    exchange.getContext(reply).setProperty(key, headers.get(key)).addLabels(EndpointLabel.SOAP.label());
                 }
 
-                exchange.send(message);
+                exchange.send(reply);
             }
         } catch (Fault f) {
             SOAPFault fault = null;
@@ -301,7 +303,7 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
                         createFault("", f.getFaultName());
 
                 Detail detail=fault.addDetail();
-                Node cloned=detail.getOwnerDocument().importNode(WSDLHelper.unwrapMessagePart(f.getFaultMessage()), true);                    
+                Node cloned=detail.getOwnerDocument().importNode(WSDLHelper.unwrapMessagePart(f.getFaultMessage()), true);
                 detail.appendChild(cloned);
         
             } catch (Exception e) {

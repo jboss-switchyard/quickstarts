@@ -104,13 +104,13 @@ public class SCAInvoker extends BaseServiceHandler {
     private void invokeRemote(Exchange exchange) {
         // Figure out the QName for the service were invoking
         QName serviceName = getTargetServiceName(exchange);
-        
+
         RemoteMessage request = new RemoteMessage()
             .setDomain(exchange.getProvider().getDomain().getName())
             .setService(serviceName)
-            .setContent(exchange.getMessage().getContent())
-            .setContext(exchange.getContext());
-        
+            .setContent(exchange.getMessage().getContent());
+        request.setContext(exchange.getContext());
+
         try {
             RemoteMessage reply = _invoker.invoke(request);
             if (isInOut(exchange) && reply != null) {

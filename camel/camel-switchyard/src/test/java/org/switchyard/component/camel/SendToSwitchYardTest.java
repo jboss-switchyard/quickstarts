@@ -27,6 +27,8 @@ import javax.xml.namespace.QName;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
+import org.switchyard.Property;
+import org.switchyard.Scope;
 import org.switchyard.component.camel.common.handler.InboundHandler;
 import org.switchyard.component.camel.common.model.v1.V1BaseCamelBindingModel;
 import org.switchyard.component.camel.util.Composer;
@@ -90,7 +92,10 @@ public class SendToSwitchYardTest extends SwitchYardComponentTestBase {
         List<Exchange> exchanges = new ArrayList<Exchange>();
         mock.getMessages().drainTo(exchanges);
         assertEquals(1, exchanges.size());
-        assertEquals(Mapper.VALUE, exchanges.get(0).getContext().getPropertyValue(Mapper.PROPERTY));
+        Exchange exchange = exchanges.get(0);
+        Property property = exchange.getContext().getProperty(Mapper.PROPERTY);
+        assertNotNull(property);
+        assertEquals(Mapper.VALUE, property.getValue());
 
         handler.stop();
     }

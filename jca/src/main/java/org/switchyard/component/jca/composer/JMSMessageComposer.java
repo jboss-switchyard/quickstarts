@@ -48,7 +48,7 @@ public class JMSMessageComposer extends BaseMessageComposer<JMSBindingData> {
     @Override
     public org.switchyard.Message compose(JMSBindingData source, Exchange exchange, boolean create) throws Exception {
         final org.switchyard.Message syMessage = create ? exchange.createMessage() : exchange.getMessage();
-        getContextMapper().mapFrom(source, exchange.getContext());
+        getContextMapper().mapFrom(source, exchange.getContext(syMessage));
 
         Message jmsMessage = source.getMessage();
         if (jmsMessage instanceof BytesMessage) {
@@ -96,11 +96,12 @@ public class JMSMessageComposer extends BaseMessageComposer<JMSBindingData> {
      */
     @Override
     public JMSBindingData decompose(Exchange exchange, JMSBindingData target) throws Exception {
+        org.switchyard.Message syMessage = exchange.getMessage();
         getContextMapper().mapTo(exchange.getContext(), target);
         Message jmsMessage = target.getMessage();
         ObjectMessage targetObj = ObjectMessage.class.cast(jmsMessage);
         // expect transformer to transform the content into Serializable ...
-        targetObj.setObject(exchange.getMessage().getContent(Serializable.class));
+        targetObj.setObject(syMessage.getContent(Serializable.class));
         return target;
     }
 

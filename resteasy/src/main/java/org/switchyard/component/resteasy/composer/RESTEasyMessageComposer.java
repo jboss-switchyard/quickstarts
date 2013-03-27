@@ -39,7 +39,7 @@ public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyBinding
     @Override
     public Message compose(RESTEasyBindingData source, Exchange exchange, boolean create) throws Exception {
         final Message message = create ? exchange.createMessage() : exchange.getMessage();
-        getContextMapper().mapFrom(source, exchange.getContext());
+        getContextMapper().mapFrom(source, exchange.getContext(message));
         Object content = null;
         if (source.getParameters().length > 0) {
             content = source.getParameters()[0];
@@ -57,7 +57,8 @@ public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyBinding
      */
     @Override
     public RESTEasyBindingData decompose(Exchange exchange, RESTEasyBindingData target) throws Exception {
-        Object content = exchange.getMessage().getContent();
+        Message sourceMessage = exchange.getMessage();
+        Object content = sourceMessage.getContent();
         target.setOperationName(exchange.getContract().getProviderOperation().getName());
         if (content != null) {
             target.setParameters(new Object[]{content});

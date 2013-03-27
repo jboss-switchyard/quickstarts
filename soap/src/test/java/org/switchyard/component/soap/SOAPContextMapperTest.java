@@ -34,6 +34,7 @@ import org.switchyard.component.soap.composer.SOAPHeadersType;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.ConfigurationPuller;
+import org.switchyard.internal.CompositeContext;
 import org.switchyard.internal.DefaultContext;
 import org.w3c.dom.Element;
 
@@ -55,9 +56,9 @@ public class SOAPContextMapperTest {
     }
 
     private Context newSourceContext() {
-        Context source = new DefaultContext();
-        source.setProperty(FIRST_NAME.toString(), "John", Scope.OUT);
-        source.setProperty(LAST_NAME.toString(), "Doe", Scope.OUT);
+        CompositeContext source = newContext();
+        source.setProperty(FIRST_NAME.toString(), "John");
+        source.setProperty(LAST_NAME.toString(), "Doe");
         return source;
     }
 
@@ -66,12 +67,15 @@ public class SOAPContextMapperTest {
         return target;
     }
 
-    private Context newTargetContext() {
-        return new DefaultContext();
+    private CompositeContext newContext() {
+        CompositeContext source = new CompositeContext();
+        source.setContext(Scope.MESSAGE, new DefaultContext(Scope.MESSAGE));
+        source.setContext(Scope.EXCHANGE, new DefaultContext());
+        return source;
     }
 
     private Object getPropertyValue(Context context, QName qname) {
-        Object o = context.getProperty(qname.toString(), Scope.IN).getValue();
+        Object o = context.getProperty(qname.toString(), Scope.MESSAGE).getValue();
         return o;
     }
 
@@ -102,7 +106,7 @@ public class SOAPContextMapperTest {
         mapper.setSOAPHeadersType(soapHeadersType);
         // test mapFrom
         SOAPMessage sourceMessage = newSourceMessage();
-        Context targetContext = newTargetContext();
+        Context targetContext = newContext();
         mapper.mapFrom(new SOAPBindingData(sourceMessage), targetContext);
         Assert.assertEquals("John", getPropertyValue(targetContext, FIRST_NAME));
         Assert.assertEquals("Doe", getPropertyValue(targetContext, LAST_NAME));
@@ -120,7 +124,7 @@ public class SOAPContextMapperTest {
         mapper.setSOAPHeadersType(SOAPHeadersType.XML);
         // test mapFrom
         SOAPMessage sourceMessage = newSourceMessage();
-        Context targetContext = newTargetContext();
+        Context targetContext = newContext();
         mapper.mapFrom(new SOAPBindingData(sourceMessage), targetContext);
         Assert.assertEquals("<first xmlns=\"urn:names:1.0\">John</first>", getPropertyValue(targetContext, FIRST_NAME));
         Assert.assertEquals("<last xmlns=\"urn:names:1.0\">Doe</last>", getPropertyValue(targetContext, LAST_NAME));
@@ -138,7 +142,7 @@ public class SOAPContextMapperTest {
         mapper.setSOAPHeadersType(SOAPHeadersType.CONFIG);
         // test mapFrom
         SOAPMessage sourceMessage = newSourceMessage();
-        Context targetContext = newTargetContext();
+        Context targetContext = newContext();
         mapper.mapFrom(new SOAPBindingData(sourceMessage), targetContext);
         Assert.assertEquals(newConfiguration("<first xmlns=\"urn:names:1.0\">John</first>"), getPropertyValue(targetContext, FIRST_NAME));
         Assert.assertEquals(newConfiguration("<last xmlns=\"urn:names:1.0\">Doe</last>"), getPropertyValue(targetContext, LAST_NAME));
@@ -156,7 +160,7 @@ public class SOAPContextMapperTest {
         mapper.setSOAPHeadersType(SOAPHeadersType.DOM);
         // test mapFrom
         SOAPMessage sourceMessage = newSourceMessage();
-        Context targetContext = newTargetContext();
+        Context targetContext = newContext();
         mapper.mapFrom(new SOAPBindingData(sourceMessage), targetContext);
         Assert.assertEquals("<first xmlns=\"urn:names:1.0\">John</first>", toString((Element)getPropertyValue(targetContext, FIRST_NAME)));
         Assert.assertEquals("<last xmlns=\"urn:names:1.0\">Doe</last>", toString((Element)getPropertyValue(targetContext, LAST_NAME)));

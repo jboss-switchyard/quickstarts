@@ -23,7 +23,6 @@ import org.hornetq.api.core.SimpleString;
 import org.hornetq.api.core.client.ClientMessage;
 import org.switchyard.Context;
 import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.component.common.composer.BaseRegexContextMapper;
 import org.switchyard.component.common.label.ComponentLabel;
 import org.switchyard.component.common.label.EndpointLabel;
@@ -48,7 +47,7 @@ public class HornetQContextMapper extends BaseRegexContextMapper<HornetQBindingD
             if (matches(name)) {
                 Object value = clientMessage.getObjectProperty(key);
                 if (value != null) {
-                    context.setProperty(name, value, Scope.IN).addLabels(HORNETQ_LABELS);
+                    context.setProperty(name, value).addLabels(HORNETQ_LABELS);
                 }
             }
         }
@@ -60,7 +59,7 @@ public class HornetQContextMapper extends BaseRegexContextMapper<HornetQBindingD
     @Override
     public void mapTo(Context context, HornetQBindingData target) throws Exception {
         ClientMessage clientMessage = target.getClientMessage();
-        for (Property property : context.getProperties(Scope.OUT)) {
+        for (Property property : context.getProperties()) {
             String name = property.getName();
             if (matches(name)) {
                 Object value = property.getValue();

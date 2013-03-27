@@ -25,7 +25,6 @@ import javax.jms.Message;
 
 import org.switchyard.Context;
 import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.component.common.composer.BaseRegexContextMapper;
 import org.switchyard.component.common.label.ComponentLabel;
 import org.switchyard.component.common.label.EndpointLabel;
@@ -58,7 +57,7 @@ public class JMSContextMapper extends BaseRegexContextMapper<JMSBindingData> {
                     pce.getMessage();
                 }
                 if (value != null) {
-                    context.setProperty(key, value, Scope.IN).addLabels(JMS_RECORD_LABELS);
+                    context.setProperty(key, value).addLabels(JMS_RECORD_LABELS);
                 }
             }
         }
@@ -70,7 +69,7 @@ public class JMSContextMapper extends BaseRegexContextMapper<JMSBindingData> {
     @Override
     public void mapTo(Context context, JMSBindingData target) throws Exception {
         Message message = target.getMessage();
-        for (Property property : context.getProperties(Scope.OUT)) {
+        for (Property property : context.getProperties()) {
             String name = property.getName();
             if (matches(name)) {
                 Object value = property.getValue();

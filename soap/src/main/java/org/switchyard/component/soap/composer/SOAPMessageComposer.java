@@ -70,7 +70,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
         final SOAPMessage soapMessage = source.getSOAPMessage();
         final Message message = create ? exchange.createMessage() : exchange.getMessage();
 
-        getContextMapper().mapFrom(source, exchange.getContext());
+        getContextMapper().mapFrom(source, exchange.getContext(message));
 
         final SOAPBody soapBody = soapMessage.getSOAPBody();
         if (soapBody == null) {

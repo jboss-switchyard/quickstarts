@@ -25,7 +25,6 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.w3c.dom.Document;
@@ -41,9 +40,10 @@ public class SOAPProvider extends BaseHandler {
 
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
+        Message message = exchange.createMessage();
         if (exchange.getContract().getProviderOperation().getExchangePattern().equals(ExchangePattern.IN_OUT)) {
-            Message message;
-            Node request = exchange.getMessage().getContent(Node.class);
+            Message receivedMessage = exchange.getMessage();
+            Node request = receivedMessage.getContent(Node.class);
             Element name = XMLHelper.getFirstChildElementByName(request, "arg0");
             Element fault = XMLHelper.getFirstChildElementByName(request, "CustomFaultMessage");
             
@@ -53,7 +53,6 @@ public class SOAPProvider extends BaseHandler {
             }
             String response = null;
             if (toWhom.length() == 0) {
-                message = exchange.createMessage();
                 if (fault != null) {
                     // for testing sendFault() with the message which is not SOAP/Fault format
                     message.setContent(fault);
@@ -70,13 +69,12 @@ public class SOAPProvider extends BaseHandler {
                 }
                 exchange.sendFault(message);
             } else {
-                message = exchange.createMessage();
-                Property soapActionProp = exchange.getContext().getProperty("Soapaction", Scope.IN);
+                Property soapActionProp = exchange.getContext().getProperty("Soapaction");
                 String soapAction = "";
                 if (soapActionProp != null) {
                     soapAction = (String) soapActionProp.getValue();
                 } else {
-                    soapActionProp = exchange.getContext().getProperty("Content-Type", Scope.IN);
+                    soapActionProp = exchange.getContext().getProperty("Content-Type");
                     if (soapActionProp != null) {
                         soapAction = (String) soapActionProp.getValue();
                     }

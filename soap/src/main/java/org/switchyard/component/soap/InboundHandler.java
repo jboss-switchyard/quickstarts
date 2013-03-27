@@ -35,7 +35,6 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
-import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
@@ -202,9 +201,7 @@ public class InboundHandler extends BaseServiceHandler {
                 assertComposedMessageOK(message, operation);
             }
 
-            exchange.getContext().setProperty(MESSAGE_NAME, 
-                    operation.getInput().getMessage().getQName().getLocalPart(),
-                    Scope.IN);
+            exchange.getContext(message).setProperty(MESSAGE_NAME, operation.getInput().getMessage().getQName().getLocalPart());
 
             if (oneWay) {
                 exchange.send(message);

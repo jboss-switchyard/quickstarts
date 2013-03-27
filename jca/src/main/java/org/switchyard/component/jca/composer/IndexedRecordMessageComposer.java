@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.switchyard.Exchange;
+import org.switchyard.Message;
 import org.switchyard.component.common.composer.BaseMessageComposer;
 
 /**
@@ -39,7 +40,7 @@ public class IndexedRecordMessageComposer extends BaseMessageComposer<IndexedRec
     public org.switchyard.Message compose(IndexedRecordBindingData source, Exchange exchange, boolean create) throws Exception {
         
         final org.switchyard.Message message = create ? exchange.createMessage() : exchange.getMessage();
-        getContextMapper().mapFrom(source, exchange.getContext());
+        getContextMapper().mapFrom(source, exchange.getContext(message));
         List<Object> l = new ArrayList<Object>();
         l.addAll(source.getRecord());
         message.setContent(l);
@@ -52,9 +53,10 @@ public class IndexedRecordMessageComposer extends BaseMessageComposer<IndexedRec
     @SuppressWarnings("unchecked")
     @Override
     public IndexedRecordBindingData decompose(Exchange exchange, IndexedRecordBindingData target) throws Exception {
+        Message sourceMessage = exchange.getMessage();
 
         getContextMapper().mapTo(exchange.getContext(), target);
-        final List<?> content = exchange.getMessage().getContent(List.class);
+        final List<?> content = sourceMessage.getContent(List.class);
         target.getRecord().addAll(content);
         return target;
     }

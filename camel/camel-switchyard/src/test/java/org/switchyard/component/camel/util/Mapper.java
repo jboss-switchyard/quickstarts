@@ -19,6 +19,7 @@
 package org.switchyard.component.camel.util;
 
 import org.switchyard.Context;
+import org.switchyard.Scope;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.camel.common.composer.CamelContextMapper;
 
