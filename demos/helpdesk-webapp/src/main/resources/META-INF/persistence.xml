@@ -8,8 +8,11 @@
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <jta-data-source>java:jboss/datasources/jbpmDS</jta-data-source>
     <mapping-file>JBPMorm-JPA2.xml</mapping-file>
-    <class>org.drools.persistence.info.SessionInfo</class>
+    <class>org.jbpm.persistence.correlation.CorrelationKeyInfo</class>
+    <class>org.jbpm.persistence.correlation.CorrelationPropertyInfo</class>
+    <class>org.jbpm.persistence.processinstance.ProcessInstanceEventInfo</class>
     <class>org.jbpm.persistence.processinstance.ProcessInstanceInfo</class>
+    <class>org.drools.persistence.info.SessionInfo</class>
     <class>org.drools.persistence.info.WorkItemInfo</class>
     <class>org.jbpm.process.audit.ProcessInstanceLog</class>
     <class>org.jbpm.process.audit.NodeInstanceLog</class>
