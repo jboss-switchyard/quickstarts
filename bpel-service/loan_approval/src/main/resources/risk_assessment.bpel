@@ -69,6 +69,10 @@
 					<from variable="check" header="conversationId" />
 					<to variable="checkResponse" header="conversationId" />
 				    </copy>
+				    <copy>
+			                <from><literal><ns:exampleHeader xmlns:ns="http://www.jboss.org/header">Outbound</ns:exampleHeader></literal></from>
+					<to variable="checkResponse" header="exampleHeader" />
+				    </copy>
 			        </assign>
 			
 			      <reply partnerLink="assessor" 
