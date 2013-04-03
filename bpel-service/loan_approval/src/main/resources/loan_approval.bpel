@@ -71,6 +71,10 @@
 		<from variable="request" header="conversationId" />
 		<to variable="check" header="conversationId" />
             </copy>
+            <copy>
+		<from variable="request" header="exampleHeader" />
+		<to variable="check" header="exampleHeader" />
+            </copy>
         </assign>
         
       <invoke partnerLink="assessor" portType="lns:riskAssessmentPT" operation="check" 
@@ -88,6 +92,10 @@
             <copy>
 		<from variable="checkResponse" header="conversationId" />
 		<to variable="requestResponse" header="conversationId" />
+            </copy>
+            <copy>
+		<from variable="checkResponse" header="exampleHeader" />
+		<to variable="requestResponse" header="exampleHeader" />
             </copy>
         </assign>
 

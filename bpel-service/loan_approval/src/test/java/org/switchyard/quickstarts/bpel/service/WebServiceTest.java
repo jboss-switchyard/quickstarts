@@ -1,6 +1,5 @@
 package org.switchyard.quickstarts.bpel.service;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
@@ -19,7 +18,6 @@ public class WebServiceTest {
     private HTTPMixIn httpMixIn;
 
     @Test
-    @Ignore("Fix with SWITCHYARD-1289. Problem now is that conversationId somehow loses its namespace, so it's not getting included as a soap response header.")
     public void loanApproval1() throws Exception {
         // Send a SOAP request and verify the SOAP reply is what we expected
         httpMixIn.postResourceAndTestXML(
