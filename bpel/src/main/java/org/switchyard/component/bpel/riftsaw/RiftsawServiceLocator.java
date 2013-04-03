@@ -237,13 +237,7 @@ public class RiftsawServiceLocator implements ServiceLocator {
         }
 
         /**
-         * This method invokes the external switchyard service.
-         * 
-         * @param operationName The operation
-         * @param mesg The message
-         * @param headers The optional headers
-         * @return The response
-         * @throws Exception Failed to invoke
+         * {@inheritDoc}
          */
         public Element invoke(String operationName, Element mesg,
                 Map<String, Object> headers) throws Exception {
@@ -262,7 +256,11 @@ public class RiftsawServiceLocator implements ServiceLocator {
                 for (String key : keys) {
                     exchange.getContext().setProperty(key,headers.get(key), Scope.IN).addLabels(EndpointLabel.SOAP.label());
                 }
+
+                // Clear the headers in preparation for response headers
+                headers.clear();
             }
+            
             exchange.send(req);
             
             try {
@@ -278,8 +276,14 @@ public class RiftsawServiceLocator implements ServiceLocator {
             if (resp == null) {
                 throw new Exception("Response not returned from operation '"
                            + operationName
-                           + "' on service: "+_serviceReference.getName());
-                
+                           + "' on service: "+_serviceReference.getName());                
+            }
+            
+            // Process header values associated with the response
+            for (org.switchyard.Property p : exchange.getContext().getProperties(Scope.OUT)) {
+                if (p.hasLabel(EndpointLabel.SOAP.label())) {
+                    headers.put(p.getName(), p.getValue());
+                }
             }
             
             // Check for exception - but don't rethrow a BPEL
