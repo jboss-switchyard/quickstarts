@@ -158,6 +158,13 @@ that triggers the Camel route. This allows SwitchYard clients to use the service
 
 For example:
 
+    route.xml :
+    <route xmlns="http://camel.apache.org/schema/spring" id="Camel Test Route">
+        <log message="ItemId [${body}]"/>
+        <to uri="switchyard://WarehouseService?operationName=hasItem"/>
+        <log message="Title Name [${body}]"/>
+    </route>
+
     <sd:switchyard 
         xmlns="urn:switchyard-component-camel:config:1.0" 
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
@@ -183,11 +190,7 @@ For example:
                 </sca:reference>
                 
                 <implementation.camel>
-                    <route xmlns="http://camel.apache.org/schema/spring" id="Camel Test Route">
-                        <log message="ItemId [${body}]"/>
-                        <to uri="switchyard://WarehouseService?operationName=hasItem"/>
-                        <log message="Title Name [${body}]"/>
-                    </route>
+                    <xml path="META-INF/route.xml"/>
                 </implementation.camel>
             </sca:component>
         

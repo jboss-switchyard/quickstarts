@@ -22,7 +22,23 @@
 
         <sca:component name="MathComponent">
             <camel:implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
-	         <xml path="org/switchyard/component/camel/deploy/math-route.xml"/> 
+                <route xmlns="http://camel.apache.org/schema/spring" id="CamelMathRoute">
+                    <to uri="log:test?showAll=true" />
+                    <choice>
+                        <when>
+                            <simple>${header.org.switchyard.operationName} == 'cos'</simple>
+                            <to uri="switchyard://MathCos" />
+                        </when>
+                        <when>
+                            <simple>${header.org.switchyard.operationName} == 'abs'</simple>
+                            <to uri="switchyard://MathAbs" />
+                        </when>
+                        <otherwise>
+                            <to uri="mock:unknown" />
+                        </otherwise>
+                    </choice>
+                    <to uri="switchyard://MathAll" />
+                </route>
             </camel:implementation.camel>
 
             <sca:service name="CamelMathService">

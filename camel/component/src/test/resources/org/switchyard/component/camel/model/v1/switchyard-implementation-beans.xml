@@ -27,12 +27,8 @@
         </sca:component>
 
         <sca:component name="CamelComponent">
-            <camel:implementation.camel>
-                <route xmlns="http://camel.apache.org/schema/spring" id="CamelTestRoute">
-                    <log message="ItemId [${body}]"/>
-                    <to uri="switchyard://WarehouseService?operationName=hasItem"/>
-                    <log message="Title Name [${body}]"/>
-                </route>
+            <camel:implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
+		<xml path="org/switchyard/component/camel/model/v1/route.xml"/>
             </camel:implementation.camel>
 
             <sca:service name="OrderService" >

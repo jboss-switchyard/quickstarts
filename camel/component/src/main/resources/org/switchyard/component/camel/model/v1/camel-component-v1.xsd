@@ -34,7 +34,6 @@ MA  02110-1301, USA.
             <extension base="sca:Implementation">
                 <sequence>
                     <choice>
-                        <element ref="camelSpring:route"/>
                         <element name="java" type="tns:JavaDSLType"/>
                         <element name="xml" type="tns:XMLDSLType"/>
                     </choice>
