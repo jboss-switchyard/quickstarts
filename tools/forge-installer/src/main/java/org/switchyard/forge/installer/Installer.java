@@ -18,6 +18,10 @@
  */
 package org.switchyard.forge.installer;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import org.jboss.forge.shell.PluginEntry;
 import org.jboss.forge.shell.InstalledPluginRegistry;
 
 /** 
@@ -29,7 +33,7 @@ import org.jboss.forge.shell.InstalledPluginRegistry;
  */ 
 public class Installer {
     
-    public static final String FORGE_VERSION = "1.0.2.Final";
+    public static final String FORGE_VERSION = "1.2.2.Final";
 
     /**
      * Add an install entry to installed.xml.
@@ -38,7 +42,13 @@ public class Installer {
      * @param slot the module slot 
      */
      public void install (String plugin, String slot) {
-		InstalledPluginRegistry.install(plugin, FORGE_VERSION, slot);	
+	    try {
+	    	PluginEntry pe = InstalledPluginRegistry.install(plugin, FORGE_VERSION, slot);	
+	    } catch (Exception e) {
+	    	System.out.println("Please make sure that you are using FORGE "
+	    			+ FORGE_VERSION);
+	    	e.printStackTrace();
+	    }
      }
 
     /**
