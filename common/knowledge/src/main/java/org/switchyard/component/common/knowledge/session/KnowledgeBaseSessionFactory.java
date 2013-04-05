@@ -28,6 +28,8 @@ import org.kie.KnowledgeBase;
 import org.kie.KnowledgeBaseFactory;
 import org.kie.builder.KnowledgeBuilder;
 import org.kie.builder.KnowledgeBuilderConfiguration;
+import org.kie.builder.KnowledgeBuilderError;
+import org.kie.builder.KnowledgeBuilderErrors;
 import org.kie.builder.KnowledgeBuilderFactory;
 import org.kie.persistence.jpa.KieStoreServices;
 import org.kie.runtime.Environment;
@@ -42,6 +44,7 @@ import org.switchyard.component.common.knowledge.util.Environments;
 import org.switchyard.component.common.knowledge.util.Listeners;
 import org.switchyard.component.common.knowledge.util.Loggers;
 import org.switchyard.component.common.knowledge.util.Resources;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * A Base-based KnowledgeSessionFactory.
@@ -49,6 +52,17 @@ import org.switchyard.component.common.knowledge.util.Resources;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
+
+    private static final String LINE_SEPARATOR;
+    static {
+        String lineSeparator;
+        try {
+            lineSeparator = System.getProperty("line.separator", "\n");
+        } catch (Throwable t) {
+            lineSeparator = "\n";
+        }
+        LINE_SEPARATOR = lineSeparator;
+    }
 
     private final KieBase _base;
     private final KieSessionConfiguration _sessionConfiguration;
@@ -111,7 +125,23 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
         KnowledgeBuilderConfiguration builderConfiguration = Configurations.getBuilderConfiguration(getModel(), getPropertyOverrides(), getLoader());
         KnowledgeBuilder builder = KnowledgeBuilderFactory.newKnowledgeBuilder(base, builderConfiguration);
         Resources.addResources(getModel(), getLoader(), builder);
-        return builder.newKnowledgeBase();
+        try {
+            return builder.newKnowledgeBase();
+        } catch (Throwable t) {
+            // NOTE: Logging can also be enabled on org.drools.builder.impl.KnowledgeBuilderImpl
+            StringBuilder sb = new StringBuilder("Problem creating knowledge base");
+            String tm = t.getMessage();
+            if (tm != null) {
+                sb.append(": ");
+                sb.append(tm.trim());
+            }
+            KnowledgeBuilderErrors errors = builder.getErrors();
+            for (KnowledgeBuilderError error : errors) {
+                sb.append(LINE_SEPARATOR);
+                sb.append(error.toString().trim());
+            }
+            throw new SwitchYardException(sb.toString(), t);
+        }
     }
 
 }
