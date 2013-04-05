@@ -123,7 +123,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             MessageProducer producer = session.createProducer(_jmsDestination);
 
             Message msg = session.createObjectMessage();
-            MessageComposer<JMSBindingData> composer = JCAComposition.getMessageComposer(JMSBindingData.class);
+            MessageComposer<JMSBindingData> composer = JCAComposition.getMessageComposer(getJCABindingModel(), JMSBindingData.class);
             producer.send(composer.decompose(exchange, new JMSBindingData(msg)).getMessage());
             return null;
         } catch (Exception e) {

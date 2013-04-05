@@ -67,7 +67,10 @@ public class JCAJMSReferenceBindingTest  {
         _service.sendInOnly(payload);
         
         final MessageConsumer consumer = _hqMixIn.getJMSSession().createConsumer(HornetQMixIn.getJMSQueue(OUTPUT_QUEUE));
-        _hqMixIn.readJMSMessageAndTestString(consumer.receive(1000), payload);
+        javax.jms.Message msg = consumer.receive(1000);
+        _hqMixIn.readJMSMessageAndTestString(msg, payload+"test");
+        Assert.assertEquals(msg.getStringProperty("testProp"), "testVal");
+        
     }
     
     @Test
@@ -82,7 +85,9 @@ public class JCAJMSReferenceBindingTest  {
         
         tx.commit();
         
-        _hqMixIn.readJMSMessageAndTestString(consumer.receive(1000), payload);
+        javax.jms.Message msg = consumer.receive(1000);
+        _hqMixIn.readJMSMessageAndTestString(msg, payload+"test");
+        Assert.assertEquals(msg.getStringProperty("testProp"), "testVal");
     }
 }
 

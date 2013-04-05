@@ -240,7 +240,8 @@ public class JCAActivator extends BaseActivator {
         Properties connProps = jcaconfig.getOutboundConnection().getConnection().getProperties();
         processor.setApplicationClassLoader(_appClassLoader)
                     .setMCFProperties(connProps)
-                    .setConnectionFactoryJNDIName(cfJndiName);
+                    .setConnectionFactoryJNDIName(cfJndiName)
+                    .setJCABindingModel(jcaconfig);
 
         if (jcaconfig.getOutboundInteraction().getConnectionSpec() != null) {
             String connSpecClassName = jcaconfig.getOutboundInteraction().getConnectionSpec().getConnectionSpecClassName();

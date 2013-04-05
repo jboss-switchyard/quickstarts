@@ -24,6 +24,8 @@
         <sca:service name="JCAJMSService" promote="ComponentName/JCAJMSService">
             <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
                <operationSelector xmlns="urn:switchyard-config:switchyard:1.0" operationName="onMessage"/>
+               <jca:contextMapper class="org.switchyard.component.jca.deploy.MyJMSContextMapper"/>
+               <jca:messageComposer class="org.switchyard.component.jca.deploy.MyJMSMessageComposer"/>
                <inboundConnection>
                    <resourceAdapter name="hornetq-ra.rar"/>
                    <activationSpec>

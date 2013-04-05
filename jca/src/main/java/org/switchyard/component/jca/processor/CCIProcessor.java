@@ -52,7 +52,6 @@ public class CCIProcessor extends AbstractOutboundProcessor {
     private String _recordClassName;
     private ConnectionSpec _connectionSpec;
     private InteractionSpec _interactionSpec;
-    private RecordFactory _recordFactory;
     private ConnectionFactory _connectionFactory;
     private RecordHandler<?> _recordHandler;
     
@@ -91,7 +90,9 @@ public class CCIProcessor extends AbstractOutboundProcessor {
     public void initialize() {
         try {
             Class<?> clazz = getApplicationClassLoader().loadClass(_recordClassName);
-            _recordHandler = RecordHandlerFactory.createRecordHandler(clazz, getApplicationClassLoader());
+            _recordHandler = RecordHandlerFactory.createRecordHandler(clazz, getApplicationClassLoader())
+                    .setJCABindingModel(getJCABindingModel())
+                    .setInteractionSpec(_interactionSpec);
 
             InitialContext ic = new InitialContext();
             _connectionFactory = (ConnectionFactory) ic.lookup(getConnectionFactoryJNDIName());
@@ -99,7 +100,8 @@ public class CCIProcessor extends AbstractOutboundProcessor {
             throw new SwitchYardException("Failed to initialize " + this.getClass().getName(), e);
         }
         try {
-            _recordFactory = _connectionFactory.getRecordFactory();
+            RecordFactory factory = _connectionFactory.getRecordFactory();
+            _recordHandler.setRecordFactory(factory);
         } catch (ResourceException e) {
             _logger.warn("Failed to get RecordFactory: " + e.getMessage());
         }
@@ -121,7 +123,7 @@ public class CCIProcessor extends AbstractOutboundProcessor {
                 connection = _connectionFactory.getConnection();
             }
             interaction = connection.createInteraction();
-            return _recordHandler.handle(exchange, _recordFactory, _interactionSpec, connection, interaction);
+            return _recordHandler.handle(exchange, connection, interaction);
         } catch (Exception e) {
             throw new HandlerException("Failed to process CCI outbound interaction", e);
         } finally {

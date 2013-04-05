@@ -27,6 +27,7 @@ import javax.jms.TextMessage;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.Exchange;
 import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
@@ -72,10 +73,13 @@ public class JCAJMSServiceBindingTest  {
         mockHandler.waitForOKMessage();
         
         Assert.assertEquals(mockHandler.getMessages().size(), 1);
-        final Object content = mockHandler.getMessages().poll().getMessage().getContent();
+        Exchange exchange = mockHandler.getMessages().poll();
+        final Object content = exchange.getMessage().getContent();
         Assert.assertTrue(content instanceof String);
         final String string = (String) content;
-        Assert.assertEquals(string, "payload");
+        Assert.assertEquals(string, "payloadtest");
+        final String val = exchange.getContext().getProperty("testProp").getValue().toString();
+        Assert.assertEquals(val, "testVal");
     }
 }
 

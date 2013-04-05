@@ -211,7 +211,7 @@ public abstract class AbstractInflowEndpoint {
     }
    
     protected <D extends JCABindingData> MessageComposer<D> getMessageComposer(Class<D> clazz) {
-        return JCAComposition.getMessageComposer(clazz);
+        return JCAComposition.getMessageComposer(_jcaBindingModel, clazz);
     }
 
     protected <D extends JCABindingData> OperationSelector<D> getOperationSelector(Class<D> clazz) {

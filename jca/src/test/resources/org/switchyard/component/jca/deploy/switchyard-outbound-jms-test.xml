@@ -23,6 +23,8 @@
         <!-- Reference binding example -->
         <sca:reference name="JCAJMSReference" promote="ComponentName/JCAJMSReference" multiplicity="1..1">
             <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <jca:contextMapper class="org.switchyard.component.jca.deploy.MyJMSContextMapper"/>
+               <jca:messageComposer class="org.switchyard.component.jca.deploy.MyJMSMessageComposer"/>
                <outboundConnection>
                    <resourceAdapter name="hornetq-ra.rar"/>
                    <connection jndiName="java:/JmsXA"/>

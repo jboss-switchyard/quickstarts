@@ -20,12 +20,9 @@ package org.switchyard.component.jca.processor.cci;
 
 import javax.resource.cci.Connection;
 import javax.resource.cci.Interaction;
-import javax.resource.cci.InteractionSpec;
-import javax.resource.cci.RecordFactory;
 
 import org.switchyard.Exchange;
 import org.switchyard.Message;
-import org.switchyard.component.jca.composer.JCAComposition;
 import org.switchyard.component.jca.composer.StreamableRecordBindingData;
 
 /**
@@ -36,19 +33,12 @@ import org.switchyard.component.jca.composer.StreamableRecordBindingData;
  */
 public class StreamableRecordHandler extends RecordHandler<StreamableRecordBindingData> {
 
-    /**
-     * Constructor.
-     */
-    public StreamableRecordHandler() {
-        setMessageComposer(JCAComposition.getMessageComposer(StreamableRecordBindingData.class));
-    }
-
     @Override
-    public Message handle(Exchange exchange, RecordFactory factory, InteractionSpec interactionSpec, Connection conn, Interaction interact) throws Exception {
+    public Message handle(Exchange exchange, Connection conn, Interaction interact) throws Exception {
         StreamableRecord record = new StreamableRecord();
         StreamableRecord outRecord = new StreamableRecord();
-        interact.execute(interactionSpec, getMessageComposer().decompose(exchange, new StreamableRecordBindingData(record)).getRecord(), outRecord);
-        return getMessageComposer().compose(new StreamableRecordBindingData(outRecord), exchange, true);
+        interact.execute(getInteractionSpec(), getMessageComposer(StreamableRecordBindingData.class).decompose(exchange, new StreamableRecordBindingData(record)).getRecord(), outRecord);
+        return getMessageComposer(StreamableRecordBindingData.class).compose(new StreamableRecordBindingData(outRecord), exchange, true);
     }
 
 }
