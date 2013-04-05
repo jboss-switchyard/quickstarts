@@ -45,7 +45,13 @@ import javax.activation.DataSource;
  * </ul>
  */
 public interface Message {
-    
+
+    /**
+     * Retrieves the message context.
+     * @return the message context
+     */
+    Context getContext();
+
     /**
      * Assigns the specified content to the body of this message.
      *
@@ -82,10 +88,9 @@ public interface Message {
     /**
      * Removes the named attachment from this message.
      * @param name the attachment name
-     * @return a reference to the removed attachment or null if the attachment
-     * does not exist
      */
-    DataSource removeAttachment(String name);
+    void removeAttachment(String name);
+
     /**
      * Returns a map containing all attachments to this message. The returned
      * map is not a live reference to the underlying attachment map in the
@@ -94,4 +99,14 @@ public interface Message {
      * @return a map containing all message attachments
      */
     Map<String, DataSource> getAttachmentMap();
+
+    /**
+     * Return copy of message. The copy will contain clean context and point
+     * to same payload object. In other words contents of message is not cloned
+     * nor copied.
+     *
+     * @return copy of message.
+     */
+    Message copy();
+
 }

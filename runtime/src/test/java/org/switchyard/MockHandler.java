@@ -126,7 +126,7 @@ public class MockHandler extends BaseHandler {
     public void handleMessage(final Exchange exchange) throws HandlerException {
         _messages.offer(exchange);
         if (_forwardInToOut) {
-            exchange.send(exchange.getMessage());
+            exchange.send(exchange.getMessage().copy());
         } else if (_forwardInToFault) {
             exchange.sendFault(exchange.createMessage());
         }

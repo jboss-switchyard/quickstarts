@@ -27,7 +27,6 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.validate.ValidationResult;
@@ -91,13 +90,11 @@ public class ValidateHandler extends BaseHandler {
             }
         }
     }
-    
+
     private Validator<?> get(Exchange exchange) {
-        Property contentType = exchange.getContext().getProperty(
-                Exchange.CONTENT_TYPE, Scope.activeScope(exchange));
-        Property validatedType = exchange.getContext().getProperty(
-                KEY_VALIDATED_TYPE, Scope.activeScope(exchange));
-        
+        Property contentType = exchange.getContext().getProperty(Exchange.CONTENT_TYPE);
+        Property validatedType = exchange.getContext().getProperty(KEY_VALIDATED_TYPE);
+
         if (contentType != null) {
             if (validatedType != null && contentType.getValue().equals(validatedType.getValue())) {
                 // Avoid to apply same validator twice. That may occur if any transformer is not applied and
@@ -126,9 +123,10 @@ public class ValidateHandler extends BaseHandler {
                         + ") with name '" + validator.getName() + "' using validator type '" + validator.getType() + "'.");
             }
        }
-        exchange.getContext().setProperty(
-                KEY_VALIDATED_TYPE, validator.getType(), Scope.activeScope(exchange)).addLabels(BehaviorLabel.TRANSIENT.label());
-        return validationResult;
+
+       exchange.getContext().setProperty(KEY_VALIDATED_TYPE, validator.getType())
+           .addLabels(BehaviorLabel.TRANSIENT.label());
+       return validationResult;
     }
 }
 

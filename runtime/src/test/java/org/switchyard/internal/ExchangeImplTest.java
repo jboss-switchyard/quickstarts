@@ -36,13 +36,13 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
-import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.event.EventObserver;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
+import org.switchyard.spi.Dispatcher;
 import org.switchyard.transform.BaseTransformer;
 
 /**
@@ -51,15 +51,18 @@ import org.switchyard.transform.BaseTransformer;
 public class ExchangeImplTest {
     
     private MockDomain _domain;
-    
+	private Dispatcher _dispatch;
+
     @Before
     public void setUp() throws Exception {
         _domain = new MockDomain();
+        ServiceReference reference = _domain.createInOnlyService(new QName("foo"));
+        _dispatch = _domain.getBus().createDispatcher(reference);
     }
     
     @Test
     public void testSendFaultOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(_domain);
+        Exchange exchange = new ExchangeImpl(_domain, _dispatch);
         try {
             exchange.sendFault(exchange.createMessage());
             Assert.fail("Sending a fault on a new exchange is not allowed");
@@ -70,7 +73,7 @@ public class ExchangeImplTest {
     
     @Test
     public void testPhaseIsNullOnNewExchange() {
-        Exchange exchange = new ExchangeImpl(_domain);
+        Exchange exchange = new ExchangeImpl(_domain, _dispatch);
         Assert.assertNull(exchange.getPhase());
     }
     
@@ -109,30 +112,29 @@ public class ExchangeImplTest {
         ServiceReference service = _domain.createInOnlyService(new QName("IdTest"));
         Exchange exchange = service.createExchange();
         exchange.send(exchange.createMessage());
-        Assert.assertNotNull(exchange.getContext().getProperty(Exchange.MESSAGE_ID, Scope.IN));
+        Assert.assertNotNull(exchange.getMessage().getContext().getProperty(Exchange.MESSAGE_ID));
     }
     
     @Test
     public void testRelatesToSetOnReply() {
         ServiceReference service = _domain.createInOutService(
-                new QName("ReplyTest"), new MockHandler().forwardInToOut());
+            new QName("ReplyTest"), new MockHandler().forwardInToOut());
         MockHandler replyHandler = new MockHandler();
         Exchange exchange = service.createExchange(replyHandler);
-        exchange.send(exchange.createMessage());
-        String requestId = (String)exchange.getContext().getProperty(
-                Exchange.MESSAGE_ID, Scope.IN).getValue();
-        String replyId = (String)exchange.getContext().getProperty(
-                Exchange.MESSAGE_ID, Scope.OUT).getValue();
-        String replyRelatesTo = (String)exchange.getContext().getProperty(
-                Exchange.RELATES_TO, Scope.OUT).getValue();
-        
+        Message message = exchange.createMessage();
+        exchange.send(message);
+
+        String requestId = message.getContext().getPropertyValue(Exchange.MESSAGE_ID);
+        String replyId = exchange.getMessage().getContext().getPropertyValue(Exchange.MESSAGE_ID);
+        String replyRelatesTo = exchange.getMessage().getContext().getPropertyValue(Exchange.RELATES_TO);
+
         Assert.assertEquals(requestId, replyRelatesTo);
         Assert.assertFalse(requestId.equals(replyId));
     }
 
     @Test
     public void testNullSend() {
-        Exchange exchange = new ExchangeImpl(_domain);
+        Exchange exchange = new ExchangeImpl(_domain, _dispatch);
         try {
             exchange.send(null);
             Assert.fail("Expected IllegalArgumentException.");
@@ -143,7 +145,7 @@ public class ExchangeImplTest {
 
     @Test
     public void testNullSendFault() {
-        Exchange exchange = new ExchangeImpl(_domain);
+        Exchange exchange = new ExchangeImpl(_domain, _dispatch);
         try {
             exchange.sendFault(null);
             Assert.fail("Expected IllegalArgumentException.");

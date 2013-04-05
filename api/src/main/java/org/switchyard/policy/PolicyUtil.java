@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.switchyard.Exchange;
 import org.switchyard.Property;
+import org.switchyard.Scope;
 import org.switchyard.label.BehaviorLabel;
 
 /**
@@ -34,9 +35,16 @@ import org.switchyard.label.BehaviorLabel;
  */
 public final class PolicyUtil {
 
-    private static String PROVIDED_PROPERTY = "org.switchyard.policy.provided";
-    private static String REQUIRED_PROPERTY = "org.switchyard.policy.required";
-    
+    /**
+     * Exchange property name where provided policies are kept.
+     */
+    public final static String PROVIDED_PROPERTY = "org.switchyard.policy.provided";
+
+    /**
+     * Exchange property name where required policies are kept.
+     */
+    public final static String REQUIRED_PROPERTY = "org.switchyard.policy.required";
+
     private PolicyUtil() {
         
     }
@@ -49,7 +57,7 @@ public final class PolicyUtil {
     public static void provide(Exchange exchange, Policy policy) {
         Set<Policy> provided = getPolicies(exchange, PROVIDED_PROPERTY);
         provided.add(policy);
-        exchange.getContext().setProperty(PROVIDED_PROPERTY, provided).addLabels(BehaviorLabel.TRANSIENT.label());
+        exchange.getContext().setProperty(PROVIDED_PROPERTY, provided, Scope.EXCHANGE).addLabels(BehaviorLabel.TRANSIENT.label());
     }
     
     /**
@@ -79,7 +87,7 @@ public final class PolicyUtil {
     public static void require(Exchange exchange, Policy policy) {
         Set<Policy> required = getPolicies(exchange, REQUIRED_PROPERTY);
         required.add(policy);
-        exchange.getContext().setProperty(REQUIRED_PROPERTY, required).addLabels(BehaviorLabel.TRANSIENT.label());
+        exchange.getContext().setProperty(REQUIRED_PROPERTY, required, Scope.EXCHANGE).addLabels(BehaviorLabel.TRANSIENT.label());
     }
     
     /**
@@ -103,7 +111,7 @@ public final class PolicyUtil {
     
     @SuppressWarnings("unchecked")
     private static Set<Policy> getPolicies(Exchange exchange, String propertyName) {
-        Property intentsProperty = exchange.getContext().getProperty(propertyName);
+        Property intentsProperty = exchange.getContext().getProperty(propertyName, Scope.EXCHANGE);
         Set<Policy> intents = new HashSet<Policy>();
         if (intentsProperty != null) {
             intents.addAll((Set<Policy>)intentsProperty.getValue());

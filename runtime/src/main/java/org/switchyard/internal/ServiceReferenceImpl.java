@@ -129,7 +129,6 @@ public class ServiceReferenceImpl implements ServiceReference {
 
     @Override
     public Exchange createExchange(String operation, ExchangeHandler handler) {
-        ExchangeImpl ex = new ExchangeImpl(_domain, handler);
         ServiceOperation op = _interface.getOperation(operation);
         if (op == null) {
             // try for a default operation
@@ -140,9 +139,9 @@ public class ServiceReferenceImpl implements ServiceReference {
             }
         }
 
+        Exchange ex = _dispatcher.createExchange(handler, op.getExchangePattern());
         ex.consumer(this, op);
-        ex.setOutputDispatcher(_dispatcher);
-        
+
         for (Policy policy : _requires) {
             PolicyUtil.require(ex, policy);
         }

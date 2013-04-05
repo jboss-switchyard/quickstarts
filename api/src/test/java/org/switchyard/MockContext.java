@@ -34,25 +34,20 @@ import org.switchyard.label.BehaviorLabel;
 public class MockContext implements Context {
 
     private final Map<String,Property> _exchangeProperties = Collections.synchronizedMap(new HashMap<String,Property>());
-    private final Map<String,Property> _inProperties = Collections.synchronizedMap(new HashMap<String,Property>());
-    private final Map<String,Property> _outProperties = Collections.synchronizedMap(new HashMap<String,Property>());
+    private final Map<String,Property> _messageProperties = Collections.synchronizedMap(new HashMap<String,Property>());
 
     public MockContext() {}
     
     private MockContext(Map<String, Property> exchangeProps,
-            Map<String, Property> inProps,
-            Map<String, Property> outProps) {
+            Map<String, Property> msgProps) {
         _exchangeProperties.putAll(exchangeProps);
-        _inProperties.putAll(inProps);
-        _outProperties.putAll(outProps);
+        _messageProperties.putAll(msgProps);
     }
 
     private Map<String,Property> getPropertiesMap(Scope scope) {
         switch (scope) {
-            case IN:
-                return _inProperties;
-            case OUT:
-                return _outProperties;
+            case MESSAGE:
+                return _messageProperties;
             case EXCHANGE:
             default:
                 return _exchangeProperties;
@@ -79,9 +74,10 @@ public class MockContext implements Context {
      * {@inheritDoc}
      */
     @Override
-    public Object getPropertyValue(String name) {
+    @SuppressWarnings("unchecked")
+    public <T> T getPropertyValue(String name) {
         Property property = getProperty(name);
-        return property != null ? property.getValue() : null;
+        return property != null ? (T) property.getValue() : null;
     }
 
     /**
@@ -165,7 +161,7 @@ public class MockContext implements Context {
 
     @Override
     public Context copy() {
-        MockContext ctx = new MockContext(_exchangeProperties, _inProperties, _outProperties);
+        MockContext ctx = new MockContext(_exchangeProperties, _messageProperties);
         ctx.removeProperties(BehaviorLabel.TRANSIENT.label());
         return ctx;
     }

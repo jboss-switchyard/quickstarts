@@ -23,31 +23,15 @@ package org.switchyard;
  * Defines the scope of a context property.
  */
 public enum Scope {
+
     /** 
      * Properties available for the duration of an exchange.
      */
     EXCHANGE,
+
     /**
-     * Properties available during the IN phase of an exchange.
+     * Properties available as part of message.
      */
-    IN,
-    /**
-     * Properties available during the OUT phase of an exchange.
-     */
-    OUT;
-    
-    /**
-     * Returns the active scope for an exchange based on the exchange phase.
-     * @param exchange the exchange used to determine active scope
-     * @return current scope for the exchange
-     */
-    public static Scope activeScope(Exchange exchange) {
-        if (ExchangePhase.IN.equals(exchange.getPhase())) {
-            return Scope.IN;
-        } else if (ExchangePhase.OUT.equals(exchange.getPhase())) {
-            return Scope.OUT;
-        } else {
-            return null;
-        }
-    }
+    MESSAGE;
+
 }

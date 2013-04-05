@@ -27,7 +27,7 @@ import org.switchyard.internal.ExchangeImpl;
 public class MockExchange extends ExchangeImpl {
     
     public MockExchange() {
-        super(new MockDomain());
+        super(new MockDomain(), null);
     }
     
     public void setPhase(ExchangePhase phase) {

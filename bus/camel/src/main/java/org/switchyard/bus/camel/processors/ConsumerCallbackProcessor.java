@@ -24,8 +24,7 @@ package org.switchyard.bus.camel.processors;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.switchyard.ExchangeState;
-import org.switchyard.bus.camel.CamelHelper;
-import org.switchyard.internal.ExchangeImpl;
+import org.switchyard.bus.camel.CamelExchange;
 
 /**
  * Processor used to call reply chain.
@@ -34,7 +33,7 @@ public class ConsumerCallbackProcessor implements Processor {
 
     @Override
     public void process(Exchange ex) throws Exception {
-        ExchangeImpl syEx = (ExchangeImpl) CamelHelper.getSwitchYardExchange(ex);
+        org.switchyard.Exchange syEx = new CamelExchange(ex);
 
         if (syEx.getState() == ExchangeState.FAULT) {
             syEx.getReplyHandler().handleFault(syEx);

@@ -41,7 +41,7 @@ public class DefaultContextTest {
     
     @Before
     public void setUp()  {
-        _context = new DefaultContext();
+        _context = new DefaultContext(Scope.EXCHANGE);
     }
     
     @Test
@@ -49,22 +49,12 @@ public class DefaultContextTest {
         _context.setProperty(PROP_NAME, PROP_VAL);
         Assert.assertEquals(PROP_VAL, _context.getProperty(PROP_NAME).getValue());
     }
-    
-    @Test
-    public void testGetSetScoped() {
-        _context.setProperty(PROP_NAME, PROP_VAL, Scope.IN);
-        Assert.assertEquals(PROP_VAL, _context.getProperty(PROP_NAME, Scope.IN).getValue());
-        Assert.assertNull(_context.getProperty(PROP_NAME));
-        Assert.assertNull(_context.getProperty(PROP_NAME, Scope.OUT));
-    }
-    
+
     @Test
     public void testGetPropertyValue() {
         final String key = "prop";
         final String value = "exchange";
         _context.setProperty(key, value);
-        _context.setProperty(key, "in", Scope.IN);
-        _context.setProperty(key, "out", Scope.OUT);
         Assert.assertEquals(value, _context.getPropertyValue(key));
     }
 
@@ -76,21 +66,12 @@ public class DefaultContextTest {
         _context.removeProperty(p);
         Assert.assertNull(_context.getProperty(PROP_NAME));
     }
-    
-    @Test
-    public void testRemoveScopedProperites() {
-        _context.setProperty("out", "bar", Scope.OUT);
-        _context.setProperty("in", "foo", Scope.IN);
-        _context.removeProperties(Scope.IN);
-        Assert.assertNull(_context.getProperty("in", Scope.IN));
-        Assert.assertNotNull(_context.getProperty("out", Scope.OUT));
-    }
-    
+
     @Test
     public void testRemoveProperites() {
-        _context.setProperty("out", "bar", Scope.OUT);
-        _context.setProperty("in", "foo", Scope.IN);
-        _context.setProperty("ex", "psst", Scope.EXCHANGE);
+        _context.setProperty("out", "bar");
+        _context.setProperty("in", "foo");
+        _context.setProperty("ex", "psst");
         _context.removeProperties();
         Assert.assertNull(_context.getPropertyValue("in"));
         Assert.assertNull(_context.getPropertyValue("out"));
@@ -109,8 +90,8 @@ public class DefaultContextTest {
     public void testSetPropertySet() {
         _context.setProperty("one", "bar");
         _context.setProperty("two", "foo");
-        Set<Property> props = _context.getProperties(Scope.EXCHANGE);
-        DefaultContext ctx = new DefaultContext();
+        Set<Property> props = _context.getProperties();
+        DefaultContext ctx = new DefaultContext(Scope.MESSAGE);
         ctx.setProperties(props);
         Assert.assertNotNull(ctx.getPropertyValue("one"));
         Assert.assertNotNull(ctx.getPropertyValue("two"));
@@ -130,20 +111,20 @@ public class DefaultContextTest {
     
     @Test
     public void testGetPropertyLabel() {
-        _context.setProperty("a", "a", Scope.IN).addLabels(TRANSIENT);
-        _context.setProperty("b", "b", Scope.OUT).addLabels(TRANSIENT);
-        _context.setProperty("c", "c", Scope.EXCHANGE).addLabels(TRANSIENT);
-        _context.setProperty("d", "d", Scope.IN).addLabels("foo");
+        _context.setProperty("a", "a").addLabels(TRANSIENT);
+        _context.setProperty("b", "b").addLabels(TRANSIENT);
+        _context.setProperty("c", "c").addLabels(TRANSIENT);
+        _context.setProperty("d", "d").addLabels("foo");
         Assert.assertEquals(3, _context.getProperties(TRANSIENT).size());
         Assert.assertEquals(1, _context.getProperties("foo").size());
     }
     
     @Test
     public void testRemovePropertyLabel() {
-        _context.setProperty("a", "a", Scope.IN).addLabels(TRANSIENT);
-        _context.setProperty("b", "b", Scope.OUT).addLabels(TRANSIENT);
-        _context.setProperty("c", "c", Scope.EXCHANGE).addLabels(TRANSIENT);
-        _context.setProperty("d", "d", Scope.IN).addLabels("foo");
+        _context.setProperty("a", "a").addLabels(TRANSIENT);
+        _context.setProperty("b", "b").addLabels(TRANSIENT);
+        _context.setProperty("c", "c").addLabels(TRANSIENT);
+        _context.setProperty("d", "d").addLabels("foo");
         
         _context.removeProperties(TRANSIENT);
         Assert.assertEquals(0, _context.getProperties(TRANSIENT).size());
@@ -152,9 +133,9 @@ public class DefaultContextTest {
     
     @Test
     public void testCopyClean() {
-        _context.setProperty("a", "a", Scope.IN).addLabels(TRANSIENT);
-        _context.setProperty("b", "b", Scope.OUT);
-        _context.setProperty("c", "c", Scope.EXCHANGE).addLabels(TRANSIENT);
+        _context.setProperty("a", "a").addLabels(TRANSIENT);
+        _context.setProperty("b", "b");
+        _context.setProperty("c", "c").addLabels(TRANSIENT);
         
         Context newCtx = _context.copy();
         Assert.assertEquals(0, newCtx.getProperties(TRANSIENT).size());
@@ -163,24 +144,24 @@ public class DefaultContextTest {
     
     @Test
     public void testCopy() {
-        _context.setProperty("exchange", "val", Scope.EXCHANGE);
-        _context.setProperty("in", "val", Scope.IN);
-        _context.setProperty("out", "val", Scope.OUT);
+        _context.setProperty("exchange", "val");
+        _context.setProperty("in", "val");
+        _context.setProperty("out", "val");
         Context ctx = _context.copy();
         // verify that all fields were copied
         Assert.assertEquals(
-                _context.getProperty("exchange", Scope.EXCHANGE),
-                ctx.getProperty("exchange", Scope.EXCHANGE));
+                _context.getProperty("exchange"),
+                ctx.getProperty("exchange"));
         Assert.assertEquals(
-                _context.getProperty("in", Scope.IN),
-                ctx.getProperty("in", Scope.IN));
+                _context.getProperty("in"),
+                ctx.getProperty("in"));
         Assert.assertEquals(
-                _context.getProperty("out", Scope.OUT),
-                ctx.getProperty("out", Scope.OUT));
+                _context.getProperty("out"),
+                ctx.getProperty("out"));
         // verify that mods to one context do not impact the other
-        _context.removeProperties(Scope.EXCHANGE);
-        Assert.assertNull(_context.getProperty("exchange", Scope.EXCHANGE));
-        Assert.assertNotNull(ctx.getProperty("exchange", Scope.EXCHANGE));
+        _context.removeProperties();
+        Assert.assertNull(_context.getProperty("exchange"));
+        Assert.assertNotNull(ctx.getProperty("exchange"));
     }
     
 }

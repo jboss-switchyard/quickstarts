@@ -30,7 +30,6 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
-import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.TransformSequence;
@@ -90,7 +89,7 @@ public class TransformationTest {
             TransformSequence.
                     from(inType).
                     to(expectedDestType).
-                    associateWith(exchange, Scope.IN);
+                    associateWith(msg);
 
             msg.setContent(input);
             exchange.send(msg);
@@ -130,7 +129,7 @@ public class TransformationTest {
         TransformSequence.
                 from(inType).
                 to(expectedDestType).
-                associateWith(exchange, Scope.IN);
+                associateWith(msg);
 
         msg.setContent(input);
 

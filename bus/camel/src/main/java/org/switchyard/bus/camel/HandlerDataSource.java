@@ -18,34 +18,46 @@
  */
 package org.switchyard.bus.camel;
 
-import org.switchyard.Exchange;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 
 /**
- * Simple helper to enclose logic necessary to obtain SwitchYard exchange from
- * camel exchange instance.
+ * An extension of DataHandler which implements {@link DataSource} interface.
+ * As result instances of this class may be used as {@link DataHandler} and {@link DataSource}.
  */
-public final class CamelHelper {
-
-    private CamelHelper() { }
+public class HandlerDataSource extends DataHandler implements DataSource {
 
     /**
-     * Lookup for SwitchYard exchange inside camel exchange.
+     * Creates new handler.
      * 
-     * @param exchange Camel exchange.
-     * @return Attached SwitchYard exchange.
+     * @param handler Handler to wrap.
      */
-    public static Exchange getSwitchYardExchange(org.apache.camel.Exchange exchange) {
-        return exchange.getProperty(ExchangeDispatcher.SY_EXCHANGE, Exchange.class);
+    public HandlerDataSource(DataHandler handler) {
+        super(handler.getDataSource());
     }
 
-    /**
-     * Attach SwitchYard exchange to camel exchange.
-     * 
-     * @param camelExchange Camel exchange instance.
-     * @param switchYardExchange SwitchYard exchange to attach.
-     */
-    public static void setSwitchYardExchange(org.apache.camel.Exchange camelExchange, Exchange switchYardExchange) {
-        camelExchange.setProperty(ExchangeDispatcher.SY_EXCHANGE, switchYardExchange);
+    @Override
+    public String getContentType() {
+        return getDataSource().getContentType();
+    }
+
+    @Override
+    public InputStream getInputStream() throws IOException {
+        return getDataSource().getInputStream();
+    }
+
+    @Override
+    public String getName() {
+        return getDataSource().getName();
+    }
+
+    @Override
+    public OutputStream getOutputStream() throws IOException {
+        return getDataSource().getOutputStream();
     }
 
 }

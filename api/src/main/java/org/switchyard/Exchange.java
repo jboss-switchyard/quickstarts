@@ -68,6 +68,16 @@ public interface Exchange {
     Context getContext();
 
     /**
+     * Retrieves context available for passed message. If message is same as
+     * message available on this exchange it will return same context as {@link #getContext()}
+     * method, otherwise another instance of Context will be returned.
+     * 
+     * @param message Message instance.
+     * @return Context for message.
+     */
+    Context getContext(Message message);
+
+    /**
      * Get the service reference representing the consumer.
      * @return The consumer service reference instance.
      */
@@ -144,5 +154,11 @@ public interface Exchange {
      * @return the exchange phase
      */
     ExchangePhase getPhase();
+
+    /**
+     * Get the reply handler for this exchange.
+     * @return reply handler
+     */
+    ExchangeHandler getReplyHandler();
 
 }

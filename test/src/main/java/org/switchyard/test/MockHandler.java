@@ -163,10 +163,10 @@ public class MockHandler extends BaseHandler {
         
         switch (_behavior) {
         case FORWARD_IN_TO_OUT :
-            exchange.send(exchange.getMessage());
+            exchange.send(exchange.getMessage().copy());
             break;
         case FORWARD_IN_TO_FAULT :
-            exchange.sendFault(exchange.getMessage());
+            exchange.sendFault(exchange.getMessage().copy());
             break;
         case REPLY_WITH_OUT :
             exchange.send(exchange.createMessage().setContent(_replyContent));

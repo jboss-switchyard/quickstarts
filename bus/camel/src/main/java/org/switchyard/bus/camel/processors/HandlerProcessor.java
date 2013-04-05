@@ -28,7 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
-import org.switchyard.bus.camel.CamelHelper;
+import org.switchyard.bus.camel.CamelExchange;
 
 /**
  * Processor wrapping SwitchYard {@link ExchangeHandler} invocation.
@@ -60,7 +60,7 @@ public class HandlerProcessor implements Processor {
 
     @Override
     public void process(Exchange ex) throws Exception {
-        org.switchyard.Exchange exchange = CamelHelper.getSwitchYardExchange(ex);
+        org.switchyard.Exchange exchange = new CamelExchange(ex);
 
         for (ExchangeHandler handler : _handlers) {
             if (exchange.getState() == ExchangeState.FAULT) {

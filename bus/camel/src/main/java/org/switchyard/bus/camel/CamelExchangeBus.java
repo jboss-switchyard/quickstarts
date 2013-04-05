@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.model.ModelHelper;
 import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
@@ -101,7 +102,7 @@ public class CamelExchangeBus implements ExchangeBus {
     }
 
     @Override
-    public Dispatcher createDispatcher(final ServiceReference reference) {
+    public ExchangeDispatcher createDispatcher(final ServiceReference reference) {
         if (_logger.isDebugEnabled()) {
             _logger.debug("Creating Camel dispatcher for " + reference.getName());
         }
@@ -119,17 +120,16 @@ public class CamelExchangeBus implements ExchangeBus {
                 }
             }
 
-            if (_logger.isDebugEnabled()) {
-                _logger.debug("Created route for " + endpoint + ", definition is: " + rb.toString());
-            }
-
             _camelContext.addRoutes(rb);
+
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Created route for " + endpoint + ", definition is: " + ModelHelper.dumpModelAsXml(rb.getRouteCollection()));
+            }
         } catch (Exception ex) {
             throw new SwitchYardException("Failed to create Camel route for service " + reference.getName(), ex);
         }
 
-        ExchangeDispatcher dispatcher = new ExchangeDispatcher(
-                reference, _camelContext.createProducerTemplate());
+        ExchangeDispatcher dispatcher = new ExchangeDispatcher(_camelContext, reference);
         _dispatchers.put(reference.getName(), dispatcher);
         return dispatcher;
     }

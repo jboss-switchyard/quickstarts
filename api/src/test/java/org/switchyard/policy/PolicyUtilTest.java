@@ -29,33 +29,33 @@ public class PolicyUtilTest {
 
     @Test
     public void testProvidePolicy() {
-    	Exchange ex = new MockExchange().setContext(new MockContext());
-    	PolicyUtil.provide(ex, DummyPolicy.A);
-    	Assert.assertTrue(PolicyUtil.isProvided(ex, DummyPolicy.A));
-    	Assert.assertFalse(PolicyUtil.isProvided(ex, DummyPolicy.B));
-    	Assert.assertFalse(PolicyUtil.isRequired(ex, DummyPolicy.B));
-    	Assert.assertEquals(1, PolicyUtil.getProvided(ex).size());
+        Exchange ex = new MockExchange().setContext(new MockContext());
+        PolicyUtil.provide(ex, DummyPolicy.A);
+        Assert.assertTrue(PolicyUtil.isProvided(ex, DummyPolicy.A));
+        Assert.assertFalse(PolicyUtil.isProvided(ex, DummyPolicy.B));
+        Assert.assertFalse(PolicyUtil.isRequired(ex, DummyPolicy.B));
+        Assert.assertEquals(1, PolicyUtil.getProvided(ex).size());
     }
     
     @Test
     public void testRequirePolicy() {
-    	Exchange ex = new MockExchange().setContext(new MockContext());
-    	PolicyUtil.require(ex, DummyPolicy.A);
-    	Assert.assertTrue(PolicyUtil.isRequired(ex, DummyPolicy.A));
-    	Assert.assertFalse(PolicyUtil.isRequired(ex, DummyPolicy.B));
-    	Assert.assertFalse(PolicyUtil.isProvided(ex, DummyPolicy.A));
-    	Assert.assertEquals(1, PolicyUtil.getRequired(ex).size());
+        Exchange ex = new MockExchange().setContext(new MockContext());
+        PolicyUtil.require(ex, DummyPolicy.A);
+        Assert.assertTrue(PolicyUtil.isRequired(ex, DummyPolicy.A));
+        Assert.assertFalse(PolicyUtil.isRequired(ex, DummyPolicy.B));
+        Assert.assertFalse(PolicyUtil.isProvided(ex, DummyPolicy.A));
+        Assert.assertEquals(1, PolicyUtil.getRequired(ex).size());
     }
 }
 
 enum DummyPolicy implements Policy {
-	
-	A, B;
-	
-	@Override
-	public String getName() {
-		return toString();
-	}
+    
+    A, B;
+    
+    @Override
+    public String getName() {
+        return toString();
+    }
 
     @Override
     public PolicyType getType() {
@@ -66,7 +66,7 @@ enum DummyPolicy implements Policy {
     public boolean isCompatibleWith(Policy target) {
         return true;
     }
-	
+    
     @Override
     public Policy getPolicyDependency() {
         return null;

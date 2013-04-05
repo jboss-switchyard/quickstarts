@@ -18,11 +18,15 @@
  */
 package org.switchyard.internal;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.Assert;
 
+import org.junit.Ignore;
 import org.junit.Test;
+import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.serial.CompressionType;
 import org.switchyard.serial.FormatType;
@@ -43,7 +47,7 @@ public final class ContextSerializationTest {
 
     @Test
     public void testScopedPropertyMap() throws Exception {
-        assertScopedPropertyMap(serDeser(buildScopedPropertyMap(), ScopedPropertyMap.class));
+        assertScopedPropertyMap(serDeser(buildScopedPropertyMap(), Map.class));
     }
 
     @Test
@@ -57,14 +61,15 @@ public final class ContextSerializationTest {
         return cp;
     }
 
-    private ScopedPropertyMap buildScopedPropertyMap() {
-        ScopedPropertyMap spm = new ScopedPropertyMap();
-        spm.put(buildContextProperty());
-        return spm;
+    private Map<String,Property> buildScopedPropertyMap() {
+        Map<String,Property> properties = new HashMap<String, Property>();
+        ContextProperty property = buildContextProperty();
+        properties.put(property.getName(), property);
+        return properties;
     }
 
     private DefaultContext buildDefaultContext() {
-        return new DefaultContext(buildScopedPropertyMap());
+        return new DefaultContext(Scope.EXCHANGE, buildScopedPropertyMap());
     }
 
     private void assertContextProperty(ContextProperty cp) {
@@ -79,9 +84,9 @@ public final class ContextSerializationTest {
         Assert.assertFalse(labels.contains("beep"));
     }
 
-    private void assertScopedPropertyMap(ScopedPropertyMap spm) {
+    private void assertScopedPropertyMap(Map<String, Property> spm) {
         Assert.assertNotNull(spm);
-        assertContextProperty((ContextProperty)spm.get().iterator().next());
+        assertContextProperty((ContextProperty) spm.values().iterator().next());
     }
 
     private void assertDefaultContext(DefaultContext dc) {

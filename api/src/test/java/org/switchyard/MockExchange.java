@@ -49,6 +49,11 @@ public class MockExchange implements Exchange {
     }
 
     @Override
+    public Context getContext(Message message) {
+        return message.getContext();
+    }
+
+    @Override
     public ExchangeContract getContract() {
         return _contract;
     }
@@ -124,4 +129,10 @@ public class MockExchange implements Exchange {
         _provider = provider;
         return this;
     }
+
+    @Override
+    public ExchangeHandler getReplyHandler() {
+        return null;
+    }
+
 }

@@ -23,15 +23,16 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.Scope;
+import org.switchyard.common.lang.Strings;
 
 /**
  * Half-baked message tracing implementation, used primarily as an example
@@ -65,16 +66,12 @@ public class MessageTrace implements ExchangeHandler {
             .append(indent(0) + "State -> " + exchange.getState());
         
         // Add context properties
-        Context ctx = exchange.getContext();
         summary.append(indent(0) + "Exchange Context -> ");
-        for (Property p : ctx.getProperties(Scope.EXCHANGE)) {
-            summary.append(indent(1) + p.getName() + " : " + p.getValue());
-        }
+        dumpContext(summary, exchange.getContext().getProperties(Scope.EXCHANGE));
+
         summary.append(indent(0) + "Message Context -> ");
-        for (Property p : ctx.getProperties(Scope.valueOf(exchange.getPhase().toString()))) {
-            summary.append(indent(1) + p.getName() + " : " + p.getValue());
-        }
-        
+        dumpContext(summary, exchange.getContext().getProperties(Scope.MESSAGE));
+
         // Add message content
         String content = null;
         try {
@@ -101,14 +98,14 @@ public class MessageTrace implements ExchangeHandler {
         summary.append(indent(0) + "------ End Message Trace -------");
         return summary.toString();
     }
-    
-    private String indent(int column) {
-        String indent = INDENT;
-        if (column > 0) {
-            for (int i = 0; i < column; i++) {
-                indent += "\t";
-            }
+
+    private void dumpContext(StringBuilder summary, Set<Property> properties) {
+        for (Property property : properties) {
+            summary.append(indent(1) + property.getName() + " : " + property.getValue());
         }
-        return indent;
+    }
+
+    private String indent(int column) {
+        return INDENT + Strings.repeat("\t", column);
     }
 }

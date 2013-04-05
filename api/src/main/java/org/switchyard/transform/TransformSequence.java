@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.label.BehaviorLabel;
 
 /**
@@ -60,19 +59,18 @@ public final class TransformSequence implements Serializable {
     private List<QName> _sequence = new ArrayList<QName>();
 
     /**
-     * Create an {@link #associateWith(Exchange, Scope) unassociated} sequence.
+     * Create an unassociated sequence.
      */
     private TransformSequence() {
     }
 
     /**
      * Associate this instance with the supplied message context.
-     * @param exchange associate the transform to this exchange
-     * @param scope associate the transform with this scope
+     * @param message associate the transform to this message
      */
-    public void associateWith(Exchange exchange, Scope scope) {
-        exchange.getContext().setProperty(
-                TransformSequence.class.getName(), this, scope).addLabels(BehaviorLabel.TRANSIENT.label());
+    public void associateWith(Message message) {
+        message.getContext().setProperty(TransformSequence.class.getName(), this)
+            .addLabels(BehaviorLabel.TRANSIENT.label());
     }
 
     /**
@@ -221,7 +219,7 @@ public final class TransformSequence implements Serializable {
     }
 
     private static TransformSequence get(final Exchange exchange) {
-        Property sequenceProperty = exchange.getContext().getProperty(TransformSequence.class.getName(), Scope.activeScope(exchange));
+        Property sequenceProperty = exchange.getContext().getProperty(TransformSequence.class.getName());
         if (sequenceProperty != null) {
             return (TransformSequence)sequenceProperty.getValue();
         } else {

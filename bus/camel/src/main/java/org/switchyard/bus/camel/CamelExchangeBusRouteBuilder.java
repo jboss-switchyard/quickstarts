@@ -21,6 +21,7 @@ package org.switchyard.bus.camel;
 import static org.switchyard.bus.camel.processors.Processors.ADDRESSING;
 import static org.switchyard.bus.camel.processors.Processors.CONSUMER_CALLBACK;
 import static org.switchyard.bus.camel.processors.Processors.DOMAIN_HANDLERS;
+import static org.switchyard.bus.camel.processors.Processors.ERROR_HANDLING;
 import static org.switchyard.bus.camel.processors.Processors.GENERIC_POLICY;
 import static org.switchyard.bus.camel.processors.Processors.PROVIDER_CALLBACK;
 import static org.switchyard.bus.camel.processors.Processors.SECURITY;
@@ -32,10 +33,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FilterDefinition;
@@ -44,7 +43,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.switchyard.ExchangePattern;
 import org.switchyard.bus.camel.audit.AuditInterceptStrategy;
-import org.switchyard.bus.camel.audit.FaultInterceptStrategy;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
 
@@ -56,8 +54,7 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
     private static final Predicate IN_OUT_CHECK = new Predicate() {
         @Override
         public boolean matches(Exchange exchange) {
-            org.switchyard.Exchange syEx = CamelHelper.getSwitchYardExchange(exchange);
-            ServiceOperation operation = syEx.getContract().getConsumerOperation();
+            ServiceOperation operation = new CamelExchange(exchange).getContract().getConsumerOperation();
             return operation.getExchangePattern() == ExchangePattern.IN_OUT;
         }
 
@@ -91,13 +88,9 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
                 throw new SwitchYardException("Only one exception handler can be defined. Found " + handlers.keySet());
             }
         } else {
-            // set up default error handler without re-delivery
-            LoggingErrorHandlerBuilder errorHandler = loggingErrorHandler(CamelExchangeBus.class.getName());
-            errorHandler.setLevel(LoggingLevel.DEBUG);
-            definition.errorHandler(errorHandler);
+            definition.errorHandler(loggingErrorHandler());
         }
 
-        definition.addInterceptStrategy(new FaultInterceptStrategy());
         // add default intercept strategy using @Audit annotation
         definition.addInterceptStrategy(new AuditInterceptStrategy());
 
@@ -111,16 +104,9 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
             }
         }
 
-        final ExpressionNode filterDefinition = new FilterDefinition(IN_OUT_CHECK)
-            .processRef(DOMAIN_HANDLERS.name())
-            .processRef(VALIDATION.name())
-            .processRef(TRANSFORMATION.name())
-            .processRef(VALIDATION.name())
-            .processRef(CONSUMER_CALLBACK.name());
-
         OnExceptionDefinition onException = new OnExceptionDefinition(Throwable.class);
-        onException.handled(true);
-        onException.addOutput(filterDefinition);
+        onException.processRef(ERROR_HANDLING.name());
+        onException.addOutput(createFilterDefinition());
         // register exception closure
         definition.addOutput(onException);
 
@@ -135,7 +121,16 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
             .processRef(VALIDATION.name())
             .processRef(PROVIDER_CALLBACK.name())
             .processRef(TRANSACTION_HANDLER.name())
-            .addOutput(filterDefinition);
+            .addOutput(createFilterDefinition());
+    }
+
+    private ExpressionNode createFilterDefinition() {
+        return new FilterDefinition(IN_OUT_CHECK)
+            .processRef(DOMAIN_HANDLERS.name())
+            .processRef(VALIDATION.name())
+            .processRef(TRANSFORMATION.name())
+            .processRef(VALIDATION.name())
+            .processRef(CONSUMER_CALLBACK.name());
     }
 
 }

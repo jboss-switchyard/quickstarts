@@ -19,52 +19,63 @@
 
 package org.switchyard.internal;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.switchyard.Context;
+import org.switchyard.ContextUtil;
 import org.switchyard.Property;
 import org.switchyard.Scope;
-import org.switchyard.label.BehaviorLabel;
 import org.switchyard.serial.graph.AccessType;
 import org.switchyard.serial.graph.Strategy;
+
+import static org.switchyard.ContextUtil.checkScope;
 
 /**
  * Base context implementation.
  */
 @Strategy(access=AccessType.FIELD)
 public class DefaultContext implements Context {
-    
-    private ScopedPropertyMap _properties;
-    
-    /**
-     * Create a new DefaultContext instance.
-     */
-    public DefaultContext() {
-        _properties = new ScopedPropertyMap();
-    }
-    
+
+    private Scope _scope;
+    private final Map<String, Property> _properties;
+
     /**
      * Create a new DefaultContext instance using the specified property map.
+     * @param defaultScope Scope handled by context.
      * @param properties context properties
      */
-    DefaultContext(ScopedPropertyMap properties) {
+    public DefaultContext(Scope defaultScope, Map<String, Property> properties) {
+        _scope = defaultScope;
         _properties = properties;
     }
 
-    @Override
-    public Property getProperty(String name, Scope scope) {
-        return _properties.get(scope, name);
+    /**
+     * Creates new context with given scope.
+     * 
+     * @param defaultScope Scope handled by context.
+     */
+    public DefaultContext(Scope defaultScope) {
+        this(defaultScope, new HashMap<String, Property>());
+    }
+
+    /**
+     * Creates new context with exchange scope.
+     */
+    public DefaultContext() {
+        this(Scope.EXCHANGE);
     }
 
     @Override
-    public Object getPropertyValue(String name) {
-       Property prop = _properties.get(Scope.EXCHANGE, name);
+    @SuppressWarnings("unchecked")
+    public <T> T getPropertyValue(String name) {
+       Property prop = _properties.get(name);
        if (prop != null) {
-           return prop.getValue();
-       } else {
-           return null;
+           return (T) prop.getValue();
        }
+       return null;
     }
 
     @Override
@@ -73,57 +84,39 @@ public class DefaultContext implements Context {
     }
 
     @Override
-    public void removeProperties(Scope scope) {
-        _properties.clear(scope);
-    }
-
-    @Override
     public Context setProperties(Set<Property> properties) {
         for (Property p : properties) {
-            _properties.put(p);
+            _properties.put(p.getName(), p);
         }
         return this;
     }
 
     @Override
-    public Property setProperty(String name, Object val, Scope scope) {
-        Property p = new ContextProperty(name, scope, val);
-        _properties.put(p);
-        return p;
-    }
-
-    @Override
     public Set<Property> getProperties() {
-        return _properties.get();
-    }
-    
-    @Override
-    public Set<Property> getProperties(Scope scope) {
-        return _properties.get(scope);
+        return new HashSet<Property>(_properties.values());
     }
 
     @Override
     public void removeProperty(Property property) {
-        _properties.remove(property);
+        checkScope(_scope, property.getScope());
+        _properties.remove(property.getName());
     }
 
     @Override
     public Property getProperty(String name) {
-        return _properties.get(Scope.EXCHANGE, name);
+        return _properties.get(name);
     }
 
     @Override
     public Property setProperty(String name, Object val) {
-        Property p = new ContextProperty(name, Scope.EXCHANGE, val);
-        _properties.put(p);
+        Property p = new ContextProperty(name, _scope, val);
+        _properties.put(p.getName(), p);
         return p;
     }
-    
+
     @Override
     public Context copy() {
-        Context ctx = new DefaultContext(_properties.copy());
-        ctx.removeProperties(BehaviorLabel.TRANSIENT.label());
-        return ctx;
+        return ContextUtil.copy(this, new DefaultContext(_scope, new HashMap<String, Property>()));
     }
 
     @Override
@@ -144,5 +137,45 @@ public class DefaultContext implements Context {
                 removeProperty(p);
             }
         }
+    }
+
+    @Override
+    public Property getProperty(String name, Scope scope) {
+        checkScope(_scope, scope);
+        return _properties.get(name);
+    }
+
+    @Override
+    public Set<Property> getProperties(Scope scope) {
+        checkScope(_scope, scope);
+        return getProperties();
+    }
+
+    @Override
+    public void removeProperties(Scope scope) {
+        checkScope(_scope, scope);
+        _properties.clear();
+    }
+
+    @Override
+    public Property setProperty(String name, Object val, Scope scope) {
+        checkScope(_scope, scope);
+        ContextProperty value = new ContextProperty(name, scope, val);
+        _properties.put(name, value);
+        return value;
+    }
+
+    /**
+     * Allows to specify default scope of this context.
+     * 
+     * @param scope Scope of this context instance.
+     */
+    public void setScope(Scope scope) {
+        this._scope = scope;
+    }
+
+    @Override
+    public String toString() {
+        return _properties.toString();
     }
 }

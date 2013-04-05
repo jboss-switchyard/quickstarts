@@ -19,6 +19,8 @@
 
 package org.switchyard.internal;
 
+import javax.xml.namespace.QName;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +30,9 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerChain;
 import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
+import org.switchyard.ServiceReference;
 import org.switchyard.metadata.InOnlyOperation;
+import org.switchyard.spi.Dispatcher;
 
 public class DefaultHandlerChainTest {
     
@@ -53,8 +57,11 @@ public class DefaultHandlerChainTest {
         
         _chain.addFirst("first", badHandler);
         _chain.addLast("second", goodHandler);
-        
-        Exchange ex = new ExchangeImpl(new MockDomain()).consumer(null, new InOnlyOperation("foo"));
+
+        MockDomain domain = new MockDomain();
+        ServiceReference reference = domain.createInOnlyService(new QName("bar"));
+        Dispatcher dispatch = domain.getBus().createDispatcher(reference);
+        Exchange ex = new ExchangeImpl(domain, dispatch).consumer(reference, new InOnlyOperation("foo"));
         _chain.handleFault(ex);
         Assert.assertNotNull(goodHandler.waitForFaultMessage());
     }

@@ -26,7 +26,7 @@ import java.util.Set;
  * service consumer and provider.
  */
 public interface Context {
-    
+
     /**
      * Creates a shallow copy of the existing Context including all properties in all scopes.
      * Properties with a label of Labels.TRANSIENT are not included in the copy.
@@ -55,13 +55,14 @@ public interface Context {
     
     /**
      * Retrieves the value of the named property within this context, regardless
-     * of the scope.  This is a convenience method equivalent to 
+     * of the scope. This is a convenience method equivalent to 
      * <code> getProperty(name).getValue() </code>.
      * @param name property name
      * @return value of the property in this context or null if the property
      * does not exist
+     * @param <T> Expected type of property.
      */
-    Object getPropertyValue(String name);
+    <T> T getPropertyValue(String name);
     
     /**
      * Returns the set of all properties in this context. The returned

@@ -31,9 +31,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.log4j.Logger;
-import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
-import org.switchyard.bus.camel.CamelHelper;
+import org.switchyard.bus.camel.CamelExchange;
 import org.switchyard.bus.camel.ErrorListener;
 import org.switchyard.common.lang.Strings;
 
@@ -62,9 +61,8 @@ public class FaultProcessor extends DelegateAsyncProcessor {
             @Override
             public void done(boolean doneSync) {
                 if (doneSync) { // verify exchange only if processing is done
-                    org.switchyard.Exchange exc = CamelHelper.getSwitchYardExchange(exchange);
                     if (exchange.getException() != null) {
-                        handle(exchange.getException(), exchange, exc);
+                        handle(exchange.getException(), exchange, new CamelExchange(exchange));
                     }
                 }
                 callback.done(doneSync);
@@ -81,10 +79,15 @@ public class FaultProcessor extends DelegateAsyncProcessor {
      * @param exchange SwitchYard exchange related to exception.
      */
     protected void handle(Throwable throwable, Exchange camel, org.switchyard.Exchange exchange) {
-        if (ExchangeState.OK == exchange.getState()) {
-            dumpExceptionContents(throwable);
+        // exception caught == we are in error handling route part
+        Throwable caught = camel.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+        if (caught == null || throwable.equals(caught)) {
             notifyListeners(camel.getContext(), exchange, throwable);
             Throwable content = detectHandlerException(throwable);
+            // TODO fix me!!!
+            throwable.printStackTrace();
+            // reset exception
+            camel.setException(null);
             exchange.sendFault(exchange.createMessage().setContent(content));
         } else {
             // exception thrown during handling FAULT state cannot be forwarded

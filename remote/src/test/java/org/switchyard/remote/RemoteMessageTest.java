@@ -53,11 +53,11 @@ public final class RemoteMessageTest {
         final String expectedXML = "<one number=\"1\"><two number=\"2\"/></one>";
         final Element expectedDOM = new ElementPuller().pull(new StringReader(expectedXML));
         RemoteMessage msg = new RemoteMessage();
-        Context ctx = new DefaultContext();
+        Context ctx = new DefaultContext(Scope.MESSAGE);
         ctx.setProperty("one", expectedDOM);
         msg.setContext(ctx);
         msg = serDeser(msg, RemoteMessage.class);
-        final Element actualDOM = (Element)msg.getContext().getProperty("one", Scope.EXCHANGE).getValue();
+        final Element actualDOM = (Element)msg.getContext().getProperty("one").getValue();
         final String actualXML = XMLHelper.toString(actualDOM);
         Assert.assertEquals(expectedXML, actualXML);
     }

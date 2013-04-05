@@ -30,7 +30,6 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.ServiceOperation;
@@ -125,10 +124,10 @@ public class TransformHandler extends BaseHandler {
     private void setContentType(Exchange exchange) {
         QName currentType = TransformSequence.getCurrentMessageType(exchange);
         if (currentType != null) {
-            exchange.getContext().setProperty(Exchange.CONTENT_TYPE, currentType, Scope.activeScope(exchange)).addLabels(BehaviorLabel.TRANSIENT.label());
+            exchange.getContext().setProperty(Exchange.CONTENT_TYPE, currentType).addLabels(BehaviorLabel.TRANSIENT.label());
         } else {
             // make sure no property is used for current scope
-            Property p = exchange.getContext().getProperty(Exchange.CONTENT_TYPE, Scope.activeScope(exchange));
+            Property p = exchange.getContext().getProperty(Exchange.CONTENT_TYPE);
             if (p != null) {
                 exchange.getContext().removeProperty(p);
             }
@@ -143,7 +142,7 @@ public class TransformHandler extends BaseHandler {
             TransformSequence.
                     from(exchangeInputType).
                     to(serviceOperationInputType).
-                    associateWith(exchange, Scope.IN);
+                    associateWith(exchange.getMessage());
         }
     }
 
@@ -155,7 +154,7 @@ public class TransformHandler extends BaseHandler {
             TransformSequence.
                     from(serviceOperationOutputType).
                     to(exchangeOutputType).
-                    associateWith(exchange, Scope.OUT);
+                    associateWith(exchange.getMessage());
         }
     }
     
@@ -180,7 +179,7 @@ public class TransformHandler extends BaseHandler {
             TransformSequence.
                 from(exceptionTypeName).
                 to(invokerFaultTypeName).
-                associateWith(exchange, Scope.OUT);
+                associateWith(exchange.getMessage());
         }
     }
 

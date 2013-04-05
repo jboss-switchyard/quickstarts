@@ -29,7 +29,7 @@ public class ContextPropertyTest {
     public void testNullName() {
         // null name should not be permitted
         try {
-            new ContextProperty(null, Scope.IN, "bar");
+            new ContextProperty(null, Scope.MESSAGE, "bar");
             Assert.fail("Null property name should not be permitted!");
         } catch (IllegalArgumentException expected) {
             // All good
@@ -51,19 +51,17 @@ public class ContextPropertyTest {
     
     @Test
     public void testEquals() {
-        ContextProperty prop1 = new ContextProperty("foo", Scope.IN, "bar");
-        ContextProperty prop2 = new ContextProperty("foo", Scope.IN, "bar");
+        ContextProperty prop1 = new ContextProperty("foo", Scope.MESSAGE, "bar");
+        ContextProperty prop2 = new ContextProperty("foo", Scope.MESSAGE, "bar");
         Assert.assertTrue(prop1.equals(prop2));
     }
 
     @Test
     public void testNotEquals() {
-        ContextProperty propRef = new ContextProperty("foo", Scope.IN, "bar");
-        ContextProperty propDiffName = new ContextProperty("oops", Scope.IN, "bar");
-        ContextProperty propDiffScope = new ContextProperty("foo", Scope.OUT, "bar");
-        ContextProperty propDiffValue = new ContextProperty("foo", Scope.IN, "nope");
+        ContextProperty propRef = new ContextProperty("foo", Scope.MESSAGE, "bar");
+        ContextProperty propDiffName = new ContextProperty("oops", Scope.MESSAGE, "bar");
+        ContextProperty propDiffValue = new ContextProperty("foo", Scope.MESSAGE, "nope");
         Assert.assertFalse(propRef.equals(propDiffName));
-        Assert.assertFalse(propRef.equals(propDiffScope));
         Assert.assertFalse(propRef.equals(propDiffValue));
     }
     

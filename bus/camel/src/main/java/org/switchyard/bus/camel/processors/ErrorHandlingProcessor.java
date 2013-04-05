@@ -20,28 +20,27 @@ package org.switchyard.bus.camel.processors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.switchyard.bus.camel.CamelHelper;
+import org.switchyard.HandlerException;
+import org.switchyard.bus.camel.CamelExchange;
 
 /**
- * Processor which wraps SwitchYard _exchange into Camel _exchange.
+ * Processor put at the beginning of OnExceptionDefinition which turns state of
+ * SwitchYard exchange into FAULT.
  */
-public class DispatcherProcessor implements Processor {
-
-    private final org.switchyard.Exchange _exchange;
-
-    /**
-     * Creates new processor which sends SwitchYard exchange over camel route.
-     * 
-     * @param exchange SwitchYard exchange.
-     */
-    public DispatcherProcessor(org.switchyard.Exchange exchange) {
-        this._exchange = exchange;
-    }
+public class ErrorHandlingProcessor implements Processor {
 
     @Override
-    public void process(Exchange ex) throws Exception {
-        CamelHelper.setSwitchYardExchange(ex, _exchange);
-        ex.getIn().setBody(_exchange.getMessage().getContent());
+    public void process(Exchange exchange) throws Exception {
+        CamelExchange ex = new CamelExchange(exchange);
+        Throwable content = detectHandlerException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+        ex.sendFault(ex.createMessage().setContent(content));
+    }
+
+    private Throwable detectHandlerException(Throwable throwable) {
+        if (throwable instanceof HandlerException) {
+            return (HandlerException) throwable;
+        }
+        return new HandlerException(throwable);
     }
 
 }

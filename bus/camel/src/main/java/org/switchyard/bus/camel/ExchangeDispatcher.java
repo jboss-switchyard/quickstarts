@@ -23,10 +23,13 @@
 package org.switchyard.bus.camel;
 
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.model.ModelCamelContext;
 import org.switchyard.Exchange;
+import org.switchyard.ExchangeHandler;
+import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ServiceReference;
-import org.switchyard.bus.camel.processors.DispatcherProcessor;
 import org.switchyard.spi.Dispatcher;
 
 /**
@@ -35,33 +38,46 @@ import org.switchyard.spi.Dispatcher;
  */
 public class ExchangeDispatcher implements Dispatcher {
 
-    /**
-     * Property used to store a reference to the SY exchange in a Camel exchange.
-     */
-    public static final String SY_EXCHANGE = "SwitchYardExchange";
-    
+    private final ModelCamelContext _context;
     private ServiceReference _reference;
     private ProducerTemplate _producer;
 
     /**
      * Create a new Dispatcher instance.
+     * @param context Camel context instance
      * @param reference dispatch for this reference
-     * @param producer Camel producer template used to consume a service
      */
-    public ExchangeDispatcher(ServiceReference reference, ProducerTemplate producer) {
+    public ExchangeDispatcher(ModelCamelContext context, ServiceReference reference) {
+        _context = context;
         _reference = reference;
-        _producer = producer;
+        _producer = context.createProducerTemplate();
     }
-    
+
     @Override
     public ServiceReference getServiceReference() {
         return _reference;
     }
 
     @Override
+    public Exchange createExchange(ExchangeHandler replyHandler, ExchangePattern pattern) {
+        DefaultExchange exchange = new DefaultExchange(_context, translate(pattern));
+        exchange.setIn(new CamelMessage(exchange));
+        return new CamelExchange(this, exchange, replyHandler);
+    }
+
+    private org.apache.camel.ExchangePattern translate(ExchangePattern pattern) {
+        return ExchangePattern.IN_OUT == pattern ? org.apache.camel.ExchangePattern.InOut : org.apache.camel.ExchangePattern.InOnly;
+    }
+
+    @Override
     public void dispatch(final Exchange exchange) {
-        if (exchange.getPhase().equals(ExchangePhase.IN)) {
-            _producer.send("direct:" + exchange.getConsumer().getName(), new DispatcherProcessor(exchange));
+        if (exchange instanceof CamelExchange) {
+            if (exchange.getPhase().equals(ExchangePhase.IN)) {
+                _producer.send("direct:" + exchange.getConsumer().getName(), ((CamelExchange) exchange).getExchange());
+            }
+        } else {
+            throw new IllegalArgumentException("Camel Bus accepts only CamelExchanges");
         }
     }
+
 }

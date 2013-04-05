@@ -88,8 +88,8 @@ public class ValidationTest {
             // name will not be necessary once the service definition is available
             // at runtime
             Message msg = exchange.createMessage().setContent(input);
-            exchange.getContext().setProperty(Exchange.CONTENT_TYPE, typeName, Scope.IN);
-            
+            msg.getContext().setProperty(Exchange.CONTENT_TYPE, typeName);
+
             msg.setContent(input);
             exchange.send(msg);
 
@@ -133,7 +133,7 @@ public class ValidationTest {
         // name will not be necessary once the service definition is available
         // at runtime
         Message msg = exchange.createMessage().setContent(input);
-        exchange.getContext().setProperty(Exchange.CONTENT_TYPE, typeName, Scope.IN);
+        msg.getContext().setProperty(Exchange.CONTENT_TYPE, typeName);
 
         msg.setContent(input);
 
