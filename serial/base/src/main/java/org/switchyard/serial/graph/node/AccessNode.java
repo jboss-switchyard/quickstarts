@@ -38,6 +38,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.reflect.Access;
 import org.switchyard.common.type.reflect.BeanAccess;
 import org.switchyard.common.type.reflect.FieldAccess;
+import org.switchyard.common.type.reflect.MethodAccess;
 import org.switchyard.serial.graph.AccessType;
 import org.switchyard.serial.graph.CoverageType;
 import org.switchyard.serial.graph.Exclude;
@@ -194,13 +195,39 @@ public final class AccessNode implements Node {
                     throw new RuntimeException(ie);
                 }
                 for (PropertyDescriptor desc : info.getPropertyDescriptors()) {
-                    Method method = desc.getReadMethod();
+                    Method readMethod = desc.getReadMethod();
                     if (((CoverageType.INCLUSIVE.equals(coverageType)
-                            && method.getAnnotation(Exclude.class) == null)
+                            && readMethod.getAnnotation(Exclude.class) == null)
                             || (CoverageType.EXCLUSIVE.equals(coverageType)
-                                    && method.getAnnotation(Include.class) != null))
-                                    && method.getAnnotation(Deprecated.class) == null) {
-                        Access access = new BeanAccess(desc);
+                                    && readMethod.getAnnotation(Include.class) != null))
+                                    && readMethod.getAnnotation(Deprecated.class) == null) {
+                        Access access = null;
+                        Method writeMethod = desc.getWriteMethod();
+                        if (writeMethod == null) {
+                            String name = readMethod.getName();
+                            if (name.startsWith("get") || name.startsWith("is")) {
+                                name = "set" + (name.startsWith("get") ? name.substring(3) : name.substring(2));
+                                Class<?> readClass = readMethod.getDeclaringClass();
+                                try {
+                                    writeMethod = readClass.getDeclaredMethod(name, desc.getPropertyType());
+                                } catch (NoSuchMethodException nsme1) {
+                                    try {
+                                        writeMethod = readClass.getMethod(name, desc.getPropertyType());
+                                    } catch (NoSuchMethodException nsme2) {
+                                        writeMethod = null;
+                                    }
+                                }
+                                if (writeMethod != null) {
+                                    Class<?> returnClass = writeMethod.getReturnType();
+                                    if (returnClass == null || returnClass.isAssignableFrom(readClass)) {
+                                        access = new MethodAccess(readMethod, writeMethod);
+                                    }
+                                }
+                            }
+                        }
+                        if (access == null) {
+                            access = new BeanAccess(desc);
+                        }
                         if (access.isReadable() && !"class".equals(access.getName())) {
                             accessList.add(access);
                         }

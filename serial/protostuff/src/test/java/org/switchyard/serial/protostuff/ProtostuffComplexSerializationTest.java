@@ -35,11 +35,15 @@ import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.serial.FormatType;
 import org.switchyard.serial.Serializer;
 import org.switchyard.serial.SerializerFactory;
+import org.switchyard.serial.protostuff.ProtostuffSerializationData.Antennae;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Car;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.CustomPart;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.ExpiredPart;
+import org.switchyard.serial.protostuff.ProtostuffSerializationData.FluentTitle;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Part;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Person;
+import org.switchyard.serial.protostuff.ProtostuffSerializationData.StrictTitle;
+import org.switchyard.serial.protostuff.ProtostuffSerializationData.Title;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Wheel;
 import org.w3c.dom.Element;
 
@@ -52,7 +56,9 @@ public final class ProtostuffComplexSerializationTest {
 
     private <T> T serDeser(T object, Class<T> clazz) throws Exception {
         Serializer ser = SerializerFactory.create(FormatType.JSON, null, true);
+        //ser.setPrettyPrint(true);
         byte[] bytes = ser.serialize(object, clazz);
+        //System.out.println(new String(bytes));
         return ser.deserialize(bytes, clazz);
     }
 
@@ -88,6 +94,13 @@ public final class ProtostuffComplexSerializationTest {
         List<Part> list = new ArrayList<Part>(car.getExpensiveParts());
         Assert.assertEquals(true, list.get(3).isReplaceable());
         Assert.assertEquals(false, list.get(4).isReplaceable());
+    }
+
+    @Test
+    public void testSpecificUnsupportedType() throws Exception {
+        ExpiredPart part = new ExpiredPart(new Date());
+        part = serDeser(part, ExpiredPart.class);
+        Assert.assertNull(part);
     }
 
     @Test
@@ -179,6 +192,38 @@ public final class ProtostuffComplexSerializationTest {
         Assert.assertEquals(expectedCause.getMessage(), actualCause.getMessage());
         Assert.assertEquals(expectedProblem.getStackTrace().length, actualProblem.getStackTrace().length);
         Assert.assertEquals(expectedCause.getStackTrace().length, actualCause.getStackTrace().length);
+    }
+
+    @Test
+    public void testStrictBean() throws Exception {
+        Car car = new Car();
+        StrictTitle title = new StrictTitle();
+        title.setState("NY");
+        title.setLiened(true);
+        car.setTitle(title);
+        car = serDeser(car, Car.class);
+        Assert.assertEquals("NY", car.getTitle().getState());
+        Assert.assertTrue(car.getTitle().isLiened());
+    }
+
+    @Test
+    public void testFluentBean() throws Exception {
+        Car car = new Car();
+        Title title = new FluentTitle().setState("NY").setLiened(true);
+        car.setTitle(title);
+        car = serDeser(car, Car.class);
+        Assert.assertEquals("NY", car.getTitle().getState());
+        Assert.assertTrue(car.getTitle().isLiened());
+    }
+
+    @Test
+    public void testEmptyBean() throws Exception {
+        Car car = new Car();
+        Antennae antennae = new Antennae();
+        car.setAntennae(antennae);
+        car = serDeser(car, Car.class);
+        antennae = car.getAntennae();
+        Assert.assertNotNull(antennae);
     }
 
 }

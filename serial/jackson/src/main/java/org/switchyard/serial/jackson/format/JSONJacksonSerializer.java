@@ -28,6 +28,7 @@ import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.switchyard.common.io.CountingOutputStream;
 import org.switchyard.serial.BaseSerializer;
 import org.switchyard.serial.FormatType;
@@ -46,6 +47,7 @@ public final class JSONJacksonSerializer extends BaseSerializer {
         jsonFactory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
         OBJECT_MAPPER = new ObjectMapper(jsonFactory);
         OBJECT_MAPPER.enableDefaultTyping();
+        OBJECT_MAPPER.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
     }
 
     /**
