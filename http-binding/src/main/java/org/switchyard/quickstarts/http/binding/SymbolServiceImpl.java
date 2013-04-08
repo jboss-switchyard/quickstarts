@@ -44,7 +44,7 @@ public class SymbolServiceImpl implements SymbolService {
         String symbol = "";
         if (companyName.equals("headers")) {
             StringBuffer headers = new StringBuffer();
-            for (Property property : context.getProperties(Scope.IN)) {
+            for (Property property : context.getProperties(Scope.MESSAGE)) {
                 if (property.hasLabel(EndpointLabel.HTTP.label()) && (property.getValue() instanceof String)) {
                     headers.append(property.getName());
                     headers.append("=");
@@ -54,14 +54,14 @@ public class SymbolServiceImpl implements SymbolService {
             return headers.toString();
         }
         if (companyName.equals("requestInfo")) {
-            Property prop = context.getProperty(HttpComposition.HTTP_REQUEST_INFO, Scope.IN);
+            Property prop = context.getProperty(HttpComposition.HTTP_REQUEST_INFO);
             return ((HttpRequestInfo)prop.getValue()).toString();
         }
 
         // Note the property becomes lower cased when executed on AS7
-        Property prop = context.getProperty("content-type", Scope.IN);
+        Property prop = context.getProperty("content-type");
         if (prop == null) {
-            prop = context.getProperty("Content-type", Scope.IN);
+            prop = context.getProperty("Content-type");
         }
         String contentType = (prop == null) ? null : (String)prop.getValue();
         if (contentType != null) {

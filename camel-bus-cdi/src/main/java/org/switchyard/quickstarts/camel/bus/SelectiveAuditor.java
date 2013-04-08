@@ -25,8 +25,6 @@ import javax.inject.Named;
 
 import org.apache.camel.Exchange;
 import org.apache.log4j.Logger;
-import org.switchyard.Message;
-import org.switchyard.bus.camel.ExchangeDispatcher;
 import org.switchyard.bus.camel.audit.Audit;
 import org.switchyard.bus.camel.audit.Auditor;
 import org.switchyard.bus.camel.processors.Processors;
@@ -42,14 +40,12 @@ public class SelectiveAuditor implements Auditor {
 
     @Override
     public void beforeCall(Processors processor, Exchange exchange) {
-        Message message = exchange.getProperty(ExchangeDispatcher.SY_EXCHANGE, org.switchyard.Exchange.class).getMessage();
-        _logger.info("Calling provider with message " + message.getContent());
+        _logger.info("Calling provider with message " + exchange.getIn(String.class));
     }
 
     @Override
     public void afterCall(Processors processor, Exchange exchange) {
-        Message message = exchange.getProperty(ExchangeDispatcher.SY_EXCHANGE, org.switchyard.Exchange.class).getMessage();
-        _logger.info("Provider respond with message " + message.getContent());
+        _logger.info("Provider respond with message " + exchange.getIn(String.class));
     }
 
 }
