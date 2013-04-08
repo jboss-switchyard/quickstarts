@@ -124,7 +124,7 @@ public abstract class GenericTestForge extends AbstractShellTest {
      * @return all the text that was printed in the project's shell after the 
      * latest reset output stream reset {@link #resetOutputStream()} 
      */
-    public static String getOutput() {
+    public String getOutput() {
         return outputStream.toString();
     }
 
