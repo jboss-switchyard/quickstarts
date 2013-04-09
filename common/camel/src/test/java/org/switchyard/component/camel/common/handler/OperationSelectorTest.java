@@ -61,9 +61,9 @@ public class OperationSelectorTest extends InboundHandlerTestBase {
         producer.sendBody("direct://bar", "BarOperationPayload");
         mockEndpoint.assertIsSatisfied();
         List<Exchange> exchanges = mockEndpoint.getReceivedExchanges();
-        mockEndpoint.message(0).header(CamelConstants.OPERATION_SELETOR_HEADER)
+        mockEndpoint.message(0).header(CamelConstants.OPERATION_SELECTOR_HEADER)
             .isInstanceOf(OperationSelector.class).matches(exchanges.get(0));
-        mockEndpoint.message(1).header(CamelConstants.OPERATION_SELETOR_HEADER)
+        mockEndpoint.message(1).header(CamelConstants.OPERATION_SELECTOR_HEADER)
             .isInstanceOf(OperationSelector.class).matches(exchanges.get(1));
 
         handler1.stop();

@@ -120,16 +120,17 @@ public class SwitchYardProducer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private String getOperationName(org.apache.camel.Exchange exchange) {
-        OperationSelector<CamelBindingData> selector = exchange.getIn().getHeader(CamelConstants.OPERATION_SELETOR_HEADER, OperationSelector.class);
-        if (selector == null) {
-            return _operationName == null ? exchange.getIn().getHeader(Exchange.OPERATION_NAME, String.class) : _operationName;
+        String operationName = null;
+        
+        OperationSelector<CamelBindingData> selector = exchange.getIn().getHeader(CamelConstants.OPERATION_SELECTOR_HEADER, OperationSelector.class);
+        if (selector != null) {
+            try {
+                operationName = selector.selectOperation(new CamelBindingData(exchange.getIn())).getLocalPart();
+            } catch (Exception e) {
+                log.error("Cannot lookup operation using custom operation selector. Returning empty name", e);
+            }
         }
-        try {
-            return selector.selectOperation(new CamelBindingData(exchange.getIn())).getLocalPart();
-        } catch (Exception e) {
-            log.error("Can not lookup operation using custom operation selector. Returning empty name", e);
-        }
-        return null;
+        return operationName;
     }
 
     @SuppressWarnings("unchecked")
@@ -160,20 +161,36 @@ public class SwitchYardProducer extends DefaultProducer {
     }
 
     private String lookupOperationNameFor(final org.apache.camel.Exchange camelExchange, final ServiceReference serviceRef) {
-        String operationName = getOperationName(camelExchange);
-
-        // From Service Interface
+        
+        // Initialize operation name to whatever is specified in endpoint URI
+        String operationName = _operationName;
+        
+        // See if an operation selector has been specified
         if (operationName == null) {
-            final Set<ServiceOperation> operations = serviceRef.getInterface().getOperations();
-            if (operations.size() != 1) {
-                final StringBuilder msg = new StringBuilder();
-                msg.append("No operationSelector was configured for the Camel Component and the Service Interface ");
-                msg.append("contains more than one operation: ").append(operations);
-                msg.append("Please add an operationSelector element.");
-                throw new SwitchYardException(msg.toString());
+            operationName = getOperationName(camelExchange);
+        }
+        
+        // If we still haven't found an operation and the target service only has one operation, 
+        // then just use that
+        if (operationName == null) {
+            Set<ServiceOperation> ops = serviceRef.getInterface().getOperations();
+            if (ops.size() == 1) {
+                operationName = ops.iterator().next().getName();
+            } else {
+                // See if the existing camel operation exists on the target service
+                String camelOp = camelExchange.getIn().getHeader(Exchange.OPERATION_NAME, String.class);
+                if (serviceRef.getInterface().getOperation(camelOp) != null) {
+                    operationName = camelOp;
+                }
             }
-            final ServiceOperation serviceOperation = operations.iterator().next();
-            operationName = serviceOperation.getName();
+        }
+        
+        // Still haven't found it?  Houston, we have a problem.
+        if (operationName == null) {
+            final StringBuilder msg = new StringBuilder();
+            msg.append("Unable to determine operation as the target service contains more than one operation");
+            msg.append(serviceRef.getInterface().getOperations());
+            throw new SwitchYardException(msg.toString());
         }
         return operationName;
     }

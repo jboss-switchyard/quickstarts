@@ -39,7 +39,7 @@ public interface CamelConstants {
     /**
      * Name of message header where operation selector is stored.
      */
-    String OPERATION_SELETOR_HEADER = "org.switchyard.operationSelector";
+    String OPERATION_SELECTOR_HEADER = "org.switchyard.operationSelector";
 
     /**
      * Name of message header where message composer is stored.

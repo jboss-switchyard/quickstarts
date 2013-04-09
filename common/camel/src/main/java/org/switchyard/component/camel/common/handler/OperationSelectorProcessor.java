@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.camel.common.handler;
 
-import static org.switchyard.component.camel.common.CamelConstants.OPERATION_SELETOR_HEADER;
+import static org.switchyard.component.camel.common.CamelConstants.OPERATION_SELECTOR_HEADER;
 
 import javax.xml.namespace.QName;
 
@@ -59,7 +59,7 @@ public class OperationSelectorProcessor implements Processor {
         }
 
         Message in = exchange.getIn();
-        in.setHeader(OPERATION_SELETOR_HEADER, selector);
+        in.setHeader(OPERATION_SELECTOR_HEADER, selector);
         exchange.setOut(in.copy());
     }
 
