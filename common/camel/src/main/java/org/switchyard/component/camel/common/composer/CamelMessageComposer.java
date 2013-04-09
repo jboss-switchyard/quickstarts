@@ -45,7 +45,7 @@ import org.xml.sax.InputSource;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> {
-
+    
     /**
      * {@inheritDoc}
      */
@@ -119,7 +119,7 @@ public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> 
         if (exchange.getPhase() == null) {
             msgType = exchange.getContract().getConsumerOperation().getInputType();
         } else {
-            msgType = exchange.getContract().getConsumerOperation().getOutputType();
+            msgType = exchange.getContract().getProviderOperation().getOutputType();
         }
         
         return msgType;
