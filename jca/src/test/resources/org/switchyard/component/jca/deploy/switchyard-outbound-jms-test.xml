@@ -36,6 +36,22 @@
                </outboundInteraction>
             </binding.jca>
         </sca:reference>
+        <sca:reference name="JCAJMSReferenceText" promote="ComponentName/JCAJMSReferenceText" multiplicity="1..1">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <jca:contextMapper class="org.switchyard.component.jca.deploy.MyJMSContextMapper"/>
+               <jca:messageComposer class="org.switchyard.component.jca.deploy.MyJMSMessageComposer"/>
+               <outboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <connection jndiName="java:/JmsXA"/>
+               </outboundConnection>
+               <outboundInteraction>
+                   <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                       <property name="destination" value="TestQueue"/>
+                       <property name="messageType" value="Text"/>
+                   </processor>
+               </outboundInteraction>
+            </binding.jca>
+        </sca:reference>
         
         <sca:component name="ComponentName">
             <bean:implementation.bean class="org.switchyard.component.jca.deploy.JCAJMSReferenceServiceImpl"/>
@@ -43,6 +59,9 @@
                 <sca:interface.java interface="org.switchyard.component.jca.deploy.JCAJMSReferenceService"/>
             </sca:service>
             <sca:reference name="JCAJMSReference">
+                <sca:interface.java interface="org.switchyard.component.jca.deploy.JCAJMSReference"/>
+            </sca:reference>
+            <sca:reference name="JCAJMSReferenceText">
                 <sca:interface.java interface="org.switchyard.component.jca.deploy.JCAJMSReference"/>
             </sca:reference>
         </sca:component>

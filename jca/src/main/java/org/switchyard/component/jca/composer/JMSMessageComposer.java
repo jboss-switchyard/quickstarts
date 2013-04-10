@@ -18,6 +18,7 @@
  */
 package org.switchyard.component.jca.composer;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -99,9 +100,44 @@ public class JMSMessageComposer extends BaseMessageComposer<JMSBindingData> {
         org.switchyard.Message syMessage = exchange.getMessage();
         getContextMapper().mapTo(exchange.getContext(), target);
         Message jmsMessage = target.getMessage();
-        ObjectMessage targetObj = ObjectMessage.class.cast(jmsMessage);
-        // expect transformer to transform the content into Serializable ...
-        targetObj.setObject(syMessage.getContent(Serializable.class));
+
+        if (jmsMessage instanceof ObjectMessage) {
+            ObjectMessage msg = ObjectMessage.class.cast(jmsMessage);
+            // expect transformer to transform the content into Serializable ...
+            msg.setObject(syMessage.getContent(Serializable.class));
+
+        } else if (jmsMessage instanceof TextMessage) {
+            TextMessage msg = TextMessage.class.cast(jmsMessage);
+            msg.setText(syMessage.getContent(String.class));
+
+        } else if (jmsMessage instanceof BytesMessage) {
+            BytesMessage msg = BytesMessage.class.cast(jmsMessage);
+            msg.writeBytes(syMessage.getContent(byte[].class));
+
+        } else if (jmsMessage instanceof StreamMessage) {
+            StreamMessage msg = StreamMessage.class.cast(jmsMessage);
+            byte[] buffer = new byte[8192];
+            int size = 0;
+            if (syMessage.getContent() instanceof StreamMessage) {
+                // in case the StreamMessage is passed through from JMS inbound
+                StreamMessage sm = syMessage.getContent(StreamMessage.class);
+                while ((size = sm.readBytes(buffer)) > 0) {
+                    msg.writeBytes(buffer, 0, size);
+                }
+            } else {
+                InputStream is = syMessage.getContent(InputStream.class);
+                while ((size = is.read(buffer)) > 0) {
+                    msg.writeBytes(buffer, 0, size);
+                }
+            }
+
+        } else if (jmsMessage instanceof MapMessage) {
+            MapMessage msg = MapMessage.class.cast(jmsMessage);
+            Map<?,?> map = syMessage.getContent(Map.class);
+            for (Object key : map.keySet()) {
+                msg.setObject(key.toString(), map.get(key));
+            }
+        }
         return target;
     }
 

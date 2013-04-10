@@ -53,7 +53,9 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     public static final String KEY_ACKNOWLEDGE_MODE = "acknowledgeMode";
     /** key for destination property. */
     public static final String KEY_DESTINATION = "destination";
-
+    /** key for message type property. */
+    public static final String KEY_MESSAGE_TYPE  = "messageType";
+            
     private Logger _logger = Logger.getLogger(JMSProcessor.class);
     private String _userName;
     private String _password;
@@ -65,6 +67,11 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     private ConnectionFactory _connectionFactory;
     private Destination _jmsDestination;
     private MessageComposer<JMSBindingData> _composer;
+    private MessageType _outMessageType = MessageType.Object;
+    
+    private enum MessageType {
+        Stream, Map, Text, Object, Bytes, Plain 
+    }
     
     @Override
     public AbstractOutboundProcessor setConnectionSpec(String name, Properties props) {
@@ -123,8 +130,28 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             
             session = connection.createSession(_txEnabled, _ackMode);
             MessageProducer producer = session.createProducer(_jmsDestination);
-
-            Message msg = session.createObjectMessage();
+            
+            Message msg;
+            switch (_outMessageType) {
+            case Stream:
+                msg = session.createStreamMessage();
+                break;
+            case Map:
+                msg = session.createMapMessage();
+                break;
+            case Text:
+                msg = session.createTextMessage();
+                break;
+            case Bytes:
+                msg = session.createBytesMessage();
+                break;
+            case Plain:
+                msg = session.createMessage();
+                break;
+            default:
+                    msg = session.createObjectMessage();
+            }
+            
             producer.send(_composer.decompose(exchange, new JMSBindingData(msg)).getMessage());
             return null;
         } catch (Exception e) {
@@ -191,4 +218,11 @@ public class JMSProcessor extends AbstractOutboundProcessor {
         _acknowledgeMode = ack;
     }
     
+    /**
+     * set message type.
+     * @param type message type
+     */
+    public void setMessageType(String type) {
+        _outMessageType = MessageType.valueOf(type);
+    }
 }

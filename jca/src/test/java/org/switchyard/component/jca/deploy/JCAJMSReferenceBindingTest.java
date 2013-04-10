@@ -22,6 +22,7 @@
 package org.switchyard.component.jca.deploy;
 
 import javax.jms.MessageConsumer;
+import javax.jms.TextMessage;
 import javax.transaction.UserTransaction;
 
 import junit.framework.Assert;
@@ -55,6 +56,9 @@ public class JCAJMSReferenceBindingTest  {
     @ServiceOperation("JCAJMSReferenceService.onMessage")
     private Invoker _service;
 
+    @ServiceOperation("JCAJMSReferenceService.onMessageText")
+    private Invoker _serviceText;
+    
     @BeforeDeploy
     public void before() {
         ResourceAdapterConfig ra = new ResourceAdapterConfig(ResourceAdapterConfig.ResourceAdapterType.HORNETQ);
@@ -69,6 +73,20 @@ public class JCAJMSReferenceBindingTest  {
         final MessageConsumer consumer = _hqMixIn.getJMSSession().createConsumer(HornetQMixIn.getJMSQueue(OUTPUT_QUEUE));
         javax.jms.Message msg = consumer.receive(1000);
         _hqMixIn.readJMSMessageAndTestString(msg, payload+"test");
+        Assert.assertEquals(msg.getStringProperty("testProp"), "testVal");
+        
+    }
+    
+    @Test
+    public void testUnmanagedOutboundJMSSpecifyingMessageType() throws Exception {
+        String payload = "Shikishima";
+        _serviceText.sendInOnly(payload);
+        
+        final MessageConsumer consumer = _hqMixIn.getJMSSession().createConsumer(HornetQMixIn.getJMSQueue(OUTPUT_QUEUE));
+        javax.jms.Message msg = consumer.receive(1000);
+        Assert.assertTrue(msg instanceof TextMessage);
+        javax.jms.TextMessage txtmsg = TextMessage.class.cast(msg);
+        Assert.assertEquals(payload+"test", txtmsg.getText());
         Assert.assertEquals(msg.getStringProperty("testProp"), "testVal");
         
     }

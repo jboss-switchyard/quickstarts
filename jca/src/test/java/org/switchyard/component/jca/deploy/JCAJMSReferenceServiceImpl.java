@@ -9,9 +9,17 @@ import org.switchyard.component.bean.Service;
 public class JCAJMSReferenceServiceImpl implements JCAJMSReferenceService {
     @Inject @Reference
     private JCAJMSReference service;
+    
+    @Inject @Reference("JCAJMSReferenceText")
+    private JCAJMSReference serviceText;
 
     @Override
     public void onMessage(String name) {
         service.onMessage(name);
+    }
+    
+    @Override
+    public void onMessageText(String name) {
+        serviceText.onMessageText(name);
     }
 }
