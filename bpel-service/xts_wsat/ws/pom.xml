@@ -32,11 +32,6 @@
     <name>Quickstart : BPEL Service : XTS WSAT : Airport Web Service</name>
     <packaging>ejb</packaging>
     <dependencies>
-        <dependency>
-            <groupId>org.jboss.ejb3</groupId>
-            <artifactId>jboss-ejb3-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
