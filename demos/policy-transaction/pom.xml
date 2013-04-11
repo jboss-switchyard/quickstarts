@@ -78,11 +78,11 @@
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-core</artifactId>
+            <artifactId>hornetq-server</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-jms</artifactId>
+            <artifactId>hornetq-jms-server</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
