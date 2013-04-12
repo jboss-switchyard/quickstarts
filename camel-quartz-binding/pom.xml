@@ -25,13 +25,13 @@
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
         <artifactId>switchyard-quickstart-parent</artifactId>
-        <version>0.8.0.Final</version>
+        <version>0.8.1.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-quickstart-camel-quartz-binding</artifactId>
     <name>Quickstart : Camel Quartz Binding</name>
     <properties>
-        <switchyard.version>0.8.0.Final</switchyard.version>
+        <switchyard.version>0.8.1.Final</switchyard.version>
     </properties>
     <dependencies>
         <dependency>
