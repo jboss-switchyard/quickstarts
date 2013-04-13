@@ -505,6 +505,25 @@ public final class XMLHelper {
             return builder.newDocument();
         }
     }
+    
+    /**
+     * Create a document from bytes.
+     * 
+     * @return the created document
+     * @param xml the input string
+     * @throws ParserConfigurationException for errors during creation
+     * @throws IOException if the source could not be read 
+     * @throws SAXException if any parser error occurs
+     */
+    public static Document getDocumentFromString(final String xml)
+        throws ParserConfigurationException, IOException, SAXException {
+        final DocumentBuilder builder = getCreationDocumentBuilder();
+        synchronized (builder) {
+            // synchronized as it is not guaranteed to be thread safe
+            return builder.parse(new InputSource(new StringReader(xml)));
+        }
+    }
+
     /**
      * Create a document from InputSource.
      * 

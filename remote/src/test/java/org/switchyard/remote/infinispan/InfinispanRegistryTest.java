@@ -27,6 +27,7 @@ import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.remoting.transport.Address;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.remote.RemoteEndpoint;
@@ -34,16 +35,22 @@ import org.switchyard.remote.RemoteEndpoint;
 public class InfinispanRegistryTest {
 
     private InfinispanRegistry _registry;
+    private DefaultCacheManager _cacheMgr;
     
     @Before
     public void setUp() {
-        DefaultCacheManager cacheMgr = new DefaultCacheManager(new GlobalConfigurationBuilder()
+        _cacheMgr = new DefaultCacheManager(new GlobalConfigurationBuilder()
             .transport().defaultTransport().build());
         
-        cacheMgr.defineConfiguration("test-cache", 
+        _cacheMgr.defineConfiguration("test-cache", 
                 new ConfigurationBuilder().invocationBatching().enable().build());
-        Cache<String, String> cache = cacheMgr.getCache("test-cache");
+        Cache<String, String> cache = _cacheMgr.getCache("test-cache");
         _registry = new InfinispanRegistry(cache);
+    }
+    
+    @After
+    public void tearDown() {
+        _cacheMgr.stop();
     }
     
     @Test
@@ -117,5 +124,13 @@ class FakeAddress implements Address {
     @Override
     public String toString() {
         return _address;
+    }
+
+    @Override
+    public int compareTo(Address address) {
+        if (address == null) {
+            return -1;
+        }
+        return _address.compareTo(address.toString());
     }
 }

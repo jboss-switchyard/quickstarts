@@ -70,6 +70,24 @@ public final class Files {
         }
     }
 
+    /**
+     * Deletes a file or folder. If a folder all contents will be deleted recursively.
+     * @param source the source file
+     * @throws IOException something went wanky
+     */
+    public static final void delete(File source) throws IOException {
+        if ((source != null) && (source.exists())) {
+            if (source.isDirectory()) {
+                for (File f : source.listFiles()) {
+                    delete(f);
+                }
+            }
+            if (!source.delete()) {
+                throw new IOException("Could not delete " + source);
+            }
+        }
+    }
+
     private Files() {}
 
 }

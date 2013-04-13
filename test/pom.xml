@@ -58,10 +58,6 @@
             <artifactId>xmlunit</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.interceptor</groupId>
-            <artifactId>jboss-interceptor-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.weld.se</groupId>
             <artifactId>weld-se-core</artifactId>
         </dependency>
@@ -105,7 +101,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-            <artifactId>shrinkwrap-descriptors-api</artifactId>
+            <artifactId>shrinkwrap-descriptors-api-base</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.spec.javax.resource</groupId>

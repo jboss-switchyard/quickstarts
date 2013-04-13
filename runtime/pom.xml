@@ -73,7 +73,7 @@
         </dependency>
         <!-- external dependencies -->
         <dependency>
-            <groupId>javax.transaction</groupId>
+             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>
         </dependency>
         <dependency>
