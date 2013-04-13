@@ -22,6 +22,7 @@
 package org.switchyard.test.mixins.amqp;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Properties;
 
 import javax.jms.ConnectionFactory;
@@ -160,8 +161,10 @@ public class AMQPMixIn extends AbstractTestMixIn {
 
         String configFile = getClass().getResource(CONFIG_XML).getFile();
         options.setConfigFile(configFile);
-        String logFile = getClass().getResource(LOG_XML).getFile();
-        options.setLogConfigFile(logFile);
+        URL log4j = getClass().getResource(LOG_XML);
+        if (log4j != null) {
+            options.setLogConfigFile(log4j.getFile());
+        }
 
         _broker = new Broker();
         try {

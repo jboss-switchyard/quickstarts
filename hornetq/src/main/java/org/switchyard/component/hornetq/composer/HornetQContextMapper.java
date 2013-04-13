@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.hornetq.composer;
 
-import org.hornetq.api.core.PropertyConversionException;
+import org.hornetq.api.core.HornetQPropertyConversionException;
 import org.hornetq.api.core.SimpleString;
 import org.hornetq.api.core.client.ClientMessage;
 import org.switchyard.Context;
@@ -67,7 +67,7 @@ public class HornetQContextMapper extends BaseRegexContextMapper<HornetQBindingD
                 if (value != null) {
                     try {
                         clientMessage.putObjectProperty(name, value);
-                    } catch (PropertyConversionException pce) {
+                    } catch (HornetQPropertyConversionException pce) {
                         // ignore and keep going (here just to keep checkstyle happy)
                         pce.getMessage();
                     }

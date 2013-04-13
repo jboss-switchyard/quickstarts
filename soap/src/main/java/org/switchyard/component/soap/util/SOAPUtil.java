@@ -19,8 +19,8 @@
  
 package org.switchyard.component.soap.util;
 
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Iterator;
 
@@ -34,8 +34,6 @@ import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -48,6 +46,7 @@ import org.switchyard.common.xml.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * Contains utility methods to examine/manipulate SOAP Messages.
@@ -234,11 +233,14 @@ public final class SOAPUtil {
      * @param soapRes the SOAP Message
      * @return the new document
      * @throws ParserConfigurationException for errors during creation
-     * @throws XMLStreamException If the SOAP message could not be read
+     * @throws IOException if the source could not be read 
+     * @throws SAXException if any parser error occurs
      */
-    public static Document parseAsDom(final String soapRes) throws ParserConfigurationException, XMLStreamException {
-        final XMLEventReader reader = XMLHelper.getXMLEventReader(new StringReader(soapRes));
-        return XMLHelper.createDocument(reader);
+    public static Document parseAsDom(final String soapRes) throws ParserConfigurationException, IOException, SAXException {
+        // Note: Using DOM approach rather than Event based because, comments are not handled properly.
+        // An END_DOCUMENT event is sent when a comment is encountered and that leads to:
+        // org.w3c.dom.DOMException: HIERARCHY_REQUEST_ERR: An attempt was made to insert a node where it is not permitted.
+        return XMLHelper.getDocumentFromString(soapRes);
     }
 
     /**

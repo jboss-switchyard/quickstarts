@@ -14,6 +14,9 @@
         <managedconnectionfactory-class>org.switchyard.component.test.mixins.jca.MockManagedConnectionFactory</managedconnectionfactory-class>
         <connectionfactory-interface>javax.resource.cci.ConnectionFactory</connectionfactory-interface>
         <connectionfactory-impl-class>org.switchyard.component.test.mixins.jca.MockConnectionFactory</connectionfactory-impl-class>
+        <connection-interface>javax.resource.cci.Connection</connection-interface>
+        <connection-impl-class>org.switchyard.component.test.mixins.jca.MockConnection</connection-impl-class>
+
        </connection-definition>
        <reauthentication-support>false</reauthentication-support>
     </outbound-resourceadapter>

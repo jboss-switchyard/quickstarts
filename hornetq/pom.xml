@@ -86,7 +86,7 @@
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-core</artifactId>
+            <artifactId>hornetq-server</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -96,7 +96,7 @@
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-jms</artifactId>
+            <artifactId>hornetq-jms-server</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>

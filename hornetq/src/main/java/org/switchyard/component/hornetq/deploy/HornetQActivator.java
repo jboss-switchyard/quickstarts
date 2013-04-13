@@ -27,6 +27,8 @@ import javax.xml.namespace.QName;
 
 import org.hornetq.api.core.DiscoveryGroupConfiguration;
 import org.hornetq.api.core.TransportConfiguration;
+import org.hornetq.api.core.UDPBroadcastGroupConfiguration;
+import org.hornetq.api.core.client.HornetQClient;
 import org.hornetq.api.core.client.ServerLocator;
 import org.switchyard.component.hornetq.ServerLocatorBuilder;
 import org.switchyard.component.hornetq.config.model.HornetQBindingModel;
@@ -141,25 +143,22 @@ public class HornetQActivator extends BaseActivator {
         if (config == null) {
             return null;
         }
-        final DiscoveryGroupConfiguration discoveryGroupConfiguration = new DiscoveryGroupConfiguration(
-                config.getGroupAddress(),
-                config.getGroupPort());
-        
+
+        Long refreshTimeout = config.getRefreshTimeout();
+        if (refreshTimeout == null) {
+            refreshTimeout = HornetQClient.DEFAULT_DISCOVERY_REFRESH_TIMEOUT;
+        }
+
+        Long initialWaitTimeout = config.getInitialWaitTimeout();
+        if (initialWaitTimeout == null) {
+            initialWaitTimeout = HornetQClient.DEFAULT_DISCOVERY_INITIAL_WAIT_TIMEOUT;
+        }
+
         final String localBindAddress = config.getLocalBindAddress();
-        if (localBindAddress != null) {
-            discoveryGroupConfiguration.setLocalBindAdress(localBindAddress);
-        }
-        
-        final Long refreshTimeout = config.getRefreshTimeout();
-        if (refreshTimeout != null) {
-            discoveryGroupConfiguration.setRefreshTimeout(refreshTimeout);
-        }
-        
-        final Long initialWaitTimeout = config.getInitialWaitTimeout();
-        if (initialWaitTimeout != null) {
-            discoveryGroupConfiguration.setDiscoveryInitialWaitTimeout(initialWaitTimeout);
-        }
-        
+
+        UDPBroadcastGroupConfiguration udpCfg = new UDPBroadcastGroupConfiguration(config.getGroupAddress(), config.getGroupPort(), localBindAddress, -1);
+        final DiscoveryGroupConfiguration discoveryGroupConfiguration = new DiscoveryGroupConfiguration(refreshTimeout, initialWaitTimeout, udpCfg);
+
         return discoveryGroupConfiguration;
     }
 }

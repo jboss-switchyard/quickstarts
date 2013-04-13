@@ -39,14 +39,15 @@ import org.jboss.jca.deployers.fungal.AbstractFungalDeployment;
 import org.jboss.jca.deployers.fungal.RAActivator;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.switchyard.common.io.Files;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
 import com.github.fungal.api.Kernel;
-import com.github.fungal.api.util.FileUtil;
 
 /**
  * Handle IronJacamar embedded and fungal kernel.
@@ -101,10 +102,16 @@ public class SwitchYardIronJacamarHandler {
         
         if (connDefs != null && connDefs.size() != 0) {
             URL raxmlUrl = createRaXml(raa.getName(), connDefs);
+            File raaFile = new File(outdir, raa.getName());
+            URL raaFileUrl = raaFile.toURI().toURL();
             RAActivator activator = _embedded.lookup(RA_ACTIVATOR_BEAN_NAME, RAActivator.class);
             activator.setEnabled(false);
-            _embedded.deploy(raa);
-            _embedded.deploy(raxmlUrl);
+            //_embedded.deploy(raa);
+            raa.as(ZipExporter.class).exportTo(raaFile, true);
+            _kernel.getMainDeployer().deploy(raaFileUrl);
+            _manualDeployments.add(raaFileUrl);
+            //_embedded.deploy(raxmlUrl);
+            _kernel.getMainDeployer().deploy(raxmlUrl);
             _manualDeployments.add(raxmlUrl);
             activator.setEnabled(true);
         } else {
@@ -118,18 +125,18 @@ public class SwitchYardIronJacamarHandler {
      * @throws Throwable when it fails to shutdown
      */
     public void shutdown() throws Throwable {
+        File outdir = new File(TEMP_OUT_DIR);
         try {
             for (URL d : _manualDeployments) {
                 try {
-                    _embedded.undeploy(d);
-                    new File(d.toURI()).delete();
+                    _kernel.getMainDeployer().undeploy(d);
                 } catch (Throwable t) {
                     t.getMessage(); // ignore
                 }
             }
             _embedded.shutdown();
         } finally {
-            new FileUtil().delete(new File(TEMP_OUT_DIR));
+            Files.delete(outdir);
             _kernel = null;
             _embedded = null;
         }

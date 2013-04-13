@@ -29,6 +29,7 @@ import org.hornetq.api.core.DiscoveryGroupConfiguration;
 import org.hornetq.api.core.HornetQException;
 import org.hornetq.api.core.Interceptor;
 import org.hornetq.api.core.TransportConfiguration;
+import org.hornetq.api.core.UDPBroadcastGroupConfiguration;
 import org.hornetq.api.core.client.HornetQClient;
 import org.hornetq.api.core.client.ServerLocator;
 import org.hornetq.core.protocol.core.Packet;
@@ -49,14 +50,13 @@ public class ServerLocatorBuilderTest {
     @Before
     public void setup() {
         builder = new ServerLocatorBuilder();
-        builder.discoveryGroupConfiguration(new DiscoveryGroupConfiguration("localhost", 10222));
+        UDPBroadcastGroupConfiguration udpCfg = new UDPBroadcastGroupConfiguration("localhost", 10222, null, -1);
+        builder.discoveryGroupConfiguration(new DiscoveryGroupConfiguration(HornetQClient.DEFAULT_DISCOVERY_REFRESH_TIMEOUT, HornetQClient.DEFAULT_DISCOVERY_INITIAL_WAIT_TIMEOUT, udpCfg));
     }
 
     @Test
     public void discoveryGroupConfiguration() {
         final ServerLocator locator = builder.build();
-        assertThat(locator.getDiscoveryGroupConfiguration().getGroupAddress(), is(equalTo("localhost")));
-        assertThat(locator.getDiscoveryGroupConfiguration().getGroupPort(), is(equalTo(10222)));
         assertThat(locator.isHA(), is(false));
     }
     

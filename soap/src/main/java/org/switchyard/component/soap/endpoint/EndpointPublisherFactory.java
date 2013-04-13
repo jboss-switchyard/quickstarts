@@ -19,7 +19,9 @@
  
 package org.switchyard.component.soap.endpoint;
 
-import org.switchyard.common.type.Classes;
+import java.util.ServiceLoader;
+
+import org.switchyard.component.soap.WebServicePublishException;
 
 /**
  * Factory for creating Endpoint publishers.
@@ -28,8 +30,15 @@ import org.switchyard.common.type.Classes;
  */
 public final class EndpointPublisherFactory {
 
-    private static String JBOSSWS_PUBLISHER_FACTORY = "org.jboss.as.webservices.publish.EndpointPublisherImpl";
-    private static EndpointPublisher _publisher;
+    private static final EndpointPublisher PUBLISHER;
+
+    static {
+        try {
+            PUBLISHER = ServiceLoader.load(EndpointPublisher.class).iterator().next();
+        } catch (Exception e) {
+            throw new WebServicePublishException(e);
+        }
+    }
 
     private EndpointPublisherFactory() {
     }
@@ -39,15 +48,6 @@ public final class EndpointPublisherFactory {
      * @return The EndpointPublisher
      */
     public static EndpointPublisher getEndpointPublisher() {
-        return _publisher;
-    }
-
-    static {
-        final Class<?> publisherClass = Classes.forName(JBOSSWS_PUBLISHER_FACTORY);
-        if (publisherClass != null) {
-            _publisher = new JBossWSEndpointPublisher();
-        } else {
-            _publisher = new JAXWSEndpointPublisher();
-        }
+        return PUBLISHER;
     }
 }
