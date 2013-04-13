@@ -93,15 +93,14 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
         context.addStep(new AbstractDeploymentChainStep() {
             protected void execute(DeploymentProcessorTarget processorTarget) {
                 int priority = 0x4000;
-                processorTarget.addDeploymentProcessor(Phase.PARSE, priority++, new SwitchYardConfigDeploymentProcessor());
-                processorTarget.addDeploymentProcessor(Phase.DEPENDENCIES, priority++, new SwitchYardDependencyProcessor());
-                priority = priority + 2;
-                processorTarget.addDeploymentProcessor(Phase.POST_MODULE, priority, new SwitchYardCdiIntegrationProcessor());
-                processorTarget.addDeploymentProcessor(Phase.POST_MODULE, priority++, new SwitchYardConfigProcessor());
-                processorTarget.addDeploymentProcessor(Phase.INSTALL, priority++, new SwitchYardDeploymentProcessor());
+                processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.PARSE, priority++, new SwitchYardConfigDeploymentProcessor());
+                processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, priority++, new SwitchYardDependencyProcessor());
+                processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, priority++, new SwitchYardCdiIntegrationProcessor());
+                processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, priority++, new SwitchYardConfigProcessor());
+                processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.INSTALL, priority++, new SwitchYardDeploymentProcessor());
             }
         }, OperationContext.Stage.RUNTIME);
-        LOG.info("Activating SwitchYard Extension");
+        LOG.info("Activating SwitchYard Subsystem");
 
         ServerUtil.setRegistry(context.getServiceRegistry(false));
         final SwitchYardInjectorService injectorService = new SwitchYardInjectorService();

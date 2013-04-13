@@ -82,9 +82,9 @@ public final class SwitchYardSubsystemListServices implements OperationStepHandl
                         services.add(ModelNodeCreationUtil.createSimpleServiceNode(service));
                     }
                 }
-                context.completeStep();
+                context.stepCompleted();
             }
         }, OperationContext.Stage.RUNTIME);
-        context.completeStep();
+        context.stepCompleted();
     }
 }

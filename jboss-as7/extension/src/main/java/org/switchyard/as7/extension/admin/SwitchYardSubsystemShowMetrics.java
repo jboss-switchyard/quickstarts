@@ -81,10 +81,10 @@ public final class SwitchYardSubsystemShowMetrics implements OperationStepHandle
                                     new ModelNode(), switchYard.getMessageMetrics()));
                 }
                 
-                context.completeStep();
+                context.stepCompleted();
             }
         }, OperationContext.Stage.RUNTIME);
-        context.completeStep();
+        context.stepCompleted();
     }
     
 }

@@ -45,23 +45,21 @@ public class JCAOutboundHornetQQuickstartTest {
     private static final String ORDER_QUEUE = "OrderQueue";
     private static final String SHIPPING_QUEUE = "ShippingQueue";
     private static final String FILLING_STOCK_QUEUE = "FillingStockQueue";
-    private static final String USER = "guest";
-    private static final String PASSWD = "guestp";
     
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
         ResourceDeployer.addQueue(ORDER_QUEUE);
         ResourceDeployer.addQueue(SHIPPING_QUEUE);
         ResourceDeployer.addQueue(FILLING_STOCK_QUEUE);
-        ResourceDeployer.addPropertiesUser(USER, PASSWD);
+        ResourceDeployer.addPropertiesUser();
         return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-jca-outbound-hornetq");
     }
 
     @Test
     public void testDeployment() throws Exception {
         HornetQMixIn hqMixIn = new HornetQMixIn(false)
-                                    .setUser(USER)
-                                    .setPassword(PASSWD);
+                                    .setUser(ResourceDeployer.USER)
+                                    .setPassword(ResourceDeployer.PASSWD);
         hqMixIn.initialize();
         String[] orders = {"BREAD", "PIZZA", "JAM", "POTATO", "MILK", "JAM"};
 

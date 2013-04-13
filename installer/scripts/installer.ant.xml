@@ -40,7 +40,7 @@
         <condition property="as7.not.available">
           <and>
             <not>
-              <available file="res/jboss-as-${as7.version}.zip"/>
+              <available file="res/jboss-${server}-${as.version}.zip"/>
             </not>
           </and>
         </condition>
@@ -79,13 +79,13 @@
 
     <target name="download-as7-zip" depends="download-as7-check" if="as7.not.available">
         <echo>Downloading AS7 ...</echo>
-        <get src="${as7.dist.url}" dest="res/jboss-as-${as7.version}.zip"/>
+        <get src="${as7.dist.url}" dest="res/jboss-${server}-${as.version}.zip"/>
     </target>
 
     <target name="download-as7" depends="download-as7-zip">
 	<echo>Installing AS7 ...</echo>
-        <unzip src="res/jboss-as-${as7.version}.zip" dest="${basedir}" overwrite="true"/>
-    	<chmod dir="${basedir}/jboss-as-${as7.version}/bin" perm="ugo+rx" includes="**/*.sh"/>
+        <unzip src="res/jboss-${server}-${as.version}.zip" dest="${basedir}" overwrite="true"/>
+    	<chmod dir="${basedir}/jboss-${server}-${as.version}/bin" perm="ugo+rx" includes="**/*.sh"/>
     </target>
 
     <target name="download-sy-as7" depends="download-sy-as7-check" if="sy.as7.not.available">
@@ -191,7 +191,8 @@
 
     <target name="install" description="Install SwitchYard into JBoss (optionally specified by AS7_PATH)"
         depends="download-sy-as7, get-jboss-path">
-        <property name="AS7_PATH" value="${basedir}/jboss-as-${as7.version}"/>
+        <!-- ************************** Change this for AS7 community version or ************************* -->
+        <property name="AS7_PATH" value="${basedir}/jboss-${server}-${as.version.major}"/>
         <property name="QUICKSTART_PATH" value="${basedir}"/>
         <property name="INSTALL_PATH" value="${AS7_PATH}"/>
         <condition property="isAS7">
@@ -246,7 +247,7 @@
         <xslt style="res/standalone.xsl"
               basedir="${AS7_PATH}/standalone/configuration"
               destdir="${AS7_PATH}/standalone/configuration"
-              includes="standalone.xml,standalone-preview.xml,standalone-full.xml,standalone-ha.xml"/>
+              includes="standalone.xml,standalone-full.xml,standalone-full-ha.xml,standalone-ha.xml"/>
         <xslt style="res/domain.xsl"
               basedir="${AS7_PATH}/domain/configuration"
               destdir="${AS7_PATH}/domain/configuration"
@@ -279,7 +280,7 @@
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration"
           failonerror="false">
           <filelist dir="${AS7_PATH}/standalone/configuration">
-            <file name="standalone-preview.html"/>
+            <file name="standalone-full-ha.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
@@ -340,11 +341,11 @@
 
 	<target name="transform-console-module">
         <xslt style="res/console_module.xsl"
-              basedir="${AS7_PATH}/modules/org/jboss/as/console/main"
-              destdir="${AS7_PATH}/modules/org/jboss/as/console/main"
+              basedir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/console/${server}"
+              destdir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/console/${server}"
               includes="module.xml"/>
-        <move overwrite="true" todir="${INSTALL_PATH}/modules/org/jboss/as/console/main">
-          <filelist dir="${AS7_PATH}/modules/org/jboss/as/console/main">
+        <move overwrite="true" todir="${INSTALL_PATH}/modules/system/layers/base/org/jboss/as/console/${server}">
+          <filelist dir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/console/${server}">
             <file name="module.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>

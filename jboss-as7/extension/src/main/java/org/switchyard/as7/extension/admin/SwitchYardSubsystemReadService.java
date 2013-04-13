@@ -104,10 +104,10 @@ public final class SwitchYardSubsystemReadService implements OperationStepHandle
 
                 addServiceNodes(context.getResult(), services);
 
-                context.completeStep();
+                context.stepCompleted();
             }
         }, OperationContext.Stage.RUNTIME);
-        context.completeStep();
+        context.stepCompleted();
     }
 
     private void addServiceNodes(ModelNode result, List<Service> services) {

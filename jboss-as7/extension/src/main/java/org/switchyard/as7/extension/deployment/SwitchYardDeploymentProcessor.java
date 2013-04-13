@@ -27,6 +27,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.weld.WeldDeploymentMarker;
+import org.jboss.as.weld.WeldStartService;
 import org.jboss.as.weld.services.BeanManagerService;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
@@ -90,6 +91,13 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
         if (WeldDeploymentMarker.isPartOfWeldDeployment(deploymentUnit)) {
             final ServiceName beanManagerServiceName = deploymentUnit.getServiceName().append(BeanManagerService.NAME);
             switchyardServiceBuilder.addDependency(beanManagerServiceName);
+            if (deploymentUnit.getParent() == null) {
+                final ServiceName weldStartServiceName = deploymentUnit.getServiceName().append(WeldStartService.SERVICE_NAME);
+                switchyardServiceBuilder.addDependency(weldStartServiceName);
+            } else {
+                final ServiceName weldStartServiceName = deploymentUnit.getParent().getServiceName().append(WeldStartService.SERVICE_NAME);
+                switchyardServiceBuilder.addDependency(weldStartServiceName);
+            }
         }
         
         switchyardServiceBuilder.addDependency(DependencyType.OPTIONAL, CacheService.getServiceName("cluster", null));

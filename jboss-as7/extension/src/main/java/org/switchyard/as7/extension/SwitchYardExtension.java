@@ -19,33 +19,29 @@
 package org.switchyard.as7.extension;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
-import static org.switchyard.as7.extension.CommonAttributes.IDENTIFIER;
-import static org.switchyard.as7.extension.CommonAttributes.IMPLCLASS;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
 import static org.switchyard.as7.extension.CommonAttributes.MODULE;
-import static org.switchyard.as7.extension.CommonAttributes.PROPERTIES;
-import static org.switchyard.as7.extension.CommonAttributes.SOCKET_BINDING;
 
-import java.util.EnumSet;
 import java.util.Locale;
 
 import org.jboss.as.controller.Extension;
 import org.jboss.as.controller.ExtensionContext;
+import org.jboss.as.controller.OperationDefinition;
 import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.ReloadRequiredWriteAttributeHandler;
+import org.jboss.as.controller.ResourceBuilder;
+import org.jboss.as.controller.ResourceDefinition;
+import org.jboss.as.controller.SimpleOperationDefinitionBuilder;
+import org.jboss.as.controller.SimpleResourceDefinition;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.descriptions.DescriptionProvider;
 import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
-import org.jboss.as.controller.operations.validation.ModelTypeValidator;
+import org.jboss.as.controller.descriptions.StandardResourceDescriptionResolver;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
-import org.jboss.as.controller.registry.OperationEntry;
-import org.jboss.as.controller.registry.AttributeAccess.Storage;
 import org.jboss.dmr.ModelNode;
-import org.jboss.dmr.ModelType;
 import org.jboss.logging.Logger;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemGetVersion;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemListApplications;
@@ -71,6 +67,39 @@ public class SwitchYardExtension implements Extension {
     /** Namespace for this subsystem. */
     public static final String NAMESPACE = "urn:jboss:domain:switchyard:1.0";
 
+    private static final PathElement SUBSYSTEM_PATH = PathElement.pathElement(SUBSYSTEM, SUBSYSTEM_NAME);
+    private static final PathElement MODULE_PATH = PathElement.pathElement(MODULE);
+    private static final String RESOURCE_NAME = SwitchYardExtension.class.getPackage().getName() + ".LocalDescriptions";
+
+    private static final OperationDefinition GET_VERSION = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.GET_VERSION, getResourceDescriptionResolver("switchyard.get-version"))
+            .build();
+    private static final OperationDefinition LIST_APPLICATIONS = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.LIST_APPLICATIONS, getResourceDescriptionResolver("switchyard.list-applications"))
+            .build();
+    private static final OperationDefinition LIST_SERVICES = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.LIST_SERVICES, getResourceDescriptionResolver("switchyard.list-services"))
+            .build();
+    private static final OperationDefinition READ_APPLICATION = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.READ_APPLICATION, getResourceDescriptionResolver("switchyard.read-application"))
+            .build();
+    private static final OperationDefinition READ_SERVICE = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.READ_SERVICE, getResourceDescriptionResolver("switchyard.read-service"))
+            .build();
+    private static final OperationDefinition USES_ARTIFACT = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.USES_ARTIFACT, getResourceDescriptionResolver("switchyard.uses-artifacts"))
+            .build();
+    private static final OperationDefinition SHOW_METRICS = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.SHOW_METRICS, getResourceDescriptionResolver("switchyard.show-metrics"))
+            .build();
+
+    /**
+     * Create description resolver.
+     * @param keyPrefix a list of prefixes
+     * @return the decscription resolver
+     */
+    public static StandardResourceDescriptionResolver getResourceDescriptionResolver(final String... keyPrefix) {
+        StringBuilder prefix = new StringBuilder(SUBSYSTEM_NAME);
+        for (String kp : keyPrefix) {
+            prefix.append('.').append(kp);
+        }
+        return new StandardResourceDescriptionResolver(prefix.toString(), RESOURCE_NAME, SwitchYardExtension.class.getClassLoader(), true, false);
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public void initialize(final ExtensionContext context) {
@@ -78,30 +107,28 @@ public class SwitchYardExtension implements Extension {
         LOGGER.info(Versions.getSwitchYardNotification());
 
         final SubsystemRegistration subsystem = context.registerSubsystem(SUBSYSTEM_NAME, 1, 0);
-        final ManagementResourceRegistration registration = subsystem.registerSubsystemModel(SwitchYardSubsystemProviders.SUBSYSTEM_DESCRIBE);
-        registration.registerOperationHandler(ADD, SwitchYardSubsystemAdd.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_ADD_DESCRIBE, false);
-        registration.registerOperationHandler(REMOVE, SwitchYardSubsystemRemove.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_REMOVE_DESCRIBE, false);
-        registration.registerOperationHandler(DESCRIBE, SwitchYardSubsystemDescribe.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_DESCRIBE, false, OperationEntry.EntryType.PRIVATE);
-        registration.registerReadWriteAttribute(SOCKET_BINDING, null, new ReloadRequiredWriteAttributeHandler(new ModelTypeValidator(ModelType.STRING)), Storage.CONFIGURATION);
-        registration.registerReadWriteAttribute(PROPERTIES, null, new ReloadRequiredWriteAttributeHandler(new ModelTypeValidator(ModelType.STRING)), Storage.CONFIGURATION);
         subsystem.registerXMLElementWriter(SwitchYardSubsystemWriter.getInstance());
 
-        // SwitchYard modules
-        final ManagementResourceRegistration modules = registration.registerSubModel(PathElement.pathElement(MODULE), SwitchYardSubsystemProviders.MODULE_DESCRIBE);
-        modules.registerOperationHandler(ADD, SwitchYardModuleAdd.INSTANCE, SwitchYardSubsystemProviders.MODULE_ADD_DESCRIBE, false);
-        modules.registerOperationHandler(REMOVE, SwitchYardModuleRemove.INSTANCE, SwitchYardSubsystemProviders.MODULE_REMOVE_DESCRIBE, false);
-        modules.registerReadWriteAttribute(IDENTIFIER, null, new ReloadRequiredWriteAttributeHandler(new ModelTypeValidator(ModelType.STRING)), Storage.CONFIGURATION);
-        modules.registerReadWriteAttribute(IMPLCLASS, null, new ReloadRequiredWriteAttributeHandler(new ModelTypeValidator(ModelType.STRING)), Storage.CONFIGURATION);
-        modules.registerReadWriteAttribute(PROPERTIES, null, new ReloadRequiredWriteAttributeHandler(new ModelTypeValidator(ModelType.STRING)), Storage.CONFIGURATION);
+        ResourceBuilder modulesResource = ResourceBuilder.Factory.create(MODULE_PATH, getResourceDescriptionResolver(MODULE))
+                .setAddOperation(SwitchYardModuleAdd.INSTANCE)
+                .setRemoveOperation(SwitchYardModuleRemove.INSTANCE)
+                .addReadWriteAttribute(Attributes.IDENTIFIER, null, new ReloadRequiredWriteAttributeHandler(Attributes.IDENTIFIER))
+                .addReadWriteAttribute(Attributes.IMPLCLASS, null, new ReloadRequiredWriteAttributeHandler(Attributes.IMPLCLASS))
+                .addReadWriteAttribute(Attributes.PROPERTIES, null, new ReloadRequiredWriteAttributeHandler(Attributes.PROPERTIES));
 
-        // register administrative functions
-        registration.registerOperationHandler(SwitchYardModelConstants.GET_VERSION, SwitchYardSubsystemGetVersion.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_GET_VERSION, false, EnumSet.of(OperationEntry.Flag.READ_ONLY));
-        registration.registerOperationHandler(SwitchYardModelConstants.LIST_APPLICATIONS, SwitchYardSubsystemListApplications.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_LIST_APPLICATIONS, false, EnumSet.of(OperationEntry.Flag.READ_ONLY, OperationEntry.Flag.RUNTIME_ONLY));
-        registration.registerOperationHandler(SwitchYardModelConstants.LIST_SERVICES, SwitchYardSubsystemListServices.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_LIST_SERVICES, false, EnumSet.of(OperationEntry.Flag.READ_ONLY, OperationEntry.Flag.RUNTIME_ONLY));
-        registration.registerOperationHandler(SwitchYardModelConstants.READ_APPLICATION, SwitchYardSubsystemReadApplication.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_APPLICATION, false, EnumSet.of(OperationEntry.Flag.READ_ONLY, OperationEntry.Flag.RUNTIME_ONLY));
-        registration.registerOperationHandler(SwitchYardModelConstants.READ_SERVICE, SwitchYardSubsystemReadService.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_READ_SERVICE, false, EnumSet.of(OperationEntry.Flag.READ_ONLY, OperationEntry.Flag.RUNTIME_ONLY));
-        registration.registerOperationHandler(SwitchYardModelConstants.USES_ARTIFACT, SwitchYardSubsystemUsesArtifact.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_USES_ARTIFACT, false, EnumSet.of(OperationEntry.Flag.READ_ONLY, OperationEntry.Flag.RUNTIME_ONLY));
-        registration.registerOperationHandler(SwitchYardModelConstants.SHOW_METRICS, SwitchYardSubsystemShowMetrics.INSTANCE, SwitchYardSubsystemProviders.SUBSYSTEM_SHOW_METRICS, false, EnumSet.of(OperationEntry.Flag.READ_ONLY, OperationEntry.Flag.RUNTIME_ONLY));
+        ResourceDefinition subsystemResource = ResourceBuilder.Factory.createSubsystemRoot(SUBSYSTEM_PATH, getResourceDescriptionResolver(), SwitchYardSubsystemAdd.INSTANCE, SwitchYardSubsystemRemove.INSTANCE)
+                .addReadWriteAttribute(Attributes.SOCKET_BINDING, null, new ReloadRequiredWriteAttributeHandler(Attributes.SOCKET_BINDING))
+                .addReadWriteAttribute(Attributes.PROPERTIES, null, new ReloadRequiredWriteAttributeHandler(Attributes.PROPERTIES))
+                .addOperation(GET_VERSION, SwitchYardSubsystemGetVersion.INSTANCE)
+                .addOperation(LIST_APPLICATIONS, SwitchYardSubsystemListApplications.INSTANCE)
+                .addOperation(LIST_SERVICES, SwitchYardSubsystemListServices.INSTANCE)
+                .addOperation(READ_APPLICATION, SwitchYardSubsystemReadApplication.INSTANCE)
+                .addOperation(READ_SERVICE, SwitchYardSubsystemReadService.INSTANCE)
+                .addOperation(USES_ARTIFACT, SwitchYardSubsystemUsesArtifact.INSTANCE)
+                .addOperation(SHOW_METRICS, SwitchYardSubsystemShowMetrics.INSTANCE)
+                .pushChild(modulesResource).pop()
+                .build();
+        subsystem.registerSubsystemModel(subsystemResource);
 
         DescriptionProvider nullDescriptionProvider = new DescriptionProvider() {
             @Override
@@ -109,9 +136,9 @@ public class SwitchYardExtension implements Extension {
                 return new ModelNode();
             }
         };
-        final ManagementResourceRegistration deployments = subsystem.registerDeploymentModel(nullDescriptionProvider);
-        deployments.registerSubModel(PathElement.pathElement(SwitchYardModelConstants.APPLICATION),
-                nullDescriptionProvider);
+
+        final ManagementResourceRegistration registration = subsystem.registerDeploymentModel(new SimpleResourceDefinition(SUBSYSTEM_PATH, getResourceDescriptionResolver("deployment")));
+        registration.registerSubModel(new SimpleResourceDefinition(PathElement.pathElement(SwitchYardModelConstants.APPLICATION), getResourceDescriptionResolver()));
     }
 
     /** {@inheritDoc} */

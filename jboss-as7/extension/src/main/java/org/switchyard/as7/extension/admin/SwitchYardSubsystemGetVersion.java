@@ -57,7 +57,7 @@ public final class SwitchYardSubsystemGetVersion implements OperationStepHandler
             public void execute(final OperationContext context, final ModelNode operation)
                     throws OperationFailedException {
                 context.getResult().get("version").set(Versions.getSwitchYardVersion());
-                context.completeStep();
+                context.stepCompleted();
             }
         }, OperationContext.Stage.RUNTIME);
         context.completeStep();

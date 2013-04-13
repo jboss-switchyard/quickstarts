@@ -34,10 +34,12 @@
     <description>SwitchYard AS7 Distribution</description>
     <properties>
         <staging.dir>${project.build.directory}/jboss-switchyard</staging.dir>
-        <staging.jboss.dir>${staging.dir}/jboss-as-${version.jbossas}</staging.jboss.dir>
+        <redhat.eap6.dir> jboss-eap-${version.redhat.eap6}</redhat.eap6.dir>
+        <staging.jboss.dir>${staging.dir}/${redhat.eap6.dir}</staging.jboss.dir>
+        <staging.configs.dir>${staging.dir}/configs</staging.configs.dir>
         <distro.root.dir>/switchyard-as7-${version.distro}/</distro.root.dir>
         <installer.root.dir>/switchyard-as7-installer-${version.distro}</installer.root.dir>
-        <switchyard.jboss.home>${project.build.directory}${distro.root.dir}</switchyard.jboss.home>
+        <switchyard.jboss.home>${staging.jboss.dir}</switchyard.jboss.home>
     </properties>
     <dependencies>
         <dependency>
@@ -50,6 +52,38 @@
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-dist</artifactId>
             <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+            <version>1.0.3.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-test-api</artifactId>
+            <scope>test</scope>
+            <version>1.0.3.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-arquillian-container-managed</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-arquillian-common</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-arquillian-testenricher-msc</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-arquillian-protocol-jmx</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -88,6 +122,25 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>stage-jboss-configs</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.as</groupId>
+                                    <artifactId>jboss-as-dist</artifactId>
+                                    <type>zip</type>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>${redhat.eap6.dir}/standalone/configuration/standalone.xml, ${redhat.eap6.dir}/standalone/configuration/standalone-full.xml, ${redhat.eap6.dir}/domain/configuration/domain.xml</includes>
+                            <outputDirectory>${staging.configs.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>unpack-bundle</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -103,24 +156,6 @@
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${staging.jboss.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>unzip-distro</id>
-                        <phase>process-test-classes</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-as7-standalone-dist</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -154,21 +189,22 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <forceCreation>true</forceCreation>
                     <transformationSets>
                         <transformationSet>
-                            <dir>${staging.jboss.dir}/standalone/configuration</dir>
+                            <dir>${staging.configs.dir}/${redhat.eap6.dir}/standalone/configuration</dir>
                             <includes>
                                 <include>standalone*.xml</include>
                             </includes>
-                            <outputDir>${staging.dir}</outputDir>
+                            <outputDir>${staging.jboss.dir}/standalone/configuration</outputDir>
                             <stylesheet>${staging.jboss.dir}/xsl/standalone.xsl</stylesheet>
                         </transformationSet>
                         <transformationSet>
-                            <dir>${staging.jboss.dir}/domain/configuration</dir>
+                            <dir>${staging.configs.dir}/${redhat.eap6.dir}/domain/configuration</dir>
                             <includes>
                                 <include>domain*.xml</include>
                             </includes>
-                            <outputDir>${staging.dir}</outputDir>
+                            <outputDir>${staging.jboss.dir}/domain/configuration</outputDir>
                             <stylesheet>${staging.jboss.dir}/xsl/domain.xsl</stylesheet>
                         </transformationSet>
                         <transformationSet>
@@ -181,26 +217,6 @@
                         </transformationSet>
                     </transformationSets>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>assembly-full-dist</id>
-                        <phase>generate-test-resources</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <finalName>switchyard-as7</finalName>
-                            <descriptors>
-                                <descriptor>${basedir}/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <!-- Configure the Surefire plugin for running the tests.  Be sure to make these same setting if running in your IDE... -->
             <plugin>

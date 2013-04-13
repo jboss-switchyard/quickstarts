@@ -80,9 +80,9 @@ public final class SwitchYardSubsystemReadApplication implements OperationStepHa
                         applications.add(ModelNodeCreationUtil.createApplicationNode(application));
                     }
                 }
-                context.completeStep();
+                context.stepCompleted();
             }
         }, OperationContext.Stage.RUNTIME);
-        context.completeStep();
+        context.stepCompleted();
     }
 }

@@ -37,21 +37,19 @@ import org.switchyard.test.quickstarts.util.ResourceDeployer;
 public class CamelJMSBindingQuickstartTest {
 
     private static final String QUEUE = "GreetingServiceQueue";
-    private static final String USER = "guest";
-    private static final String PASSWD = "guestp";
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
         ResourceDeployer.addQueue(QUEUE);
-        ResourceDeployer.addPropertiesUser(USER, PASSWD);
+        ResourceDeployer.addPropertiesUser();
         return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-camel-jms-binding");
     }
 
     @Test
     public void testDeployment() throws Exception {
         HornetQMixIn hqMixIn = new HornetQMixIn(false)
-                                    .setUser(USER)
-                                    .setPassword(PASSWD);
+                                    .setUser(ResourceDeployer.USER)
+                                    .setPassword(ResourceDeployer.PASSWD);
         hqMixIn.initialize();
 
         try {

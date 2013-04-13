@@ -50,8 +50,6 @@ public class PolicyTransactionDemoQuickstartTest {
     private static final String QUEUE_OUT_A = "queueA";
     private static final String QUEUE_OUT_B = "queueB";
     private static final String QUEUE_OUT_C = "queueC";
-    private static final String USER = "guest";
-    private static final String PASSWD = "guestp";
     
     private HornetQMixIn _hqMixIn;
     
@@ -62,15 +60,15 @@ public class PolicyTransactionDemoQuickstartTest {
         ResourceDeployer.addQueue(QUEUE_OUT_A);
         ResourceDeployer.addQueue(QUEUE_OUT_B);
         ResourceDeployer.addQueue(QUEUE_OUT_C);
-        ResourceDeployer.addPropertiesUser(USER, PASSWD);
+        ResourceDeployer.addPropertiesUser();
         return ArquillianUtil.createJarDemoDeployment("switchyard-quickstart-demo-policy-transaction");
     }
 
     @Before
     public void before() throws Exception {
         _hqMixIn = new HornetQMixIn(false)
-                            .setUser(USER)
-                            .setPassword(PASSWD);
+                            .setUser(ResourceDeployer.USER)
+                            .setPassword(ResourceDeployer.PASSWD);
         _hqMixIn.initialize();
     }
     

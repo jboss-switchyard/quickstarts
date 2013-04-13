@@ -31,10 +31,6 @@
     <artifactId>switchyard-as7-modules</artifactId>
     <name>SwitchYard: AS7 Modules</name>
     <description>SwitchYard AS7 Modules</description>
-    <!-- Temporary fix, will be removed in next upgrade to AS7 -->
-    <properties>
-        <version.weld.core>1.1.6.Final</version.weld.core>
-    </properties>
     <build>
         <plugins>
             <plugin>
@@ -310,11 +306,11 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-jca</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.switchyard.console</groupId>
             <artifactId>switchyard-console-application</artifactId>
             <classifier>resources</classifier>
-        </dependency>
+        </dependency>-->
         <!--
         H2Database...
         -->
@@ -329,17 +325,6 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
         -->
-        <!--
-        PicketLink...
-        -->
-        <dependency>
-            <groupId>org.picketlink</groupId>
-            <artifactId>picketlink-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.picketlink.distribution</groupId>
-            <artifactId>picketlink-jbas7</artifactId>
-        </dependency>
         <!--
         Riftsaw...
         -->
@@ -765,12 +750,6 @@
         <dependency>
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
-        </dependency>
-        <!-- Temporary fix, will be removed in next upgrade to AS7 -->
-        <dependency>
-            <groupId>org.jboss.weld</groupId>
-            <artifactId>weld-core</artifactId>
-            <version>${version.weld.core}</version>
         </dependency>
         <dependency>
             <groupId>com.jcraft</groupId>

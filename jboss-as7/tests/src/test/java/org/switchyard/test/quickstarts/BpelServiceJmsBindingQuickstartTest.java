@@ -46,22 +46,20 @@ public class BpelServiceJmsBindingQuickstartTest {
 
     private static final String REQUEST_QUEUE = "HelloRequestQueue";
     private static final String REPLY_QUEUE = "HelloReplyQueue";
-    private static final String USER = "guest";
-    private static final String PASSWD = "guestp";
     
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
         ResourceDeployer.addQueue(REQUEST_QUEUE);
         ResourceDeployer.addQueue(REPLY_QUEUE);
-        ResourceDeployer.addPropertiesUser(USER, PASSWD);
+        ResourceDeployer.addPropertiesUser();
         return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-bpel-service-jms-binding");
     }
 
     @Test
     public void testJmsBinding() throws Exception {
         HornetQMixIn hqMixIn = new HornetQMixIn(false)
-                                    .setUser(USER)
-                                    .setPassword(PASSWD);
+                                    .setUser(ResourceDeployer.USER)
+                                    .setPassword(ResourceDeployer.PASSWD);
         hqMixIn.initialize();
         
         Session session = null;

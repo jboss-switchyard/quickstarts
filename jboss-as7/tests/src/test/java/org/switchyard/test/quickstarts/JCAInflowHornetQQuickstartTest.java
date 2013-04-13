@@ -37,21 +37,19 @@ import org.switchyard.test.quickstarts.util.ResourceDeployer;
 public class JCAInflowHornetQQuickstartTest {
 
     private static final String QUEUE = "JCAInflowGreetingServiceQueue";
-    private static final String USER = "guest";
-    private static final String PASSWD = "guestp";
     
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
         ResourceDeployer.addQueue(QUEUE);
-        ResourceDeployer.addPropertiesUser(USER, PASSWD);
+        ResourceDeployer.addPropertiesUser();
         return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-jca-inflow-hornetq");
     }
 
     @Test
     public void testDeployment() throws Exception {
         HornetQMixIn hqMixIn = new HornetQMixIn(false)
-                                    .setUser(USER)
-                                    .setPassword(PASSWD);
+                                    .setUser(ResourceDeployer.USER)
+                                    .setPassword(ResourceDeployer.PASSWD);
         hqMixIn.initialize();
         
         try {

@@ -36,20 +36,12 @@
         <module>modules</module>
         <module>tests</module>
         <module>extension</module>
+        <module>bundle</module>
     </modules>
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-release-distribution</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-dist</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-connector</artifactId>
         </dependency>
         <!--
         Test dependencies...
@@ -62,21 +54,6 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-release-testutil</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>arquillian-container-test-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-arquillian-container-managed</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -291,7 +268,7 @@
         <profile>
             <id>openshift</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <modules>
                 <module>openshift</module>

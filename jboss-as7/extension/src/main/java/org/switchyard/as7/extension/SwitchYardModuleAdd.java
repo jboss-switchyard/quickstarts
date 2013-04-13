@@ -101,7 +101,7 @@ public final class SwitchYardModuleAdd extends AbstractAddStepHandler {
 
         context.addStep(new AbstractDeploymentChainStep() {
             protected void execute(DeploymentProcessorTarget processorTarget) {
-                processorTarget.addDeploymentProcessor(Phase.DEPENDENCIES, 0x4002, new SwitchYardModuleDependencyProcessor(moduleId));
+                processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 0x4002, new SwitchYardModuleDependencyProcessor(moduleId));
             }
         }, OperationContext.Stage.RUNTIME);
 

@@ -67,9 +67,9 @@ public final class SwitchYardSubsystemListApplications implements OperationStepH
                 for (Application application : switchYard.getApplications()) {
                     applications.add(application.getName().toString());
                 }
-                context.completeStep();
+                context.stepCompleted();
             }
         }, OperationContext.Stage.RUNTIME);
-        context.completeStep();
+        context.stepCompleted();
     }
 }

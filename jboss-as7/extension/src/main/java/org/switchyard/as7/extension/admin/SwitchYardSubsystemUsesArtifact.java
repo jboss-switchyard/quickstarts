@@ -85,9 +85,9 @@ public final class SwitchYardSubsystemUsesArtifact implements OperationStepHandl
                         applications.add(application.getName().toString());
                     }
                 }
-                context.completeStep();
+                context.stepCompleted();
             }
         }, OperationContext.Stage.RUNTIME);
-        context.completeStep();
+        context.stepCompleted();
     }
 }

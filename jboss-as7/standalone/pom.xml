@@ -33,7 +33,6 @@
     <name>SwitchYard: AS7 Standalone Parent</name>
     <description>SwitchYard AS7 Standalone Parent</description>
     <modules>
-        <module>bundle</module>
         <module>dist</module>
     </modules>
 </project>
