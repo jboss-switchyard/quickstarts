@@ -23,8 +23,7 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.quickstarts.camel.jpa.binding.domain.Greet;
@@ -41,7 +40,7 @@ public class PeriodicServiceImpl implements PeriodicService {
         "Tomo", "Lukasz", "Magesh", "Tom"
     };
 
-    private Logger _logger = LoggerFactory.getLogger(PeriodicServiceImpl.class);
+    private Logger _logger = Logger.getLogger(PeriodicServiceImpl.class);
 
     @Inject
     @Reference("StoreReference")
@@ -50,7 +49,7 @@ public class PeriodicServiceImpl implements PeriodicService {
     @Override
     public void execute() {
         Greet greet = createRandomGreet();
-        _logger.info("Sending {} to JPA _store", greet);
+        _logger.info("Sending " + greet + " to JPA store");
         _store.storeGreeting(greet);
     }
 

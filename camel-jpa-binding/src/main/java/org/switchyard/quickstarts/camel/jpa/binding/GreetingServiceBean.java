@@ -20,8 +20,7 @@ package org.switchyard.quickstarts.camel.jpa.binding;
 
 import java.text.SimpleDateFormat;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.switchyard.component.bean.Service;
 import org.switchyard.quickstarts.camel.jpa.binding.domain.Greet;
 
@@ -33,7 +32,7 @@ import org.switchyard.quickstarts.camel.jpa.binding.domain.Greet;
 @Service(GreetingService.class)
 public class GreetingServiceBean implements GreetingService {
 
-    private Logger _logger = LoggerFactory.getLogger(GreetingServiceBean.class);
+    private Logger _logger = Logger.getLogger(GreetingServiceBean.class);
 
     private static SimpleDateFormat FORMAT = new SimpleDateFormat("HH:mm:ss:SSS");
 
