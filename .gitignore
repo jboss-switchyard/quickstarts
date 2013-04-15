@@ -9,3 +9,4 @@ bin/
 *.ipr
 *.iws
 .DS_Store
+jca/transaction.log
