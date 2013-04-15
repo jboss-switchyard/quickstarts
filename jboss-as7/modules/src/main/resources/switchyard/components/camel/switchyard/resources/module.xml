@@ -34,6 +34,7 @@
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.common.camel"/>
         <module name="org.switchyard.component.common"/>
+        <module name="org.apache.log4j"/>
         <module name="org.switchyard.component.common.camel">
             <imports>
                 <include path="META-INF/services" />

@@ -29,8 +29,8 @@
     <dependencies>
         <module name="javax.api"/>
         <module name="javax.xml.stream.api"/>
-        <module name="org.apache.commons.logging"/>
-        <module name="org.slf4j"/>
+        <module name="org.apache.commons.logging" export="true"/>
+        <module name="org.slf4j" export="true"/>
         <module name="org.switchyard.jaxb-impl" services="export" export="true"/>
     </dependencies>
 </module>
