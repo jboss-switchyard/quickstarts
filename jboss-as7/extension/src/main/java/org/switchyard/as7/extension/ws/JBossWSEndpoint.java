@@ -19,12 +19,14 @@
  
 package org.switchyard.as7.extension.ws;
 
+import java.net.URL;
 import java.util.Map;
 import java.util.ServiceLoader;
 
 import org.apache.log4j.Logger;
 import org.jboss.wsf.spi.classloading.ClassLoaderProvider;
 import org.jboss.wsf.spi.deployment.Endpoint;
+import org.jboss.wsf.spi.metadata.webservices.JBossWebservicesMetaData;
 import org.jboss.wsf.spi.metadata.webservices.WebservicesMetaData;
 import org.jboss.wsf.spi.publish.Context;
 import org.jboss.wsf.spi.publish.EndpointPublisher;
@@ -32,6 +34,7 @@ import org.jboss.wsf.spi.publish.EndpointPublisherFactory;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.WebServicePublishException;
+import org.switchyard.component.soap.config.model.EndpointConfigModel;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.endpoint.BaseWebService;
 import org.switchyard.component.soap.endpoint.WSEndpoint;
@@ -71,8 +74,25 @@ public class JBossWSEndpoint implements WSEndpoint {
      * {@inheritDoc}
      */
     public void publish(String contextRoot, Map<String, String> urlPatternToClassNameMap, WebservicesMetaData wsMetadata, SOAPBindingModel bindingModel, InboundHandler handler) throws Exception {
+        EndpointConfigModel epcModel = bindingModel.getEndpointConfig();
+        JBossWebservicesMetaData jbwsMetadata = null;
+        if (epcModel != null) {
+            String configFile = epcModel.getConfigFile();
+            if (configFile != null) {
+                URL jbwsURL = Classes.getResource(configFile, getClass());
+                jbwsMetadata = new JBossWebservicesMetaData(jbwsURL);
+                jbwsMetadata.setConfigFile(configFile);
+            }
+            String configName = epcModel.getConfigName();
+            if (configName != null) {
+                if (jbwsMetadata == null) {
+                    jbwsMetadata = new JBossWebservicesMetaData(null);
+                }
+                jbwsMetadata.setConfigName(configName);
+            }
+        }
         ClassLoader tccl = Classes.getTCCL();
-        _context = _publisher.publish(contextRoot, tccl, urlPatternToClassNameMap, wsMetadata);
+        _context = _publisher.publish(contextRoot, tccl, urlPatternToClassNameMap, wsMetadata, jbwsMetadata);
         for (Endpoint ep : _context.getEndpoints()) {
             BaseWebService wsProvider = (BaseWebService)ep.getInstanceProvider().getInstance(BaseWebService.class.getName()).getValue();
             wsProvider.setInvocationClassLoader(tccl);

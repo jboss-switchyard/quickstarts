@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ JBoss, Home of Professional Open Source.
-  ~ Copyright 2011, Red Hat, Inc., and individual contributors
+  ~ Copyright 2013, Red Hat, Inc., and individual contributors
   ~ as indicated by the @author tags. See the copyright.txt file in the
   ~ distribution for a full listing of individual contributors.
   ~
@@ -39,7 +39,7 @@
 <xsl:template match="node()[name(.)='resources']">
     <xsl:copy>
         <xsl:apply-templates select="@*|node()"/>
-        <resource-root path="switchyard-console-application-resources.jar"/>
+        <resource-root path="jbossws-spi-2.1.2.Final.jar"/>
     </xsl:copy>
 </xsl:template>
 

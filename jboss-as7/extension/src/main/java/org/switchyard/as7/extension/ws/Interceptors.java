@@ -18,26 +18,31 @@
  */
 package org.switchyard.as7.extension.ws;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
-import org.apache.log4j.Logger;
-import org.apache.ws.security.handler.WSHandlerConstants;
+import org.apache.cxf.phase.AbstractPhaseInterceptor;
+import org.apache.cxf.phase.Phase;
+import org.jboss.security.SecurityContextAssociation;
 import org.jboss.wsf.spi.deployment.Endpoint;
 import org.jboss.wsf.stack.cxf.configuration.BusHolder;
 import org.jboss.wsf.stack.cxf.configuration.NonSpringBusHolder;
 import org.jboss.wsf.stack.cxf.deployment.EndpointImpl;
 import org.jboss.wsf.stack.cxf.security.authentication.SubjectCreatingInterceptor;
-import org.switchyard.common.lang.Strings;
+import org.jboss.wsf.stack.cxf.security.authentication.SubjectCreatingPolicyInterceptor;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.soap.config.model.InterceptorModel;
 import org.switchyard.component.soap.config.model.InterceptorsModel;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.config.model.property.PropertiesModel;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * Interceptor functions.
@@ -46,7 +51,10 @@ import org.switchyard.component.soap.config.model.SOAPBindingModel;
  */
 public final class Interceptors {
 
-    private static final Logger LOGGER = Logger.getLogger(Interceptors.class);
+    private static final Class<?>[][] PARAMETER_TYPES = new Class<?>[][]{
+        new Class<?>[]{Map.class},
+        new Class<?>[0]
+    };
 
     /**
      * Adds any binding model-configured inInterceptors and outInterceptors to the endpoint.
@@ -61,53 +69,12 @@ public final class Interceptors {
             for (Object o : list) {
                 for (org.apache.cxf.endpoint.Endpoint e : ((EndpointImpl)o).getService().getEndpoints().values()) {
                     e.getInInterceptors().addAll(getConfiguredInInterceptors(bindingModel, loader));
-                    e.getInInterceptors().addAll(getSecurityInInterceptors(bindingModel));
                     e.getOutInterceptors().addAll(getConfiguredOutInterceptors(bindingModel, loader));
+                    e.getOutInterceptors().add(new ClearSecurityContextOutInterceptor());
+                    e.getOutFaultInterceptors().add(new ClearSecurityContextOutFaultInterceptor());
                 }
             }
         }
-    }
-
-    private static List<Interceptor<? extends Message>> getSecurityInInterceptors(SOAPBindingModel bindingModel) {
-        List<Interceptor<? extends Message>> interceptors = new ArrayList<Interceptor<? extends Message>>();
-        /*
-        boolean addSecurity = false;
-        Model policyModel = null;
-        if (bindingModel.isServiceBinding()) {
-            policyModel = bindingModel.getService().getComponentService();
-        } else if (bindingModel.isReferenceBinding()) {
-            policyModel = bindingModel.getReference().getComponentReference();
-        }
-        if (policyModel != null) {
-            Set<String> requires = PolicyConfig.getRequires(policyModel);
-            for (SecurityPolicy securityPolicy : SecurityPolicy.values()) {
-                if (requires.contains(securityPolicy.getName())) {
-                    addSecurity = true;
-                    break;
-                }
-            }
-        }
-        if (addSecurity) {
-        */
-        String securityAction = Strings.trimToNull(bindingModel.getSecurityAction());
-        if (securityAction != null) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Adding WS-Security SubjectCreatingInterceptor with binding.soap:securityAction: " + securityAction);
-            }
-            Map<String, Object> sciProps = new HashMap<String, Object>();
-            //sciProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
-            sciProps.put(WSHandlerConstants.ACTION, securityAction);
-            SubjectCreatingInterceptor sci = new SubjectCreatingInterceptor(sciProps);
-            sci.setPropagateContext(true);
-            interceptors.add(sci);
-            interceptors.add(new ClearSecurityContextInterceptor());
-        } else {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("binding.soap:securityAction undefined; not adding WS-Security SubjectCreatingInterceptor");
-            }
-        }
-        //}
-        return interceptors;
     }
 
     /**
@@ -146,14 +113,78 @@ public final class Interceptors {
                     @SuppressWarnings("unchecked")
                     Class<T> interceptorClass = (Class<T>)interceptorModel.getClazz(loader);
                     if (interceptorClass != null) {
-                        T interceptor = Construction.construct(interceptorClass);
-                        interceptors.add(interceptor);
+                        PropertiesModel propertiesModel = interceptorModel.getProperties();
+                        Map<String, String> properties = propertiesModel != null ? propertiesModel.toMap() : new HashMap<String, String>();
+                        T interceptor = newInterceptor(interceptorClass, properties);
+                        if (interceptor != null) {
+                            if (interceptor instanceof SubjectCreatingInterceptor) {
+                                ((SubjectCreatingInterceptor)interceptor).setPropagateContext(true);
+                            } else if (interceptor instanceof SubjectCreatingPolicyInterceptor) {
+                                ((SubjectCreatingPolicyInterceptor)interceptor).setPropagateContext(true);
+                            }
+                            interceptors.add(interceptor);
+                        }
                     }
                 }
             }
         }
         return interceptors;
     }
+
+    private static <T extends Interceptor<? extends Message>> T newInterceptor(Class<T> interceptorClass, Map<String, String> properties) {
+        T interceptor = null;
+        Constructor<T> constructor = getConstructor(interceptorClass);
+        Class<?>[] parameterTypes = constructor != null ? constructor.getParameterTypes() : new Class<?>[0];
+        try {
+            if (parameterTypes.length == 0) {
+                interceptor = Construction.construct(interceptorClass);
+            } else if (parameterTypes.length == 1) {
+                interceptor = Construction.construct(interceptorClass, parameterTypes, new Object[]{properties});
+            }
+        } catch (Throwable t) {
+            throw new SwitchYardException("Could not instantiate interceptor class: " + interceptorClass.getName(), t);
+        }
+        return interceptor;
+    }
+
+    private static <T extends Interceptor<? extends Message>> Constructor<T> getConstructor(Class<T> interceptorClass) {
+        Constructor<T> constructor = null;
+        for (Class<?>[] parameterTypes : PARAMETER_TYPES) {
+            try {
+                constructor = interceptorClass.getConstructor(parameterTypes);
+                if (constructor != null) {
+                    break;
+                }
+            } catch (Throwable t) {
+                // keep checkstyle happy ("at least one statement")
+                t.getMessage();
+            }
+        }
+        return constructor;
+    }
+
+    private static class ClearSecurityContextInterceptor extends AbstractPhaseInterceptor<Message> {
+        private ClearSecurityContextInterceptor() {
+            super(Phase.POST_LOGICAL_ENDING);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void handleMessage(Message message) throws Fault {
+            SecurityContextAssociation.clearSecurityContext();
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void handleFault(Message message) {
+            SecurityContextAssociation.clearSecurityContext();
+        }
+    }
+    // class simple names must be unique
+    private static final class ClearSecurityContextOutInterceptor extends ClearSecurityContextInterceptor {}
+    private static final class ClearSecurityContextOutFaultInterceptor extends ClearSecurityContextInterceptor {}
 
     private Interceptors() {}
 

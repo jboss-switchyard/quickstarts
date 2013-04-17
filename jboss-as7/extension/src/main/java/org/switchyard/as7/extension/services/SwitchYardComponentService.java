@@ -105,7 +105,7 @@ public class SwitchYardComponentService implements Service<Component> {
     }
 
     private Configuration createEnvironmentConfig(ModelNode properties) {
-        Configuration envConfig = Configurations.emptyConfig();
+        Configuration envConfig = Configurations.newConfiguration();
         if (properties != null) {
             Set<String> propertyNames = properties.keys();
             if (propertyNames != null) {

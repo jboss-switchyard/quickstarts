@@ -34,7 +34,7 @@
     <description>SwitchYard AS7 Distribution</description>
     <properties>
         <staging.dir>${project.build.directory}/jboss-switchyard</staging.dir>
-        <redhat.eap6.dir> jboss-eap-${version.redhat.eap6}</redhat.eap6.dir>
+        <redhat.eap6.dir>jboss-eap-${version.redhat.eap6}</redhat.eap6.dir>
         <staging.jboss.dir>${staging.dir}/${redhat.eap6.dir}</staging.jboss.dir>
         <staging.configs.dir>${staging.dir}/configs</staging.configs.dir>
         <distro.file>switchyard-distribution-${project.version}</distro.file>
@@ -209,12 +209,20 @@
                             <stylesheet>${staging.jboss.dir}/xsl/domain.xsl</stylesheet>
                         </transformationSet>
                         <transformationSet>
-                            <dir>${staging.jboss.dir}/modules/org/jboss/as/console/main</dir>
+                            <dir>${staging.jboss.dir}/modules/system/layers/base/org/jboss/ws/spi/main</dir>
                             <includes>
                                 <include>module.xml</include>
                             </includes>
-                            <outputDir>${staging.jboss.dir}/modules/org/jboss/as/console/main</outputDir>
-                            <stylesheet>${staging.jboss.dir}/xsl/console_module.xsl</stylesheet>
+                            <outputDir>${staging.jboss.dir}/modules/system/layers/base/org/jboss/ws/spi/main</outputDir>
+                            <stylesheet>${staging.jboss.dir}/xsl/jbossws-spi_module.xsl</stylesheet>
+                        </transformationSet>
+                        <transformationSet>
+                            <dir>${staging.jboss.dir}/modules/system/layers/base/org/jboss/as/webservices/main</dir>
+                            <includes>
+                                <include>module.xml</include>
+                            </includes>
+                            <outputDir>${staging.jboss.dir}/modules/system/layers/base/org/jboss/as/webservices/main</outputDir>
+                            <stylesheet>${staging.jboss.dir}/xsl/jbossws-jboss720-server-integration_module.xsl</stylesheet>
                         </transformationSet>
                     </transformationSets>
                 </configuration>

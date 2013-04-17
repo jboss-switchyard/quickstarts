@@ -284,7 +284,8 @@
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
-		<antcall target="transform-console-module" />
+		<antcall target="transform-jbossws-spi-module" />
+		<antcall target="transform-jbossws-jboss720-server-integration-module" />
     </target>
 
     <target name="unzipQuickstartResources" unless="quickstartResourcesAlreadyInstalled">
@@ -338,14 +339,26 @@
         </pathconvert>
     </target>
 
-
-	<target name="transform-console-module">
-        <xslt style="res/console_module.xsl"
-              basedir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/console/${server}"
-              destdir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/console/${server}"
+	<target name="transform-jbossws-spi-module">
+        <xslt style="res/jbossws-spi_module.xsl"
+              basedir="${AS7_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"
+              destdir="${AS7_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"
               includes="module.xml"/>
-        <move overwrite="true" todir="${INSTALL_PATH}/modules/system/layers/base/org/jboss/as/console/${server}">
-          <filelist dir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/console/${server}">
+        <move overwrite="true" todir="${INSTALL_PATH}/modules/system/layers/base/org/jboss/ws/spi/main">
+          <filelist dir="${AS7_PATH}/modules/system/layers/base/org/jboss/ws/spi/main">
+            <file name="module.html"/>
+          </filelist>
+          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+    </target>
+
+	<target name="transform-jbossws-jboss720-server-integration-module">
+        <xslt style="res/jbossws-jboss720-server-integration_module.xsl"
+              basedir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/webservices/main"
+              destdir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/webservices/main"
+              includes="module.xml"/>
+        <move overwrite="true" todir="${INSTALL_PATH}/modules/system/layers/base/org/jboss/as/webservices/main">
+          <filelist dir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/webservices/main">
             <file name="module.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>

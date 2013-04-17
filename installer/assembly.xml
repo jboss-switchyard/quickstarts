@@ -47,7 +47,11 @@
             <outputDirectory>${installer.root.dir}/res</outputDirectory>
         </file>
         <file>
-            <source>${bundle.dir}/xsl/console_module.xsl</source>
+            <source>${bundle.dir}/xsl/jbossws-spi_module.xsl</source>
+            <outputDirectory>${installer.root.dir}/res</outputDirectory>
+        </file>
+        <file>
+            <source>${bundle.dir}/xsl/jbossws-jboss720-server-integration_module.xsl</source>
             <outputDirectory>${installer.root.dir}/res</outputDirectory>
         </file>
     </files>

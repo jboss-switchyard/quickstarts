@@ -31,7 +31,9 @@
         <module name="javax.api"/>
         <module name="javax.servlet.api"/>
         <module name="javax.wsdl4j.api"/>
-        <module name="org.apache.cxf"/>
+        <module name="org.apache.cxf" export="true"/>
+        <module name="org.apache.cxf.impl" export="true"/>
+        <module name="org.apache.ws.security" export="true"/>
         <module name="org.apache.log4j"/>
         <module name="org.jboss.as.webservices" export="true"/>
         <module name="org.jboss.ws.api" export="false"/>

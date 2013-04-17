@@ -111,6 +111,10 @@
       <componentDescriptor>src/main/resources/external/springframework/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/ws-impl/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/xstream/assembly-component.xml</componentDescriptor>
+
+      <!--JBossWS-CXF assemblies -->
+      <componentDescriptor>src/main/resources/external/jbossws/jbossws-spi/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/jbossws/jbossws-jboss720-server-integration/assembly-component.xml</componentDescriptor>
     </componentDescriptors>
 
 </assembly>

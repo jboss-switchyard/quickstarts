@@ -114,6 +114,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.jboss.ws</groupId>
+            <artifactId>jbossws-jboss720-server-integration</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.ws.cxf</groupId>
             <artifactId>jbossws-cxf-server</artifactId>
             <scope>provided</scope>

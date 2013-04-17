@@ -767,5 +767,16 @@
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
         </dependency>
+        <!--
+        JBossWS-CXF...
+        -->
+        <dependency>
+            <groupId>org.jboss.ws</groupId>
+            <artifactId>jbossws-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.ws</groupId>
+            <artifactId>jbossws-jboss720-server-integration</artifactId>
+        </dependency>
     </dependencies>
 </project>
