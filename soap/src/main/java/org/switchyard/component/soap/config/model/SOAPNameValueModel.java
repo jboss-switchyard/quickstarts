@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -18,28 +18,38 @@
  */
 package org.switchyard.component.soap.config.model;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
-import org.switchyard.config.model.ModelPuller;
+import org.switchyard.config.model.Model;
 
 /**
- * Test of SOAP binding model.
+ * A SOAP Value Model.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public class SOAPBindingModelTest {
+public interface SOAPNameValueModel extends Model {
 
-    private static final String SOAP_BINDING = "soap-binding-reference.xml";
-
-    @Test
-    public void testReadConfigBinding() throws Exception {
-        ModelPuller<SOAPBindingModel> puller = new ModelPuller<SOAPBindingModel>();
-        SOAPBindingModel binding = puller.pull(SOAP_BINDING, getClass());
-        binding.assertModelValid();
-        Assert.assertEquals("http://modified.com/phantom", binding.getEndpointAddress());
-        EndpointConfigModel endpointConfig = binding.getEndpointConfig();
-        Assert.assertEquals("myFile", endpointConfig.getConfigFile());
-        Assert.assertEquals("myName", endpointConfig.getConfigName());
+    /** Known XML element names. */
+    public enum SOAPName {
+        /** Known XML element names. */
+        wsdl, wsdlPort, socketAddr, contextPath, endpointAddress;
     }
+
+    /**
+     * Gets the name.
+     * @return the name
+     */
+    public SOAPName getName();
+
+    /**
+     * Gets the value.
+     * @return the value
+     */
+    public String getValue();
+
+    /**
+     * Sets the value.
+     * @param value the value
+     * @return this SOAPValueModel (useful for chaining)
+     */
+    public SOAPNameValueModel setValue(String value);
+
 }

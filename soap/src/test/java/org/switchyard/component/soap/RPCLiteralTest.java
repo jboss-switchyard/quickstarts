@@ -31,13 +31,13 @@ import javax.xml.transform.stream.StreamResult;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.config.model.v1.V1SOAPBindingModel;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
@@ -89,7 +89,6 @@ public class RPCLiteralTest {
         _domain.registerService(_config.getServiceName(), new OrderServiceInterface(), provider);
         _domain.registerServiceReference(_config.getServiceName(), new OrderServiceInterface());
         
-        _config.setPublishAsWS(true);
         _config.setSocketAddr(new SocketAddr(host, Integer.parseInt(port)));
         
         _soapInbound = new InboundHandler(_config, _domain);
@@ -100,7 +99,7 @@ public class RPCLiteralTest {
         _serviceURL = new URL("http://" + host + ":" + port + "/OrderServiceRPC");
 
         // A WS Consumer as Service
-        SOAPBindingModel config2 = new SOAPBindingModel();
+        SOAPBindingModel config2 = new V1SOAPBindingModel();
         config2.setWsdl(_serviceURL.toExternalForm() + "?wsdl");
         config2.setServiceName(consumerService.getServiceName());
         _soapOutbound = new OutboundHandler(config2);

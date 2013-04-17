@@ -19,9 +19,10 @@
 
 package org.switchyard.component.soap.config.model.v1;
 
+import org.switchyard.component.soap.config.model.EndpointConfigModel;
 import org.switchyard.component.soap.config.model.InterceptorModel;
 import org.switchyard.component.soap.config.model.InterceptorsModel;
-import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.config.model.SOAPNameValueModel.SOAPName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
@@ -29,6 +30,10 @@ import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composer.ContextMapperModel;
 import org.switchyard.config.model.composer.MessageComposerModel;
 import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.property.PropertiesModel;
+import org.switchyard.config.model.property.PropertyModel;
+import org.switchyard.config.model.property.v1.V1PropertiesModel;
+import org.switchyard.config.model.property.v1.V1PropertyModel;
 
 /**
  * Marshaller for SOAP Gateway configurations.
@@ -57,15 +62,27 @@ public class V1SOAPMarshaller extends BaseMarshaller {
         Descriptor desc = getDescriptor();
         String name = config.getName();
         if (name.startsWith(BindingModel.BINDING)) {
-            return new SOAPBindingModel(config, desc);
+            return new V1SOAPBindingModel(config, desc);
         } else if (name.equals(ContextMapperModel.CONTEXT_MAPPER)) {
             return new V1SOAPContextMapperModel(config, desc);
         } else if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
             return new V1SOAPMessageComposerModel(config, desc);
+        } else if (name.equals(EndpointConfigModel.ENDPOINT_CONFIG)) {
+            return new V1EndpointConfigModel(config, desc);
         } else if (name.equals(InterceptorsModel.IN_INTERCEPTORS) || name.equals(InterceptorsModel.OUT_INTERCEPTORS)) {
             return new V1InterceptorsModel(config, desc);
         } else if (name.equals(InterceptorModel.INTERCEPTOR)) {
             return new V1InterceptorModel(config, desc);
+        } else if (name.equals(PropertiesModel.PROPERTIES)) {
+            return new V1PropertiesModel(config, desc);
+        } else if (name.equals(PropertyModel.PROPERTY)) {
+            return new V1PropertyModel(config, desc);
+        } else {
+            for (SOAPName n : SOAPName.values()) {
+                if (n.name().equals(name)) {
+                    return new V1SOAPNameValueModel(config, desc);
+                }
+            }
         }
         return null;
     }

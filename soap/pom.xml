@@ -43,29 +43,6 @@
                     </delimiters>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <classpathDependencyExcludes>
-                        <classpathDependencyExclude>org.apache.cxf:cxf-rt-frontend-jaxws</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.apache.cxf:cxf-api</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.apache.cxf:cxf-rt-bindings-soap</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.apache.cxf:cxf-rt-bindings-xml</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.apache.cxf:cxf-rt-ws-security</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.apache.cxf:cxf-common-utilities</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.jboss.ws:jbossws-spi</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.jboss.ws:jbossws-api</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.jboss.ws.cxf:jbossws-cxf-server</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.jboss.ws.cxf:jbossws-cxf-client</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.jboss.ws:jbossws-common-tools</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.jboss.ws.cxf:jbossws-cxf-transports-httpserver</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.jboss.ws.projects:jaxws-jboss-httpserver-httpspi</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.jboss.ws:jbossws-common</classpathDependencyExclude>
-                        <classpathDependencyExclude>org.jboss.ws.cxf:jbossws-cxf-factories</classpathDependencyExclude>
-                    </classpathDependencyExcludes>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
     <dependencies>

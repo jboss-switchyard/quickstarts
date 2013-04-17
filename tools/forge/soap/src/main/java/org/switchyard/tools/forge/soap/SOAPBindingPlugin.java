@@ -35,12 +35,13 @@ import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.config.model.v1.V1SOAPBindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
-import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 import org.switchyard.tools.forge.common.CommonFacet;
+import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
  * Forge commands related to SOAP bindings.
@@ -97,7 +98,7 @@ public class SOAPBindingPlugin implements Plugin {
             service.setInterface(intf);
         }
         
-        SOAPBindingModel binding = new SOAPBindingModel();
+        SOAPBindingModel binding = new V1SOAPBindingModel();
         binding.setWsdl(wsdlLocation);
         if (socketAddr != null) {
             binding.setSocketAddr(new SocketAddr(socketAddr));
@@ -151,7 +152,7 @@ public class SOAPBindingPlugin implements Plugin {
             reference.setInterface(intf);
         }
         
-        SOAPBindingModel binding = new SOAPBindingModel();
+        SOAPBindingModel binding = new V1SOAPBindingModel();
         binding.setWsdl(wsdlLocation);
         if (portName != null) {
             binding.setPort(new PortName(portName));

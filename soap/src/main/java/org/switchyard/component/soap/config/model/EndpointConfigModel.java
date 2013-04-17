@@ -18,46 +18,44 @@
  */
 package org.switchyard.component.soap.config.model;
 
-import org.switchyard.config.model.NamedModel;
-import org.switchyard.config.model.property.PropertiesModel;
+import org.switchyard.config.model.Model;
 
 /**
- * A Interceptor Model.
+ * A EndpointConfig Model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public interface InterceptorModel extends NamedModel {
+public interface EndpointConfigModel extends Model {
 
     /**
-     * The interceptor XML element.
+     * The endpointConfig XML element.
      */
-    public static final String INTERCEPTOR = "interceptor";
+    public static final String ENDPOINT_CONFIG = "endpointConfig";
 
     /**
-     * Gets the Interceptor class.
-     * @param loader the ClassLoader to use
-     * @return the Interceptor class
+     * Gets the configFile.
+     * @return the configFile
      */
-    public Class<?> getClazz(ClassLoader loader);
+    public String getConfigFile();
 
     /**
-     * Sets the Interceptor class.
-     * @param clazz the Interceptor class
-     * @return this InterceptorModel (useful for chaining)
+     * Sets the configFile.
+     * @param configFile the configFile
+     * @return this EndpointConfigModel (useful for chaining)
      */
-    public InterceptorModel setClazz(Class<?> clazz);
+    public EndpointConfigModel setConfigFile(String configFile);
 
     /**
-     * Gets the child properties model.
-     * @return the child properties model
+     * Gets the configName.
+     * @return the configName
      */
-    public PropertiesModel getProperties();
+    public String getConfigName();
 
     /**
-     * Sets the child properties model.
-     * @param properties the child properties model
-     * @return this InterceptorModel (useful for chaining)
+     * Sets the configName.
+     * @param configName the configName
+     * @return this EndpointConfigModel (useful for chaining)
      */
-    public InterceptorModel setProperties(PropertiesModel properties);
+    public EndpointConfigModel setConfigName(String configName);
 
 }

@@ -59,7 +59,7 @@ public class HttpBindingModel extends V1BindingModel {
     private String _method;
     private String _contentType;
 
-    private Configuration _environment = Configurations.emptyConfig();
+    private Configuration _environment = Configurations.newConfiguration();
 
     /**
      * Constructor.

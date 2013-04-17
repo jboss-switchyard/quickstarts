@@ -97,29 +97,37 @@ MA  02110-1301, USA.
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="securityAction" type="string" minOccurs="0" maxOccurs="1">
+                    <element name="endpointConfig" type="soap:EndpointConfigType" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>
-                                The security action, valid values being a blank separated list of actions as specified in
-                                org.apache.ws.security.handler.WSHandlerConstants
+                                The JBossWS @EndpointConfig to add
                             </documentation>
                         </annotation>
                     </element>
                     <element name="inInterceptors" type="soap:InterceptorsType" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>
-                                The Apache CXF InInterceptors to add
+                                The Apache CXF @InInterceptors to add
                             </documentation>
                         </annotation>
                     </element>
                     <element name="outInterceptors" type="soap:InterceptorsType" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>
-                                The Apache CXF OutInterceptors to add
+                                The Apache CXF @OutInterceptors to add
                             </documentation>
                         </annotation>
                     </element>
                 </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="EndpointConfigType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="configFile" type="string" use="optional"/>
+                <attribute name="configName" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
@@ -138,7 +146,31 @@ MA  02110-1301, USA.
     <complexType name="InterceptorType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="soap:properties" minOccurs="0" maxOccurs="1"/>
+                </sequence>
                 <attribute name="class" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="properties" type="soap:PropertiesType"/>
+    <complexType name="PropertiesType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="soap:property" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="property" type="soap:PropertyType"/>
+    <complexType name="PropertyType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="name" type="string" use="required"/>
+                <attribute name="value" type="string" use="required"/>
             </extension>
         </complexContent>
     </complexType>

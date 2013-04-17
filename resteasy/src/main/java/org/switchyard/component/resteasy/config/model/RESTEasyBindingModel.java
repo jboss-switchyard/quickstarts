@@ -57,7 +57,7 @@ public class RESTEasyBindingModel extends V1BindingModel {
     private String _resourceInterfaces;
     private String _contextPath;
 
-    private Configuration _environment = Configurations.emptyConfig();
+    private Configuration _environment = Configurations.newConfiguration();
 
     /**
      * Constructor.

@@ -1,4 +1,5 @@
 <soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
     <soap:wsdl>Foo.wsdl</soap:wsdl>
     <soap:endpointAddress>http://modified.com/phantom</soap:endpointAddress>
+    <soap:endpointConfig configFile="myFile" configName="myName"/>
 </soap:binding.soap>

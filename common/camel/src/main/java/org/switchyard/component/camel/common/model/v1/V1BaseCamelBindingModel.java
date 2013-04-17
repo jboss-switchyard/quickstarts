@@ -49,7 +49,7 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel
      */
     public static final String CAMEL = "camel";
 
-    private Configuration _environment = Configurations.emptyConfig();
+    private Configuration _environment = Configurations.newConfiguration();
 
     /**
      * 

@@ -19,59 +19,52 @@
 package org.switchyard.component.soap.config.model.v1;
 
 import static org.switchyard.component.soap.config.model.SOAPBindingModel.DEFAULT_NAMESPACE;
-import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
 
-import org.switchyard.common.type.Classes;
-import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.component.soap.config.model.InterceptorModel;
+import org.switchyard.component.soap.config.model.EndpointConfigModel;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.BaseNamedModel;
+import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.property.PropertiesModel;
 
 /**
  * The 1st version InterceptorModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public class V1InterceptorModel extends BaseNamedModel implements InterceptorModel {
+public class V1EndpointConfigModel extends BaseModel implements EndpointConfigModel {
 
-    private PropertiesModel _properties;
+    private static final String CONFIG_FILE = "configFile";
+    private static final String CONFIG_NAME = "configName";
 
     /**
      * Creates a new InterceptorModel.
      */
-    public V1InterceptorModel() {
-        super(XMLHelper.createQName(DEFAULT_NAMESPACE, INTERCEPTOR));
-        setModelChildrenOrder(PROPERTIES);
+    public V1EndpointConfigModel() {
+        super(ENDPOINT_CONFIG, DEFAULT_NAMESPACE);
     }
 
     /**
-     * Creates a new InterceptorModel with the specified configuration and descriptor.
+     * Creates a new EndpointConfigModel with the specified configuration and descriptor.
      * @param config the configuration
      * @param desc the descriptor
      */
-    public V1InterceptorModel(Configuration config, Descriptor desc) {
+    public V1EndpointConfigModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(PROPERTIES);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<?> getClazz(ClassLoader loader) {
-        String c = getModelAttribute("class");
-        return c != null ? Classes.forName(c, loader) : null;
+    public String getConfigFile() {
+        return getModelAttribute(CONFIG_FILE);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public InterceptorModel setClazz(Class<?> clazz) {
-        String c = clazz != null ? clazz.getName() : null;
-        setModelAttribute("class", c);
+    public EndpointConfigModel setConfigFile(String configFile) {
+        setModelAttribute(CONFIG_FILE, configFile);
         return this;
     }
 
@@ -79,20 +72,16 @@ public class V1InterceptorModel extends BaseNamedModel implements InterceptorMod
      * {@inheritDoc}
      */
     @Override
-    public PropertiesModel getProperties() {
-        if (_properties == null) {
-            _properties = (PropertiesModel)getFirstChildModel(PROPERTIES);
-        }
-        return _properties;
+    public String getConfigName() {
+        return getModelAttribute(CONFIG_NAME);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public InterceptorModel setProperties(PropertiesModel properties) {
-        setChildModel(properties);
-        _properties = properties;
+    public EndpointConfigModel setConfigName(String configName) {
+        setModelAttribute(CONFIG_NAME, configName);
         return this;
     }
 

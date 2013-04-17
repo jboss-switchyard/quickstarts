@@ -54,6 +54,7 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.composer.SOAPComposition;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.config.model.v1.V1SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.CompositeModel;
@@ -168,7 +169,6 @@ public class SOAPGatewayTest {
         // Service exposed as WS
         _soapInbound11 = new InboundHandler(_config, _domain);
 
-        _config.setPublishAsWS(true);
         _config.setSocketAddr(new SocketAddr(host, Integer.parseInt(port)));
 
         _soapInbound11.start();
@@ -176,7 +176,7 @@ public class SOAPGatewayTest {
         _serviceURL = new URL("http://" + host + ":" + port + "/HelloWebService");
 
         // A WS Consumer as Service
-        SOAPBindingModel config2 = new SOAPBindingModel();
+        SOAPBindingModel config2 = new V1SOAPBindingModel();
         config2.setWsdl(_serviceURL.toExternalForm() + "?wsdl");
         config2.setServiceName(_consumerService11.getServiceName());
         _soapOutbound11_1 = new OutboundHandler(config2);
@@ -184,7 +184,7 @@ public class SOAPGatewayTest {
         // Hack for Test Runner. Register a service to test outbound.
         _domain.registerService(_consumerService11.getServiceName(), new HelloWebServiceInterface(), _soapOutbound11_1);
 
-        SOAPBindingModel config3 = new SOAPBindingModel();
+        SOAPBindingModel config3 = new V1SOAPBindingModel();
         config3.setWsdl(_config.getWsdl());
         config3.setServiceName(_consumerCPWsdl.getServiceName());
         _soapOutbound11_2 = new OutboundHandler(config3);
@@ -197,7 +197,6 @@ public class SOAPGatewayTest {
 
         compositeService = composite.getServices().get(0);
         SOAPBindingModel _config12 = (SOAPBindingModel)compositeService.getBindings().get(0);
-        _config12.setPublishAsWS(true);
         _config12.setSocketAddr(new SocketAddr(host, Integer.parseInt(port)));
 
         // Massive hack for Test Runner. Register both a service and a reference binding.
@@ -211,7 +210,7 @@ public class SOAPGatewayTest {
         // We cannot use HelloWebServiceXXX, because the context path suffix XXX is ignored by JAXWS
         URL serviceURL = new URL("http://" + host + ":" + port + "/HelloSOAP12Service");
 
-        SOAPBindingModel config4 = new SOAPBindingModel();
+        SOAPBindingModel config4 = new V1SOAPBindingModel();
         config4.setWsdl(serviceURL.toExternalForm() + "?wsdl");
         config4.setServiceName(_consumerService12.getServiceName());
         _soapOutbound12_1 = new OutboundHandler(config4);
