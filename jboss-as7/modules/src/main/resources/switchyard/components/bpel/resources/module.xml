@@ -91,7 +91,7 @@
         <module name="org.jboss.msc" />
 
 		    <!-- Required by bpel2svg module -->
-        <module name="batik" />
+        <module name="org.apache.xmlgraphics" />
         <module name="org.codehaus.jettison" />
         
         <module name="org.jaxen"/>

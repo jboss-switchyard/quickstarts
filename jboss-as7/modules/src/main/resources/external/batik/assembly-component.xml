@@ -26,35 +26,35 @@
   <files>
     <file>
       <source>src/main/resources/external/batik/module.xml</source>
-      <outputDirectory>/modules/system/layers/soa/batik/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/xmlgraphics/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/system/layers/soa/batik/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/xmlgraphics/main</outputDirectory>
       <includes>
-        <include>batik:batik-anim</include>
-        <include>batik:batik-awt-util</include>
-        <include>batik:batik-bridge</include>
-        <include>batik:batik-codec</include>
-        <include>batik:batik-css</include>
-        <include>batik:batik-dom</include>
-        <include>batik:batik-ext</include>
-        <include>batik:batik-gvt</include>
-        <include>batik:batik-parser</include>
-        <include>batik:batik-script</include>
-        <include>batik:batik-svg-dom</include>
-        <include>batik:batik-svggen</include>
-        <include>batik:batik-transcoder</include>
-        <include>batik:batik-util</include>
-        <include>batik:batik-xml</include>
+        <include>org.apache.xmlgraphics:batik-anim</include>
+        <include>org.apache.xmlgraphics:batik-awt-util</include>
+        <include>org.apache.xmlgraphics:batik-bridge</include>
+        <include>org.apache.xmlgraphics:batik-codec</include>
+        <include>org.apache.xmlgraphics:batik-css</include>
+        <include>org.apache.xmlgraphics:batik-dom</include>
+        <include>org.apache.xmlgraphics:batik-ext</include>
+        <include>org.apache.xmlgraphics:batik-gvt</include>
+        <include>org.apache.xmlgraphics:batik-parser</include>
+        <include>org.apache.xmlgraphics:batik-script</include>
+        <include>org.apache.xmlgraphics:batik-svg-dom</include>
+        <include>org.apache.xmlgraphics:batik-svggen</include>
+        <include>org.apache.xmlgraphics:batik-transcoder</include>
+        <include>org.apache.xmlgraphics:batik-util</include>
+        <include>org.apache.xmlgraphics:batik-xml</include>
       </includes>
       <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>/modules/system/layers/soa/batik/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/xmlgraphics/main</outputDirectory>
       <includes>
         <include>org.apache.ws.commons.axiom:axiom-api</include>
         <include>org.apache.ws.commons.axiom:axiom-impl</include>
@@ -63,7 +63,7 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>/modules/system/layers/soa/batik/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/xmlgraphics/main</outputDirectory>
       <includes>
         <include>xml-apis:xml-apis</include>
         <include>xml-apis:xml-apis-ext</include>
