@@ -9,7 +9,7 @@
         </service>
         <component name="WorkService">
             <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demo.policy.security.cert.WorkServiceBean"/>
-            <service name="WorkService" requires="confidentiality authorization clientAuthentication">
+            <service name="WorkService" requires="confidentiality clientAuthentication authorization">
                 <interface.java interface="org.switchyard.quickstarts.demo.policy.security.cert.WorkService"/>
             </service>
         </component>
@@ -25,7 +25,7 @@
             <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
         </handlers>
         -->
-        <security callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler" moduleName="policy-security-cert" rolesAllowed="analysts">
+        <security callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler" moduleName="policy-security-cert" rolesAllowed="friend">
             <properties>
                 <property name="alias" value="users"/>
             </properties>

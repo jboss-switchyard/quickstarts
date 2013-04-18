@@ -40,12 +40,10 @@ public final class WorkServiceMain {
 
     private static final String MAVEN_USAGE = String.format("Maven Usage: mvn exec:java -Dexec.args=\"%s %s %s\"", CONFIDENTIALITY, CLIENT_AUTHENTICATION, HELP);
 
-    private static void invokeWorkService(String scheme, int port, String usernameToken) throws Exception {
+    private static void invokeWorkService(String scheme, int port, String username) throws Exception {
         String soapRequest = new StringPuller().pull("/xml/soap-request.xml").replaceAll("WORK_CMD", "CMD-" + System.currentTimeMillis());
         HTTPMixIn http = new HTTPMixIn();
-        if (usernameToken != null) {
-            soapRequest = soapRequest.replaceFirst("<!-- UsernameToken -->", usernameToken);
-        }
+        soapRequest = soapRequest.replaceFirst("<!-- Username -->", username);
         http.initialize();
         try {
             String endpoint = String.format("%s://localhost:%s/policy-security-wss-username/WorkService", scheme, port);
@@ -53,7 +51,7 @@ public final class WorkServiceMain {
             LOGGER.info(String.format("Invoking work service at endpoint: %s", endpoint));
             String soapResponse = http.postString(endpoint, soapRequest);
             //LOGGER.info(String.format("Received work service response: %s", soapResponse));
-            if (soapResponse.contains("fault")) {
+            if (soapResponse.toLowerCase().contains("fault")) {
                 throw new Exception("Error invoking work service (check server log)");
             }
         } finally {
@@ -87,8 +85,8 @@ public final class WorkServiceMain {
                 scheme = "http";
                 port = 8080;
             }
-            String usernameToken = policies.contains(CLIENT_AUTHENTICATION) ? new StringPuller().pull("/xml/UsernameToken.xml") : null;
-            invokeWorkService(scheme, port, usernameToken);
+            String username = policies.contains(CLIENT_AUTHENTICATION) ? "kermit" : "misspiggy";
+            invokeWorkService(scheme, port, username);
         }
     }
 

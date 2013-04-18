@@ -5,26 +5,6 @@ service invocation.  The only service in the application is a Bean service calle
 SSL is used for "confidentiality", and WS-Security UsernameToken is used for "clientAuthentication".
 
 
-Upgrading JBossWS-CXF
-=====================
-
-It is necessary to upgrade the version of JBossWS-CXF included in AS7 for this quickstart to work:
-
-1. Browse to http://www.jboss.org/jbossws/downloads
-2. Download jbossws-cxf-4.1.1.Final.
-3. Extract the archive:
-    unzip jbossws-cxf-4.1.1.Final.zip
-4. Specify the location of your Switchyard-AS7 installation:
-    cd jbossws-cxf-bin-dist/
-    cp ant.properties.example ant.properties
-    vi ant.properties
-    Replace this:
-        jboss711.home=@jboss711.home@
-    With this:
-        jboss711.home=(your-file-path-to-AS7)
-5. Run the upgrade:
-    ant deploy-jboss711
-
 Running the quickstart
 ======================
 
@@ -38,10 +18,10 @@ Running the quickstart
 4. Create an application user:
     cd ${AS7}/bin
     sh ./add-user.sh
-    Add username "kermit", password "thefrog", and role "analysts".
-6. Deploy the quickstart
+    Add username "kermit", password "the-frog-1", and role "friend".
+5. Deploy the quickstart
     cp target/switchyard-quickstart-demo-policy-security-wss-username.jar ${AS7}/standalone/deployments
-7. Start JBoss AS 7 in standalone mode:
+6. Start JBoss AS 7 in standalone mode:
     sh ./standalone.sh
 7. Execute the test
     See "Options" section below.
@@ -57,17 +37,25 @@ When running with no options:
 
     mvn exec:java
 
-, you will be hitting the http (non-SSL) URL, and see this in your log:
+, you will be hitting the http (non-SSL) URL without providing authentication information, and see this in your log:
 
-    Caused by: org.switchyard.exception.SwitchYardException: Required policies have not been provided: authorization clientAuthentication confidentiality
+    Caused by: org.apache.ws.security.WSSecurityException: Failed Authentication : Subject has not been created
+
+When running with this option:
+
+    mvn exec:java -Dexec.args="clientAuthentication"
+
+, you will be hitting the http (non-SSL) URL while providing authentication information, and see this in your log:
+
+    Caused by: org.switchyard.exception.SwitchYardException: Required policies have not been provided: confidentiality
 
 When running with this option:
 
     mvn exec:java -Dexec.args="confidentiality clientAuthentication"
 
-, you will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
+, you will be hitting the https (SSL) URL while providing authentication information, and see this in your log:
 
     INFO  [org.switchyard.quickstarts.demo.policy.security.wss.username.WorkServiceBean] (http--127.0.0.1-8443-1) :: WorkService :: Received work command => CMD-1345738943385
 
-You can play with the exec.args and only specify one of "confidentiality" or "clientAuthentication". I bet you can guess what will happen... ;)
+Success!
 
