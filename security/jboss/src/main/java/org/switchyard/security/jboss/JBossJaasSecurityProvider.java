@@ -73,4 +73,19 @@ public class JBossJaasSecurityProvider extends JaasSecurityProvider {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean clear(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
+        boolean success = super.clear(serviceSecurity, securityContext);
+        try {
+            SecurityContextAssociation.clearSecurityContext();
+        } catch (Throwable t) {
+            LOGGER.error("Problem clearing SecurityContextAssociation: " + t.getMessage(), t);
+            success = false;
+        }
+        return success;
+    }
+
 }

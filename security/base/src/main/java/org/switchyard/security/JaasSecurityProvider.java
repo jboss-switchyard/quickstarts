@@ -134,6 +134,15 @@ public class JaasSecurityProvider extends SecurityProvider {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean clear(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
+        securityContext.clear();
+        return true;
+    }
+
+    /**
      * Gets the security domain from the ServiceSecurity.
      * @param serviceSecurity the ServiceSecurity
      * @return the security domain

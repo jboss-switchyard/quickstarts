@@ -215,11 +215,7 @@ public class ExchangeImpl implements SecurityExchange {
             }
             _log.warn("Fault generated during exchange without a handler: " + faultContent);
         } else {
-            try {
-                _dispatch.dispatch(this);
-            } finally {
-                _securityContext.clear();
-            }
+            _dispatch.dispatch(this);
         }
         
         // Notify exchange completion

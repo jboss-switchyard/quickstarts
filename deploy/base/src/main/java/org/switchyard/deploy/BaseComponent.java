@@ -32,7 +32,7 @@ import org.switchyard.config.Configurations;
 public abstract class BaseComponent implements Component {
 
     private String _name;
-    private Configuration _config = Configurations.emptyConfig();
+    private Configuration _config = Configurations.newConfiguration();
     private List<String> _activationTypes = new LinkedList<String>();
 
     protected BaseComponent(String ... types) {

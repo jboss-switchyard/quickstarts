@@ -130,6 +130,7 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
             .processRef(VALIDATION.name())
             .processRef(TRANSFORMATION.name())
             .processRef(VALIDATION.name())
+            .processRef(SECURITY.name())
             .processRef(CONSUMER_CALLBACK.name());
     }
 

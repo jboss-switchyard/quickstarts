@@ -41,12 +41,40 @@ import org.switchyard.config.model.composite.CompositeModel;
  */
 public final class Configurations {
 
+    private static final QName DEFAULT_QNAME = XMLHelper.createQName(Configuration.class.getSimpleName().toLowerCase());
+
     // HACK: SWITCHYARD-145
     private static final QName COMPOSITE_QNAME = XMLHelper.createQName(CompositeModel.DEFAULT_NAMESPACE, CompositeModel.COMPOSITE);
 
     private static final QName SCHEMA_LOCATION_QNAME = XMLHelper.createQName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation");
 
     private Configurations() {}
+
+    /**
+     * Creates a new Configuration with the name "configuration".
+     * @return the new Configuration
+     */
+    public static Configuration newConfiguration() {
+        return newConfiguration(DEFAULT_QNAME);
+    }
+
+    /**
+     * Creates a new Configuration with the specified name.
+     * @param name the specified name, which will get parsed into a qualified name
+     * @return the new Configuration
+     */
+    public static Configuration newConfiguration(String name) {
+        return newConfiguration(XMLHelper.createQName(name));
+    }
+
+    /**
+     * Creates a new Configuration with the specified qualified name.
+     * @param qname the specified qualified name
+     * @return the new Configuration
+     */
+    public static Configuration newConfiguration(QName qname) {
+        return new ConfigurationPuller().pull(qname);
+    }
 
     /**
      * Merges two configs into a new config.
@@ -79,14 +107,6 @@ public final class Configurations {
         recursiveMerge(fromConfig.copy(), mergedConfig, fromOverridesTo);
         mergedConfig.orderChildren();
         return mergedConfig;
-    }
-
-    /**
-     * Create an empty properties config.
-     * @return the newly created config
-     */
-    public static Configuration emptyConfig() {
-        return new ConfigurationPuller().pull(new QName("properties"));
     }
 
     private static void recursiveMerge(Configuration from_config, Configuration merged_config, boolean from_overrides_merged) {

@@ -76,13 +76,13 @@ public class LocalExchangeBus implements ExchangeBus {
         _requestChain.addLast("transformation", transformHandler);
         _requestChain.addLast("validation-after-transform", validateHandler);
         _requestChain.addLast("provider", new ProviderHandler());
-
         _requestChain.addLast("transaction-post-invoke", transactionHandler);
         
         _replyChain = new DefaultHandlerChain();
         _replyChain.addLast("validation-before-transform", validateHandler);
         _replyChain.addLast("transformation", transformHandler);
         _replyChain.addLast("validation-after-transform", validateHandler);
+        _replyChain.addLast("security", securityHandler);
         _replyChain.addLast(HandlerChain.CONSUMER_HANDLER, new BaseHandler());
     }
 

@@ -82,6 +82,14 @@ public abstract class SecurityProvider {
    public abstract boolean checkRolesAllowed(ServiceSecurity serviceSecurity, SecurityContext securityContext);
 
    /**
+    * Clears the SecurityContext and any underlying SecurityContextAssociation.
+    * @param serviceSecurity the ServiceSecurity
+    * @param securityContext the SecurityContext
+    * @return whether the clear was successful
+    */
+   public abstract boolean clear(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+
+   /**
     * Gets the singleton instance of the SecurityProvider.
     * @return the singleton instance of the SecurityProvider
     */

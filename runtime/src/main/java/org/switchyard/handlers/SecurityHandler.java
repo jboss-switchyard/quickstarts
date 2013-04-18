@@ -61,8 +61,8 @@ public class SecurityHandler extends BaseHandler {
      */
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
+        SecurityContext securityContext = SecurityContext.get(exchange);
         if (IN.equals(exchange.getPhase())) {
-            SecurityContext securityContext = SecurityContext.get(exchange);
             if (isRequired(exchange, CONFIDENTIALITY) && !isProvided(exchange, CONFIDENTIALITY)) {
                 if (isConfidentialityProvided(securityContext)) {
                     provide(exchange, CONFIDENTIALITY);
@@ -92,7 +92,17 @@ public class SecurityHandler extends BaseHandler {
                     provide(exchange, AUTHORIZATION);
                 }
             }
+        } else {
+            _securityProvider.clear(_serviceSecurity, securityContext);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void handleFault(Exchange exchange) {
+        _securityProvider.clear(_serviceSecurity, SecurityContext.get(exchange));
     }
 
     private boolean isConfidentialityProvided(SecurityContext securityContext) {
