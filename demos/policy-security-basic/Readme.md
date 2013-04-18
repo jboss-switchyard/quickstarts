@@ -18,10 +18,10 @@ Running the quickstart
 4. Create an application user:
     cd ${AS7}/bin
 	sh ./add-user.sh
-	Add username "kermit", password "thefrog", and role "analysts".
-6. Deploy the quickstart
+	Add username "kermit", password "the-frog-1", and role "friend".
+5. Deploy the quickstart
     cp target/switchyard-quickstart-demo-policy-security-basic.jar ${AS7}/standalone/deployments
-7. Start JBoss AS 7 in standalone mode:
+6. Start JBoss AS 7 in standalone mode:
     sh ./standalone.sh
 7. Execute the test
     See "Options" section below.

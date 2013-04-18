@@ -59,7 +59,7 @@ public final class WorkServiceMain {
             LOGGER.info(String.format("Invoking work service at endpoint: %s", endpoint));
             String soapResponse = http.postString(endpoint, soapRequest);
             //LOGGER.info(String.format("Received work service response: %s", soapResponse));
-            if (soapResponse.contains("fault")) {
+            if (soapResponse.toLowerCase().contains("fault")) {
                 throw new Exception("Error invoking work service (check server log)");
             }
         } finally {
@@ -93,7 +93,7 @@ public final class WorkServiceMain {
                 scheme = "http";
                 port = 8080;
             }
-            String[] userPass = policies.contains(CLIENT_AUTHENTICATION) ? new String[]{"kermit", "thefrog"} : null;
+            String[] userPass = policies.contains(CLIENT_AUTHENTICATION) ? new String[]{"kermit", "the-frog-1"} : null;
             invokeWorkService(scheme, port, userPass);
         }
     }
