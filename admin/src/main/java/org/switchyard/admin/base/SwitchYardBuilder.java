@@ -23,9 +23,14 @@ import java.util.EventObject;
 import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
+import org.switchyard.admin.Application;
 import org.switchyard.admin.ComponentReference;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.ServiceOperation;
+import org.switchyard.admin.SwitchYard;
+import org.switchyard.admin.mbean.internal.LocalManagement;
+import org.switchyard.admin.mbean.internal.MBeans;
+import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.event.ApplicationDeployedEvent;
 import org.switchyard.deploy.event.ApplicationUndeployedEvent;
 import org.switchyard.deploy.internal.AbstractDeployment;
@@ -44,15 +49,59 @@ import org.switchyard.runtime.event.ExchangeCompletionEvent;
 public class SwitchYardBuilder implements EventObserver {
 
     private BaseSwitchYard _switchYard;
+    private ServiceDomainManager _domainManager;
 
     /**
      * Create a new SwitchYardBuilder.
-     * 
-     * @param switchYard the {@link BaseSwitchYard} instance used to process
-     *            deployment notifications.
      */
-    public SwitchYardBuilder(BaseSwitchYard switchYard) {
-        _switchYard = switchYard;
+    public SwitchYardBuilder() {
+        _switchYard = new BaseSwitchYard();
+    }
+    
+    /**
+     * Initializes the SwitchBuilder which includes registering the local management MBean
+     * and registering as an EventObserver within SwitchYard.
+     * @param domainManager the SY ServiceDomainManager
+     */
+    public void init(ServiceDomainManager domainManager) {
+        _domainManager = domainManager;
+        
+        // Register local management MBeans
+        LocalManagement lm = new LocalManagement(_domainManager);
+        MBeans.registerLocalManagement(lm);
+        
+        // Register event hooks
+        _domainManager.getEventManager()
+            .addObserver(this, ExchangeCompletionEvent.class)
+            .addObserver(this, ApplicationDeployedEvent.class)
+            .addObserver(this, ApplicationUndeployedEvent.class);
+    }
+    
+    /**
+     * Tears down registered MBeans and event subscriptions.  Call this during system shutdown
+     * to clean up.
+     */
+    public void destroy() {
+        // Unregister event hooks
+        _domainManager.getEventManager().removeObserver(this);
+        // Unregister management mbeans
+        MBeans.unregisterLocalManagement();
+    }
+    
+    /**
+     * Returns the SwitchYard admin object.
+     * @return SwitchYard interface representing the SY runtime
+     */
+    public SwitchYard getSwitchYard() {
+        return _switchYard;
+    }
+    
+    /**
+     * Returns the ServiceDomainManager instance in use for this builder.
+     * @return ServiceDomainManager used by this builder instance.
+     */
+    public ServiceDomainManager getDomainManager() {
+        return _domainManager;
     }
     
     @Override
@@ -69,14 +118,20 @@ public class SwitchYardBuilder implements EventObserver {
     void applicationDeployed(ApplicationDeployedEvent event) {
         AbstractDeployment deployment = event.getDeployment();
         if (deployment.getName() != null) {
-            _switchYard.addApplication(new BaseApplication(deployment.getName(), deployment.getConfig()));
+            BaseApplication app = new BaseApplication(deployment.getName(), deployment.getConfig());
+            _switchYard.addApplication(app);
+            MBeans.registerApplication(app);
         }
     }
 
     void applicationUndeployed(ApplicationUndeployedEvent event) {
         AbstractDeployment deployment = event.getDeployment();
         if (deployment.getName() != null) {
-            _switchYard.removeApplication(deployment.getName());
+            Application app = _switchYard.getApplication(deployment.getName());
+            if (app != null) {
+                MBeans.unregisterApplication(app);
+                _switchYard.removeApplication(deployment.getName());
+            }
         }
     }
     

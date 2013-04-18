@@ -30,11 +30,13 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.admin.Application;
 import org.switchyard.admin.ComponentService;
+import org.switchyard.admin.Reference;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.Transformer;
 import org.switchyard.admin.Validator;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
@@ -48,6 +50,7 @@ public class BaseApplication implements Application {
     
     private QName _name;
     private Map<QName, Service> _services;
+    private Map<QName, Reference> _references;
     private Map<QName, ComponentService> _componentServices;
     private List<Transformer> _transformers;
     private List<Validator> _validators;
@@ -66,6 +69,7 @@ public class BaseApplication implements Application {
         addValidators();
         addComponents();
         addServices();
+        addReferences();
     }
 
     @Override
@@ -82,11 +86,27 @@ public class BaseApplication implements Application {
     }
     
     @Override
+    public List<Reference> getReferences() {
+        if (_references == null) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<Reference>(_references.values());
+    }
+    
+    @Override
     public Service getService(QName serviceName) {
         if (_services == null) {
             return null;
         }
         return _services.get(serviceName);
+    }
+    
+    @Override
+    public Reference getReference(QName referenceName) {
+        if (_references == null) {
+            return null;
+        }
+        return _references.get(referenceName);
     }
     
     @Override
@@ -129,6 +149,17 @@ public class BaseApplication implements Application {
         
         for (CompositeServiceModel service : _config.getComposite().getServices()) {
             _services.put(service.getQName(), new BaseService(service, this));
+        }
+    }
+    
+    private void addReferences() {
+        _references = new LinkedHashMap<QName, Reference>();
+        if (_config.getComposite().getReferences() == null) {
+            return;
+        }
+        
+        for (CompositeReferenceModel ref : _config.getComposite().getReferences()) {
+            _references.put(ref.getQName(), new BaseReference(ref, this));
         }
     }
 

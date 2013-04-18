@@ -23,11 +23,14 @@ package org.switchyard.admin.base;
 
 import javax.xml.namespace.QName;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.switchyard.admin.SwitchYard;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.event.ApplicationDeployedEvent;
+import org.switchyard.deploy.event.ApplicationUndeployedEvent;
 import org.switchyard.deploy.internal.Deployment;
 
 /**
@@ -37,7 +40,7 @@ import org.switchyard.deploy.internal.Deployment;
 public class SwitchYardBuilderTestBase {
 
     protected static final QName TEST_APP = new QName("test-app");
-    protected BaseSwitchYard _switchYard;
+    protected SwitchYard _switchYard;
     protected Deployment _deployment;
     protected SwitchYardBuilder _builder;
 
@@ -47,10 +50,16 @@ public class SwitchYardBuilderTestBase {
     }
 
     @Before
-    public void setUp() {
-        _switchYard = new BaseSwitchYard();
-        _builder = new SwitchYardBuilder(_switchYard);
+    public void setUp() throws Exception {
+        _builder = new SwitchYardBuilder();
+        _switchYard = _builder.getSwitchYard();
         _builder.notify(new ApplicationDeployedEvent(_deployment));
+        //Thread.sleep(300 * 1000);
+    }
+    
+    @After
+    public void tearDown() {
+        _builder.notify(new ApplicationUndeployedEvent(_deployment));
     }
 
 }

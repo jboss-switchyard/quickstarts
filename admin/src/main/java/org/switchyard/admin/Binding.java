@@ -33,6 +33,12 @@ public interface Binding {
     public String getType();
     
     /**
+     * Returns the name of the binding.
+     * @return binding name
+     */
+    public String getName();
+    
+    /**
      * @return the raw configuration details
      */
     public String getConfiguration();

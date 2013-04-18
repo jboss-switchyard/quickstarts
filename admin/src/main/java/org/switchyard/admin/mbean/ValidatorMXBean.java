@@ -16,49 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.admin.base;
-
-import org.switchyard.admin.Binding;
+package org.switchyard.admin.mbean;
 
 /**
- * BaseBinding
- * 
- * Base implementation for {@link Binding}.
- * 
- * @author Rob Cernich
+ * Management interface for a SwitchYard validator.
  */
-public class BaseBinding implements Binding {
-
-    private final String _type;
-    private final String _name;
-    private final String _configuration;
+public interface ValidatorMXBean {
 
     /**
-     * Create a new BaseBinding.
-     * 
-     * @param type the binding's type (e.g. soap)
-     * @param name the binding's name
-     * @param configuration the binding's raw configuration
+     * The name of the data type validated by this validator.
+     * @return the name of type upon which the validator acts
      */
-    public BaseBinding(String type, String name, String configuration) {
-        _type = type;
-        _name = name;
-        _configuration = configuration;
-    }
+    public String getName();
 
-    @Override
-    public String getType() {
-        return _type;
-    }
-
-    @Override
-    public String getConfiguration() {
-        return _configuration;
-    }
-
-    @Override
-    public String getName() {
-        return _name;
-    }
+    /**
+     * The implementation type of this validator.
+     * @return the validator type (e.g. java, xml, etc.)
+     */
+    public String getType();
 
 }

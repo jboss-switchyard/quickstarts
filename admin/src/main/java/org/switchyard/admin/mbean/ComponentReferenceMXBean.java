@@ -16,49 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.admin.base;
-
-import org.switchyard.admin.Binding;
+package org.switchyard.admin.mbean;
 
 /**
- * BaseBinding
- * 
- * Base implementation for {@link Binding}.
- * 
- * @author Rob Cernich
+ * Management interface for a component reference contained in a SwitchYard application.
  */
-public class BaseBinding implements Binding {
-
-    private final String _type;
-    private final String _name;
-    private final String _configuration;
+public interface ComponentReferenceMXBean extends MessageMetricsMXBean {
 
     /**
-     * Create a new BaseBinding.
-     * 
-     * @param type the binding's type (e.g. soap)
-     * @param name the binding's name
-     * @param configuration the binding's raw configuration
+     * Component reference name.
+     * @return the name of this reference.
      */
-    public BaseBinding(String type, String name, String configuration) {
-        _type = type;
-        _name = name;
-        _configuration = configuration;
-    }
+    String getName();
 
-    @Override
-    public String getType() {
-        return _type;
-    }
-
-    @Override
-    public String getConfiguration() {
-        return _configuration;
-    }
-
-    @Override
-    public String getName() {
-        return _name;
-    }
+    /**
+     * Interface used by component reference.
+     * @return the interface required for this reference.
+     */
+    String getInterface();
 
 }

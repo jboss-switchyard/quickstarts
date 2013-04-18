@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,49 +16,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.admin.base;
+package org.switchyard.admin.mbean.internal;
 
-import org.switchyard.admin.Binding;
+import org.switchyard.admin.Transformer;
+import org.switchyard.admin.mbean.TransformerMXBean;
 
 /**
- * BaseBinding
- * 
- * Base implementation for {@link Binding}.
- * 
- * @author Rob Cernich
+ * Implementation of TransformerMXBean.
  */
-public class BaseBinding implements Binding {
-
-    private final String _type;
-    private final String _name;
-    private final String _configuration;
-
+public class ManagedTransformer implements TransformerMXBean {
+    
+    private Transformer _transformer;
+    
     /**
-     * Create a new BaseBinding.
-     * 
-     * @param type the binding's type (e.g. soap)
-     * @param name the binding's name
-     * @param configuration the binding's raw configuration
+     * Create a new ManagedTransformer instance.
+     * @param transformer delegate reference to admin Transformer.
      */
-    public BaseBinding(String type, String name, String configuration) {
-        _type = type;
-        _name = name;
-        _configuration = configuration;
+    public ManagedTransformer(Transformer transformer) {
+        _transformer = transformer;
+    }
+
+    @Override
+    public String getFrom() {
+        return _transformer.getFrom().toString();
+    }
+
+    @Override
+    public String getTo() {
+        return _transformer.getTo().toString();
     }
 
     @Override
     public String getType() {
-        return _type;
-    }
-
-    @Override
-    public String getConfiguration() {
-        return _configuration;
-    }
-
-    @Override
-    public String getName() {
-        return _name;
+        return _transformer.getType();
     }
 
 }

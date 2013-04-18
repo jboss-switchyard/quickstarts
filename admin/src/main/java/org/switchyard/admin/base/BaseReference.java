@@ -19,6 +19,7 @@
 
 package org.switchyard.admin.base;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,8 +27,9 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.admin.Application;
 import org.switchyard.admin.Binding;
-import org.switchyard.admin.ComponentReference;
 import org.switchyard.admin.Reference;
+import org.switchyard.config.model.composite.BindingModel;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 
 /**
  * Base implementation for Reference.
@@ -37,7 +39,7 @@ public class BaseReference implements Reference {
     private QName _name;
     private String _referenceInterface;
     private Application _application;
-    private ComponentReference _promotedReference;
+    private String _promotedReference;
     private List<Binding> _gateways = new LinkedList<Binding>();
     
     /**
@@ -52,7 +54,7 @@ public class BaseReference implements Reference {
     public BaseReference(QName name,
             String referenceInterface,
             Application application, 
-            ComponentReference reference,
+            String reference,
             List<Binding> gateways) {
         
         _name = name;
@@ -60,6 +62,29 @@ public class BaseReference implements Reference {
         _application = application;
         _promotedReference = reference;
         _gateways = gateways;
+    }
+    
+    /**
+     * Create a new BaseReference from the specified config model.
+     * 
+     * @param referenceConfig the composite reference config.
+     * @param application the application containing the service.
+     */
+    public BaseReference(CompositeReferenceModel referenceConfig, Application application) {
+        _name = referenceConfig.getQName();
+        _application = application;
+        if (referenceConfig.getInterface() != null) {
+            _referenceInterface = referenceConfig.getInterface().getInterface();
+        }
+        _promotedReference = referenceConfig.getPromote();
+        _gateways = new ArrayList<Binding>();
+
+        int idx = 1;
+        for (BindingModel bindingModel : referenceConfig.getBindings()) {
+            // Generate binding name for now until tooling and config are updated to expose it
+            String name = bindingModel.getType() + idx++;
+            _gateways.add(new BaseBinding(bindingModel.getType(), name, bindingModel.toString()));
+        }
     }
 
     @Override
@@ -73,7 +98,7 @@ public class BaseReference implements Reference {
     }
 
     @Override
-    public ComponentReference getPromotedReference() {
+    public String getPromotedReference() {
        return _promotedReference;
     }
 

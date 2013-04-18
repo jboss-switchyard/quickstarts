@@ -16,49 +16,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.admin.base;
 
-import org.switchyard.admin.Binding;
+package org.switchyard.admin.mbean;
+
+import java.util.List;
 
 /**
- * BaseBinding
- * 
- * Base implementation for {@link Binding}.
- * 
- * @author Rob Cernich
+ * Management interface for a composite service provided by a SwitchYard application.
  */
-public class BaseBinding implements Binding {
-
-    private final String _type;
-    private final String _name;
-    private final String _configuration;
+public interface ServiceMXBean {
 
     /**
-     * Create a new BaseBinding.
-     * 
-     * @param type the binding's type (e.g. soap)
-     * @param name the binding's name
-     * @param configuration the binding's raw configuration
+     * The service name.
+     * @return the name of this service.
      */
-    public BaseBinding(String type, String name, String configuration) {
-        _type = type;
-        _name = name;
-        _configuration = configuration;
-    }
+    String getName();
 
-    @Override
-    public String getType() {
-        return _type;
-    }
+    /**
+     * The component service promoted by this composite service.
+     * @return the component service promoted by this service.
+     */
+    String getPromotedService();
 
-    @Override
-    public String getConfiguration() {
-        return _configuration;
-    }
+    /**
+     * List of managed bindings used by this service.
+     * @return management interfaces for gateway bindings on this service.
+     */
+    List<BindingMXBean> getBindings();
 
-    @Override
-    public String getName() {
-        return _name;
-    }
+    /**
+     * Composite service interface.
+     * @return the interface implemented by this service.
+     */
+    String getInterface();
 
+    /**
+     * The application which uses this reference.
+     * @return the application which exports this reference.
+     */
+    ApplicationMXBean getApplication();
 }

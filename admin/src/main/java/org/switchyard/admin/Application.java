@@ -41,6 +41,17 @@ public interface Application {
      * @return the requested service, may be null
      */
     public Service getService(QName serviceName);
+    
+    /**
+     * @return the references consumed by this application.
+     */
+    public List<Reference> getReferences();
+
+    /**
+     * @param referenceName the name of a reference consumed by this application.
+     * @return the requested reference, may be null
+     */
+    public Reference getReference(QName referenceName);
 
     /**
      * @return the component services contained by this application.

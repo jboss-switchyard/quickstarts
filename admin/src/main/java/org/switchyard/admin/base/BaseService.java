@@ -81,8 +81,11 @@ public class BaseService implements Service {
         _promotedService = getPromotedService(application, serviceConfig);
         _gateways = new ArrayList<Binding>();
 
+        int idx = 1;
         for (BindingModel bindingModel : serviceConfig.getBindings()) {
-            _gateways.add(new BaseBinding(bindingModel.getType(), bindingModel.toString()));
+            // Generate binding name for now until tooling and config are updated to expose it
+            String name = bindingModel.getType() + idx++;
+            _gateways.add(new BaseBinding(bindingModel.getType(), name, bindingModel.toString()));
         }
     }
     

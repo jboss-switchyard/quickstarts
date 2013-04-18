@@ -54,11 +54,10 @@ public class SwitchYardBuilderTest extends SwitchYardBuilderTestBase {
         Deployment testDeployment = new MockDeployment(
                 new ModelPuller<SwitchYardModel>().pull("switchyard_multiappweb.xml", getClass()), 
                 QName.valueOf("{urn:switchyard-quickstart-demo:multiapp:0.1.0}web"));
-        BaseSwitchYard switchYard = new BaseSwitchYard();
-        SwitchYardBuilder builder = new SwitchYardBuilder(switchYard);
+        SwitchYardBuilder builder = new SwitchYardBuilder();
         builder.notify(new ApplicationDeployedEvent(testDeployment));
         
-        Assert.assertEquals(1, switchYard.getApplications().size());
+        Assert.assertEquals(1, builder.getSwitchYard().getApplications().size());
     }
 
 }

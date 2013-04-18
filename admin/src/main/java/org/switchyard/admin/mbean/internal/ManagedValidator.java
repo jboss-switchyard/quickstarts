@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,49 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.admin.base;
+package org.switchyard.admin.mbean.internal;
 
-import org.switchyard.admin.Binding;
+import org.switchyard.admin.Validator;
+import org.switchyard.admin.mbean.ValidatorMXBean;
 
 /**
- * BaseBinding
- * 
- * Base implementation for {@link Binding}.
- * 
- * @author Rob Cernich
+ * Implementation of ValidatorMXBean.
  */
-public class BaseBinding implements Binding {
+public class ManagedValidator implements ValidatorMXBean {
 
-    private final String _type;
-    private final String _name;
-    private final String _configuration;
-
+    private Validator _validator;
+    
     /**
-     * Create a new BaseBinding.
-     * 
-     * @param type the binding's type (e.g. soap)
-     * @param name the binding's name
-     * @param configuration the binding's raw configuration
+     * Create new instance of ManagedValidator.
+     * @param validator delegate reference to admin Validator.
      */
-    public BaseBinding(String type, String name, String configuration) {
-        _type = type;
-        _name = name;
-        _configuration = configuration;
-    }
-
-    @Override
-    public String getType() {
-        return _type;
-    }
-
-    @Override
-    public String getConfiguration() {
-        return _configuration;
+    public ManagedValidator(Validator validator) {
+        _validator = validator;
     }
 
     @Override
     public String getName() {
-        return _name;
+        return _validator.getName().toString();
     }
 
+    @Override
+    public String getType() {
+        return _validator.getType();
+    }
 }

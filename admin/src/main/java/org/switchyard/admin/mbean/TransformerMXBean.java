@@ -16,49 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.admin.base;
-
-import org.switchyard.admin.Binding;
+package org.switchyard.admin.mbean;
 
 /**
- * BaseBinding
- * 
- * Base implementation for {@link Binding}.
- * 
- * @author Rob Cernich
+ * Management interface for a SwitchYard transformer.
  */
-public class BaseBinding implements Binding {
-
-    private final String _type;
-    private final String _name;
-    private final String _configuration;
+public interface TransformerMXBean {
 
     /**
-     * Create a new BaseBinding.
-     * 
-     * @param type the binding's type (e.g. soap)
-     * @param name the binding's name
-     * @param configuration the binding's raw configuration
+     * Transformer "from" type name.
+     * @return the "from" type upon which the transformer acts
      */
-    public BaseBinding(String type, String name, String configuration) {
-        _type = type;
-        _name = name;
-        _configuration = configuration;
-    }
+    public String getFrom();
 
-    @Override
-    public String getType() {
-        return _type;
-    }
+    /**
+     * Transformer "to" type name.
+     * @return the "to" type produced by the transformer
+     */
+    public String getTo();
 
-    @Override
-    public String getConfiguration() {
-        return _configuration;
-    }
-
-    @Override
-    public String getName() {
-        return _name;
-    }
+    /**
+     * The implementation type of the transformer.
+     * @return the transformer type (e.g. java, smooks, etc.)
+     */
+    public String getType();
 
 }

@@ -38,7 +38,7 @@ public interface Reference {
     /**
      * @return the component reference promoted by this service.
      */
-    ComponentReference getPromotedReference();
+    String getPromotedReference();
 
     /**
      * @return the gateway bindings for this reference.
