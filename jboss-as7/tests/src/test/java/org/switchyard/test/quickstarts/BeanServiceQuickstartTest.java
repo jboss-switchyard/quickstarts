@@ -18,14 +18,18 @@
  */
 package org.switchyard.test.quickstarts;
 
+import java.io.InputStreamReader;
+import java.io.StringReader;
+
 import org.custommonkey.xmlunit.XMLAssert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.test.ArquillianUtil;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
+import org.switchyard.test.ArquillianUtil;
 
 @RunWith(Arquillian.class)
 public class BeanServiceQuickstartTest {
@@ -41,6 +45,8 @@ public class BeanServiceQuickstartTest {
 
         httpMixIn.initialize();
         try {
+            String wsdl = httpMixIn.sendString("http://localhost:8080/quickstart-bean/OrderService?wsdl", "", HTTPMixIn.HTTP_GET);
+            XMLAssert.assertXMLEqual(new InputStreamReader(Classes.getResourceAsStream("OrderService.wsdl")), new StringReader(wsdl));
             String response = httpMixIn.postString("http://localhost:8080/quickstart-bean/OrderService", SOAP_REQUEST);
             XMLAssert.assertXpathEvaluatesTo("PO-19838-XYZ", "//orderAck/orderId", response);
             XMLAssert.assertXpathEvaluatesTo("true", "//orderAck/accepted", response);

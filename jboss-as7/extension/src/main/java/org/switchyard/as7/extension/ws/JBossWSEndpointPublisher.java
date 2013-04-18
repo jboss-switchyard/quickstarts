@@ -52,7 +52,6 @@ public class JBossWSEndpointPublisher extends AbstractEndpointPublisher {
 
             WebservicesMetaData wsMetadata = new WebservicesMetaData();
             WebserviceDescriptionMetaData wsDescMetaData = new WebserviceDescriptionMetaData(wsMetadata);
-            wsMetadata.addWebserviceDescription(wsDescMetaData);
             wsDescMetaData.setWsdlFile(getWsdlLocation());
             PortComponentMetaData portComponent = new PortComponentMetaData(wsDescMetaData);
             portComponent.setPortComponentName(config.getServiceName() 
@@ -61,7 +60,10 @@ public class JBossWSEndpointPublisher extends AbstractEndpointPublisher {
             portComponent.setServiceEndpointInterface(SEI);
             portComponent.setWsdlPort(config.getPort().getPortQName());
             portComponent.setWsdlService(config.getPort().getServiceQName());
+             // Should be the WSDL's service name and not the SwitchYard config's service name
+            portComponent.setServletLink(config.getPort().getServiceQName().getLocalPart());
             wsDescMetaData.addPortComponent(portComponent);
+            wsMetadata.addWebserviceDescription(wsDescMetaData);
 
             wsEndpoint = new JBossWSEndpoint();
             if (config.getContextPath() != null) {
