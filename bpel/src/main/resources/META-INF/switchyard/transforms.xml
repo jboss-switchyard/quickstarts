@@ -27,8 +27,9 @@
                          -->
 
     <!-- Default Exception to SOAP Fault transformer... -->
+<!--  
     <trfm:transform.java from="java:org.switchyard.component.bpel.BPELFault"
                          to="java:org.w3c.dom.Node"
                          class="org.switchyard.component.bpel.DefaultBPELFaultTransformer"/>
-
+-->
 </transforms>

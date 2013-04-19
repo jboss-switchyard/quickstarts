@@ -169,20 +169,25 @@ public class ServiceProxyHandler implements ServiceHandler {
                 String errMsg = "Invocation of operation '" + invocation.getMethod().getName() 
                         + "' on bean component '" + _serviceBean.getClass().getName() + "failed.";
                 // write error details to log
-                if (exchangePattern == ExchangePattern.IN_ONLY) {
-                    _logger.warn(errMsg, ex);
-                } else if (_logger.isDebugEnabled()) {
+                if (_logger.isDebugEnabled()) {
                     _logger.debug(errMsg, ex);
                 }
                 
-                // if exchange supports fault, send one
+                // if the exception is declared on service interface, use sendFault, otherwise throw an exception
+                Throwable faultContent = ex;
                 if (exchangePattern == ExchangePattern.IN_OUT) {
-                    Throwable faultContent = ex;
                     if (faultContent instanceof InvocationTargetException) {
                         faultContent = ((InvocationTargetException)ex).getTargetException();
                     }
-                    throw new BeanComponentException(faultContent);
+                    
+                    for (Class<?> expectedFault : invocation.getMethod().getExceptionTypes()) {
+                        if (expectedFault.isAssignableFrom(faultContent.getClass())) {
+                            exchange.sendFault(exchange.createMessage().setContent(faultContent));
+                            return;
+                        }
+                    }
                 }
+                throw new BeanComponentException(faultContent);
                 
             }
         } else {

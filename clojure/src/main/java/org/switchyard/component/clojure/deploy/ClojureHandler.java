@@ -26,10 +26,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.common.type.Classes;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.component.clojure.config.model.ClojureComponentImplementationModel;
 import org.switchyard.component.clojure.config.model.ClojureScriptModel;
 import org.switchyard.deploy.ServiceHandler;
@@ -97,7 +100,14 @@ public class ClojureHandler implements ServiceHandler {
             }
                 
         } catch (final Exception e) {
-            throw new HandlerException(e);
+            QName declaredFault = exchange.getContract().getProviderOperation().getFaultType();
+            if (declaredFault != null && QNameUtil.isJavaMessageType(declaredFault)
+                    && QNameUtil.toJavaMessageType(declaredFault).isAssignableFrom(e.getClass())) {
+                Message msg = exchange.createMessage().setContent(e);
+                exchange.sendFault(msg);
+            } else {
+                throw new HandlerException(e);
+            }
         }
     }
 

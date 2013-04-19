@@ -30,6 +30,7 @@ import org.w3c.dom.Node;
  * @param <F> The BPEL fault
  * @param <T> The DOM Node
  */
+@Deprecated
 @Scannable(false)
 public class DefaultBPELFaultTransformer<F extends BPELFault, T extends Node> extends BaseTransformer<F, T> {
 

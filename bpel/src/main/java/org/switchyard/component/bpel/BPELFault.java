@@ -25,6 +25,7 @@ import org.switchyard.annotations.DefaultType;
  * generated when a BPEL process returns a fault response.
  *
  */
+@Deprecated
 @DefaultType(BPELFault.MESSAGE_TYPE)
 public class BPELFault extends HandlerException {
 

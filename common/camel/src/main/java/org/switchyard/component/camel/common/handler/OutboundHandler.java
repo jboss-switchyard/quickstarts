@@ -21,6 +21,8 @@
  */
 package org.switchyard.component.camel.common.handler;
 
+import javax.xml.namespace.QName;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Processor;
@@ -29,7 +31,9 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
+import org.switchyard.Message;
 import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.camel.common.transaction.TransactionHelper;
 import org.switchyard.component.common.composer.MessageComposer;
@@ -141,16 +145,33 @@ public class OutboundHandler extends BaseServiceHandler {
     }
 
     private void handleInOut(final Exchange switchyardExchange) throws HandlerException {
-        final Object payload = sendToCamel(switchyardExchange);
-        sendResponseToSwitchyard(switchyardExchange, payload);
-    }
-
-    private Object sendToCamel(final Exchange switchyardExchange) throws HandlerException {
         final org.apache.camel.Exchange camelExchange = _producerTemplate.request(_uri, createProcessor(switchyardExchange));
-        if (camelExchange.getException() != null) {
-            throw new HandlerException(camelExchange.getException());
+        Exception camelException = camelExchange.getException();
+
+        if (!camelExchange.isFailed()) {
+            sendResponseToSwitchyard(switchyardExchange, camelExchange.getOut().getBody());
+
+        } else {
+            QName faultName = switchyardExchange.getContract().getProviderOperation().getFaultType();
+            Class<?> declaredFault = faultName != null && QNameUtil.isJavaMessageType(faultName) ? QNameUtil.toJavaMessageType(faultName) : null;
+
+            Object camelFault = camelException;
+            if (camelFault == null) {
+                if (camelExchange.hasOut() && camelExchange.getOut().isFault()) {
+                    // Use Out body as a fault content if camelExchange.getException() returns null
+                    camelFault = camelExchange.getOut().getBody();
+                }
+            }
+            
+            if (camelFault != null && declaredFault != null && declaredFault.isAssignableFrom(camelFault.getClass())) {
+                Message msg = switchyardExchange.createMessage().setContent(camelFault);
+                switchyardExchange.sendFault(msg);
+            } else if (camelFault instanceof Throwable) {
+                throw new HandlerException(Throwable.class.cast(camelFault));
+            } else {
+                throw new HandlerException("camel exchange failed without an exception: " + camelFault);
+            }
         }
-        return camelExchange.hasOut() ? camelExchange.getOut().getBody() : camelExchange.getIn().getBody();
     }
 
     private void sendResponseToSwitchyard(final Exchange switchyardExchange, final Object payload) {

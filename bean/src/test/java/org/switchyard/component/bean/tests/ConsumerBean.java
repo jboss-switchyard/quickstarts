@@ -20,7 +20,6 @@
 package org.switchyard.component.bean.tests;
 
 import javax.inject.Inject;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
@@ -28,11 +27,8 @@ import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
-import java.io.IOException;
 import java.io.StringReader;
 
 @Service(ConsumerService.class)
@@ -65,6 +61,18 @@ public class ConsumerBean implements ConsumerService {
         }
     }
 
+    @Override
+    public Object consumeInOutServiceThrowsRuntimeException(Object message) {
+        try {
+            Object reply = null;
+            reply = requestResponse.reply(message);
+            Assert.assertEquals(message, reply);
+            return reply;
+        } catch (ConsumerException e) {
+            Assert.assertEquals(message, e);
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public String domOperation(Document message) {

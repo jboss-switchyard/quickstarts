@@ -41,7 +41,6 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
-import org.switchyard.component.bpel.BPELFault;
 import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandler;
 import org.switchyard.component.common.label.EndpointLabel;
@@ -310,7 +309,8 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
                 throw new HandlerException(e);
             }
             
-            throw new BPELFault(fault);
+            Message msg = exchange.createMessage().setContent(fault);
+            exchange.sendFault(msg);
             
         } catch (Exception e) {
             throw new HandlerException(e);

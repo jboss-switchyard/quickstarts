@@ -23,12 +23,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Message;
-import org.switchyard.component.bean.BeanComponentException;
 import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.component.bean.BeanComponentException;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 
 /*
@@ -42,6 +42,8 @@ public class BeanConsumerTest {
     private Invoker inOnly;
     @ServiceOperation("ConsumerService.consumeInOutService")
     private Invoker inOut;
+    @ServiceOperation("ConsumerService.consumeInOutServiceThrowsRuntimeException")
+    private Invoker inOutRuntimeEx;
     @ServiceOperation("ConsumerService.unknownXOp")
     private Invoker unknownXOp;
 
@@ -81,8 +83,23 @@ public class BeanConsumerTest {
         } catch (InvocationFaultException infEx) {
             System.out.println(infEx.getFaultMessage().getContent());
             Message faultMsg = infEx.getFaultMessage();
+            Assert.assertTrue(faultMsg.getContent() instanceof ConsumerException);
+            Assert.assertEquals("remote-exception-received", faultMsg.getContent(ConsumerException.class).getMessage());
+        }
+    }
+    
+    @Test
+    public void consumeInOutServiceFromBean_throws_runtime_exception() {
+        try {
+            // this should result in a fault
+            inOutRuntimeEx.sendInOut(new ConsumerException("throw me a remote exception please!!"));
+            // if we got here, then our negative test failed
+            Assert.fail("Exception thrown by bean but not turned into fault!");
+        } catch (InvocationFaultException infEx) {
+            System.out.println(infEx.getFaultMessage().getContent());
+            Message faultMsg = infEx.getFaultMessage();
             Assert.assertTrue(faultMsg.getContent() instanceof BeanComponentException);
-            Assert.assertEquals("remote-exception-received", faultMsg.getContent(BeanComponentException.class).getCause().getMessage());
+            Assert.assertEquals("throw me a remote exception please!!", faultMsg.getContent(BeanComponentException.class).getCause().getCause().getMessage());
         }
     }
 }
