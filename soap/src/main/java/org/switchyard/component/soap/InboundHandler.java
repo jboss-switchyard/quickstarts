@@ -257,7 +257,14 @@ public class InboundHandler extends BaseServiceHandler {
         }
 
         Part part = parts.get(0);
-        QName expectedPayloadType = part.getElementName();
+        QName expectedPayloadType = null;
+
+        if (part.getElementName() != null) {
+            expectedPayloadType = part.getElementName();
+        } else {
+            expectedPayloadType = part.getTypeName();
+        }
+
         String expectedNS = expectedPayloadType.getNamespaceURI();
         String expectedLN = expectedPayloadType.getLocalPart();
         if (!_documentStyle) {

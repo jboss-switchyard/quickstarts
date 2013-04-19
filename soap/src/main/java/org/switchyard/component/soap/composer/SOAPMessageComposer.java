@@ -239,8 +239,12 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
             @SuppressWarnings("unchecked")
             List<Part> parts = input ? op.getInput().getMessage().getOrderedParts(null) 
                     : op.getOutput().getMessage().getOrderedParts(null);
-            
-            ns = parts.get(0).getElementName().getNamespaceURI();
+
+            if (parts.get(0).getElementName() != null) {
+                ns = parts.get(0).getElementName().getNamespaceURI();
+            } else if (parts.get(0).getTypeName() != null) {
+                ns = parts.get(0).getTypeName().getNamespaceURI();
+            }
         }
         
         return ns;

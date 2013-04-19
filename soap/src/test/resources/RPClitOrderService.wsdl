@@ -26,12 +26,12 @@
   </types>
   
   <message name="submitOrderRequest">
-    <part name="orderId" element="tns:orderId"/>
-    <part name="itemId" element="tns:itemId"/>
-    <part name="quantity" element="tns:quantity"/>
+    <part name="orderId" type="tns:orderId"/>
+    <part name="itemId" type="tns:itemId"/>
+    <part name="quantity" type="tns:quantity"/>
   </message>
   <message name="submitOrderResponse">
-    <part name="return" element="tns:orderAck"/>
+    <part name="return" type="tns:orderAck"/>
   </message>
   
   <portType name="OrderServiceRPC">

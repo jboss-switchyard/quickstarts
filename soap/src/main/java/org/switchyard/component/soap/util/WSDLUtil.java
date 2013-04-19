@@ -240,7 +240,7 @@ public final class WSDLUtil {
     public static String getStyle(Port port) {
         String portStyle = null;
         for (ExtensibilityElement element : (List<ExtensibilityElement>) port.getBinding().getExtensibilityElements()) {
-            if (element instanceof SOAPBinding) {
+            if ((element instanceof SOAPBinding) && (((SOAPBinding)element).getStyle() != null)) {
                 String bindingStyle = ((SOAPBinding) element).getStyle();
                 if (bindingStyle != null) {
                     portStyle = bindingStyle.toLowerCase();
@@ -287,7 +287,9 @@ public final class WSDLUtil {
 
         for (Operation operation : operations) {
             Part part = (Part)operation.getInput().getMessage().getParts().values().iterator().next();
-            if (elementName.equals(part.getElementName().getLocalPart())) {
+            if (((part.getElementName() != null) && (elementName.equals(part.getElementName().getLocalPart())))
+                || ((part.getTypeName() != null) && (elementName.equals(part.getTypeName().getLocalPart())))
+                || (elementName.equals(part.getName()))) {
                 return operation;
             }
         }
