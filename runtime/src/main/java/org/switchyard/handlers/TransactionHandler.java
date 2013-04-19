@@ -87,10 +87,13 @@ public class TransactionHandler implements ExchangeHandler {
     @Override
     public void handleFault(Exchange exchange) {
         try {
-            Transaction transaction = (Transaction)
-                    exchange.getContext().getPropertyValue(INITIATED_TRANSACTION_PROPERTY);
-            if (transaction != null) {
-                transaction.setRollbackOnly();
+            Property rollbackOnFaultProperty = exchange.getContext().getProperty(Exchange.ROLLBACK_ON_FAULT);
+            if (rollbackOnFaultProperty != null && rollbackOnFaultProperty.getValue() != null
+                    && Boolean.class.cast(rollbackOnFaultProperty.getValue())) {
+                    Transaction transaction = getCurrentTransaction();
+                    if (transaction != null) {
+                        transaction.setRollbackOnly();
+                    }
             }
             handleAfter(exchange);
         } catch (Exception e) {

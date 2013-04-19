@@ -30,6 +30,7 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
@@ -197,6 +198,11 @@ public class CamelExchange implements SecurityExchange {
         _exchange.setIn(extract);
         _exchange.setProperty(FAULT, true);
 
+        org.switchyard.Property rollbackOnFaultProperty = getContext().getProperty(org.switchyard.Exchange.ROLLBACK_ON_FAULT);
+        if (rollbackOnFaultProperty == null || rollbackOnFaultProperty.getValue() == null) {
+            getContext().setProperty(org.switchyard.Exchange.ROLLBACK_ON_FAULT, Boolean.FALSE, Scope.EXCHANGE);
+        }
+        
         sendInternal();
     }
 

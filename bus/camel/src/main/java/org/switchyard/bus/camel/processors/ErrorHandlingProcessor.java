@@ -28,6 +28,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.log4j.Logger;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
+import org.switchyard.Scope;
 import org.switchyard.bus.camel.CamelExchange;
 import org.switchyard.bus.camel.ErrorListener;
 
@@ -49,6 +50,10 @@ public class ErrorHandlingProcessor implements Processor {
             Exception exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
             notifyListeners(exchange.getContext(), ex, exception);
             Throwable content = detectHandlerException(exception);
+            org.switchyard.Property rollbackOnFaultProperty = ex.getContext().getProperty(org.switchyard.Exchange.ROLLBACK_ON_FAULT);
+            if (rollbackOnFaultProperty == null || rollbackOnFaultProperty.getValue() == null) {
+                ex.getContext().setProperty(org.switchyard.Exchange.ROLLBACK_ON_FAULT, Boolean.TRUE, Scope.EXCHANGE);
+            }
             ex.sendFault(ex.createMessage().setContent(content));
             ExchangeHelper.setFailureHandled(exchange);
         }

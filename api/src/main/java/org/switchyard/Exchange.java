@@ -61,6 +61,12 @@ public interface Exchange {
      */
     String SERVICE_NAME = "org.switchyard.serviceName";
 
+    /** 
+     * Context property name used for A boolean flag which indicates if the transaction should
+     *  be rolled back or not on fault.
+     *  */
+    String ROLLBACK_ON_FAULT = "org.switchyard.rollbackOnFault";
+
     /**
      * Retrieves the exchange context.
      * @return the exchange context
