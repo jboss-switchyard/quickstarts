@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/camel/sql/module.xml</source>
-      <outputDirectory>/modules/org/apache/camel/sql/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/camel/sql/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/apache/camel/sql/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/camel/sql/main</outputDirectory>
       <includes>
         <include>org.apache.camel:camel-sql</include>
       </includes>

@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/xstream/module.xml</source>
-      <outputDirectory>/modules/com/thoughtworks/xstream/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/com/thoughtworks/xstream/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/com/thoughtworks/xstream/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/com/thoughtworks/xstream/main</outputDirectory>
       <includes>
         <include>com.thoughtworks.xstream:xstream</include>
       </includes>

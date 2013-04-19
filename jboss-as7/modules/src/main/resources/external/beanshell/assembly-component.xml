@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/beanshell/module.xml</source>
-      <outputDirectory>/modules/org/beanshell/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/beanshell/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/beanshell/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/beanshell/main</outputDirectory>
       <includes>
         <include>org.beanshell:bsh</include>
       </includes>

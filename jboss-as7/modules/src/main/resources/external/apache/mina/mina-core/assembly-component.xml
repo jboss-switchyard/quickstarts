@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/apache/mina/mina-core/module.xml</source>
-      <outputDirectory>/modules/org/apache/mina/mina-core/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/mina/mina-core/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/apache/mina/mina-core/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/mina/mina-core/main</outputDirectory>
       <includes>
         <include>org.apache.mina:mina-core</include>
       </includes>

@@ -26,7 +26,7 @@
   <files>
     <file>
       <source>src/main/resources/external/ws-impl/module.xml</source>
-      <outputDirectory>/modules/org/switchyard/component/soap/ws-impl/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/switchyard/component/soap/ws-impl/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>

@@ -22,7 +22,7 @@
     <files>
         <file>
             <source>src/main/resources/switchyard/components/common/knowledge/resources/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/component/common/knowledge/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/common/knowledge/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
@@ -32,7 +32,7 @@
             <includes>
                 <include>org.switchyard.components:switchyard-component-common-knowledge</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/common/knowledge/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/common/knowledge/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
     </dependencySets>

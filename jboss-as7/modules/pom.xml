@@ -306,11 +306,11 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-jca</artifactId>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>org.switchyard.console</groupId>
             <artifactId>switchyard-console-application</artifactId>
             <classifier>resources</classifier>
-        </dependency>-->
+        </dependency>
         <!--
         H2Database...
         -->

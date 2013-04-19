@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/python/module.xml</source>
-      <outputDirectory>/modules/org/python/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/python/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/python/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/python/main</outputDirectory>
       <includes>
         <include>org.python:jython</include>
       </includes>

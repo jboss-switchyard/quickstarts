@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/protobuf/module.xml</source>
-      <outputDirectory>/modules/com/google/protobuf/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/com/google/protobuf/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/com/google/protobuf/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/com/google/protobuf/main</outputDirectory>
       <includes>
         <include>com.google.protobuf:protobuf-java</include>
       </includes>

@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/quartz/module.xml</source>
-      <outputDirectory>/modules/org/quartz-scheduler/quartz/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/quartz-scheduler/quartz/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/quartz-scheduler/quartz/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/quartz-scheduler/quartz/main</outputDirectory>
       <includes>
         <include>org.quartz-scheduler:quartz</include>
       </includes>

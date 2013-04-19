@@ -23,7 +23,7 @@
     <files>
         <file>
             <source>src/main/resources/switchyard/components/bpel/resources/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
@@ -33,7 +33,7 @@
             <includes>
                 <include>org.switchyard.components:switchyard-component-bpel</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -42,7 +42,7 @@
             <includes>
                 <include>org.riftsaw:engine</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -51,7 +51,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-agents</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -60,7 +60,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-bpel-api</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -69,7 +69,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-bpel-compiler</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -78,7 +78,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-bpel-dao</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -87,7 +87,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-bpel-epr</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -96,7 +96,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-bpel-obj</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -105,7 +105,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-bpel-ql</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -114,7 +114,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-bpel-runtime</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -123,7 +123,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-bpel-schemas</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -132,7 +132,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-bpel-store</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -141,7 +141,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-dao-jpa</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -150,7 +150,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-dao-jpa-hibernate</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -159,7 +159,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-jacob</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -168,7 +168,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-scheduler-simple</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -177,7 +177,7 @@
             <includes>
                 <include>org.jboss.soa.bpel:riftsaw-utils</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -186,7 +186,7 @@
             <includes>
                 <include>org.jboss.bpm:activity-monitor-model</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -196,7 +196,7 @@
             <includes>
                 <include>org.jboss.bpm:gwt-console-rpc</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -205,7 +205,7 @@
             <includes>
                 <include>org.jboss.bpm:gwt-console-server-integration</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -214,7 +214,7 @@
             <includes>
                 <include>org.riftsaw.console:riftsaw-bpel2svg</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -223,7 +223,7 @@
             <includes>
                 <include>org.riftsaw.console:riftsaw-console-integration</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -232,7 +232,7 @@
             <includes>
                 <include>org.riftsaw.console:riftsaw-bpaf</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -242,7 +242,7 @@
             <includes>
                 <include>org.apache.xmlbeans:xmlbeans</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/bpel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>

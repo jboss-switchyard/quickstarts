@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/mvel/mvel2/module.xml</source>
-      <outputDirectory>/modules/org/mvel/mvel2/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/mvel/mvel2/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/mvel/mvel2/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/mvel/mvel2/main</outputDirectory>
       <includes>
         <include>org.mvel:mvel2</include>
       </includes>

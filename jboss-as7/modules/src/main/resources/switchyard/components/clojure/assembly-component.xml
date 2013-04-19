@@ -23,7 +23,7 @@
     <files>
         <file>
             <source>src/main/resources/switchyard/components/clojure/resources/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/component/clojure/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/clojure/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
@@ -33,7 +33,7 @@
             <includes>
                 <include>org.switchyard.components:switchyard-component-clojure</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/clojure/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/clojure/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
     </dependencySets>

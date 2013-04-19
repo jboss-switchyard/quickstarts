@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/jcraft/jsch/module.xml</source>
-      <outputDirectory>/modules/com/jcraft/jsch/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/com/jcraft/jsch/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/com/jcraft/jsch/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/com/jcraft/jsch/main</outputDirectory>
       <includes>
         <include>com.jcraft:jsch</include>
       </includes>

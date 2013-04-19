@@ -27,6 +27,14 @@
         <format>zip</format>
     </formats>
 
+    <files>
+        <file>
+            <source>src/main/resources/layers.conf</source>
+            <outputDirectory>/modules</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+    </files>
+
     <componentDescriptors>
       <componentDescriptor>src/main/resources/switchyard/core/assembly-component.xml</componentDescriptor>
 

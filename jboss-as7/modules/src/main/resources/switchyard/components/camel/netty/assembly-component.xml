@@ -26,7 +26,7 @@
     <files>
         <file>
             <source>src/main/resources/switchyard/components/camel/netty/resources/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/component/camel/netty/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/camel/netty/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
@@ -36,7 +36,7 @@
             <includes>
                 <include>org.switchyard.components:switchyard-component-camel-netty</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/camel/netty/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/camel/netty/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
     </dependencySets>

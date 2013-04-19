@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/freemarker/module.xml</source>
-      <outputDirectory>/modules/org/freemarker/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/freemarker/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/freemarker/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/freemarker/main</outputDirectory>
       <includes>
         <include>org.freemarker:freemarker</include>
       </includes>

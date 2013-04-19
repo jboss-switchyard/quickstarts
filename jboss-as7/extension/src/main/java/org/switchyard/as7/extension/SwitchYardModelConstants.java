@@ -59,6 +59,18 @@ public final class SwitchYardModelConstants {
     
     // nodes
     /**
+     * Constant for model key: name.
+     */
+    public static final String NAME = "name";
+    /**
+     * Constant for model key: interface.
+     */
+    public static final String INTERFACE = "interface";
+    /**
+     * Constant for model key: type.
+     */
+    public static final String TYPE = "type";
+    /**
      * Constant for model key: application.
      */
     public static final String APPLICATION = "application";

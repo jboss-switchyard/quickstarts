@@ -26,7 +26,7 @@
     <files>
         <file>
             <source>src/main/resources/switchyard/components/camel/quartz/resources/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/component/camel/quartz/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/camel/quartz/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
@@ -36,7 +36,7 @@
             <includes>
                 <include>org.switchyard.components:switchyard-component-camel-quartz</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/component/camel/quartz/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/camel/quartz/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
     </dependencySets>

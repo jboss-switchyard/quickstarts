@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/eclipse/jdt/core/compiler/ecj/module.xml</source>
-      <outputDirectory>/modules/org/eclipse/jdt/core/compiler/ecj/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/eclipse/jdt/core/compiler/ecj/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/eclipse/jdt/core/compiler/ecj/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/eclipse/jdt/core/compiler/ecj/main</outputDirectory>
       <includes>
         <include>org.eclipse.jdt.core.compiler:ecj</include>
       </includes>

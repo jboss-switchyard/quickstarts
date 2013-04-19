@@ -26,7 +26,7 @@
   <files>
         <file>
             <source>src/main/resources/external/antlr/antlr-runtime/module.xml</source>
-            <outputDirectory>/modules/org/antlr/antlr-runtime/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/antlr/antlr-runtime/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
@@ -36,7 +36,7 @@
             <includes>
                 <include>org.antlr:antlr-runtime</include>
             </includes>
-            <outputDirectory>/modules/org/antlr/antlr-runtime/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/antlr/antlr-runtime/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
     </dependencySets>

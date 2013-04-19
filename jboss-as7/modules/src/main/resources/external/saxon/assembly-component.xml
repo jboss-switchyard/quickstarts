@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/saxon/module.xml</source>
-      <outputDirectory>/modules/net/sourceforge/saxon/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/net/sourceforge/saxon/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/net/sourceforge/saxon/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/net/sourceforge/saxon/main</outputDirectory>
       <includes>
         <include>net.sourceforge.saxon:saxonhe</include>
       </includes>

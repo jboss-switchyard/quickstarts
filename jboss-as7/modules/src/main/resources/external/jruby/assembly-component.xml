@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/jruby/module.xml</source>
-      <outputDirectory>/modules/org/jruby/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/jruby/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/jruby/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/jruby/main</outputDirectory>
       <includes>
         <include>org.jruby:jruby</include>
       </includes>

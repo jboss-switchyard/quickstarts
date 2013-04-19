@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/springframework/module.xml</source>
-      <outputDirectory>/modules/org/springframework/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/springframework/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/springframework/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/springframework/main</outputDirectory>
       <includes>
         <include>org.springframework:spring-core</include>
         <include>org.springframework:spring-context</include>

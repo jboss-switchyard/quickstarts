@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/apache/commons/collections/module.xml</source>
-      <outputDirectory>/modules/org/apache/commons/collections/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/commons/collections/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/apache/commons/collections/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/commons/collections/main</outputDirectory>
       <includes>
         <include>commons-collections:commons-collections</include>
       </includes>

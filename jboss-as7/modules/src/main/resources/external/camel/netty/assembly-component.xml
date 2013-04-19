@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/camel/netty/module.xml</source>
-      <outputDirectory>/modules/org/apache/camel/netty/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/camel/netty/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/apache/camel/netty/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/camel/netty/main</outputDirectory>
       <includes>
         <include>org.apache.camel:camel-netty</include>
       </includes>

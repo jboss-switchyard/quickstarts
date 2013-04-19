@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/rhino/module.xml</source>
-      <outputDirectory>/modules/rhino/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/rhino/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/rhino/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/rhino/main</outputDirectory>
       <includes>
         <include>rhino:js</include>
       </includes>

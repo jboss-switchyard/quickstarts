@@ -22,87 +22,87 @@
     <files>
         <file>
             <source>src/main/resources/switchyard/core/api/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/api/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/api/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/api/extensions/wsdl/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/api/extensions/wsdl/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/api/extensions/wsdl/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/admin/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/admin/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/admin/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/common/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/common/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/common/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/common/camel/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/common/camel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/common/camel/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/common/cdi/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/common/cdi/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/common/cdi/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/config/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/config/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/config/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/remote/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/remote/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/remote/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/runtime/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/runtime/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/runtime/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/security/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/security/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/security/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/serial/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/serial/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/serial/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/transform/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/transform/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/transform/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/validate/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/validate/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/validate/main</outputDirectory>
             <filtered>true</filtered>
         </file>
          <file>
             <source>src/main/resources/switchyard/core/deploy/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/deploy/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/deploy/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/jaxb-impl/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/jaxb-impl/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/jaxb-impl/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/bus/camel/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/bus/camel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/bus/camel/main</outputDirectory>
             <filtered>true</filtered>
         </file>
         <file>
             <source>src/main/resources/switchyard/core/module.xml</source>
-            <outputDirectory>/modules/org/switchyard/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
@@ -112,7 +112,7 @@
             <includes>
                 <include>org.switchyard:switchyard-api</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/api/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/api/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -121,7 +121,7 @@
             <includes>
                 <include>org.switchyard:switchyard-admin</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/admin/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/admin/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -130,7 +130,7 @@
             <includes>
                 <include>org.switchyard:switchyard-common</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/common/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/common/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -139,7 +139,7 @@
             <includes>
                 <include>org.switchyard:switchyard-common-camel</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/common/camel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/common/camel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -148,7 +148,7 @@
             <includes>
                 <include>org.switchyard:switchyard-common-cdi</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/common/cdi/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/common/cdi/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -157,7 +157,7 @@
             <includes>
                 <include>org.switchyard:switchyard-config</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/config/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/config/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -166,7 +166,7 @@
             <includes>
                 <include>org.switchyard:switchyard-extensions-wsdl</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/api/extensions/wsdl/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/api/extensions/wsdl/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -175,7 +175,7 @@
             <includes>
                 <include>org.switchyard:switchyard-transform</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/transform/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/transform/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -184,7 +184,7 @@
             <includes>
                 <include>org.switchyard:switchyard-validate</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/validate/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/validate/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -193,7 +193,7 @@
             <includes>
                 <include>org.switchyard:switchyard-remote</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/remote/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/remote/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -202,7 +202,7 @@
             <includes>
                 <include>org.switchyard:switchyard-runtime</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/runtime/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/runtime/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -212,7 +212,7 @@
                 <include>org.switchyard:switchyard-security</include>
                 <include>org.switchyard:switchyard-security-jboss</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/security/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/security/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -225,7 +225,7 @@
                 <include>org.switchyard:switchyard-serial-protostuff</include>
                 -->
             </includes>
-            <outputDirectory>/modules/org/switchyard/serial/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/serial/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -234,7 +234,7 @@
             <includes>
                 <include>org.switchyard:switchyard-bus-camel</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/bus/camel/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/bus/camel/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -243,7 +243,7 @@
             <includes>
                 <include>org.switchyard:switchyard-deploy</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/deploy/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/deploy/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
@@ -252,7 +252,7 @@
             <includes>
                 <include>org.switchyard:switchyard-deploy-jboss-as7</include>
             </includes>
-            <outputDirectory>/modules/org/switchyard/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>

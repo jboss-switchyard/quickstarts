@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/camel/core/module.xml</source>
-      <outputDirectory>/modules/org/apache/camel/core/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/camel/core/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/apache/camel/core/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/camel/core/main</outputDirectory>
       <includes>
         <include>org.apache.camel:camel-core</include>
       </includes>

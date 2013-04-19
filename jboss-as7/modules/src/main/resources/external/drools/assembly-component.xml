@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/drools/module.xml</source>
-      <outputDirectory>/modules/org/drools/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/drools/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/drools/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/drools/main</outputDirectory>
       <includes>
         <include>org.drools:drools-compiler</include>
         <include>org.drools:drools-core</include>

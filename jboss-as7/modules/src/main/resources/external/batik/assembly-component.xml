@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/batik/module.xml</source>
-      <outputDirectory>/modules/batik/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/batik/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/batik/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/batik/main</outputDirectory>
       <includes>
         <include>batik:batik-anim</include>
         <include>batik:batik-awt-util</include>
@@ -54,7 +54,7 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>/modules/batik/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/batik/main</outputDirectory>
       <includes>
         <include>org.apache.ws.commons.axiom:axiom-api</include>
         <include>org.apache.ws.commons.axiom:axiom-impl</include>
@@ -63,7 +63,7 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>/modules/batik/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/batik/main</outputDirectory>
       <includes>
         <include>xml-apis:xml-apis</include>
         <include>xml-apis:xml-apis-ext</include>

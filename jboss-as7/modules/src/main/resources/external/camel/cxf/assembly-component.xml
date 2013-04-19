@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/camel/cxf/module.xml</source>
-      <outputDirectory>/modules/org/apache/camel/cxf/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/camel/cxf/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/apache/camel/cxf/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/camel/cxf/main</outputDirectory>
       <includes>
         <include>org.apache.camel:camel-cxf</include>
       </includes>

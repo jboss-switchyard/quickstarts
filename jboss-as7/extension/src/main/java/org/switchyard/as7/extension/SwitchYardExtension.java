@@ -28,12 +28,10 @@ import java.util.Locale;
 
 import org.jboss.as.controller.Extension;
 import org.jboss.as.controller.ExtensionContext;
-import org.jboss.as.controller.OperationDefinition;
 import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.ReloadRequiredWriteAttributeHandler;
 import org.jboss.as.controller.ResourceBuilder;
 import org.jboss.as.controller.ResourceDefinition;
-import org.jboss.as.controller.SimpleOperationDefinitionBuilder;
 import org.jboss.as.controller.SimpleResourceDefinition;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.descriptions.DescriptionProvider;
@@ -71,21 +69,6 @@ public class SwitchYardExtension implements Extension {
     private static final PathElement MODULE_PATH = PathElement.pathElement(MODULE);
     private static final String RESOURCE_NAME = SwitchYardExtension.class.getPackage().getName() + ".LocalDescriptions";
 
-    private static final OperationDefinition GET_VERSION = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.GET_VERSION, getResourceDescriptionResolver("switchyard.get-version"))
-            .build();
-    private static final OperationDefinition LIST_APPLICATIONS = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.LIST_APPLICATIONS, getResourceDescriptionResolver("switchyard.list-applications"))
-            .build();
-    private static final OperationDefinition LIST_SERVICES = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.LIST_SERVICES, getResourceDescriptionResolver("switchyard.list-services"))
-            .build();
-    private static final OperationDefinition READ_APPLICATION = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.READ_APPLICATION, getResourceDescriptionResolver("switchyard.read-application"))
-            .build();
-    private static final OperationDefinition READ_SERVICE = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.READ_SERVICE, getResourceDescriptionResolver("switchyard.read-service"))
-            .build();
-    private static final OperationDefinition USES_ARTIFACT = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.USES_ARTIFACT, getResourceDescriptionResolver("switchyard.uses-artifacts"))
-            .build();
-    private static final OperationDefinition SHOW_METRICS = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.SHOW_METRICS, getResourceDescriptionResolver("switchyard.show-metrics"))
-            .build();
-
     /**
      * Create description resolver.
      * @param keyPrefix a list of prefixes
@@ -119,13 +102,13 @@ public class SwitchYardExtension implements Extension {
         ResourceDefinition subsystemResource = ResourceBuilder.Factory.createSubsystemRoot(SUBSYSTEM_PATH, getResourceDescriptionResolver(), SwitchYardSubsystemAdd.INSTANCE, SwitchYardSubsystemRemove.INSTANCE)
                 .addReadWriteAttribute(Attributes.SOCKET_BINDING, null, new ReloadRequiredWriteAttributeHandler(Attributes.SOCKET_BINDING))
                 .addReadWriteAttribute(Attributes.PROPERTIES, null, new ReloadRequiredWriteAttributeHandler(Attributes.PROPERTIES))
-                .addOperation(GET_VERSION, SwitchYardSubsystemGetVersion.INSTANCE)
-                .addOperation(LIST_APPLICATIONS, SwitchYardSubsystemListApplications.INSTANCE)
-                .addOperation(LIST_SERVICES, SwitchYardSubsystemListServices.INSTANCE)
-                .addOperation(READ_APPLICATION, SwitchYardSubsystemReadApplication.INSTANCE)
-                .addOperation(READ_SERVICE, SwitchYardSubsystemReadService.INSTANCE)
-                .addOperation(USES_ARTIFACT, SwitchYardSubsystemUsesArtifact.INSTANCE)
-                .addOperation(SHOW_METRICS, SwitchYardSubsystemShowMetrics.INSTANCE)
+                .addOperation(Operations.GET_VERSION, SwitchYardSubsystemGetVersion.INSTANCE)
+                .addOperation(Operations.LIST_APPLICATIONS, SwitchYardSubsystemListApplications.INSTANCE)
+                .addOperation(Operations.LIST_SERVICES, SwitchYardSubsystemListServices.INSTANCE)
+                .addOperation(Operations.READ_APPLICATION, SwitchYardSubsystemReadApplication.INSTANCE)
+                .addOperation(Operations.READ_SERVICE, SwitchYardSubsystemReadService.INSTANCE)
+                .addOperation(Operations.USES_ARTIFACT, SwitchYardSubsystemUsesArtifact.INSTANCE)
+                .addOperation(Operations.SHOW_METRICS, SwitchYardSubsystemShowMetrics.INSTANCE)
                 .pushChild(modulesResource).pop()
                 .build();
         subsystem.registerSubsystemModel(subsystemResource);

@@ -26,13 +26,13 @@
   <files>
     <file>
       <source>src/main/resources/external/groovy/module.xml</source>
-      <outputDirectory>/modules/org/codehaus/groovy/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/codehaus/groovy/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/codehaus/groovy/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/codehaus/groovy/main</outputDirectory>
       <includes>
         <include>org.codehaus.groovy:groovy-all</include>
       </includes>

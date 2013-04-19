@@ -26,17 +26,17 @@
   <files>
     <file>
       <source>src/main/resources/external/jbpm/module.xml</source>
-      <outputDirectory>/modules/org/jbpm/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/jbpm/main</outputDirectory>
       <filtered>true</filtered>
     </file>
     <file>
       <source>target/jbpm-switchyard-${version.jbpm}.jar</source>
-      <outputDirectory>/modules/org/jbpm/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/jbpm/main</outputDirectory>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/org/jbpm/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/jbpm/main</outputDirectory>
       <includes>
         <include>org.jbpm:jbpm-bam</include>
         <include>org.jbpm:jbpm-bpmn2</include>
