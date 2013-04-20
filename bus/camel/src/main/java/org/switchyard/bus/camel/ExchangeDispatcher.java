@@ -67,7 +67,7 @@ public class ExchangeDispatcher implements Dispatcher {
     public void dispatch(final Exchange exchange) {
         // We can only send Camel exchanges through the camel bus
         if (!CamelExchange.class.isInstance(exchange)) {
-            throw new IllegalArgumentException("Camel Bus accepts only CamelExchanges");
+            throw BusMessages.MESSAGES.onlyCamelExchanges();
         }
         CamelExchange camelEx = (CamelExchange)exchange;
         

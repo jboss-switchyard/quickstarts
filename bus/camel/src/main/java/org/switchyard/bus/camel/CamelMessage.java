@@ -25,7 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.switchyard.Context;
 import org.switchyard.Message;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.camel.HandlerDataSource;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.camel.SwitchYardMessage;
@@ -69,7 +68,7 @@ public class CamelMessage extends SwitchYardMessage implements Message {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected <T> T getBody(Class<T> type, Object body) {
         if (type == null) {
-            throw new IllegalArgumentException("null 'type' argument.");
+            throw BusMessages.MESSAGES.nullTypeArgument();
         }
         if (body == null) {
             return null;
@@ -80,7 +79,7 @@ public class CamelMessage extends SwitchYardMessage implements Message {
 
         TransformerRegistry transformerRegistry = getTransformerRegistry();
         if (transformerRegistry == null) {
-            throw new SwitchYardException("Cannot convert from '" + body.getClass().getName() + "' to '" + type.getName() + "'.  No TransformRegistry available.");
+            throw BusMessages.MESSAGES.cannotConvertNoTransformRegistry(body.getClass().getName(), type.getName());
         }
 
         QName toType = JavaTypes.toMessageType(type);
@@ -89,17 +88,17 @@ public class CamelMessage extends SwitchYardMessage implements Message {
         if (transformer == null) {
             T camelBody = super.getBody(type, body);
             if (camelBody == null) {
-                throw new SwitchYardException("Cannot convert from '" + body.getClass().getName() + "' to '" + type.getName() + "'.  No registered Transformer available for transforming from '" + fromType + "' to '" + toType + "'.  A Transformer must be registered.");
+                throw BusMessages.MESSAGES.transformerMustBeRegistered(body.getClass().getName(), type.getName(), fromType.toString(), toType.toString());
             }
             return camelBody;
         }
 
         Object transformedContent = transformer.transform(body);
         if (transformedContent == null) {
-            throw new SwitchYardException("Error converting from '" + body.getClass().getName() + "' to '" + type.getName() + "'.  Transformer '" + transformer.getClass().getName() + "' returned null.");
+            throw BusMessages.MESSAGES.transformerReturnedNull(body.getClass().getName(), type.getName(), transformer.getClass().getName());
         }
         if (!type.isInstance(transformedContent)) {
-            throw new SwitchYardException("Error converting from '" + body.getClass().getName() + "' to '" + type.getName() + "'.  Transformer '" + transformer.getClass().getName() + "' returned incompatible type '" + transformedContent.getClass().getName() + "'.");
+            throw BusMessages.MESSAGES.transformerReturnedIncompatibleType(body.getClass().getName(), type.getName(), transformer.getClass().getName(), transformedContent.getClass().getName());
         }
 
         return type.cast(transformedContent);

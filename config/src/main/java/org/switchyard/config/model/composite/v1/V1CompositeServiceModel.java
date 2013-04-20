@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.common.lang.Strings;
+import org.switchyard.config.ConfigLogger;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
@@ -124,11 +125,11 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
                                     return service;
                                 }
                             }
-                            LOGGER.warn("missing component service [" + componentServiceName + "] for component [" + componentName + "]");
+                            ConfigLogger.ROOT_LOGGER.missingComponentService(componentServiceName, componentName);
                         }
                     }
                 }
-                LOGGER.warn("missing component service for " + (missingComponent ? "missing " : "") + "component [" + componentName + "]");
+                ConfigLogger.ROOT_LOGGER.missingComponentService((missingComponent ? "missing " : ""), componentName);
             }
         }
         return null;

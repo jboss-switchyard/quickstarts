@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
 import org.switchyard.bus.camel.CamelExchange;
+import org.switchyard.bus.camel.BusMessages;
 
 /**
  * Processor wrapping SwitchYard {@link ExchangeHandler} invocation.
@@ -65,7 +66,7 @@ public class HandlerProcessor implements Processor {
 
     @Override
     public String toString() {
-        return "HandlerProcessor [" + _handlers + "]";
+        return BusMessages.MESSAGES.handlerProcessorString(_handlers);
     }
 
 }

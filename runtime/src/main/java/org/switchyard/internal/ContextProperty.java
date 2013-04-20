@@ -22,6 +22,7 @@ import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.internal.ContextProperty.ContextPropertyFactory;
+import org.switchyard.runtime.RuntimeMessages;
 import org.switchyard.serial.graph.AccessType;
 import org.switchyard.serial.graph.BaseFactory;
 import org.switchyard.serial.graph.Strategy;
@@ -44,7 +45,7 @@ public class ContextProperty implements Property {
     
     ContextProperty(String name, Scope scope, Object value) {
         if (name == null || scope == null) {
-            throw new IllegalArgumentException("Property name and scope must not be null!");
+            throw RuntimeMessages.MESSAGES.propertyNameAndScopeCannotBeNull();
         }
         
         _name = name;

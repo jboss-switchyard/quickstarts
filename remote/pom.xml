@@ -45,11 +45,6 @@
             <artifactId>infinispan-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.marshalling</groupId>
             <artifactId>jboss-marshalling</artifactId>
             <scope>test</scope>

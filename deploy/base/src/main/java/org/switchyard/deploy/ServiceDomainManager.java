@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
+import org.switchyard.BaseDeployMessages;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.bus.camel.CamelExchangeBus;
@@ -146,7 +147,7 @@ public class ServiceDomainManager {
                             if (!map.containsKey(key)) {
                                 map.put(key, value);
                             } else {
-                                throw new IllegalStateException("Duplicate security configuration names calculated: " + key);
+                                throw BaseDeployMessages.MESSAGES.duplicateSecurityConfigurationNames(key);
                             }
                         }
                     }

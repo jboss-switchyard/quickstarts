@@ -21,6 +21,7 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
+import org.switchyard.security.BaseSecurityMessages;
 import org.switchyard.security.credential.Credential;
 import org.switchyard.security.credential.NameCredential;
 import org.switchyard.security.credential.PasswordCredential;
@@ -44,7 +45,7 @@ public class NamePasswordCallbackHandler extends SwitchYardCallbackHandler {
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         Set<Credential> credentials = getCredentials();
         if (credentials == null) {
-            throw new IllegalStateException("Credentials not set");
+            throw BaseSecurityMessages.MESSAGES.credentialsNotSet();
         }
         for (Callback cb : callbacks) {
             if (cb instanceof NameCallback) {

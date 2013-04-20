@@ -16,9 +16,9 @@ package org.switchyard.serial.graph.node;
 import java.lang.reflect.Constructor;
 
 import org.switchyard.HandlerException;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.type.reflect.FieldAccess;
+import org.switchyard.serial.SerialMessages;
 import org.switchyard.serial.graph.Graph;
 
 /**
@@ -177,7 +177,7 @@ public final class ThrowableNode implements Node {
                 throwable = Construction.construct(throwableClass, parameterTypes, new Object[]{message});
             }
         } catch (Throwable t) {
-            throw new SwitchYardException("Could not instantiate Throwable class: " + throwableClass.getName());
+            throw SerialMessages.MESSAGES.couldNotInstantiateThrowable(throwableClass.getName());
         }
         return throwable;
     }

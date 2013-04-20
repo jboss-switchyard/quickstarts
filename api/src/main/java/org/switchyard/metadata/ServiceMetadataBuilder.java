@@ -17,6 +17,7 @@ package org.switchyard.metadata;
 import java.util.Collections;
 import java.util.List;
 
+import org.switchyard.APIMessages;
 import org.switchyard.ServiceMetadata;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.metadata.qos.Throttling;
@@ -115,7 +116,7 @@ public final class ServiceMetadataBuilder {
      */
     public static ServiceMetadataBuilder update(ServiceMetadata metadata) {
         if (!ServiceMetadataImpl.class.isInstance(metadata)) {
-            throw new IllegalArgumentException("Unable to update metadata type " + metadata.getClass());
+            throw APIMessages.MESSAGES.unableUpdateMetadataType(metadata.getClass().toString());
         }
         return new ServiceMetadataBuilder((ServiceMetadataImpl)metadata);
     }

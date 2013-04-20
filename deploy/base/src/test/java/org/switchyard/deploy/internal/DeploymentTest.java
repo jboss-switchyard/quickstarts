@@ -309,7 +309,8 @@ public class DeploymentTest {
             deployment.start();
             Assert.fail("Expected SwitchYardException");
         } catch (SwitchYardException e) {
-            Assert.assertEquals("Failed to load Service interface class 'org.acme.Blah'.", e.getMessage());
+            boolean exceptionMatches = e.getMessage().contains("SWITCHYARD012211");
+            Assert.assertTrue(exceptionMatches);
         }
     }
     

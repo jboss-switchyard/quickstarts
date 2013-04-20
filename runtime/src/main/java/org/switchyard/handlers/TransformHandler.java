@@ -29,6 +29,7 @@ import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.JavaTypes;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.runtime.RuntimeMessages;
 import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
@@ -95,8 +96,8 @@ public class TransformHandler extends BaseHandler {
         if (!TransformSequence.assertTransformsApplied(exchange)) {
             QName actualPayloadType = TransformSequence.getCurrentMessageType(exchange);
             QName expectedPayloadType = TransformSequence.getTargetMessageType(exchange);
-
-            throw new HandlerException("Transformations not applied.  Required payload type of '" + expectedPayloadType + "'.  Actual payload type is '" + actualPayloadType + "'.  You must define and register a Transformer to transform between these types.");
+            throw RuntimeMessages.MESSAGES.transformationsNotApplied(expectedPayloadType.toString(), 
+                    actualPayloadType.toString());
         }
 
         // Replace the CONTENT_TYPE property to indicate current content type after transform

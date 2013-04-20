@@ -17,6 +17,8 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.switchyard.common.CommonCoreMessages;
+
 /**
  * Access via a wrapped PropertyDescriptor.
  *
@@ -109,7 +111,7 @@ public final class BeanAccess<T> implements Access<T> {
     public String toString() {
         Class<?> clazz = getType();
         String type = clazz != null ? clazz.getSimpleName() : null;
-        return "BeanAccess(name=" + getName() + ", type=" + type + ", readable=" + isReadable() + ", writeable=" + isWriteable() + ")";
+        return CommonCoreMessages.MESSAGES.beanAccessString(getName(), type, isReadable(), isWriteable());
     }
 
 }

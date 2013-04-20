@@ -32,6 +32,7 @@ import javax.xml.soap.SOAPMessage;
 
 import org.switchyard.common.codec.Base64;
 import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.security.BaseSecurityMessages;
 import org.switchyard.security.credential.AssertionCredential;
 import org.switchyard.security.credential.CertificateCredential;
 import org.switchyard.security.credential.Credential;
@@ -123,12 +124,12 @@ public class SOAPMessageCredentialExtractor implements CredentialExtractor<SOAPM
                                         Certificate certificate = factory.generateCertificate(certStream);
                                         credentials.add(new CertificateCredential(certificate));
                                     } else if (PKCS7.equals(valueType)) {
-                                        throw new IllegalArgumentException(valueType + " not implemented (although recognized)");
+                                        throw BaseSecurityMessages.MESSAGES.valueTypeRecognizedNotImplemented(valueType);
                                     } else {
-                                        throw new IllegalArgumentException(valueType + " not implemented");
+                                        throw BaseSecurityMessages.MESSAGES.valueTypeNotImplemented(valueType);
                                     }
                                 } catch (CertificateException ce) {
-                                    throw new RuntimeException("Could not create certificate(s): " + ce.getMessage(), ce);
+                                    throw BaseSecurityMessages.MESSAGES.couldNotCreateCert(ce.getMessage(), ce);
                                 }
                             }
                         }

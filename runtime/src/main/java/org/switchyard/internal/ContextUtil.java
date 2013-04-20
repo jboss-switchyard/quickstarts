@@ -17,6 +17,7 @@ import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.label.BehaviorLabel;
+import org.switchyard.runtime.RuntimeMessages;
 
 /**
  * Utility class to handle {@link Context} related operations.
@@ -51,7 +52,7 @@ public final class ContextUtil {
      */
     public static void checkScope(Scope source, Scope target) {
         if (source != target) {
-            throw new IllegalArgumentException("Scope " + target + " is different than expected " + source);
+            throw RuntimeMessages.MESSAGES.scopeDifferent(target.toString(), source.toString());
         }
     }
 }

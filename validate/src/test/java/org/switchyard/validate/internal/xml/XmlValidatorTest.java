@@ -38,7 +38,8 @@ public class XmlValidatorTest extends AbstractValidatorTestCase {
         try {
             getValidator("sw-config-no-schematype.xml");
         } catch(RuntimeException e) {
-            Assert.assertEquals("Could not instantiate XmlValidator: schemaType must be specified.", e.getMessage());
+        	boolean exceptionText = e.getMessage().contains("SWITCHYARD017219");
+        	Assert.assertTrue(exceptionText);
         }
     }
 
@@ -47,7 +48,8 @@ public class XmlValidatorTest extends AbstractValidatorTestCase {
         try {
             getValidator("sw-config-no-schemafile.xml");
         } catch(RuntimeException e) {
-            Assert.assertEquals("schema file must be specified for XML_SCHEMA validation.", e.getMessage());
+        	boolean exceptionText = e.getMessage().contains("SWITCHYARD017221");
+        	Assert.assertTrue(exceptionText);
         }
     }
 

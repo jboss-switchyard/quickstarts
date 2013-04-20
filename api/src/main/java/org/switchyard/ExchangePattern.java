@@ -62,7 +62,7 @@ public enum ExchangePattern {
         } else if (IN_OUT.getURI().equals(uri)) {
             return IN_OUT;
         } else {
-            throw new IllegalArgumentException("Unrecognized URI: " + uri);
+            throw APIMessages.MESSAGES.unrecognizedURI(uri);
         }
     }
 }

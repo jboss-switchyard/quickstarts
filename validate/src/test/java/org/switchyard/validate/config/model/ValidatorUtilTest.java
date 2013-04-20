@@ -71,9 +71,8 @@ public class ValidatorUtilTest {
             ValidatorUtil.newValidator(TestValidator.class, QName.valueOf("AAA"));
             Assert.fail("Expected Exception");
         } catch(RuntimeException e) {
-            Assert.assertEquals("Error constructing Validator instance for class 'org.switchyard.validate.config.model.ValidatorUtilTest$TestValidator'.  " +
-                    "Class does not support a validation for type 'AAA'.",
-                    e.getMessage());
+        	boolean messageMatches = e.getMessage().contains("SWITCHYARD017210");
+        	Assert.assertTrue(messageMatches);
         }
     }
 

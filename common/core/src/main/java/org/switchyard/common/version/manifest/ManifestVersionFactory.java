@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import java.util.jar.Manifest;
 
 import org.apache.log4j.Logger;
+import org.switchyard.common.CommonCoreLogger;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.version.BaseVersionFactory;
 import org.switchyard.common.version.Query;
@@ -74,13 +75,13 @@ public final class ManifestVersionFactory extends BaseVersionFactory {
                     }
                 }
             } catch (IOException ioe) {
-                LOGGER.warn(String.format("problem reading %s stream: %s", url, ioe.getMessage()));
+                CommonCoreLogger.ROOT_LOGGER.problemReadingStream(url.toString(), ioe.getMessage());
             } finally {
                 if (is != null) {
                     try {
                         is.close();
                     } catch (IOException ioe) {
-                        LOGGER.warn(String.format("problem closing %s stream: %s", url, ioe.getMessage()));
+                        CommonCoreLogger.ROOT_LOGGER.problemClosingStream(url.toString(), ioe.getMessage());
                     }
                 }
             }

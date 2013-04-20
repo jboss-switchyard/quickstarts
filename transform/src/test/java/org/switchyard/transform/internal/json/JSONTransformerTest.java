@@ -149,7 +149,8 @@ public class JSONTransformerTest {
 			Object result = toObject((String)transformer.transform(new Person()), User.class);
 			assertEquals(expected, result);
 		} catch (Exception e) {
-			assertEquals("The object to transform is of wrong instance type class org.switchyard.transform.internal.json.Person", e.getMessage());
+			boolean exceptionMatches = e.getMessage().contains("SWITCHYARD016828");
+			Assert.assertTrue(exceptionMatches);
 		}
 	}
 

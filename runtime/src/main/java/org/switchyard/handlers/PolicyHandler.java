@@ -22,6 +22,7 @@ import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.policy.Policy;
 import org.switchyard.policy.PolicyUtil;
+import org.switchyard.runtime.RuntimeMessages;
 
 /**
  * Generic policy handler which simply checks to make sure all required policies
@@ -57,7 +58,7 @@ public class PolicyHandler extends BaseHandler {
                 while (missing.hasNext()) {
                     requires += " " + missing.next().getName();
                 }
-                throw new HandlerException("Required policies have not been provided: " + requires);
+                throw RuntimeMessages.MESSAGES.requiredPolicesNeeded(requires);
             }
         }
     }

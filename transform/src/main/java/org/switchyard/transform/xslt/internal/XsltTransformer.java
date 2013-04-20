@@ -23,9 +23,10 @@ import javax.xml.transform.dom.DOMResult;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Message;
-import org.switchyard.SwitchYardException;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.transform.BaseTransformer;
+import org.switchyard.transform.TransformLogger;
+import org.switchyard.transform.TransformMessages;
 import org.w3c.dom.Document;
 
 /**
@@ -68,7 +69,7 @@ public class XsltTransformer<F, T> extends BaseTransformer<Message, Message> {
             message.setContent(((Document)result.getNode()).getDocumentElement());
 
         } catch (Exception e) {
-            throw new SwitchYardException("Error during xslt transformation", e);
+            throw TransformMessages.MESSAGES.errorDuringXsltTransformation(e);
         }
         return message;
     }
@@ -85,7 +86,7 @@ public class XsltTransformer<F, T> extends BaseTransformer<Message, Message> {
             if (_failOnWarning) {
                 throw ex;
            } else {
-                LOGGER.warn("Warning during xslt transformation", ex);
+               TransformLogger.ROOT_LOGGER.warningDuringTransformation(ex);
              }
         }
 
@@ -100,4 +101,3 @@ public class XsltTransformer<F, T> extends BaseTransformer<Message, Message> {
         }
     }
 }
-

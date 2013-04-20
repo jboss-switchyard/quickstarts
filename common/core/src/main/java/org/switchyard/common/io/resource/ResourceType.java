@@ -24,6 +24,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
+import org.switchyard.common.CommonCoreMessages;
 import org.switchyard.common.io.pull.PropertiesPuller;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
@@ -247,7 +248,7 @@ public final class ResourceType implements Comparable<ResourceType> {
         // name
         name = Strings.trimToNull(name);
         if (name == null) {
-            throw new IllegalArgumentException("name == null");
+            throw CommonCoreMessages.MESSAGES.nameNull();
         }
         name = name.toUpperCase();
         // description

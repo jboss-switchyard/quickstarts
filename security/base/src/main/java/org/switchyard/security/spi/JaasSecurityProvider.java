@@ -30,6 +30,8 @@ import org.switchyard.security.callback.handler.SwitchYardCallbackHandler;
 import org.switchyard.security.principal.Group;
 import org.switchyard.security.principal.Role;
 
+import org.switchyard.security.BaseSecurityLogger;
+
 /**
  * JaasSecurityProvider.
  *
@@ -66,7 +68,7 @@ public class JaasSecurityProvider extends SecurityProvider {
             new LoginContext(securityDomain, subject, ch).login();
             success = true;
         } catch (LoginException le) {
-            LOGGER.error("authenticate LoginException: " + le.getMessage(), le);
+            BaseSecurityLogger.ROOT_LOGGER.authenticateLoginException(le.getMessage(), le);
         }
         return success;
     }

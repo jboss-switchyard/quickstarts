@@ -24,7 +24,6 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.SwitchYardException;
 import org.switchyard.bus.camel.processors.Processors;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.spi.Dispatcher;
@@ -71,7 +70,7 @@ public class CamelExchangeBus implements ExchangeBus {
         try {
             _camelContext.start();
         } catch (Exception ex) {
-            throw new SwitchYardException("Failed to start Camel Exchange Bus", ex);
+            throw BusMessages.MESSAGES.failedToStartBus(ex);
         }
     }
 
@@ -84,7 +83,7 @@ public class CamelExchangeBus implements ExchangeBus {
             _dispatchers.clear();
             _camelContext.stop();
         } catch (Exception ex) {
-            throw new SwitchYardException("Failed to stop Camel Exchange Bus", ex);
+            throw BusMessages.MESSAGES.failedToStopBus(ex);
         }
     }
 
@@ -108,7 +107,7 @@ public class CamelExchangeBus implements ExchangeBus {
             if (_camelContext.getRoute(endpoint) != null) {
                 _camelContext.removeRoute(endpoint);
                 if (_logger.isInfoEnabled()) {
-                    _logger.info("Removing route " + endpoint);
+                    BusLogger.ROOT_LOGGER.removeRoute(endpoint);
                 }
             }
 
@@ -118,7 +117,7 @@ public class CamelExchangeBus implements ExchangeBus {
                 _logger.debug("Created route for " + endpoint + ", definition is: " + ModelHelper.dumpModelAsXml(rb.getRouteCollection()));
             }
         } catch (Exception ex) {
-            throw new SwitchYardException("Failed to create Camel route for service " + reference.getName(), ex);
+            throw BusMessages.MESSAGES.failedToCreateRoute(reference.getName(), ex);
         }
 
         ExchangeDispatcher dispatcher = new ExchangeDispatcher(_camelContext, reference);

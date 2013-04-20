@@ -26,13 +26,13 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.cdi.CDIUtil;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.metadata.JavaTypes;
 import org.switchyard.validate.BaseValidator;
+import org.switchyard.validate.ValidateMessages;
 import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.config.model.JavaValidateModel;
@@ -73,24 +73,24 @@ public final class ValidatorUtil {
             String bean = javaValidateModel.getBean();
             if (bean != null) {
                 if (CDIUtil.lookupBeanManager() == null) {
-                    throw new SwitchYardException("CDI BeanManager couldn't be found. A Java validator class name must be specified if CDI is not enabled.");
+                    throw ValidateMessages.MESSAGES.cdiBeanManagerNotFound();
                 }
                 Object validator = CDIUtil.lookupBean(bean);
                 if (validator == null) {
-                    throw new SwitchYardException("The Java validator bean '" + bean + "' couldn't be found in CDI registry.");
+                    throw ValidateMessages.MESSAGES.validatorBeanNotFound(bean);
                 }
                 validators = newValidators(validator, validateModel.getName());
 
             } else {
                 String className = ((JavaValidateModel) validateModel).getClazz();
                 if (className == null) {
-                    throw new SwitchYardException("'bean' or 'class' must be specified for Java validator definition.");
+                    throw ValidateMessages.MESSAGES.beanOrClassRequired();
                 }
                 try {
                     Class<?> validateClass = Classes.forName(className, ValidatorUtil.class);
                     validators = newValidators(validateClass, validateModel.getName());
                 } catch (Exception e) {
-                    throw new SwitchYardException("Error constructing Validator instance for class '" + className + "'.", e);
+                    throw ValidateMessages.MESSAGES.errorConstructingValidator(className, e);
                 }
             }
         } else {
@@ -101,7 +101,7 @@ public final class ValidatorUtil {
         }
 
         if (validators == null || validators.isEmpty()) {
-            throw new SwitchYardException("Unknown ValidateModel type '" + validateModel.getClass().getName() + "'.");
+            throw ValidateMessages.MESSAGES.unknownValidateModel(validateModel.getClass().getName());
         }
 
         return validators;
@@ -129,7 +129,7 @@ public final class ValidatorUtil {
      */
     public static Collection<Validator<?>> newValidators(Class<?> clazz, QName name) {
         if (!isValidator(clazz)) {
-            throw new SwitchYardException("Invalid Validator class '" + clazz.getName() + "'.  Must implement the Validator interface, or have methods annotated with the @Validator annotation.");
+            throw ValidateMessages.MESSAGES.invalidValidatorClass(clazz.getName());
         }
 
         final Object validatorObject;
@@ -137,7 +137,7 @@ public final class ValidatorUtil {
         try {
             validatorObject = clazz.newInstance();
         } catch (Exception e) {
-            throw new SwitchYardException("Error constructing Validator instance for class '" + clazz.getName() + "'.  Class must have a public default constructor.", e);
+            throw ValidateMessages.MESSAGES.errorConstructingValidatorConstructorRequired(clazz.getName(), e);
         }
 
         return newValidators(validatorObject, name);
@@ -188,7 +188,8 @@ public final class ValidatorUtil {
         }
 
         if (validators.isEmpty()) {
-            throw new SwitchYardException("Error constructing Validator instance for class '" + validatorObject.getClass().getName() + "'.  Class does not support a validation for type '" + name + "'.");
+            throw ValidateMessages.MESSAGES.errorConstructingValidatorClassNotSupported(validatorObject.getClass().getName(), 
+                    name.toString());
         }
 
         return validators;
@@ -206,7 +207,7 @@ public final class ValidatorUtil {
         try {
             validatorObject = clazz.newInstance();
         } catch (Exception e) {
-            throw new SwitchYardException("Error constructing Validator instance for class '" + clazz.getName() + "'.  Class must have a public default constructor.", e);
+            throw ValidateMessages.MESSAGES.errorConstructingValidatorMustHavePublicConstructor(clazz.getName(), e);
         }
 
         // If the class itself implements the Validator interface....
@@ -286,7 +287,8 @@ public final class ValidatorUtil {
 
     private static Validator newValidator(final Object validatorObject, final Method publicMethod, QName name) {
         if (!ValidationResult.class.isAssignableFrom(publicMethod.getReturnType())) {
-            throw new SwitchYardException("Invalid method signature: @Validator method '" + publicMethod.getName() + "' on class '" + publicMethod.getDeclaringClass().getName() + "' must return org.switchyard.validate.ValidationResult.");
+            throw ValidateMessages.MESSAGES.invalidMethodSignatureMustReturnValidationResult(publicMethod.getName(), 
+                    publicMethod.getDeclaringClass().getName());
         }
         
         Validator validator = new BaseValidator(name) {
@@ -295,9 +297,11 @@ public final class ValidatorUtil {
                 try {
                     return ValidationResult.class.cast(publicMethod.invoke(validatorObject, subject));
                 } catch (InvocationTargetException e) {
-                    throw new SwitchYardException("Error executing @Validator method '" + publicMethod.getName() + "' on class '" + publicMethod.getDeclaringClass().getName() + "'.", e.getCause());
+                    throw ValidateMessages.MESSAGES.errorExecutingValidatorInvocationTargetException(publicMethod.getName(),
+                            publicMethod.getDeclaringClass().getName(), e);
                 } catch (Exception e) {
-                    throw new SwitchYardException("Error executing @Validator method '" + publicMethod.getName() + "' on class '" + publicMethod.getDeclaringClass().getName() + "'.", e);
+                    throw ValidateMessages.MESSAGES.errorExecutingValidatorException(publicMethod.getName(),
+                            publicMethod.getDeclaringClass().getName(), e);
                 }
             }
             
@@ -336,7 +340,8 @@ public final class ValidatorUtil {
 
         Class<?>[] params = publicMethod.getParameterTypes();
         if (params.length != 1) {
-            throw new SwitchYardException("Invalid @Validator method '" + publicMethod.getName() + "' on class '" + publicMethod.getDeclaringClass().getName() + "'.  Must have exactly 1 parameter.");
+            throw ValidateMessages.MESSAGES.invalidValidatorOneParameter(publicMethod.getName(),
+                    publicMethod.getDeclaringClass().getName());
         }
         type = params[0];
 
@@ -353,19 +358,19 @@ public final class ValidatorUtil {
         ValidatorFactoryClass validatorFactoryClass = validateModel.getClass().getAnnotation(ValidatorFactoryClass.class);
 
         if (validatorFactoryClass == null) {
-            throw new SwitchYardException("ValidateModel type '" + validateModel.getClass().getName() + "' is not annotated with an @ValidatorFactoryClass annotation.");
+            throw ValidateMessages.MESSAGES.validateModelNotAnnotated(validateModel.getClass().getName());
         }
 
         Class<?> factoryClass = validatorFactoryClass.value();
 
         if (!org.switchyard.validate.internal.ValidatorFactory.class.isAssignableFrom(factoryClass)) {
-            throw new SwitchYardException("Invalid ValidatorFactory implementation.  Must implement '" + org.switchyard.validate.internal.ValidatorFactory.class.getName() + "'.");
+            throw ValidateMessages.MESSAGES.invalidValidatorFactoryImplementation(org.switchyard.validate.internal.ValidatorFactory.class.getName());
         }
 
         try {
             return (org.switchyard.validate.internal.ValidatorFactory) factoryClass.newInstance();
         } catch (Exception e) {
-            throw new SwitchYardException("Failed to create an instance of ValidatorFactory '" + factoryClass.getName() + "'.  Class must have a public default constructor and not be abstract.");
+            throw ValidateMessages.MESSAGES.failedToInstantiateValidatorFactory(factoryClass.getName());
         }
     }
 

@@ -22,13 +22,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.ValidatorRegistry;
+import org.switchyard.validate.ValidateMessages;
 
 /**
  * {@link ValidatorRegistry} loader class.
@@ -61,7 +61,7 @@ public class ValidatorRegistryLoader {
      */
     public ValidatorRegistryLoader(ValidatorRegistry validatorRegistry) {
         if (validatorRegistry == null) {
-            throw new IllegalArgumentException("null 'validatorRegistry' argument.");
+            throw ValidateMessages.MESSAGES.nullValidatorRegistryArgument();
         }
         this._validatorRegistry = validatorRegistry;
     }
@@ -83,9 +83,7 @@ public class ValidatorRegistryLoader {
                 for (Validator<?> validator : validators) {
                     if (_validatorRegistry.hasValidator(validator.getName())) {
                         Validator<?> registeredValidator = _validatorRegistry.getValidator(validator.getName());
-                        throw new DuplicateValidatorException("Failed to register Validator '" + toDescription(validator)
-                                + "'.  A Validator for these types is already registered: '"
-                                + toDescription(registeredValidator) + "'.");
+                        throw ValidateMessages.MESSAGES.failedToRegisterValidator(toDescription(validator), toDescription(registeredValidator));
                     }
 
                     _log.debug("Adding validator =>"
@@ -135,7 +133,7 @@ public class ValidatorRegistryLoader {
                 }
             }
         } catch (IOException e) {
-            throw new SwitchYardException("Error reading out-of-the-box Validator configurations from classpath (" + VALIDATES_XML + ").", e);
+            throw ValidateMessages.MESSAGES.errorReadingValidator(VALIDATES_XML, e);
         }
     }
 

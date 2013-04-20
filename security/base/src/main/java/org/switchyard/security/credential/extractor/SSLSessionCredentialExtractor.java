@@ -19,6 +19,7 @@ import java.util.Set;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 
+import org.switchyard.security.BaseSecurityMessages;
 import org.switchyard.security.credential.CertificateCredential;
 import org.switchyard.security.credential.ConfidentialityCredential;
 import org.switchyard.security.credential.Credential;
@@ -45,7 +46,7 @@ public class SSLSessionCredentialExtractor implements CredentialExtractor<SSLSes
             credentials.add(new PrincipalCredential(source.getPeerPrincipal()));
             credentials.add(new CertificateCredential(source.getPeerCertificates()[0]));
         } catch (SSLPeerUnverifiedException e) {
-            throw new RuntimeException("Unable to extract Credentials from SSLSession: " + e.getMessage(), e);
+            throw BaseSecurityMessages.MESSAGES.unableToExtractCredentials(e.getMessage(), e);
         }
         return credentials;
     }

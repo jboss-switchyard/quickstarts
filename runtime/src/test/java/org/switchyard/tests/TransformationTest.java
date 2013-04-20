@@ -133,6 +133,8 @@ public class TransformationTest {
         invokerHandler.waitForFaultMessage();
         Object content = invokerHandler.getFaults().poll().getMessage().getContent();
         Assert.assertTrue(content instanceof HandlerException);
-        Assert.assertEquals("Transformations not applied.  Required payload type of 'toB'.  Actual payload type is 'fromA'.  You must define and register a Transformer to transform between these types.", ((HandlerException)content).getMessage());
+        String testString = "Transformations not applied.  Required payload type of 'toB'.  Actual payload type is 'fromA'.  You must define and register a Transformer to transform between these types.";
+        boolean transformsApplied = ((HandlerException)content).getMessage().contains(testString);
+        Assert.assertTrue(transformsApplied);
     }
 }

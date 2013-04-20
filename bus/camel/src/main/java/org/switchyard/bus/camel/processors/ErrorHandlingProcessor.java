@@ -25,6 +25,7 @@ import org.switchyard.ErrorListener;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Scope;
+import org.switchyard.bus.camel.BusLogger;
 import org.switchyard.bus.camel.CamelExchange;
 
 /**
@@ -68,7 +69,7 @@ public class ErrorHandlingProcessor implements Processor {
                 try {
                     entry.getValue().notify(exchange, exception);
                 } catch (Exception e) {
-                    LOG.error("Error listener " + entry.getKey() + " failed to handle exception " + exception.getClass());
+                    BusLogger.ROOT_LOGGER.failedToHandlException(entry.getKey(), exception.getClass());
                 }
             }
         }

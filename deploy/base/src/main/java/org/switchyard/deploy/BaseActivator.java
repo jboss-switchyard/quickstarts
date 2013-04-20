@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.BaseDeployMessages;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -43,27 +44,23 @@ public abstract class BaseActivator implements Activator {
 
     @Override
     public ServiceHandler activateBinding(QName name, BindingModel config) {
-        throw new UnsupportedOperationException(
-                "activateBinding() not supported by " + getClass());
+        throw BaseDeployMessages.MESSAGES.activateBindingNotSupported(getClass().getName());
     }
 
     @Override
     public ServiceHandler activateService(QName name, ComponentModel config) {
-        throw new UnsupportedOperationException(
-                "deactivateService() not supported by " + getClass());
+        throw BaseDeployMessages.MESSAGES.activateServiceNotSupported(getClass().getName());
     }
     
 
     @Override
     public void deactivateBinding(QName name, ServiceHandler handler) {
-        throw new UnsupportedOperationException(
-                "deactivateBinding() not supported by " + getClass());
+        throw BaseDeployMessages.MESSAGES.deactivateBindingNotSupported(getClass().getName());
     }
 
     @Override
     public void deactivateService(QName name, ServiceHandler handler) {
-        throw new UnsupportedOperationException(
-                "deactivateService() not supported by " + getClass());
+        throw BaseDeployMessages.MESSAGES.deactivateServiceNotSupported(getClass().getName());
     }
     
     

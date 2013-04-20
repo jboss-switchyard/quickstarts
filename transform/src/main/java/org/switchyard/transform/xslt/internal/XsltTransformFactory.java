@@ -23,9 +23,10 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.log4j.Logger;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.Classes;
+
+import org.switchyard.transform.TransformLogger;
+import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.XsltTransformModel;
 import org.switchyard.transform.internal.TransformerFactory;
@@ -34,8 +35,6 @@ import org.switchyard.transform.internal.TransformerFactory;
  * @author Alejandro Montenegro <a href="mailto:aamonten@gmail.com">aamonten@gmail.com</a>
  */
 public final class XsltTransformFactory implements TransformerFactory<XsltTransformModel>{
-
-    private static final Logger LOGGER = Logger.getLogger(XsltTransformFactory.class);
     
     /**
      * Create a {@link Transformer} instance from the supplied {@link XsltTransformModel}.
@@ -50,14 +49,14 @@ public final class XsltTransformFactory implements TransformerFactory<XsltTransf
         QName from = model.getFrom();
 
         if (xsltFileUri == null || xsltFileUri.equals("")) {
-            throw new SwitchYardException("No xsl file has been defined. Check your transformer configuration.");
+            throw TransformMessages.MESSAGES.noXSLFileDefined();
         }
 
         try {
             InputStream stylesheetStream = Classes.getResourceAsStream(xsltFileUri);
 
             if (stylesheetStream == null) {
-                throw new SwitchYardException("Failed to load xsl file '" + xsltFileUri + "' from classpath.");
+                TransformMessages.MESSAGES.failedToLoadXSLFile(xsltFileUri);
             }
             javax.xml.transform.TransformerFactory tFactory = javax.xml.transform.TransformerFactory.newInstance();
             tFactory.setErrorListener(new XsltTransformFactoryErrorListener(failOnWarning));
@@ -66,12 +65,9 @@ public final class XsltTransformFactory implements TransformerFactory<XsltTransf
             
             return new XsltTransformer(from, to, templates, failOnWarning);
         } catch (TransformerConfigurationException e) {
-            throw new SwitchYardException(
-                    "An unexpected error ocurred while creating the xslt transformer",
-                    e);
+            throw TransformMessages.MESSAGES.unexpectedErrorOcurred(e);
         } catch (IOException e) {
-            throw new SwitchYardException("Unable to locate the xslt file "
-                    + model.getXsltFile(), e);
+            throw TransformMessages.MESSAGES.unableToLocateXSLTFile(model.getXsltFile().toString(), e);
         }
     }
     
@@ -87,7 +83,7 @@ public final class XsltTransformFactory implements TransformerFactory<XsltTransf
             if (_failOnWarning) {
                 throw ex;
            } else {
-                LOGGER.warn("Warning during xslt compilation", ex);
+               TransformLogger.ROOT_LOGGER.warningDuringCompilation(ex);
              }
         }
 

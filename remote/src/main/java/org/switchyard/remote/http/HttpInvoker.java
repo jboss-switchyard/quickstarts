@@ -21,6 +21,7 @@ import java.net.URL;
 import org.apache.log4j.Logger;
 import org.switchyard.remote.RemoteInvoker;
 import org.switchyard.remote.RemoteMessage;
+import org.switchyard.remote.RemoteMessages;
 import org.switchyard.serial.FormatType;
 import org.switchyard.serial.Serializer;
 import org.switchyard.serial.SerializerFactory;
@@ -47,8 +48,7 @@ public class HttpInvoker implements RemoteInvoker {
         try {
             _endpoint = new URL(endpoint);
         } catch (MalformedURLException badURL) {
-            throw new IllegalArgumentException(
-                    "Invalid URL for remote endpoint: " + endpoint, badURL);
+            throw RemoteMessages.MESSAGES.invalidURLForEndpoint(endpoint, badURL);
         }
     }
     

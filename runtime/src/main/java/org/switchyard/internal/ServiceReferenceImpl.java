@@ -23,13 +23,13 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceMetadata;
 import org.switchyard.ServiceReference;
-import org.switchyard.SwitchYardException;
 import org.switchyard.event.ReferenceUnregistrationEvent;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceMetadataBuilder;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.Policy;
 import org.switchyard.policy.PolicyUtil;
+import org.switchyard.runtime.RuntimeMessages;
 import org.switchyard.spi.Dispatcher;
 
 /**
@@ -91,11 +91,9 @@ public class ServiceReferenceImpl implements ServiceReference {
     public Exchange createExchange(ExchangeHandler handler) {
         Set<ServiceOperation> operations = _interface.getOperations();
         if (operations.size() == 0) {
-            throw new SwitchYardException(
-                    "No operations in interface for service: " + _name);
+            throw RuntimeMessages.MESSAGES.noOperationsInInterfaceForService(_name.toString());
         } else if (operations.size() > 1) {
-            throw new SwitchYardException("Operation name required - "
-                    + "multiple operations on service interface: " + _name);
+            throw RuntimeMessages.MESSAGES.operationNameRequiredMultipleOps(_name.toString());
         }
 
         return createExchange(operations.iterator().next().getName(), handler);
@@ -114,7 +112,8 @@ public class ServiceReferenceImpl implements ServiceReference {
             if (ServiceInterface.DEFAULT_TYPE.equals(_interface.getType())) {
                 op = _interface.getOperations().iterator().next();
             } else {
-                throw new SwitchYardException("Operation " + operation + " does not exist for service " + _name);
+                throw RuntimeMessages.MESSAGES.operationDoesNotExistForService(operation, 
+                        _name.toString());
             }
         }
 

@@ -15,8 +15,9 @@
 package org.switchyard.transform.ootb.xml;
 
 import org.apache.log4j.Logger;
-import org.switchyard.SwitchYardException;
 import org.switchyard.transform.BaseTransformer;
+import org.switchyard.transform.TransformLogger;
+import org.switchyard.transform.TransformMessages;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -93,15 +94,15 @@ public abstract class AbstractDOMTransformer<F, T> extends BaseTransformer<F, T>
         try {
             docBuilder = _docBuilderFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
-            throw new SwitchYardException("Unexpected DOM parser configuration exception.", e);
+            throw TransformMessages.MESSAGES.unexpectedDOMParserConfigException(e);
         }
 
         try {
             return docBuilder.parse(source);
         } catch (SAXException e) {
-            throw new SwitchYardException("Error parsing DOM source.", e);
+            throw TransformMessages.MESSAGES.errorReadingDOMSourceSAX(e);
         } catch (IOException e) {
-            throw new SwitchYardException("Error reading DOM source.", e);
+            throw TransformMessages.MESSAGES.errorReadingDOMSourceIO(e);
         } finally {
             InputStream stream = source.getByteStream();
             Reader reader = source.getCharacterStream();
@@ -116,7 +117,7 @@ public abstract class AbstractDOMTransformer<F, T> extends BaseTransformer<F, T>
                     }
                 }
             } catch (IOException e) {
-                LOGGER.error("Exception while closing DOM InputSource: " + e.getMessage());
+                TransformLogger.ROOT_LOGGER.exceptionClosingDOMInputSource(e.getMessage());
             }
         }
     }
@@ -132,7 +133,7 @@ public abstract class AbstractDOMTransformer<F, T> extends BaseTransformer<F, T>
         try {
             transformer = _transformerFactory.newTransformer();
         } catch (TransformerConfigurationException e) {
-            throw new SwitchYardException("Unexpected exception creating JDK Transformer instance.", e);
+            throw TransformMessages.MESSAGES.unexpectedExceptionCreatingJDKTransformer(e);
         }
 
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -144,7 +145,7 @@ public abstract class AbstractDOMTransformer<F, T> extends BaseTransformer<F, T>
         try {
             transformer.transform(new DOMSource(node), new StreamResult(writer));
         } catch (TransformerException e) {
-            throw new SwitchYardException("Error serializing DOM node.", e);
+            throw TransformMessages.MESSAGES.errorSerializingDOMNode(e);
         }
 
         return writer.toString();

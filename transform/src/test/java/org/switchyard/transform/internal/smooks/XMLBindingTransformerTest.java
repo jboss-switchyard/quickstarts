@@ -66,7 +66,8 @@ public class XMLBindingTransformerTest extends AbstractTransformerTestCase {
         try {
             new SmooksTransformFactory().newTransformer(model);
         } catch (RuntimeException e) {
-            Assert.assertEquals("Invalid XML2JAVA binding configuration.  No <jb:bean> configurations found.", e.getMessage());
+        	boolean exceptionMatch = e.getMessage().contains("SWITCHYARD016812");
+            Assert.assertTrue(exceptionMatch);
         }
     }
 
@@ -77,7 +78,8 @@ public class XMLBindingTransformerTest extends AbstractTransformerTestCase {
         try {
             new SmooksTransformFactory().newTransformer(model);
         } catch (RuntimeException e) {
-            Assert.assertEquals("Invalid JAVA2XML binding configuration.  No <jb:bean> configurations found.", e.getMessage());
+        	boolean exceptionMatch = e.getMessage().contains("SWITCHYARD016812");
+        	Assert.assertTrue(exceptionMatch);
         }
     }
 
@@ -88,7 +90,8 @@ public class XMLBindingTransformerTest extends AbstractTransformerTestCase {
         try {
             transformer.transform("wrong type");
         } catch (RuntimeException e) {
-            Assert.assertEquals("Cannot transform to XML.  Input type is 'java.lang.String' but should be 'org.switchyard.transform.internal.smooks.Person'.", e.getMessage());
+        	boolean exceptionMatch = e.getMessage().contains("SWITCHYARD016806");
+        	Assert.assertTrue(exceptionMatch);
         }
     }
 }

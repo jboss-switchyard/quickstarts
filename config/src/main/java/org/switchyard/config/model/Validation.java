@@ -13,6 +13,8 @@
  */
 package org.switchyard.config.model;
 
+import org.switchyard.config.ConfigMessages;
+
 /**
  * Represents the result of a Model validation.
  *
@@ -70,7 +72,7 @@ public final class Validation {
      */
     public Validation assertValid() {
         if (!isValid()) {
-            throw new RuntimeException("Model [" + getModelClass().getName() + "] is invalid: " + getMessage(), getCause());
+            throw ConfigMessages.MESSAGES.modelInvalid(getModelClass().getName(), getMessage(), getCause());
         }
         return this;
     }

@@ -41,6 +41,7 @@ import org.switchyard.common.io.pull.PropertiesPuller;
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.reflect.Construction;
+import org.switchyard.config.ConfigMessages;
 import org.switchyard.config.Configuration;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
@@ -369,7 +370,7 @@ public final class Descriptor {
             if (typeName != null) {
                 Class<?> type = Classes.forName(typeName, loader);
                 if (type == null) {
-                    throw new IllegalArgumentException("Can not find marshaller " + typeName + " for namespace " + namespace + " using classloader " + loader);
+                    throw ConfigMessages.MESSAGES.cannotFindMarshaller(typeName, loader);
                 }
                 marshaller = (Marshaller) Construction.construct(type, new Class<?>[]{Descriptor.class}, new Object[]{this});
                 if (marshaller != null) {

@@ -144,7 +144,7 @@ public final class SecurityContext {
         if (exchange instanceof SecurityExchange) {
             return ((SecurityExchange)exchange).getSecurityContext();
         }
-        throw new IllegalArgumentException("Exchange [" + exchange + "] is not an instance of " + SecurityExchange.class.getName());
+        throw BaseSecurityMessages.MESSAGES.notASecurityExchange(exchange.toString(), SecurityExchange.class.getName());
     }
 
 }

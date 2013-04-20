@@ -29,6 +29,8 @@ import org.switchyard.Scope;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
+import org.switchyard.runtime.RuntimeLogger;
+import org.switchyard.runtime.RuntimeMessages;
 
 
 /**
@@ -118,7 +120,7 @@ public class TransactionHandler implements ExchangeHandler {
                 endTransaction();
             }
         } catch (Exception e) {
-            throw new HandlerException("TransactionHandler failed to complete a transaction", e);
+            throw RuntimeMessages.MESSAGES.failedToCompleteTransaction(e);
         } finally {
             // resume the transaction which is suspended by this handler
             transaction = (Transaction) exchange.getContext().getPropertyValue(SUSPENDED_TRANSACTION_PROPERTY);
@@ -151,22 +153,19 @@ public class TransactionHandler implements ExchangeHandler {
     private void evaluatePolicyCombination(Exchange exchange) throws HandlerException {
         // check for incompatible policy definition 
         if (suspendsRequired(exchange) && propagatesRequired(exchange)) {
-            throw new HandlerException("Invalid transaction policy : "
-                + TransactionPolicy.SUSPENDS_TRANSACTION + " and " + TransactionPolicy.PROPAGATES_TRANSACTION
-                + " cannot be requested simultaneously.");
+            throw RuntimeMessages.MESSAGES.invalidTransactionPolicy(TransactionPolicy.SUSPENDS_TRANSACTION.toString(), 
+                    TransactionPolicy.PROPAGATES_TRANSACTION.toString());
         }
         if (managedGlobalRequired(exchange) && managedLocalRequired(exchange)
                 || managedGlobalRequired(exchange) && noManagedRequired(exchange)
                 || managedLocalRequired(exchange) && noManagedRequired(exchange)) {
-            throw new HandlerException("Invalid transaction policy : "
-                    + TransactionPolicy.MANAGED_TRANSACTION_GLOBAL + ", " + TransactionPolicy.MANAGED_TRANSACTION_LOCAL
-                    + " and " + TransactionPolicy.NO_MANAGED_TRANSACTION + " cannot be requested simultaneously with each other.");
+            throw RuntimeMessages.MESSAGES.invalidTransactionPolicy(TransactionPolicy.MANAGED_TRANSACTION_GLOBAL.toString(), 
+                    TransactionPolicy.NO_MANAGED_TRANSACTION.toString());
         }
         if (propagatesRequired(exchange) && managedLocalRequired(exchange)
                 || propagatesRequired(exchange) && noManagedRequired(exchange)) {
-            throw new HandlerException("Invalid transaction policy : "
-                    + TransactionPolicy.PROPAGATES_TRANSACTION + " cannot be requested with "
-                    + TransactionPolicy.MANAGED_TRANSACTION_LOCAL + " nor " + TransactionPolicy.NO_MANAGED_TRANSACTION);
+            throw RuntimeMessages.MESSAGES.invalidTransactionPolicyCombo(TransactionPolicy.PROPAGATES_TRANSACTION.toString(), 
+                    TransactionPolicy.MANAGED_TRANSACTION_LOCAL.toString(), TransactionPolicy.NO_MANAGED_TRANSACTION.toString());
         }
     }
     
@@ -174,8 +173,7 @@ public class TransactionHandler implements ExchangeHandler {
         Transaction transaction = getCurrentTransaction();
 
         if (transaction == null && propagatesRequired(exchange) && !managedGlobalRequired(exchange)) {
-            throw new HandlerException("Invalid transaction status : " 
-                    + TransactionPolicy.PROPAGATES_TRANSACTION + " is required but the transaction doesn't exist");
+            throw RuntimeMessages.MESSAGES.invalidTransactionStatus(TransactionPolicy.PROPAGATES_TRANSACTION.toString());
         }
     }
     
@@ -274,11 +272,11 @@ public class TransactionHandler implements ExchangeHandler {
                 _transactionManager.begin();
                 transaction = _transactionManager.getTransaction();
             } catch (Exception e) {
-                throw new HandlerException("Failed to create new transaction", e);
+                throw RuntimeMessages.MESSAGES.failedCreateNewTransaction(e);
             }
             exchange.getContext().setProperty(INITIATED_TRANSACTION_PROPERTY, transaction, Scope.EXCHANGE).addLabels(BehaviorLabel.TRANSIENT.label());
         } else {
-            throw new HandlerException("Transaction already exists");
+            throw RuntimeMessages.MESSAGES.transactionAlreadyExists();
         }
     }
     
@@ -293,17 +291,16 @@ public class TransactionHandler implements ExchangeHandler {
             try {
                 _transactionManager.rollback();
             } catch (Exception e) {
-                throw new HandlerException("Failed to rollback transaction", e);
+                throw RuntimeMessages.MESSAGES.failedToRollbackTransaction(e);
             }
         } else if (txStatus == Status.STATUS_ACTIVE) {
             try {
                 _transactionManager.commit();
             } catch (Exception e) {
-                throw new HandlerException("Failed to commit transaction", e);
+                throw RuntimeMessages.MESSAGES.failedToCommitTransaction(e);
             }
         } else {
-            throw new HandlerException("Failed to complete transaction due to invalid status - code="
-                    + txStatus + ": see javax.transaction.Status.");
+            throw RuntimeMessages.MESSAGES.failedToCompleteWithStatus(txStatus);
         }
     }
 
@@ -314,9 +311,9 @@ public class TransactionHandler implements ExchangeHandler {
 
         Transaction transaction = null;
         try {
-                transaction = _transactionManager.suspend();
+            transaction = _transactionManager.suspend();
         } catch (SystemException sysEx) {
-            _log.error("Failed to suspend transaction on exchange.", sysEx);
+            RuntimeLogger.ROOT_LOGGER.failedToSuspendTransactionOnExchange(sysEx);
         }
         if (transaction != null) {
             exchange.getContext().setProperty(SUSPENDED_TRANSACTION_PROPERTY, transaction, Scope.EXCHANGE).addLabels(BehaviorLabel.TRANSIENT.label());
@@ -330,7 +327,7 @@ public class TransactionHandler implements ExchangeHandler {
             }
             _transactionManager.resume(transaction);
         } catch (Exception ex) {
-            _log.error("Failed to resume transaction after service invocation.", ex);
+            RuntimeLogger.ROOT_LOGGER.failedToResumeTransaction(ex);
         }
     }
 
@@ -338,7 +335,7 @@ public class TransactionHandler implements ExchangeHandler {
         try {
             return _transactionManager.getTransaction();
         } catch (Exception e) {
-            throw new HandlerException("Failed to retrieve transaction status", e);
+            throw RuntimeMessages.MESSAGES.failedToRetrieveStatus(e);
         }
     }
     
@@ -346,7 +343,7 @@ public class TransactionHandler implements ExchangeHandler {
         try {
             return _transactionManager.getStatus();
         } catch (Exception e) {
-            throw new HandlerException("Failed to retrieve transaction status", e);
+            throw RuntimeMessages.MESSAGES.failedToRetrieveStatus(e);
         }
     }
 }

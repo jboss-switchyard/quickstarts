@@ -21,10 +21,10 @@ import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.Policy;
 import org.switchyard.policy.PolicyUtil;
+import org.switchyard.runtime.RuntimeMessages;
 
 /**
  * The AddressingHandler resolves service instances based on a service reference.
@@ -55,7 +55,7 @@ public class AddressingHandler extends BaseHandler {
         
         List<Service> services = _domain.getServices(exchange.getConsumer().getTargetServiceName());
         if (services == null || services.isEmpty()) {
-            throw new SwitchYardException("No registered service found for " + exchange.getConsumer().getName());
+            throw RuntimeMessages.MESSAGES.noRegisteredService(exchange.getConsumer().getName().toString());
         }
 
         // At this stage, just pick the first service implementation we find and go with
@@ -69,8 +69,8 @@ public class AddressingHandler extends BaseHandler {
             if (service.getInterface().getOperations().size() == 1) {
                 providerOp = service.getInterface().getOperations().iterator().next();
             } else {
-                throw new HandlerException("Operation " + consumerOp.getName() 
-                    + " is not included in interface for service: " + service.getName());
+                throw RuntimeMessages.MESSAGES.operationNotIncluded(consumerOp.getName(), 
+                        service.getName().toString());
             }
         }
         

@@ -137,7 +137,9 @@ public class ValidationTest {
         invokerHandler.waitForFaultMessage();
         Object content = invokerHandler.getFaults().poll().getMessage().getContent();
         Assert.assertTrue(content instanceof HandlerException);
-        Assert.assertEquals("Validator 'org.switchyard.tests.ValidationTest$2' failed: validation fail test", ((HandlerException)content).getMessage());
+        
+        boolean failed = ((HandlerException)content).getMessage().contains("Validator 'org.switchyard.tests.ValidationTest$2' failed: validation fail test");
+        Assert.assertTrue(failed);
     }
     
 }

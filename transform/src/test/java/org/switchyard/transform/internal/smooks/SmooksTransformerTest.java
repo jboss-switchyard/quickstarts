@@ -42,7 +42,8 @@ public class SmooksTransformerTest extends AbstractTransformerTestCase {
         try {
             getTransformer("sw-config-01.xml");
         } catch(RuntimeException e) {
-            Assert.assertEquals("Invalid Smooks configuration file.  Must define an <core:exports> section with a single <core:export>.  See Smooks User Guide.", e.getMessage());
+        	boolean exceptionMatches = e.getMessage().contains("SWITCHYARD016814");
+        	Assert.assertTrue(exceptionMatches);
         }
     }
 
@@ -51,7 +52,8 @@ public class SmooksTransformerTest extends AbstractTransformerTestCase {
         try {
             getTransformer("sw-config-02.xml");
         } catch(RuntimeException e) {
-            Assert.assertEquals("Unsupported Smooks <core:export> type 'java.io.StringReader'.  Only supports StringResult or JavaResult.", e.getMessage());
+        	boolean exceptionMatches = e.getMessage().contains("SWITCHYARD016815");
+        	Assert.assertTrue(exceptionMatches);
         }
     }
 

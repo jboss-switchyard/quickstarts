@@ -21,6 +21,8 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
+import org.switchyard.APILogger;
+import org.switchyard.APIMessages;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.Property;
@@ -128,9 +130,7 @@ public final class TransformSequence implements Serializable {
             _sequence.remove(0);
 
             if (result == null) {
-                String msg ="Transformer '" + transformer.getClass().getName() + "' returned a null transformation result when transforming from type '" 
-                    + from + "' to type '" + to + "'. Check input payload matches requirements of the Transformer implementation.";
-                LOGGER.warn(msg);
+                APILogger.ROOT_LOGGER.nullTransformResult(transformer.getClass().getName(), from, to);
             }
         }
     }
@@ -208,7 +208,7 @@ public final class TransformSequence implements Serializable {
 
     private void add(final QName typeName) {
         if (typeName == null) {
-            throw new IllegalArgumentException("null 'typeName' arg passed.");
+            throw APIMessages.MESSAGES.nullTypeNamePassed();
         }
         _sequence.add(typeName);
     }

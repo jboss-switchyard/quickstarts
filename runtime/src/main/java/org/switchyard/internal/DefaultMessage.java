@@ -23,8 +23,8 @@ import javax.xml.namespace.QName;
 import org.switchyard.Context;
 import org.switchyard.Message;
 import org.switchyard.Scope;
-import org.switchyard.SwitchYardException;
 import org.switchyard.metadata.JavaTypes;
+import org.switchyard.runtime.RuntimeMessages;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
@@ -92,7 +92,7 @@ public class DefaultMessage implements Message {
     @Override
     public <T> T getContent(final Class<T> type) {
         if (type == null) {
-            throw new IllegalArgumentException("null 'type' argument.");
+            throw RuntimeMessages.MESSAGES.nullTypeArgument();
         }
         if (_content == null) {
             return null;
@@ -101,22 +101,25 @@ public class DefaultMessage implements Message {
             return type.cast(_content);
         }
         if (_transformerRegistry == null) {
-            throw new SwitchYardException("Cannot convert from '" + _content.getClass().getName() + "' to '" + type.getName() + "'.  No TransformRegistry available.");
+            throw RuntimeMessages.MESSAGES.noTransformRegistryAvailable(_content.getClass().getName(), type.getName());
         }
 
         QName fromType = JavaTypes.toMessageType(_content.getClass());
         QName toType = JavaTypes.toMessageType(type);
         Transformer transformer = _transformerRegistry.getTransformer(fromType, toType);
         if (transformer == null) {
-            throw new SwitchYardException("Cannot convert from '" + _content.getClass().getName() + "' to '" + type.getName() + "'.  No registered Transformer available for transforming from '" + fromType + "' to '" + toType + "'.  A Transformer must be registered.");
+            throw RuntimeMessages.MESSAGES.noRegisteredTransformer(_content.getClass().getName(), type.getName(), 
+                    fromType.toString(), toType.toString());
         }
 
         Object transformedContent = transformer.transform(_content);
         if (transformedContent == null) {
-            throw new SwitchYardException("Error converting from '" + _content.getClass().getName() + "' to '" + type.getName() + "'.  Transformer '" + transformer.getClass().getName() + "' returned null.");
+            throw RuntimeMessages.MESSAGES.transformerReturnedNull(_content.getClass().getName(), type.getName(),
+                    transformer.getClass().getName());
         }
         if (!type.isInstance(transformedContent)) {
-            throw new SwitchYardException("Error converting from '" + _content.getClass().getName() + "' to '" + type.getName() + "'.  Transformer '" + transformer.getClass().getName() + "' returned incompatible type '" + transformedContent.getClass().getName() + "'.");
+            throw RuntimeMessages.MESSAGES.transformerReturnedIncompatibleType(_content.getClass().getName(), type.getName(), transformer.getClass().getName(), 
+                    transformedContent.getClass().getName());
         }
 
         return type.cast(transformedContent);

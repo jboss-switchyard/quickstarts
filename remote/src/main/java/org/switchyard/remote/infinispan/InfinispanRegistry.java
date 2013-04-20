@@ -27,6 +27,7 @@ import org.infinispan.notifications.cachemanagerlistener.annotation.ViewChanged;
 import org.infinispan.notifications.cachemanagerlistener.event.ViewChangedEvent;
 import org.infinispan.remoting.transport.Address;
 import org.switchyard.remote.RemoteEndpoint;
+import org.switchyard.remote.RemoteLogger;
 import org.switchyard.remote.RemoteRegistry;
 import org.switchyard.serial.FormatType;
 import org.switchyard.serial.Serializer;
@@ -63,7 +64,7 @@ public class InfinispanRegistry implements RemoteRegistry {
     public void addEndpoint(RemoteEndpoint endpoint) {
         String cacheKey = createNodeKey(ROOT_DOMAIN, endpoint.getServiceName(), _nodeName);
         if (_serviceCache.get(cacheKey) != null) {
-            _log.info("Remote endpoint " + cacheKey + " is already registered in the cache");
+            RemoteLogger.ROOT_LOGGER.remoteEndpointRegistered(cacheKey);
             return;
         }
         
@@ -72,7 +73,7 @@ public class InfinispanRegistry implements RemoteRegistry {
             String epStr = new String(_serializer.serialize(endpoint, RemoteEndpoint.class));
             _serviceCache.put(cacheKey, epStr);
         } catch (java.io.IOException ioEx) {
-            _log.warn("Failed to add remote endpoint " + cacheKey + " to registry.", ioEx);
+            RemoteLogger.ROOT_LOGGER.failedAddEndpoint(cacheKey, ioEx);
         }
     }
 

@@ -24,7 +24,6 @@ import javax.enterprise.inject.spi.BeforeShutdown;
 import javax.enterprise.inject.spi.Extension;
 
 import org.switchyard.ServiceDomain;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.Classes;
 import org.switchyard.deploy.ActivatorLoader;
 import org.switchyard.deploy.ServiceDomainManager;
@@ -59,7 +58,7 @@ public class SwitchYardCDIDeployer implements Extension {
             try {
                 _deployment = new Deployment(swConfigStream);
             } catch (java.io.IOException ioEx) {
-                throw new SwitchYardException("Failed while reading config stream.", ioEx);
+                throw CDIDeployMessages.MESSAGES.failedReadingConfig(ioEx);
             } finally {
                 try {
                     swConfigStream.close();

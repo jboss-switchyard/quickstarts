@@ -34,6 +34,7 @@ import org.switchyard.event.TransformerAddedEvent;
 import org.switchyard.event.TransformerRemovedEvent;
 import org.switchyard.transform.TransformResolver;
 import org.switchyard.transform.TransformSequence;
+import org.switchyard.runtime.RuntimeMessages;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
@@ -172,7 +173,8 @@ public class BaseTransformerRegistry implements TransformerRegistry {
         if (_log.isDebugEnabled()) {
             StringBuilder messageBuilder = new StringBuilder();
 
-            messageBuilder.append("Multiple possible fallback transformers available:");
+            
+            messageBuilder.append(RuntimeMessages.MESSAGES.multipleFallbackRegistry());
             for (JavaSourceFallbackTransformer t : fallbackTransforms) {
                 messageBuilder.append("\n\t- from '" + t.getTransformer().getFrom() + "' to '" + t.getTransformer().getTo() + "'");
             }

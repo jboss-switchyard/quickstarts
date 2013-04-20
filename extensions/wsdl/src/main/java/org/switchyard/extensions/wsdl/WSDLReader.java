@@ -93,7 +93,7 @@ public class WSDLReader {
         Map<String, String> namespaces = parseNamespaces(defEl);
         Element portType = getPortType(defEl, portName, namespaces);
         if (portType == null) {
-            throw new WSDLReaderException("Unable to find portType with name " + portName);
+            throw WSDLExtensionsMessages.MESSAGES.unableFindPort(portName);
         }
         String style = getStyle(defEl, portType, namespaces);
         _documentStyle = style.equals(DOCUMENT) ? true : false;
@@ -130,7 +130,7 @@ public class WSDLReader {
             return doc.getDocumentElement();
 
         } catch (IOException e) {
-            throw new WSDLReaderException("Unable to resolve WSDL document at " + wsdlURI, e);
+            throw WSDLExtensionsMessages.MESSAGES.unableResolveWSDL(wsdlURI, e);
         } catch (ParserConfigurationException pce) {
             throw new WSDLReaderException(pce);
         } catch (SAXException se) {
@@ -353,14 +353,14 @@ outer:  while (tempEl != null) {
             Element msgEl = (Element) messages.item(i);
             NodeList partEls = msgEl.getElementsByTagNameNS(PART.getNamespaceURI(), PART.getLocalPart());
             if (_documentStyle && (partEls.getLength() != 1)) {
-                throw new WSDLReaderException("Service operations on a WSDL interface must have exactly one parameter.");
+                throw WSDLExtensionsMessages.MESSAGES.wsdlInterfaceNeedsOneParameter();
             }
             if (_documentStyle) {
                 Element partEl = (Element) partEls.item(0);
                 parts.put(getQName(msgEl.getAttribute(ATTR_NAME), namespaces), getQName(partEl.getAttribute(ATTR_ELEMENT), namespaces));
             } else {
                 if (!msgEl.hasAttribute(ATTR_NAME)) {
-                    throw new WSDLReaderException("Message name missing.");
+                    throw WSDLExtensionsMessages.MESSAGES.messageNameMissing();
                 }
                 Element operationEl = getOperationByInput(portType, msgEl, namespaces);
                 if (operationEl != null) {
@@ -374,7 +374,7 @@ outer:  while (tempEl != null) {
                         // Create a fictional wrapper with the operation name + Response suffix
                         parts.put(getQName(msgEl.getAttribute(ATTR_NAME), namespaces), getQName(operationEl.getAttribute(ATTR_NAME) + RESPONSE, namespaces));
                     } else {
-                        throw new WSDLReaderException("Missing operation for message " + msgEl.getLocalName());
+                        WSDLExtensionsMessages.MESSAGES.missingOperationForMessage(msgEl.getLocalName());
                     }
                 }
             }

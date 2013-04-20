@@ -78,11 +78,11 @@ public final class WSDLService extends BaseService {
             if (localPart.contains(PORTTYPE)) {
                 portName = localPart.substring(PORTTYPE.length() + 1, localPart.length() - 1);
             } else {
-                throw new WSDLReaderException("Invalid WSDL interface part " + wsdlLocationURI);
+                throw WSDLExtensionsMessages.MESSAGES.invalidWSDLInterfacePart(wsdlLocationURI);
             }
             return fromWSDL(wsdlLocation, portName);
         } else {
-            throw new WSDLReaderException("Invalid WSDL interface " + wsdlLocationURI);
+            throw WSDLExtensionsMessages.MESSAGES.invalidWSDLInterface(wsdlLocationURI);
         }
     }
 

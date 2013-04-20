@@ -20,6 +20,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.switchyard.common.CommonCoreMessages;
+
 /**
  * File utilities.
  *
@@ -78,7 +80,7 @@ public final class Files {
                 }
             }
             if (!source.delete()) {
-                throw new IOException("Could not delete " + source);
+                throw CommonCoreMessages.MESSAGES.couldNotDeleteFile(source.getName());
             }
         }
     }

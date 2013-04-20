@@ -16,6 +16,8 @@ package org.switchyard.security.principal;
 import java.io.Serializable;
 import java.security.Principal;
 
+import org.switchyard.security.BaseSecurityMessages;
+
 /**
  * Role.
  *
@@ -33,7 +35,7 @@ public class Role implements Principal, Serializable {
      */
     public Role(String name) {
         if (name == null) {
-            throw new IllegalArgumentException("Role name cannot be null");
+            throw BaseSecurityMessages.MESSAGES.roleCannotBeNull();
         }
         _name = name;
     }

@@ -16,9 +16,9 @@ package org.switchyard.deploy;
 
 import static org.switchyard.deploy.internal.AbstractDeployment.CLASSLOADER_PROPERTY;
 
+import org.switchyard.BaseDeployMessages;
 import org.switchyard.BaseHandler;
 import org.switchyard.ServiceDomain;
-import org.switchyard.SwitchYardException;
 
 /**
  * NOP implementation of ServiceHandler.
@@ -47,7 +47,7 @@ public class BaseServiceHandler extends BaseHandler implements ServiceHandler {
             // already started
             return;
         } else if (_state != State.NONE) {
-            throw new SwitchYardException("Invalid handler state.");
+            throw BaseDeployMessages.MESSAGES.invalidHandlerState();
         }
         final ClassLoader oldTCCL = Thread.currentThread().getContextClassLoader();
         try {
@@ -77,7 +77,7 @@ public class BaseServiceHandler extends BaseHandler implements ServiceHandler {
             // already stopped
             return;
         } else if (_state != State.STARTED) {
-            throw new SwitchYardException("Invalid handler state.");
+            throw BaseDeployMessages.MESSAGES.invalidHandlerState();
         }
         final ClassLoader oldTCCL = Thread.currentThread().getContextClassLoader();
         try {
@@ -111,7 +111,7 @@ public class BaseServiceHandler extends BaseHandler implements ServiceHandler {
      */
     protected void setState(State newState) {
         if (newState == null) {
-            throw new IllegalArgumentException("state cannot be null.");
+            throw BaseDeployMessages.MESSAGES.stateCannotBeNull();
         }
         _state = newState;
     }

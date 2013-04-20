@@ -21,6 +21,7 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
+import org.switchyard.security.BaseSecurityMessages;
 import org.switchyard.security.callback.CertificateCallback;
 import org.switchyard.security.credential.CertificateCredential;
 import org.switchyard.security.credential.Credential;
@@ -46,7 +47,7 @@ public class CertificateCallbackHandler extends SwitchYardCallbackHandler {
         String keyPassword = getProperty("keyPassword", false);
         Set<Credential> credentials = getCredentials();
         if (credentials == null) {
-            throw new IllegalStateException("Credentials not set");
+            throw BaseSecurityMessages.MESSAGES.credentialsNotSet();
         }
         for (Callback cb : callbacks) {
             if (cb instanceof NameCallback) {

@@ -23,8 +23,8 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.switchyard.Message;
-import org.switchyard.SwitchYardException;
 import org.switchyard.transform.BaseTransformer;
+import org.switchyard.transform.TransformMessages;
 
 /**
  * JSON to Java Transformer.
@@ -63,14 +63,14 @@ public class JSON2JavaTransformer<F, T> extends BaseTransformer<Message, Message
                 message.setContent(result);
                 return message;
             } else {
-                throw new SwitchYardException("Result of transformation has wrong instance type " + result.getClass());
+                throw TransformMessages.MESSAGES.transformationResultWrongType(result.getClass().toString());
             }
         } catch (JsonParseException e) {
-            throw new SwitchYardException("Unexpected JSON parse exception, check your transformer configuration", e);
+            throw TransformMessages.MESSAGES.unexpectedJSONParseException(e);
         } catch (JsonMappingException e) {
-            throw new SwitchYardException("Unexpected JSON mapping exception, check your transformer configuration", e);
+            throw TransformMessages.MESSAGES.unexpectedJSONMappingException(e);
         } catch (IOException e) {
-            throw new SwitchYardException("Unexpected I/O exception, check your transformer configuration", e);
+            throw TransformMessages.MESSAGES.unexpectedIOExceptionCheckTransformer(e);
         }
     }
 }

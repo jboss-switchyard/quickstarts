@@ -27,6 +27,8 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
+import org.switchyard.BaseDeployLogger;
+import org.switchyard.BaseDeployMessages;
 import org.switchyard.Service;
 import org.switchyard.ServiceMetadata;
 import org.switchyard.ServiceReference;
@@ -212,7 +214,7 @@ public class Deployment extends AbstractDeployment {
         if (_activators.containsKey(type)) {
             return _activators.get(type);
         } else if (failOnMissingActivator()) {
-            throw new SwitchYardException("Activator not found for type: " + type);
+            throw BaseDeployMessages.MESSAGES.activatorNotFoundForType(type);
         } else {
             return null;
         }
@@ -257,8 +259,7 @@ public class Deployment extends AbstractDeployment {
      */
     private Activator findActivator(ComponentModel component) throws SwitchYardException {
         if (component.getImplementation() == null) {
-            throw new SwitchYardException("Component defintion " + component.getName() 
-                    + " does not included an implementation definition.");
+            throw BaseDeployMessages.MESSAGES.componentDefNoImpl(component.getName());
         }
         return findActivator(component.getImplementation().getType());
     }
@@ -394,7 +395,7 @@ public class Deployment extends AbstractDeployment {
                 Class<?> serviceInterfaceType = loadClass(interfaceClass);
 
                 if (serviceInterfaceType == null) {
-                    throw new SwitchYardException("Failed to load Service interface class '" + interfaceClass + "'.");
+                    throw BaseDeployMessages.MESSAGES.failedToLoadServiceInterface(interfaceClass);
                 }
                 serviceInterface = JavaService.fromClass(serviceInterfaceType);
             } else if (InterfaceModel.WSDL.equals(intfModel.getType())) {
@@ -423,11 +424,11 @@ public class Deployment extends AbstractDeployment {
     // Checks for invalid input/output/fault combinations on ESB interfaces.
     private void validateEsbInterface(EsbInterfaceModel esbIntf)  {
         if (esbIntf.getInputType() == null) {
-            throw new SwitchYardException("inputType required on ESB interface definition: " + esbIntf);
+            throw BaseDeployMessages.MESSAGES.inputTypeRequired(esbIntf.toString());
         }
         
         if (esbIntf.getFaultType() != null && esbIntf.getOutputType() == null) {
-            throw new SwitchYardException("faultType must be acommpanied by outputType in ESB interface: " + esbIntf);
+            throw BaseDeployMessages.MESSAGES.faultTypeNeedsOutputType(esbIntf.toString());
         }
     }
     
@@ -465,8 +466,7 @@ public class Deployment extends AbstractDeployment {
                 List<Model> models = reference.getModelChildren();
                 for (Model model : models) {
                     if (BindingModel.class.isAssignableFrom(model.getClass())) {
-                        throw new SwitchYardException("Component Reference bindings are not allowed.   Found " + model.toString()
-                                + " on reference " + reference.toString());
+                        throw BaseDeployMessages.MESSAGES.componentReferenceBindingsNotAllowed(model.toString(), reference.toString());
                     }
                 }
                 
@@ -474,7 +474,7 @@ public class Deployment extends AbstractDeployment {
                 try {
                     requires = getPolicyRequirements(reference);
                 } catch (Exception e) {
-                    throw new SwitchYardException("Unable to collect requirements for " + reference, e);
+                    throw BaseDeployMessages.MESSAGES.unableCollectRequirements(reference.toString(), e);
                 }
                 validatePolicy(requires, requiresImpl);
 
@@ -507,9 +507,7 @@ public class Deployment extends AbstractDeployment {
             
             // register a service for each one declared in the component
             if (component.getServices().size() > 1) {
-                throw new SwitchYardException("Multiple services in the Component '"
-                        + component.getName() + "' - Just one service is allowed");
-
+                throw BaseDeployMessages.MESSAGES.multipleServicesFound(component.getName());
             } else if (component.getServices().size() == 1) {
                 ComponentServiceModel service = component.getServices().get(0);
                 _log.debug("Registering service " + service.getQName()
@@ -520,8 +518,7 @@ public class Deployment extends AbstractDeployment {
                 List<Model> models = service.getModelChildren();
                 for (Model model : models) {
                     if (BindingModel.class.isAssignableFrom(model.getClass())) {
-                        throw new SwitchYardException("Component Service bindings are not allowed.   Found " + model.toString()
-                                + " on Service " + service.toString());
+                        throw BaseDeployMessages.MESSAGES.componentServiceBindingsNotAllowed(model.toString(), service.toString());
                     }
                 }
                 
@@ -621,12 +618,12 @@ public class Deployment extends AbstractDeployment {
                 try {
                     activation.getHandler().stop();
                 } catch (Throwable e) {
-                    _log.error("Error stopping service binding.", e);
+                    BaseDeployLogger.ROOT_LOGGER.errorStoppingServiceBinding(e);
                 }
                 try {
                     activation.getActivator().deactivateBinding(activation.getName(), activation.getHandler());
                 } catch (Throwable e) {
-                    _log.error("Error deactivating service binding.", e);
+                    BaseDeployLogger.ROOT_LOGGER.errorDeactivatingServiceBinding(e);
                 }
 
                for (ServiceReference reference : activation.getReferences()) {
@@ -646,12 +643,12 @@ public class Deployment extends AbstractDeployment {
                 try {
                     activation.getHandler().stop();
                 } catch (Throwable e) {
-                    _log.error("Error stopping service.", e);
+                    BaseDeployLogger.ROOT_LOGGER.errorStoppingService(e);
                 }
                 try {
                     activation.getActivator().deactivateService(activation.getName(), activation.getHandler());
                 } catch (Throwable e) {
-                    _log.error("Error deactivating service.", e);
+                    BaseDeployLogger.ROOT_LOGGER.errorDeactivatingService(e);
                 }
 
                 for (Service service : activation.getServices()) {
@@ -678,12 +675,12 @@ public class Deployment extends AbstractDeployment {
                 try {
                     activation.getHandler().stop();
                 } catch (Throwable e) {
-                    _log.error("Error stopping reference binding.", e);
+                    BaseDeployLogger.ROOT_LOGGER.errorStoppingReferenceBinding(e);
                 }
                 try {
                     activation.getActivator().deactivateBinding(activation.getName(), activation.getHandler());
                 } catch (Throwable e) {
-                    _log.error("Error deactivating reference binding.", e);
+                    BaseDeployLogger.ROOT_LOGGER.errorDeactivatingReferenceBinding(e);
                 }
 
                 for (Service service : activation.getServices()) {
@@ -726,51 +723,50 @@ public class Deployment extends AbstractDeployment {
     private void validatePolicy(List<Policy> interaction, List<Policy> implementation) {
         for (int i=0; interaction != null && i<interaction.size(); i++) {
             if (!interaction.get(i).supports(PolicyType.INTERACTION)) {
-                throw new SwitchYardException("Policy '" + interaction.get(i) + "' is not an interaction policy.");
+                BaseDeployMessages.MESSAGES.policyNotInteraction(interaction.get(i).toString());
             }
 
             Policy required = interaction.get(i).getPolicyDependency();
             if (required != null) {
                 if (required.supports(PolicyType.INTERACTION) && !interaction.contains(required)) {
-                    throw new SwitchYardException("Interaction Policy '" + interaction.get(i) + "' should be requested with '" + required);
+                    throw BaseDeployMessages.MESSAGES.interactionPolicyShouldBeRequestedWith(interaction.get(i).toString(), required.toString());
                     
                 } else if (required.supports(PolicyType.IMPLEMENTATION) && !implementation.contains(required)) {
-                    throw new SwitchYardException("Interaction Policy '" + interaction.get(i) + "' requires '" + required
-                            + "' Implementation Policy, but it does not exist. " + implementation);
+                    throw BaseDeployMessages.MESSAGES.interactionPolicyRequiresImplPolicy(interaction.get(i).toString(), required.toString(), implementation.toString());
                 }
             }
             
             for (int j=i+1; j<interaction.size(); j++) {
                 if (!interaction.get(i).isCompatibleWith(interaction.get(j))) {
-                    throw new SwitchYardException("Interaction Policy '" + interaction.get(i) + "' and '" + interaction.get(j) + " are not compatible.");
+                    BaseDeployMessages.MESSAGES.interactionPolicyNotCompatible(interaction.get(i).toString(), interaction.get(j).toString());
                 }
             }
         }
 
         for (int i=0; implementation != null && i<implementation.size(); i++) {
             if (!implementation.get(i).supports(PolicyType.IMPLEMENTATION)) {
-                throw new SwitchYardException("Policy '" + implementation.get(i) + "' is not an implementation policy.");
+                BaseDeployMessages.MESSAGES.policyNotImplementationPolicy(implementation.get(i).toString());
             }
             
             Policy required = implementation.get(i).getPolicyDependency();
             if (required != null) {
                 if (required.supports(PolicyType.IMPLEMENTATION) && !implementation.contains(required)) {
-                    throw new SwitchYardException("Implementation Policy '" + implementation.get(i) + "' should be requested with '" + required);
+                    throw BaseDeployMessages.MESSAGES.implementationPolicyShouldBeRequestedWith(implementation.get(i).toString(), required.toString());
                 } else if (required.supports(PolicyType.INTERACTION) && !interaction.contains(required)) {
-                    throw new SwitchYardException("Implementation Policy '" + implementation.get(i) + "' requires '" + required
-                            + "' Interaction Policy, but it does not exist. " + interaction);
+                    throw BaseDeployMessages.MESSAGES.implementationPolicyRequiresInterPolicy(implementation.get(i).toString(), required.toString(), interaction.toString());                    
                 }
             }
             
             for (int j=i+1; j<implementation.size(); j++) {
                 if (!implementation.get(i).isCompatibleWith(implementation.get(j))) {
-                    throw new SwitchYardException("Implementation Policy '" + implementation.get(i) + "' and '" + implementation.get(j) + " are not compatible.");
+                    BaseDeployMessages.MESSAGES.implementationPolicyNotCompatible(implementation.get(i).toString(), implementation.get(j).toString());
                 }
             }
 
             for (int j=0; interaction != null && j<interaction.size(); j++) {
                 if (!implementation.get(i).isCompatibleWith(interaction.get(j))) {
-                    throw new SwitchYardException("Implementation Policy '" + implementation.get(i) + "' and Interaciton Policy'" + interaction.get(j) + " are not compatible.");
+                    throw BaseDeployMessages.MESSAGES.implementationPolicyNotCompatibleWithInteraction(implementation.get(i).toString(), 
+                            interaction.get(j).toString());
                 }
             }
         }
@@ -780,7 +776,7 @@ public class Deployment extends AbstractDeployment {
         for (ComponentModel component : getConfig().getComposite().getComponents()) {
             for (ComponentServiceModel service : component.getServices()) {
                 if (service.getQName().equals(name)) {
-                    throw new SwitchYardException("Service registration with name " + name + " hides " + service);
+                    throw BaseDeployMessages.MESSAGES.serviceRegHidesService(name.toString(), service.toString());
                 }
             }
         }

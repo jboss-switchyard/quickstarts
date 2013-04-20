@@ -135,7 +135,8 @@ public class ExchangeImplTest {
             exchange.send(null);
             Assert.fail("Expected IllegalArgumentException.");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Invalid null 'message' argument in method call.", e.getMessage());
+        	boolean messageMatch = e.getMessage().contains("SWITCHYARD014019");
+            Assert.assertTrue(messageMatch);
         }
     }
 
@@ -146,7 +147,8 @@ public class ExchangeImplTest {
             exchange.sendFault(null);
             Assert.fail("Expected IllegalArgumentException.");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Invalid null 'message' argument in method call.", e.getMessage());
+        	boolean messageMatch = e.getMessage().contains("SWITCHYARD014019");
+        	Assert.assertTrue(messageMatch);
         }
     }
     
@@ -292,7 +294,8 @@ public class ExchangeImplTest {
         try {
             exchange.send(exchange.createMessage());
         } catch(IllegalStateException e) {
-            Assert.assertEquals("Exchange instance is in a FAULT state.", e.getMessage());
+        	boolean messageMatch = e.getMessage().contains("SWITCHYARD014020");
+            Assert.assertTrue(messageMatch);
         }
     }
 

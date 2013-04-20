@@ -84,8 +84,8 @@ public class JAXBTransformerTest extends AbstractTransformerTestCase {
         String message = JAXBTransformerFactory.createMissingFactoryMethodMessage(
                 USAddress.class,
                 ObjectFactory.class);
-
-        Assert.assertTrue(message.startsWith("JAXB Type 'org.switchyard.transform.jaxb.internal.USAddress' does not have a JAXBElement factory method defined in org.switchyard.transform.jaxb.internal.ObjectFactory.  The supported JAXBElement factory methods are for types:"));
+        boolean messageContains = message.contains("SWITCHYARD016840");
+        Assert.assertTrue(messageContains);
     }
 
     private static final String PO_XML = "<?xml version=\"1.0\"?>\n" +

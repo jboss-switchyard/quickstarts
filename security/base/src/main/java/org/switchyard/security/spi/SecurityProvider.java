@@ -16,9 +16,10 @@ package org.switchyard.security.spi;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
-import org.apache.log4j.Logger;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.security.SecurityContext;
+
+import org.switchyard.security.BaseSecurityLogger;
 
 /**
  * SecurityProvider.
@@ -26,8 +27,6 @@ import org.switchyard.security.SecurityContext;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 public abstract class SecurityProvider {
-
-    private static final Logger LOGGER = Logger.getLogger(SecurityProvider.class);
 
     private static final SecurityProvider INSTANCE;
     static {
@@ -40,9 +39,7 @@ public abstract class SecurityProvider {
             instance = null;
         }
         INSTANCE = instance != null ? instance : new JaasSecurityProvider();
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Using SecurityProvider implementation: " + INSTANCE.getClass().getName());
-        }
+        BaseSecurityLogger.ROOT_LOGGER.usingSecurityProviderImplementation(INSTANCE.getClass().getName());
     }
 
    /**

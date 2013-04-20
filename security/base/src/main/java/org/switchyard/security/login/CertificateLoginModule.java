@@ -30,6 +30,7 @@ import javax.security.auth.login.LoginException;
 import org.switchyard.common.io.pull.PropertiesPuller;
 import org.switchyard.common.io.pull.Puller.PathType;
 import org.switchyard.common.lang.Strings;
+import org.switchyard.security.BaseSecurityMessages;
 import org.switchyard.security.callback.CertificateCallback;
 import org.switchyard.security.principal.Group;
 import org.switchyard.security.principal.Role;
@@ -62,9 +63,9 @@ public class CertificateLoginModule extends SwitchYardLoginModule {
             //getCallbackHandler().handle(new Callback[]{aliasCallback, keyPasswordCallback, certificateCallback});
             getCallbackHandler().handle(new Callback[]{aliasCallback, certificateCallback});
         } catch (IOException ioe) {
-            throw new LoginException("Failed to invoke callback: " + ioe.getMessage());
+            throw BaseSecurityMessages.MESSAGES.failedInvokeCallback(ioe.getMessage(), ioe);
         } catch (UnsupportedCallbackException uce) {
-            throw new LoginException("CallbackHandler does not support: " + uce.getCallback());
+            throw BaseSecurityMessages.MESSAGES.callbackHandlerNoSupport(uce.getCallback().toString());
         }
         X509Certificate callerCertificate = getCallerCertificate(certificateCallback);
         KeyStore keyStore = getKeyStore();
@@ -74,12 +75,12 @@ public class CertificateLoginModule extends SwitchYardLoginModule {
         try {
             switchyardCertificate = keyStore.getCertificate(alias);
         } catch (KeyStoreException kse) {
-            throw new LoginException("problem accessing KeyStore: " + kse.getMessage());
+            throw BaseSecurityMessages.MESSAGES.problemAccessingKeystore(kse.getMessage());
         }
         try {
             callerCertificate.verify(switchyardCertificate.getPublicKey());
         } catch (Exception e) {
-            throw new LoginException("problem verifying caller Certificate: " + e.getMessage());
+            throw BaseSecurityMessages.MESSAGES.problemVerifyingCallerCert(e.getMessage());
         }
         _verifiedCallerCertificate = callerCertificate;
         return true;
@@ -141,7 +142,7 @@ public class CertificateLoginModule extends SwitchYardLoginModule {
             }
         }
         if (x509cert == null) {
-            throw new LoginException("no caller X509 Certificate provided");
+            throw BaseSecurityMessages.MESSAGES.noCallerCertificateProvided();
         }
         return x509cert;
     }

@@ -26,10 +26,10 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.metadata.JavaTypes;
 import org.switchyard.transform.BaseTransformer;
+import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.Transformer;
 
 /**
@@ -69,14 +69,14 @@ public final class TransformerUtil {
      */
     public static Collection<Transformer<?, ?>> newTransformers(Class<?> clazz, QName from, QName to) {
         if (!isTransformer(clazz)) {
-            throw new SwitchYardException("Invalid Transformer class '" + clazz.getName() + "'.  Must implement the Transformer interface, or have methods annotated with the @Transformer annotation.");
+            throw TransformMessages.MESSAGES.invalidTransformerClass(clazz.getName());
         }
 
         final Object transformerObject;
         try {
             transformerObject = clazz.newInstance();
         } catch (Exception e) {
-            throw new SwitchYardException("Error constructing Transformer instance for class '" + clazz.getName() + "'.  Class must have a public default constructor.", e);
+            throw TransformMessages.MESSAGES.errorConstructingTransformer(clazz.getName(), e);
         }
 
         return TransformerUtil.newTransformers(transformerObject, from, to);
@@ -133,7 +133,7 @@ public final class TransformerUtil {
         }
 
         if (transformers.isEmpty()) {
-            throw new SwitchYardException("Error constructing Transformer instance for class '" + transformerObject.getClass().getName() + "'.  Class does not support a transformation from type '" + from + "' to type '" + to + "'.");
+            throw TransformMessages.MESSAGES.classDoesNotSupportTransformation(transformerObject.getClass().getName(), from.toString(), to.toString());
         }
 
         return transformers;
@@ -151,7 +151,7 @@ public final class TransformerUtil {
         try {
             transformerObject = clazz.newInstance();
         } catch (Exception e) {
-            throw new SwitchYardException("Error constructing Transformer instance for class '" + clazz.getName() + "'.  Class must have a public default constructor.", e);
+            throw TransformMessages.MESSAGES.errorConstructingTransformer(clazz.getName(), e);
         }
 
         // If the class itself implements the Transformer interface....
@@ -237,9 +237,9 @@ public final class TransformerUtil {
                 try {
                     return publicMethod.invoke(transformerObject, from);
                 } catch (InvocationTargetException e) {
-                    throw new SwitchYardException("Error executing @Transformer method '" + publicMethod.getName() + "' on class '" + publicMethod.getDeclaringClass().getName() + "'.", e.getCause());
+                    throw TransformMessages.MESSAGES.errorExecutingTransformerMethod(publicMethod.getName(), publicMethod.getDeclaringClass().getName(), e.getCause());
                 } catch (Exception e) {
-                    throw new SwitchYardException("Error executing @Transformer method '" + publicMethod.getName() + "' on class '" + publicMethod.getDeclaringClass().getName() + "'.", e);
+                    throw TransformMessages.MESSAGES.errorExecutingTransformerMethod(publicMethod.getName(), publicMethod.getDeclaringClass().getName(), e);
                 }
             }
             
@@ -285,12 +285,12 @@ public final class TransformerUtil {
 
         Class<?>[] params = publicMethod.getParameterTypes();
         if (params.length != 1) {
-            throw new SwitchYardException("Invalid @Transformer method '" + publicMethod.getName() + "' on class '" + publicMethod.getDeclaringClass().getName() + "'.  Must have exactly 1 parameter.");
+            throw TransformMessages.MESSAGES.invalidTransformerMethodParameter(publicMethod.getName(), publicMethod.getDeclaringClass().getName());
         }
         fromType = params[0];
         toType = publicMethod.getReturnType();
         if (toType == null) {
-            throw new SwitchYardException("Invalid @Transformer method '" + publicMethod.getName() + "' on class '" + publicMethod.getDeclaringClass().getName() + "'.  Must return a result.");
+            throw TransformMessages.MESSAGES.invalidTransformerMethodResult(publicMethod.getName(), publicMethod.getDeclaringClass().getName());
         }
 
         if (!transformerAnno.from().trim().equals("")) {

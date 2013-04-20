@@ -15,11 +15,11 @@ package org.switchyard.security.jboss.spi;
 
 import javax.security.auth.Subject;
 
-import org.apache.log4j.Logger;
 import org.jboss.security.SecurityContextAssociation;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.security.SecurityContext;
 import org.switchyard.security.spi.JaasSecurityProvider;
+import org.switchyard.security.jboss.JBossSecurityLogger;
 
 /**
  * JBossJaasSecurityProvider.
@@ -27,8 +27,6 @@ import org.switchyard.security.spi.JaasSecurityProvider;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 public class JBossJaasSecurityProvider extends JaasSecurityProvider {
-
-    private static final Logger LOGGER = Logger.getLogger(JBossJaasSecurityProvider.class);
 
     static {
         // Here to trigger fallback usage of the JaasSecurityProvider in the static initializer
@@ -61,7 +59,7 @@ public class JBossJaasSecurityProvider extends JaasSecurityProvider {
                     sy_subject.getPublicCredentials().addAll(jb_subject.getPublicCredentials());
                 }
                 return true;
-            }
+            } 
         }
         return false;
     }
@@ -82,7 +80,7 @@ public class JBossJaasSecurityProvider extends JaasSecurityProvider {
                 }
             }
         } catch (Throwable t) {
-            LOGGER.error("Problem clearing SecurityContextAssociation: " + t.getMessage(), t);
+            JBossSecurityLogger.ROOT_LOGGER.clearSecurityContextAssociation(t);
             success = false;
         }
         return success;

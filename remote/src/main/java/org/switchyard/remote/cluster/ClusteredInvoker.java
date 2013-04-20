@@ -15,10 +15,10 @@ package org.switchyard.remote.cluster;
 
 import java.io.IOException;
 
-import org.switchyard.SwitchYardException;
 import org.switchyard.remote.RemoteEndpoint;
 import org.switchyard.remote.RemoteInvoker;
 import org.switchyard.remote.RemoteMessage;
+import org.switchyard.remote.RemoteMessages;
 import org.switchyard.remote.RemoteRegistry;
 import org.switchyard.remote.http.HttpInvoker;
 
@@ -52,7 +52,7 @@ public class ClusteredInvoker implements RemoteInvoker {
     public RemoteMessage invoke(RemoteMessage request) throws IOException {
         RemoteEndpoint ep = _loadBalancer.selectEndpoint(request.getService());
         if (ep == null) {
-            throw new SwitchYardException("No remote endpoints found for service " + request.getService());
+            throw RemoteMessages.MESSAGES.noRemoteEndpointFound(request.getService().toString());
         }
         return new HttpInvoker(ep.getEndpoint()).invoke(request);
     }

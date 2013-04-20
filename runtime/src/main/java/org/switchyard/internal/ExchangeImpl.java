@@ -31,11 +31,12 @@ import org.switchyard.Scope;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.SwitchYardException;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.runtime.RuntimeLogger;
+import org.switchyard.runtime.RuntimeMessages;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.runtime.event.ExchangeInitiatedEvent;
 import org.switchyard.security.SecurityContext;
@@ -127,8 +128,7 @@ public class ExchangeImpl implements SecurityExchange {
             message.getContext().setProperty(RELATES_TO, propertyValue)
                 .addLabels(BehaviorLabel.TRANSIENT.label());
         } else {
-            throw new IllegalStateException(
-                    "Send message not allowed for exchange in phase " + _phase);
+            throw RuntimeMessages.MESSAGES.sendMessageNotAllowed(_phase.toString());
         }
 
         sendInternal(message);
@@ -140,7 +140,7 @@ public class ExchangeImpl implements SecurityExchange {
         
         // You can't send a fault before you send a message
         if (_phase == null) {
-            throw new IllegalStateException("Send fault no allowed on new exchanges");        
+            throw RuntimeMessages.MESSAGES.sendFaultNotAllowed();
         }
         
         _phase = ExchangePhase.OUT;
@@ -218,7 +218,7 @@ public class ExchangeImpl implements SecurityExchange {
                 // Well, that didn't work.  Try the next best thing.
                 faultContent = _message.getContent().toString();
             }
-            _log.warn("Fault generated during exchange without a handler: " + faultContent);
+            RuntimeLogger.ROOT_LOGGER.faultGeneratedDuringExchange(faultContent);
         } else {
             // Publish exchange initiation event
             if (ExchangePhase.IN.equals(getPhase())) {
@@ -244,18 +244,18 @@ public class ExchangeImpl implements SecurityExchange {
 
     private void assertMessageOK(Message message) {
         if (message == null) {
-            throw new IllegalArgumentException("Invalid null 'message' argument in method call.");
+            throw RuntimeMessages.MESSAGES.invalidMessageArgument();
         }
         if (_state == ExchangeState.FAULT) {
-            throw new IllegalStateException("Exchange instance is in a FAULT state.");
+            throw RuntimeMessages.MESSAGES.exchangeInFaultState();
         }
 
         if (!(message instanceof DefaultMessage)) {
-            throw new IllegalStateException("This exchange may handle only DefaultMessage instances");
+            throw RuntimeMessages.MESSAGES.onlyDefaultMessageInstances();
         }
 
         if (((DefaultMessage) message).isSent()) {
-            throw new IllegalStateException("Message may be sent only once. Use Message.copy() to re-send same payload.");
+            throw RuntimeMessages.MESSAGES.messageOnlySentOnce();
         }
         // mark message as sent
         ((DefaultMessage) message).send();
@@ -296,10 +296,10 @@ public class ExchangeImpl implements SecurityExchange {
     @Override
     public ExchangeImpl consumer(ServiceReference consumer, ServiceOperation operation) {
         if (_phase != null) {
-            throw new IllegalStateException("Cannot change consumer metadata after message has been sent on exchange.");
+            throw RuntimeMessages.MESSAGES.cannotChangeMetaDataAfterMessageSent();
         }
         if (_replyHandler == null && operation.getExchangePattern() == ExchangePattern.IN_OUT) {
-            throw new SwitchYardException("Invalid consumer contract - IN_OUT exchanges require a reply handler.");
+            throw RuntimeMessages.MESSAGES.invalidConsumerContract(); 
         }
         _consumer = consumer;
         _contract.setConsumerOperation(operation);
@@ -309,7 +309,7 @@ public class ExchangeImpl implements SecurityExchange {
     @Override
     public ExchangeImpl provider(Service provider, ServiceOperation operation) {
         if (_phase == ExchangePhase.OUT) {
-            throw new IllegalStateException("Cannot change provider metadata after provider has been invoked!");
+            throw RuntimeMessages.MESSAGES.cannotChangeMetadataAfterInvoke();
         }
         _provider = provider;
         _contract.setProviderOperation(operation);

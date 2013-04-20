@@ -23,6 +23,7 @@ import org.picketlink.identity.federation.core.wstrust.auth.TokenCallback;
 import org.switchyard.security.callback.handler.SwitchYardCallbackHandler;
 import org.switchyard.security.credential.AssertionCredential;
 import org.switchyard.security.credential.Credential;
+import org.switchyard.security.jboss.JBossSecurityMessages;
 
 /**
  * STSTokenCallbackHandler.
@@ -43,7 +44,7 @@ public class STSTokenCallbackHandler extends SwitchYardCallbackHandler {
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         Set<Credential> credentials = getCredentials();
         if (credentials == null) {
-            throw new IllegalStateException("Credentials not set");
+            throw JBossSecurityMessages.MESSAGES.credentialsNotSet();
         }
         for (Callback cb : callbacks) {
             if (cb instanceof TokenCallback) {

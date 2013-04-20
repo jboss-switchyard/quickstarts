@@ -44,5 +44,4 @@ public final class SystemPropertyResolver implements PropertyResolver {
            }
         }) : null;
     }
-
 }

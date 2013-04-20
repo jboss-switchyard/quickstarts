@@ -19,6 +19,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.log4j.Logger;
 import org.switchyard.bus.camel.CamelExchange;
+import org.switchyard.bus.camel.BusLogger;
+import org.switchyard.bus.camel.BusMessages;
 
 /**
  * This processor catches exceptions from camel thrown during handling fault replies
@@ -64,17 +66,15 @@ public class FaultProcessor extends DelegateAsyncProcessor {
      * @param exchange SwitchYard exchange related to exception.
      */
     protected void handle(Throwable throwable, Exchange exchange) {
+      
         // exception thrown during handling FAULT state cannot be forwarded
         // anywhere, because we already have problem to handle
-        _logger.error("Unexpected exception thrown during handling FAULT response. "
-            + "This exception can not be handled, thus it's marked as handled and only logged. "
-            + "If you don't want see messages like this consider handling "
-            + "exceptions in your handler logic", throwable);
+        BusLogger.ROOT_LOGGER.exceptionDuringFaultResponse(throwable);
     }
 
     @Override
     public String toString() {
-        return "FaultProcessor [" + getProcessor() + "]";
+        return BusMessages.MESSAGES.faultProcessorString(getProcessor());
     }
 
 }

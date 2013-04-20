@@ -90,7 +90,8 @@ public class XsltTransformerTest extends AbstractTransformerTestCase {
             getTransformer("xslt-config-02.xml");
             Assert.fail("the configuration file should be invalid");
         } catch (RuntimeException e) {
-            Assert.assertEquals("No xsl file has been defined. Check your transformer configuration.",e.getMessage());
+        	boolean exceptionMatch = e.getMessage().contains("SWITCHYARD016801");
+        	Assert.assertTrue(exceptionMatch);
         }
     }
 
@@ -114,7 +115,8 @@ public class XsltTransformerTest extends AbstractTransformerTestCase {
             Object result = transformer.transform(message);
             Assert.fail("xml to transform should be invalid");
         } catch (SwitchYardException e) {
-            Assert.assertEquals("Error during xslt transformation",e.getMessage());
+        	boolean exceptionMatch = e.getMessage().contains("SWITCHYARD016800");
+        	Assert.assertTrue(exceptionMatch);
         }
     }
 
@@ -151,7 +153,8 @@ public class XsltTransformerTest extends AbstractTransformerTestCase {
 
             Assert.fail("No SwitchYardException has been thrown");
         } catch (SwitchYardException e) {
-            Assert.assertEquals("An unexpected error ocurred while creating the xslt transformer", e.getMessage());
+        	boolean exceptionMatch = e.getMessage().contains("SWITCHYARD016802");
+        	Assert.assertTrue(exceptionMatch);
         }
     }
 
@@ -162,7 +165,8 @@ public class XsltTransformerTest extends AbstractTransformerTestCase {
 
             Assert.assertTrue(transformer instanceof XsltTransformer);
         } catch (SwitchYardException e) {
-            Assert.assertEquals("An unexpected error ocurred while creating the xslt transformer", e.getMessage());
+            boolean exceptionMatch = e.getMessage().contains("SWITCHYARD016802");
+            Assert.assertTrue(exceptionMatch);
         }
     }
     
@@ -173,7 +177,8 @@ public class XsltTransformerTest extends AbstractTransformerTestCase {
             
             Assert.fail("No SwitchYardException has been thrown");
         } catch (SwitchYardException e) {
-            Assert.assertEquals("An unexpected error ocurred while creating the xslt transformer", e.getMessage());
+	    boolean exceptionMatch = e.getMessage().contains("SWITCHYARD016802");
+            Assert.assertTrue(exceptionMatch);
         }
     }
     private DefaultMessage newMessage(Object content) {

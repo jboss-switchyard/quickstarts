@@ -21,6 +21,7 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import org.switchyard.common.lang.Strings;
+import org.switchyard.security.BaseSecurityMessages;
 
 /**
  * SwitchYardLoginModule.
@@ -85,14 +86,14 @@ public abstract class SwitchYardLoginModule implements LoginModule {
         Map<String, ?> options = getOptions();
         if (options == null) {
             if (required) {
-                throw new IllegalStateException("options not set");
+                throw BaseSecurityMessages.MESSAGES.optionsNotSet();
             }
         } else {
             Object value = options.get(name);
             if (value != null) {
                 return Strings.replaceSystemAndTestProperties(String.valueOf(value));
             } else if (required) {
-                throw new IllegalStateException("option [" + name + "] not set");
+                throw BaseSecurityMessages.MESSAGES.optionNotSet(name);
             }
         }
         return null;

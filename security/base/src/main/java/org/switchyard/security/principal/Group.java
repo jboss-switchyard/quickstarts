@@ -20,6 +20,8 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.switchyard.security.BaseSecurityMessages;
+
 /**
  * Group.
  *
@@ -43,7 +45,7 @@ public class Group implements java.security.acl.Group, Serializable {
      */
     public Group(String name) {
         if (name == null) {
-            throw new IllegalArgumentException("Group name cannot be null");
+            throw BaseSecurityMessages.MESSAGES.groupNameCannotBeNull();
         }
         _name = name;
     }

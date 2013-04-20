@@ -23,6 +23,7 @@ import org.switchyard.ExchangeInterceptor;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.ServiceDomain;
+import org.switchyard.bus.camel.BusLogger;
 import org.switchyard.bus.camel.CamelExchange;
 import org.switchyard.handlers.MessageTraceHandler;
 
@@ -112,7 +113,7 @@ public class InterceptProcessor implements Processor {
                             // If we are already in fault state, don't allow the
                             // interceptor to throw again - this blows up the route
                             if (ExchangeState.FAULT.equals(syEx.getState())) {
-                                _log.error("Interceptor threw an exception while exchange is already in fault state", error);
+                                BusLogger.ROOT_LOGGER.alreadyInFaultState(error);
                             } else {
                                 if (error instanceof HandlerException) {
                                     throw (HandlerException)error;

@@ -24,6 +24,8 @@ import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.SwitchYardException;
 import org.switchyard.label.BehaviorLabel;
+import org.switchyard.runtime.RuntimeLogger;
+import org.switchyard.runtime.RuntimeMessages;
 import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.ValidatorRegistry;
@@ -66,10 +68,10 @@ public class ValidateHandler extends BaseHandler {
             try {
                 ValidationResult result = applyValidator(exchange, validator);
                 if (!result.isValid()) {
-                    throw new HandlerException("Validator '" + validator.getClass().getName() + "' failed: " + result.getDetail());
+                    throw RuntimeMessages.MESSAGES.validatorFailed(validator.getClass().getName(), result.getDetail());
                 }
             } catch (SwitchYardException syEx) {
-                // Validators which throw SwitchYardException should be reported as HandlerException
+                // Validators which throw SwitchYardException should be reported as HandlerException    
                 throw new HandlerException(syEx.getMessage());
             }
         }
@@ -81,7 +83,7 @@ public class ValidateHandler extends BaseHandler {
         if (validator != null) {
             ValidationResult result = applyValidator(exchange, validator);
             if (!result.isValid()) {
-                _logger.warn("Validator '" + validator.getClass().getName() + "' failed: " + result.getDetail());
+                RuntimeLogger.ROOT_LOGGER.validatorFailed(validator.getClass().getName(), result.getDetail());
             }
         }
     }

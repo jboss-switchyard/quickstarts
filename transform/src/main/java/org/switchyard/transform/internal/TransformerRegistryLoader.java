@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.cdi.CDIUtil;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
+import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.config.model.JavaTransformModel;
@@ -69,7 +69,7 @@ public class TransformerRegistryLoader {
      */
     public TransformerRegistryLoader(TransformerRegistry transformerRegistry) {
         if (transformerRegistry == null) {
-            throw new IllegalArgumentException("null 'transformerRegistry' argument.");
+            throw TransformMessages.MESSAGES.nullTransformerRegistryArgument();
         }
         this._transformerRegistry = transformerRegistry;
     }
@@ -155,7 +155,7 @@ public class TransformerRegistryLoader {
                 }
             }
         } catch (IOException e) {
-            throw new SwitchYardException("Error reading out-of-the-box Transformer configurations from classpath (" + TRANSFORMS_XML + ").", e);
+            throw TransformMessages.MESSAGES.errorReadingTransformerConfig(TRANSFORMS_XML, e);
         }
     }
 
@@ -182,21 +182,21 @@ public class TransformerRegistryLoader {
             String bean = javaTransformModel.getBean();
             if (bean != null) {
                 if (CDIUtil.lookupBeanManager() == null) {
-                    throw new SwitchYardException("CDI BeanManager couldn't be found. A Java transformer class name must be specified if CDI is not enabled.");
+                    throw TransformMessages.MESSAGES.cdiBeanManagerNotFound();
                 }
                 Object transformer = CDIUtil.lookupBean(bean);
                 if (transformer == null) {
-                    throw new SwitchYardException("The Java transformer bean '" + bean + "' couldn't be found in CDI registry.");
+                    throw TransformMessages.MESSAGES.beanNotFoundInCDIRegistry(bean);                    
                 }
                 transformers = TransformerUtil.newTransformers(transformer, transformModel.getFrom(), transformModel.getTo());
             } else {
                 String className = ((JavaTransformModel) transformModel).getClazz();
                 if (className == null) {
-                    throw new SwitchYardException("'bean' or 'class' must be specified for Java transformer definition");
+                    throw TransformMessages.MESSAGES.beanOrClassMustBeSpecified();
                 }
                 Class<?> transformClass = Classes.forName(className, TransformerUtil.class);
                 if (transformClass == null) {
-                    throw new SwitchYardException("Unable to load transformer class " + className);
+                    throw TransformMessages.MESSAGES.unableToLoadTransformerClass(className);
                 }
                 transformers = TransformerUtil.newTransformers(transformClass, transformModel.getFrom(), transformModel.getTo());
             }
@@ -208,7 +208,7 @@ public class TransformerRegistryLoader {
         }
 
         if (transformers == null || transformers.isEmpty()) {
-            throw new SwitchYardException("Unknown TransformModel type '" + transformModel.getClass().getName() + "'.");
+            throw TransformMessages.MESSAGES.unknownTransformModel(transformModel.getClass().getName());
         }
 
         return transformers;
@@ -222,12 +222,12 @@ public class TransformerRegistryLoader {
         TransformerFactoryClass transformerFactoryClass = transformModel.getClass().getAnnotation(TransformerFactoryClass.class);
 
         if (transformerFactoryClass == null) {
-            throw new SwitchYardException("TransformModel type '" + transformModel.getClass().getName() + "' is not annotated with an @TransformerFactoryClass annotation.");
+            TransformMessages.MESSAGES.transformModelNotAnnotated(transformModel.getClass().getName());
         }
 
         Class<?> factoryClass = transformerFactoryClass.value();
         if (!TransformerFactory.class.isAssignableFrom(factoryClass)) {
-            throw new SwitchYardException("Invalid TransformerFactory implementation.  Must implement '" + org.switchyard.transform.internal.TransformerFactory.class.getName() + "'.");
+            TransformMessages.MESSAGES.invalidTransformerFactory(org.switchyard.transform.internal.TransformerFactory.class.getName());
         }
 
         try {
@@ -238,7 +238,7 @@ public class TransformerRegistryLoader {
             
             return _transformerFactories.get(factoryClass);
         } catch (Exception e) {
-            throw new SwitchYardException("Failed to create an instance of TransformerFactory '" + factoryClass.getName() + "'.  Class must have a public default constructor and not be abstract.");
+            throw TransformMessages.MESSAGES.failedCreateInstanceofTransformerFactory(factoryClass.getName());
         }
     }
 }

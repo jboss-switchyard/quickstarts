@@ -72,9 +72,8 @@ public class TransformerUtilTest {
             TransformerUtil.newTransformer(TestTransformer.class, QName.valueOf("AAA"), QName.valueOf("BBB"));
             Assert.fail("Expected Exception");
         } catch(RuntimeException e) {
-            Assert.assertEquals("Error constructing Transformer instance for class 'org.switchyard.transform.config.model.TransformerUtilTest$TestTransformer'.  " +
-                    "Class does not support a transformation from type 'AAA' to type 'BBB'.",
-                    e.getMessage());
+            boolean exceptionMatch = e.getMessage().contains("SWITCHYARD016855");
+            Assert.assertTrue(exceptionMatch);
         }
     }
 

@@ -136,7 +136,7 @@ public class CamelExchange implements SecurityExchange {
     @Override
     public Exchange provider(Service provider, ServiceOperation operation) {
         if (getPhase() == ExchangePhase.OUT) {
-            throw new IllegalStateException("Cannot change provider metadata after provider has been invoked!");
+            throw BusMessages.MESSAGES.cannotChangeProviderMetadata();
         }
         _exchange.setProperty(PROVIDER, provider);
         getContract().setProviderOperation(operation);
@@ -178,12 +178,12 @@ public class CamelExchange implements SecurityExchange {
         if (message instanceof CamelMessage) {
             CamelMessage msg = (CamelMessage) message;
             if (msg.isSent()) {
-                throw new IllegalArgumentException("Can not send same message twice. Use Message.copy() instead");
+                throw BusMessages.MESSAGES.cannotSendMessageTwice();
             }
             msg.sent(); // mark as sent
             return msg;
         }
-        throw new IllegalArgumentException("CamelExchange accepts only CamelMessages");
+        throw BusMessages.MESSAGES.camelExchangeOnlyCamelMessages();
     }
 
     @Override
