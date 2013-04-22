@@ -94,11 +94,12 @@
         <version.infinispan>5.2.1.Final</version.infinispan>
         <version.ironjacamar>1.0.15.Final</version.ironjacamar>
         <version.jbossas>7.2.0.Alpha1-redhat-4</version.jbossas>
-        <version.jbosseap>6.1</version.jbosseap>
         <version.jbossas.console>1.5.1.Final</version.jbossas.console>
         <!-- Override versions for OpenShift. May use the same version as AS but -->
         <!-- maintaining this override for future flexibility -->
+        <version.jbossas.maven>7.1.1.Final</version.jbossas.maven>
         <version.jbossas.openshift>7.1.0.Final</version.jbossas.openshift>
+        <version.jbosseap>6.1</version.jbosseap>
         <version.jbpm>6.0.0.Alpha9</version.jbpm>
         <version.jettison>1.2</version.jettison>
         <version.jsch>0.1.48</version.jsch>
@@ -283,7 +284,7 @@
                 <plugin>
                     <groupId>org.jboss.as.plugins</groupId>
                     <artifactId>jboss-as-maven-plugin</artifactId>
-                    <version>${version.jbossas}</version>
+                    <version>${version.jbossas.maven}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.switchyard</groupId>
