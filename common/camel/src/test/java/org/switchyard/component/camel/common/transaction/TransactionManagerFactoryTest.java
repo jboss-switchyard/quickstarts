@@ -66,9 +66,9 @@ public class TransactionManagerFactoryTest {
 
     @Test
     public void createSpringTransactionManager() throws Exception {
-        mixIn.getInitialContext().bind("java:comp/UserTransaction", mock(UserTransaction.class));
-        mixIn.getInitialContext().bind("java:comp/TransactionManager", mock(TransactionManager.class));
-        mixIn.getInitialContext().bind("java:comp/TransactionSynchronizationRegistry", mock(TransactionSynchronizationRegistry.class));
+        mixIn.getInitialContext().bind(TransactionManagerFactory.JBOSS_USER_TRANSACTION, mock(UserTransaction.class));
+        mixIn.getInitialContext().bind(TransactionManagerFactory.JBOSS_TRANSACTION_MANANGER, mock(TransactionManager.class));
+        mixIn.getInitialContext().bind(TransactionManagerFactory.JBOSS_TRANSACTION_SYNC_REG, mock(TransactionSynchronizationRegistry.class));
         final TransactionManagerFactory factory = TransactionManagerFactory.getInstance();
         final PlatformTransactionManager tm = factory.create();
         assertThat(tm, is(notNullValue()));
@@ -82,9 +82,9 @@ public class TransactionManagerFactoryTest {
 
     @Test
     public void createJBossTransactionManager() throws Exception {
-        mixIn.getInitialContext().bind("java:jboss/UserTransaction", mock(UserTransaction.class));
-        mixIn.getInitialContext().bind("java:jboss/TransactionManager", mock(TransactionManager.class));
-        mixIn.getInitialContext().bind("java:jboss/TransactionSynchronizationRegistry", mock(TransactionSynchronizationRegistry.class));
+        mixIn.getInitialContext().bind(TransactionManagerFactory.JBOSS_USER_TRANSACTION, mock(UserTransaction.class));
+        mixIn.getInitialContext().bind(TransactionManagerFactory.JBOSS_TRANSACTION_MANANGER, mock(TransactionManager.class));
+        mixIn.getInitialContext().bind(TransactionManagerFactory.JBOSS_TRANSACTION_SYNC_REG, mock(TransactionSynchronizationRegistry.class));
         final TransactionManagerFactory factory = TransactionManagerFactory.getInstance();
         final PlatformTransactionManager tm = factory.create();
         assertThat(tm, is(instanceOf(JtaTransactionManager.class)));

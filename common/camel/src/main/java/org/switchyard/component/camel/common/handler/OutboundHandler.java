@@ -31,6 +31,7 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
+import org.switchyard.component.camel.common.transaction.TransactionHelper;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
@@ -85,6 +86,8 @@ public class OutboundHandler extends BaseServiceHandler {
         _camelContext = context;
         _messageComposer = messageComposer;
         _producerTemplate = producerTemplate == null ? _camelContext.createProducerTemplate() : producerTemplate;
+
+        TransactionHelper.useTransactionManager(_uri, context);
     }
 
     /**

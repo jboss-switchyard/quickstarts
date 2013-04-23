@@ -21,21 +21,16 @@
 package org.switchyard.component.camel.common.handler;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.camel.util.URISupport;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.switchyard.Exchange;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
-import org.switchyard.component.camel.common.transaction.TransactionManagerFactory;
+import org.switchyard.component.camel.common.transaction.TransactionHelper;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
@@ -54,7 +49,6 @@ import org.switchyard.exception.SwitchYardException;
  */
 public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHandler {
 
-    private static TransactionManagerFactory TM_FACTORY = TransactionManagerFactory.getInstance();
     private final T _camelBindingModel;
     private final SwitchYardCamelContext _camelContext;
     private final QName _serviceName;
@@ -116,15 +110,9 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
      * @return 
      */
     protected RouteDefinition addTransactionPolicy(final SwitchYardRouteDefinition route) {
-        if (!hasTransactionManager()) {
+        if (!TransactionHelper.useTransactionManager(getComponentUri(), _camelContext)) {
             // namespace will be added by SwitchYardRouteDefinition
             return route.to(getSwitchyardEndpointUri());
-        }
-
-        final String tmName = getTransactionManagerName();
-        if (!isRegisteredInCamelRegistry(tmName) && isDefaultJtaTransactionName(tmName)) {
-            final PlatformTransactionManager tm = TM_FACTORY.create();
-            addToCamelRegistry(tm, tmName);
         }
 
         // Tell Camel the route is transacted
@@ -141,38 +129,6 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
 
     protected String getSwitchyardEndpointUri() {
         return CamelConstants.SWITCHYARD_COMPONENT_NAME + "://" + getServiceName().getLocalPart();
-    }
-
-    private boolean isDefaultJtaTransactionName(final String tmName) {
-        return tmName.equals(TransactionManagerFactory.TM);
-    }
-
-    private boolean isRegisteredInCamelRegistry(final String tmName) {
-        return _camelContext.getRegistry().lookup(tmName) != null;
-    }
-
-    private void addToCamelRegistry(final PlatformTransactionManager tm, final String tmName) {
-        // Add the transaction manager
-        _camelContext.getWritebleRegistry().put(tmName, tm);
-        // Add a policy ref bean pointing to the transaction manager
-        _camelContext.getWritebleRegistry().put(CamelConstants.TRANSACTED_REF, new SpringTransactionPolicy(tm));
-    }
-
-    protected boolean hasTransactionManager() {
-        return getComponentUri().toString().contains("transactionManager");
-    }
-
-    protected String getTransactionManagerName() {
-        try {
-            final Map<String, Object> parseParameters = URISupport.parseParameters(getComponentUri());
-            String name = (String) parseParameters.get("transactionManager");
-            if (name != null) {
-                name = name.replace("#", "");
-            }
-            return name;
-        } catch (URISyntaxException e) {
-            throw new SwitchYardException(e);
-        }
     }
 
     protected T getBindingModel() {

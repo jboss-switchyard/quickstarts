@@ -23,11 +23,16 @@ package org.switchyard.component.camel.common.handler;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.transaction.UserTransaction;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
@@ -49,8 +54,10 @@ import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.camel.common.composer.CamelComposition;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
+import org.switchyard.component.camel.common.transaction.TransactionManagerFactory;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.component.test.mixins.naming.NamingMixIn;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.test.Invoker;
@@ -67,6 +74,8 @@ import org.switchyard.test.SwitchYardTestCaseConfig;
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
 public class OutboundHandlerTest extends CamelTestSupport {
+
+    private NamingMixIn _mixIn;
 
     @EndpointInject(uri = "mock:result")
     private static MockEndpoint camelEndpoint;
@@ -110,6 +119,34 @@ public class OutboundHandlerTest extends CamelTestSupport {
         assertThat(camelEndpoint.getReceivedCounter(), is(1));
         final String received = (String) camelEndpoint.getReceivedExchanges().get(0).getIn().getBody();
         assertThat(received, is(equalTo(payload)));
+    }
+
+    @Test
+    public void checkTransactionManagerRegistration() throws Exception {
+        _mixIn.initialize();
+        _mixIn.getInitialContext().bind(TransactionManagerFactory.JBOSS_USER_TRANSACTION, mock(UserTransaction.class));
+        _mixIn.getInitialContext().bind(TransactionManagerFactory.JBOSS_TRANSACTION_MANANGER, mock(TransactionManager.class));
+        _mixIn.getInitialContext().bind(TransactionManagerFactory.JBOSS_TRANSACTION_SYNC_REG, mock(TransactionSynchronizationRegistry.class));
+
+        bindingModel = mock(CamelBindingModel.class);
+        when(bindingModel.getComponentURI()).thenReturn(URI.create("transaction:foo?transactionManager=%23jtaTransactionManager"));
+        _messageComposer = CamelComposition.getMessageComposer();
+        _serviceDomain.registerService(_targetService.getServiceName(),
+            new InOnlyService(), 
+            new OutboundHandler(bindingModel.getComponentURI().toString(),
+                (SwitchYardCamelContext) context, _messageComposer
+            )
+        );
+        _service = _serviceDomain.registerServiceReference(
+            _targetService.getServiceName(), new InOnlyService());
+        Exchange exchange = _service.createExchange();
+
+        MockEndpoint endpoint = getMockEndpoint("mock:result");
+        endpoint.expectedBodiesReceived("foo");
+        exchange.send(exchange.createMessage().setContent("foo"));
+    
+        assertThat(context.getRegistry().lookup(TransactionManagerFactory.TM), is(notNullValue()));
+        _mixIn.uninitialize();
     }
 
     @Test
@@ -174,9 +211,7 @@ public class OutboundHandlerTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        SwitchYardCamelContext camelContext = new SwitchYardCamelContext();
-        camelContext.setRegistry(createRegistry());
-        return camelContext;
+        return new SwitchYardCamelContext();
     }
 
     @Override
@@ -187,7 +222,9 @@ public class OutboundHandlerTest extends CamelTestSupport {
                 .convertBodyTo(String.class)
                 .log("Before Routing to mock:result body: ${body}")
                 .to("mock:result");
+                from("transaction:foo").to("mock:result");
             }
         };
     }
+
 }

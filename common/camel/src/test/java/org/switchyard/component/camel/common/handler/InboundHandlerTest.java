@@ -20,8 +20,9 @@
  */
 package org.switchyard.component.camel.common.handler;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
@@ -103,14 +104,10 @@ public class InboundHandlerTest extends InboundHandlerTestBase {
 
     @Test
     public void hasTransactionManagerConfigured() {
-        mockTransaction("jtaTransactionMgr");
-        mockTransaction("jtaTransactionManager");
-        InboundHandler<?> handler = createInboundHandler("jms://queue?transactionManager=%23jtaTransactionMgr");
-        String transactedRef = handler.getTransactionManagerName();
-        assertThat(transactedRef, is(equalTo("jtaTransactionMgr")));
-        handler = createInboundHandler("jms://GreetingServiceQueue?connectionFactory=%23&JmsXA&transactionManager=%23jtaTransactionManager");
-        transactedRef = handler.getTransactionManagerName();
-        assertThat(transactedRef, is(equalTo("jtaTransactionManager")));
+        createInboundHandler("jms://queue?transactionManager=%23jtaTransactionMgr");
+        assertThat(_camelContext.getRegistry().lookup("jtaTransactionMgr"), is(nullValue()));
+        createInboundHandler("jms://GreetingServiceQueue?connectionFactory=%23&JmsXA&transactionManager=%23jtaTransactionManager");
+        assertThat(_camelContext.getRegistry().lookup("jtaTransactionManager"), is(notNullValue()));
     }
 
     /**

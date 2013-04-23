@@ -22,16 +22,23 @@ import static org.mockito.Mockito.mock;
 
 import java.net.URI;
 
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.transaction.UserTransaction;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.mockito.Mockito;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.model.v1.V1BaseCamelBindingModel;
+import org.switchyard.component.camel.common.transaction.TransactionManagerFactory;
+import org.switchyard.component.test.mixins.naming.NamingMixIn;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composer.ContextMapperModel;
@@ -48,6 +55,8 @@ import org.switchyard.config.model.selector.OperationSelectorModel;
  * mapper are place in camel-switchyard module.
  */
 public abstract class InboundHandlerTestBase {
+
+    private static NamingMixIn mixIn = new NamingMixIn();
 
     protected SwitchYardCamelContext _camelContext;
     protected Configuration _configuration;
@@ -103,4 +112,18 @@ public abstract class InboundHandlerTestBase {
         _camelContext.getWritebleRegistry().put(manager, transactionManager);
         _camelContext.getWritebleRegistry().put(CamelConstants.TRANSACTED_REF, new SpringTransactionPolicy(transactionManager));
     }
+
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        mixIn.initialize();
+        mixIn.getInitialContext().bind(TransactionManagerFactory.JBOSS_USER_TRANSACTION, mock(UserTransaction.class));
+        mixIn.getInitialContext().bind(TransactionManagerFactory.JBOSS_TRANSACTION_MANANGER, mock(TransactionManager.class));
+        mixIn.getInitialContext().bind(TransactionManagerFactory.JBOSS_TRANSACTION_SYNC_REG, mock(TransactionSynchronizationRegistry.class));
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        mixIn.uninitialize();
+    }
+
 }
