@@ -51,8 +51,8 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
     @SuppressWarnings("rawtypes")
     private final InjectedValue<Map> _socketBindings = new InjectedValue<Map>();
     private final InjectedValue<ServiceDomainManager> _serviceDomainManager = new InjectedValue<ServiceDomainManager>();
-    private BaseSwitchYard _switchYard;
-    private SwitchYardBuilder _adminObserver;
+    private SwitchYard _switchYard;
+    private SwitchYardBuilder _syBuilder;
 
     /**
      * Create a new SwitchYardAdminService.
@@ -66,15 +66,12 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
 
     @Override
     public void start(StartContext context) throws StartException {
-        _switchYard = new BaseSwitchYard();
-        _adminObserver = new SwitchYardBuilder(_switchYard);
-        _serviceDomainManager.getValue().getEventManager()
-            .addObserver(_adminObserver, ExchangeCompletionEvent.class)
-            .addObserver(_adminObserver, ApplicationDeployedEvent.class)
-            .addObserver(_adminObserver, ApplicationUndeployedEvent.class);
+        _syBuilder = new SwitchYardBuilder();
+        _syBuilder.init(_serviceDomainManager.getValue());
+        _switchYard = _syBuilder.getSwitchYard();
 
         // add in the configured socket bindings
-        _switchYard.addSocketBindingNames(_socketBindings.getValue().keySet());
+        ((BaseSwitchYard)_switchYard).addSocketBindingNames(_socketBindings.getValue().keySet());
 
         // TODO: add in configured properties
         // _switchYard.addProperties(properties);
@@ -82,7 +79,7 @@ public class SwitchYardAdminService implements Service<SwitchYard> {
 
     @Override
     public void stop(StopContext context) {
-        _serviceDomainManager.getValue().getEventManager().removeObserver(_adminObserver);
+        _syBuilder.destroy();
         _switchYard = null;
     }
 
