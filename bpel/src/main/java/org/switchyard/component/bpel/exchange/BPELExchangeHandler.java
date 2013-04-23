@@ -21,7 +21,7 @@ package org.switchyard.component.bpel.exchange;
 import javax.xml.namespace.QName;
 
 import org.riftsaw.engine.BPELEngine;
-import org.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
+import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
 import org.switchyard.deploy.ServiceHandler;
 
 /**

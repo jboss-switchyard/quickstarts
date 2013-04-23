@@ -37,7 +37,7 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.bpel.BPELFault;
-import org.switchyard.component.bpel.config.model.BPELComponentImplementationModel;
+import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
 import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.exception.DeliveryException;
