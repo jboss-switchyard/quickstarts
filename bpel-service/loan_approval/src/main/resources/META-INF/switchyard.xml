@@ -4,7 +4,7 @@
              xmlns:trfm="urn:switchyard-config:transform:1.0"
              xmlns:bean="urn:switchyard-component-bean:config:1.0"
              xmlns:soap="urn:switchyard-component-soap:config:1.0"
-             xmlns:bpel="http://docs.oasis-open.org/ns/opencsa/sca/200903"
+             xmlns:bpel="http://docs.oasis-open.org/ns/opencsa/sca/200912"
              xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
              xmlns:ls="http://example.com/loan-approval/loanService/"
              xmlns:ra="http://example.com/loan-approval/riskAssessment/"
