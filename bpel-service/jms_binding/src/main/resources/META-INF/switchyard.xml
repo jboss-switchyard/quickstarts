@@ -21,7 +21,7 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
-    xmlns:bpel="http://docs.oasis-open.org/ns/opencsa/sca/200903"
+    xmlns:bpel="http://docs.oasis-open.org/ns/opencsa/sca/200912"
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
     xmlns:sh="http://www.jboss.org/bpel/examples"
     xmlns:jms="urn:switchyard-component-camel-jms:config:1.0"
