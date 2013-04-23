@@ -37,7 +37,8 @@
         <redhat.eap6.dir> jboss-eap-${version.redhat.eap6}</redhat.eap6.dir>
         <staging.jboss.dir>${staging.dir}/${redhat.eap6.dir}</staging.jboss.dir>
         <staging.configs.dir>${staging.dir}/configs</staging.configs.dir>
-        <distro.root.dir>/switchyard-as7-${version.distro}/</distro.root.dir>
+        <distro.file>switchyard-distribution-${project.version}</distro.file>
+        <distro.root.dir>/</distro.root.dir>
         <installer.root.dir>/switchyard-as7-installer-${version.distro}</installer.root.dir>
         <switchyard.jboss.home>${staging.jboss.dir}</switchyard.jboss.home>
     </properties>
@@ -217,6 +218,26 @@
                         </transformationSet>
                     </transformationSets>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>assembly-full-dist</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>${distro.file}</finalName>
+                            <descriptors>
+                                <descriptor>${basedir}/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <!-- Configure the Surefire plugin for running the tests.  Be sure to make these same setting if running in your IDE... -->
             <plugin>

@@ -60,6 +60,6 @@ public final class SwitchYardSubsystemGetVersion implements OperationStepHandler
                 context.stepCompleted();
             }
         }, OperationContext.Stage.RUNTIME);
-        context.completeStep();
+        context.stepCompleted();
     }
 }
