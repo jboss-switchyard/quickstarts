@@ -100,6 +100,8 @@
         <version.jbossas.maven>7.1.1.Final</version.jbossas.maven>
         <version.jbossas.openshift>7.1.0.Final</version.jbossas.openshift>
         <version.jbosseap>6.1</version.jbosseap>
+        <version.jbossws.spi>2.1.2.Final</version.jbossws.spi>
+        <version.jbossws.jboss720.server.integration>4.2.0-SNAPSHOT</version.jbossws.jboss720.server.integration>
         <version.jbpm>6.0.0.Alpha9</version.jbpm>
         <version.jettison>1.2</version.jettison>
         <version.jsch>0.1.48</version.jsch>
@@ -1228,6 +1230,11 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.quickstarts.demos</groupId>
+                <artifactId>switchyard-quickstart-demo-policy-security-wss-signencrypt</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts.demos</groupId>
                 <artifactId>switchyard-quickstart-demo-policy-security-wss-username</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2207,6 +2214,16 @@
                 <artifactId>jboss-as-arquillian-protocol-jmx</artifactId> 
                 <version>${version.arquillian.container}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.ws</groupId>
+                <artifactId>jbossws-spi</artifactId>
+                <version>${version.jbossws.spi}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.ws</groupId>
+                <artifactId>jbossws-jboss720-server-integration</artifactId>
+                <version>${version.jbossws.jboss720.server.integration}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
