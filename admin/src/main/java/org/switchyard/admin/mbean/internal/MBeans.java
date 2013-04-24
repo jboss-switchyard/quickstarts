@@ -42,7 +42,7 @@ public final class MBeans {
     /**
      * Domain name used for SwitchYard MBean ObjectNames.
      */
-    public static final String DOMAIN = "org.switchayrd.admin";
+    public static final String DOMAIN = "org.switchyard.admin";
     
     static final String APPLICATION = "type=Application,name=";
     static final String SERVICE = "type=Service,name=";
