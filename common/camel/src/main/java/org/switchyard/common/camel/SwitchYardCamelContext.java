@@ -77,10 +77,10 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
         _cdiIntegration = autoDetectCdi;
         if (isEnableCdiIntegration()) {
             setInjector(new CdiInjector(getInjector()));
-            getManagementStrategy().addEventNotifier(new CamelEventBridge());
         } else {
             _logger.warn("CDI environment not detected, disabling Camel CDI integration");
         }
+        getManagementStrategy().addEventNotifier(new CamelEventBridge());
     }
 
     /**

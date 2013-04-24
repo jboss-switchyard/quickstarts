@@ -19,20 +19,25 @@
 package org.switchyard.bus.camel;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.namespace.QName;
 
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
+import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.Service;
+import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.security.SecurityContext;
 import org.switchyard.security.SecurityExchange;
 
@@ -133,6 +138,9 @@ public class CamelExchange implements SecurityExchange {
 
     @Override
     public Exchange provider(Service provider, ServiceOperation operation) {
+        if (getPhase() == ExchangePhase.OUT) {
+            throw new IllegalStateException("Cannot change provider metadata after provider has been invoked!");
+        }
         _exchange.setProperty(PROVIDER, provider);
         getContract().setProviderOperation(operation);
         return this;
@@ -202,7 +210,16 @@ public class CamelExchange implements SecurityExchange {
     }
 
     private void sendInternal() {
-         _exchange.getProperty(DISPATCHER, ExchangeDispatcher.class).dispatch(this);
+        _exchange.getProperty(DISPATCHER, ExchangeDispatcher.class).dispatch(this);
+        if (isDone()) {
+            ServiceDomain domain = ((SwitchYardCamelContext) _exchange.getContext()).getServiceDomain();
+            long duration = System.nanoTime() - _exchange.getProperty(ExchangeCompletionEvent.EXCHANGE_DURATION + ".start", 0, Long.class);
+            getContext().setProperty(ExchangeCompletionEvent.EXCHANGE_DURATION, TimeUnit.NANOSECONDS.toMillis(duration))
+                .addLabels(BehaviorLabel.TRANSIENT.label());
+            domain.getEventPublisher().publish(new ExchangeCompletionEvent(this));
+        } else {
+            _exchange.setProperty(ExchangeCompletionEvent.EXCHANGE_DURATION + ".start", System.nanoTime());
+        }
     }
 
     @Override
@@ -234,6 +251,13 @@ public class CamelExchange implements SecurityExchange {
     @Override
     public ExchangeHandler getReplyHandler() {
         return _exchange.getProperty(REPLY_HANDLER, ExchangeHandler.class);
+    }
+
+    private boolean isDone() {
+        ExchangePhase phase = getPhase();
+        ExchangePattern mep = getContract().getConsumerOperation().getExchangePattern();
+        return (ExchangePhase.IN.equals(phase) && ExchangePattern.IN_ONLY.equals(mep))
+                || (ExchangePhase.OUT.equals(phase) && ExchangePattern.IN_OUT.equals(mep));
     }
 
     /**

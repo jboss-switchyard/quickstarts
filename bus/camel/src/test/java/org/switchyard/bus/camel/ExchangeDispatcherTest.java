@@ -61,6 +61,7 @@ public class ExchangeDispatcherTest {
     public void setUp() throws Exception {
         _domain = new MockDomain();
         _camelContext = new SwitchYardCamelContext();
+        _camelContext.setServiceDomain(_domain);
         _provider = new CamelExchangeBus(_camelContext);
         _provider.init(_domain);
         _camelContext.start();
