@@ -43,7 +43,7 @@ import org.jboss.jca.core.spi.rar.Activation;
 import org.jboss.jca.core.spi.rar.MessageListener;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.util.propertyeditor.PropertyEditors;
-import org.jboss.as.connector.ConnectorServices;
+import org.jboss.as.connector.util.ConnectorServices;
 
 
 /**
