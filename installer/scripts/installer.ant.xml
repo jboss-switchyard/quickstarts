@@ -78,18 +78,19 @@
     </target>
 
     <target name="download-as7-zip" depends="download-as7-check" if="as7.not.available">
-        <echo>Downloading AS7 ...</echo>
+        <echo>Downloading ${container.name} ...</echo>
         <get src="${as7.dist.url}" dest="res/jboss-${server}-${as.version}.zip"/>
     </target>
 
     <target name="download-as7" depends="download-as7-zip">
-	<echo>Installing AS7 ...</echo>
+	<property name="unzipped.dir" value="jboss-${server}-${as.version}"/>
+	<echo>Installing ${container.name} ...</echo>
         <unzip src="res/jboss-${server}-${as.version}.zip" dest="${basedir}" overwrite="true"/>
-    	<chmod dir="${basedir}/jboss-${server}-${as.version}/bin" perm="ugo+rx" includes="**/*.sh"/>
+    	<chmod dir="${basedir}/${unzipped.dir}/bin" perm="ugo+rx" includes="**/*.sh"/>
     </target>
 
     <target name="download-sy-as7" depends="download-sy-as7-check" if="sy.as7.not.available">
-        <echo>Downloading SwitchYard AS7 Bundle ..."</echo>
+        <echo>Downloading SwitchYard ${container.name} Bundle ..."</echo>
         <get src="${as7.bundle.url}" dest="res/switchyard-as7-bundle.zip"/>
     </target>
 
@@ -142,7 +143,7 @@
     </target>
 
     <target name="request-sy-install" unless="SKIP_AS7">
-        <input message="Would you like to install the SwitchYard distribution to your AS7 installation (y/n)?" addproperty="install.sy.dist.question" validargs="y,n" defaultvalue="y" />
+        <input message="Would you like to install the SwitchYard distribution to your ${container.name} installation (y/n)?" addproperty="install.sy.dist.question" validargs="y,n" defaultvalue="y" />
         <condition property="installSYDit">
            <and>
               <isset property="install.sy.dist.question" />
@@ -170,7 +171,7 @@
     </target>
 
     <target name="get-jboss-path-question" depends="request-sy-install" if="skip.as7.folder.question" unless="SKIP_AS7">
-        <input message="Please enter the path to the root folder of your JBoss AS7 installation (or press return if you would like the installer to download an AS7 distribution): " addproperty="AS7_PATH_ENTERED" />
+        <input message="Please enter the path to the root folder of your JBoss ${container.name} installation (or press return if you would like the installer to download an ${container.name} distribution): " addproperty="AS7_PATH_ENTERED" />
         <condition property="AS7_PATH_CHECK" value="${AS7_PATH_ENTERED}">
             <and>
             <isset property="AS7_PATH_ENTERED"/>
@@ -300,7 +301,7 @@
     <target name="notAS7" unless="isAS7">
         <echo>The specified path '${AS7_PATH}' is not a path to a valid JBoss AS7 installation."</echo>
 
-        <input message="Would you like to download an AS7 distribution (y/n)?"  validargs="y,n" defaultvalue="y" />
+        <input message="Would you like to download an ${container.name} distribution (y/n)?"  validargs="y,n" defaultvalue="y" />
 
         <antcall target="download-as7"/>
     </target>
