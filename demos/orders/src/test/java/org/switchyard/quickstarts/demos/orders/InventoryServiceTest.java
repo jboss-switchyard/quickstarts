@@ -49,7 +49,7 @@ public class InventoryServiceTest {
     
     @Test
     public void testItemLookupNonexistent() throws Exception {
-        final String ITEM_ID = "GUNS";
+        final String ITEM_ID = "SPAM";
         try {
             // This should generate a fault because the ITEM_ID is not found
             lookupItem
