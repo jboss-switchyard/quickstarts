@@ -137,7 +137,7 @@
                                     <overWrite>true</overWrite>
                                 </artifactItem>
                             </artifactItems>
-                            <includes>${redhat.eap6.dir}/standalone/configuration/standalone.xml, ${redhat.eap6.dir}/standalone/configuration/standalone-full.xml, ${redhat.eap6.dir}/domain/configuration/domain.xml</includes>
+                            <includes>${redhat.eap6.dir}/standalone/configuration/standalone.xml, ${redhat.eap6.dir}/standalone/configuration/standalone-full.xml, ${redhat.eap6.dir}/standalone/configuration/standalone.xml, ${redhat.eap6.dir}/standalone/configuration/standalone-ha.xml, ${redhat.eap6.dir}/standalone/configuration/standalone.xml, ${redhat.eap6.dir}/standalone/configuration/standalone-full-ha.xml,${redhat.eap6.dir}/domain/configuration/domain.xml</includes>
                             <outputDirectory>${staging.configs.dir}</outputDirectory>
                         </configuration>
                     </execution>
@@ -195,7 +195,10 @@
                         <transformationSet>
                             <dir>${staging.configs.dir}/${redhat.eap6.dir}/standalone/configuration</dir>
                             <includes>
-                                <include>standalone*.xml</include>
+                                <include>standalone.xml</include>
+                                <include>standalone-ha.xml</include>
+                                <include>standalone-full-ha.xml</include>
+                                <include>standalone-full.xml</include>
                             </includes>
                             <outputDir>${staging.jboss.dir}/standalone/configuration</outputDir>
                             <stylesheet>${staging.jboss.dir}/xsl/standalone.xsl</stylesheet>
@@ -203,7 +206,7 @@
                         <transformationSet>
                             <dir>${staging.configs.dir}/${redhat.eap6.dir}/domain/configuration</dir>
                             <includes>
-                                <include>domain*.xml</include>
+                                <include>domain.xml</include>
                             </includes>
                             <outputDir>${staging.jboss.dir}/domain/configuration</outputDir>
                             <stylesheet>${staging.jboss.dir}/xsl/domain.xsl</stylesheet>
