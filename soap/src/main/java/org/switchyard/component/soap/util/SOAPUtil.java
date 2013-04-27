@@ -99,11 +99,11 @@ public final class SOAPUtil {
      * Retrieves the first element name in the SOAP Envelope's body.
      *
      * @param soapMessage The SOAP message.
-     * @return The first Element name.
+     * @return The first Element QName.
      * @throws SOAPException If the SOAP message is invalid
      */
-    public static String getFirstBodyElement(final SOAPMessage soapMessage) throws SOAPException {
-        String operationName = null;
+    public static QName getFirstBodyElement(final SOAPMessage soapMessage) throws SOAPException {
+        QName operationName = null;
         SOAPBody body = soapMessage.getSOAPPart().getEnvelope().getBody();
         
         if (body != null) {
@@ -112,7 +112,7 @@ public final class SOAPUtil {
             while (nodes.hasNext()) {
                 node = nodes.next();
                 if (node instanceof Element) {
-                    operationName = node.getLocalName();
+                    operationName = new QName(node.getNamespaceURI(), node.getLocalName());
                 }
             }
         }

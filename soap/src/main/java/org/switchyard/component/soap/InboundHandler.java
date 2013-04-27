@@ -21,6 +21,7 @@ package org.switchyard.component.soap;
 
 import java.util.List;
 
+import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
@@ -41,6 +42,7 @@ import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.soap.composer.SOAPBindingData;
 import org.switchyard.component.soap.composer.SOAPComposition;
+import org.switchyard.component.soap.composer.SOAPMessageComposer;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.endpoint.EndpointPublisherFactory;
 import org.switchyard.component.soap.endpoint.WSEndpoint;
@@ -73,6 +75,7 @@ public class InboundHandler extends BaseServiceHandler {
     private Port _wsdlPort;
     private String _bindingId;
     private Boolean _documentStyle = false;
+    private String _targetNamespace;
 
     /**
      * Constructor.
@@ -92,7 +95,9 @@ public class InboundHandler extends BaseServiceHandler {
         try {
             _service = _domain.getServiceReference(_config.getServiceName());
             PortName portName = _config.getPort();
-            javax.wsdl.Service wsdlService = WSDLUtil.getService(_config.getWsdl(), portName);
+            Definition definition = WSDLUtil.readWSDL(_config.getWsdl());
+            _targetNamespace = definition.getTargetNamespace();
+            javax.wsdl.Service wsdlService = WSDLUtil.getService(definition, portName);
             _wsdlPort = WSDLUtil.getPort(wsdlService, portName);
             // Update the portName
             portName.setServiceQName(wsdlService.getQName());
@@ -103,7 +108,9 @@ public class InboundHandler extends BaseServiceHandler {
             _endpoint = EndpointPublisherFactory.getEndpointPublisher().publish(_config, _bindingId, this);
 
             // Create and configure the SOAP message composer
-            _messageComposer = SOAPComposition.getMessageComposer(_config, _wsdlPort);
+            _messageComposer = SOAPComposition.getMessageComposer(_config);
+            ((SOAPMessageComposer)_messageComposer).setDocumentStyle(_documentStyle);
+            ((SOAPMessageComposer)_messageComposer).setWsdlPort(_wsdlPort);
         } catch (WSDLException e) {
             throw new WebServicePublishException(e);
         }
@@ -150,21 +157,17 @@ public class InboundHandler extends BaseServiceHandler {
         String operationName = null;
         Operation operation;
         Boolean oneWay = false;
-        String firstBodyElement = null;
+        QName firstBodyElement = null;
 
         if ((soapMessage == null) || (soapMessage.getSOAPPart() == null)) {
             return handleException(oneWay, new SOAPException("No such operation: " + _wsdlPort.getName() + "->null"));
         }
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Request:[" + SOAPUtil.soapMessageToString(soapMessage) + "]");
+            LOGGER.trace("Inbound <-- Request:[" + SOAPUtil.soapMessageToString(soapMessage) + "]");
         }
         try {
             firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
-            if (_documentStyle) {
-                operation = WSDLUtil.getOperationByElement(_wsdlPort, firstBodyElement);
-            } else {
-                operation = WSDLUtil.getOperationByName(_wsdlPort, firstBodyElement);
-            }
+            operation = WSDLUtil.getOperationByElement(_wsdlPort, firstBodyElement, _documentStyle);
             if (operation != null) {
                 operationName = operation.getName();
                 oneWay = WSDLUtil.isOneWay(operation);
@@ -233,9 +236,8 @@ public class InboundHandler extends BaseServiceHandler {
                 }
                 
                 if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Response:[" + SOAPUtil.soapMessageToString(soapResponse) + "]");
+                    LOGGER.trace("Inbound --> Response:[" + SOAPUtil.soapMessageToString(soapResponse) + "]");
                 }
-                
                 return soapResponse;
             }
         } catch (SOAPException se) {
@@ -256,13 +258,17 @@ public class InboundHandler extends BaseServiceHandler {
                                                                               + "').  No such Part '" + actualLN + "'.");
         }
 
-        Part part = parts.get(0);
         QName expectedPayloadType = null;
 
-        if (part.getElementName() != null) {
-            expectedPayloadType = part.getElementName();
+        if (_documentStyle) {
+            if (parts.get(0).getElementName() != null) {
+                expectedPayloadType = parts.get(0).getElementName();
+            } else if (parts.get(0).getTypeName() != null) {
+                expectedPayloadType = parts.get(0).getTypeName();
+            }
         } else {
-            expectedPayloadType = part.getTypeName();
+            // RPC
+            expectedPayloadType = new QName(_targetNamespace, operation.getName());
         }
 
         String expectedNS = expectedPayloadType.getNamespaceURI();

@@ -18,8 +18,6 @@
  */
 package org.switchyard.component.soap.composer;
 
-import javax.wsdl.Port;
-
 import org.switchyard.component.common.composer.Composition;
 import org.switchyard.component.common.composer.ContextMapper;
 import org.switchyard.component.common.composer.MessageComposer;
@@ -48,17 +46,15 @@ public final class SOAPComposition {
     /**
      * Uses the {@link Composition} class to create a SOAP-specific MessageComposer.
      * @param sbm a SOAPBindingModel to get configuration details from
-     * @param wsdlPort the WSDL port where the message is defined
      * @return the MessageComposer
      */
-    public static MessageComposer<SOAPBindingData> getMessageComposer(SOAPBindingModel sbm, Port wsdlPort) {
+    public static MessageComposer<SOAPBindingData> getMessageComposer(SOAPBindingModel sbm) {
         SOAPContextMapperModel scmm = sbm != null ? sbm.getSOAPContextMapper() : null;
         SOAPMessageComposerModel mcm = sbm != null ? sbm.getSOAPMessageComposer() : null;
         MessageComposer<SOAPBindingData> mc = Composition.getMessageComposer(SOAPBindingData.class, scmm, mcm);
         if (mc instanceof SOAPMessageComposer && mcm != null) {
             SOAPMessageComposer smc = (SOAPMessageComposer)mc;
             smc.setComposerConfig(mcm);
-            smc.setWsdlPort(wsdlPort);
             
         }
         ContextMapper<SOAPBindingData> cm = mc.getContextMapper();

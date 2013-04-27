@@ -61,6 +61,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
     private static Logger _log = Logger.getLogger(SOAPMessageComposer.class);
     private SOAPMessageComposerModel _config;
     private Port _wsdlPort;
+    private Boolean _documentStyle;
 
     /**
      * {@inheritDoc}
@@ -69,6 +70,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
     public Message compose(SOAPBindingData source, Exchange exchange, boolean create) throws Exception {
         final SOAPMessage soapMessage = source.getSOAPMessage();
         final Message message = create ? exchange.createMessage() : exchange.getMessage();
+        final Boolean input = exchange.getPhase() == null;
 
         getContextMapper().mapFrom(source, exchange.getContext(message));
 
@@ -105,16 +107,18 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
             }
 
             Node bodyNode = bodyChildren.get(0);
-            if (_config != null && _config.isUnwrapped()) {
-                // peel off the operation wrapper, if present
-                String opName = exchange.getContract().getConsumerOperation().getName();
-                if (opName != null && opName.equals(bodyNode.getLocalName())) {
-                    List<Element> subChildren = getChildElements(bodyNode);
-                    if (subChildren.size() == 0 || subChildren.size() > 1) {
-                        _log.debug("Unable to unwrap element: " + bodyNode.getLocalName()
-                               + ". A single child element is required.");
-                    } else {
-                        bodyNode = subChildren.get(0);
+            if (_documentStyle) {
+                if (_config != null && _config.isUnwrapped()) {
+                    String opName = exchange.getContract().getConsumerOperation().getName();
+                    // peel off the operation wrapper, if present
+                    if (opName != null && opName.equals(bodyNode.getLocalName())) {
+                        List<Element> subChildren = getChildElements(bodyNode);
+                        if (subChildren.size() == 0 || subChildren.size() > 1) {
+                            _log.debug("Unable to unwrap element: " + bodyNode.getLocalName()
+                                   + ". A single child element is required.");
+                        } else {
+                            bodyNode = subChildren.get(0);
+                        }
                     }
                 }
             }
@@ -137,6 +141,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
     public SOAPBindingData decompose(Exchange exchange, SOAPBindingData target) throws Exception {
         final SOAPMessage soapMessage = target.getSOAPMessage();
         final Message message = exchange.getMessage();
+        final Boolean input = exchange.getPhase() == null;
 
         if (message != null) {
             // check to see if the payload is null or it's a full SOAP Message
@@ -149,18 +154,20 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
             
             try {
                 // convert the message content to a form we can work with
-                org.w3c.dom.Node input = message.getContent(org.w3c.dom.Node.class);
-                org.w3c.dom.Node messageNodeImport = soapMessage.getSOAPBody().getOwnerDocument().importNode(input, true);
-                if (exchange.getState() != ExchangeState.FAULT || isSOAPFaultPayload(input)) {
-                    if (_config != null && _config.isUnwrapped()) {
+                Node messageNode = message.getContent(Node.class);
+                Node messageNodeImport = soapMessage.getSOAPBody().getOwnerDocument().importNode(messageNode, true);
+                if (exchange.getState() != ExchangeState.FAULT || isSOAPFaultPayload(messageNode)) {
+                    if (_documentStyle) {
                         String opName = exchange.getContract().getProviderOperation().getName();
-                        String ns = getWrapperNamespace(opName, exchange.getPhase() == null);
-                        // Don't wrap if it's already wrapped
-                        if (!messageNodeImport.getLocalName().equals(opName + DOC_LIT_WRAPPED_REPLY_SUFFIX)) {
-                            Element wrapper = messageNodeImport.getOwnerDocument().createElementNS(
-                                    ns, opName + DOC_LIT_WRAPPED_REPLY_SUFFIX);
-                            wrapper.appendChild(messageNodeImport);
-                            messageNodeImport = wrapper;
+                        if (_config != null && _config.isUnwrapped()) {
+                            String ns = getWrapperNamespace(opName, input);
+                            // Don't wrap if it's already wrapped
+                            if (!messageNodeImport.getLocalName().equals(opName + DOC_LIT_WRAPPED_REPLY_SUFFIX)) {
+                                Element wrapper = messageNodeImport.getOwnerDocument().createElementNS(
+                                        ns, opName + DOC_LIT_WRAPPED_REPLY_SUFFIX);
+                                wrapper.appendChild(messageNodeImport);
+                                messageNodeImport = wrapper;
+                            }
                         }
                     }
                     soapMessage.getSOAPBody().appendChild(messageNodeImport);
@@ -217,7 +224,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
 
         return false;
     }
-    
+
     // Retrieves the immediate child of the specified parent element
     private List<Element> getChildElements(Node parent) {
         List<Element> children = new ArrayList<Element>();
@@ -230,20 +237,24 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
         
         return children;
     }
-    
+
     private String getWrapperNamespace(String operationName, boolean input) {
         String ns = null;
-        
-        if (_wsdlPort != null) {
-            Operation op = WSDLUtil.getOperationByName(_wsdlPort, operationName);
-            @SuppressWarnings("unchecked")
-            List<Part> parts = input ? op.getInput().getMessage().getOrderedParts(null) 
-                    : op.getOutput().getMessage().getOrderedParts(null);
 
-            if (parts.get(0).getElementName() != null) {
-                ns = parts.get(0).getElementName().getNamespaceURI();
-            } else if (parts.get(0).getTypeName() != null) {
-                ns = parts.get(0).getTypeName().getNamespaceURI();
+        if (_wsdlPort != null) {
+            Operation operation = WSDLUtil.getOperationByName(_wsdlPort, operationName);
+            if (!_documentStyle) {
+                ns = input ? operation.getInput().getMessage().getQName().getNamespaceURI()
+                    : operation.getOutput().getMessage().getQName().getNamespaceURI();
+            } else {
+                // Note: WS-I Profile allows only one child under SOAPBody.
+                Part part = input ? (Part)operation.getInput().getMessage().getParts().values().iterator().next()
+                    : (Part)operation.getOutput().getMessage().getParts().values().iterator().next();
+                if (part.getElementName() != null) {
+                    ns = part.getElementName().getNamespaceURI();
+                } else if (part.getTypeName() != null) {
+                    ns = part.getTypeName().getNamespaceURI();
+                }
             }
         }
         
@@ -264,6 +275,22 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
      */
     public void setWsdlPort(Port wsdlPort) {
         _wsdlPort = wsdlPort;
+    }
+
+    /**
+     * Check if the WSDL used is of 'document' style.
+     * @return true if 'document' style, false otherwise
+     */
+    public Boolean isDocumentStyle() {
+        return _documentStyle;
+    }
+
+    /**
+     * Set that the WSDL used is of 'document' style.
+     * @param style true or false
+     */
+    public void setDocumentStyle(Boolean style) {
+        _documentStyle = style;
     }
 
 }

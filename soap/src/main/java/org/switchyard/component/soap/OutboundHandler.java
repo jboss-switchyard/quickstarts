@@ -24,6 +24,7 @@ import java.net.URL;
 
 import javax.wsdl.Port;
 import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.BindingProvider;
@@ -41,6 +42,7 @@ import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.soap.composer.SOAPBindingData;
 import org.switchyard.component.soap.composer.SOAPComposition;
 import org.switchyard.component.soap.composer.SOAPFaultInfo;
+import org.switchyard.component.soap.composer.SOAPMessageComposer;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
@@ -56,12 +58,12 @@ public class OutboundHandler extends BaseServiceHandler {
     private static final Logger LOGGER = Logger.getLogger(OutboundHandler.class);
 
     private final SOAPBindingModel _config;
-    
+
     private MessageComposer<SOAPBindingData> _messageComposer;
     private Dispatch<SOAPMessage> _dispatcher;
     private Port _wsdlPort;
     private String _bindingId;
-    //private Boolean _documentStyle;
+    private Boolean _documentStyle;
 
     /**
      * Constructor.
@@ -87,10 +89,12 @@ public class OutboundHandler extends BaseServiceHandler {
                 portName.setName(_wsdlPort.getName());
 
                 _bindingId = WSDLUtil.getBindingId(_wsdlPort);
-                //String style = WSDLUtil.getStyle(_wsdlPort);
-                //_documentStyle = style.equals("document") ? true : false;
+                String style = WSDLUtil.getStyle(_wsdlPort);
+                _documentStyle = style.equals(WSDLUtil.DOCUMENT) ? true : false;
 
-                _messageComposer = SOAPComposition.getMessageComposer(_config, _wsdlPort);
+                _messageComposer = SOAPComposition.getMessageComposer(_config);
+                ((SOAPMessageComposer)_messageComposer).setDocumentStyle(_documentStyle);
+                ((SOAPMessageComposer)_messageComposer).setWsdlPort(_wsdlPort);
 
                 URL wsdlUrl = WSDLUtil.getURL(_config.getWsdl());
                 LOGGER.info("Creating dispatch with WSDL " + wsdlUrl);
@@ -143,9 +147,8 @@ public class OutboundHandler extends BaseServiceHandler {
                 throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
             }
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Request:[" + SOAPUtil.soapMessageToString(request) + "]");
+                LOGGER.trace("Outbound ---> Request:[" + SOAPUtil.soapMessageToString(request) + "]");
             }
-            
             SOAPMessage response = invokeService(request);
             if (response != null) {
                 // This property vanishes once message composer processes this message
@@ -169,11 +172,11 @@ public class OutboundHandler extends BaseServiceHandler {
                     exchange.send(message);
                 }
             }
-            
+
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Response:[" + SOAPUtil.soapMessageToString(response) + "]");
+                LOGGER.trace("Outbound <--- Response:[" + SOAPUtil.soapMessageToString(response) + "]");
             }
-            
+
         } catch (SOAPException se) {
             throw new HandlerException("Unexpected exception handling SOAP Message", se);
         }
@@ -189,11 +192,11 @@ public class OutboundHandler extends BaseServiceHandler {
 
         SOAPMessage response = null;
         try {
-            String firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
-            String action = WSDLUtil.getSoapAction(_wsdlPort, firstBodyElement);
+            QName firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
+            String action = WSDLUtil.getSoapAction(_wsdlPort, firstBodyElement, _documentStyle);
             _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, "\"" + action + "\"");
 
-            if (WSDLUtil.isOneWay(_wsdlPort, firstBodyElement)) {
+            if (WSDLUtil.isOneWay(_wsdlPort, firstBodyElement, _documentStyle)) {
                 _dispatcher.invokeOneWay(soapMessage);
                 //return empty response
             } else {

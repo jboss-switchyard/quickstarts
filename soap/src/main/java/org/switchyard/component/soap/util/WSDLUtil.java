@@ -177,12 +177,25 @@ public final class WSDLUtil {
      */
     public static Service getService(final String wsdlLocation, final PortName portName) throws WSDLException {
         Definition definition = readWSDL(wsdlLocation);
+        return getService(definition, portName);
+    }
+
+    /**
+     * Get the Service from the WSDL Definition given a PortName.
+     * If the PortName.getServiceQName() is empty (QName("")) then this method returns the first found Service.
+     *
+     * @param definition the WSDL XML definition.
+     * @param portName the PortName.
+     * @return the Service.
+     * @throws WSDLException If the Service could not be retrieved.
+     */
+    public static Service getService(final Definition definition, final PortName portName) throws WSDLException {
         Service service = null;
         if (portName.getServiceQName().equals(new QName(""))) {
             service = (Service) definition.getServices().values().iterator().next();
             portName.setServiceQName(service.getQName());
         } else {
-            String namespace = portName.getNamespaceURI();        
+            String namespace = portName.getNamespaceURI();
             if (namespace.equals(XMLConstants.NULL_NS_URI)) {
                 namespace = definition.getTargetNamespace();
             }
@@ -197,7 +210,7 @@ public final class WSDLUtil {
             }
         }
         if (service == null) {
-            throw new WSDLException("Could not find service " + portName + " in the WSDL " + wsdlLocation, null);
+            throw new WSDLException("Could not find service " + portName + " in the WSDL " + definition.getDocumentBaseURI(), null);
         }
         return service;
     }
@@ -278,19 +291,25 @@ public final class WSDLUtil {
 
     /**
      * Get the SOAP {@link Operation} instance for the specified message element.
+     *
      * @param port The WSDL port.
-     * @param elementName The SOAP Body element name.
+     * @param elementName The SOAP Body element QName.
+     * @param documentStyle true if it is 'document', false if 'rpc'.
      * @return The Operation instance, or null if the operation was not found on the port.
      */
-    public static Operation getOperationByElement(Port port, String elementName) {
+    public static Operation getOperationByElement(Port port, QName elementName, Boolean documentStyle) {
         List<Operation> operations = port.getBinding().getPortType().getOperations();
 
         for (Operation operation : operations) {
-            Part part = (Part)operation.getInput().getMessage().getParts().values().iterator().next();
-            if (((part.getElementName() != null) && (elementName.equals(part.getElementName().getLocalPart())))
-                || ((part.getTypeName() != null) && (elementName.equals(part.getTypeName().getLocalPart())))
-                || (elementName.equals(part.getName()))) {
+            if (!documentStyle && (elementName.getLocalPart().equals(operation.getName()))) {
                 return operation;
+            } else {
+                // Note: WS-I Profile allows only one child under SOAPBody.
+                Part part = (Part)operation.getInput().getMessage().getParts().values().iterator().next();
+                if ((part.getElementName() != null) && elementName.equals(part.getElementName())
+                    || (part.getTypeName() != null) && elementName.equals(part.getTypeName())) {
+                    return operation;
+                }
             }
         }
         return null;
@@ -337,13 +356,14 @@ public final class WSDLUtil {
      * Check if we are invoking a @Oneway annotated method.
      *
      * @param port The WSDL service port.
-     * @param elementName The SOAP Body element name.
+     * @param elementName The SOAP Body element QName.
+     * @param documentStyle true if it is 'document', false if 'rpc'.
      * @return True if there is no response to be expected.
      */
-    public static boolean isOneWay(final Port port, final String elementName) {
+    public static boolean isOneWay(final Port port, final QName elementName, Boolean documentStyle) {
         // Overloaded methods not supported
         // Encrypted messages will be treated as request-response as it cannot be decrypted
-        Operation operation = getOperationByElement(port, elementName);
+        Operation operation = getOperationByElement(port, elementName, documentStyle);
         return isOneWay(operation);
     }
     
@@ -364,11 +384,12 @@ public final class WSDLUtil {
    /**
      * Get the SOAP {@link BindingOperation} instance for the specified SOAP operation name.
      * @param port The WSDL port.
-     * @param elementName The SOAP Body element name.
+     * @param elementName The SOAP Body element QName.
+     * @param documentStyle true if it is 'document', false if 'rpc'.
      * @return The BindingOperation instance, or null if the operation was not found on the port.
      */
-    public static BindingOperation getBindingOperation(Port port, String elementName) {
-        Operation operation = getOperationByElement(port, elementName);
+    public static BindingOperation getBindingOperation(Port port, QName elementName, Boolean documentStyle) {
+        Operation operation = getOperationByElement(port, elementName, documentStyle);
         if (operation != null) {
             List<BindingOperation> bindingOperations = port.getBinding().getBindingOperations();
             for (BindingOperation bindingOperation : bindingOperations) {
@@ -384,12 +405,13 @@ public final class WSDLUtil {
      * Get the soapAction value for a given operation.
      *
      * @param port The WSDL service port.
-     * @param elementName The SOAP Body element name.
+     * @param elementName The SOAP Body element QName.
+     * @param documentStyle true if it is 'document', false if 'rpc'.
      * @return the soapAction value if it exists.
      */
-    public static String getSoapAction(final Port port, final String elementName) {
+    public static String getSoapAction(final Port port, final QName elementName, Boolean documentStyle) {
         // Overloaded methods not supported
-        BindingOperation operation = getBindingOperation(port, elementName);
+        BindingOperation operation = getBindingOperation(port, elementName, documentStyle);
         return getSoapAction(operation);
     }
 
@@ -418,39 +440,6 @@ public final class WSDLUtil {
             }
         }
         return soapActionUri;
-    }
-
-    /**
-     * Get the methods Input message's name.
-     *
-     * @param port The WSDL service port.
-     * @param operationName The name of the operation obtained from SOAP message.
-     * @return The local name of the input message.
-     */
-    public static String getMessageLocalName(final Port port, final String operationName) {
-        QName messageName = getMessageQName(port, operationName);
-        if (messageName != null) {
-            return messageName.getLocalPart();
-        }
-        return null;
-    }
-
-    /**
-     * Get the methods Input message's name.
-     *
-     * @param port The WSDL service port.
-     * @param operationName The name of the operation obtained from SOAP message.
-     * @return The QName name of the input message.
-     */
-    public static QName getMessageQName(final Port port, final String operationName) {
-        QName messageName = null;
-        // Overloaded methods not supported
-        // Encrypted messages will be treated as request-response as it cannot be decrypted
-        Operation operation = getOperationByElement(port, operationName);
-        if (operation != null) {
-            messageName = operation.getInput().getMessage().getQName();
-        }
-        return messageName;
     }
 
     /**

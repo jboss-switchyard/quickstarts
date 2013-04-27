@@ -111,9 +111,9 @@ public class WSDLUtilTest {
         Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloWebService"));
         Port port = WSDLUtil.getPort(service, new PortName("HelloWebServicePort"));
         Assert.assertNotNull(port);
-        String action = WSDLUtil.getSoapAction(port, "sayHello");
+        String action = WSDLUtil.getSoapAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "sayHello"), true);
         Assert.assertEquals(action, "uri:something:that:needs#tobevalid");
-        action = WSDLUtil.getSoapAction(port, "helloWS");
+        action = WSDLUtil.getSoapAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "helloWS"), true);
         Assert.assertEquals(action, "");
         
     }
@@ -125,9 +125,9 @@ public class WSDLUtilTest {
         Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloSOAP12Service"));
         Port port = WSDLUtil.getPort(service, new PortName("HelloSOAP12ServicePort"));
         Assert.assertNotNull(port);
-        String action = WSDLUtil.getSoapAction(port, "sayHello");
+        String action = WSDLUtil.getSoapAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "sayHello"), true);
         Assert.assertEquals(action, "uri:soap12:that:needs#tobevalid");
-        action = WSDLUtil.getSoapAction(port, "helloWS");
+        action = WSDLUtil.getSoapAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "helloWS"), true);
         Assert.assertEquals(action, "");
     }
 
