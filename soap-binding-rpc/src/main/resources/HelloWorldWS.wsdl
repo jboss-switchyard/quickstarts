@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="urn:switchyard-quickstart:soap-binding-rpc:1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="urn:switchyard-quickstart:soap-binding-rpc:1.0"
+    name="HelloWorldWSService">
+
+    <wsdl:types></wsdl:types>
+    <wsdl:message name="sayHello">
+        <wsdl:part name="toWhom" type="xsd:string"/>
+        <wsdl:part name="language" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="sayHelloReply">
+        <wsdl:part name="return" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:portType name="HelloWorld">
+        <wsdl:operation name="sayHello" parameterOrder="toWhom language">
+            <wsdl:input message="tns:sayHello"/>
+            <wsdl:output message="tns:sayHelloReply"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="HelloWorldPortBinding" type="tns:HelloWorld">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+        <wsdl:operation name="sayHello">
+            <soap:operation soapAction=""/>
+            <wsdl:input>
+                <soap:body use="literal" namespace="urn:switchyard-quickstart:soap-binding-rpc:1.0"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" namespace="urn:switchyard-quickstart:soap-binding-rpc:1.0"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="HelloWorldWSService">
+        <wsdl:port name="HelloWorldPort" binding="tns:HelloWorldPortBinding">
+            <soap:address location="http://localhost:8080/soap-binding-rpc/HelloWorldWS"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
