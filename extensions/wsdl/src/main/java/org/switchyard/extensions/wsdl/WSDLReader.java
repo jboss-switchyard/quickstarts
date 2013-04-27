@@ -55,6 +55,8 @@ public class WSDLReader {
 
     private static final Logger LOGGER = Logger.getLogger(WSDLReader.class);
 
+    private static final String SOAP11_URI = "http://schemas.xmlsoap.org/wsdl/soap/";
+    private static final String SOAP12_URI = "http://schemas.xmlsoap.org/wsdl/soap12/";
     private static final String WSDLNS_URI = "http://schemas.xmlsoap.org/wsdl/";
     private static final String XMLNS_URI = "http://www.w3.org/2000/xmlns/";
     private static final String ATTR_ELEMENT = "element";
@@ -62,6 +64,8 @@ public class WSDLReader {
     private static final String ATTR_NAME = "name";
     private static final String ATTR_TARGET_NS = "targetNamespace";
     private static final String ATTR_XMLNS = "xmlns";
+    private static final String ATTR_STYLE = "style";
+    private static final String ATTR_TYPE = "type";
     private static final QName PORT_TYPE = new QName(WSDLNS_URI, "portType");
     private static final QName OPERATION = new QName(WSDLNS_URI, "operation");
     private static final QName INPUT = new QName(WSDLNS_URI, "input");
@@ -69,6 +73,13 @@ public class WSDLReader {
     private static final QName FAULT = new QName(WSDLNS_URI, "fault");
     private static final QName MESSAGE = new QName(WSDLNS_URI, "message");
     private static final QName PART = new QName(WSDLNS_URI, "part");
+    private static final QName BINDING = new QName(WSDLNS_URI, "binding");
+    private static final QName SOAP11_BINDING = new QName(SOAP11_URI, "binding");
+    private static final QName SOAP12_BINDING = new QName(SOAP12_URI, "binding");
+    private static final String DOCUMENT = "document";
+    private static final String RESPONSE = "Response";
+
+    private Boolean _documentStyle;
 
     /**
      * Read the WSDL document accessible via the specified
@@ -83,11 +94,13 @@ public class WSDLReader {
 
         Element defEl = readWSDL(wsdlURI);
         Map<String, String> namespaces = parseNamespaces(defEl);
-        Map<QName, QName> parts = getParts(defEl, namespaces);
         Element portType = getPortType(defEl, portName);
         if (portType == null) {
             throw new WSDLReaderException("Unable to find portType with name " + portName);
         }
+        String style = getStyle(defEl, portType, namespaces);
+        _documentStyle = style.equals(DOCUMENT) ? true : false;
+        Map<QName, QName> parts = getParts(defEl, portType, namespaces);
         HashSet<ServiceOperation> ops = new HashSet<ServiceOperation>();
         List<Element> operations = getOperations(portType);
         int size = operations.size();
@@ -143,8 +156,8 @@ public class WSDLReader {
             QName qname = new QName(tempEl.getNamespaceURI(), tempEl.getLocalName());
             if (PORT_TYPE.equals(qname)) {
                 if (portName != null
-                    && tempEl.hasAttribute("name")
-                    && !tempEl.getAttribute("name").equals(portName)) {
+                    && tempEl.hasAttribute(ATTR_NAME)
+                    && !tempEl.getAttribute(ATTR_NAME).equals(portName)) {
                     tempEl = XMLHelper.getNextSiblingElement(tempEl);
                     continue;
                 }
@@ -154,6 +167,41 @@ public class WSDLReader {
             tempEl = XMLHelper.getNextSiblingElement(tempEl);
         }
         return portType;
+    }
+
+    /**
+     * Find the style of a WSDL port.
+     *
+     * @param defEl the definition element.
+     * @param portType the porttype element.
+     * @param namespaces a map of namespaceURIs
+     * @return the style, can be 'document' or 'rpc'.
+     */
+    private String getStyle(final Element defEl, final Element portType, final Map<String, String> namespaces) {
+        Element tempEl = XMLHelper.getFirstChildElement(defEl);
+        QName portTypeName = getQName(portType.getAttributeNode(ATTR_NAME).getValue(), namespaces);
+        String style = DOCUMENT;
+
+        while (tempEl != null) {
+            QName qname = new QName(tempEl.getNamespaceURI(), tempEl.getLocalName());
+            if (BINDING.equals(qname)) {
+                QName bindingType = getQName(tempEl.getAttributeNode(ATTR_TYPE).getValue(), namespaces);
+                if (bindingType.equals(portTypeName)) {
+                    Element tempEl2 = XMLHelper.getFirstChildElement(tempEl);
+                    while (tempEl2 != null) {
+                        QName qname2 = new QName(tempEl2.getNamespaceURI(), tempEl2.getLocalName());
+                        if ((SOAP11_BINDING.equals(qname2) || SOAP12_BINDING.equals(qname2)) && tempEl2.hasAttribute(ATTR_STYLE)) {
+                            style = tempEl2.getAttributeNode(ATTR_STYLE).getValue();
+                            break;
+                        }
+                        tempEl2 = XMLHelper.getNextSiblingElement(tempEl2);
+                    }
+                    break;
+                }
+            }
+            tempEl = XMLHelper.getNextSiblingElement(tempEl);
+        }
+        return style;
     }
 
     /**
@@ -177,25 +225,115 @@ public class WSDLReader {
     }
 
     /**
+     * Parse a port element and return the operation element matching the message element.
+     *
+     * @param portEl the portType element.
+     * @param msgEl the message element.
+     * @param namespaces a map of namespaceURIs
+     * @return the operation element.
+     */
+    private Element getOperationByInput(final Element portEl, final Element msgEl, final Map<String, String> namespaces) {
+        Element tempEl = XMLHelper.getFirstChildElement(portEl);
+        Element operation = null;
+        QName msgQName = getQName(msgEl.getAttribute(ATTR_NAME), namespaces);
+
+outer:  while (tempEl != null) {
+            QName qname = new QName(tempEl.getNamespaceURI(), tempEl.getLocalName());
+            if (OPERATION.equals(qname)) {
+                Element inputEl = XMLHelper.getFirstChildElement(tempEl);
+                while (inputEl != null) {
+                    QName inputElQName = new QName(inputEl.getNamespaceURI(), inputEl.getLocalName());
+                    if (INPUT.equals(inputElQName)) {
+                        QName inputMessageQName = getQName(inputEl.getAttribute(ATTR_MESSAGE), namespaces);
+                        if (inputMessageQName.equals(msgQName)) {
+                            operation = tempEl;
+                            break outer;
+                        }
+                    }
+                    inputEl = XMLHelper.getNextSiblingElement(inputEl);
+                }
+            }
+            tempEl = XMLHelper.getNextSiblingElement(tempEl);
+        }
+        return operation;
+    }
+
+    /**
+     * Parse a port element and return the operation element matching the message element.
+     *
+     * @param portEl the portType element.
+     * @param msgEl the message element.
+     * @param namespaces a map of namespaceURIs
+     * @return the operation element.
+     */
+    private Element getOperationByOutput(final Element portEl, final Element msgEl, final Map<String, String> namespaces) {
+        Element tempEl = XMLHelper.getFirstChildElement(portEl);
+        Element operation = null;
+        QName msgQName = getQName(msgEl.getAttribute(ATTR_NAME), namespaces);
+
+outer:  while (tempEl != null) {
+            QName qname = new QName(tempEl.getNamespaceURI(), tempEl.getLocalName());
+            if (OPERATION.equals(qname)) {
+                Element inputEl = XMLHelper.getFirstChildElement(tempEl);
+                while (inputEl != null) {
+                    QName inputElQName = new QName(inputEl.getNamespaceURI(), inputEl.getLocalName());
+                    if (OUTPUT.equals(inputElQName)) {
+                        QName inputMessageQName = getQName(inputEl.getAttribute(ATTR_MESSAGE), namespaces);
+                        if (inputMessageQName.equals(msgQName)) {
+                            operation = tempEl;
+                            break outer;
+                        }
+                    }
+                    inputEl = XMLHelper.getNextSiblingElement(inputEl);
+                }
+            }
+            tempEl = XMLHelper.getNextSiblingElement(tempEl);
+        }
+        return operation;
+    }
+
+    /**
      * Parse a definition element and return all message parts defined in it.
      *
      * @param defEl the definition element.
+     * @param portType the portType element.
      * @param namespaces a map of namespaceURIs
      * @return a map of message parts.
      * @throws WSDLReaderException if the wsdl operation is improper
      */
-    private Map<QName, QName> getParts(final Element defEl, final Map<String, String> namespaces) throws WSDLReaderException {
+    private Map<QName, QName> getParts(final Element defEl, final Element portType, final Map<String, String> namespaces) throws WSDLReaderException {
         NodeList messages = defEl.getElementsByTagNameNS(MESSAGE.getNamespaceURI(), MESSAGE.getLocalPart());
         int msgSize = messages.getLength();
         Map<QName, QName> parts = new HashMap<QName, QName>();
         for (int i = 0; i < msgSize; i++) {
             Element msgEl = (Element) messages.item(i);
             NodeList partEls = msgEl.getElementsByTagNameNS(PART.getNamespaceURI(), PART.getLocalPart());
-            if (partEls.getLength() != 1) {
+            if (_documentStyle && (partEls.getLength() != 1)) {
                 throw new WSDLReaderException("Service operations on a WSDL interface must have exactly one parameter.");
             }
-            Element partEl = (Element) partEls.item(0);
-            parts.put(getQName(msgEl.getAttribute(ATTR_NAME), namespaces), getQName(partEl.getAttribute(ATTR_ELEMENT), namespaces));
+            if (_documentStyle) {
+                Element partEl = (Element) partEls.item(0);
+                parts.put(getQName(msgEl.getAttribute(ATTR_NAME), namespaces), getQName(partEl.getAttribute(ATTR_ELEMENT), namespaces));
+            } else {
+                if (!msgEl.hasAttribute(ATTR_NAME)) {
+                    throw new WSDLReaderException("Message name missing.");
+                }
+                Element operationEl = getOperationByInput(portType, msgEl, namespaces);
+                if (operationEl != null) {
+                    // request
+                    // Create a fictional wrapper with the operation name
+                    parts.put(getQName(msgEl.getAttribute(ATTR_NAME), namespaces), getQName(operationEl.getAttribute(ATTR_NAME), namespaces));
+                } else {
+                    // response
+                    operationEl = getOperationByOutput(portType, msgEl, namespaces);
+                    if (operationEl != null) {
+                        // Create a fictional wrapper with the operation name + Response suffix
+                        parts.put(getQName(msgEl.getAttribute(ATTR_NAME), namespaces), getQName(operationEl.getAttribute(ATTR_NAME) + RESPONSE, namespaces));
+                    } else {
+                        throw new WSDLReaderException("Missing operation for message " + msgEl.getLocalName());
+                    }
+                }
+            }
         }
         return parts;
     }
