@@ -24,13 +24,16 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import javax.activation.DataSource;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.test.TestDataSource;
 
 /**
  * Test for {@link CamelActivator}.
@@ -45,9 +48,21 @@ public class CamelImplementationTest {
     @ServiceOperation("OrderService.getTitleForItem")
     private Invoker _getTitleForItem;
 
+    @ServiceOperation("WarehouseService.getDataForItem")
+    private Invoker _getDataForItem;
+
     @Test
     public void sendOneWayMessageThroughCamelToSwitchYardService() throws Exception {
         final String title = _getTitleForItem.sendInOut("10").getContent(String.class);
         assertThat(title, is(equalTo("Fletch")));
     }
+
+    @Test
+    public void sendOneWayMessageThroughCamelToTestAttachment() throws Exception {
+        DataSource attachment = new TestDataSource("10", "text/plain", "Fletch-Data");
+        _getDataForItem.addAttachment(attachment.getName(), attachment);
+        final String data = _getDataForItem.sendInOut(attachment.getName()).getContent(String.class);
+        assertThat(data, is(equalTo("Fletch-Data")));
+    }
+
 }

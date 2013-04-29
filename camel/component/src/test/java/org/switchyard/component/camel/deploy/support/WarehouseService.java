@@ -24,4 +24,6 @@ public interface WarehouseService {
 
     String hasItem(Integer id);
 
+    String getDataForItem(String itemId);
+
 }

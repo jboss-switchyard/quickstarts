@@ -22,7 +22,6 @@ import static org.switchyard.component.common.knowledge.KnowledgeConstants.CONTE
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.CONTENT_OUTPUT;
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.CONTEXT;
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.DEFAULT;
-import static org.switchyard.component.common.knowledge.KnowledgeConstants.EXCHANGE;
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.MESSAGE;
 
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ import java.util.Map.Entry;
 
 import org.kie.runtime.Globals;
 import org.switchyard.Exchange;
+import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.common.knowledge.ActionType;
@@ -113,14 +113,14 @@ public final class Mappings {
      * @param exchange the exchange
      * @param action the action
      * @param session the session
-     * @param includeTrifecta include the Exchange, Context and Message
+     * @param includeDefaults include the Message ("message") and the Context ("context")
      */
-    public static void setGlobals(Exchange exchange, KnowledgeAction action, KnowledgeSession session, boolean includeTrifecta) {
+    public static void setGlobals(Exchange exchange, KnowledgeAction action, KnowledgeSession session, boolean includeDefaults) {
         Globals globals = session.getGlobals();
-        if (includeTrifecta) {
-            globals.set(EXCHANGE, exchange);
-            globals.set(CONTEXT, exchange.getContext());
-            globals.set(MESSAGE, exchange.getMessage());
+        if (includeDefaults) {
+            Message message = exchange.getMessage();
+            globals.set(MESSAGE, message);
+            globals.set(CONTEXT, exchange.getContext(message));
         }
         Map<String, Object> map = getGlobalMap(exchange, action);
         for (Entry<String, Object> entry : map.entrySet()) {
@@ -303,9 +303,9 @@ public final class Mappings {
                         map.put(var, list);
                     }
                     Map<String, Object> ctx = new HashMap<String, Object>();
-                    ctx.put(EXCHANGE, exchange);
-                    ctx.put(CONTEXT, new ContextMap(exchange.getContext()));
-                    ctx.put(MESSAGE, exchange.getMessage());
+                    Message message = exchange.getMessage();
+                    ctx.put(MESSAGE, message);
+                    ctx.put(CONTEXT, new ContextMap(exchange.getContext(message)));
                     if (contextOverrides != null) {
                         for (Entry<String, Object> contextOverride : contextOverrides.entrySet()) {
                             ctx.put(contextOverride.getKey(), contextOverride.getValue());

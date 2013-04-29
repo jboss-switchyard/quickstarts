@@ -35,102 +35,142 @@ import org.switchyard.Scope;
 @ApplicationScoped
 public class ContextProxy implements Context {
 
-    private static ThreadLocal<Context> _context = new ThreadLocal<Context>();
+    private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<Context>();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Property getProperty(String name) {
         return getContext().getProperty(name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Property getProperty(String name, Scope scope) {
         return getContext().getProperty(name, scope);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T getPropertyValue(String name) {
         return getContext().getPropertyValue(name);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Property> getProperties() {
         return getContext().getProperties();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Property> getProperties(Scope scope) {
         return getContext().getProperties(scope);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeProperty(Property property) {
         getContext().removeProperty(property);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeProperties() {
         getContext().removeProperties();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeProperties(Scope scope) {
         getContext().removeProperties(scope);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Property setProperty(String name, Object val) {
         return getContext().setProperty(name, val);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Property setProperty(String name, Object val, Scope scope) {
         return getContext().setProperty(name, val, scope);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Context setProperties(Set<Property> properties) {
         return getContext().setProperties(properties);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Context copy() {
         return getContext().copy();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Property> getProperties(String label) {
         return getContext().getProperties(label);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeProperties(String label) {
         getContext().removeProperties(label);
     }
 
     /**
-     * Set the {@link Context} for the current thread.
-     * @param context The context.
+     * Gets the {@link Context} for the current thread.
+     * @return the context
      */
-    public static void setContext(Context context) {
-        if (context != null) {
-            _context.set(context);
-        } else {
-            _context.remove();
+    private static Context getContext() {
+        Context context = CONTEXT.get();
+        if (context == null) {
+            throw new IllegalStateException("Illegal call to get the SwitchYard Context; must be called within the execution of an ExchangeHandler chain.");
         }
+        return context;
     }
 
     /**
-     * Get the {@link Context} for the current thread.
-     * @return The context.
+     * Sets the {@link Context} for the current thread.
+     * @param context the context
      */
-    private static Context getContext() {
-        Context context = _context.get();
-
-        if (context == null) {
-            throw new UnsupportedOperationException("Illegal call to get the SwitchYard Exchange Context.  Must be called within the scope of an Exchange Handler Chain.");
+    public static void setContext(Context context) {
+        if (context != null) {
+            CONTEXT.set(context);
+        } else {
+            CONTEXT.remove();
         }
-
-        return context;
     }
 
 }

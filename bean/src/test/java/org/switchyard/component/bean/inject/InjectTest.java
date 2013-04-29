@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -16,12 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
+package org.switchyard.component.bean.inject;
 
-package org.switchyard.component.bean.contextinject;
+import javax.activation.DataSource;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.SynchronousInOutHandler;
@@ -30,29 +32,28 @@ import org.switchyard.test.Invoker;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
+import org.switchyard.test.TestDataSource;
 
-/**
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
- */
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
-public class ContextInjectTest {
+public class InjectTest {
 
     private SwitchYardTestKit _testKit;
 
     @Test
-    public void test() {
-
-        Invoker invoker = _testKit.newInvoker("ContextInjectService.doSomething");
+    public void testInject() {
+        Invoker invoker = _testKit.newInvoker("InjectService.doSomething");
         SynchronousInOutHandler handler = new SynchronousInOutHandler();
         Exchange exchange = invoker.createExchange(handler);
         Message message = exchange.createMessage();
-
-        exchange.getContext(message).setProperty("someProp", "somePropVal");
+        Context context = exchange.getContext(message);
+        context.setProperty("someProp", "somePropVal");
         message.setContent("blah");
+        DataSource attach = new TestDataSource("someAttach", "text/plain", "someAttachData");
+        message.addAttachment(attach.getName(), attach);
         exchange.send(message);
-
         Exchange outExchange = handler.waitForOut();
-        Assert.assertEquals("somePropVal", outExchange.getMessage().getContent());
+        Assert.assertEquals("true, true, true", outExchange.getMessage().getContent());
     }
+
 }

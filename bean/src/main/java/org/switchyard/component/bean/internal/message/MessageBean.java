@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,28 +16,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.knowledge;
+package org.switchyard.component.bean.internal.message;
+
+import org.switchyard.Message;
+import org.switchyard.component.bean.internal.InternalBean;
 
 /**
- * Rules constants.
+ * Message Bean.
+ * <p/>
+ * CDI bean for injecting the SwitchYard Message into consumer beans.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public final class KnowledgeConstants {
+public class MessageBean extends InternalBean {
 
-    /** default. */
-    public static final String DEFAULT = "default";
-
-    /** context. */
-    public static final String CONTEXT = "context";
-    /** message. */
-    public static final String MESSAGE = "message";
-
-    /** contentInput. */
-    public static final String CONTENT_INPUT = "contentInput";
-    /** contentOutput. */
-    public static final String CONTENT_OUTPUT = "contentOutput";
-
-    private KnowledgeConstants() {}
+    /**
+     * Public constructor.
+     */
+    public MessageBean() {
+        super(new MessageProxy(), Message.class);
+    }
 
 }

@@ -21,6 +21,7 @@ package org.switchyard.component.bpm.service;
 import static org.switchyard.component.bpm.BPMConstants.CORRELATION_KEY_PROPERTY;
 import static org.switchyard.component.bpm.BPMConstants.PROCESSS_INSTANCE_ID_PROPERTY;
 
+import javax.activation.DataSource;
 import javax.xml.namespace.QName;
 
 import org.junit.Assert;
@@ -57,6 +58,7 @@ import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.test.SwitchYardRunner;
+import org.switchyard.test.TestDataSource;
 
 /**
  * Tests the BPM implementation.
@@ -66,6 +68,7 @@ import org.switchyard.test.SwitchYardRunner;
 @RunWith(SwitchYardRunner.class)
 public class BPMServiceTests {
 
+    private static final String ACCESS_ATTACHMENT_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-AccessAttachment.bpmn";
     private static final String CALL_SERVICE_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-CallService.bpmn";
     private static final String CONTROL_PROCESS_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-ControlProcess.bpmn";
     private static final String FAULT_RESULT_PROCESS_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-FaultResultProcess.bpmn";
@@ -97,6 +100,33 @@ public class BPMServiceTests {
         ksession.halt();
         ksession.dispose();
         Assert.assertEquals("message handled", holder.getValue());
+    }
+
+    @BPM(processId="AccessAttachment", manifest=@Manifest(resources=@Resource(location=ACCESS_ATTACHMENT_BPMN, type="BPMN2")))
+    public interface AccessAttachment {
+        @StartProcess(inputs={
+            @Mapping(expression="message.attachmentMap['someAttach']", variable="attachment"),
+            @Mapping(expression="message.content", variable="holder")
+        })
+        public Object process(Object content);
+    }
+
+    @Test
+    public void testAccessAttachment() throws Exception {
+        final Holder holder = new Holder();
+        BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(AccessAttachment.class).getImplementation();
+        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain);
+        Service aaService = serviceDomain.registerService(new QName("AccessAttachment"), JavaService.fromClass(AccessAttachment.class), handler);
+        ServiceReference aaReference = serviceDomain.registerServiceReference(aaService.getName(), aaService.getInterface(), aaService.getProviderHandler());
+        handler.start();
+        Exchange exchange = aaReference.createExchange("process");
+        Message message = exchange.createMessage();
+        message.setContent(holder);
+        DataSource attachment = new TestDataSource("someAttach", "text/plain", "someAttachData");
+        message.addAttachment(attachment.getName(), attachment);
+        exchange.send(message);
+        handler.stop();
+        Assert.assertEquals("someAttachData", holder.getValue());
     }
 
     @BPM(processId="ControlProcess", manifest=@Manifest(resources=@Resource(location=CONTROL_PROCESS_BPMN, type="BPMN2")))
