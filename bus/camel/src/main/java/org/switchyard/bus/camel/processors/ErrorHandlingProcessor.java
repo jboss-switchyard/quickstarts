@@ -18,10 +18,18 @@
  */
 package org.switchyard.bus.camel.processors;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.log4j.Logger;
+import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.bus.camel.CamelExchange;
+import org.switchyard.bus.camel.ErrorListener;
 
 /**
  * Processor put at the beginning of OnExceptionDefinition which turns state of
@@ -29,11 +37,21 @@ import org.switchyard.bus.camel.CamelExchange;
  */
 public class ErrorHandlingProcessor implements Processor {
 
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = Logger.getLogger(ErrorHandlingProcessor.class);
+
     @Override
     public void process(Exchange exchange) throws Exception {
         CamelExchange ex = new CamelExchange(exchange);
-        Throwable content = detectHandlerException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
-        ex.sendFault(ex.createMessage().setContent(content));
+        if (ex.getState() != ExchangeState.FAULT) {
+            Exception exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+            notifyListeners(exchange.getContext(), ex, exception);
+            Throwable content = detectHandlerException(exception);
+            ex.sendFault(ex.createMessage().setContent(content));
+            ExchangeHelper.setFailureHandled(exchange);
+        }
     }
 
     private Throwable detectHandlerException(Throwable throwable) {
@@ -41,6 +59,19 @@ public class ErrorHandlingProcessor implements Processor {
             return (HandlerException) throwable;
         }
         return new HandlerException(throwable);
+    }
+
+    private void notifyListeners(CamelContext context, org.switchyard.Exchange exchange, Throwable exception) {
+        Map<String, ErrorListener> listeners = context.getRegistry().lookupByType(ErrorListener.class);
+        if (listeners != null && listeners.size() > 0) {
+            for (Entry<String, ErrorListener> entry : listeners.entrySet()) {
+                try {
+                    entry.getValue().notify(exchange, exception);
+                } catch (Exception e) {
+                    LOG.error("Error listener " + entry.getKey() + " failed to handle exception " + exception.getClass());
+                }
+            }
+        }
     }
 
 }

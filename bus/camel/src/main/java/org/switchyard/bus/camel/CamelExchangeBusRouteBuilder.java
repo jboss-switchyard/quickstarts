@@ -29,6 +29,7 @@ import static org.switchyard.bus.camel.processors.Processors.TRANSACTION_HANDLER
 import static org.switchyard.bus.camel.processors.Processors.TRANSFORMATION;
 import static org.switchyard.bus.camel.processors.Processors.VALIDATION;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -38,11 +39,13 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FilterDefinition;
-import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.TryDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.switchyard.ExchangePattern;
 import org.switchyard.bus.camel.audit.AuditInterceptStrategy;
+import org.switchyard.bus.camel.audit.FaultInterceptStrategy;
+import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
 
@@ -76,41 +79,46 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
     }
 
     @Override
+    public SwitchYardCamelContext getContext() {
+        return (SwitchYardCamelContext) super.getContext();
+    }
+
+    @Override
     public void configure() throws Exception {
         RouteDefinition definition = from(_endpoint);
         definition.routeId(_endpoint);
 
-        Map<String, ErrorHandlerBuilder> handlers = getContext().getRegistry().lookupByType(ErrorHandlerBuilder.class);
-        if (handlers != null && !handlers.isEmpty()) {
-            if (handlers.size() == 1) {
-                definition.errorHandler(handlers.values().iterator().next());
-            } else {
-                throw new SwitchYardException("Only one exception handler can be defined. Found " + handlers.keySet());
-            }
-        } else {
+        Map<String, ErrorHandlerBuilder> handlers = lookup(ErrorHandlerBuilder.class);
+        if (handlers.isEmpty()) {
             definition.errorHandler(loggingErrorHandler());
+        } else if (handlers.size() == 1) {
+            definition.errorHandler(handlers.values().iterator().next());
+        } else {
+            throw new SwitchYardException("Only one exception handler can be defined. Found " + handlers.keySet());
         }
 
         // add default intercept strategy using @Audit annotation
+        definition.addInterceptStrategy(new FaultInterceptStrategy());
         definition.addInterceptStrategy(new AuditInterceptStrategy());
 
-        Map<String, InterceptStrategy> interceptStrategies = getContext().getRegistry().lookupByType(InterceptStrategy.class);
-        if (interceptStrategies != null) {
-            for (Entry<String, InterceptStrategy> interceptEntry : interceptStrategies.entrySet()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Adding intercept strategy {} to route {}", interceptEntry.getKey(), _endpoint);
-                }
-                definition.addInterceptStrategy(interceptEntry.getValue());
+        for (Entry<String, InterceptStrategy> interceptEntry : lookup(InterceptStrategy.class).entrySet()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Adding intercept strategy {} to route {}", interceptEntry.getKey(), _endpoint);
             }
+            definition.addInterceptStrategy(interceptEntry.getValue());
         }
 
-        OnExceptionDefinition onException = new OnExceptionDefinition(Throwable.class);
-        onException.processRef(ERROR_HANDLING.name());
-        onException.addOutput(createFilterDefinition());
-        // register exception closure
-        definition.addOutput(onException);
+        Map<String, ErrorListener> errorListeners = lookup(ErrorListener.class);
+        if (errorListeners.isEmpty()) {
+            getContext().getWritebleRegistry().put("defaultErrorListener", new DefaultErrorListener());
+        }
 
-        definition
+        // Since camel doesn't support onException closures together with doCatch/doFinal
+        // code below is commented because it doesn't work as expected
+        // definition.onException(Throwable.class).processRef(FATAL_ERROR.name());
+
+        TryDefinition tryDefinition = definition.doTry();
+        tryDefinition
             .processRef(DOMAIN_HANDLERS.name())
             .processRef(ADDRESSING.name())
             .processRef(TRANSACTION_HANDLER.name())
@@ -120,6 +128,11 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
             .processRef(TRANSFORMATION.name())
             .processRef(VALIDATION.name())
             .processRef(PROVIDER_CALLBACK.name())
+            .processRef(TRANSACTION_HANDLER.name())
+            .addOutput(createFilterDefinition());
+        tryDefinition
+            .doCatch(Exception.class)
+            .processRef(ERROR_HANDLING.name())
             .processRef(TRANSACTION_HANDLER.name())
             .addOutput(createFilterDefinition());
     }
@@ -134,4 +147,17 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
             .processRef(CONSUMER_CALLBACK.name());
     }
 
+    /**
+     * Lookup in camel context given type of beans.
+     * 
+     * @param type Type of bean.
+     * @return Map of beans where key is name.
+     */
+    private <T> Map<String, T> lookup(Class<T> type) {
+        Map<String, T> result = getContext().getRegistry().lookupByType(type);
+        if (result == null) {
+            return Collections.emptyMap();
+        }
+        return result;
+    }
 }

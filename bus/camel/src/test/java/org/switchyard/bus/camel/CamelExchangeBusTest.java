@@ -176,8 +176,7 @@ public class CamelExchangeBusTest {
     }
 
     @Test
-    @Ignore
-    public void testErrorHandlerHandling() throws InterruptedException {
+    public void testErrorListener() throws InterruptedException {
         final AtomicBoolean fired = new AtomicBoolean();
         ErrorListener listener = new ErrorListener() {
             @Override
@@ -193,7 +192,7 @@ public class CamelExchangeBusTest {
         assertCause("Runtime error", exchange);
     }
 
-    @Test
+    @Test @Ignore
     public void testCustomErrorHandler() throws InterruptedException {
         final AtomicBoolean fired = new AtomicBoolean();
         _camelContext.getWritebleRegistry().put("custom error handler", new LoggingErrorHandlerBuilder() {

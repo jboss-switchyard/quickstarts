@@ -186,10 +186,9 @@ public class CamelExchange implements SecurityExchange {
         org.apache.camel.Message extract = extract(message);
 
         _exchange.setProperty(PHASE, ExchangePhase.OUT);
-        _exchange.setOut(extract);
+        _exchange.setIn(extract);
         _exchange.setProperty(FAULT, true);
 
-        //_exchange.getOut().setFault(true);
         sendInternal();
     }
 
@@ -208,8 +207,7 @@ public class CamelExchange implements SecurityExchange {
 
     @Override
     public ExchangeState getState() {
-        return _exchange.getProperty(org.apache.camel.Exchange.EXCEPTION_CAUGHT) != null || _exchange.isFailed() 
-            || _exchange.getProperty(FAULT, false, Boolean.class) ? ExchangeState.FAULT : ExchangeState.OK;
+        return isFault(_exchange) ? ExchangeState.FAULT : ExchangeState.OK;
     }
 
     @Override
@@ -236,6 +234,17 @@ public class CamelExchange implements SecurityExchange {
     @Override
     public ExchangeHandler getReplyHandler() {
         return _exchange.getProperty(REPLY_HANDLER, ExchangeHandler.class);
+    }
+
+    /**
+     * Utility method which checks state of camel exchange used to implement
+     * switchyard flow. 
+     * 
+     * @param exchange Camel exchange.
+     * @return True if exchange state is fault.
+     */
+    public static boolean isFault(org.apache.camel.Exchange exchange) {
+        return exchange.getProperty(FAULT, false, Boolean.class);
     }
 
 }
