@@ -285,6 +285,27 @@
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
+
+        <!-- Apply second style sheet to add cache-container -->
+        <xslt style="res/standalone-ha.xsl" force="true"
+              basedir="${AS7_PATH}/standalone/configuration"
+              destdir="${AS7_PATH}/standalone/configuration"
+              includes="standalone-full-ha.xml,standalone-ha.xml"/>
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
+          <filelist dir="${AS7_PATH}/standalone/configuration">
+            <file name="standalone-ha.html"/>
+          </filelist>
+          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <!-- Allow this move to fail without error in case of 7.1.0.Beta1 -->
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration"
+          failonerror="false">
+          <filelist dir="${AS7_PATH}/standalone/configuration">
+            <file name="standalone-full-ha.html"/>
+          </filelist>
+          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+
 		<antcall target="transform-jbossws-spi-module" />
 		<antcall target="transform-jbossws-jboss720-server-integration-module" />
     </target>

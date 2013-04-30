@@ -204,6 +204,15 @@
                             <stylesheet>${staging.jboss.dir}/xsl/standalone.xsl</stylesheet>
                         </transformationSet>
                         <transformationSet>
+                            <dir>${staging.jboss.dir}/standalone/configuration</dir>
+                            <includes>
+                                <include>standalone-ha.xml</include>
+                                <include>standalone-full-ha.xml</include>
+                            </includes>
+                            <outputDir>${staging.jboss.dir}/standalone/configuration</outputDir>
+                            <stylesheet>${staging.jboss.dir}/xsl/standalone-ha.xsl</stylesheet>
+                        </transformationSet>
+                        <transformationSet>
                             <dir>${staging.configs.dir}/${redhat.eap6.dir}/domain/configuration</dir>
                             <includes>
                                 <include>domain.xml</include>
