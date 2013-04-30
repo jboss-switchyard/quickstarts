@@ -9,7 +9,6 @@
         <rules:actions>
           <rules:action operation="verify" type="EXECUTE">
             <rules:globals>
-              <rules:mapping expression="exchange.provider.name.localPart" variable="serviceName"/>
               <rules:mapping expression="userName" variable="userName"/>
             </rules:globals>
           </rules:action>

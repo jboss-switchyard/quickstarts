@@ -17,7 +17,6 @@
 
 package org.switchyard.quickstarts.rules.interview
 
-global java.lang.String serviceName
 global java.lang.String userName
 
 rule "Is of valid age"
@@ -25,7 +24,7 @@ rule "Is of valid age"
         $a : Applicant( age > 17 )
     then
         $a.setValid( true );
-        System.out.println("********** " + serviceName + ": " + $a.getName() + " is a valid applicant, " + userName + ". **********");
+        System.out.println("********** " + $a.getName() + " is a valid applicant, " + userName + ". **********");
 end
 
 rule "Is not of valid age"
@@ -33,5 +32,5 @@ rule "Is not of valid age"
         $a : Applicant( age < 18 )
     then
         $a.setValid( false );
-        System.err.println("********** " + serviceName + ": " + $a.getName() + " is NOT a valid applicant, " + userName + ". **********");
+        System.err.println("********** " + $a.getName() + " is NOT a valid applicant, " + userName + ". **********");
 end

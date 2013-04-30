@@ -24,9 +24,6 @@
             <implementation.rules xmlns="urn:switchyard-component-rules:config:1.0">
                 <actions>
                     <action operation="determineDestination" type="EXECUTE">
-                        <globals>
-                            <mapping expression="exchange" variable="exchange"/>
-                        </globals>
                         <inputs>
                             <mapping expression="message.content.widget"/>
                         </inputs>

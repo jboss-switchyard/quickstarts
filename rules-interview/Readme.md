@@ -30,7 +30,7 @@ Expected Output:
 (userName is a placeholder in this Readme.)
 ```
 Running org.switchyard.quickstarts.rules.interview.RulesInterviewTest  
-********** Interview: Twenty is a valid applicant, userName. **********  
+********** Twenty is a valid applicant, userName. **********  
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.131 sec`  
 ```
 

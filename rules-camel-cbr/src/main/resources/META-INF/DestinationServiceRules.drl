@@ -17,8 +17,6 @@
 
 package org.switchyard.quickstarts.rules.camel.cbr;
 
-global org.switchyard.Exchange exchange;
-
 rule "Red Destination"
     when
         $widget : Widget(id matches "FF0000-.*")
