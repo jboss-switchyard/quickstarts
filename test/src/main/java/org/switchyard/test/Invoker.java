@@ -22,7 +22,10 @@ package org.switchyard.test;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.activation.DataSource;
 import javax.xml.namespace.QName;
 
 import org.junit.Assert;
@@ -55,6 +58,7 @@ public class Invoker {
     private QName _inputType;
     private QName _expectedOutputType;
     private QName _expectedFaultType;
+    private Map<String, DataSource> _attachments = new HashMap<String, DataSource>();
 
     /**
      * Protected invoker.
@@ -184,6 +188,33 @@ public class Invoker {
     }
 
     /**
+     * Adds an attachment for created Messages.
+     * @param name the name of the attachment
+     * @param attachment the attachment
+     * @return This invoker instance.
+     */
+    public Invoker addAttachment(String name, DataSource attachment) {
+        _attachments.put(name, attachment);
+        return this;
+    }
+
+    private void addAttachments(Message message) {
+        for (Map.Entry<String, DataSource> entry : _attachments.entrySet()) {
+            message.addAttachment(entry.getKey(), entry.getValue());
+        }
+    }
+
+    /**
+     * Removes and attachment for created Messages.
+     * @param name the name of the attachment
+     * @return This invoker instance.
+     */
+    public Invoker removeAttachment(String name) {
+        _attachments.remove(name);
+        return this;
+    }
+
+    /**
      * Send an IN_ONLY message to the target Service.
      * @param messagePayload The message payload.
      */
@@ -199,6 +230,7 @@ public class Invoker {
         Exchange exchange = createExchange(ExchangePattern.IN_ONLY, exchangeHandlerProxy._exchangeHandlerProxy);
 
         Message message = exchange.createMessage().setContent(messagePayload);
+        addAttachments(message);
         exchange.send(message);
     }
 
@@ -220,6 +252,7 @@ public class Invoker {
         Exchange exchange = createExchange(ExchangePattern.IN_OUT, exchangeHandlerProxy._exchangeHandlerProxy);
 
         Message message = exchange.createMessage().setContent(messagePayload);
+        addAttachments(message);
         exchange.send(message);
         exchangeHandlerProxy._proxyInvocationHandler.waitForResponse(_timeoutMillis);
 
