@@ -34,10 +34,12 @@
         </component>
     </composite>
     <domain>
-        <security callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler" moduleName="netty-security-cert" rolesAllowed="analysts">
-            <properties>
-                <property name="alias" value="users"/>
-            </properties>
-        </security>
+        <securities>
+            <security callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler" rolesAllowed="analysts" securityDomain="netty-security-cert">
+                <properties>
+                    <property name="alias" value="users"/>
+                </properties>
+            </security>
+        </securities>
     </domain>
 </switchyard>

@@ -25,6 +25,8 @@
             <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
         </handlers>
         -->
-        <security callbackHandler="org.switchyard.security.jboss.callback.handler.STSTokenCallbackHandler" moduleName="saml-validate-token"/>
+        <securities>
+            <security callbackHandler="org.switchyard.security.jboss.callback.handler.STSTokenCallbackHandler" securityDomain="saml-validate-token"/>
+        </securities>
     </domain>
 </switchyard>

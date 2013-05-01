@@ -25,10 +25,12 @@
             <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
         </handlers>
         -->
-        <security callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler" moduleName="policy-security-cert" rolesAllowed="friend">
-            <properties>
-                <property name="alias" value="users"/>
-            </properties>
-        </security>
+        <securities>
+            <security callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler" rolesAllowed="friend" securityDomain="policy-security-cert">
+                <properties>
+                    <property name="alias" value="users"/>
+                </properties>
+            </security>
+        </securities>
     </domain>
 </switchyard>
