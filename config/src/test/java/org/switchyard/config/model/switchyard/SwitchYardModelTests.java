@@ -44,6 +44,7 @@ import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
 import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.HandlerModel;
+import org.switchyard.config.model.domain.SecuritiesModel;
 import org.switchyard.config.model.domain.SecurityModel;
 import org.switchyard.config.model.property.PropertiesModel;
 import org.switchyard.config.model.switchyard.test.java.JavaTransformModel;
@@ -105,7 +106,16 @@ public class SwitchYardModelTests {
         PortModel port = binding.getPort();
         Assert.assertEquals("MyWebService/SOAPPort", port.getPort());
         Assert.assertEquals("service.wsdl", binding.getWSDL().getLocation());
-        String name = port.getBinding().getService().getComposite().getComponents().get(0).getName();
+        ComponentModel component = port.getBinding().getService().getComposite().getComponents().get(0);
+        ComponentServiceModel componentService = component.getServices().get(0);
+        Assert.assertEquals("SimpleService", componentService.getName());
+        Assert.assertTrue(componentService.hasPolicyRequirement("clientAuthentication"));
+        Assert.assertEquals("theSecurityName", componentService.getSecurity());
+        ComponentReferenceModel componentReference = component.getReferences().get(0);
+        Assert.assertEquals("anotherService", componentReference.getName());
+        Assert.assertTrue(componentReference.hasPolicyRequirement("clientAuthentication"));
+        Assert.assertEquals("theSecurityName", componentReference.getSecurity());
+        String name = component.getName();
         Assert.assertEquals("SimpleService", name);
         // Verify transform configuration
         TransformsModel transforms = switchyard.getTransforms();
@@ -146,15 +156,18 @@ public class SwitchYardModelTests {
         Assert.assertEquals("OrderService", artifact.getName());
         Assert.assertEquals("http://localhost:8080/guvnorsoa/rest/packages/OrderService", artifact.getURL());
         // Verify security configuration
-        SecurityModel security = domain.getSecurity();
-        Assert.assertEquals(domain, security.getDomain());
+        SecuritiesModel securities = domain.getSecurities();
+        Assert.assertEquals(domain, securities.getDomain());
+        SecurityModel security = securities.getSecurities().iterator().next();
+        Assert.assertEquals(securities, security.getSecurities());
         Assert.assertEquals(Object.class, security.getCallbackHandler(getClass().getClassLoader()));
-        Assert.assertEquals("other", security.getModuleName());
+        Assert.assertEquals("theSecurityName", security.getName());
         Set<String> rolesAllowed = new LinkedHashSet<String>();
         rolesAllowed.add("administrator");
         rolesAllowed.add("user");
         Assert.assertEquals(rolesAllowed, security.getRolesAllowed());
         Assert.assertEquals("leader", security.getRunAs());
+        Assert.assertEquals("theSecurityDomain", security.getSecurityDomain());
         Assert.assertEquals("iam", security.getProperties().toProperties().getProperty("will"));
         Assert.assertEquals("iam", security.getProperties().toMap().get("will"));
     }

@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -31,29 +31,28 @@ import java.util.Set;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
+import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.security.SecurityContext;
-import org.switchyard.security.SecurityProvider;
 import org.switchyard.security.credential.ConfidentialityCredential;
 import org.switchyard.security.credential.PrincipalCredential;
+import org.switchyard.security.spi.SecurityProvider;
 
 /**
  * A security ExchangeHandler implementation.
  * 
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 public class SecurityHandler extends BaseHandler {
 
     private final SecurityProvider _securityProvider;
-    private final ServiceSecurity _serviceSecurity;
 
     /**
-     * Constructs a SecurityHandler with the specified ServiceSecurity.
-     * @param serviceSecurity the specified ServiceSecurity
+     * Constructs a SecurityHandler.
      */
-    public SecurityHandler(ServiceSecurity serviceSecurity) {
+    public SecurityHandler() {
         _securityProvider = SecurityProvider.instance();
-        _serviceSecurity = serviceSecurity;
     }
 
     /**
@@ -61,39 +60,42 @@ public class SecurityHandler extends BaseHandler {
      */
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
-        SecurityContext securityContext = SecurityContext.get(exchange);
-        if (IN.equals(exchange.getPhase())) {
-            if (isRequired(exchange, CONFIDENTIALITY) && !isProvided(exchange, CONFIDENTIALITY)) {
-                if (isConfidentialityProvided(securityContext)) {
-                    provide(exchange, CONFIDENTIALITY);
+        ServiceSecurity serviceSecurity = getServiceSecurity(exchange);
+        if (serviceSecurity != null) {
+            SecurityContext securityContext = SecurityContext.get(exchange);
+            if (IN.equals(exchange.getPhase())) {
+                if (isRequired(exchange, CONFIDENTIALITY) && !isProvided(exchange, CONFIDENTIALITY)) {
+                    if (isConfidentialityProvided(securityContext)) {
+                        provide(exchange, CONFIDENTIALITY);
+                    }
                 }
-            }
-            boolean success = false;
-            if (isRequired(exchange, CLIENT_AUTHENTICATION) && !isProvided(exchange, CLIENT_AUTHENTICATION)) {
-                if (isClientAuthenticationProvided(securityContext)) {
-                    provide(exchange, CLIENT_AUTHENTICATION);
-                    success = true;
-                } else {
-                    boolean authenticated = _securityProvider.authenticate(_serviceSecurity, securityContext);
-                    if (authenticated) {
+                boolean success = false;
+                if (isRequired(exchange, CLIENT_AUTHENTICATION) && !isProvided(exchange, CLIENT_AUTHENTICATION)) {
+                    if (isClientAuthenticationProvided(securityContext)) {
                         provide(exchange, CLIENT_AUTHENTICATION);
                         success = true;
+                    } else {
+                        boolean authenticated = _securityProvider.authenticate(serviceSecurity, securityContext);
+                        if (authenticated) {
+                            provide(exchange, CLIENT_AUTHENTICATION);
+                            success = true;
+                        }
+                    }
+                } else {
+                    success = true;
+                }
+                if (success) {
+                    _securityProvider.propagate(serviceSecurity, securityContext);
+                    _securityProvider.addRunAs(serviceSecurity, securityContext);
+                }
+                if (isRequired(exchange, AUTHORIZATION) && !isProvided(exchange, AUTHORIZATION)) {
+                    if (isAuthorizationProvided(serviceSecurity, securityContext)) {
+                        provide(exchange, AUTHORIZATION);
                     }
                 }
             } else {
-                success = true;
+                _securityProvider.clear(serviceSecurity, securityContext);
             }
-            if (success) {
-                _securityProvider.propagate(_serviceSecurity, securityContext);
-                _securityProvider.addRunAs(_serviceSecurity, securityContext);
-            }
-            if (isRequired(exchange, AUTHORIZATION) && !isProvided(exchange, AUTHORIZATION)) {
-                if (isAuthorizationProvided(securityContext)) {
-                    provide(exchange, AUTHORIZATION);
-                }
-            }
-        } else {
-            _securityProvider.clear(_serviceSecurity, securityContext);
         }
     }
 
@@ -102,7 +104,11 @@ public class SecurityHandler extends BaseHandler {
      */
     @Override
     public void handleFault(Exchange exchange) {
-        _securityProvider.clear(_serviceSecurity, SecurityContext.get(exchange));
+        ServiceSecurity serviceSecurity = getServiceSecurity(exchange);
+        if (serviceSecurity != null) {
+            SecurityContext securityContext = SecurityContext.get(exchange);
+            _securityProvider.clear(serviceSecurity, securityContext);
+        }
     }
 
     private boolean isConfidentialityProvided(SecurityContext securityContext) {
@@ -125,8 +131,23 @@ public class SecurityHandler extends BaseHandler {
         return false;
     }
 
-    private boolean isAuthorizationProvided(SecurityContext securityContext) {
-        return _securityProvider.checkRolesAllowed(_serviceSecurity, securityContext);
+    private boolean isAuthorizationProvided(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
+        return _securityProvider.checkRolesAllowed(serviceSecurity, securityContext);
+    }
+
+    private ServiceSecurity getServiceSecurity(Exchange exchange) {
+        ServiceSecurity serviceSecurity = null;
+        Service service = exchange.getProvider();
+        if (service != null) {
+            serviceSecurity = service.getSecurity();
+        }
+        if (serviceSecurity == null) {
+            ServiceReference serviceReference = exchange.getConsumer();
+            if (serviceReference != null) {
+                serviceSecurity = serviceReference.getSecurity();
+            }
+        }
+        return serviceSecurity;
     }
 
 }

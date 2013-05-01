@@ -25,7 +25,7 @@ import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.HandlersModel;
-import org.switchyard.config.model.domain.SecurityModel;
+import org.switchyard.config.model.domain.SecuritiesModel;
 import org.switchyard.config.model.property.PropertiesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
@@ -38,14 +38,14 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
     
     private PropertiesModel _properties;
     private HandlersModel _handlers;
-    private SecurityModel _security;
+    private SecuritiesModel _securities;
     
     /**
      * Constructs a new V1DomainModel.
      */
     public V1DomainModel() {
         super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, DomainModel.DOMAIN));
-        setModelChildrenOrder(TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, PropertiesModel.PROPERTIES, HandlersModel.HANDLERS, SecurityModel.SECURITY);
+        setModelChildrenOrder(TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, PropertiesModel.PROPERTIES, HandlersModel.HANDLERS, SecuritiesModel.SECURITIES);
     }
 
     /**
@@ -55,7 +55,7 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
      */
     public V1DomainModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, PropertiesModel.PROPERTIES, HandlersModel.HANDLERS, SecurityModel.SECURITY);
+        setModelChildrenOrder(TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, PropertiesModel.PROPERTIES, HandlersModel.HANDLERS, SecuritiesModel.SECURITIES);
     }
     
     @Override
@@ -98,17 +98,17 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
     }
 
     @Override
-    public SecurityModel getSecurity() {
-        if (_security == null) {
-            _security = (SecurityModel)getFirstChildModel(SecurityModel.SECURITY);
+    public SecuritiesModel getSecurities() {
+        if (_securities == null) {
+            _securities = (SecuritiesModel)getFirstChildModel(SecuritiesModel.SECURITIES);
         }
-        return _security;
+        return _securities;
     }
 
     @Override
-    public DomainModel setSecurity(SecurityModel security) {
-        setChildModel(security);
-        _security = security;
+    public DomainModel setSecurities(SecuritiesModel securities) {
+        setChildModel(securities);
+        _securities = securities;
         return this;
     }
 

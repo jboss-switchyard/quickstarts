@@ -276,7 +276,7 @@ public class Deployment extends AbstractDeployment {
                 ServiceInterface si = getCompositeReferenceInterface(reference);
                 Binding bindingMetadata = new Binding(binding);
                 validateServiceRegistration(refQName);
-                Service svc = getDomain().registerService(refQName, si, handler, null, bindingMetadata);
+                Service svc = getDomain().registerService(refQName, si, handler, null, null, bindingMetadata);
                 activation.addService(svc);
                 _referenceBindings.add(activation);
                         
@@ -424,7 +424,7 @@ public class Deployment extends AbstractDeployment {
 
                 ServiceInterface refIntf = getComponentReferenceInterface(reference);
                 ServiceReference svcRef = getDomain().registerServiceReference(
-                        reference.getQName(), refIntf, null, null, requires, impl);
+                        reference.getQName(), refIntf, null, null, requires, reference.getSecurity(), impl);
 
                 // wire a reference if the name is different from promoted name
                 for (CompositeReferenceModel compositeReference : getConfig().getComposite().getReferences()) {
@@ -461,7 +461,7 @@ public class Deployment extends AbstractDeployment {
                 Activation activation = new Activation(activator, service.getQName(), handler);
                 ServiceInterface serviceIntf = getComponentServiceInterface(service);
 
-                Service svc = getDomain().registerService(service.getQName(), serviceIntf, handler, requires, impl);
+                Service svc = getDomain().registerService(service.getQName(), serviceIntf, handler, requires, service.getSecurity(), impl);
                 activation.addService(svc);
                 activation.addReferences(references);
                 

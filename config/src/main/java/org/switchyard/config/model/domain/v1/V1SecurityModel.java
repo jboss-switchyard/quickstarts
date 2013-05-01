@@ -18,6 +18,9 @@
  */
 package org.switchyard.config.model.domain.v1;
 
+import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
+import static org.switchyard.config.model.switchyard.SwitchYardModel.DEFAULT_NAMESPACE;
+
 import java.util.Set;
 
 import javax.xml.namespace.QName;
@@ -25,24 +28,23 @@ import javax.xml.namespace.QName;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.BaseModel;
+import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.domain.DomainModel;
+import org.switchyard.config.model.domain.SecuritiesModel;
 import org.switchyard.config.model.domain.SecurityModel;
 import org.switchyard.config.model.property.PropertiesModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * The 1st version SecurityModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class V1SecurityModel extends BaseModel implements SecurityModel {
+public class V1SecurityModel extends BaseNamedModel implements SecurityModel {
 
     private static final String CALLBACK_HANDLER = "callbackHandler";
-    private static final String MODULE_NAME = "moduleName";
     private static final String ROLES_ALLOWED = "rolesAllowed";
     private static final String RUN_AS = "runAs";
+    private static final String SECURITY_DOMAIN = "securityDomain";
 
     private PropertiesModel _properties;
 
@@ -50,8 +52,8 @@ public class V1SecurityModel extends BaseModel implements SecurityModel {
      * Creates a new V1SecurityModel.
      */
     public V1SecurityModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, SECURITY));
-        setModelChildrenOrder(PropertiesModel.PROPERTIES);
+        super(new QName(DEFAULT_NAMESPACE, SECURITY));
+        setModelChildrenOrder(PROPERTIES);
     }
 
     /**
@@ -61,15 +63,15 @@ public class V1SecurityModel extends BaseModel implements SecurityModel {
      */
     public V1SecurityModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(PropertiesModel.PROPERTIES);
+        setModelChildrenOrder(PROPERTIES);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DomainModel getDomain() {
-        return (DomainModel)getModelParent();
+    public SecuritiesModel getSecurities() {
+        return (SecuritiesModel)getModelParent();
     }
 
     /**
@@ -88,23 +90,6 @@ public class V1SecurityModel extends BaseModel implements SecurityModel {
     public SecurityModel setCallbackHandler(Class<?> clazz) {
         String c = clazz != null ? clazz.getName() : null;
         setModelAttribute(CALLBACK_HANDLER, c);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getModuleName() {
-        return getModelAttribute(MODULE_NAME);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SecurityModel setModuleName(String moduleName) {
-        setModelAttribute(MODULE_NAME, moduleName);
         return this;
     }
 
@@ -150,7 +135,7 @@ public class V1SecurityModel extends BaseModel implements SecurityModel {
     @Override
     public synchronized PropertiesModel getProperties() {
         if (_properties == null) {
-            _properties = (PropertiesModel)getFirstChildModel(PropertiesModel.PROPERTIES);
+            _properties = (PropertiesModel)getFirstChildModel(PROPERTIES);
         }
         return _properties;
     }
@@ -162,6 +147,23 @@ public class V1SecurityModel extends BaseModel implements SecurityModel {
     public SecurityModel setProperties(PropertiesModel properties) {
         setChildModel(properties);
         _properties = properties;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getSecurityDomain() {
+        return getModelAttribute(SECURITY_DOMAIN);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SecurityModel setSecurityDomain(String securityDomainName) {
+        setModelAttribute(SECURITY_DOMAIN, securityDomainName);
         return this;
     }
 

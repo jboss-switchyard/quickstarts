@@ -23,12 +23,12 @@ import java.util.List;
 import org.switchyard.config.model.Model;
 
 /**
- * The "handlers" configuration model.
+ * The "securities" configuration model.
  */
-public interface HandlersModel extends Model {
+public interface SecuritiesModel extends Model {
 
-    /** The "handlers" name. */
-    public static final String HANDLERS = "handlers";
+    /** The "securities" name. */
+    public static final String SECURITIES = "securities";
 
     /**
      * Gets the parent domain model.
@@ -37,23 +37,9 @@ public interface HandlersModel extends Model {
     public DomainModel getDomain();
 
     /**
-     * Gets the child handler models.
-     * @return the child handler models
+     * Gets the child security models.
+     * @return the child security models
      */
-    public List<HandlerModel> getHandlers();
-
-    /**
-     * Adds a child handler model.
-     * @param handler the child handler model to add
-     * @return this TransformsModel (useful for chaining)
-     */
-    public HandlersModel addHandler(HandlerModel handler);
-    
-    /**
-     * Removes a child handler model.
-     * @param handlerName the name of the handler
-     * @return the removed handler or null if the named handler was not present
-     */
-    public HandlerModel removeHandler(String handlerName);
+    public List<SecurityModel> getSecurities();
 
 }

@@ -176,7 +176,7 @@ MA  02110-1301, USA.
             <element ref="swyd:validates" minOccurs="0" maxOccurs="1"/>
             <element ref="swyd:properties" minOccurs="0" maxOccurs="1"/>
             <element ref="swyd:handlers" minOccurs="0" maxOccurs="1"/>
-            <element ref="swyd:security" minOccurs="0" maxOccurs="1"/>
+            <element ref="swyd:securities" minOccurs="0" maxOccurs="1"/>
         </sequence>
         <attribute name="name" type="string" use="optional"/>
     </complexType>
@@ -226,15 +226,23 @@ MA  02110-1301, USA.
         <attribute name="url" type="string" use="required"/>
     </complexType>
 
+    <element name="securities" type="swyd:SecuritiesType"/>
+    <complexType name="SecuritiesType">
+        <sequence>
+            <element ref="swyd:security" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
     <element name="security" type="swyd:SecurityType"/>
     <complexType name="SecurityType">
         <sequence>
             <element ref="swyd:properties" minOccurs="0" maxOccurs="1"/>
         </sequence>
         <attribute name="callbackHandler" type="string" use="optional"/>
-        <attribute name="moduleName" type="string" use="optional"/>
+        <attribute name="name" type="string" use="optional"/>
         <attribute name="rolesAllowed" type="string" use="optional"/>
         <attribute name="runAs" type="string" use="optional"/>
+        <attribute name="securityDomain" type="string" use="optional"/>
     </complexType>
 
     <element name="interface.esb" type="swyd:EsbInterface" substitutionGroup="sca:interface"/>
@@ -253,6 +261,9 @@ MA  02110-1301, USA.
     <attribute name="targetNamespace" type="string"/>
     <attribute name="clustered" type="boolean"/>
     <attribute name="loadBalance" type="string"/>
+    
+    <!-- service and reference extensions -->
+    <attribute name="security" type="string"/>
     
     <!-- Support for using ${property} values in non-string content -->
     <simpleType name="propInteger">

@@ -20,7 +20,7 @@ package org.switchyard.config.model.domain;
 
 import java.util.Set;
 
-import org.switchyard.config.model.Model;
+import org.switchyard.config.model.NamedModel;
 import org.switchyard.config.model.property.PropertiesModel;
 
 /**
@@ -28,7 +28,7 @@ import org.switchyard.config.model.property.PropertiesModel;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface SecurityModel extends Model {
+public interface SecurityModel extends NamedModel {
 
     /**
      * The security XML element.
@@ -36,10 +36,10 @@ public interface SecurityModel extends Model {
     public static final String SECURITY = "security";
 
     /**
-     * Gets the parent domain model.
-     * @return the parent domain model
+     * Gets the parent securities model.
+     * @return the parent securities model
      */
-    public DomainModel getDomain();
+    public SecuritiesModel getSecurities();
 
     /**
      * Gets the CallbackHandler class.
@@ -54,19 +54,6 @@ public interface SecurityModel extends Model {
      * @return this SecurityModel (useful for chaining)
      */
     public SecurityModel setCallbackHandler(Class<?> callbackHandler);
-
-    /**
-     * Gets the module name.
-     * @return the module name
-     */
-    public String getModuleName();
-
-    /**
-     * Sets the module name.
-     * @param moduleName the module name
-     * @return this SecurityModel (useful for chaining)
-     */
-    public SecurityModel setModuleName(String moduleName);
 
     /**
      * Gets the roles allowed.
@@ -106,5 +93,18 @@ public interface SecurityModel extends Model {
      * @return this SecurityModel (useful for chaining)
      */
     public SecurityModel setProperties(PropertiesModel properties);
+
+    /**
+     * Gets the security domain.
+     * @return the security domain
+     */
+    public String getSecurityDomain();
+
+    /**
+     * Sets the security domain.
+     * @param securityDomain the security domain
+     * @return this SecurityModel (useful for chaining)
+     */
+    public SecurityModel setSecurityDomain(String securityDomain);
 
 }

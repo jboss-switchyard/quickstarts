@@ -19,8 +19,10 @@
 
 package org.switchyard.deploy;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -33,6 +35,7 @@ import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.HandlerModel;
+import org.switchyard.config.model.domain.SecuritiesModel;
 import org.switchyard.config.model.domain.SecurityModel;
 import org.switchyard.config.model.property.PropertiesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
@@ -99,15 +102,16 @@ public class ServiceDomainManager {
      * @return The ServiceDomain instance.
      */
     public ServiceDomain createDomain(QName domainName, SwitchYardModel switchyardConfig) {
-        ServiceSecurity serviceSecurity = getServiceSecurity(switchyardConfig);
         TransformerRegistry transformerRegistry = new BaseTransformerRegistry();
         ValidatorRegistry validatorRegistry = new BaseValidatorRegistry();
 
         SwitchYardCamelContext camelContext = new SwitchYardCamelContext();
         CamelExchangeBus bus = new CamelExchangeBus(camelContext);
 
+        Map<String, ServiceSecurity> serviceSecurities = getServiceSecurities(switchyardConfig);
+
         DomainImpl domain = new DomainImpl(
-                domainName, serviceSecurity, _registry, bus, transformerRegistry, validatorRegistry, _eventManager);
+                domainName, _registry, bus, transformerRegistry, validatorRegistry, _eventManager, serviceSecurities);
         camelContext.setServiceDomain(domain);
 
         if (switchyardConfig != null) {
@@ -115,26 +119,6 @@ public class ServiceDomainManager {
         }
 
         return domain;
-    }
-    
-    private ServiceSecurity getServiceSecurity(SwitchYardModel switchyard) {
-        DefaultServiceSecurity serviceSecurity = new DefaultServiceSecurity();
-        if (switchyard != null) {
-            DomainModel domain = switchyard.getDomain();
-            if (domain != null) {
-                SecurityModel config = domain.getSecurity();
-                if (config != null) {
-                    PropertiesModel properties = config.getProperties();
-                    serviceSecurity
-                        .setModuleName(config.getModuleName())
-                        .setCallbackHandler(config.getCallbackHandler(getClass().getClassLoader()))
-                        .setRolesAllowed(config.getRolesAllowed())
-                        .setRunAs(config.getRunAs())
-                        .setProperties(properties != null ? properties.toMap() : null);
-                }
-            }
-        }
-        return serviceSecurity;
     }
     
     /**
@@ -148,7 +132,6 @@ public class ServiceDomainManager {
     /**
      * Looks for handler definitions in the switchyard config and attempts to 
      * create and add them to the domain's global handler chain.
-     *
      */
     private List<ExchangeHandler> getDomainHandlers(DomainModel domain) {
         LinkedList<ExchangeHandler> handlers = new LinkedList<ExchangeHandler>();
@@ -172,5 +155,36 @@ public class ServiceDomainManager {
             }
         }
         return handlers;
+    }
+
+    private Map<String, ServiceSecurity> getServiceSecurities(SwitchYardModel switchyard) {
+        Map<String, ServiceSecurity> map = new HashMap<String, ServiceSecurity>();
+        if (switchyard != null) {
+            DomainModel domain = switchyard.getDomain();
+            if (domain != null) {
+                SecuritiesModel securities = domain.getSecurities();
+                if (securities != null) {
+                    for (SecurityModel security : securities.getSecurities()) {
+                        if (security != null) {
+                            PropertiesModel properties = security.getProperties();
+                            ServiceSecurity value = new DefaultServiceSecurity()
+                                .setName(security.getName())
+                                .setCallbackHandler(security.getCallbackHandler(getClass().getClassLoader()))
+                                .setProperties(properties != null ? properties.toMap() : null)
+                                .setRolesAllowed(security.getRolesAllowed())
+                                .setRunAs(security.getRunAs())
+                                .setSecurityDomain(security.getSecurityDomain());
+                            String key = value.getName();
+                            if (!map.containsKey(key)) {
+                                map.put(key, value);
+                            } else {
+                                throw new IllegalStateException("Duplicate security configuration names calculated: " + key);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return map;
     }
 }

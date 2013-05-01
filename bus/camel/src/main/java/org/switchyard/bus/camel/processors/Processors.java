@@ -71,7 +71,7 @@ public enum Processors {
     SECURITY {
         @Override
         public Processor create(ServiceDomain domain) {
-            return wrap(new SecurityHandler(domain.getServiceSecurity()));
+            return wrap(new SecurityHandler());
         }
     },
     /**

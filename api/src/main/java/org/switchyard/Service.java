@@ -48,13 +48,19 @@ public interface Service {
      * Unregisters this service from the domain it's registered in.
      */
     void unregister();
-
+    
     /**
      * The domain in which this service is registered.
      * @return service domain which created this service
      */
     ServiceDomain getDomain();
-     
+    
+    /**
+     * Gets the security.
+     * @return the security
+     */
+    ServiceSecurity getSecurity();
+    
     /**
      * Returns a list of required policies for this service.
      * @return list of required policy

@@ -101,7 +101,24 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
         _interface = interfaze;
         return this;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getSecurity() {
+        return getModelAttribute(ComponentReferenceModel.SECURITY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ComponentReferenceModel setSecurity(String security) {
+        setModelAttribute(ComponentReferenceModel.SECURITY, security);
+        return this;
+    }
+
     /**
      * {@inheritDoc}
      */

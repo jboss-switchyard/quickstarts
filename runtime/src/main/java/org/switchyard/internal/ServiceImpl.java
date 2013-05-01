@@ -27,6 +27,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceSecurity;
 import org.switchyard.event.ServiceUnregistrationEvent;
 import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
@@ -44,6 +45,7 @@ public class ServiceImpl implements Service {
     private DomainImpl _domain;
     private ExchangeHandler _providerHandler;
     private List<Policy> _requires;
+    private String _securityName;
     private Registrant _providerMetadata;
     
     /**
@@ -53,28 +55,29 @@ public class ServiceImpl implements Service {
      * @param domain domain in which the service is used 
      * @param providerHandler the exchange handler representing the provider
      */
-    public ServiceImpl(QName name, 
-            ServiceInterface serviceInterface, 
+    public ServiceImpl(QName name,
+            ServiceInterface serviceInterface,
             DomainImpl domain,
             ExchangeHandler providerHandler) {
-        this(name, serviceInterface, domain, providerHandler, null, null);
+        this(name, serviceInterface, domain, providerHandler, null, null, null);
     }
-
 
     /**
      * Creates a new Service instance representing a service provider.
      * @param name name of the service reference
      * @param serviceInterface the service interface
-     * @param requires list of policies required for this reference
      * @param domain domain in which the service is used 
-     * @param providerMetadata information related to the provider
      * @param providerHandler the exchange handler representing the provider
+     * @param requires list of policies required for this reference
+     * @param securityName the security name
+     * @param providerMetadata information related to the provider
      */
-    public ServiceImpl(QName name, 
-            ServiceInterface serviceInterface, 
-            DomainImpl domain, 
+    public ServiceImpl(QName name,
+            ServiceInterface serviceInterface,
+            DomainImpl domain,
             ExchangeHandler providerHandler,
             List<Policy> requires,
+            String securityName,
             Registrant providerMetadata) {
         
         _name = name;
@@ -82,12 +85,12 @@ public class ServiceImpl implements Service {
         _domain = domain;
         _providerHandler = providerHandler;
         _providerMetadata = providerMetadata;
-        
         if (requires != null) {
             _requires = requires;
         } else {
             _requires = Collections.emptyList();
         }
+        _securityName = securityName;
     }
 
     @Override
@@ -103,6 +106,11 @@ public class ServiceImpl implements Service {
     @Override
     public ServiceDomain getDomain() {
         return _domain;
+    }
+    
+    @Override
+    public ServiceSecurity getSecurity() {
+        return _domain != null ? _domain.getServiceSecurity(_securityName) : null;
     }
     
     @Override

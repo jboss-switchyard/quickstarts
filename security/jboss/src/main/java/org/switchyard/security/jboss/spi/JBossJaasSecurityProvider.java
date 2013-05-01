@@ -16,15 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security.jboss;
+package org.switchyard.security.jboss.spi;
 
 import javax.security.auth.Subject;
 
 import org.apache.log4j.Logger;
 import org.jboss.security.SecurityContextAssociation;
 import org.switchyard.ServiceSecurity;
-import org.switchyard.security.JaasSecurityProvider;
 import org.switchyard.security.SecurityContext;
+import org.switchyard.security.spi.JaasSecurityProvider;
 
 /**
  * JBossJaasSecurityProvider.
@@ -55,19 +55,19 @@ public class JBossJaasSecurityProvider extends JaasSecurityProvider {
     public boolean propagate(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
         org.jboss.security.SecurityContext jb_securityContext = SecurityContextAssociation.getSecurityContext();
         if (jb_securityContext != null) {
-            String securityDomain = getSecurityDomain(serviceSecurity);
+            String sy_securityDomain = serviceSecurity.getSecurityDomain();
             String jb_securityDomain = jb_securityContext.getSecurityDomain();
-            if (securityDomain.equals(jb_securityDomain)) {
-                Subject subject = securityContext.getSubject(securityDomain);
+            if (sy_securityDomain.equals(jb_securityDomain)) {
+                Subject sy_subject = securityContext.getSubject(sy_securityDomain);
                 Subject jb_subject = jb_securityContext.getUtil().getSubject();
-                if (jb_subject != null && subject != jb_subject && !subject.equals(jb_subject)) {
-                    subject.getPrincipals().addAll(jb_subject.getPrincipals());
-                    subject.getPrivateCredentials().addAll(jb_subject.getPrivateCredentials());
-                    subject.getPublicCredentials().addAll(jb_subject.getPublicCredentials());
+                if (jb_subject != null && sy_subject != jb_subject && !sy_subject.equals(jb_subject)) {
+                    sy_subject.getPrincipals().addAll(jb_subject.getPrincipals());
+                    sy_subject.getPrivateCredentials().addAll(jb_subject.getPrivateCredentials());
+                    sy_subject.getPublicCredentials().addAll(jb_subject.getPublicCredentials());
                 }
                 return true;
             } else {
-                LOGGER.warn(String.format("SwitchYard security domain (%s) does not match JBoss security domain (%s).", securityDomain, jb_securityDomain));
+                LOGGER.warn(String.format("SwitchYard security domain (%s) does not match JBoss security domain (%s).", sy_securityDomain, jb_securityDomain));
             }
         }
         return false;
@@ -80,6 +80,7 @@ public class JBossJaasSecurityProvider extends JaasSecurityProvider {
     public boolean clear(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
         boolean success = super.clear(serviceSecurity, securityContext);
         try {
+            // TODO: Look into only clearing the context details if the config's specified security domain matches the SecurityContextAssociation's
             SecurityContextAssociation.clearSecurityContext();
         } catch (Throwable t) {
             LOGGER.error("Problem clearing SecurityContextAssociation: " + t.getMessage(), t);

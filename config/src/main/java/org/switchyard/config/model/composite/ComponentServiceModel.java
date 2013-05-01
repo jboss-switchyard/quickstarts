@@ -21,7 +21,10 @@ package org.switchyard.config.model.composite;
 
 import java.util.Set;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.model.NamedModel;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * The "component/service" model.
@@ -32,6 +35,9 @@ public interface ComponentServiceModel extends NamedModel {
 
     /** The "service"  name. */
     public static final String SERVICE = CompositeServiceModel.SERVICE;
+
+    /** The "security" name. */
+    public static final QName SECURITY = new QName(SwitchYardModel.DEFAULT_NAMESPACE, "security");
 
     /**
      * Gets the parent component model.
@@ -51,6 +57,19 @@ public interface ComponentServiceModel extends NamedModel {
      * @return this ComponentServiceModel (useful for chaining)
      */
     public ComponentServiceModel setInterface(InterfaceModel interfaze);
+    
+    /**
+     * Gets the name of the security section to respect.
+     * @return the name of the security section to respect
+     */
+    public String getSecurity();
+    
+    /**
+     * Sets the name of the security section to respect.
+     * @param security the name of the security section to respect
+     * @return this ComponentServiceModel (useful for chaining)
+     */
+    public ComponentServiceModel setSecurity(String security);
     
     /**
      * Adds the specified policy identifier to the set of required policy 

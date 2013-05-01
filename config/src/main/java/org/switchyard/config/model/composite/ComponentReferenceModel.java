@@ -21,7 +21,10 @@ package org.switchyard.config.model.composite;
 
 import java.util.Set;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.model.NamedModel;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * The "component/reference" configuration model.
@@ -30,11 +33,14 @@ import org.switchyard.config.model.NamedModel;
  */
 public interface ComponentReferenceModel extends NamedModel {
 
-    /** The "reference" name. */
-    public static final String REFERENCE = "reference";
-
     /** The "multiplicity" name. */
-    public static final String MULTIPLICITY = "multiplicity";
+    public static final String MULTIPLICITY = CompositeReferenceModel.MULTIPLICITY;
+
+    /** The "reference" name. */
+    public static final String REFERENCE = CompositeReferenceModel.REFERENCE;
+
+    /** The "security" name. */
+    public static final QName SECURITY = new QName(SwitchYardModel.DEFAULT_NAMESPACE, "security");
 
     /**
      * Gets the parent component model.
@@ -68,7 +74,19 @@ public interface ComponentReferenceModel extends NamedModel {
      */
     public ComponentReferenceModel setInterface(InterfaceModel interfaze);
     
-
+    /**
+     * Gets the name of the security section to respect.
+     * @return the name of the security section to respect
+     */
+    public String getSecurity();
+    
+    /**
+     * Sets the name of the security section to respect.
+     * @param security the name of the security section to respect
+     * @return this ComponentReferenceModel (useful for chaining)
+     */
+    public ComponentReferenceModel setSecurity(String security);
+    
     /**
      * Adds the specified policy identifier to the set of required policy 
      * intents for the reference.

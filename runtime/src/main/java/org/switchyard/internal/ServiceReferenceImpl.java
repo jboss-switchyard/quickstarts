@@ -29,6 +29,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.ServiceSecurity;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
@@ -48,7 +49,8 @@ public class ServiceReferenceImpl implements ServiceReference {
     private ServiceInterface _interface;
     private DomainImpl _domain;
     private List<Policy> _requires;
-    private List<Policy> _provides = Collections.emptyList();
+    private List<Policy> _provides;
+    private String _securityName;
     private ExchangeHandler _handler;
     private Dispatcher _dispatcher;
     private Registrant _consumerMetadata;
@@ -60,27 +62,29 @@ public class ServiceReferenceImpl implements ServiceReference {
      * @param serviceInterface the service interface
      * @param domain domain in which the service is used 
      */
-    public ServiceReferenceImpl(QName name, 
-            ServiceInterface serviceInterface, 
+    public ServiceReferenceImpl(QName name,
+            ServiceInterface serviceInterface,
             DomainImpl domain) {
-        this(name, serviceInterface, domain, null, null, null, null);
+        this(name, serviceInterface, domain, null, null, null, null, null);
     }
 
     /**
      * Creates a new reference to a service.
      * @param name name of the service reference
      * @param serviceInterface the service interface
+     * @param domain domain in which the service is used
      * @param provides list of policies provided by this reference
      * @param requires list of policies required for this reference
+     * @param securityName the security name
      * @param handler handler used to process reply faults/messages
-     * @param domain domain in which the service is used 
      * @param consumerMetadata information related to the consumer
      */
-    public ServiceReferenceImpl(QName name, 
-            ServiceInterface serviceInterface, 
+    public ServiceReferenceImpl(QName name,
+            ServiceInterface serviceInterface,
             DomainImpl domain,
             List<Policy> provides,
             List<Policy> requires,
+            String securityName,
             ExchangeHandler handler,
             Registrant consumerMetadata) {
         
@@ -101,7 +105,7 @@ public class ServiceReferenceImpl implements ServiceReference {
         } else {
             _requires = Collections.emptyList();
         }
-        
+        _securityName = securityName;
     }
     
     @Override
@@ -193,6 +197,11 @@ public class ServiceReferenceImpl implements ServiceReference {
     @Override
     public ServiceDomain getDomain() {
         return _domain;
+    }
+    
+    @Override
+    public ServiceSecurity getSecurity() {
+        return _domain != null ? _domain.getServiceSecurity(_securityName) : null;
     }
     
     /**

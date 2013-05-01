@@ -52,6 +52,7 @@ import org.junit.Assert;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceSecurity;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.xml.XMLHelper;
@@ -457,9 +458,12 @@ public class SwitchYardTestKit {
         Service replacedService = services.get(0);
         replacedService.unregister();
         
+        ServiceSecurity serviceSecurity = replacedService.getSecurity();
+        String serviceSecurityName = serviceSecurity != null ? serviceSecurity.getName() : null;
+        
         // add the replacement service
-        getServiceDomain().registerService(name, replacedService.getInterface(), handler, 
-                replacedService.getRequiredPolicies(), replacedService.getProviderMetadata());
+        getServiceDomain().registerService(name, replacedService.getInterface(), handler,
+                replacedService.getRequiredPolicies(), serviceSecurityName, replacedService.getProviderMetadata());
     }
     
     /**

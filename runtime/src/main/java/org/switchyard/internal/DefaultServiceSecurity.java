@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -18,6 +18,8 @@
  */
 package org.switchyard.internal;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,36 +28,37 @@ import org.switchyard.ServiceSecurity;
 /**
  * DefaultServiceSecurity.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 public class DefaultServiceSecurity implements ServiceSecurity {
 
-    private String _moduleName;
-    private Class<?> _callbackHandler;
-    private Set<String> _rolesAllowed;
-    private String _runAs;
-    private Map<String,String> _properties;
+    private static final String FORMAT = DefaultServiceSecurity.class.getSimpleName() + "[name=%s, callbackHandler=%s, properties=%s, rolesAllowed=%s, runAs=%s, securityDomain=%s]";
 
-    /**
-     * Constructs a DefaultServiceSecurity.
-     */
-    public DefaultServiceSecurity() {}
+    private String _name;
+    private Class<?> _callbackHandler;
+    private Map<String,String> _properties = new LinkedHashMap<String,String>();
+    private Set<String> _rolesAllowed = new LinkedHashSet<String>();
+    private String _runAs;
+    private String _securityDomain;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getModuleName() {
-        return _moduleName;
+    public String getName() {
+        if (_name != null) {
+            return _name;
+        }
+        return DEFAULT_NAME;
     }
 
     /**
-     * Sets the module name.
-     * @param moduleName the module name
+     * Sets the name.
+     * @param name the name
      * @return this instance (useful for chaining)
      */
-    public DefaultServiceSecurity setModuleName(String moduleName) {
-        _moduleName = moduleName;
+    public DefaultServiceSecurity setName(String name) {
+        _name = name;
         return this;
     }
 
@@ -81,6 +84,27 @@ public class DefaultServiceSecurity implements ServiceSecurity {
      * {@inheritDoc}
      */
     @Override
+    public Map<String,String> getProperties() {
+        return _properties;
+    }
+
+    /**
+     * Sets the properties.
+     * @param properties the properties
+     * @return this instance (useful for chaining)
+     */
+    public DefaultServiceSecurity setProperties(Map<String,String> properties) {
+        _properties.clear();
+        if (properties != null) {
+            _properties.putAll(properties);
+        }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Set<String> getRolesAllowed() {
         return _rolesAllowed;
     }
@@ -91,7 +115,10 @@ public class DefaultServiceSecurity implements ServiceSecurity {
      * @return this instance (useful for chaining)
      */
     public DefaultServiceSecurity setRolesAllowed(Set<String> rolesAllowed) {
-        _rolesAllowed = rolesAllowed;
+        _rolesAllowed.clear();
+        if (rolesAllowed != null) {
+            _rolesAllowed.addAll(rolesAllowed);
+        }
         return this;
     }
 
@@ -117,18 +144,29 @@ public class DefaultServiceSecurity implements ServiceSecurity {
      * {@inheritDoc}
      */
     @Override
-    public Map<String,String> getProperties() {
-        return _properties;
+    public String getSecurityDomain() {
+        if (_securityDomain != null) {
+            return _securityDomain;
+        }
+        return DEFAULT_SECURITY_DOMAIN;
     }
 
     /**
-     * Sets the properties.
-     * @param properties the properties
+     * Sets the security domain.
+     * @param securityDomain the security domain
      * @return this instance (useful for chaining)
      */
-    public DefaultServiceSecurity setProperties(Map<String,String> properties) {
-        _properties = properties;
+    public DefaultServiceSecurity setSecurityDomain(String securityDomain) {
+        _securityDomain = securityDomain;
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format(FORMAT, getName(), _callbackHandler, _properties, _rolesAllowed, _runAs, getSecurityDomain());
     }
 
 }

@@ -89,6 +89,23 @@ public class V1ComponentServiceModel extends BaseNamedModel implements Component
      * {@inheritDoc}
      */
     @Override
+    public String getSecurity() {
+        return getModelAttribute(ComponentServiceModel.SECURITY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ComponentServiceModel setSecurity(String security) {
+        setModelAttribute(ComponentServiceModel.SECURITY, security);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void addPolicyRequirement(String policyName) {
         Set<String> requires = PolicyConfig.getRequires(this);
         requires.add(policyName);

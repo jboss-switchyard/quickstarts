@@ -29,17 +29,16 @@ import org.switchyard.config.model.NamedModel;
  */
 public interface CompositeReferenceModel extends NamedModel {
 
-    /** The "reference" name. */
-    public static final String REFERENCE = "reference";
+    /** The "multiplicity" name. */
+    public static final String MULTIPLICITY = "multiplicity";
+    /** The default multiplicity (1..1). */
+    public static final String DEFAULT_MULTIPLICITY = "1..1";
 
     /** The "promote" name. */
     public static final String PROMOTE = "promote";
 
-    /** The "multiplicity" name. */
-    public static final String MULTIPLICITY = "multiplicity";
-
-    /** The default multiplicity (1..1). */
-    public static final String DEFAULT_MULTIPLICITY = "1..1";
+    /** The "reference" name. */
+    public static final String REFERENCE = "reference";
 
     /**
      * Gets the parent composite model.

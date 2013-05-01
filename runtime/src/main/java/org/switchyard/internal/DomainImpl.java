@@ -63,16 +63,15 @@ public class DomainImpl implements ServiceDomain {
     private static Logger _logger = Logger.getLogger(DomainImpl.class);
 
     private final QName _name;
-    private final ServiceSecurity _security;
     private EventManager _eventManager;
-    private ServiceRegistry _registry;
+    private ServiceRegistry _serviceRegistry;
     private ExchangeBus _exchangeBus;
     private TransformerRegistry _transformerRegistry;
     private ValidatorRegistry _validatorRegistry;
     private List<ExchangeHandler> _userHandlers = new LinkedList<ExchangeHandler>();
-    private Map<String, Object> _attachements = Collections.synchronizedMap(new LinkedHashMap<String, Object>());
-    private Map<QName, ServiceReference> _references =
-            new ConcurrentHashMap<QName, ServiceReference>();
+    private Map<String, Object> _properties = Collections.synchronizedMap(new LinkedHashMap<String, Object>());
+    private Map<QName, ServiceReference> _serviceReferences = new ConcurrentHashMap<QName, ServiceReference>();
+    private Map<String, ServiceSecurity> _serviceSecurities = new ConcurrentHashMap<String, ServiceSecurity>();
     
     /**
      * Create a new ServiceDomain.
@@ -80,42 +79,47 @@ public class DomainImpl implements ServiceDomain {
      */
     public DomainImpl(QName name) {
         this(name,
-            new DefaultServiceSecurity(),
             new DefaultServiceRegistry(),
             new LocalExchangeBus(),
             new BaseTransformerRegistry(),
             new BaseValidatorRegistry(),
-            new EventManager());
-        // this constructor is used for tests, normally exchange bus can listen
-        // for domain events
-//        ((LocalExchangeBus) _exchangeBus).init(this);
+            new EventManager(),
+            null);
+        // this constructor is used for tests, normally exchange bus can listen for domain events
+        // ((LocalExchangeBus) _exchangeBus).init(this);
     }
     
     /**
      * Create a new ServiceDomain.
      * @param name name
-     * @param security service security
-     * @param registry registry
-     * @param exchangeBus message exchange bus
+     * @param serviceRegistry serviceRegistry
+     * @param exchangeBus exchangeBus
      * @param transformerRegistry transformerRegistry
      * @param validatorRegistry validatorRegistry
-     * @param eventManager event manager
+     * @param eventManager eventManager
+     * @param serviceSecurities serviceSecurities
      */
     public DomainImpl(QName name,
-            ServiceSecurity security,
-            ServiceRegistry registry,
+            ServiceRegistry serviceRegistry,
             ExchangeBus exchangeBus,
             TransformerRegistry transformerRegistry,
             ValidatorRegistry validatorRegistry,
-            EventManager eventManager) {
+            EventManager eventManager,
+            Map<String, ServiceSecurity> serviceSecurities) {
 
         _name = name;
-        _security = security;
-        _registry = registry;
+        _serviceRegistry = serviceRegistry;
         _exchangeBus  = exchangeBus;
         _transformerRegistry = transformerRegistry;
         _validatorRegistry = validatorRegistry;
         _eventManager = eventManager;
+
+        if (serviceSecurities != null) {
+            _serviceSecurities.putAll(serviceSecurities);
+        }
+        if (!_serviceSecurities.containsKey(ServiceSecurity.DEFAULT_NAME)) {
+            _serviceSecurities.put(ServiceSecurity.DEFAULT_NAME, new DefaultServiceSecurity());
+        }
 
         setEventPublisher(_transformerRegistry);
         setEventPublisher(_validatorRegistry);
@@ -132,22 +136,21 @@ public class DomainImpl implements ServiceDomain {
     @Override
     public Service registerService(QName serviceName, ServiceInterface metadata, 
             ExchangeHandler handler) {
-        List<Policy> requires = Collections.emptyList();
-        return registerService(serviceName, metadata, handler, requires, null);
+        return registerService(serviceName, metadata, handler, null, null, null);
     }
 
     @Override
     public Service registerService(QName serviceName,
-            ServiceInterface metadata, ExchangeHandler handler, List<Policy> requires, Registrant owner) {
+            ServiceInterface metadata, ExchangeHandler handler, List<Policy> requires, String securityName, Registrant owner) {
         
         // If no service interface is provided, we default to InOutService
         if (metadata == null) {
             metadata = new InOutService();
         }
         // Create the service 
-        Service service = new ServiceImpl(serviceName, metadata, this, handler, requires, owner);
+        Service service = new ServiceImpl(serviceName, metadata, this, handler, requires, securityName, owner);
         // register the service
-        _registry.registerService(service);
+        _serviceRegistry.registerService(service);
         _eventManager.publish(new ServiceRegistrationEvent(service));
         return service;
     }
@@ -155,22 +158,23 @@ public class DomainImpl implements ServiceDomain {
     @Override
     public ServiceReference registerServiceReference(QName serviceName,
             ServiceInterface metadata) {
-        return registerServiceReference(serviceName, metadata, null, null, null, null);
+        return registerServiceReference(serviceName, metadata, null, null, null, null, null);
     }
 
     @Override
     public ServiceReference registerServiceReference(QName serviceName,
             ServiceInterface metadata, ExchangeHandler handler) {
-        return registerServiceReference(serviceName, metadata, handler, null, null, null);
+        return registerServiceReference(serviceName, metadata, handler, null, null, null, null);
     }
     
     @Override
     public ServiceReference registerServiceReference(QName serviceName,
-            ServiceInterface metadata, ExchangeHandler handler, List<Policy> provides, List<Policy> requires, Registrant owner) {
-        ServiceReferenceImpl reference = new ServiceReferenceImpl(serviceName, metadata, this, provides, requires, handler, owner);
+            ServiceInterface metadata, ExchangeHandler handler,
+            List<Policy> provides, List<Policy> requires, String securityName, Registrant owner) {
+        ServiceReferenceImpl reference = new ServiceReferenceImpl(serviceName, metadata, this, provides, requires, securityName, handler, owner);
         Dispatcher dispatch = _exchangeBus.createDispatcher(reference);
         reference.setDispatcher(dispatch);
-        _references.put(serviceName, reference);
+        _serviceReferences.put(serviceName, reference);
         _eventManager.publish(new ReferenceRegistrationEvent(reference));
         
         return reference;
@@ -178,7 +182,7 @@ public class DomainImpl implements ServiceDomain {
     
     @Override
     public ServiceReference getServiceReference(QName serviceName) {
-        return _references.get(serviceName);
+        return _serviceReferences.get(serviceName);
     }
     
     /**
@@ -186,18 +190,13 @@ public class DomainImpl implements ServiceDomain {
      * @param reference the reference to unregister
      */
     public void unregisterServiceReference(ServiceReference reference) {
-        _references.remove(reference.getName());
+        _serviceReferences.remove(reference.getName());
         _eventManager.publish(new ReferenceUnregistrationEvent(reference));
     }
 
     @Override
     public QName getName() {
         return _name;
-    }
-    
-    @Override
-    public ServiceSecurity getServiceSecurity() {
-        return _security;
     }
     
     @Override
@@ -212,13 +211,13 @@ public class DomainImpl implements ServiceDomain {
     
      @Override
      public List<Service> getServices() {
-         return _registry.getServices();
+         return _serviceRegistry.getServices();
      }
        
 
      @Override
      public List<Service> getServices(QName serviceName) {
-         return _registry.getServices(serviceName);
+         return _serviceRegistry.getServices(serviceName);
      }
     
     /**
@@ -226,7 +225,7 @@ public class DomainImpl implements ServiceDomain {
      * @return service registry
      */
     public ServiceRegistry getServiceRegistry() {
-        return _registry;
+        return _serviceRegistry;
     }
     
     /**
@@ -241,7 +240,7 @@ public class DomainImpl implements ServiceDomain {
     public void destroy() {
         _exchangeBus.stop();
         _eventManager.publish(new DomainShutdownEvent(this));
-        _references.clear();
+        _serviceReferences.clear();
     }
 
     @Override
@@ -262,7 +261,7 @@ public class DomainImpl implements ServiceDomain {
 
     @Override
     public Map<String, Object> getProperties() {
-        return _attachements;
+        return _properties;
     }
 
     private void setEventPublisher(Object target) {
@@ -277,6 +276,18 @@ public class DomainImpl implements ServiceDomain {
             _logger.debug("Attempt to set EventPublisher failed on " 
                     + target.getClass().getCanonicalName(), ex);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ServiceSecurity getServiceSecurity(String name) {
+        ServiceSecurity serviceSecurity = name != null ? _serviceSecurities.get(name) : null;
+        if (serviceSecurity == null) {
+            serviceSecurity = _serviceSecurities.get(ServiceSecurity.DEFAULT_NAME);
+        }
+        return serviceSecurity;
     }
 
     @Override

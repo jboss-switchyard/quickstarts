@@ -18,6 +18,9 @@
  */
 package org.switchyard.config.model.domain.v1;
 
+import static org.switchyard.config.model.domain.HandlerModel.HANDLER;
+import static org.switchyard.config.model.switchyard.SwitchYardModel.DEFAULT_NAMESPACE;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,9 +30,9 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.HandlerModel;
 import org.switchyard.config.model.domain.HandlersModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * A version 1 HandlersModel.
@@ -39,35 +42,35 @@ public class V1HandlersModel extends BaseModel implements HandlersModel {
     private List<HandlerModel> _handlers = new ArrayList<HandlerModel>();
 
     /**
-     * Constructs a new V1PropertiesModel.
+     * Constructs a new V1HandlersModel.
      */
     public V1HandlersModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, HandlersModel.HANDLERS));
-        setModelChildrenOrder(HandlerModel.HANDLER);
+        super(new QName(DEFAULT_NAMESPACE, HANDLERS));
+        setModelChildrenOrder(HANDLER);
     }
 
     /**
-     * Constructs a new V1PropertiesModel with the specified Configuration and Descriptor.
+     * Constructs a new V1HandlersModel with the specified Configuration and Descriptor.
      * @param config the Configuration
      * @param desc the Descriptor
      */
     public V1HandlersModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        for (Configuration handler_config : config.getChildrenStartsWith(HandlerModel.HANDLER)) {
+        for (Configuration handler_config : config.getChildrenStartsWith(HANDLER)) {
             HandlerModel handler = (HandlerModel)readModel(handler_config);
             if (handler != null) {
                 _handlers.add(handler);
             }
         }
-        setModelChildrenOrder(HandlerModel.HANDLER);
+        setModelChildrenOrder(HANDLER);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SwitchYardModel getSwitchYard() {
-        return (SwitchYardModel)getModelParent();
+    public DomainModel getDomain() {
+        return (DomainModel)getModelParent();
     }
 
     /**
@@ -88,6 +91,9 @@ public class V1HandlersModel extends BaseModel implements HandlersModel {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HandlerModel removeHandler(String handlerName) {
         HandlerModel removed = null;
@@ -100,4 +106,5 @@ public class V1HandlersModel extends BaseModel implements HandlersModel {
         }
         return removed;
     }
+
 }

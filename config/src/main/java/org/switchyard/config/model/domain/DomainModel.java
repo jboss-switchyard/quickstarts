@@ -63,16 +63,16 @@ public interface DomainModel extends NamedModel {
     public DomainModel setHandlers(HandlersModel handlers);
     
     /**
-     * Gets the child security model.
-     * @return the child security model
+     * Gets the child securities model.
+     * @return the child securities model
      */
-    public SecurityModel getSecurity();
+    public SecuritiesModel getSecurities();
     
     /**
-     * Sets the child security model.
-     * @param security the child security model
+     * Sets the child securities model.
+     * @param securities the child securities model
      * @return this DomainModel (useful for chaining)
      */
-    public DomainModel setSecurity(SecurityModel security);
+    public DomainModel setSecurities(SecuritiesModel securities);
     
 }

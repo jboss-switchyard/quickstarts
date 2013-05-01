@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA  02110-1301, USA.
 -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:sy="urn:switchyard-config:switchyard:1.0"
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
             xmlns:bean="urn:switchyard-config:test-bean:1.0"
             xmlns:java="urn:switchyard-config:test-java:1.0"
@@ -43,10 +44,10 @@ MA  02110-1301, USA.
         </sca:service>
         <sca:component name="SimpleService">
             <bean:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>
-            <sca:service name="SimpleService">
+            <sca:service name="SimpleService" requires="clientAuthentication" sy:security="theSecurityName">
                 <sca:interface.java interface="org.switchyard.example.m1app.SimpleService"/>
             </sca:service>
-            <sca:reference name="anotherService">
+            <sca:reference name="anotherService" requires="clientAuthentication" sy:security="theSecurityName">
                 <sca:interface.java interface="org.switchyard.example.m1app.AnotherService"/>
             </sca:reference>
         </sca:component>
@@ -87,11 +88,13 @@ MA  02110-1301, USA.
         <handlers>
             <handler name="handler1" class="org.switchyard.handlers.TestHandler"/>
         </handlers>
-        <security callbackHandler="java.lang.Object" moduleName="other" rolesAllowed="administrator, user" runAs="leader">
-            <properties>
-                <property name="will" value="${whoIsWill}"/>
-            </properties>
-        </security>
+        <securities>
+            <security callbackHandler="java.lang.Object" name="theSecurityName" rolesAllowed="administrator, user" runAs="leader" securityDomain="theSecurityDomain">
+                <properties>
+                    <property name="will" value="${whoIsWill}"/>
+                </properties>
+            </security>
+        </securities>
     </domain>
     <artifacts>
         <artifact name="OrderService" url="http://localhost:8080/guvnorsoa/rest/packages/OrderService"/>

@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -24,21 +24,37 @@ import java.util.Set;
 /**
  * ServiceSecurity.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 public interface ServiceSecurity {
 
     /**
-     * Gets the module name.
-     * @return the module name
+     * The default name ("default").
      */
-    public String getModuleName();
+    public static final String DEFAULT_NAME = "default";
+
+    /**
+     * The default security domain ("other").
+     */
+    public static final String DEFAULT_SECURITY_DOMAIN = "other";
+
+    /**
+     * Gets the name.
+     * @return the name
+     */
+    public String getName();
 
     /**
      * Gets the CallbackHandler class.
      * @return the CallbackHandler class
      */
     public Class<?> getCallbackHandler();
+
+    /**
+     * Gets the properties.
+     * @return the properties
+     */
+    public Map<String,String> getProperties();
 
     /**
      * Gets the roles allowed.
@@ -53,9 +69,9 @@ public interface ServiceSecurity {
     public String getRunAs();
 
     /**
-     * Gets the properties.
-     * @return the properties
+     * Gets the security domain.
+     * @return the security domain
      */
-    public Map<String,String> getProperties();
+    public String getSecurityDomain();
 
 }

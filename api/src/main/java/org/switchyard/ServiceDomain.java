@@ -68,6 +68,7 @@ public interface ServiceDomain {
      * service
      * @param contract service interface details
      * @param requires policy requirements for the service
+     * @param securityName the security name
      * @param owner metadata related to the entity registering the service
      * @return the registered service
      */
@@ -75,6 +76,7 @@ public interface ServiceDomain {
             ServiceInterface contract,
             ExchangeHandler handler,
             List<Policy> requires,
+            String securityName,
             Registrant owner);
     
     /**
@@ -105,6 +107,7 @@ public interface ServiceDomain {
      * @param handler the handler to use to process replies from the service
      * @param provides policies provided by the reference
      * @param requires policies required for the reference
+     * @param securityName the security name
      * @param owner metadata related to the entity registering the reference
      * @return a reference to the registered service that can be used to
      * unregister when required
@@ -114,6 +117,7 @@ public interface ServiceDomain {
             ExchangeHandler handler,
             List<Policy> provides,
             List<Policy> requires,
+            String securityName,
             Registrant owner);
     
     /**
@@ -136,12 +140,6 @@ public interface ServiceDomain {
      * @return services
      */
     List<Service> getServices(QName serviceName);
-    
-    /**
-     * Returns a reference to the service security for this domain.
-     * @return service security instance
-     */
-    public ServiceSecurity getServiceSecurity();
     
     /**
      * Returns a reference to the transformer registry for this domain.
@@ -177,6 +175,13 @@ public interface ServiceDomain {
      * @return event publisher
      */
     EventPublisher getEventPublisher();
+
+    /**
+     * Gets a ServiceSecurity by name.
+     * @param name the name
+     * @return the ServiceSecurity
+     */
+    ServiceSecurity getServiceSecurity(String name);
 
     /**
      * Shared properties/POJOs which are not part of switchyard core-api.

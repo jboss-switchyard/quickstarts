@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceSecurity;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
@@ -48,13 +49,13 @@ public class MockService implements Service {
     }
 
     @Override
-    public ServiceInterface getInterface() {
-        return _serviceInterface;
+    public QName getName() {
+        return _serviceName;
     }
 
     @Override
-    public QName getName() {
-        return _serviceName;
+    public ServiceInterface getInterface() {
+        return _serviceInterface;
     }
 
     @Override
@@ -64,6 +65,11 @@ public class MockService implements Service {
 
     @Override
     public ServiceDomain getDomain() {
+        return null;
+    }
+
+    @Override
+    public ServiceSecurity getSecurity() {
         return null;
     }
 
@@ -79,7 +85,6 @@ public class MockService implements Service {
 
     @Override
     public Registrant getProviderMetadata() {
-        // TODO Auto-generated method stub
         return null;
     }
 

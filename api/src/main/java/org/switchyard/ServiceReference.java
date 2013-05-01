@@ -50,6 +50,12 @@ public interface ServiceReference {
     ServiceInterface getInterface();
     
     /**
+     * Gets the security.
+     * @return the security
+     */
+    ServiceSecurity getSecurity();
+    
+    /**
      * Creates a new Exchange to invoke this service.  Since this method does
      * not accept an operation name, it should only be used when the service
      * interface contains a single operation.

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.security;
+package org.switchyard.security.spi;
 
 import java.util.Set;
 
@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.reflect.Construction;
+import org.switchyard.security.SecurityContext;
 import org.switchyard.security.callback.handler.NamePasswordCallbackHandler;
 import org.switchyard.security.callback.handler.SwitchYardCallbackHandler;
 import org.switchyard.security.principal.Group;
@@ -64,7 +65,7 @@ public class JaasSecurityProvider extends SecurityProvider {
             sych.setProperties(serviceSecurity.getProperties());
             sych.setCredentials(securityContext.getCredentials());
         }
-        String securityDomain = getSecurityDomain(serviceSecurity);
+        String securityDomain = serviceSecurity.getSecurityDomain();
         Subject subject = securityContext.getSubject(securityDomain);
         try {
             new LoginContext(securityDomain, subject, ch).login();
@@ -94,7 +95,7 @@ public class JaasSecurityProvider extends SecurityProvider {
         if (runAs != null) {
             success = false;
             Role runAsRole = new Role(runAs);
-            String securityDomain = getSecurityDomain(serviceSecurity);
+            String securityDomain = serviceSecurity.getSecurityDomain();
             Subject subject = securityContext.getSubject(securityDomain);
             Set<Group> groups = subject.getPrincipals(Group.class);
             if (groups.isEmpty()) {
@@ -123,7 +124,7 @@ public class JaasSecurityProvider extends SecurityProvider {
         if (rolesAllowed.isEmpty()) {
             return true;
         }
-        String securityDomain = getSecurityDomain(serviceSecurity);
+        String securityDomain = serviceSecurity.getSecurityDomain();
         for (String roleName : rolesAllowed) {
             boolean isInRole = securityContext.isCallerInRole(roleName, securityDomain);
             if (isInRole) {
@@ -138,21 +139,9 @@ public class JaasSecurityProvider extends SecurityProvider {
      */
     @Override
     public boolean clear(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
+        // TODO: Look into only clearing the context details per the config's specified security domain
         securityContext.clear();
         return true;
-    }
-
-    /**
-     * Gets the security domain from the ServiceSecurity.
-     * @param serviceSecurity the ServiceSecurity
-     * @return the security domain
-     */
-    protected String getSecurityDomain(ServiceSecurity serviceSecurity) {
-        String securityDomain = Strings.trimToNull(serviceSecurity.getModuleName());
-        if (securityDomain == null) {
-            securityDomain = "other";
-        }
-        return securityDomain;
     }
 
 }

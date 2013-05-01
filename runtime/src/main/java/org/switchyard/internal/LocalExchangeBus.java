@@ -62,7 +62,7 @@ public class LocalExchangeBus implements ExchangeBus {
     public void init(ServiceDomain domain) {
         _domain = domain;
         TransactionHandler transactionHandler = new TransactionHandler();
-        SecurityHandler securityHandler = new SecurityHandler(domain.getServiceSecurity());
+        SecurityHandler securityHandler = new SecurityHandler();
         TransformHandler transformHandler = new TransformHandler(domain.getTransformerRegistry());
         ValidateHandler validateHandler = new ValidateHandler(domain.getValidatorRegistry());
         
