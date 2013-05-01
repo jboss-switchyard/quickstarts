@@ -14,6 +14,10 @@
                 <include>*.txt</include>
                 <include>standalone/**/standalone*.xml</include>
                 <include>domain/**/domain*.xml</include>
+                <include>modules/system/layers/base/org/jboss/as/webservices/main/jbossws-jboss720-server-integration-${version.jbossws.jboss720.server.integration}.jar</include>
+                <include>modules/system/layers/base/org/jboss/as/webservices/main/module.xml</include>
+                <include>modules/system/layers/base/org/jboss/ws/spi/main/jbossws-spi-${version.jbossws.spi}.jar</include>
+                <include>modules/system/layers/base/org/jboss/ws/spi/main/module.xml</include>
                 <include>modules/system/layers/soa/**</include>
                 <include>modules/layers.conf</include>
                 <include>quickstarts/**</include>

@@ -36,19 +36,12 @@
     </xsl:copy>
 </xsl:template>
 
-<xsl:template match="node()[name(.)='resources']">
+<xsl:template match="node()[name(.)='resource-root'][starts-with(@path,'jbossws-spi')]">
     <xsl:copy>
-        <xsl:apply-templates select="@*|node()"/>
-        <resource-root path="jbossws-spi-2.1.2.Final.jar"/>
+        <xsl:attribute name="path">
+            <xsl:text>jbossws-spi-2.1.2.Final.jar</xsl:text>
+        </xsl:attribute>
     </xsl:copy>
-</xsl:template>
-
-<xsl:template match="node()[name(.)='resource-root']">
-    <xsl:text disable-output-escaping="yes">&lt;!-- </xsl:text>
-        <xsl:copy>
-            <xsl:apply-templates select="@*|node()"/>
-        </xsl:copy>
-    <xsl:text disable-output-escaping="yes"> --&gt;</xsl:text>
 </xsl:template>
 
 </xsl:stylesheet>

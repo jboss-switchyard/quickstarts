@@ -36,20 +36,12 @@
     </xsl:copy>
 </xsl:template>
 
-<xsl:template match="node()[name(.)='resources']">
+<xsl:template match="node()[name(.)='resource-root'][starts-with(@path,'jboss-as-webservices-server-integration')]">
     <xsl:copy>
-        <xsl:apply-templates select="@*|node()"/>
-        <resource-root path="jbossws-jboss720-server-integration-4.2.0-SNAPSHOT.jar"/>
-        <resource-root path="jbossws-cxf-resources-4.1.3.Final-jboss711.jar"/>
+        <xsl:attribute name="path">
+            <xsl:text>jbossws-jboss720-server-integration-4.2.0-SNAPSHOT.jar</xsl:text>
+        </xsl:attribute>
     </xsl:copy>
-</xsl:template>
-
-<xsl:template match="node()[name(.)='resource-root']">
-    <xsl:text disable-output-escaping="yes">&lt;!-- </xsl:text>
-        <xsl:copy>
-            <xsl:apply-templates select="@*|node()"/>
-        </xsl:copy>
-    <xsl:text disable-output-escaping="yes"> --&gt;</xsl:text>
 </xsl:template>
 
 </xsl:stylesheet>
