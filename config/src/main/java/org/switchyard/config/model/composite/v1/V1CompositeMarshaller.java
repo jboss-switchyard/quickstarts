@@ -23,6 +23,8 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
+import org.switchyard.config.model.implementation.bpel.v1.V1BPELComponentImplementationModel;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -41,6 +43,8 @@ import org.switchyard.config.model.property.v1.V1PropertyModel;
  */
 public class V1CompositeMarshaller extends BaseMarshaller {
 
+    private static final String IMPLEMENTATION_BPEL= ComponentImplementationModel.IMPLEMENTATION + "." + BPELComponentImplementationModel.BPEL;    
+    
     /**
      * Constructs a new V1CompositeMarshaller with the specified Descriptor.
      * @param desc the Descriptor
@@ -76,6 +80,9 @@ public class V1CompositeMarshaller extends BaseMarshaller {
         } else if (name.equals(ComponentModel.COMPONENT)) {
             return new V1ComponentModel(config, desc);
         } else if (name.startsWith(ComponentImplementationModel.IMPLEMENTATION)) {
+            if (name.equals(IMPLEMENTATION_BPEL)) {
+                return new V1BPELComponentImplementationModel(config, getDescriptor());
+            }
             return new V1ComponentImplementationModel(config, desc);
         } else if (name.startsWith(InterfaceModel.INTERFACE)) {
             Configuration config_parent = config.getParent();
