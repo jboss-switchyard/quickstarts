@@ -28,7 +28,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:as="urn:jboss:domain:1.2"
     xmlns:inf="urn:jboss:domain:infinispan:1.4"
-    exclude-result-prefixes="xs xsl xsi fn xdt as inf">
+    xmlns:switch="urn:jboss:domain:switchyard:1.0"
+    exclude-result-prefixes="xs xsl xsi fn xdt as inf switch">
 
 <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
@@ -49,5 +50,10 @@
             </cache-container>
     </xsl:copy>
 </xsl:template>
+
+<xsl:template match="//switch:cache-name">
+    <xsl:copy>switchyard</xsl:copy>
+</xsl:template>
+
 
 </xsl:stylesheet>
