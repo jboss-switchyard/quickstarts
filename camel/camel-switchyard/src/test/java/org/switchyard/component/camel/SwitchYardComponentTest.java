@@ -109,7 +109,7 @@ public class SwitchYardComponentTest extends SwitchYardComponentTestBase {
     public void customBindingData() throws Exception {
         List<Policy> policies = Arrays.<Policy>asList(SecurityPolicy.CONFIDENTIALITY);
         final MockHandler mockService = new MockHandler();
-        _serviceDomain.registerService(new QName(_serviceName), new InOnlyService(), mockService, policies, new Binding(null));
+        _serviceDomain.registerService(new QName(_serviceName), new InOnlyService(), mockService, policies, null, new Binding(null));
         _serviceDomain.registerServiceReference(new QName(_serviceName), new InOnlyService("process"));
         _camelContext.addRoutes(new RouteBuilder() {
             @Override
