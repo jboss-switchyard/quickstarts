@@ -29,6 +29,7 @@
         <!-- Needed for @Resource annotations -->
         <module name="javax.annotation.api"/>
         <module name="javax.api"/>
+        <module name="javax.mail.api"/>
         <module name="javax.servlet.api"/>
         <module name="javax.wsdl4j.api"/>
         <module name="org.apache.cxf" export="true"/>
