@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<route xmlns="http://camel.apache.org/schema/spring" id="org.switchyard.quickstarts.soap-attachment.external">
+    <log message="Request is: ${body}" />
+    <process ref="customProcessor"/>
+    <log message="Response is: ${body}" />
+</route>

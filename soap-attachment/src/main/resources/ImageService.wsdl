@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:tns="urn:switchyard-quickstart:soap-attachment:1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="urn:switchyard-quickstart:soap-attachment:1.0"
+    name="ImageServiceService">
+    <types>
+        <xsd:schema xmlns:tns="urn:switchyard-quickstart:soap-attachment:1.0" version="1.0" targetNamespace="urn:switchyard-quickstart:soap-attachment:1.0">
+            <xsd:element name="echoImage" nillable="true" type="xsd:base64Binary"/>
+            <xsd:element name="echoImageResponse" nillable="true" type="xsd:base64Binary"/>
+        </xsd:schema>
+    </types>
+    <message name="echoImage">
+        <part name="echoImage" element="tns:echoImage"/>
+    </message>
+    <message name="echoImageResponse">
+        <part name="echoImageResponse" element="tns:echoImageResponse"/>
+    </message>
+    <portType name="ImageService">
+        <operation name="echoImage">
+            <input message="tns:echoImage"/>
+            <output message="tns:echoImageResponse"/>
+        </operation>
+    </portType>
+    <binding name="ImageServicePortBinding" type="tns:ImageService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="echoImage">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal" namespace="urn:switchyard-quickstart:soap-attachment:1.0"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="urn:switchyard-quickstart:soap-attachment:1.0"/>
+            </output>
+            <!-- mime parts are disallowed by WS-I BP http://www.ws-i.org/profiles/BasicProfile-1.0-2004-04-16.html#refinement16627160-->
+            <!--<input>
+                <mime:multipartRelated>
+                    <mime:part>
+                        <mime:content part="echoImage" type="image/png" />
+                    </mime:part>
+                </mime:multipartRelated>
+            </input>
+            <output>
+                <mime:multipartRelated>
+                    <mime:part>
+                        <mime:content part="echoImageResponse" type="image/png" />
+                    </mime:part>
+                </mime:multipartRelated>
+            </output>-->
+        </operation>
+    </binding>
+    <service name="ImageServiceService">
+        <port name="ImageServicePort" binding="tns:ImageServicePortBinding">
+            <soap:address location="http://localhost:8080/soap-attachment/ImageServiceService"/>
+        </port>
+    </service>
+</definitions>
