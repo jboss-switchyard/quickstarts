@@ -20,6 +20,7 @@
 package org.switchyard.component.soap.util;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -87,6 +89,8 @@ public final class SOAPUtil {
     public static final QName SOAP12_FAULT_MESSAGE_TYPE = new QName(SOAP12_URI, "Fault");
 
     private static final boolean RETURN_STACK_TRACES = false;
+    private static final String INDENT_FEATURE = "{http://xml.apache.org/xslt}indent-amount";
+    private static final String INDENT_AMOUNT = "4";
 
     /** SOAP Message Factory holder. */
     private static final MessageFactory SOAP11_MESSAGE_FACTORY;
@@ -260,6 +264,27 @@ public final class SOAPUtil {
         } catch (Exception e) {
             LOGGER.error("Could not parse SOAP Message", e);
             return null;
+        }
+    }
+
+    /**
+     * Pretty print a SOAP message.
+     * @param msg SOAPMessage to print
+     * @param out PrintStream to print to.
+     */
+    public static void prettyPrint(SOAPMessage msg, PrintStream out) {
+        try {
+            TransformerFactory transFactory = TransformerFactory.newInstance();
+            Transformer transformer = transFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(INDENT_FEATURE, INDENT_AMOUNT);
+            StringWriter sw = new StringWriter();
+            DOMSource source = new DOMSource(msg.getSOAPPart().getDocumentElement());
+            StreamResult result = new StreamResult(sw);
+            transformer.transform(source, result);
+            out.println(sw);
+        } catch (Exception e) {
+            LOGGER.error("Could not parse SOAP Message", e);
         }
     }
 

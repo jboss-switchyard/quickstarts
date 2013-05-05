@@ -22,10 +22,14 @@ package org.switchyard.component.soap.composer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
+import javax.activation.DataHandler;
+import javax.mail.util.ByteArrayDataSource;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
+import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
 import javax.xml.soap.SOAPBody;
@@ -57,7 +61,14 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
     // Constant suffix used for the reply wrapper when the composer is configured to 
     // wrap response messages with operation name.
     private static final String DOC_LIT_WRAPPED_REPLY_SUFFIX = "Response";
-    
+
+    private static final String CONTENT_DISPOSITION = "Content-Disposition";
+    private static final String CONTENT_ID = "Content-ID";
+    private static final String CONTENT_ID_START = "<";
+    private static final String CONTENT_DISPOSITION_NAME = "name=";
+    private static final String CONTENT_DISPOSITION_QUOTE = "\"";
+    private static final String TEMP_FILE_EXTENSION = ".tmp";
+
     private static Logger _log = Logger.getLogger(SOAPMessageComposer.class);
     private SOAPMessageComposerModel _config;
     private Port _wsdlPort;
@@ -124,6 +135,30 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
             }
             bodyNode = bodyNode.getParentNode().removeChild(bodyNode);
             message.setContent(new DOMSource(bodyNode));
+
+            // SOAP Attachments
+            Iterator<AttachmentPart> aparts = (Iterator<AttachmentPart>) soapMessage.getAttachments();
+            while (aparts.hasNext()) {
+                AttachmentPart apRequest = aparts.next();
+                String name = apRequest.getDataHandler().getDataSource().getName();
+                if ((name == null) || (name.length() == 0)) {
+                    String[] disposition = apRequest.getMimeHeader(CONTENT_DISPOSITION);
+                    String[] contentId = apRequest.getMimeHeader(CONTENT_ID);
+                    name = (contentId != null) ? contentId[0] : null;
+                    if ((name == null) && (disposition != null)) {
+                        int start = disposition[0].indexOf(CONTENT_DISPOSITION_NAME);
+                        String namePart = disposition[0].substring(start + CONTENT_DISPOSITION_NAME.length() + 1);
+                        int end = namePart.indexOf(CONTENT_DISPOSITION_QUOTE);
+                        name = namePart.substring(0, end);
+                    } else if (name == null) {
+                        // TODO: Identify the extension using content-type
+                        name = UUID.randomUUID() + TEMP_FILE_EXTENSION;
+                    } else if (name.startsWith(CONTENT_ID_START)) {
+                        name = name.substring(1, name.length() - 1);
+                    }
+                }
+                message.addAttachment(name, new ByteArrayDataSource(apRequest.getDataHandler().getInputStream(), apRequest.getDataHandler().getContentType()));
+            }
         } catch (Exception ex) {
             if (ex instanceof SOAPException) {
                 throw (SOAPException) ex;
@@ -171,6 +206,13 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
                         }
                     }
                     soapMessage.getSOAPBody().appendChild(messageNodeImport);
+                    // SOAP Attachments
+                    for (String name : message.getAttachmentMap().keySet()) {
+                        AttachmentPart apResponse = soapMessage.createAttachmentPart();
+                        apResponse.setDataHandler(new DataHandler(message.getAttachment(name)));
+                        apResponse.setContentId("<" + name + ">");
+                        soapMessage.addAttachmentPart(apResponse);
+                    }
                 } else {
                     // convert to SOAP Fault since ExchangeState is FAULT but the message is not SOAP Fault
                     SOAPUtil.addFault(soapMessage).addDetail().appendChild(messageNodeImport);
