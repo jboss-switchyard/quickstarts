@@ -20,6 +20,9 @@ package org.switchyard.transform.internal.xslt;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.xml.namespace.QName;
+
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
@@ -27,7 +30,6 @@ import org.junit.Test;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.DefaultMessage;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
@@ -35,15 +37,9 @@ import org.switchyard.transform.AbstractTransformerTestCase;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.TransformerRegistryLoader;
-import org.switchyard.transform.TransformerUtil;
-import org.switchyard.transform.config.model.XsltTransformModel;
 import org.switchyard.transform.config.model.v1.V1XsltTransformModel;
-import org.switchyard.transform.ootb.AbstractTransformerTest;
-import org.switchyard.transform.xslt.XsltTransformFactory;
 import org.switchyard.transform.xslt.XsltTransformer;
 import org.xml.sax.SAXException;
-
-import javax.xml.namespace.QName;
 
 /**
  * @author Alejandro Montenegro <a
@@ -164,6 +160,27 @@ public class XsltTransformerTest extends AbstractTransformerTestCase {
         }
     }
 
+    @Test
+    public void test_xsl_include_with_href() throws IOException, SAXException {
+        try {
+            Transformer transformer = getTransformer("xslt-config-include-href.xml");
+
+            Assert.assertTrue(transformer instanceof XsltTransformer);
+        } catch (SwitchYardException e) {
+            Assert.assertEquals("An unexpected error ocurred while creating the xslt transformer", e.getMessage());
+        }
+    }
+    
+    @Test
+    public void test_xsl_include_with_invalid_href() throws IOException, SAXException {
+        try {
+            Transformer transformer = getTransformer("xslt-config-include-invalid-href.xml");
+            
+            Assert.fail("No SwitchYardException has been thrown");
+        } catch (SwitchYardException e) {
+            Assert.assertEquals("An unexpected error ocurred while creating the xslt transformer", e.getMessage());
+        }
+    }
     private DefaultMessage newMessage(Object content) {
         DefaultMessage message = new DefaultMessage().setContent(content);
         message.setTransformerRegistry(xformReg);
