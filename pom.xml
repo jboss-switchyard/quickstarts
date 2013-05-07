@@ -84,7 +84,7 @@
         <version.forge.arquillian>1.0.0.CR7</version.forge.arquillian>
         <version.forge.jboss.interceptor>2.0.0.Final</version.forge.jboss.interceptor>
         <version.forge.weld>1.1.5.AS71.Final</version.forge.weld>
-        <version.freemarker>2.3.15</version.freemarker>
+        <version.freemarker>2.3.19</version.freemarker>
         <version.ftpserver>1.0.6</version.ftpserver>
         <version.fungal>0.10.2.Final</version.fungal>
         <version.groovy>2.0.5</version.groovy>
