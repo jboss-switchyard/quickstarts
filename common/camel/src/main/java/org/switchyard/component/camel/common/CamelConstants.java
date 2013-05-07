@@ -31,12 +31,6 @@ public interface CamelConstants {
     String SWITCHYARD_COMPONENT_NAME = "switchyard";
 
     /**
-     * Property added to each Camel Context so that code initialized inside 
-     * Camel can access the SY service domain.
-     */
-    String SERVICE_DOMAIN = "org.switchyard.camel.serviceDomain";
-
-    /**
      * Name of message header where operation selector is stored.
      */
     String OPERATION_SELECTOR_HEADER = "org.switchyard.operationSelector";

@@ -32,6 +32,7 @@
                 <to uri="switchyard://MathAbs" />
             </when>
             <otherwise>
+                <log message="Moving ${body} ${in.headers} to unknown" />
                 <to uri="mock:unknown" />
             </otherwise>
         </choice>

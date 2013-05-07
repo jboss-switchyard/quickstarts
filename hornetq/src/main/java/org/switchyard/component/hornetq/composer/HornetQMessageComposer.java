@@ -34,8 +34,8 @@ public class HornetQMessageComposer extends BaseMessageComposer<HornetQBindingDa
      * {@inheritDoc}
      */
     @Override
-    public Message compose(HornetQBindingData source, Exchange exchange, boolean create) throws Exception {
-        final Message message = create ? exchange.createMessage() : exchange.getMessage();
+    public Message compose(HornetQBindingData source, Exchange exchange) throws Exception {
+        final Message message = exchange.createMessage();
         getContextMapper().mapFrom(source, exchange.getContext(message));
         message.setContent(HornetQUtil.readBytes(source.getClientMessage()));
         return message;

@@ -98,7 +98,7 @@ public class SwitchYardEndpoint extends DefaultEndpoint {
      */
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
-        _consumer = new SwitchYardConsumer(this, processor, getMessageComposer());
+        _consumer = new SwitchYardConsumer(this, processor);
         return _consumer;
     }
 

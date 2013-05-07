@@ -37,8 +37,8 @@ public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyBinding
      * {@inheritDoc}
      */
     @Override
-    public Message compose(RESTEasyBindingData source, Exchange exchange, boolean create) throws Exception {
-        final Message message = create ? exchange.createMessage() : exchange.getMessage();
+    public Message compose(RESTEasyBindingData source, Exchange exchange) throws Exception {
+        final Message message = exchange.createMessage();
         getContextMapper().mapFrom(source, exchange.getContext(message));
         Object content = null;
         if (source.getParameters().length > 0) {

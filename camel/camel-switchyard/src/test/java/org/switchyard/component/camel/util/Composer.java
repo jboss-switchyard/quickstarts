@@ -32,8 +32,8 @@ public class Composer extends CamelMessageComposer {
     public static final String DECOMPOSE_PREFIX = "Composer decompose ";
 
     @Override
-    public Message compose(CamelBindingData source, Exchange exchange, boolean create) throws Exception {
-        Message message = super.compose(source, exchange, create);
+    public Message compose(CamelBindingData source, Exchange exchange) throws Exception {
+        Message message = super.compose(source, exchange);
         message.setContent(COMPOSE_PREFIX + message.getContent(String.class));
         return message;
     }

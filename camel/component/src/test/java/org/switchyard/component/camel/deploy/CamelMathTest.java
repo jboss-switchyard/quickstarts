@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
 import org.switchyard.common.camel.SwitchYardCamelContext;
-import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
@@ -59,7 +58,7 @@ public class CamelMathTest {
 
     @Before
     public void verifyContext() {
-        assertNotNull(_camelContext.getWritebleRegistry().get(CamelConstants.SERVICE_DOMAIN));
+        assertNotNull(_camelContext.getServiceDomain());
     }
 
     @Test

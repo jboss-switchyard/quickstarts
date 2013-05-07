@@ -37,9 +37,9 @@ public class IndexedRecordMessageComposer extends BaseMessageComposer<IndexedRec
      * {@inheritDoc}
      */
     @Override
-    public org.switchyard.Message compose(IndexedRecordBindingData source, Exchange exchange, boolean create) throws Exception {
+    public org.switchyard.Message compose(IndexedRecordBindingData source, Exchange exchange) throws Exception {
         
-        final org.switchyard.Message message = create ? exchange.createMessage() : exchange.getMessage();
+        final org.switchyard.Message message = exchange.createMessage();
         getContextMapper().mapFrom(source, exchange.getContext(message));
         List<Object> l = new ArrayList<Object>();
         l.addAll(source.getRecord());

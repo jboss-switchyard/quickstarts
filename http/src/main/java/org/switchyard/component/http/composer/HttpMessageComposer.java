@@ -44,8 +44,8 @@ public class HttpMessageComposer extends BaseMessageComposer<HttpBindingData> {
      * {@inheritDoc}
      */
     @Override
-    public Message compose(HttpBindingData source, Exchange exchange, boolean create) throws Exception {
-        final Message message = create ? exchange.createMessage() : exchange.getMessage();
+    public Message compose(HttpBindingData source, Exchange exchange) throws Exception {
+        final Message message = exchange.createMessage();
 
         getContextMapper().mapFrom(source, exchange.getContext(message));
 

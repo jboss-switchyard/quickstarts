@@ -37,9 +37,8 @@ public class MappedRecordMessageComposer extends BaseMessageComposer<MappedRecor
      * {@inheritDoc}
      */
     @Override
-    public org.switchyard.Message compose(MappedRecordBindingData source, Exchange exchange, boolean create) throws Exception {
-        
-        final org.switchyard.Message message = create ? exchange.createMessage() : exchange.getMessage();
+    public org.switchyard.Message compose(MappedRecordBindingData source, Exchange exchange) throws Exception {
+        final org.switchyard.Message message = exchange.createMessage();
         getContextMapper().mapFrom(source, exchange.getContext(message));
         Map<Object,Object> m = new HashMap<Object,Object>();
         m.putAll(source.getRecord());

@@ -162,7 +162,7 @@ public class OutboundHandler extends BaseServiceHandler {
                         faultInfo.copyFaultInfo(response);
                         bindingData.setSOAPFaultInfo(faultInfo);
                     }
-                    message = _messageComposer.compose(bindingData, exchange, true);
+                    message = _messageComposer.compose(bindingData, exchange);
                 } catch (Exception e) {
                     throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
                 }

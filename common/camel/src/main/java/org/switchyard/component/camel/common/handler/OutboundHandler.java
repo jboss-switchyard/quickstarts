@@ -150,7 +150,7 @@ public class OutboundHandler extends BaseServiceHandler {
         if (camelExchange.getException() != null) {
             throw new HandlerException(camelExchange.getException());
         }
-        return camelExchange.getOut().getBody();
+        return camelExchange.hasOut() ? camelExchange.getOut().getBody() : camelExchange.getIn().getBody();
     }
 
     private void sendResponseToSwitchyard(final Exchange switchyardExchange, final Object payload) {

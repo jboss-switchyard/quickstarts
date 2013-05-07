@@ -98,7 +98,7 @@ public class InboundHandler extends BaseServiceHandler {
         Exchange exchange = _service.createExchange(restMessageRequest.getOperationName(), inOutHandler);
         Message message = null;
         try {
-            message = _messageComposer.compose(restMessageRequest, exchange, true);
+            message = _messageComposer.compose(restMessageRequest, exchange);
         } catch (Exception e) {
             LOGGER.error("Unexpected exception composing inbound Message", e);
             return output;

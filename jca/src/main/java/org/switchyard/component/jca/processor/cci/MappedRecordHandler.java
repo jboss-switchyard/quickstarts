@@ -38,6 +38,6 @@ public class MappedRecordHandler extends RecordHandler<MappedRecordBindingData> 
     public Message handle(Exchange exchange, Connection conn, Interaction interact) throws Exception {
         MappedRecord record = getRecordFactory().createMappedRecord(MappedRecordHandler.class.getName());
         MappedRecord outRecord = (MappedRecord) interact.execute(getInteractionSpec(), getMessageComposer(MappedRecordBindingData.class).decompose(exchange, new MappedRecordBindingData(record)).getRecord());
-        return getMessageComposer(MappedRecordBindingData.class).compose(new MappedRecordBindingData(outRecord), exchange, true);
+        return getMessageComposer(MappedRecordBindingData.class).compose(new MappedRecordBindingData(outRecord), exchange);
     }
 }

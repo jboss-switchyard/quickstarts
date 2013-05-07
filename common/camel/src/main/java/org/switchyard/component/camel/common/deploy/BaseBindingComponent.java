@@ -18,18 +18,12 @@
  */
 package org.switchyard.component.camel.common.deploy;
 
-import java.util.List;
-
-import org.switchyard.ServiceDomain;
 import org.switchyard.common.camel.SwitchYardCamelContext;
-import org.switchyard.component.camel.common.CamelConstants;
-import org.switchyard.deploy.Activator;
-import org.switchyard.deploy.BaseComponent;
 
 /**
  * Base class for camel binding components.
  */
-public abstract class BaseBindingComponent extends BaseComponent {
+public abstract class BaseBindingComponent extends BaseCamelComponent {
 
     /**
      * Default constructor.
@@ -38,27 +32,10 @@ public abstract class BaseBindingComponent extends BaseComponent {
      * @param types Names of supported elements.
      */
     protected BaseBindingComponent(String name, String ... types) {
-        super(types);
-        setName(name);
+        super(name, types);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Activator createActivator(ServiceDomain domain) {
-        List<String> activationTypes = getActivationTypes();
-        String[] types = activationTypes.toArray(new String[activationTypes.size()]);
-
-        SwitchYardCamelContext camelContext = (SwitchYardCamelContext) domain.getProperties()
-            .get(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY);
-        camelContext.getWritebleRegistry().put(CamelConstants.SERVICE_DOMAIN, domain);
-        BaseBindingActivator activator = createActivator(camelContext, types);
-        activator.setServiceDomain(domain);
-        activator.setEnvironment(getConfig());
-        return activator;
-    }
-
     protected BaseBindingActivator createActivator(SwitchYardCamelContext context, String ... types) {
         return new BaseBindingActivator(context, types);
     }

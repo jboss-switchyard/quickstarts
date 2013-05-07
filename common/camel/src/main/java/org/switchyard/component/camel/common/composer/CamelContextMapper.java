@@ -27,6 +27,7 @@ import org.apache.camel.Message;
 import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
+import org.switchyard.common.camel.ContextPropertyUtil;
 import org.switchyard.component.common.composer.BaseRegexContextMapper;
 import org.switchyard.component.common.label.ComponentLabel;
 import org.switchyard.component.common.label.EndpointLabel;
@@ -71,7 +72,7 @@ public class CamelContextMapper extends BaseRegexContextMapper<CamelBindingData>
 
         for (Map.Entry<String,Object> header : message.getHeaders().entrySet()) {
             String name = header.getKey();
-            if (matches(name) && !name.startsWith("org.switchyard.bus.camel")) {
+            if (matches(name) && !ContextPropertyUtil.isReservedProperty(name, Scope.MESSAGE)) {
                 Object value = header.getValue();
                 if (value != null) {
                     context.setProperty(name, value, Scope.MESSAGE).addLabels(getCamelLabels());
@@ -81,7 +82,7 @@ public class CamelContextMapper extends BaseRegexContextMapper<CamelBindingData>
         if (exchange != null) {
             for (Map.Entry<String,Object> property : exchange.getProperties().entrySet()) {
                 String name = property.getKey();
-                if (matches(name) && !name.startsWith("org.switchyard.bus.camel")) {
+                if (matches(name) && !ContextPropertyUtil.isReservedProperty(name, Scope.EXCHANGE)) {
                     Object value = property.getValue();
                     if (value != null) {
                         context.setProperty(name, value, Scope.EXCHANGE).addLabels(getCamelLabels());
@@ -101,7 +102,7 @@ public class CamelContextMapper extends BaseRegexContextMapper<CamelBindingData>
 
         for (Property property : context.getProperties(Scope.MESSAGE)) {
             String name = property.getName();
-            if (matches(name) && !name.startsWith("org.switchyard.bus.camel")) {
+            if (matches(name) && !ContextPropertyUtil.isReservedProperty(name, Scope.MESSAGE)) {
                 Object value = property.getValue();
                 if (value != null) {
                     message.setHeader(name, value);
@@ -111,7 +112,7 @@ public class CamelContextMapper extends BaseRegexContextMapper<CamelBindingData>
         if (exchange != null) {
             for (Property property : context.getProperties(Scope.EXCHANGE)) {
                 String name = property.getName();
-                if (matches(name) && !name.startsWith("org.switchyard.bus.camel")) {
+                if (matches(name) && !ContextPropertyUtil.isReservedProperty(name, Scope.EXCHANGE)) {
                     Object value = property.getValue();
                     if (value != null) {
                         exchange.setProperty(name, value);

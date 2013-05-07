@@ -129,7 +129,7 @@ public class OutboundHandler extends BaseServiceHandler {
 
         try {
             restResponse.setOperationName(opName);
-            Message out = _messageComposer.compose(restResponse, exchange, true);
+            Message out = _messageComposer.compose(restResponse, exchange);
             // Our transformer magic transforms the entity appropriately here :)
             exchange.send(out);
         } catch (Exception e) {

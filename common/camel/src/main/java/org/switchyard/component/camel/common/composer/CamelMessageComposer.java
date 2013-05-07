@@ -50,8 +50,8 @@ public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> 
      * {@inheritDoc}
      */
     @Override
-    public Message compose(CamelBindingData source, Exchange exchange, boolean create) throws Exception {
-        Message message = create ? exchange.createMessage() : exchange.getMessage();
+    public Message compose(CamelBindingData source, Exchange exchange) throws Exception {
+        Message message = exchange.createMessage();
 
         // map context properties
         getContextMapper().mapFrom(source, exchange.getContext(message));

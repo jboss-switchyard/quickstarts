@@ -165,7 +165,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 httpResponse.setBodyFromStream(entity.getContent());
             }
             httpResponse.setStatus(status);
-            Message out = _messageComposer.compose(httpResponse, exchange, true);
+            Message out = _messageComposer.compose(httpResponse, exchange);
             if (httpResponse.getStatus() < 400) {
                 exchange.send(out);
             } else {

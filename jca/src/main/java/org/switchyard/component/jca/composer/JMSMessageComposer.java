@@ -47,8 +47,8 @@ public class JMSMessageComposer extends BaseMessageComposer<JMSBindingData> {
      * {@inheritDoc}
      */
     @Override
-    public org.switchyard.Message compose(JMSBindingData source, Exchange exchange, boolean create) throws Exception {
-        final org.switchyard.Message syMessage = create ? exchange.createMessage() : exchange.getMessage();
+    public org.switchyard.Message compose(JMSBindingData source, Exchange exchange) throws Exception {
+        final org.switchyard.Message syMessage = exchange.createMessage();
         getContextMapper().mapFrom(source, exchange.getContext(syMessage));
 
         Message jmsMessage = source.getMessage();

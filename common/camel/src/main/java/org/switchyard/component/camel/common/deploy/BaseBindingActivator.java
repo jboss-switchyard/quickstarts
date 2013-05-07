@@ -25,9 +25,7 @@ import org.switchyard.component.camel.common.composer.CamelComposition;
 import org.switchyard.component.camel.common.handler.InboundHandler;
 import org.switchyard.component.camel.common.handler.OutboundHandler;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
-import org.switchyard.config.Configuration;
 import org.switchyard.config.model.composite.BindingModel;
-import org.switchyard.deploy.BaseActivator;
 import org.switchyard.deploy.ServiceHandler;
 
 /**
@@ -35,59 +33,32 @@ import org.switchyard.deploy.ServiceHandler;
  * 
  * @author Lukasz Dywicki
  */
-public class BaseBindingActivator extends BaseActivator {
-
-    private Configuration _environment;
-    private SwitchYardCamelContext _camelContext;
+public class BaseBindingActivator extends BaseCamelActivator {
 
     protected BaseBindingActivator(SwitchYardCamelContext context, String ... types) {
-        super(types);
-        _camelContext = context;
-    }
-
-    /**
-     * Specify environment configuration for binding.
-     * 
-     * @param config Environment settings.
-     */
-    public void setEnvironment(Configuration config) {
-        _environment = config;
+        super(context, types);
     }
 
     @Override
     public ServiceHandler activateBinding(QName serviceName, BindingModel config) {
         CamelBindingModel binding = (CamelBindingModel) config;
-        binding.setEnvironment(_environment);
+        binding.setEnvironment(getEnvironment());
 
         if (binding.isServiceBinding()) {
             return createInboundHandler(serviceName, binding);
         } else {
-            return new OutboundHandler(binding.getComponentURI().toString(), _camelContext, CamelComposition
+            return new OutboundHandler(binding.getComponentURI().toString(), getCamelContext(), CamelComposition
                 .getMessageComposer(binding));
         }
     }
 
     protected <T extends CamelBindingModel> InboundHandler<T> createInboundHandler(QName serviceName, T binding) {
-        return new InboundHandler<T>(binding, _camelContext, serviceName);
+        return new InboundHandler<T>(binding, getCamelContext(), serviceName);
     }
 
     @Override
     public void deactivateBinding(QName name, ServiceHandler handler) {
         // anything to do here?
-    }
-
-    @Override
-    public void deactivateService(QName name, ServiceHandler handler) {
-        // anything to do here?
-    }
-
-    /**
-     * Gets the {@link CamelContext} used by this Activator.
-     * 
-     * @return CamelContext the {@link CamelContext} used by this Activator.
-     */
-    public SwitchYardCamelContext getCamelContext() {
-        return _camelContext;
     }
 
 }

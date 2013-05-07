@@ -74,7 +74,7 @@ public class CCIEndpoint extends AbstractInflowEndpoint implements MessageListen
             MappedRecordBindingData bindingData = new MappedRecordBindingData(sourceRecord);
             String operation = _selector != null ? _selector.selectOperation(bindingData).getLocalPart() : null;
             Exchange exchange = createExchange(operation, inOutHandler);
-            exchange.send(_composer.compose(bindingData, exchange, true));
+            exchange.send(_composer.compose(bindingData, exchange));
 
             exchange = inOutHandler.waitForOut(_waitTimeout);
             MappedRecord returnRecord = _recordFactory.createMappedRecord(_recordName);

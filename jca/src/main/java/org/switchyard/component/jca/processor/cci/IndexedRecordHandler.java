@@ -38,6 +38,6 @@ public class IndexedRecordHandler extends RecordHandler<IndexedRecordBindingData
     public Message handle(Exchange exchange, Connection conn, Interaction interact) throws Exception {
         IndexedRecord record = getRecordFactory().createIndexedRecord(IndexedRecordHandler.class.getName());
         IndexedRecord outRecord = (IndexedRecord) interact.execute(getInteractionSpec(), getMessageComposer(IndexedRecordBindingData.class).decompose(exchange, new IndexedRecordBindingData(record)).getRecord());
-        return getMessageComposer(IndexedRecordBindingData.class).compose(new IndexedRecordBindingData(outRecord), exchange, true);
+        return getMessageComposer(IndexedRecordBindingData.class).compose(new IndexedRecordBindingData(outRecord), exchange);
     }
 }

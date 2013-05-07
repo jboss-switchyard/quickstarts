@@ -38,7 +38,7 @@ public class StreamableRecordHandler extends RecordHandler<StreamableRecordBindi
         StreamableRecord record = new StreamableRecord();
         StreamableRecord outRecord = new StreamableRecord();
         interact.execute(getInteractionSpec(), getMessageComposer(StreamableRecordBindingData.class).decompose(exchange, new StreamableRecordBindingData(record)).getRecord(), outRecord);
-        return getMessageComposer(StreamableRecordBindingData.class).compose(new StreamableRecordBindingData(outRecord), exchange, true);
+        return getMessageComposer(StreamableRecordBindingData.class).compose(new StreamableRecordBindingData(outRecord), exchange);
     }
 
 }

@@ -7,8 +7,8 @@ import org.switchyard.component.jca.composer.JMSMessageComposer;
 public class MyJMSMessageComposer extends JMSMessageComposer {
 
     @Override
-    public org.switchyard.Message compose(JMSBindingData source, Exchange exchange, boolean create) throws Exception {
-        org.switchyard.Message msg = super.compose(source, exchange, create);
+    public org.switchyard.Message compose(JMSBindingData source, Exchange exchange) throws Exception {
+        org.switchyard.Message msg = super.compose(source, exchange);
         msg.setContent(msg.getContent(String.class) + "test");
         return msg;
     }

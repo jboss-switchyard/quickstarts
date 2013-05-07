@@ -194,7 +194,7 @@ public class InboundHandler extends BaseServiceHandler {
 
             Message message;
             try {
-                message = _messageComposer.compose(soapBindingData, exchange, true);
+                message = _messageComposer.compose(soapBindingData, exchange);
             } catch (Exception e) {
                 throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
             }

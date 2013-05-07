@@ -47,11 +47,10 @@ public interface MessageComposer<D extends BindingData> {
      * Takes the data from the passed in source object and composes a SwithYardMessage based on the specified Exchange.
      * @param source the source object
      * @param exchange the exchange to use
-     * @param create whether or not we ask the exchange to create a new message, or just get the existing one
      * @return the composed message
      * @throws Exception if a problem happens
      */
-    public Message compose(D source, Exchange exchange, boolean create) throws Exception;
+    public Message compose(D source, Exchange exchange) throws Exception;
 
     /**
      * Takes the data from the SwitchYardMessage in the specified Exchange and decomposes it into the target object.

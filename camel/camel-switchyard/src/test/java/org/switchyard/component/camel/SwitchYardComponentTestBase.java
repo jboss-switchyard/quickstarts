@@ -36,7 +36,7 @@ public abstract class SwitchYardComponentTestBase extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         _camelContext = new SwitchYardCamelContext(false);
-        _camelContext.getWritebleRegistry().put(CamelConstants.SERVICE_DOMAIN, _serviceDomain);
+        _camelContext.setServiceDomain(_serviceDomain);
         return _camelContext;
     }
 

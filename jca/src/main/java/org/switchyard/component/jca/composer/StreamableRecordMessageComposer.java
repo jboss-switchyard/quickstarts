@@ -39,8 +39,8 @@ public class StreamableRecordMessageComposer extends BaseMessageComposer<Streama
      * {@inheritDoc}
      */
     @Override
-    public Message compose(StreamableRecordBindingData source, Exchange exchange, boolean create) throws Exception {
-        final org.switchyard.Message message = create ? exchange.createMessage() : exchange.getMessage();
+    public Message compose(StreamableRecordBindingData source, Exchange exchange) throws Exception {
+        final org.switchyard.Message message = exchange.createMessage();
         getContextMapper().mapFrom(source, exchange.getContext(message));
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(); 

@@ -31,6 +31,7 @@ import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.composer.BindingDataCreator;
 import org.switchyard.component.camel.common.composer.BindingDataCreatorResolver;
@@ -82,8 +83,8 @@ public class SwitchYardProducer extends DefaultProducer {
 
     @Override
     public void process(final org.apache.camel.Exchange camelExchange) throws Exception {
-        final String targetUri = (String) camelExchange.getProperty(org.apache.camel.Exchange.TO_ENDPOINT);
-        ServiceDomain domain = (ServiceDomain) camelExchange.getContext().getRegistry().lookup(CamelConstants.SERVICE_DOMAIN);
+        final String targetUri = camelExchange.getProperty(org.apache.camel.Exchange.TO_ENDPOINT, String.class);
+        ServiceDomain domain = ((SwitchYardCamelContext) camelExchange.getContext()).getServiceDomain();
 
         final ServiceReference serviceRef = lookupServiceReference(targetUri, domain);
         MessageComposer<CamelBindingData> composer = getMessageComposer(camelExchange);
@@ -103,7 +104,7 @@ public class SwitchYardProducer extends DefaultProducer {
             SecurityContext.get(switchyardExchange).getCredentials().addAll(
                 ((SecurityBindingData) bindingData).extractCredentials());
         }
-        Message switchyardMessage = composer.compose(bindingData, switchyardExchange, true);
+        Message switchyardMessage = composer.compose(bindingData, switchyardExchange);
         switchyardExchange.send(switchyardMessage);
     }
 

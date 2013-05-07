@@ -51,7 +51,7 @@ public class JMSEndpoint extends AbstractInflowEndpoint implements MessageListen
             JMSBindingData bindingData = new JMSBindingData(message);
             final String operation = _selector != null ? _selector.selectOperation(bindingData).getLocalPart() : null;
             final Exchange exchange = createExchange(operation);
-            exchange.send(_composer.compose(bindingData, exchange, true));
+            exchange.send(_composer.compose(bindingData, exchange));
         } catch (Exception e) {
             throw new SwitchYardException(e);
         }

@@ -78,9 +78,9 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
      * {@inheritDoc}
      */
     @Override
-    public Message compose(SOAPBindingData source, Exchange exchange, boolean create) throws Exception {
+    public Message compose(SOAPBindingData source, Exchange exchange) throws Exception {
         final SOAPMessage soapMessage = source.getSOAPMessage();
-        final Message message = create ? exchange.createMessage() : exchange.getMessage();
+        final Message message = exchange.createMessage();
         final Boolean input = exchange.getPhase() == null;
 
         getContextMapper().mapFrom(source, exchange.getContext(message));

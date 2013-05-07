@@ -40,7 +40,7 @@ import org.switchyard.component.camel.SwitchYardEndpoint;
 import org.switchyard.component.camel.SwitchYardPropertiesParser;
 import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.composer.CamelComposition;
-import org.switchyard.component.camel.common.deploy.BaseBindingActivator;
+import org.switchyard.component.camel.common.deploy.BaseCamelActivator;
 import org.switchyard.component.camel.model.CamelComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
@@ -53,7 +53,7 @@ import org.switchyard.exception.SwitchYardException;
  * 
  * @author Daniel Bevenius
  */
-public class CamelActivator extends BaseBindingActivator {
+public class CamelActivator extends BaseCamelActivator {
 
     /**
      * Creates a new activator for Camel endpoint types.
@@ -61,7 +61,7 @@ public class CamelActivator extends BaseBindingActivator {
      * @param context Camel context to use.
      * @param types Activation types.
      */
-    public CamelActivator(SwitchYardCamelContext context, String[] types) {
+    public CamelActivator(SwitchYardCamelContext context, String ... types) {
         super(context, types);
     }
 
@@ -83,6 +83,11 @@ public class CamelActivator extends BaseBindingActivator {
         }
 
         return handler;
+    }
+
+    @Override
+    public void deactivateService(QName name, ServiceHandler handler) {
+        // nothing to do here ...
     }
 
     private ServiceHandler handleImplementation(final ComponentServiceModel config, final QName serviceName) {

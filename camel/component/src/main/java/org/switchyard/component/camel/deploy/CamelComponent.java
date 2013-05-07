@@ -19,8 +19,7 @@
 package org.switchyard.component.camel.deploy;
 
 import org.switchyard.common.camel.SwitchYardCamelContext;
-import org.switchyard.component.camel.common.deploy.BaseBindingActivator;
-import org.switchyard.component.camel.common.deploy.BaseBindingComponent;
+import org.switchyard.component.camel.common.deploy.BaseCamelComponent;
 import org.switchyard.component.camel.model.v1.V1CamelImplementationModel;
 
 /**
@@ -28,7 +27,7 @@ import org.switchyard.component.camel.model.v1.V1CamelImplementationModel;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
-public class CamelComponent extends BaseBindingComponent {
+public class CamelComponent extends BaseCamelComponent {
 
     /**
      * Default constructor.
@@ -38,7 +37,7 @@ public class CamelComponent extends BaseBindingComponent {
     }
 
     @Override
-    protected BaseBindingActivator createActivator(SwitchYardCamelContext context, String... types) {
+    protected CamelActivator createActivator(SwitchYardCamelContext context, String... types) {
         return new CamelActivator(context, types);
     }
 

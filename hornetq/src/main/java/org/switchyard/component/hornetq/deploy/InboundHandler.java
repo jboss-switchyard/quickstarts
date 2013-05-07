@@ -123,7 +123,7 @@ public class InboundHandler extends BaseServiceHandler implements MessageHandler
             Exchange exchange = _serviceRef.createExchange(getOperationName(bindingData), this);
             Thread.currentThread().setContextClassLoader(_applicationClassLoader);
             _logger.info("onMessage :" + message);
-            exchange.send(_messageComposer.compose(bindingData, exchange, true));
+            exchange.send(_messageComposer.compose(bindingData, exchange));
         } catch (final Exception e) {
             throw new SwitchYardException(e);
         } finally {
