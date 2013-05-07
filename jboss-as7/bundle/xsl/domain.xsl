@@ -26,8 +26,10 @@
     xmlns:fn="http://www.w3.org/2005/xpath-functions"
     xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:as="urn:jboss:domain:1.2"
-    exclude-result-prefixes="xs xsl xsi fn xdt as">
+    xmlns:as="urn:jboss:domain:1.4"
+    xmlns:inf="urn:jboss:domain:infinispan:1.4"
+    xmlns:sy="urn:jboss:domain:switchyard:1.0"
+    exclude-result-prefixes="xs xsl xsi fn xdt as inf sy">
 
 <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
@@ -51,7 +53,7 @@
     </xsl:copy>
 </xsl:template>
 
-<xsl:template match="node()[name(.)='profile']">
+<xsl:template match="//as:profile[@name='default' or @name='full']">
     <xsl:copy>
         <xsl:apply-templates select="@*|node()"/>
         <subsystem xmlns="urn:jboss:domain:switchyard:1.0">
@@ -94,6 +96,50 @@
     </xsl:copy>
 </xsl:template>
 
+<xsl:template match="//as:profile[@name='ha' or @name='full-ha']">
+    <xsl:copy>
+        <xsl:apply-templates select="@*|node()"/>
+        <subsystem xmlns="urn:jboss:domain:switchyard:1.0">
+            <modules>
+                <module identifier="org.switchyard.component.bean" implClass="org.switchyard.component.bean.deploy.BeanComponent"/>
+                <module identifier="org.switchyard.component.soap" implClass="org.switchyard.component.soap.deploy.SOAPComponent">
+                    <properties>
+                        <socketAddr>:18001</socketAddr>
+                    </properties>
+                </module>
+                <module identifier="org.switchyard.component.camel" implClass="org.switchyard.component.camel.deploy.CamelComponent">
+                    <properties>
+                        <socketAddr>:18001</socketAddr>
+                    </properties>
+                </module>
+                <module identifier="org.switchyard.component.camel.amqp" implClass="org.switchyard.component.camel.amqp.deploy.CamelAmqpComponent"/>
+                <module identifier="org.switchyard.component.camel.atom" implClass="org.switchyard.component.camel.atom.deploy.CamelAtomComponent"/>
+                <module identifier="org.switchyard.component.camel.core" implClass="org.switchyard.component.camel.core.deploy.CamelCoreComponent"/>
+                <module identifier="org.switchyard.component.camel.file" implClass="org.switchyard.component.camel.file.deploy.CamelFileComponent"/>
+                <module identifier="org.switchyard.component.camel.ftp" implClass="org.switchyard.component.camel.ftp.deploy.CamelFtpComponent"/>
+                <module identifier="org.switchyard.component.camel.jms" implClass="org.switchyard.component.camel.jms.deploy.CamelJmsComponent"/>
+                <module identifier="org.switchyard.component.camel.jpa" implClass="org.switchyard.component.camel.jpa.deploy.CamelJpaComponent"/>
+                <module identifier="org.switchyard.component.camel.mail" implClass="org.switchyard.component.camel.mail.deploy.CamelMailComponent"/>
+                <module identifier="org.switchyard.component.camel.netty" implClass="org.switchyard.component.camel.netty.deploy.CamelNettyComponent"/>
+                <module identifier="org.switchyard.component.camel.quartz" implClass="org.switchyard.component.camel.quartz.deploy.CamelQuartzComponent"/>
+                <module identifier="org.switchyard.component.camel.sql" implClass="org.switchyard.component.camel.sql.deploy.CamelSqlComponent"/>
+                <module identifier="org.switchyard.component.rules" implClass="org.switchyard.component.rules.deploy.RulesComponent"/>
+                <module identifier="org.switchyard.component.bpm" implClass="org.switchyard.component.bpm.deploy.BPMComponent"/>
+                <module identifier="org.switchyard.component.bpel" implClass="org.switchyard.component.bpel.deploy.BPELComponent"/>
+                <module identifier="org.switchyard.component.http" implClass="org.switchyard.component.http.deploy.HttpComponent"/>
+                <module identifier="org.switchyard.component.jca" implClass="org.switchyard.component.jca.deploy.JCAComponent"/>
+                <module identifier="org.switchyard.component.sca" implClass="org.switchyard.component.sca.deploy.SCAComponent">
+                    <properties>
+                        <cache-name>switchyard</cache-name>
+                    </properties>
+                </module>
+                <module identifier="org.switchyard.component.resteasy" implClass="org.switchyard.component.resteasy.deploy.RESTEasyComponent"/>
+            </modules>
+        </subsystem>
+    </xsl:copy>
+</xsl:template>
+
+
 <xsl:template match="node()[name(.)='datasources']">
     <xsl:copy>
         <datasource jndi-name="java:jboss/datasources/jbpmDS" pool-name="jbpmDS" enabled="true" use-java-context="true">
@@ -135,6 +181,22 @@
                 <login-module code="UsersRoles" flag="required"/>
             </authentication>
         </security-domain>
+    </xsl:copy>
+</xsl:template>
+
+<xsl:template match="//as:profile[@name='ha' or @name='full-ha']//sy:cache-name">
+   <xsl:copy>switchyard</xsl:copy>
+</xsl:template>
+
+<xsl:template match="//as:profile[@name='ha' or @name='full-ha']/inf:subsystem">
+   <xsl:copy>
+   <xsl:apply-templates select="@*|node()"/>
+        <cache-container name="switchyard" default-cache="default" start="EAGER">
+           <transport lock-timeout="60000"/>
+           <replicated-cache name="default" mode="SYNC" batching="true" start="EAGER">
+               <locking isolation="REPEATABLE_READ"/>
+           </replicated-cache>
+       </cache-container>
     </xsl:copy>
 </xsl:template>
 
