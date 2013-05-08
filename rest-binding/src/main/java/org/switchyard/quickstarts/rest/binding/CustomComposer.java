@@ -20,7 +20,6 @@ package org.switchyard.quickstarts.rest.binding;
 
 import org.switchyard.Exchange;
 import org.switchyard.Message;
-
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 import org.switchyard.component.resteasy.composer.RESTEasyMessageComposer;
 
@@ -35,8 +34,8 @@ public class CustomComposer extends RESTEasyMessageComposer {
      * {@inheritDoc}
      */
     @Override
-    public Message compose(RESTEasyBindingData source, Exchange exchange, boolean create) throws Exception {
-        final Message message = super.compose(source, exchange, create);
+    public Message compose(RESTEasyBindingData source, Exchange exchange) throws Exception {
+        final Message message = super.compose(source, exchange);
         if (source.getOperationName().equals("addItem") && (source.getParameters().length == 2)) {
             // Wrap the parameters
             Item item = new Item((Integer)source.getParameters()[0], (String)source.getParameters()[1]);
