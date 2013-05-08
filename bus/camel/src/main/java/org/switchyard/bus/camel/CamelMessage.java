@@ -28,11 +28,13 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultMessage;
 import org.switchyard.Context;
 import org.switchyard.Message;
+import org.switchyard.common.camel.HandlerDataSource;
 import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.common.camel.SwitchYardMessage;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
@@ -41,7 +43,7 @@ import org.switchyard.transform.TransformerRegistry;
  * Message implementation which adapt SwitchYard {@link Message} interface to 
  * {@link org.apache.camel.Message}.
  */
-public class CamelMessage extends DefaultMessage implements Message {
+public class CamelMessage extends SwitchYardMessage implements Message {
 
     /**
      * Creates new Camel message with specified exchange.
@@ -143,11 +145,6 @@ public class CamelMessage extends DefaultMessage implements Message {
     }
 
     @Override
-    protected Map<String, Object> createHeaders() {
-        return new HashMap<String, Object>();
-    }
-
-    @Override
     public CamelMessage copy() {
         CamelMessage message = newInstance();
         message.setBody(getBody());
@@ -163,7 +160,7 @@ public class CamelMessage extends DefaultMessage implements Message {
      * Mark message as sent.
      */
     public void sent() {
-        setHeader(CamelExchange.MESSAGE_SENT, true);
+        getContext().setProperty(CamelExchange.MESSAGE_SENT, true).addLabels(BehaviorLabel.TRANSIENT.name());
     }
 
     /**
