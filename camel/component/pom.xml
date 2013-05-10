@@ -40,6 +40,11 @@
             <artifactId>camel-script</artifactId>
             <scope>compile</scope>
         </dependency>
+        <dependency> 
+            <groupId>org.beanshell</groupId>
+            <artifactId>bsh</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common-camel</artifactId>
