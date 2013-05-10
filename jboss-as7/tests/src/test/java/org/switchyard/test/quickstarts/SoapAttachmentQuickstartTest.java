@@ -59,7 +59,7 @@ public class SoapAttachmentQuickstartTest {
 
     private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8080/soap-attachment/ImageServiceService";
 
-    static int size = 130000000;
+    static int size = 13000000;
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
