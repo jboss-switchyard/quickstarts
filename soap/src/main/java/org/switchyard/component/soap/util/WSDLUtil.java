@@ -29,6 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
@@ -227,7 +228,11 @@ public final class WSDLUtil {
         String name = portName.getName();
         Port port = null;
         if ((name == null) || (name.length() == 0)) {
-            port = (Port) wsdlService.getPorts().values().iterator().next();
+            try {
+                port = (Port) wsdlService.getPorts().values().iterator().next();
+            } catch (NoSuchElementException nsee) {
+                throw new WSDLException("Could not find a port definition within service " + wsdlService.getQName(), null);
+            }
         } else {
             Iterator<Port> ports = wsdlService.getPorts().values().iterator();
             while (ports.hasNext()) {
