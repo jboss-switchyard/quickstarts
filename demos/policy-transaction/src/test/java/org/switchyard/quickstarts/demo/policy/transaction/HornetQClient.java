@@ -47,7 +47,7 @@ public final class HornetQClient {
     /**
      * The password to connect to JMS server.
      */
-    private static final String PASSWD = "guestp";
+    private static final String PASSWD = "guestp.1";
     
     /**
      * The name of the file containing the message content.

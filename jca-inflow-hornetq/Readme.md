@@ -1,28 +1,44 @@
 Introduction
 ============
-This quickstart demonstrates the usage of the JCA Component and it's service binding feature,
-by binding to a HornetQ Queue. When a message arrives in this queue the service will be invoked.
-This quickstart is using XPath dynamic operation selector which determines the service operation
-to be invoked by reading message content. If you pass the name and language parameters at step 7
+This quickstart demonstrates the usage of the JCA Component and it's service
+binding feature, by binding to a HornetQ Queue. When a message arrives in this
+queue the service will be invoked.  This quickstart is using XPath dynamic
+operation selector which determines the service operation to be invoked by
+reading message content. If you pass the name and language parameters at step 7
 like following:
+
     mvn exec:java -Dexec.args="Fernando spanish"
+
 then operation selector choose the spanish operation so you would get a spanish greeting like this:
+
     Hola Fernando :-)
 
 JBoss AS 7
 ----------
 1. Build the quickstart:
-    mvn clean install
+
+        mvn clean install
+
 2. Start JBoss AS 7 in standalone-full mode:
-     ./standalone.sh -server-config standalone-full.xml
-3. Add JMS user using add-user.sh with username=guest, password=guestp, Realm=ApplicationRealm, role=guest
-    ./add-user.sh
+
+        ${AS}/bin/standalone.sh -server-config standalone-full.xml
+
+3. Add JMS user using add-user.sh with username=guest, password=guestp.1, Realm=ApplicationRealm, role=guest
+
+        ${AS}}/bin/add-user.sh
+
 4. Deploy JMS Queue
-    cp src/test/resources/switchyard-quickstart-jca-inflow-hornetq-jms.xml ${AS7}/standalone/deployments
+
+        cp src/test/resources/switchyard-quickstart-jca-inflow-hornetq-jms.xml ${AS}/standalone/deployments
+
 5. Deploy the quickstart
-    mvn jboss-as:deploy
+
+        mvn jboss-as:deploy
+
 6. Execute HornetQClient
-    mvn exec:java
+
+        mvn exec:java
+
 7. Check the server console for output from the service.
 
 Expected Results

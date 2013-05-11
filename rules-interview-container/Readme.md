@@ -25,9 +25,12 @@ Running the quickstart
 JBoss AS 7
 ----------
 1. Build the quickstart:
-    mvn clean install
+
+        mvn clean install
+
 2. Run the test:
-    mvn -Dtest=RulesInterviewTest test
+
+        mvn -Dtest=RulesInterviewTest test
 
 Expected Output:
 ================

@@ -9,27 +9,38 @@ Running the quickstart
 ======================
 
 1. Build the quickstart:
-    mvn clean install
+
+        mvn clean install
 2. Create a keystore to support SSL:
-    cd ${AS7}/standalone/configuration
-    keytool -genkey -alias tomcat -keyalg RSA -keypass changeit -keystore tomcat.jks
+
+        cd ${AS}/standalone/configuration
+        keytool -genkey -alias tomcat -keyalg RSA -keypass changeit -keystore tomcat.jks
+
     (password is "changeit")
 3. Add the required https connector to the web subsystem in standalone.xml to support SSL. (include contents of connector.xml)
 4. Add the required security-domain sections to the security subsystem in standalone.xml to support SSL. (include contents of security-domain.xml)
 5. Copy the users keystore file:
-    cp users.jks ${AS7}/standalone/configuration
+
+        cp users.jks ${AS}/standalone/configuration
+
 6. Copy the roles properties file:
-    cp roles.properties ${AS7}/standalone/configuration
-7. Deploy the quickstart
-    cp target/switchyard-quickstart-demo-policy-security-cert.jar ${AS7}/standalone/deployments
-8. Start JBoss AS 7 in standalone mode:
-    sh ./standalone.sh
+
+        cp roles.properties ${AS}/standalone/configuration
+
+7. Start JBoss AS 7 in standalone mode:
+
+        ${AS}/bin/standalone.sh
+
+8. Deploy the quickstart
+
+        mvn jboss-as:deploy
+
 9. Execute the test
     See "Options" section below.
 10. Check the server console for output from the service.
 11. Undeploy the application
-    rm ${AS7}/standalone/deployments/switchyard-quickstart-demo-policy-security-cert-{version}.jar
 
+        mvn jboss-as:undeploy
 
 Options
 =======
@@ -51,4 +62,3 @@ When running with this option:
     INFO  [org.switchyard.quickstarts.demo.policy.security.cert.WorkServiceBean] (http--127.0.0.1-8443-1) :: WorkService :: Received work command => CMD-1345738943385
 
 You can play with the exec.args and only specify one of "confidentiality" or "clientAuthentication". I bet you can guess what will happen... ;)
-

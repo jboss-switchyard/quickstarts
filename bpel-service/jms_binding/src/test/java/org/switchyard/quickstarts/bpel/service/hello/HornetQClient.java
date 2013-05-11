@@ -35,7 +35,7 @@ public final class HornetQClient {
     private static final String REQUEST_NAME = "HelloRequestQueue";
     private static final String REPLY_NAME = "HelloReplyQueue";
     private static final String USER = "guest";
-    private static final String PASSWD = "guestp";
+    private static final String PASSWD = "guestp.1";
     
     private HornetQClient() {
     }

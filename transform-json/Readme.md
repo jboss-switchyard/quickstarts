@@ -16,11 +16,13 @@ Running the quickstart
 ======================
 
 1. Build the quickstart:
-    mvn clean install
+
+        mvn clean install
+
 2. Run the test:
-    mvn -Dtest=JsonTransformationTest test
+
+        mvn -Dtest=JsonTransformationTest test
 
 ## Further Reading
 
 1. [Transformation Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Transformation)
-

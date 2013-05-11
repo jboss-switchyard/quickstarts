@@ -7,11 +7,17 @@ Running the quickstart
 JBoss AS 7
 ----------
 1. Build the quickstart:
-    mvn clean install
-2. Start JBoss AS 7 in standalone mode (other modes are fine too):
-    ${AS}/bin/standalone.sh
-3. Deploy the quickstart
-    mvn jboss-as:deploy
+
+        mvn clean install
+
+2. Start JBoss AS 7 in standalone mode:
+
+        ${AS}/bin/standalone.sh
+
+3. Deploy the Quickstart : 
+
+        mvn jboss-as:deploy
+
 4. Wait a bit for producer thread to start storing entities into database
 5. Check the server console for output from the service
 
@@ -26,11 +32,10 @@ JBoss AS 7
     - password sa
 9. Execute following statement
     INSERT INTO events (sender,receiver,createdAt) values ('John', 'Rambo', NOW());
-9. After short time you shoild see in console message
+9. After short time you should see in console message
 
     Hey Rambo please receive greetings from John sent at 17:20:01:542
 
 ## Further Reading
 
 1. [Camel Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Camel+Bindings)
-
