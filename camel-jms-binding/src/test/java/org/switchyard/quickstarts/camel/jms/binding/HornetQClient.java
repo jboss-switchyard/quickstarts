@@ -46,7 +46,7 @@ public final class HornetQClient {
     private static final String MESSAGE_PAYLOAD = "test.txt";
     
     private static final String USER = "guest";
-    private static final String PASSWD = "guestp";
+    private static final String PASSWD = "guestp.1";
     
     /**
      * Private no-args constructor.

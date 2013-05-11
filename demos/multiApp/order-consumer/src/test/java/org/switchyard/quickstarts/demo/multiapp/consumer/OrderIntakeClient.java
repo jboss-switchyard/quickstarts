@@ -41,7 +41,7 @@ public final class OrderIntakeClient {
     private static final String ORDER_QUEUE_NAME = "OrderRequestQueue";
     private static final String ORDERACK_QUEUE_NAME = "OrderReplyQueue";
     private static final String USER = "guest";
-    private static final String PASSWD = "guestp";
+    private static final String PASSWD = "guestp.1";
    
     /**
      * Main routing for OrderIntakeClient

@@ -20,23 +20,36 @@ Running the quickstart
 ======================
 
 1. Build the quickstart:
-    mvn clean install
+
+        mvn clean install
+
 2. Start JBoss AS 7 in standalone-full mode:
-    ./standalone --server-config=standalone-full.xml
-3. Add JMS user using add-user.sh with username=guest, password=guestp, Realm=ApplicationRealm, role=guest
-    ./add-user.sh
+
+        ${AS}/bin/standalone.sh --server-config=standalone-full.xml
+
+3. Add JMS user using add-user.sh with username=guest, password=guestp.1, Realm=ApplicationRealm, role=guest
+
+        ${AS}/bin/add-user.sh
+
 4. Deploy JMS Queue
-    cp src/test/resources/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml ${AS7}/standalone/deployments
+
+        cp src/test/resources/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml ${AS}/standalone/deployments
+
 5. Deploy the quickstart
-    mvn jboss-as:deploy
+
+        mvn jboss-as:deploy
+
 6. Execute HornetQClient
-    mvn exec:java
+
+        mvn exec:java
+
 7. Check the server console for output from the service.  With the default
    configuration of the quickstart, you should see the output below in the
    AS server.log.
 8. Undeploy the application
-    mvn jboss-as:undeploy
-    rm ${AS7}/standalone/deployments/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml
+
+        mvn jboss-as:undeploy
+        rm ${AS}/standalone/deployments/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml
 
 ```
 :: WorkService :: Received command =>  rollback
@@ -83,11 +96,11 @@ Options
 =======
 The maven exec goal in this quickstart accepts the following options:
 
-   mvn exec:java -D exec.args="[command] [queueName]"
+    mvn exec:java -D exec.args="[command] [queueName]"
 
 Running "mvn exec:java" with no options is equivalent to:
 
-   mvn exec:java -Dexec.args="rollback policyQSTransacted"
+    mvn exec:java -Dexec.args="rollback policyQSTransacted"
 
 If the value for 'command' contains the string "rollback", then the bean service
 will attempt to rollback an existing transaction.

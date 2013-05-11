@@ -42,7 +42,7 @@ public final class HornetQClient {
     private static final String SHIPPING_QUEUE = "ShippingQueue";
     private static final String FILLING_STOCK_QUEUE = "FillingStockQueue";
     private static final String USER = "guest";
-    private static final String PASSWD = "guestp";
+    private static final String PASSWD = "guestp.1";
     
     /**
      * Private no-args constructor.

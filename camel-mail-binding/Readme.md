@@ -25,11 +25,17 @@ You can then send plain text messages to test account, after processing you will
 JBoss AS 7
 ----------
 1. Build the quickstart:
-    mvn clean install
+
+        mvn clean install
+
 2. Start JBoss AS 7 in standalone-full mode:
-    ${AS}/bin/standalone.sh --server-config=standalone-full.xml
+
+        ${AS}/bin/standalone.sh --server-config=standalone-full.xml
+
 3. Deploy the quickstart
-    mvn jboss-as:deploy
+
+        mvn jboss-as:deploy
+
 4. Wait a bit for mail poller to open mailbox and read messages.
 5. Check the server console for output from the service. For every message you should see one entry with contents of the message. The best for testing is plaintext mail.
 
@@ -37,4 +43,3 @@ JBoss AS 7
 ## Further Reading
 
 1. [Camel Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Camel+Bindings)
-

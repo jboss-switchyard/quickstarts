@@ -13,9 +13,9 @@ is simply a matter of building the project module.
 JBoss AS 7
 ----------
 1. Build the quickstart:
-    mvn clean install
+
+        mvn clean install
 
 ## Further Reading
 
 1. [Camel Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Camel+Bindings)
-

@@ -19,15 +19,21 @@ Running the quickstart
 JBoss AS 7
 ----------
 1. Build the quickstart:
-    mvn clean install
+
+        mvn clean install
+
 2. Start JBoss AS 7 in standalone mode:
-    ./standalone
+
+        ${AS}/bin/standalone.sh
+
 3. Deploy the Quickstart : 
-    mvn jboss-as:deploy
+
+        mvn jboss-as:deploy
+
 4. Run the test from Maven :
-    mvn -Dtest=ServiceTransformationTest test
+
+        mvn -Dtest=ServiceTransformationTest test
 
 ## Further Reading
 
 1. [Transformation Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Transformation)
-

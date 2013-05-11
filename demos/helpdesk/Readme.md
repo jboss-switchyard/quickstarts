@@ -22,9 +22,12 @@ Running the quickstart
 JBoss AS 7
 ----------
 1. Build the quickstart:
-    mvn clean install
+
+        mvn clean install
+
 2. Run the test:
-    mvn -Dtest=HelpDeskTests test
+
+        mvn -Dtest=HelpDeskTests test
 
 Expected Output:
 ================
@@ -77,4 +80,3 @@ INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] jBPM TaskServer on
 2. [SOAP Bindings Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SOAP+Bindings)
 3. [BPM Services Documentation](https://docs.jboss.org/author/display/SWITCHYARD/BPM+Services)
 4. [Bean Services Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Bean+Services)
-

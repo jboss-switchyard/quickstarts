@@ -24,9 +24,9 @@ This example demonstrates how to:
        * <i>Item ID</i>  : "BUTTER"
        * <i>Quantity</i> : "5" (Any integer is valid).
     * <b>SOAP</b>:  Using the example SOAP client e.g.
-```
-    mvn exec:java
-```
+
+            mvn exec:java
+
 
 
 
