@@ -23,5 +23,18 @@
 <route xmlns="http://camel.apache.org/schema/spring">
     <from uri="switchyard://XMLService"/>
     <log message="Inside XML Camel Route"/>
-    <log message="[message] '${body}'"/>
+
+    <choice>
+        <when>
+            <ognl>request.body == ' I like cheese'</ognl>
+            <log message="[ognl message] 'sally:${body}'"/>
+        </when>
+        <when>
+            <mvel>request.body == ' And milk too'</mvel>
+            <log message="[mvel message] 'sally:${body}'"/>
+        </when>
+        <otherwise>
+            <log message="[message] 'sally:${body}'"/>
+        </otherwise>
+    </choice>
 </route>

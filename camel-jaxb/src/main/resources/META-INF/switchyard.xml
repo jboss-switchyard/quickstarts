@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-jaxb" targetNamespace="urn:switchyard-quickstart:camel-jaxb:1.0">
+        <sca:service xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="GreetingService" promote="GreetingService/GreetingService">
+            <http:binding.http xmlns:http="urn:switchyard-component-http:config:1.0">
+                <http:contextPath>camel-binding</http:contextPath>
+            </http:binding.http>
+        </sca:service>
+        <component name="GreetingService">
+            <implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
+                <java class="org.switchyard.quickstarts.camel.jaxb.GreetingServiceRoute"/>
+            </implementation.camel>
+            <service name="GreetingService">
+                <interface.java interface="org.switchyard.quickstarts.camel.jaxb.GreetingService"/>
+            </service>
+        </component>
+    </composite>
+</switchyard>

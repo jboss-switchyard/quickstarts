@@ -28,13 +28,16 @@
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>switchyard-quickstart-camel-service</artifactId>
-    <name>Quickstart : Camel Service</name>
-    <packaging>jar</packaging>
+    <artifactId>switchyard-quickstart-camel-jaxb</artifactId>
+    <name>Quickstart : Camel JAXB</name>
     <properties>
         <switchyard.version>1.0.0-SNAPSHOT</switchyard.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jaxb</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
@@ -44,34 +47,22 @@
             <artifactId>switchyard-plugin</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-test-mixin-cdi</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
+            <artifactId>switchyard-component-http</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-camel-file</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-ognl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-mvel</artifactId>
+            <artifactId>switchyard-component-test-mixin-http</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -85,20 +76,13 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.switchyard</groupId>
-                <artifactId>switchyard-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>configure</goal>
-                        </goals>
-                        <configuration>
-                            <scannerClassNames>
-                                <param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>
-                            </scannerClassNames>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <executable>java</executable>
+                    <classpathScope>test</classpathScope>
+                    <mainClass>org.switchyard.quickstarts.camel.jaxb.JAXBClient</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
