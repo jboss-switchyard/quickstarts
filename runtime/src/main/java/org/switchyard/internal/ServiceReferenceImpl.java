@@ -30,6 +30,7 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.ServiceSecurity;
+import org.switchyard.event.ReferenceUnregistrationEvent;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
@@ -177,7 +178,8 @@ public class ServiceReferenceImpl implements ServiceReference {
     
     @Override
     public void unregister() {
-        _domain.unregisterServiceReference(this);
+        _domain.getServiceRegistry().unregisterServiceReference(this);
+        _domain.getEventPublisher().publish(new ReferenceUnregistrationEvent(this));
     }
 
     /**

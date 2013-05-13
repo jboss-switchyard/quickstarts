@@ -24,11 +24,10 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 
 /**
- * A runtime service registry can be queried
- * for services by service name, domain name, or
- * all the services can be returned.
+ * A runtime service registry can be queried for services and references.
  */
 public interface ServiceRegistry {
 
@@ -43,16 +42,42 @@ public interface ServiceRegistry {
      * @param service service
      */
     void unregisterService(Service service);
+    
+    /**
+     * Register the service reference.
+     * @param reference service reference
+     */
+    void registerServiceReference(ServiceReference reference);
+    
+    /**
+     * Unregister the service reference.
+     * @param reference service reference
+     */
+    void unregisterServiceReference(ServiceReference reference);
 
     /**
      * Return the list of services.
      * @return services
      */
     List<Service> getServices();
+    
     /**
      * Get the list of services for the specified service name.
      * @param serviceName service name
      * @return services
      */
     List<Service> getServices(QName serviceName);
+    
+    /**
+     * Return the list of service references.
+     * @return references
+     */
+    List<ServiceReference> getServiceReferences();
+    
+    /**
+     * Get a ServiceReference instance for the specified service name.
+     * @param serviceName service name
+     * @return reference to the specified service or null if a service reference is not registered.
+     */
+    ServiceReference getServiceReference(QName serviceName);
 }

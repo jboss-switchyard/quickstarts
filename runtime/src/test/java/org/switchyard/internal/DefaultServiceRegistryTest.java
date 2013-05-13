@@ -56,4 +56,14 @@ public class DefaultServiceRegistryTest
         Assert.assertTrue(registry.getServices(serviceName).size() == 0);
     }
 
+    @Test
+    public void referenceRegistration() {
+        final QName referenceName = new QName("Bar");
+        DefaultServiceRegistry registry = new DefaultServiceRegistry();
+        ServiceReferenceImpl reference = new ServiceReferenceImpl(referenceName, null, null);
+        registry.registerServiceReference(reference);
+        Assert.assertTrue(registry.getServiceReferences().size() > 0);
+        registry.unregisterServiceReference(reference);
+        Assert.assertTrue(registry.getServices(referenceName).size() == 0);
+    }
 }

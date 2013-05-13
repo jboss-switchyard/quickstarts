@@ -24,11 +24,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Service;
+import org.switchyard.ServiceReference;
 import org.switchyard.spi.ServiceRegistry;
 
 /**
@@ -40,6 +42,9 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     private final Map<QName, List<Service>> _services =
         new HashMap<QName, List<Service>>();
+
+    private ConcurrentHashMap<QName, ServiceReference> _references =
+            new ConcurrentHashMap<QName, ServiceReference>();
 
     @Override
     public synchronized List<Service> getServices() {
@@ -86,6 +91,37 @@ public class DefaultServiceRegistry implements ServiceRegistry {
                 _logger.debug("Unregistered Service '" + serviceName + "' from ServiceDomain '" + domainName + "'.");
             }
         }
+    }
+   
+    @Override
+    public void registerServiceReference(ServiceReference reference) {
+        _references.putIfAbsent(reference.getName(), reference);
+
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Registered ServiceReference '" + reference.getName() + "'.");
+        }
+    }
+
+    @Override
+    public void unregisterServiceReference(ServiceReference reference) {
+        ServiceReference removed = _references.remove(reference.getName());
+        if (removed != null && _logger.isDebugEnabled()) {
+            _logger.debug("Unregistered ServiceReference '" + reference.getName() + "'.");
+        }
+    }
+
+    @Override
+    public List<ServiceReference> getServiceReferences() {
+        if (_references.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return new LinkedList<ServiceReference>(_references.values());
+        }
+    }
+
+    @Override
+    public ServiceReference getServiceReference(QName serviceName) {
+        return _references.get(serviceName);
     }
 
 }

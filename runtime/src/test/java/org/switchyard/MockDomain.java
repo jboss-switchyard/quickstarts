@@ -22,9 +22,14 @@ package org.switchyard;
 import javax.xml.namespace.QName;
 
 import org.switchyard.internal.DomainImpl;
+import org.switchyard.internal.EventManager;
+import org.switchyard.internal.LocalExchangeBus;
+import org.switchyard.internal.transform.BaseTransformerRegistry;
+import org.switchyard.internal.validate.BaseValidatorRegistry;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.spi.ServiceRegistry;
 
 public class MockDomain extends DomainImpl {
     
@@ -33,6 +38,16 @@ public class MockDomain extends DomainImpl {
     
     public MockDomain() {
         super(DEFAULT_DOMAIN);
+    }
+    
+    public MockDomain(ServiceRegistry registry) {
+        super(DEFAULT_DOMAIN,
+                registry,
+                new LocalExchangeBus(),
+                new BaseTransformerRegistry(),
+                new BaseValidatorRegistry(),
+                new EventManager(),
+                null);
     }
     
     public ServiceReference createInOnlyService(QName serviceName) {

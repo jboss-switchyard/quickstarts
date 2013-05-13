@@ -82,6 +82,17 @@ public abstract class AbstractDeployment {
      */
     protected AbstractDeployment(SwitchYardModel configModel) {
         _switchyardConfig = configModel;
+        
+        // set deployment name
+        if (_switchyardConfig != null) {
+            _name = _switchyardConfig.getQName();
+            if (_name == null) {
+                // initialize to composite name if config name is missing
+                if (_switchyardConfig.getComposite() != null) {
+                    _name = _switchyardConfig.getComposite().getQName();
+                }
+            }
+        }
     }
 
     /**
@@ -118,17 +129,6 @@ public abstract class AbstractDeployment {
     public final void init(ServiceDomain appServiceDomain, List<Activator> activators) {
         if (appServiceDomain == null) {
             throw new IllegalArgumentException("null 'appServiceDomain' argument.");
-        }
-        
-        // initialize deployment name
-        if (getConfig() != null) {
-            _name = getConfig().getQName();
-            if (_name == null) {
-                // initialize to composite name if config name is missing
-                if (getConfig().getComposite() != null) {
-                    _name = getConfig().getComposite().getQName();
-                }
-            }
         }
         
         _serviceDomain = appServiceDomain;
