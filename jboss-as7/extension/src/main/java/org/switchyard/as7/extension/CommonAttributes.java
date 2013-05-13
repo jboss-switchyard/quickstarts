@@ -58,4 +58,15 @@ public interface CommonAttributes {
      * The replaceable properties.
      */
     String DOLLAR = "$";
+
+    /**
+     * The extensions element.
+     */
+    String EXTENSIONS = "extensions";
+
+    /**
+     * The extension element.
+     */
+    String EXTENSION = "extension";
+
 }

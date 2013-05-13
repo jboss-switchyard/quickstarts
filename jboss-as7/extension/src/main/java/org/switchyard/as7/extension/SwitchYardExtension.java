@@ -22,6 +22,7 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
+import static org.switchyard.as7.extension.CommonAttributes.EXTENSION;
 import static org.switchyard.as7.extension.CommonAttributes.MODULE;
 
 import java.util.Locale;
@@ -67,6 +68,7 @@ public class SwitchYardExtension implements Extension {
 
     private static final PathElement SUBSYSTEM_PATH = PathElement.pathElement(SUBSYSTEM, SUBSYSTEM_NAME);
     private static final PathElement MODULE_PATH = PathElement.pathElement(MODULE);
+    private static final PathElement EXTENSION_PATH = PathElement.pathElement(EXTENSION);
     private static final String RESOURCE_NAME = SwitchYardExtension.class.getPackage().getName() + ".LocalDescriptions";
 
     /**
@@ -99,6 +101,11 @@ public class SwitchYardExtension implements Extension {
                 .addReadWriteAttribute(Attributes.IMPLCLASS, null, new ReloadRequiredWriteAttributeHandler(Attributes.IMPLCLASS))
                 .addReadWriteAttribute(Attributes.PROPERTIES, null, new ReloadRequiredWriteAttributeHandler(Attributes.PROPERTIES));
 
+        ResourceBuilder extensionsResource = ResourceBuilder.Factory.create(EXTENSION_PATH, getResourceDescriptionResolver(EXTENSION))
+                .setAddOperation(SwitchYardExtensionAdd.INSTANCE)
+                .setRemoveOperation(SwitchYardExtensionRemove.INSTANCE)
+                .addReadWriteAttribute(Attributes.IDENTIFIER, null, new ReloadRequiredWriteAttributeHandler(Attributes.IDENTIFIER));
+
         ResourceDefinition subsystemResource = ResourceBuilder.Factory.createSubsystemRoot(SUBSYSTEM_PATH, getResourceDescriptionResolver(), SwitchYardSubsystemAdd.INSTANCE, SwitchYardSubsystemRemove.INSTANCE)
                 .addReadWriteAttribute(Attributes.SOCKET_BINDING, null, new ReloadRequiredWriteAttributeHandler(Attributes.SOCKET_BINDING))
                 .addReadWriteAttribute(Attributes.PROPERTIES, null, new ReloadRequiredWriteAttributeHandler(Attributes.PROPERTIES))
@@ -110,6 +117,7 @@ public class SwitchYardExtension implements Extension {
                 .addOperation(Operations.USES_ARTIFACT, SwitchYardSubsystemUsesArtifact.INSTANCE)
                 .addOperation(Operations.SHOW_METRICS, SwitchYardSubsystemShowMetrics.INSTANCE)
                 .pushChild(modulesResource).pop()
+                .pushChild(extensionsResource).pop()
                 .build();
         subsystem.registerSubsystemModel(subsystemResource);
 

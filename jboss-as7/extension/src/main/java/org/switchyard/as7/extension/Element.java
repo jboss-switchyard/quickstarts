@@ -48,6 +48,16 @@ public enum Element {
     MODULE("module"),
 
     /**
+     * modules element.
+     */
+    EXTENSIONS("extensions"),
+
+    /**
+     * module element.
+     */
+    EXTENSION("extension"),
+
+    /**
      * properties element.
      */
     PROPERTIES("properties");

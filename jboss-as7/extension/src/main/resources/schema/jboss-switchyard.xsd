@@ -41,6 +41,7 @@
         <xs:all>
             <xs:element name="socket-binding" type="socketBindingsType" use="optional"/>
             <xs:element name="modules" type="modulesType" minOccurs="0"/>
+            <xs:element name="extensions" type="extensionsType" minOccurs="0"/>
             <xs:element name="properties" type="propertiesType" use="optional"/>
         </xs:all>
     </xs:complexType>
@@ -85,6 +86,21 @@
 
     <xs:complexType name="propertiesType">
         <xs:any></xs:any>
+    </xs:complexType>
+
+    <xs:complexType name="extensionsType">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="module" type="extensionType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="extensionType">
+        <xs:documentation>
+        <![CDATA[
+            The SwitchYard subsystem component's module identifier.
+        ]]>
+        </xs:documentation>
+        <xs:attribute name="identifier" type="xs:string" use="required"/>
     </xs:complexType>
 
 </xs:schema>

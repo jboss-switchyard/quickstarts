@@ -70,6 +70,16 @@ final class SwitchYardSubsystemWriter implements XMLElementWriter<SubsystemMarsh
             }
             writer.writeEndElement();
         }
+        if (node.hasDefined(CommonAttributes.EXTENSION)) {
+            ModelNode modules = node.get(CommonAttributes.EXTENSION);
+            writer.writeStartElement(Element.EXTENSIONS.getLocalName());
+            for (Property property : modules.asPropertyList()) {
+                writer.writeStartElement(Element.EXTENSION.getLocalName());
+                writer.writeAttribute(Attribute.IDENTIFIER.getLocalName(), property.getName());
+                writer.writeEndElement();
+            }
+            writer.writeEndElement();
+        }
         writeProperties(node, writer);
         writer.writeEndElement();
     }

@@ -31,6 +31,7 @@ import static org.switchyard.as7.extension.CommonAttributes.IDENTIFIER;
 import static org.switchyard.as7.extension.CommonAttributes.IMPLCLASS;
 import static org.switchyard.as7.extension.CommonAttributes.MODULE;
 import static org.switchyard.as7.extension.CommonAttributes.MODULES;
+import static org.switchyard.as7.extension.CommonAttributes.EXTENSION;
 import static org.switchyard.as7.extension.CommonAttributes.PROPERTIES;
 import static org.switchyard.as7.extension.CommonAttributes.SOCKET_BINDING;
 
@@ -98,6 +99,9 @@ final class SwitchYardSubsystemReader implements XMLStreamConstants, XMLElementR
                         break;
                     case MODULES:
                         parseModulesElement(reader, list);
+                        break;
+                    case EXTENSIONS:
+                        parseExtensionsElement(reader, list);
                         break;
                     case PROPERTIES:
                         ModelNode properties = parsePropertiesElement("", reader);
@@ -206,4 +210,55 @@ final class SwitchYardSubsystemReader implements XMLStreamConstants, XMLElementR
 
         return properties;
     }
+
+
+    void parseExtensionsElement(XMLExtendedStreamReader reader, List<ModelNode> list) throws XMLStreamException {
+
+        // Handle attributes
+        requireNoAttributes(reader);
+
+        // Handle module elements
+        while (reader.hasNext() && reader.nextTag() != END_ELEMENT) {
+            if (reader.getNamespaceURI().equals(SwitchYardExtension.NAMESPACE)) {
+                final Element element = Element.forName(reader.getLocalName());
+                if (element == Element.EXTENSION) {
+                    parseExtensionElement(reader, list);
+                } else {
+                    throw unexpectedElement(reader);
+                }
+            }
+        }
+    }
+
+    void parseExtensionElement(XMLExtendedStreamReader reader, List<ModelNode> list) throws XMLStreamException {
+        String identifier = null;
+        final int count = reader.getAttributeCount();
+        for (int i = 0; i < count; i++) {
+            requireNoNamespaceAttribute(reader, i);
+            final Attribute attribute = Attribute.forName(reader.getAttributeLocalName(i));
+            switch (attribute) {
+                case IDENTIFIER:
+                    identifier = reader.getAttributeValue(i);
+                    break;
+                default:
+                    throw unexpectedAttribute(reader, i);
+            }
+        }
+        if (identifier == null) {
+            throw missingRequired(reader, Collections.singleton(Attribute.IDENTIFIER));
+        }
+
+        //Add the 'add' operation for each 'module' child
+        ModelNode moduleAdd = new ModelNode();
+        moduleAdd.get(OP).set(ModelDescriptionConstants.ADD);
+        PathAddress addr = PathAddress.pathAddress(PathElement.pathElement(SUBSYSTEM, SwitchYardExtension.SUBSYSTEM_NAME), PathElement.pathElement(EXTENSION, identifier));
+        moduleAdd.get(OP_ADDR).set(addr.toModelNode());
+
+        while (reader.hasNext() && reader.nextTag() != END_ELEMENT) {
+            throw unexpectedElement(reader);
+        }
+
+        list.add(moduleAdd);
+    }
+
 }
