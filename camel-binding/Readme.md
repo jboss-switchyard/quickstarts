@@ -1,7 +1,7 @@
 Introduction
 ============
-This quickstart demonstrates the usage of a camel binding. This example shows a GreetingService 
-which prints a hello message. The camel binding redirects a textfile as input for the 
+This quickstart demonstrates the usage of a camel binding and scripting support in camel/
+This example shows a GreetingService which prints a hello message. The camel binding redirects a textfile as input for the 
 GreetingServices' hello message.
 
 ![Camel Binding Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/camel-binding/camel-binding.jpg)
