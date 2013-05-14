@@ -29,6 +29,9 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.modules.Module;
 import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
+import org.switchyard.common.property.CompoundPropertyResolver;
+import org.switchyard.common.property.PropertyResolver;
+import org.switchyard.config.Configuration;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
@@ -59,6 +62,7 @@ public class SwitchYardConfigProcessor implements DeploymentUnitProcessor {
             Thread.currentThread().setContextClassLoader(module.getClassLoader());
             is = switchYardMetaData.getSwitchYardFile().openStream();
             SwitchYardModel switchyardModel = new ModelPuller<SwitchYardModel>().pull(is);
+            JBossPropertyResolver.set(deploymentUnit, switchyardModel);
             switchYardMetaData.setSwitchYardModel(switchyardModel);
             LOG.debug("Successfully parsed SwitchYard configuration for deployment unit '" + deploymentUnit.getName() + "'.");
         } catch (IOException ioe) {
@@ -82,6 +86,32 @@ public class SwitchYardConfigProcessor implements DeploymentUnitProcessor {
     @Override
     public void undeploy(DeploymentUnit context) {
         // TODO Auto-generated method stub
+
+    }
+
+    private static class JBossPropertyResolver implements PropertyResolver {
+
+        private final org.jboss.metadata.property.PropertyResolver _wrapped;
+
+        private JBossPropertyResolver(org.jboss.metadata.property.PropertyResolver wrapped) {
+            _wrapped = wrapped;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Object resolveProperty(String key) {
+            return key != null ? _wrapped.resolve(key) : null;
+        }
+
+        private static void set(DeploymentUnit deploymentUnit, SwitchYardModel switchyardModel) {
+            org.jboss.metadata.property.PropertyResolver wrapped = deploymentUnit.getAttachment(org.jboss.as.ee.metadata.property.Attachments.FINAL_PROPERTY_RESOLVER);
+            if (wrapped != null) {
+                Configuration config = switchyardModel.getModelConfiguration();
+                config.setPropertyResolver(CompoundPropertyResolver.compact(config.getPropertyResolver(), new JBossPropertyResolver(wrapped)));
+            }
+        }
 
     }
 
