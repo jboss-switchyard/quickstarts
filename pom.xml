@@ -55,7 +55,6 @@
         <module>bpel</module>
         <module>camel</module>
         <module>clojure</module>
-        <module>hornetq</module>
         <module>http</module>
         <module>jca</module>
         <module>tools/forge</module>
