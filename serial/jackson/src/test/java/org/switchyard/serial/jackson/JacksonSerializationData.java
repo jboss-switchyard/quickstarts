@@ -34,19 +34,68 @@ import org.w3c.dom.Element;
 public final class JacksonSerializationData {
 
     @SuppressWarnings("serial")
+    public static final class Name implements Serializable {
+        private String _first;
+        private String _middle;
+        private String _last;
+        public Name() {}
+        public Name(String first, String middle, String last) {
+            setFirst(first).setMiddle(middle).setLast(last);
+        }
+        public String getFirst() {
+            return _first;
+        }
+        public Name setFirst(String first) {
+            _first = first;
+            return this;
+        }
+        public String getMiddle() {
+            return _middle;
+        }
+        public Name setMiddle(String middle) {
+            _middle = middle;
+            return this;
+        }
+        public String getLast() {
+            return _last;
+        }
+        public Name setLast(String last) {
+            _last = last;
+            return this;
+        }
+        public String toString() {
+            return "Name@" + System.identityHashCode(this) + "(first=" + getFirst() + ", middle=" + getMiddle() + ", last=" + getLast() + ")";
+        }
+    }
+
+    @SuppressWarnings("serial")
     public static final class Person implements Serializable {
-        private String _name;
+        private String _nickName;
+        private Name _fullName;
         private Person _bestFriend;
         private Collection<Person> _relatives = new ArrayList<Person>();
         public Person() {}
-        public Person(String name) {
-            setName(name);
+        public Person(String nickName) {
+            setNickName(nickName);
         }
-        public String getName() {
-            return _name;
+        public Person(Name fullName) {
+            setFullName(fullName);
         }
-        public void setName(String name) {
-            _name = name;
+        public Person(String nickName, Name fullName) {
+            setNickName(nickName);
+            setFullName(fullName);
+        }
+        public String getNickName() {
+            return _nickName;
+        }
+        public void setNickName(String nickName) {
+            _nickName = nickName;
+        }
+        public Name getFullName() {
+            return _fullName;
+        }
+        public void setFullName(Name fullName) {
+            _fullName = fullName;
         }
         public Person getBestFriend() {
             return _bestFriend;
@@ -61,7 +110,7 @@ public final class JacksonSerializationData {
             _relatives = relatives;
         }
         public String toString() {
-            return "Person(name=" + getName() + ", bestFriend=" + (_bestFriend != null ? _bestFriend.getName() : "") + ", relatives=" + getRelatives().size() + ")";
+            return "Person@" + System.identityHashCode(this) + "(nickName=" + getNickName() + ", fullName=" + getFullName() + ", bestFriend=" + (_bestFriend != null ? _bestFriend.getNickName() : "") + ", relatives=" + getRelatives().size() + ")";
         }
     }
 
@@ -128,7 +177,7 @@ public final class JacksonSerializationData {
             _antennae = antennae;
         }
         public String toString() {
-            return "Car(driver=" + getDriver() + ", passengers=" + Arrays.toString(getPassengers()) + ", cheapParts=" + Arrays.toString(getCheapParts()) + ", expensiveParts=" + getExpensiveParts() + ", inspection=" + getInspection() + ", problem=" + getProblem() + ")";
+            return "Car@" + System.identityHashCode(this) + "(driver=" + getDriver() + ", passengers=" + Arrays.toString(getPassengers()) + ", cheapParts=" + Arrays.toString(getCheapParts()) + ", expensiveParts=" + getExpensiveParts() + ", inspection=" + getInspection() + ", problem=" + getProblem() + ")";
         }
     }
 
@@ -153,6 +202,9 @@ public final class JacksonSerializationData {
         public void setLiened(boolean liened) {
             _liened = liened;
         }
+        public String toString() {
+            return "StrictTitle@" + System.identityHashCode(this) + "(state=" + getState() + ", liened" + isLiened() + ")";
+        }
     }
 
     public static final class FluentTitle implements Title {
@@ -174,6 +226,9 @@ public final class JacksonSerializationData {
         public Title setLiened(boolean liened) {
             _liened = liened;
             return this;
+        }
+        public String toString() {
+            return "FluentTitle@" + System.identityHashCode(this) + "(state=" + getState() + ", liened" + isLiened() + ")";
         }
     }
 
@@ -203,7 +258,7 @@ public final class JacksonSerializationData {
             _replaceable = replaceable;
         }
         public String toString() {
-            return "CustomPart(replaceable=" + isReplaceable() + ")";
+            return "CustomPart@" + System.identityHashCode(this) + "(replaceable=" + isReplaceable() + ")";
         }
     }
 
@@ -219,11 +274,15 @@ public final class JacksonSerializationData {
             return _expiredDate;
         }
         public String toString() {
-            return "BadPart(replaceable=" + isReplaceable() + ", " + getExpiredDate() + ")";
+            return "BadPart@" + System.identityHashCode(this) + "(replaceable=" + isReplaceable() + ", expiredDate=" + getExpiredDate() + ")";
         }
     }
 
-    public static final class Antennae {}
+    public static final class Antennae {
+        public String toString() {
+            return "Antennae@" + System.identityHashCode(this);
+        }
+    }
 
     private JacksonSerializationData() {}
 

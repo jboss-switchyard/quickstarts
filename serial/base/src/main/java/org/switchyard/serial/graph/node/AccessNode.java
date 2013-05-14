@@ -28,11 +28,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.reflect.Access;
@@ -57,7 +55,6 @@ public final class AccessNode implements Node {
 
     private String _type;
     private Map<String, Integer> _ids;
-    private transient Set<Integer> _resolutions;
 
     /**
      * Default constructor.
@@ -138,39 +135,33 @@ public final class AccessNode implements Node {
             for (final Access access : getAccessList(clazz)) {
                 final Integer id = _ids.get(access.getName());
                 if (id != null) {
-                    if (_resolutions == null) {
-                        _resolutions = new HashSet<Integer>();
-                    }
-                    if (!_resolutions.contains(id)) {
-                        _resolutions.add(id);
-                        graph.addResolution(new Runnable() {
-                            public void run() {
-                                Object value = graph.decomposeReference(id);
-                                if (value != null) {
-                                    boolean skip = !access.isWriteable();
-                                    Class<?> accessType = access.getType();
-                                    if (access instanceof FieldAccess) {
-                                        if (NodeBuilder.isCollection(accessType) && value instanceof Collection) {
-                                            ((Collection)access.read(obj)).addAll((Collection)value);
-                                            skip = true;
-                                        } else if (NodeBuilder.isMap(accessType) && value instanceof Map) {
-                                            ((Map)access.read(obj)).putAll((Map)value);
-                                            skip = true;
-                                        }
-                                    }
-                                    if (!skip) {
-                                        if (NodeBuilder.isArray(accessType) && value.getClass().isArray()) {
-                                            Object[] old_array = (Object[])value;
-                                            Object[] new_array = (Object[])Array.newInstance(accessType.getComponentType(), old_array.length);
-                                            System.arraycopy(old_array, 0, new_array, 0, old_array.length);
-                                            value = new_array;
-                                        }
-                                        access.write(obj, value);
+                    graph.addResolution(new Runnable() {
+                        public void run() {
+                            Object value = graph.decomposeReference(id);
+                            if (value != null) {
+                                boolean skip = !access.isWriteable();
+                                Class<?> accessType = access.getType();
+                                if (access instanceof FieldAccess) {
+                                    if (NodeBuilder.isCollection(accessType) && value instanceof Collection) {
+                                        ((Collection)access.read(obj)).addAll((Collection)value);
+                                        skip = true;
+                                    } else if (NodeBuilder.isMap(accessType) && value instanceof Map) {
+                                        ((Map)access.read(obj)).putAll((Map)value);
+                                        skip = true;
                                     }
                                 }
+                                if (!skip) {
+                                    if (NodeBuilder.isArray(accessType) && value.getClass().isArray()) {
+                                        Object[] old_array = (Object[])value;
+                                        Object[] new_array = (Object[])Array.newInstance(accessType.getComponentType(), old_array.length);
+                                        System.arraycopy(old_array, 0, new_array, 0, old_array.length);
+                                        value = new_array;
+                                    }
+                                    access.write(obj, value);
+                                }
                             }
-                        });
-                    }
+                        }
+                    });
                 }
             }
         }

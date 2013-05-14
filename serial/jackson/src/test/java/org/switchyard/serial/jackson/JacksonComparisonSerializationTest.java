@@ -53,7 +53,7 @@ public final class JacksonComparisonSerializationTest {
 
     private void doRun(Serializer serializer, int spaces, boolean newline) throws Exception {
         //serializer.setPrettyPrint(true);
-        Car car = new Car(new Person("David"));
+        Car car = new Car(new Person("Dave"));
         long start = System.currentTimeMillis();
         byte[] bytes = serializer.serialize(car, Car.class);
         //System.out.println(new String(bytes));
@@ -76,7 +76,7 @@ public final class JacksonComparisonSerializationTest {
             }
             System.out.println(sb);
         }
-        Assert.assertEquals("David", car.getDriver().getName());
+        Assert.assertEquals("Dave", car.getDriver().getNickName());
     }
 
 }

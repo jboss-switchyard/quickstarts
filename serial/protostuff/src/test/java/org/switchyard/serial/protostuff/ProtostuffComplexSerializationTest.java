@@ -40,6 +40,7 @@ import org.switchyard.serial.protostuff.ProtostuffSerializationData.Car;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.CustomPart;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.ExpiredPart;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.FluentTitle;
+import org.switchyard.serial.protostuff.ProtostuffSerializationData.Name;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Part;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Person;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.StrictTitle;
@@ -68,7 +69,7 @@ public final class ProtostuffComplexSerializationTest {
         car.setPassengers(new Person[] {new Person("passengerA"), new Person("passengerB")});
         car = serDeser(car, Car.class);
         Assert.assertEquals(2, car.getPassengers().length);
-        Assert.assertEquals("passengerB", car.getPassengers()[1].getName());
+        Assert.assertEquals("passengerB", car.getPassengers()[1].getNickName());
     }
 
     @Test
@@ -136,8 +137,9 @@ public final class ProtostuffComplexSerializationTest {
 
     @Test
     public void testCircularReferences() throws Exception {
-        Person me = new Person("me");
-        Person bff = new Person("bff");
+        Name bob = new Name("Bob", "Bobby", "Bobson");
+        Person me = new Person("me", bob);
+        Person bff = new Person("bff", bob);
         me.setBestFriend(bff);
         bff.setBestFriend(me);
         Person mom = new Person("mom");
@@ -153,12 +155,15 @@ public final class ProtostuffComplexSerializationTest {
         Iterator<Person> parents = me.getRelatives().iterator();
         mom = parents.next();
         dad = parents.next();
-        Assert.assertEquals("me", me.getName());
-        Assert.assertEquals("bff", bff.getName());
-        Assert.assertEquals("mom", mom.getName());
-        Assert.assertEquals("dad", dad.getName());
+        Assert.assertEquals("me", me.getNickName());
+        Assert.assertEquals("Bob", me.getFullName().getFirst());
+        Assert.assertEquals("bff", bff.getNickName());
+        Assert.assertSame(me.getFullName(), bff.getFullName());
+        Assert.assertEquals("mom", mom.getNickName());
+        Assert.assertEquals("dad", dad.getNickName());
         Assert.assertSame(me, me.getBestFriend().getBestFriend());
         Assert.assertSame(bff, bff.getBestFriend().getBestFriend());
+        Assert.assertSame(me.getFullName(), me.getBestFriend().getBestFriend().getFullName());
         Assert.assertSame(mom, mom.getBestFriend().getBestFriend());
         Assert.assertSame(dad, dad.getBestFriend().getBestFriend());
         Assert.assertSame(me, mom.getRelatives().iterator().next());
@@ -224,6 +229,25 @@ public final class ProtostuffComplexSerializationTest {
         car = serDeser(car, Car.class);
         antennae = car.getAntennae();
         Assert.assertNotNull(antennae);
+    }
+
+    @Test
+    public void testDuplicateValues() throws Exception {
+        Name name = new Name("me", "me", "me");
+        name = serDeser(name, Name.class);
+        Assert.assertEquals("me", name.getFirst());
+        Assert.assertEquals("me", name.getMiddle());
+        Assert.assertEquals("me", name.getLast());
+        name = new Name("you", null, "you");
+        name = serDeser(name, Name.class);
+        Assert.assertEquals("you", name.getFirst());
+        Assert.assertNull(name.getMiddle());
+        Assert.assertEquals("you", name.getLast());
+        name = new Name("him", "her", null);
+        name = serDeser(name, Name.class);
+        Assert.assertEquals("him", name.getFirst());
+        Assert.assertEquals("her", name.getMiddle());
+        Assert.assertNull(name.getLast());
     }
 
 }
