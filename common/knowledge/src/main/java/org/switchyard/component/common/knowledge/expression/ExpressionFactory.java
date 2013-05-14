@@ -52,7 +52,7 @@ public final class ExpressionFactory {
      */
     public Expression create(String expression, ExpressionType expressionType, PropertyResolver propertyResolver) {
         if (propertyResolver == null) {
-            propertyResolver = SystemAndTestPropertyResolver.instance();
+            propertyResolver = SystemAndTestPropertyResolver.INSTANCE;
         }
         switch (expressionType) {
             case MVEL:
