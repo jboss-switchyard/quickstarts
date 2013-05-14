@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.common.lang.Strings;
+import org.switchyard.runtime.util.ExchangeFormatter;
 
 /**
  * Default error listener.
@@ -36,8 +37,8 @@ public class DefaultErrorListener implements ErrorListener {
     @Override
     public void notify(Exchange exchange, Throwable throwable) {
         ExchangePattern pattern = exchange.getContract().getConsumerOperation().getExchangePattern();
-
-        String message = String.format("Caught exception of type %s with message: %s", throwable.getClass().getName(), throwable.getMessage());
+        
+        String message = String.format("%s\nCaught exception of type %s with message: %s", ExchangeFormatter.format(exchange, false), throwable.getClass().getName(), throwable.getMessage());
         String causeTrace = "";
 
         if (throwable.getCause() != null) {
