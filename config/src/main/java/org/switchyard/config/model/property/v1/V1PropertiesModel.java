@@ -161,8 +161,12 @@ public class V1PropertiesModel extends BaseModel implements PropertiesModel {
      */
     @Override
     public Object resolveProperty(String key) {
-        PropertyModel property = getProperty(key);
-        return property != null ? property.getValue() : null;
+        Object value = null;
+        if (key != null) {
+            PropertyModel property = getProperty(key);
+            value = property != null ? property.getValue() : null;
+        }
+        return value;
     }
 
 }

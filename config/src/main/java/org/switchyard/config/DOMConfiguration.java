@@ -691,7 +691,7 @@ public class DOMConfiguration extends BaseConfiguration {
         PropertyResolver propertyResolver = (PropertyResolver)_element.getUserData(PROPERTY_RESOLVER_KEY);
         if (propertyResolver == null) {
             Configuration parent = getParent();
-            propertyResolver = parent != null ? parent.getPropertyResolver() : SystemAndTestPropertyResolver.instance();
+            propertyResolver = parent != null ? parent.getPropertyResolver() : SystemAndTestPropertyResolver.INSTANCE;
         }
         return propertyResolver;
     }

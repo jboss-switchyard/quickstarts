@@ -50,7 +50,7 @@ public class PropertiesPropertyResolver implements PropertyResolver {
      */
     @Override
     public final Object resolveProperty(String key) {
-        return _properties.getProperty(key);
+        return key != null ? _properties.getProperty(key) : null;
     }
 
 }

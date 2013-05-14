@@ -50,7 +50,7 @@ public class MapPropertyResolver implements PropertyResolver {
      */
     @Override
     public final Object resolveProperty(String key) {
-        return _map.get(key);
+        return key != null ? _map.get(key) : null;
     }
 
 }

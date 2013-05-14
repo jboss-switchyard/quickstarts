@@ -18,7 +18,6 @@
  */
 package org.switchyard.common.property;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -28,21 +27,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class TestPropertyResolver extends MapPropertyResolver {
 
-    private static final TestPropertyResolver INSTANCE;
-    static {
-        INSTANCE = new TestPropertyResolver(new ConcurrentHashMap<String, Object>());
-    }
+    /** The singleton instance. */
+    public static final TestPropertyResolver INSTANCE = new TestPropertyResolver();
 
-    private TestPropertyResolver(Map<String, Object> map) {
-        super(map);
-    }
-
-    /**
-     * Returns the singleton instance.
-     * @return the singleton instance
-     */
-    public static final TestPropertyResolver instance() {
-        return INSTANCE;
+    /** The singleton constructor. */
+    private TestPropertyResolver() {
+        super(new ConcurrentHashMap<String, Object>());
     }
 
 }

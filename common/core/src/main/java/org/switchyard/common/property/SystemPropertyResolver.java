@@ -18,41 +18,36 @@
  */
 package org.switchyard.common.property;
 
-import java.util.Properties;
-
-import org.apache.log4j.Logger;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
- * Resolves properties from System Properties.
+ * Resolves properties from System Properties and the System environment.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public final class SystemPropertyResolver extends PropertiesPropertyResolver {
+public final class SystemPropertyResolver implements PropertyResolver {
 
-    private static final Logger LOGGER = Logger.getLogger(SystemPropertyResolver.class);
+    /** The singleton instance. */
+    public static final SystemPropertyResolver INSTANCE = new SystemPropertyResolver();
 
-    private static final SystemPropertyResolver INSTANCE;
-    static {
-        Properties systemProperties;
-        try {
-            systemProperties = System.getProperties();
-        } catch (SecurityException se) {
-            LOGGER.error("SecurityException while getting System Properties; will default to empty Properties", se);
-            systemProperties = new Properties();
-        }
-        INSTANCE = new SystemPropertyResolver(systemProperties);
-    }
-
-    private SystemPropertyResolver(Properties systemProperties) {
-        super(systemProperties);
-    }
+    /** The singleton constructor. */
+    private SystemPropertyResolver() {}
 
     /**
-     * Returns the singleton instance.
-     * @return the singleton instance
+     * {@inheritDoc}
      */
-    public static final SystemPropertyResolver instance() {
-        return INSTANCE;
+    @Override
+    public final Object resolveProperty(final String key) {
+        return key != null ? AccessController.doPrivileged(new PrivilegedAction<String>() {
+           public String run() {
+               String value = System.getProperty(key);
+               if (value == null && key.startsWith("env.")) {
+                   value =  System.getenv(key.substring(4));
+               }
+               return value;
+           }
+        }) : null;
     }
 
 }

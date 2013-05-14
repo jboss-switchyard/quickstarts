@@ -37,9 +37,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.common.property.CompoundPropertyResolver;
 import org.switchyard.common.property.PropertiesPropertyResolver;
-import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.property.SystemAndTestPropertyResolver;
 import org.switchyard.common.property.SystemPropertyResolver;
 import org.switchyard.common.property.TestPropertyResolver;
@@ -150,19 +148,66 @@ public class StringsTests {
         custom.setProperty("emotion", "loves");
         final String original = "${user.name} has a ${foo}, and he ${emotion:hates} it, unlike his ${sibling:sister}.";
         final String expected = System.getProperty("user.name") + " has a bar, and he loves it, unlike his sister.";
-        PropertyResolver resolver = new CompoundPropertyResolver(SystemPropertyResolver.instance(), new PropertiesPropertyResolver(custom));
-        final String actual = Strings.replaceProperties(original, resolver);
+        final String actual = Strings.replaceProperties(original, SystemPropertyResolver.INSTANCE, new PropertiesPropertyResolver(custom));
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testReplaceEmbeddedProperties() {
+        Properties custom = new Properties();
+        custom.setProperty("goto", "bed");
+        custom.setProperty("foo", "${em${goto}ded}");
+        custom.setProperty("embedded", "bar");
+        custom.setProperty("foobar", "tub");
+        final String original = "I have a ${foo} and a ${foo${foo}} but not a ${baz:wiz}.";
+        final String expected = "I have a bar and a tub but not a wiz.";
+        final String actual = Strings.replaceProperties(original, new PropertiesPropertyResolver(custom));
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testReplaceButEscapeDoubleDollarProperties() {
+        Properties custom = new Properties();
+        custom.setProperty("foo", "bar");
+        custom.setProperty("boo", "foo");
+        final String original = "I have a ${foo} and a ${baz:wiz}, but not a $${foo}, a $${ba${boo}n} but not a $${ba$${boo}n}, a $${baz:wiz}, or a $${baz:$${oo}${ka}}.";
+        final String expected = "I have a bar and a wiz, but not a ${foo}, a ${bafoon} but not a ${ba${boo}n}, a ${baz:wiz}, or a ${baz:${oo}${ka}}.";
+        final String actual = Strings.replaceProperties(original, new PropertiesPropertyResolver(custom));
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testReplaceButHandleDoubleColonVaultProperty() {
+        final String key = "VAULT::ds_ExampleDS::password::N2NhZDYzOTMtNWE0OS00ZGQ0LWE4MmEtMWNlMDMyNDdmNmI2TElORV9CUkVBS3ZhdWx0";
+        final String expected = "expected";
+        Properties properties = new Properties();
+        properties.setProperty(key, expected);
+        final String original = "${" + key + "}";
+        final String actual = Strings.replaceProperties(original, new PropertiesPropertyResolver(properties));
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testReplaceButHandleDoubleColonVaultAndCustomProperties() {
+        final String nested = "VAULT::${vaultBlock:ds_ExampleDS}::${attributeName:changeit}::N2NhZDYzOTMtNWE0OS00ZGQ0LWE4MmEtMWNlMDMyNDdmNmI2TElORV9CUkVBS3ZhdWx0";
+        final String key = "VAULT::ds_ExampleDS::password::N2NhZDYzOTMtNWE0OS00ZGQ0LWE4MmEtMWNlMDMyNDdmNmI2TElORV9CUkVBS3ZhdWx0";
+        final String expected = "expected";
+        Properties properties = new Properties();
+        properties.setProperty("attributeName", "password");
+        properties.setProperty(key, expected);
+        final String original = "${" + nested + "}";
+        final String actual = Strings.replaceProperties(original, new PropertiesPropertyResolver(properties));
         Assert.assertEquals(expected, actual);
     }
 
     @Before
     public void beforeReplaceTestProperties() {
-        TestPropertyResolver.instance().getMap().put("test.key", "testValue");
+        TestPropertyResolver.INSTANCE.getMap().put("test.key", "testValue");
     }
 
     @After
     public void afterReplaceTestProperties() {
-        TestPropertyResolver.instance().getMap().clear();
+        TestPropertyResolver.INSTANCE.getMap().clear();
     }
 
     @Test
@@ -188,8 +233,7 @@ public class StringsTests {
         custom.setProperty("emotion", "loves");
         final String original = "${user.name} has a ${foo}, and he ${emotion:hates} it, unlike his ${sibling:sister}, who has a ${test.key}.";
         final String expected = System.getProperty("user.name") + " has a bar, and he loves it, unlike his sister, who has a testValue.";
-        PropertyResolver resolver = new CompoundPropertyResolver(SystemAndTestPropertyResolver.instance(), new PropertiesPropertyResolver(custom));
-        final String actual = Strings.replaceProperties(original, resolver);
+        final String actual = Strings.replaceProperties(original, SystemAndTestPropertyResolver.INSTANCE, new PropertiesPropertyResolver(custom));
         Assert.assertEquals(expected, actual);
     }
 

@@ -28,7 +28,6 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.switchyard.common.property.CompoundPropertyResolver;
-import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.property.SystemAndTestPropertyResolver;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
@@ -198,8 +197,12 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
      */
     @Override
     public Object resolveProperty(String key) {
-        PropertyModel property = getProperty(key);
-        return property != null ? property.getValue() : null;
+        Object value = null;
+        if (key != null) {
+            PropertyModel property = getProperty(key);
+            value = property != null ? property.getValue() : null;
+        }
+        return value;
     }
 
     /**
@@ -207,15 +210,13 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
      */
     @Override
     public void setCompositePropertyResolver() {
-        Configuration parent = getModelConfiguration().getParent();
+        Configuration config = getModelConfiguration();
+        Configuration parent = config.getParent();
         if (parent != null) {
-            PropertyResolver pr = new CompoundPropertyResolver(parent.getPropertyResolver(), this);
-            getModelConfiguration().setPropertyResolver(pr);
+            config.setPropertyResolver(CompoundPropertyResolver.compact(parent.getPropertyResolver(), this));
         } else {
-            PropertyResolver pr = new CompoundPropertyResolver(SystemAndTestPropertyResolver.instance(), this);
-            getModelConfiguration().setPropertyResolver(pr);
+            config.setPropertyResolver(CompoundPropertyResolver.compact(SystemAndTestPropertyResolver.INSTANCE, this));
         }
-        
         for (ComponentModel component : _components) {
             component.setComponentPropertyResolver();
         }

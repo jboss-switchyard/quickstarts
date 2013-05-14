@@ -21,8 +21,6 @@ package org.switchyard.config.model.switchyard.v1;
 import javax.xml.namespace.QName;
 
 import org.switchyard.common.property.CompoundPropertyResolver;
-import org.switchyard.common.property.PropertyResolver;
-import org.switchyard.common.property.SystemAndTestPropertyResolver;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
@@ -182,8 +180,8 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
         if (domain != null) {
             PropertiesModel properties = domain.getProperties();
             if (properties != null) {
-                PropertyResolver pr = new CompoundPropertyResolver(SystemAndTestPropertyResolver.instance(), properties);
-                getModelConfiguration().setPropertyResolver(pr);
+                Configuration config = getModelConfiguration();
+                config.setPropertyResolver(CompoundPropertyResolver.compact(config.getPropertyResolver(), properties));
             }
         }
         if (_composite != null) {

@@ -42,7 +42,7 @@ public class PropertyMixIn extends AbstractTestMixIn {
      * @return the test Map
      */
     public Map<String, Object> getMap() {
-        return TestPropertyResolver.instance().getMap();
+        return TestPropertyResolver.INSTANCE.getMap();
     }
 
     /**

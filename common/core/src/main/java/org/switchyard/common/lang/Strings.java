@@ -19,6 +19,7 @@
 package org.switchyard.common.lang;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -27,7 +28,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.switchyard.common.property.CompoundPropertyResolver;
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.property.SystemAndTestPropertyResolver;
 import org.switchyard.common.property.SystemPropertyResolver;
@@ -40,15 +44,22 @@ import org.switchyard.common.property.TestPropertyResolver;
  */
 public final class Strings {
 
-    /**
-     * Default regex replacements for cleansing Strings.
-     */
+    /** Default regex replacements for cleansing Strings. */
     public static final Map<String, String> DEFAULT_CLEANSE_REGEX_REPLACEMENTS;
     static {
         Map<String, String> map = new LinkedHashMap<String, String>();
         map.put("[\\W_]", "-");
         DEFAULT_CLEANSE_REGEX_REPLACEMENTS = Collections.unmodifiableMap(map);
     }
+
+    private static final Pattern DOUBLE_DOLLAR_LEFT_CURLY_PATTERN = Pattern.compile("\\$\\$\\{");
+    private static final Pattern INNER_DOLLAR_CURLIES_PATTERN = Pattern.compile("\\$\\{[[^\\$\\{]&&[^\\}]]*\\}");
+    private static final Pattern SINGLE_COLON_PATTERN = Pattern.compile("[^:+]:[^:+]");
+    private static final String PENCIL = String.valueOf((char)0x270F); // an actual pencil dingbat, used as a placeholder
+    private static final String DOLLAR = "\\$";
+    private static final String LEFT_CURLY = "{";
+    private static final String RIGHT_CURLY = "}";
+    private static final String PENCIL_LEFT_CURLY = PENCIL + LEFT_CURLY;
 
     /**
      * Trims the specified String, and if after it is zero-length, return null.
@@ -259,7 +270,7 @@ public final class Strings {
      * @return the modified string
      */
     public static String replaceSystemProperties(String str) {
-        return replaceProperties(str, SystemPropertyResolver.instance());
+        return replaceProperties(str, SystemPropertyResolver.INSTANCE);
     }
 
     /**
@@ -268,7 +279,7 @@ public final class Strings {
      * @return the modified string
      */
     public static String replaceTestProperties(String str) {
-        return replaceProperties(str, TestPropertyResolver.instance());
+        return replaceProperties(str, TestPropertyResolver.INSTANCE);
     }
 
     /**
@@ -277,30 +288,39 @@ public final class Strings {
      * @return the modified string
      */
     public static String replaceSystemAndTestProperties(String str) {
-        return replaceProperties(str, SystemAndTestPropertyResolver.instance());
+        return replaceProperties(str, SystemAndTestPropertyResolver.INSTANCE);
     }
 
     /**
-     * Replaces properties per the given property resolver.
+     * Replaces properties per the given property resolvers.
      * @param str the original string
-     * @param resolver the property resolver
+     * @param resolvers the property resolvers
      * @return the modified string
      */
-    public static String replaceProperties(String str, PropertyResolver resolver) {
-        if (str != null && resolver != null) {
-            int l_pos = str.indexOf("${", 0);
-            while (l_pos != -1) {
-                int r_pos = str.indexOf('}', l_pos + 2);
-                if (r_pos == -1) {
+    public static String replaceProperties(String str, PropertyResolver... resolvers) {
+        if (str != null) {
+            PropertyResolver resolver = CompoundPropertyResolver.compact(resolvers);
+            boolean penciled = false;
+            while (true) {
+                Matcher ddlc_mat = DOUBLE_DOLLAR_LEFT_CURLY_PATTERN.matcher(str);
+                if (ddlc_mat.find()) {
+                    str = ddlc_mat.replaceAll(PENCIL_LEFT_CURLY);
+                    penciled = true;
+                }
+                Matcher idc_mat = INNER_DOLLAR_CURLIES_PATTERN.matcher(str);
+                if (!idc_mat.find()) {
                     break;
                 }
+                int l_pos = idc_mat.start();
+                int r_pos = idc_mat.end() - 1;
                 String prop_key = str.substring(l_pos + 2, r_pos);
                 String real_key;
                 String def_val;
-                int c_pos = prop_key.indexOf(':');
-                if (c_pos > -1) {
-                    real_key = prop_key.substring(0, c_pos);
-                    def_val = prop_key.substring(c_pos + 1, prop_key.length());
+                Matcher sc_mat = SINGLE_COLON_PATTERN.matcher(prop_key);
+                if (sc_mat.find()) {
+                    int sc_pos = sc_mat.start() + 1;
+                    real_key = prop_key.substring(0, sc_pos);
+                    def_val = prop_key.substring(sc_pos + 1, prop_key.length());
                 } else {
                     real_key = prop_key;
                     def_val = null;
@@ -309,21 +329,34 @@ public final class Strings {
                 if (obj_val == null) {
                     obj_val = def_val;
                 }
+                String str_val;
                 if (obj_val != null) {
-                    String str_val = obj_val.toString();
-                    String begin = str.substring(0, l_pos);
-                    str = new StringBuilder()
-                        .append(begin)
-                        .append(str_val)
-                        .append(str.substring(r_pos + 1, str.length()))
-                        .toString();
-                    l_pos = str.indexOf("${", begin.length() + str_val.length());
+                    str_val = obj_val.toString();
                 } else {
-                    l_pos = str.indexOf("${", l_pos + 2);
+                    str_val = PENCIL_LEFT_CURLY + real_key + RIGHT_CURLY;
+                    penciled = true;
                 }
+                str = new StringBuilder()
+                    .append(str.substring(0, l_pos))
+                    .append(str_val)
+                    .append(str.substring(r_pos + 1, str.length()))
+                    .toString();
+            }
+            if (penciled) {
+                str = str.replaceAll(PENCIL, DOLLAR);
             }
         }
         return str;
+    }
+
+    /**
+     * Replaces properties per the given property resolvers.
+     * @param str the original string
+     * @param resolvers the property resolvers
+     * @return the modified string
+     */
+    public static String replaceProperties(String str, Collection<PropertyResolver> resolvers) {
+        return replaceProperties(str, CompoundPropertyResolver.compact(resolvers));
     }
 
     private Strings() {}

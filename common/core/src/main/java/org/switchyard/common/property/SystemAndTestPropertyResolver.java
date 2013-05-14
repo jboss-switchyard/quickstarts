@@ -25,21 +25,12 @@ package org.switchyard.common.property;
  */
 public final class SystemAndTestPropertyResolver extends CompoundPropertyResolver {
 
-    private static final SystemAndTestPropertyResolver INSTANCE;
-    static {
-        INSTANCE = new SystemAndTestPropertyResolver();
-    }
+    /** The singleton instance. */
+    public static final SystemAndTestPropertyResolver INSTANCE = new SystemAndTestPropertyResolver();
 
+    /** The singleton constructor. */
     private SystemAndTestPropertyResolver() {
-        super(SystemPropertyResolver.instance(), TestPropertyResolver.instance());
-    }
-
-    /**
-     * Returns the singleton instance.
-     * @return the singleton instance
-     */
-    public static final SystemAndTestPropertyResolver instance() {
-        return INSTANCE;
+        super(SystemPropertyResolver.INSTANCE, TestPropertyResolver.INSTANCE);
     }
 
 }

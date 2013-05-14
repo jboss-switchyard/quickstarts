@@ -28,7 +28,6 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.switchyard.common.property.CompoundPropertyResolver;
-import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.property.SystemAndTestPropertyResolver;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
@@ -161,7 +160,6 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
      */
     @Override
     public synchronized PropertyModel getProperty(String name) {
-        
         return _properties.get(name);
     }
     
@@ -188,8 +186,12 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
      */
     @Override
     public Object resolveProperty(String key) {
-        PropertyModel property = getProperty(key);
-        return property != null ? property.getValue() : null;
+        Object value = null;
+        if (key != null) {
+            PropertyModel property = getProperty(key);
+            value = property != null ? property.getValue() : null;
+        }
+        return value;
     }
 
     /**
@@ -197,13 +199,12 @@ public class V1ComponentModel extends BaseNamedModel implements ComponentModel {
      */
     @Override
     public void setComponentPropertyResolver() {
-        Configuration parent = getModelConfiguration().getParent();
+        Configuration config = getModelConfiguration();
+        Configuration parent = config.getParent();
         if (parent != null) {
-            PropertyResolver pr = new CompoundPropertyResolver(parent.getPropertyResolver(), this);
-            getModelConfiguration().setPropertyResolver(pr);
+            config.setPropertyResolver(CompoundPropertyResolver.compact(parent.getPropertyResolver(), this));
         } else {
-            PropertyResolver pr = new CompoundPropertyResolver(SystemAndTestPropertyResolver.instance(), this);
-            getModelConfiguration().setPropertyResolver(pr);
+            config.setPropertyResolver(CompoundPropertyResolver.compact(SystemAndTestPropertyResolver.INSTANCE, this));
         }
     }
 }
