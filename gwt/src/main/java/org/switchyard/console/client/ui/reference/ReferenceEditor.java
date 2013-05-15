@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -17,13 +17,14 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.console.client.ui.service;
+package org.switchyard.console.client.ui.reference;
 
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.switchyard.console.client.NameTokens;
-import org.switchyard.console.client.model.Service;
+import org.switchyard.console.client.model.Reference;
+import org.switchyard.console.client.ui.service.GatewaysList;
 import org.switchyard.console.client.ui.widgets.ClickableTextItem;
 import org.switchyard.console.client.ui.widgets.ClickableTextItem.ValueAdapter;
 import org.switchyard.console.client.ui.widgets.LocalNameFormItem;
@@ -35,32 +36,30 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 
 /**
- * ServiceEditor
+ * ReferenceEditor
  * 
- * Editor for SwitchYard service configuration.
- * 
- * @author Rob Cernich
+ * Editor for SwitchYard reference configuration.
  */
-public class ServiceEditor {
+public class ReferenceEditor {
 
-    private ServicePresenter _presenter;
+    private ReferencePresenter _presenter;
 
-    private Form<Service> _implementationDetailsForm;
+    private Form<Reference> _implementationDetailsForm;
     private GatewaysList _gatewaysList;
 
-    private Service _service;
+    private Reference _reference;
 
     /**
-     * Create a new ServiceEditor.
+     * Create a new ReferenceEditor.
      */
-    public ServiceEditor() {
+    public ReferenceEditor() {
         _gatewaysList = new GatewaysList();
     }
 
     /**
      * @param presenter the current presenter.
      */
-    public void setPresenter(ServicePresenter presenter) {
+    public void setPresenter(ReferencePresenter presenter) {
         _presenter = presenter;
         _gatewaysList.setPresenter(_presenter);
     }
@@ -79,19 +78,19 @@ public class ServiceEditor {
     }
 
     /**
-     * @param service the service to be edited.
+     * @param reference the reference to be edited.
      */
-    public void setService(Service service) {
-        _service = service;
+    public void setReference(Reference reference) {
+        _reference = reference;
 
-        if (service.getInterface() == null) {
+        if (reference.getInterface() == null) {
             // XXX: workaround to ensure interface field in the form gets set.
-            service.setInterface("");
+            reference.setInterface("");
         }
 
         _implementationDetailsForm.clearValues();
-        _implementationDetailsForm.edit(service);
-        _gatewaysList.setData(service.getGateways());
+        _implementationDetailsForm.edit(reference);
+        _gatewaysList.setData(reference.getGateways());
     }
 
     private Widget createImplementationDetailsPanel() {
@@ -118,30 +117,14 @@ public class ServiceEditor {
                 super.setValue(value);
             }
         };
-        ClickableTextItem<String> implementationItem = new ClickableTextItem<String>("promotedService",
-                "Promoted Service", new ValueAdapter<String>() {
-                    @Override
-                    public String getText(String value) {
-                        return NameTokens.parseQName(value)[1];
-                    }
 
-                    @Override
-                    public String getTargetHistoryToken(String value) {
-                        if (_service == null || _service.getApplication() == null) {
-                            return createApplicationLink(null);
-                        }
-                        return createApplicationLink(_service.getApplication());
-                    }
-                });
-
-        _implementationDetailsForm = new Form<Service>(Service.class);
+        _implementationDetailsForm = new Form<Reference>(Reference.class);
         _implementationDetailsForm.setNumColumns(2);
-        _implementationDetailsForm.setFields(nameItem, applicationItem, namespaceItem);
-        _implementationDetailsForm.setFieldsInGroup("Implementation Details", implementationItem, interfaceItem);
+        _implementationDetailsForm.setFields(nameItem, applicationItem, namespaceItem, interfaceItem);
 
         VerticalPanel implementationDetailsLayout = new VerticalPanel();
         implementationDetailsLayout.setStyleName("fill-layout-width");
-        implementationDetailsLayout.add(new ContentGroupLabel("Service Details"));
+        implementationDetailsLayout.add(new ContentGroupLabel("Reference Details"));
         implementationDetailsLayout.add(_implementationDetailsForm.asWidget());
 
         return implementationDetailsLayout;
@@ -156,7 +139,6 @@ public class ServiceEditor {
     }
 
     private Widget createGatewayDetailsPanel() {
-        _gatewaysList.setPresenter(_presenter);
         return _gatewaysList.asWidget();
     }
 

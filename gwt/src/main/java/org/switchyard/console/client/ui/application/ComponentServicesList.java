@@ -24,7 +24,7 @@ import org.switchyard.console.client.model.ComponentService;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
 
-import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
@@ -76,7 +76,7 @@ public class ComponentServicesList extends AbstractDataTable<ComponentService> {
         interfaceColumn.setSortable(true);
 
         Column<ComponentService, String> implementationColumn = new Column<ComponentService, String>(
-                new ClickableTextCell()) {
+                new ButtonCell()) {
             @Override
             public String getValue(ComponentService dummy) {
                 return "View Details...";

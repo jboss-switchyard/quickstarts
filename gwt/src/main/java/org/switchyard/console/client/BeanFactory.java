@@ -27,6 +27,7 @@ import org.switchyard.console.client.model.ComponentReference;
 import org.switchyard.console.client.model.ComponentService;
 import org.switchyard.console.client.model.MessageMetrics;
 import org.switchyard.console.client.model.QNameCategory;
+import org.switchyard.console.client.model.Reference;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.ServiceMetrics;
 import org.switchyard.console.client.model.SystemDetails;
@@ -66,6 +67,11 @@ public interface BeanFactory extends AutoBeanFactory {
      * @return a new AutoBean<Service>
      */
     AutoBean<Service> service();
+
+    /**
+     * @return a new AutoBean<Reference>
+     */
+    AutoBean<Reference> reference();
 
     /**
      * @return a new AutoBean<ComponentService>

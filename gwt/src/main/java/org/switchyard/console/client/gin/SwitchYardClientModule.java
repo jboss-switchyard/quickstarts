@@ -32,6 +32,8 @@ import org.switchyard.console.client.ui.config.ConfigPresenter;
 import org.switchyard.console.client.ui.config.ConfigView;
 import org.switchyard.console.client.ui.metrics.MetricsPresenter;
 import org.switchyard.console.client.ui.metrics.MetricsView;
+import org.switchyard.console.client.ui.reference.ReferencePresenter;
+import org.switchyard.console.client.ui.reference.ReferenceView;
 import org.switchyard.console.client.ui.runtime.RuntimePresenter;
 import org.switchyard.console.client.ui.runtime.RuntimeView;
 import org.switchyard.console.client.ui.service.ServicePresenter;
@@ -63,6 +65,8 @@ public class SwitchYardClientModule extends AbstractPresenterModule {
                 ArtifactPresenter.MyProxy.class);
         bindPresenter(ServicePresenter.class, ServicePresenter.MyView.class, ServiceView.class,
                 ServicePresenter.MyProxy.class);
+        bindPresenter(ReferencePresenter.class, ReferencePresenter.MyView.class, ReferenceView.class,
+                ReferencePresenter.MyProxy.class);
         bindPresenter(MetricsPresenter.class, MetricsPresenter.MyView.class, MetricsView.class,
                 MetricsPresenter.MyProxy.class);
         bindPresenter(RuntimePresenter.class, RuntimePresenter.MyView.class, RuntimeView.class,

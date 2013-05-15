@@ -19,15 +19,19 @@
 package org.switchyard.console.client.ui.metrics;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.switchyard.console.client.model.MessageMetrics;
 import org.switchyard.console.client.model.ServiceMetrics;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
 import org.switchyard.console.client.ui.common.PercentageBarCell;
 
+import com.google.gwt.cell.client.ButtonCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -49,12 +53,32 @@ public class ServiceMetricsList extends AbstractDataTable<ServiceMetrics> {
     };
 
     private MessageMetrics _systemMetrics;
+    private MetricsPresenter _presenter;
+    private DefaultWindow _detailsWindow;
+    private MetricsDetailsWidget _detailsWidget;
+    private String _title;
 
     /**
      * Create a new ServiceReferenceMetricsList.
+     * 
+     * @param title for the list
      */
-    public ServiceMetricsList() {
-        super("Service Metrics");
+    public ServiceMetricsList(String title) {
+        super(title);
+        _title = title;
+    }
+
+    /**
+     * @param presenter the presenter.
+     */
+    public void setPresenter(MetricsPresenter presenter) {
+        _presenter = presenter;
+    }
+
+    @Override
+    public Widget asWidget() {
+        createDetailsWindow();
+        return super.asWidget();
     }
 
     @Override
@@ -115,6 +139,33 @@ public class ServiceMetricsList extends AbstractDataTable<ServiceMetrics> {
         };
         faultPercentageColumn.setSortable(true);
 
+
+        Column<ServiceMetrics, String> viewDetailsColumn = new Column<ServiceMetrics, String>(new ButtonCell()) {
+            @Override
+            public String getValue(ServiceMetrics dummy) {
+                return "Details...";
+            }
+        };
+        viewDetailsColumn.setFieldUpdater(new FieldUpdater<ServiceMetrics, String>() {
+            @Override
+            public void update(int index, ServiceMetrics metrics, String value) {
+                showDetails(metrics);
+            }
+        });
+
+        Column<ServiceMetrics, String> clearColumn = new Column<ServiceMetrics, String>(new ButtonCell()) {
+            @Override
+            public String getValue(ServiceMetrics dummy) {
+                return "Reset Metrics";
+            }
+        };
+        clearColumn.setFieldUpdater(new FieldUpdater<ServiceMetrics, String>() {
+            @Override
+            public void update(int index, ServiceMetrics metrics, String value) {
+                _presenter.resetMetrics(metrics);
+            }
+        });
+
         ColumnSortEvent.ListHandler<ServiceMetrics> sortHandler = new ColumnSortEvent.ListHandler<ServiceMetrics>(
                 dataProvider.getList());
         sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
@@ -130,6 +181,8 @@ public class ServiceMetricsList extends AbstractDataTable<ServiceMetrics> {
         table.addColumn(averageTimeColumn, "Average Time");
         table.addColumn(totalTimePercentageColumn, "Time %");
         table.addColumn(faultPercentageColumn, "Fault %");
+        table.addColumn(viewDetailsColumn, "Details");
+        table.addColumn(clearColumn, "Reset");
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(averageTimeColumn);
@@ -152,6 +205,30 @@ public class ServiceMetricsList extends AbstractDataTable<ServiceMetrics> {
     @Override
     protected ProvidesKey<ServiceMetrics> createKeyProvider() {
         return KEY_PROVIDER;
+    }
+
+    /**
+     * create the details widget
+     */
+    protected MetricsDetailsWidget createDetailsWidget() {
+        return new ServiceDetailsWidget();
+    }
+
+    private void showDetails(ServiceMetrics metrics) {
+        _detailsWidget.setMetrics(metrics, _systemMetrics);
+        _detailsWindow.center();
+    }
+
+    private void createDetailsWindow() {
+        _detailsWindow = new DefaultWindow(_title);
+        _detailsWindow.setGlassEnabled(true);
+        _detailsWindow.setAutoHideEnabled(true);
+        _detailsWindow.setAutoHideOnHistoryEventsEnabled(true);
+        _detailsWindow.setWidth("80%");
+        _detailsWindow.setHeight("80%");
+
+        _detailsWidget = createDetailsWidget();
+        _detailsWindow.setWidget(_detailsWidget.asWidget());
     }
 
 }

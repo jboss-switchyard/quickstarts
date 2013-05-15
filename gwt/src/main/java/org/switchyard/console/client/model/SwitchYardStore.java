@@ -21,6 +21,7 @@ package org.switchyard.console.client.model;
 
 import java.util.List;
 
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.switchyard.console.client.BeanFactory;
 import org.switchyard.console.components.client.model.Component;
 
@@ -110,6 +111,13 @@ public interface SwitchYardStore {
     void loadAllServiceMetrics(AsyncCallback<List<ServiceMetrics>> asyncCallback);
 
     /**
+     * Loads message metrics for the specified service.
+     * 
+     * @param asyncCallback the callback
+     */
+    void loadAllReferenceMetrics(AsyncCallback<List<ServiceMetrics>> asyncCallback);
+
+    /**
      * Loads message metrics for the entire system.
      * 
      * @param asyncCallback the callback
@@ -122,5 +130,67 @@ public interface SwitchYardStore {
      * @param asyncCallback the callback
      */
     void loadArtifactReferences(AsyncCallback<List<ArtifactReference>> asyncCallback);
+
+    /**
+     * Load details for a specific reference.
+     * 
+     * @param referenceName the name of the reference to load.
+     * @param applicationName the name of the application containing the
+     *            reference.
+     * @param callback the callback.
+     */
+    void loadReference(String referenceName, String applicationName, AsyncCallback<Reference> callback);
+
+    /**
+     * Load references deployed on the SwitchYard subsystem.
+     * 
+     * @param callback the callback.
+     */
+    void loadReferences(AsyncCallback<List<Reference>> callback);
+
+    /**
+     * Sets the property on the application.
+     * 
+     * @param applicationName the application
+     * @param prop the property
+     * @param callback the callback
+     */
+    void setApplicationProperty(String applicationName, PropertyRecord prop, final AsyncCallback<Void> callback);
+
+    /**
+     * Resets all metrics in the system.
+     * 
+     * @param callback the callback
+     */
+    void resetSystemMetrics(AsyncCallback<Void> callback);
+
+    /**
+     * Resets metrics for the named service/reference.
+     * 
+     * @param name the name of the service/reference.
+     * @param applicationName the name of the containing application
+     * @param callback the callback.
+     */
+    void resetMetrics(String name, String applicationName, AsyncCallback<Void> callback);
+
+    /**
+     * Start the specified gateway/binding.
+     * 
+     * @param name the gateway/binding name
+     * @param serviceName the service/reference name
+     * @param applicationName the application name
+     * @param callback the callback
+     */
+    void startGateway(String name, String serviceName, String applicationName, AsyncCallback<Void> callback);
+
+    /**
+     * Stop the specified gateway/binding.
+     * 
+     * @param name the gateway/binding name
+     * @param serviceName the service/reference name
+     * @param applicationName the application name
+     * @param callback the callback
+     */
+    void stopGateway(String name, String serviceName, String applicationName, AsyncCallback<Void> callback);
 
 }

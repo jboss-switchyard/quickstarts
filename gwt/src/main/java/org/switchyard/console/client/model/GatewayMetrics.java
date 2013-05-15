@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -19,51 +19,31 @@
 package org.switchyard.console.client.model;
 
 /**
- * Binding
+ * OperationMetrics
  * 
- * Represents a gateway binding on a service.
- * 
- * @author Rob Cernich
+ * <p/>
+ * Message metrics specific to a gateway/binding.
  */
-public interface Binding {
+public interface GatewayMetrics extends MessageMetrics {
 
     /**
-     * @return the name of binding (e.g. soap1)
+     * @return binding name
      */
-    public String getName();
+    String getName();
 
     /**
-     * @param name the name of binding (e.g. soap1)
+     * @param value binding name
      */
-    public void setName(String name);
+    void setName(String value);
 
     /**
-     * @return the type of binding (e.g. soap)
+     * @return binding type
      */
-    public String getType();
+    String getType();
 
     /**
-     * @param type the type of binding (e.g. soap)
+     * @param value binding type
      */
-    public void setType(String type);
+    void setType(String value);
 
-    /**
-     * @return the raw configuration of the binding
-     */
-    public String getConfiguration();
-
-    /**
-     * @param configuration the raw configuration of the binding.
-     */
-    public void setConfiguration(String configuration);
-
-    /**
-     * @return the state of the binding.
-     */
-    public State getState();
-
-    /**
-     * @param state the state of the binding.
-     */
-    public void setState(State state);
 }

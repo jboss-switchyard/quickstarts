@@ -42,8 +42,11 @@ public class ServiceView extends DisposableViewImpl implements ServicePresenter.
     private ServiceEditor _serviceEditor;
     private Service _selectedService;
 
-    @Override
-    public Widget createWidget() {
+    /**
+     * Create a new ServiceView.
+     */
+    public ServiceView() {
+        super();
         _servicesList = new ServicesList();
         _servicesList.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
@@ -55,8 +58,12 @@ public class ServiceView extends DisposableViewImpl implements ServicePresenter.
             }
         });
 
-        _serviceEditor = new ServiceEditor(_presenter);
+        _serviceEditor = new ServiceEditor();
 
+    }
+
+    @Override
+    public Widget createWidget() {
         SimpleLayout layout = new SimpleLayout()
                 .setPlain(true)
                 .setTitle("SwitchYard Services")
@@ -72,6 +79,7 @@ public class ServiceView extends DisposableViewImpl implements ServicePresenter.
     @Override
     public void setPresenter(ServicePresenter presenter) {
         _presenter = presenter;
+        _serviceEditor.setPresenter(presenter);
     }
 
     @Override

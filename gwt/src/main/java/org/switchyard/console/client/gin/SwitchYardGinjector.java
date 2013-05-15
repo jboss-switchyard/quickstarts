@@ -24,6 +24,7 @@ import org.switchyard.console.client.ui.application.ApplicationPresenter;
 import org.switchyard.console.client.ui.artifacts.ArtifactPresenter;
 import org.switchyard.console.client.ui.config.ConfigPresenter;
 import org.switchyard.console.client.ui.metrics.MetricsPresenter;
+import org.switchyard.console.client.ui.reference.ReferencePresenter;
 import org.switchyard.console.client.ui.runtime.RuntimePresenter;
 import org.switchyard.console.client.ui.service.ServicePresenter;
 
@@ -61,6 +62,11 @@ public interface SwitchYardGinjector extends Ginjector {
      * @return the ServicePresenter configured for the module.
      */
     AsyncProvider<ServicePresenter> getServicePresenter();
+
+    /**
+     * @return the ReferencePresenter configured for the module.
+     */
+    AsyncProvider<ReferencePresenter> getReferencePresenter();
 
     /**
      * @return the MetricsPresenter configured for the module.

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.console.client.ui.service;
+package org.switchyard.console.client.ui.reference;
 
 import java.util.List;
 
@@ -25,9 +25,10 @@ import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Binding;
-import org.switchyard.console.client.model.Service;
+import org.switchyard.console.client.model.Reference;
 import org.switchyard.console.client.model.SwitchYardStore;
 import org.switchyard.console.client.ui.runtime.RuntimePresenter;
+import org.switchyard.console.client.ui.service.GatewayPresenter;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.http.client.URL;
@@ -46,13 +47,11 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 /**
- * ServicePresenter
+ * ReferencePresenter
  * 
  * Presenter for SwitchYard component configuration.
- * 
- * @author Rob Cernich
  */
-public class ServicePresenter extends Presenter<ServicePresenter.MyView, ServicePresenter.MyProxy> implements
+public class ReferencePresenter extends Presenter<ReferencePresenter.MyView, ReferencePresenter.MyProxy> implements
         GatewayPresenter {
 
     /**
@@ -61,9 +60,9 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
      * The proxy type used by this presenter.
      */
     @ProxyCodeSplit
-    @NameToken(NameTokens.SERVICES_PRESENTER)
-    @TabInfo(container = RuntimePresenter.class, label = NameTokens.SERVICES_TEXT, priority = 2)
-    public interface MyProxy extends TabContentProxyPlace<ServicePresenter> {
+    @NameToken(NameTokens.REFERENCES_PRESENTER)
+    @TabInfo(container = RuntimePresenter.class, label = NameTokens.REFERENCES_TEXT, priority = 3)
+    public interface MyProxy extends TabContentProxyPlace<ReferencePresenter> {
     }
 
     /**
@@ -75,26 +74,26 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
         /**
          * @param presenter the presenter associated with the view.
          */
-        void setPresenter(ServicePresenter presenter);
+        void setPresenter(ReferencePresenter presenter);
 
         /**
-         * @param service set the service to be viewed/edited.
+         * @param reference set the reference to be viewed/edited.
          */
-        void setService(Service service);
+        void setReference(Reference reference);
 
         /**
-         * @param services the services deployed on the server.
+         * @param references the references deployed on the server.
          */
-        void setServicesList(List<Service> services);
+        void setReferencesList(List<Reference> references);
     }
 
     private final PlaceManager _placeManager;
     private final SwitchYardStore _switchYardStore;
     private String _applicationName;
-    private String _serviceName;
+    private String _referenceName;
 
     /**
-     * Create a new ServicePresenter.
+     * Create a new ReferencePresenter.
      * 
      * @param eventBus the injected EventBus.
      * @param view the injected MyView.
@@ -103,7 +102,7 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
      * @param switchYardStore the injected SwitchYardStore.
      */
     @Inject
-    public ServicePresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
+    public ReferencePresenter(EventBus eventBus, MyView view, MyProxy proxy, PlaceManager placeManager,
             SwitchYardStore switchYardStore) {
         super(eventBus, view, proxy);
 
@@ -113,7 +112,7 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
 
     @Override
     public void startGateway(Binding binding) {
-        _switchYardStore.startGateway(binding.getName(), _serviceName, _applicationName, new AsyncCallback<Void>() {
+        _switchYardStore.startGateway(binding.getName(), _referenceName, _applicationName, new AsyncCallback<Void>() {
             @Override
             public void onSuccess(Void dummy) {
                 getEventBus().fireEvent(new ResetPresentersEvent());
@@ -128,7 +127,7 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
 
     @Override
     public void stopGateway(Binding binding) {
-        _switchYardStore.stopGateway(binding.getName(), _serviceName, _applicationName, new AsyncCallback<Void>() {
+        _switchYardStore.stopGateway(binding.getName(), _referenceName, _applicationName, new AsyncCallback<Void>() {
             @Override
             public void onSuccess(Void dummy) {
                 getEventBus().fireEvent(new ResetPresentersEvent());
@@ -142,18 +141,18 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
     }
 
     /**
-     * Notifies the presenter that the user has selected a service. The
-     * presenter will load the service details and pass them back to the view to
-     * be displayed.
+     * Notifies the presenter that the user has selected a reference. The
+     * presenter will load the reference details and pass them back to the view
+     * to be displayed.
      * 
-     * @param service the selected service.
+     * @param reference the selected reference.
      */
-    public void onServiceSelected(Service service) {
-        PlaceRequest request = new PlaceRequest(NameTokens.SERVICES_PRESENTER);
-        if (service != null && service.getName() != null) {
-            request = request.with(NameTokens.SERVICE_NAME_PARAM, URL.encode(service.getName()));
-            if (service.getApplication() != null) {
-                request = request.with(NameTokens.APPLICATION_NAME_PARAM, URL.encode(service.getApplication()));
+    public void onReferenceSelected(Reference reference) {
+        PlaceRequest request = new PlaceRequest(NameTokens.REFERENCES_PRESENTER);
+        if (reference != null && reference.getName() != null) {
+            request = request.with(NameTokens.REFERENCE_NAME_PARAM, URL.encode(reference.getName()));
+            if (reference.getApplication() != null) {
+                request = request.with(NameTokens.APPLICATION_NAME_PARAM, URL.encode(reference.getApplication()));
             }
         }
         _placeManager.revealRelativePlace(request, -1);
@@ -169,11 +168,11 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
 
-        _serviceName = _placeManager.getCurrentPlaceRequest().getParameter(NameTokens.SERVICE_NAME_PARAM, null);
+        _referenceName = _placeManager.getCurrentPlaceRequest().getParameter(NameTokens.REFERENCE_NAME_PARAM, null);
         _applicationName = _placeManager.getCurrentPlaceRequest().getParameter(NameTokens.APPLICATION_NAME_PARAM, null);
 
-        if (_serviceName != null) {
-            _serviceName = URL.decode(_serviceName);
+        if (_referenceName != null) {
+            _referenceName = URL.decode(_referenceName);
         }
         if (_applicationName != null) {
             _applicationName = URL.decode(_applicationName);
@@ -195,8 +194,8 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
     protected void onReset() {
         super.onReset();
 
-        loadServicesList();
-        loadService();
+        loadReferencesList();
+        loadReference();
     }
 
     @Override
@@ -204,11 +203,11 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
         RevealContentEvent.fire(this, RuntimePresenter.TYPE_SET_TAB_CONTENT, this);
     }
 
-    private void loadServicesList() {
-        _switchYardStore.loadServices(new AsyncCallback<List<Service>>() {
+    private void loadReferencesList() {
+        _switchYardStore.loadReferences(new AsyncCallback<List<Reference>>() {
             @Override
-            public void onSuccess(List<Service> services) {
-                getView().setServicesList(services);
+            public void onSuccess(List<Reference> references) {
+                getView().setReferencesList(references);
             }
 
             @Override
@@ -218,16 +217,15 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
         });
     }
 
-    private void loadService() {
-        if (_serviceName == null || _applicationName == null) {
-            getView().setService(_switchYardStore.getBeanFactory().service().as());
+    private void loadReference() {
+        if (_referenceName == null || _applicationName == null) {
+            getView().setReference(_switchYardStore.getBeanFactory().reference().as());
             return;
         }
-        _switchYardStore.loadService(_serviceName, _applicationName, new AsyncCallback<Service>() {
-
+        _switchYardStore.loadReference(_referenceName, _applicationName, new AsyncCallback<Reference>() {
             @Override
-            public void onSuccess(Service service) {
-                getView().setService(service);
+            public void onSuccess(Reference reference) {
+                getView().setReference(reference);
             }
 
             @Override

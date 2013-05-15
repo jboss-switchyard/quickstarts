@@ -42,6 +42,8 @@ public final class NameTokens {
     public static final String ARTIFACTS_PRESENTER = "sy-artifacts";
     /** The subpath for the SwitchYard services view. */
     public static final String SERVICES_PRESENTER = "sy-services";
+    /** The subpath for the SwitchYard references view. */
+    public static final String REFERENCES_PRESENTER = "sy-references";
     /** The subpath for the SwitchYard message metrics view. */
     public static final String METRICS_PRESENTER = "sy-metrics";
     /** The subpath for the SwitchYard runtime view. */
@@ -57,15 +59,19 @@ public final class NameTokens {
     public static final String ARTIFACT_REFERENCE_KEY_PARAM = "artifactKey";
     /** The parameter name used for service name. */
     public static final String SERVICE_NAME_PARAM = "service";
+    /** The parameter name used for reference name. */
+    public static final String REFERENCE_NAME_PARAM = "reference";
 
     /** The display text for the SwitchYard system configuration navigator item. */
     public static final String SYSTEM_CONFIG_TEXT = "Runtime Details";
     /** The display text for the SwitchYard applications navigator item. */
     public static final String APPLICATIONS_TEXT = "Applications";
     /** The display text for the SwitchYard artifact references navigator item. */
-    public static final String ARTIFACT_REFERENCES_TEXT = "Artifact References";
+    public static final String ARTIFACT_REFERENCES_TEXT = "Artifacts";
     /** The display text for the SwitchYard services navigator item. */
     public static final String SERVICES_TEXT = "Services";
+    /** The display text for the SwitchYard services navigator item. */
+    public static final String REFERENCES_TEXT = "References";
     /** The display text for the SwitchYard runtime navigator item. */
     public static final String RUNTIME_TEXT = "SwitchYard";
 

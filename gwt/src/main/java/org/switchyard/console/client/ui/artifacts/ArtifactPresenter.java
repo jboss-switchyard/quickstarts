@@ -61,7 +61,7 @@ public class ArtifactPresenter extends Presenter<ArtifactPresenter.MyView, Artif
      */
     @ProxyCodeSplit
     @NameToken(NameTokens.ARTIFACTS_PRESENTER)
-    @TabInfo(container = RuntimePresenter.class, label = "Artifacts", priority = 3)
+    @TabInfo(container = RuntimePresenter.class, label = NameTokens.ARTIFACT_REFERENCES_TEXT, priority = 4)
     public interface MyProxy extends TabContentProxyPlace<ArtifactPresenter> {
     }
 

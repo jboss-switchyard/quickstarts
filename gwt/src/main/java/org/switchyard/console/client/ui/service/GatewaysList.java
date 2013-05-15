@@ -18,12 +18,15 @@
  */
 package org.switchyard.console.client.ui.service;
 
+import java.util.EnumSet;
+
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
 import org.switchyard.console.client.model.Binding;
+import org.switchyard.console.client.model.State;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
 
-import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
@@ -42,13 +45,32 @@ public class GatewaysList extends AbstractDataTable<Binding> {
 
     private DefaultWindow _bindingDetailsWindow;
     private BindingDetailsWidget _bindingDetailsWidget;
+    private GatewayPresenter _presenter;
 
-    GatewaysList() {
+    /**
+     * Create a new GatewaysList.
+     */
+    public GatewaysList() {
         super("Gateways");
+    }
+
+    /**
+     * @param presenter the presenter.
+     */
+    public void setPresenter(GatewayPresenter presenter) {
+        _presenter = presenter;
     }
 
     @Override
     protected void createColumns(DefaultCellTable<Binding> table, ListDataProvider<Binding> dataProvider) {
+        TextColumn<Binding> nameColumn = new TextColumn<Binding>() {
+            @Override
+            public String getValue(Binding binding) {
+                return binding.getName();
+            }
+        };
+        nameColumn.setSortable(true);
+
         TextColumn<Binding> typeColumn = new TextColumn<Binding>() {
             @Override
             public String getValue(Binding binding) {
@@ -57,7 +79,7 @@ public class GatewaysList extends AbstractDataTable<Binding> {
         };
         typeColumn.setSortable(true);
 
-        Column<Binding, String> configColumn = new Column<Binding, String>(new ClickableTextCell()) {
+        Column<Binding, String> configColumn = new Column<Binding, String>(new ButtonCell()) {
             @Override
             public String getValue(Binding dummy) {
                 return "View Configuration...";
@@ -71,11 +93,41 @@ public class GatewaysList extends AbstractDataTable<Binding> {
         });
         configColumn.setSortable(false);
 
+        Column<Binding, String> statusColumn = new TextColumn<Binding>() {
+            @Override
+            public String getValue(Binding binding) {
+                return binding.getState() == null ? "Unknown" : binding.getState().toString();
+            }
+        };
+
+        Column<Binding, String> startStopColumn = new Column<Binding, String>(new ButtonCell()) {
+            @Override
+            public String getValue(Binding binding) {
+                return binding.getState() == null
+                        || EnumSet.<State> of(State.NONE, State.STOPPING).contains(binding.getState()) ? "Start"
+                        : "Stop";
+            }
+        };
+        startStopColumn.setFieldUpdater(new FieldUpdater<Binding, String>() {
+            @Override
+            public void update(int index, Binding binding, String value) {
+                if (EnumSet.<State> of(State.STARTING, State.STARTED).contains(binding.getState())) {
+                    _presenter.stopGateway(binding);
+                } else {
+                    _presenter.startGateway(binding);
+                }
+            }
+        });
+
         ColumnSortEvent.ListHandler<Binding> sortHandler = new ColumnSortEvent.ListHandler<Binding>(
                 dataProvider.getList());
         sortHandler.setComparator(typeColumn, createColumnCommparator(typeColumn));
+        sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
 
+        table.addColumn(nameColumn, "Name");
         table.addColumn(typeColumn, "Type");
+        table.addColumn(statusColumn, "Status");
+        table.addColumn(startStopColumn, "Start/Stop");
         table.addColumn(configColumn, "Configuration");
 
         table.addColumnSortHandler(sortHandler);
@@ -109,4 +161,5 @@ public class GatewaysList extends AbstractDataTable<Binding> {
         _bindingDetailsWidget = new BindingDetailsWidget();
         _bindingDetailsWindow.setWidget(_bindingDetailsWidget.asWidget());
     }
+
 }

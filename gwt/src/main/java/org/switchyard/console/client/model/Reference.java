@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -21,53 +21,40 @@ package org.switchyard.console.client.model;
 import java.util.List;
 
 /**
- * ServiceMetrics
+ * Reference
  * 
- * <p/>
- * Message metrics specific to a service/reference.
- * 
- * @author Rob Cernich
+ * Represents a SwitchYard reference.
  */
-public interface ServiceMetrics extends MessageMetrics, HasQName {
+public interface Reference extends HasQName {
 
     /**
-     * @return metrics for operations
+     * @return the interface name
      */
-    List<OperationMetrics> getOperations();
+    public String getInterface();
 
     /**
-     * @param value metrics for operations
+     * @param interfaceName the interface name
      */
-    void setOperations(List<OperationMetrics> value);
+    public void setInterface(String interfaceName);
 
     /**
-     * @return metrics for referenced services
+     * @return the gateways
      */
-    List<ServiceMetrics> getReferences();
+    List<Binding> getGateways();
 
     /**
-     * @param value metrics for referenced services
+     * @param gateways the gateways
      */
-    void setReferences(List<ServiceMetrics> value);
+    public void setGateways(List<Binding> gateways);
 
     /**
-     * @return metrics for associated gateways
+     * @return the application name
      */
-    List<GatewayMetrics> getGateways();
+    public String getApplication();
 
     /**
-     * @param value metrics for associated gateways
+     * @param application the application name
      */
-    void setGateways(List<GatewayMetrics> value);
-
-    /**
-     * @return the containing application
-     */
-    String getApplication();
-
-    /**
-     * @param application the containing application
-     */
-    void setApplication(String application);
+    public void setApplication(String application);
 
 }

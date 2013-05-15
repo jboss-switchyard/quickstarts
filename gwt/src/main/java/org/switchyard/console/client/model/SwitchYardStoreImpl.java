@@ -19,6 +19,7 @@
 package org.switchyard.console.client.model;
 
 import static org.jboss.dmr.client.ModelDescriptionConstants.CHILD_TYPE;
+import static org.jboss.dmr.client.ModelDescriptionConstants.FAILED;
 import static org.jboss.dmr.client.ModelDescriptionConstants.NAME;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP;
 import static org.jboss.dmr.client.ModelDescriptionConstants.OP_ADDR;
@@ -27,6 +28,7 @@ import static org.jboss.dmr.client.ModelDescriptionConstants.READ_RESOURCE_OPERA
 import static org.jboss.dmr.client.ModelDescriptionConstants.RECURSIVE;
 import static org.jboss.dmr.client.ModelDescriptionConstants.RESULT;
 import static org.jboss.dmr.client.ModelDescriptionConstants.SUBSYSTEM;
+import static org.jboss.dmr.client.ModelDescriptionConstants.TYPE;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +41,7 @@ import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
 import org.jboss.dmr.client.ModelNode;
@@ -64,11 +67,18 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
     private static final String GET_VERSION = "get-version";
     private static final String LIST_APPLICATIONS = "list-applications";
     private static final String LIST_SERVICES = "list-services";
+    private static final String LIST_REFERENCES = "list-references";
     private static final String MODULE = "module";
+    private static final String PROPERTY = "property";
     private static final String READ_APPLICATION = "read-application";
     private static final String READ_SERVICE = "read-service";
+    private static final String READ_REFERENCE = "read-reference";
     private static final String SERVICE_NAME = "service-name";
+    private static final String SET_APPLICATION_PROPERTY = "set-application-property";
     private static final String SHOW_METRICS = "show-metrics";
+    private static final String RESET_METRICS = "reset-metrics";
+    private static final String STOP_GATEWAY = "stop-gateway";
+    private static final String START_GATEWAY = "start-gateway";
     private static final String SWITCHYARD = NameTokens.SUBSYSTEM;
 
     private final DispatchAsync _dispatcher;
@@ -382,7 +392,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
 
     @Override
     public void loadAllServiceMetrics(final AsyncCallback<List<ServiceMetrics>> callback) {
-        // /subsystem=switchyard:show-metrics(service-name=*)
+        // /subsystem=switchyard:show-metrics(service-name=*, type=service)
 
         final ModelNode operation = new ModelNode();
         final ModelNode address = RuntimeBaseAddress.get();
@@ -390,6 +400,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         address.add(SUBSYSTEM, SWITCHYARD);
         operation.get(OP_ADDR).set(address);
         operation.get(SERVICE_NAME).set("*");
+        operation.get(TYPE).set("service");
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -403,12 +414,44 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                 final ModelNode response = result.get();
                 if (response.hasDefined(RESULT)) {
                     final List<ServiceMetrics> metrics = createServiceMetrics(response.get(RESULT));
-                    if (metrics != null) {
-                        callback.onSuccess(metrics);
-                        return;
-                    }
+                    callback.onSuccess(metrics);
+                    return;
                 }
                 callback.onFailure(new Exception("Could not load all service metrics."));
+            }
+        });
+    }
+
+    @Override
+    public void loadAllReferenceMetrics(final AsyncCallback<List<ServiceMetrics>> callback) {
+        // /subsystem=switchyard:show-metrics(service-name=*, type=reference)
+
+        final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
+        operation.get(OP).set(SHOW_METRICS);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
+        operation.get(SERVICE_NAME).set("*");
+        operation.get(TYPE).set("reference");
+
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get();
+                if (response.hasDefined(FAILED)) {
+                    callback.onFailure(new Exception("Could not load all reference metrics."));
+                } else if (response.hasDefined(RESULT)) {
+                    final List<ServiceMetrics> metrics = createServiceMetrics(response.get(RESULT));
+                    callback.onSuccess(metrics);
+                } else {
+                    callback.onSuccess(null);
+                }
             }
         });
     }
@@ -446,11 +489,84 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
     }
 
     @Override
+    public void loadReferences(final AsyncCallback<List<Reference>> callback) {
+        // /subsystem=switchyard:list-references()
+        final List<Reference> references = new ArrayList<Reference>();
+
+        final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
+        operation.get(OP).set(LIST_REFERENCES);
+
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get().get(RESULT);
+                if (response.isDefined()) {
+                    for (final ModelNode referenceNode : response.asList()) {
+                        final Reference reference = createReferenceStub(referenceNode);
+                        if (reference != null) {
+                            references.add(reference);
+                        }
+                    }
+
+                }
+
+                callback.onSuccess(references);
+            }
+        });
+    }
+
+    @Override
+    public void loadReference(final String referenceName, final String applicationName,
+            final AsyncCallback<Reference> callback) {
+        // /subsystem=switchyard:read-reference(reference-name=referenceName,
+        // application-name=applicationName)
+
+        final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
+        operation.get(OP).set(READ_REFERENCE);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
+        operation.get(SERVICE_NAME).set(referenceName);
+        operation.get(APPLICATION_NAME).set(applicationName);
+
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get();
+                if (response.hasDefined(RESULT)) {
+                    final Reference reference = createReference(response.get(RESULT).asList().get(0));
+                    if (reference != null) {
+                        callback.onSuccess(reference);
+                        return;
+                    }
+                }
+                callback.onFailure(new Exception("Could not load information for reference: " + referenceName
+                        + " from application: " + applicationName));
+            }
+        });
+    }
+
+    @Override
     public void loadArtifactReferences(final AsyncCallback<List<ArtifactReference>> callback) {
         // /subsystem=switchyard:read-application()
 
         final ModelNode operation = new ModelNode();
-        final ModelNode address = Baseadress.get();
+        final ModelNode address = RuntimeBaseAddress.get();
         operation.get(OP).set(READ_APPLICATION);
         address.add(SUBSYSTEM, SWITCHYARD);
         operation.get(OP_ADDR).set(address);
@@ -494,6 +610,168 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                     return;
                 }
                 callback.onFailure(new Exception("Could not load artifact references."));
+            }
+        });
+    }
+
+    @Override
+    public void setApplicationProperty(final String applicationName, final PropertyRecord prop,
+            final AsyncCallback<Void> callback) {
+        // /subsystem=switchyard:set-application-property(name=applicationName,
+        // property=prop)
+
+        final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
+        operation.get(OP).set(SET_APPLICATION_PROPERTY);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
+        operation.get(NAME).set(applicationName);
+        operation.get(PROPERTY).add(prop.getKey(), prop.getValue());
+
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get();
+                if (!response.hasDefined(FAILED)) {
+                    callback.onSuccess(null);
+                    return;
+                }
+                callback.onFailure(new Exception("Failure setting property:" + prop.getKey()));
+            }
+        });
+    }
+
+    @Override
+    public void resetSystemMetrics(final AsyncCallback<Void> callback) {
+        // /subsystem=switchyard:reset-metrics()
+
+        final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
+        operation.get(OP).set(RESET_METRICS);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
+
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get();
+                if (!response.hasDefined(FAILED)) {
+                    callback.onSuccess(null);
+                    return;
+                }
+                callback.onFailure(new Exception("Failure resetting system metrics: "
+                        + response.getFailureDescription()));
+            }
+        });
+    }
+
+    @Override
+    public void resetMetrics(final String name, final String applicationName, final AsyncCallback<Void> callback) {
+        // /subsystem=switchyard:reset-metrics(name=name,
+        // application-name=applicationName)
+
+        final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
+        operation.get(OP).set(RESET_METRICS);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
+        operation.get(NAME).set(name);
+        operation.get(APPLICATION_NAME).set(applicationName);
+
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get();
+                if (!response.hasDefined(FAILED)) {
+                    callback.onSuccess(null);
+                    return;
+                }
+                callback.onFailure(new Exception("Failure resetting metrics for " + name + ": "
+                        + response.getFailureDescription()));
+            }
+        });
+    }
+
+    @Override
+    public void stopGateway(final String name, final String serviceName, final String applicationName,
+            final AsyncCallback<Void> callback) {
+        // /subsystem=switchyard:stop-gateway(name=name,
+        // service-name=serviceName, application-name=applicationName)
+
+        final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
+        operation.get(OP).set(STOP_GATEWAY);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
+        operation.get(NAME).set(name);
+        operation.get(SERVICE_NAME).set(serviceName);
+        operation.get(APPLICATION_NAME).set(applicationName);
+        
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get();
+                if (!response.hasDefined(FAILED)) {
+                    callback.onSuccess(null);
+                    return;
+                }
+                callback.onFailure(new Exception("Failure stopping gateway for " + name + ": "
+                        + response.getFailureDescription()));
+            }
+        });
+    }
+
+    @Override
+    public void startGateway(final String name, final String serviceName, final String applicationName,
+            final AsyncCallback<Void> callback) {
+        // /subsystem=switchyard:start-gateway(name=name,
+        // service-name=serviceName, application-name=applicationName)
+
+        final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
+        operation.get(OP).set(START_GATEWAY);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
+        operation.get(NAME).set(name);
+        operation.get(SERVICE_NAME).set(serviceName);
+        operation.get(APPLICATION_NAME).set(applicationName);
+
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get();
+                if (!response.hasDefined(FAILED)) {
+                    callback.onSuccess(null);
+                    return;
+                }
+                callback.onFailure(new Exception("Failure starting gateway for " + name + ": "
+                        + response.getFailureDescription()));
             }
         });
     }
@@ -559,6 +837,24 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
     private MessageMetrics createMessageMetrics(final ModelNode metricsNode) {
         try {
             return AutoBeanCodex.decode(_factory, MessageMetrics.class, metricsNode.toJSONString(true)).as();
+        } catch (Exception e) {
+            Log.error("Failed to parse data source representation", e);
+            return null;
+        }
+    }
+
+    private Reference createReferenceStub(final ModelNode referenceNode) {
+        try {
+            return AutoBeanCodex.decode(_factory, Reference.class, referenceNode.toJSONString(true)).as();
+        } catch (Exception e) {
+            Log.error("Failed to parse data source representation", e);
+            return null;
+        }
+    }
+
+    private Reference createReference(final ModelNode referenceNode) {
+        try {
+            return AutoBeanCodex.decode(_factory, Reference.class, referenceNode.toJSONString(true)).as();
         } catch (Exception e) {
             Log.error("Failed to parse data source representation", e);
             return null;

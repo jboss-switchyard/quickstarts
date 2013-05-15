@@ -22,8 +22,8 @@ import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
 import org.jboss.as.console.client.shared.runtime.charts.NumberColumn;
 import org.jboss.as.console.client.shared.runtime.charts.TextColumn;
-import org.jboss.as.console.client.shared.runtime.plain.PlainColumnView;
 import org.switchyard.console.client.model.MessageMetrics;
+import org.switchyard.console.client.ui.common.PlainColumnView;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;

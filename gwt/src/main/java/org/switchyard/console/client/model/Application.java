@@ -20,6 +20,8 @@ package org.switchyard.console.client.model;
 
 import java.util.List;
 
+import org.jboss.as.console.client.shared.properties.PropertyRecord;
+
 /**
  * Application
  * 
@@ -38,6 +40,16 @@ public interface Application extends HasQName {
      * @param services the services provided by this application.
      */
     public void setServices(List<Service> services);
+
+    /**
+     * @return the references used by this application.
+     */
+    public List<Reference> getReferences();
+
+    /**
+     * @param references the references used by this application.
+     */
+    public void setReferences(List<Reference> references);
 
     /**
      * @return the component services defined within this application.
@@ -80,4 +92,13 @@ public interface Application extends HasQName {
      */
     public void setValidators(List<Validator> validators);
 
+    /**
+     * @return the properties defined for this application
+     */
+    public List<PropertyRecord> getProperties();
+    
+    /**
+     * @param properties the properties defined for this application.
+     */
+    public void setProperties(List<PropertyRecord> properties);
 }
