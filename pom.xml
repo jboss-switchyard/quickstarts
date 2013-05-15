@@ -122,6 +122,7 @@
         <!--<version.org.jboss.spec.javax.resource16>1.0.0.Final</version.org.jboss.spec.javax.resource16>-->
         <version.quartz>1.8.5</version.quartz>
         <version.qpid>0.18</version.qpid>
+        <version.ognl>3.0.6</version.ognl>
         <version.protobuf>2.4.1</version.protobuf>
         <version.protostuff>1.0.7</version.protostuff>
         <version.redhat.eap6>6.1</version.redhat.eap6>
@@ -1335,6 +1336,11 @@
                 <version>${version.beanshell}</version>
             </dependency>
             <dependency>
+                <groupId>ognl</groupId>
+                <artifactId>ognl</artifactId>
+                <version>${version.ognl}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.dyuproject.protostuff</groupId>
                 <artifactId>protostuff-api</artifactId>
                 <version>${version.protostuff}</version>
@@ -1521,6 +1527,17 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-jaxb</artifactId>
+                <version>${version.camel}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-jms</artifactId>
                 <version>${version.camel}</version>
                 <exclusions>
@@ -1533,6 +1550,17 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-mail</artifactId>
+                <version>${version.camel}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-mvel</artifactId>
                 <version>${version.camel}</version>
                 <exclusions>
                     <exclusion>
@@ -1609,6 +1637,17 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-ognl</artifactId>
+                <version>${version.camel}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-test</artifactId>
                 <version>${version.camel}</version>
                 <exclusions>
@@ -1621,6 +1660,17 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-test-spring</artifactId>
+                <version>${version.camel}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-soap</artifactId>
                 <version>${version.camel}</version>
                 <exclusions>
                     <exclusion>
