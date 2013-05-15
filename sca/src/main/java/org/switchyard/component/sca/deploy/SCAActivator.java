@@ -91,6 +91,9 @@ public class SCAActivator extends BaseActivator {
         if (scab.isServiceBinding()) {
             return new SCAEndpoint(scab, super.getServiceDomain(), _endpointPublisher, _registry);
         } else {
+            if ((scab.getTarget() == null) && (scab.getTargetNamespace() == null)) {
+                throw new IllegalArgumentException("Invalid SCA binding for reference - target service or namespace must be specified");
+            }
             return new SCAInvoker(scab, _registry);
         }
     }
