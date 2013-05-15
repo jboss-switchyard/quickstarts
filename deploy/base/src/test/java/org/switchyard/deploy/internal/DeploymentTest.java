@@ -67,6 +67,48 @@ public class DeploymentTest {
     }
     
     @Test
+    public void testComponentReferenceBinding() throws Exception {
+        InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-component-reference-binding-01.xml", getClass());
+        Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+
+        MockDomain serviceDomain = new MockDomain();
+        deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
+        
+        boolean result = false;
+        try {
+            deployment.start();
+        } catch (SwitchYardException sye) {
+            Assert.assertTrue(sye.getMessage().contains("Component Reference bindings are not allowed.   Found "));
+            result = true;
+        } catch (Exception e) {
+            Assert.fail("Expected to catch a SwitchYardException on deploy.");
+        }
+        Assert.assertTrue("Expected to catch a SwitchYardException on deploy.", result);
+    }
+
+    @Test
+    public void testComponentServiceBinding() throws Exception {
+        InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-component-service-binding-01.xml", getClass());
+        Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+
+        MockDomain serviceDomain = new MockDomain();
+        deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
+        boolean result = false;
+        try {
+            deployment.start();
+        } catch (SwitchYardException sye) { 
+            Assert.assertTrue(sye.getMessage().contains("Component Service bindings are not allowed.   Found"));
+            result = true;
+        } catch (Exception e) {
+            Assert.fail("Expected to catch a SwitchYardException on deploy.");
+        }
+        Assert.assertTrue("Expected to catch a SwitchYardException on deploy.", result);
+    }
+
+    
+    @Test
     public void testRegistrants() throws Exception {
         InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-mock-01.xml", getClass());
         Deployment deployment = new Deployment(swConfigStream);

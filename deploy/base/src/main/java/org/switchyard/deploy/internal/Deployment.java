@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.Service;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.type.Classes;
+import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
@@ -437,7 +438,16 @@ public class Deployment extends AbstractDeployment {
             for (ComponentReferenceModel reference : component.getReferences()) {
                 _log.debug("Registering reference " + reference.getQName()
                        + " for component " + component.getImplementation().getType() + " for deployment " + getName());
-
+            
+                // Component Reference bindings not allowed, check to see if we find one and throw an exception
+                List<Model> models = reference.getModelChildren();
+                for (Model model : models) {
+                    if (BindingModel.class.isAssignableFrom(model.getClass())) {
+                        throw new SwitchYardException("Component Reference bindings are not allowed.   Found " + model.toString()
+                                + " on reference " + reference.toString());
+                    }
+                }
+                
                 List<Policy> requires = null;
                 try {
                     requires = getPolicyRequirements(reference);
@@ -472,6 +482,17 @@ public class Deployment extends AbstractDeployment {
                 _log.debug("Registering service " + service.getQName()
                        + " for component " + component.getImplementation().getType() + " for deployment " + getName());
 
+                
+                // Component Service bindings not allowed, check to see if we find one and throw an exception
+                List<Model> models = service.getModelChildren();
+                for (Model model : models) {
+                    if (BindingModel.class.isAssignableFrom(model.getClass())) {
+                        throw new SwitchYardException("Component Service bindings are not allowed.   Found " + model.toString()
+                                + " on Service " + service.toString());
+                    }
+                }
+                
+                
                 List<Policy> requires = null;
                 try {
                     requires = getPolicyRequirements(service);
