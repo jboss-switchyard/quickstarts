@@ -25,6 +25,8 @@
             <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
         </handlers>
         -->
-        <security moduleName="other" rolesAllowed="friend"/>
+        <securities>
+            <security rolesAllowed="friend"/>
+        </securities>
     </domain>
 </switchyard>
