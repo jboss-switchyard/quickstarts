@@ -108,7 +108,7 @@
         <version.jta>1.1</version.jta>
         <version.junit>4.10</version.junit>
         <version.jruby>1.7.2</version.jruby>
-        <version.jython>2.5.2</version.jython>
+        <version.jython>2.5.3</version.jython>
         <version.kie>6.0.0.Alpha9</version.kie>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
         <version.mina>2.0.4</version.mina>
