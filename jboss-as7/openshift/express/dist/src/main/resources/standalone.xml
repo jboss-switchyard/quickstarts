@@ -308,6 +308,12 @@
                 <module identifier="org.switchyard.component.http" implClass="org.switchyard.component.http.deploy.HttpComponent"/>
                 <module identifier="org.switchyard.component.sca" implClass="org.switchyard.component.sca.deploy.SCAComponent"/>
             </modules>
+            <extensions>
+                <extension identifier="org.apache.camel.mvel"/>
+                <extension identifier="org.apache.camel.ognl"/>
+                <extension identifier="org.apache.camel.jaxb"/>
+                <extension identifier="org.apache.camel.soap"/>
+            </extensions>
         </subsystem>
     </profile>
 
