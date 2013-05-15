@@ -1,4 +1,4 @@
-package org.switchyard.component.jca.deploy;
+package org.switchyard.component.itests.jca;
 
 import javax.inject.Inject;
 
@@ -12,19 +12,11 @@ public class JCAJMSReferenceServiceImpl implements JCAJMSReferenceService {
     @Inject @Reference
     private JCAJMSReference service;
     
-    @Inject @Reference("JCAJMSReferenceText")
-    private JCAJMSReference serviceText;
-
     @Inject
     private Context context;
     
     @Override
     public void onMessage(String name) {
         service.onMessage(name);
-    }
-    
-    @Override
-    public void onMessageText(String name) {
-        serviceText.onMessageText(name);
     }
 }

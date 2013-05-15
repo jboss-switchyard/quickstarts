@@ -58,6 +58,7 @@
         <module>http</module>
         <module>jca</module>
         <module>tools/forge</module>
+        <module>itests</module>
     </modules>
     <repositories>
         <repository>

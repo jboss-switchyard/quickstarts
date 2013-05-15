@@ -19,35 +19,32 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
  * site: http://www.fsf.org.
  */
-package org.switchyard.component.jca.deploy;
+package org.switchyard.component.itests.jca;
 
 import javax.jms.MessageConsumer;
-import javax.jms.TextMessage;
 import javax.transaction.UserTransaction;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.component.test.mixins.cdi.CDIMixIn;
-import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
-import org.switchyard.component.test.mixins.jca.JCAMixIn;
-import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
 import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
+import org.switchyard.component.test.mixins.jca.JCAMixIn;
+import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
 
 /**
  * Functional test for {@link JCAActivator}.
  * 
- * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
- *
  */
 @RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(config = "switchyard-outbound-jms-test.xml", mixins = {HornetQMixIn.class, JCAMixIn.class, CDIMixIn.class})
-public class JCAJMSReferenceBindingTest  {
+@SwitchYardTestCaseConfig(config = "switchyard-outbound-jms-camel-test.xml", mixins = {CDIMixIn.class, HornetQMixIn.class, JCAMixIn.class})
+public class JCAJMSReferenceBindingCamelTest  {
     
     private static final String OUTPUT_QUEUE = "TestQueue";
     private HornetQMixIn _hqMixIn;
@@ -56,39 +53,10 @@ public class JCAJMSReferenceBindingTest  {
     @ServiceOperation("JCAJMSReferenceService.onMessage")
     private Invoker _service;
 
-    @ServiceOperation("JCAJMSReferenceService.onMessageText")
-    private Invoker _serviceText;
-    
     @BeforeDeploy
     public void before() {
         ResourceAdapterConfig ra = new ResourceAdapterConfig(ResourceAdapterConfig.ResourceAdapterType.HORNETQ);
         _jcaMixIn.deployResourceAdapters(ra);
-    }
-    
-    @Test
-    public void testUnmanagedOutboundJMS() throws Exception {
-        String payload = "Karakoromo";
-        _service.sendInOnly(payload);
-        
-        final MessageConsumer consumer = _hqMixIn.getJMSSession().createConsumer(HornetQMixIn.getJMSQueue(OUTPUT_QUEUE));
-        javax.jms.Message msg = consumer.receive(1000);
-        _hqMixIn.readJMSMessageAndTestString(msg, payload+"test");
-        Assert.assertEquals("testVal", msg.getStringProperty("testProp"));
-        
-    }
-    
-    @Test
-    public void testUnmanagedOutboundJMSSpecifyingMessageType() throws Exception {
-        String payload = "Shikishima";
-        _serviceText.sendInOnly(payload);
-        
-        final MessageConsumer consumer = _hqMixIn.getJMSSession().createConsumer(HornetQMixIn.getJMSQueue(OUTPUT_QUEUE));
-        javax.jms.Message msg = consumer.receive(1000);
-        Assert.assertTrue(msg instanceof TextMessage);
-        javax.jms.TextMessage txtmsg = TextMessage.class.cast(msg);
-        Assert.assertEquals(payload+"test", txtmsg.getText());
-        Assert.assertEquals("testVal", msg.getStringProperty("testProp"));
-        
     }
     
     @Test
@@ -104,8 +72,8 @@ public class JCAJMSReferenceBindingTest  {
         tx.commit();
         
         javax.jms.Message msg = consumer.receive(1000);
-        _hqMixIn.readJMSMessageAndTestString(msg, payload+"test");
-        Assert.assertEquals("testVal", msg.getStringProperty("testProp"));
+        _hqMixIn.readJMSMessageAndTestString(msg, payload);
+        Assert.assertEquals("jmscorrelation-Ashihiki", msg.getJMSCorrelationID());
     }
 }
 

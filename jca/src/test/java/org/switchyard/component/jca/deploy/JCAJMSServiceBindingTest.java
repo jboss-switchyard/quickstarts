@@ -27,12 +27,16 @@ import javax.jms.TextMessage;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
+import org.switchyard.component.common.label.PropertyLabel;
+import org.switchyard.component.jca.composer.JMSContextMapper;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
 import org.switchyard.component.test.mixins.jca.JCAMixIn;
 import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
+import org.switchyard.Property;
 import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
@@ -79,8 +83,13 @@ public class JCAJMSServiceBindingTest  {
         Assert.assertTrue(content instanceof String);
         final String string = (String) content;
         Assert.assertEquals(string, "payloadtest");
-        final String val = exchange.getContext().getProperty("testProp").getValue().toString();
+        final Context context = exchange.getContext();
+        final String val = context.getProperty("testProp").getValue().toString();
         Assert.assertEquals(val, "testVal");
+
+        Property jmsMessageId = context.getProperty(JMSContextMapper.HEADER_JMS_MESSAGE_ID);
+        Assert.assertTrue(jmsMessageId.hasLabel(PropertyLabel.HEADER.label()));
+        Assert.assertNotNull(jmsMessageId.getValue().toString());
     }
     
     @Test
