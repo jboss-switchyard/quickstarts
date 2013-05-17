@@ -22,8 +22,15 @@ package org.switchyard.quickstarts.rest.binding;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
+import org.switchyard.Context;
+import org.switchyard.Property;
+import org.switchyard.Scope;
 import org.switchyard.component.bean.Service;
+import org.switchyard.component.common.label.EndpointLabel;
+import org.switchyard.component.resteasy.composer.RESTEasyContextMapper;
 
 /**
  * A WarehouseService implementation.
@@ -33,13 +40,21 @@ import org.switchyard.component.bean.Service;
 @Service(WarehouseService.class)
 public class WarehouseServiceImpl implements WarehouseService {
 
+    @Inject
+    private Context context;
+
     private static final Logger LOGGER = Logger.getLogger(WarehouseService.class);
     private static final String SUCCESS = "SUCCESS";
     private ConcurrentMap<Integer, Item> items = new ConcurrentHashMap<Integer, Item>();
 
     public Item getItem(Integer itemId) {
         System.out.println("++++++ getItem " + itemId);
-        return this.items.get(itemId);
+        Item item = this.items.get(itemId);
+        // TODO: Currently not possible to set property on return path for CDI Beans
+        /*if (item == null) {
+            context.setProperty(RESTEasyContextMapper.HTTP_RESPONSE_STATUS, 404).addLabels(new String[]{EndpointLabel.HTTP.label()});
+        }*/
+        return item;
     }
 
     public String addItem(Item item) throws Exception {

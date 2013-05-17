@@ -27,6 +27,7 @@ import org.switchyard.Scope;
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.component.http.composer.HttpComposition;
+import org.switchyard.component.http.composer.HttpContextMapper;
 import org.switchyard.component.http.composer.HttpRequestInfo;
 
 /**
@@ -71,6 +72,10 @@ public class SymbolServiceImpl implements SymbolService {
                 }
             }
         }
+        // TODO: Currently not possible to set property on return path for CDI Beans
+        /*if (symbol.equals("")) {
+            context.setProperty(HttpContextMapper.HTTP_RESPONSE_STATUS, 404).addLabels(new String[]{EndpointLabel.HTTP.label()});
+        }*/
         return symbol;
     }
 }

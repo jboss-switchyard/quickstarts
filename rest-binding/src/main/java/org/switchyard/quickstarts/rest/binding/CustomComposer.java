@@ -20,7 +20,10 @@ package org.switchyard.quickstarts.rest.binding;
 
 import org.switchyard.Exchange;
 import org.switchyard.Message;
+
+import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
+import org.switchyard.component.resteasy.composer.RESTEasyContextMapper;
 import org.switchyard.component.resteasy.composer.RESTEasyMessageComposer;
 
 /**
@@ -49,12 +52,20 @@ public class CustomComposer extends RESTEasyMessageComposer {
      */
     @Override
     public RESTEasyBindingData decompose(Exchange exchange, RESTEasyBindingData target) throws Exception {
-        target = super.decompose(exchange, target);
         Object content = exchange.getMessage().getContent();
-        if (target.getOperationName().equals("addItem") && (content instanceof Item)) {
+        String opName = exchange.getContract().getProviderOperation().getName();
+        if (opName.equals("getItem") && (content == null)) {
+                exchange.getContext().setProperty(RESTEasyContextMapper.HTTP_RESPONSE_STATUS, 404).addLabels(new String[]{EndpointLabel.HTTP.label()});
+        }
+
+        target = super.decompose(exchange, target);
+
+        if (target.getOperationName().equals("addItem")
+            && (content != null) && (content instanceof Item)) {
             // Unwrap the parameters
             target.setParameters(new Object[]{((Item)content).getItemId(), ((Item)content).getName()});
         }
+
         return target;
     }
 

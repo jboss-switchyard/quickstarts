@@ -19,44 +19,25 @@
 
 package org.switchyard.quickstarts.rest.binding;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Produces;
-import javax.ws.rs.PUT;
+import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
+import org.jboss.resteasy.client.core.BaseClientResponse;
+import org.switchyard.annotations.Transformer;
 
-/**
- * REST interface for WarehouseService.
- *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
- */
-@Path("/warehouse")
-public interface WarehouseResource {
+@Named("Transformers")
+public class Transformers {
 
-    @GET
-    @Path("{itemId}")
-    @Produces({"text/xml"})
-    public Response getItem(@PathParam("itemId") Integer itemId);
-
-    @PUT
-    @Path("{itemId}/{desc}")
-    public String addItem(@PathParam("itemId") Integer itemId, @PathParam("desc") String description) throws Exception;
-
-    @POST
-    @Path("/")
-    @Consumes({"text/xml"})
-    public String updateItem(Item item) throws Exception;
-
-    @DELETE
-    @Path("{itemId}")
-    public String removeItem(@PathParam("itemId") Integer itemId) throws Exception;
-
-    @GET
-    @Path("/count/")
-    public Integer getItemCount();
+    /**
+     * Transform from a RESTEasy Response to an Item instance.
+     * <p/>
+     * No need to specify the "to" type because Item is a concrete type.
+     * @param from Response object.
+     * @return Item instance.
+     */
+    @Transformer(from = "java:org.jboss.resteasy.client.core.BaseClientResponse")
+    public Item transform(BaseClientResponse from) {
+        from.setReturnType(Item.class);
+        return (Item)from.getEntity();
+    }
 }

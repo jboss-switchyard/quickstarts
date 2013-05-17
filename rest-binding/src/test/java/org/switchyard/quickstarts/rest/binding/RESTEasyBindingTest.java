@@ -96,6 +96,10 @@ public class RESTEasyBindingTest {
         response = http.sendString(BASE_URL + "/order/1", "", HTTPMixIn.HTTP_GET);
         SwitchYardTestKit.compareXMLToString(response, ORDER5);
 
+        // Get item
+        int status = http.sendStringAndGetStatus(BASE_URL + "/warehouse/26", "", HTTPMixIn.HTTP_GET);
+        Assert.assertEquals(404, status);
+
         // Destroy our inventory
         response = http.sendString(BASE_URL + "/inventory/remove", "", HTTPMixIn.HTTP_OPTIONS);
         Assert.assertEquals(SUCCESS, response);
