@@ -56,6 +56,8 @@ public class HttpBindingQuickstartTest {
         try {
             String response = httpMixIn.sendString(BASE_URL + "/symbol", "headers", HTTPMixIn.HTTP_POST);
             Assert.assertEquals("content-type=text/xml;charset=UTF-8", response);
+            int status = httpMixIn.sendStringAndGetStatus(BASE_URL + "/symbol", "rum", HTTPMixIn.HTTP_POST);
+            Assert.assertEquals(404, status);
         } finally {
             httpMixIn.uninitialize();
         }

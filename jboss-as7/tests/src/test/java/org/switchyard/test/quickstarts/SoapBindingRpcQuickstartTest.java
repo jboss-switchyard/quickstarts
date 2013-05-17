@@ -48,6 +48,8 @@ public class SoapBindingRpcQuickstartTest {
             XMLUnit.setIgnoreWhitespace(true);
             String replyMsg = httpMixIn.postString(SWITCHYARD_WEB_SERVICE, REQUEST);
             XMLAssert.assertXMLEqual(RESPONSE, replyMsg);
+            int status = httpMixIn.sendStringAndGetStatus(SWITCHYARD_WEB_SERVICE, REQUEST2, HTTPMixIn.HTTP_POST);
+            Assert.assertEquals(500, status);
         } finally {
             httpMixIn.uninitialize();
         }
@@ -57,6 +59,15 @@ public class SoapBindingRpcQuickstartTest {
                             + "    <S:Body>"
                             + "        <ns2:sayHello>"
                             + "            <toWhom>SwitchYard</toWhom>"
+                            + "            <language>English</language>"
+                            + "        </ns2:sayHello>"
+                            + "    </S:Body>"
+                            + "</S:Envelope>";
+
+    private static String REQUEST2 = "<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns2=\"urn:switchyard-quickstart:soap-binding-rpc:1.0\">"
+                            + "    <S:Body>"
+                            + "        <ns2:sayHello>"
+                            + "            <toWhom>500</toWhom>"
                             + "            <language>English</language>"
                             + "        </ns2:sayHello>"
                             + "    </S:Body>"

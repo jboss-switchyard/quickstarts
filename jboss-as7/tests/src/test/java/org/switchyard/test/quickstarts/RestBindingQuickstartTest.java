@@ -78,6 +78,10 @@ public class RestBindingQuickstartTest {
             response = httpMixIn.sendString(BASE_URL + "/order/1", "", HTTPMixIn.HTTP_GET);
             SwitchYardTestKit.compareXMLToString(response, ORDER5);
 
+            // Get item
+            int status = httpMixIn.sendStringAndGetStatus(BASE_URL + "/warehouse/26", "", HTTPMixIn.HTTP_GET);
+            Assert.assertEquals(404, status);
+
             // Destroy our inventory
             response = httpMixIn.sendString(BASE_URL + "/inventory/remove", "", HTTPMixIn.HTTP_OPTIONS);
             Assert.assertEquals(SUCCESS, response);

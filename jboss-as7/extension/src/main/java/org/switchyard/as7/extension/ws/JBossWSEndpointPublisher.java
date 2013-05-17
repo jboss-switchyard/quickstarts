@@ -22,6 +22,9 @@ package org.switchyard.as7.extension.ws;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.wsf.spi.metadata.j2ee.serviceref.UnifiedHandlerChainMetaData;
+import org.jboss.wsf.spi.metadata.j2ee.serviceref.UnifiedHandlerChainsMetaData;
+import org.jboss.wsf.spi.metadata.j2ee.serviceref.UnifiedHandlerMetaData;
 import org.jboss.wsf.spi.metadata.webservices.PortComponentMetaData;
 import org.jboss.wsf.spi.metadata.webservices.WebserviceDescriptionMetaData;
 import org.jboss.wsf.spi.metadata.webservices.WebservicesMetaData;
@@ -39,6 +42,8 @@ import org.switchyard.component.soap.endpoint.WSEndpoint;
 public class JBossWSEndpointPublisher extends AbstractEndpointPublisher {
 
     private static final String SEI = "org.switchyard.component.soap.endpoint.BaseWebService";
+    private static final String RESPONSE_STATUS_HANDLER = "ResponseStatusHandler";
+    private static final String INBOUND_RESPONSE_HANDLER = "org.switchyard.component.soap.InboundResponseHandler";
 
     /**
      * {@inheritDoc}
@@ -62,6 +67,14 @@ public class JBossWSEndpointPublisher extends AbstractEndpointPublisher {
             portComponent.setWsdlService(config.getPort().getServiceQName());
              // Should be the WSDL's service name and not the SwitchYard config's service name
             portComponent.setServletLink(config.getPort().getServiceQName().getLocalPart());
+            UnifiedHandlerChainsMetaData chains = new UnifiedHandlerChainsMetaData();
+            UnifiedHandlerChainMetaData chainMetadata = new UnifiedHandlerChainMetaData();
+            UnifiedHandlerMetaData handlerMetadata = new UnifiedHandlerMetaData();
+            handlerMetadata.setHandlerName(RESPONSE_STATUS_HANDLER);
+            handlerMetadata.setHandlerClass(INBOUND_RESPONSE_HANDLER);
+            chainMetadata.addHandler(handlerMetadata);
+            chains.addHandlerChain(chainMetadata);
+            portComponent.setHandlerChains(chains);
             wsDescMetaData.addPortComponent(portComponent);
             wsMetadata.addWebserviceDescription(wsDescMetaData);
 
