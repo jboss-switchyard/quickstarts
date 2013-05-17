@@ -21,8 +21,7 @@ package org.switchyard.quickstarts.soap.binding.rpc;
 
 import javax.xml.ws.Endpoint;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
@@ -48,5 +47,7 @@ public class SoapBindingTest {
     @Test
     public void testSwitchYardWebService() throws Exception {
         _httpMixIn.postResourceAndTestXML(SWITCHYARD_WEB_SERVICE, "/xml/soap-request.xml", "/xml/soap-response.xml");
+        int status = _httpMixIn.postResourceAndGetStatus(SWITCHYARD_WEB_SERVICE, "/xml/soap-request-500.xml");
+        Assert.assertEquals(500, status);
     }
 }

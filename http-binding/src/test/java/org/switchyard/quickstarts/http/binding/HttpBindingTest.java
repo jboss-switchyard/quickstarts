@@ -63,8 +63,8 @@ public class HttpBindingTest {
         http.setContentType("text/plain");
         response = http.sendString(BASE_URL + "/symbol", "vineyard", HTTPMixIn.HTTP_POST);
         Assert.assertEquals("WINE", response);
-        response = http.sendString(BASE_URL + "/symbol", "rum", HTTPMixIn.HTTP_POST);
-        Assert.assertEquals("", response);
+        int status = http.sendStringAndGetStatus(BASE_URL + "/symbol", "rum", HTTPMixIn.HTTP_POST);
+        Assert.assertEquals(404, status);
     }
 
     @Test

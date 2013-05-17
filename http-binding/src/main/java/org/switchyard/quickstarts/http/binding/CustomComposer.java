@@ -16,27 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.quickstarts.http.binding;
 
-package org.switchyard.quickstarts.soap.binding.rpc;
+import org.switchyard.Exchange;
+import org.switchyard.Message;
 
-import org.switchyard.component.bean.Service;
 import org.switchyard.component.common.label.EndpointLabel;
-import org.switchyard.component.soap.composer.SOAPContextMapper;
+import org.switchyard.component.http.composer.HttpBindingData;
+import org.switchyard.component.http.composer.HttpContextMapper;
+import org.switchyard.component.http.composer.HttpMessageComposer;
 
 /**
- * HelloWorldService Implementation.
+ * Composes/decomposes Http messages.
+ *
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
-@Service(HelloWorldService.class)
-public class HelloWorldServiceBean implements HelloWorldService {
+public class CustomComposer extends HttpMessageComposer {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String sayHello(SayHelloExternal input) {
-        // TODO: Currently not possible to set property on return path for CDI Beans
-        /*if (input.equals("500")) {
-            context.setProperty(SOAPContextMapper.HTTP_RESPONSE_STATUS).addLabels(new String[]{EndpointLabel.HTTP.label()});
-        }*/
-        String greeting = "Hello World Greeting for '" + input.getToWhom() + "' in " + input.getLanguage() + " on a " + input.getDay() + "!";
-        return greeting;
+    public HttpBindingData decompose(Exchange exchange, HttpBindingData target) throws Exception {
+        Object content = exchange.getMessage().getContent();
+        if ((content instanceof String) && (content.equals(""))) {
+            exchange.getContext().setProperty(HttpContextMapper.HTTP_RESPONSE_STATUS, 404).addLabels(new String[]{EndpointLabel.HTTP.label()});
+        }
+        target = super.decompose(exchange, target);
+        return target;
     }
 
 }

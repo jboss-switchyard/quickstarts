@@ -4,6 +4,7 @@
     <sca:service name="HelloWorldWS" promote="InternalRouter/HelloService">
       <sca:interface.wsdl interface="HelloWorldWS.wsdl#wsdl.porttype(HelloWorld)"/>
       <soap:binding.soap>
+        <soap:messageComposer class="org.switchyard.quickstarts.soap.binding.rpc.CustomComposer"/>
         <soap:wsdl>HelloWorldWS.wsdl</soap:wsdl>
         <soap:contextPath>soap-binding-rpc</soap:contextPath>
       </soap:binding.soap>
