@@ -30,13 +30,13 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.test.BeforeDeploy;
-import org.switchyard.test.SwitchYardRunner;
-import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
 import org.switchyard.component.test.mixins.jca.JCAMixIn;
 import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
+import org.switchyard.test.BeforeDeploy;
+import org.switchyard.test.SwitchYardRunner;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 
 /**
  * Functional test for a policy-transaction demo quickstart.
@@ -44,7 +44,7 @@ import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-        mixins = {CDIMixIn.class, HornetQMixIn.class, JCAMixIn.class}
+        mixins = {HornetQMixIn.class, JCAMixIn.class, CDIMixIn.class}
 )
 public class JmsBindingTest {
     private static final String QUEUE_IN = "policyQSTransacted";

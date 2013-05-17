@@ -50,7 +50,7 @@ import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
         config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-        mixins = {CDIMixIn.class, HornetQMixIn.class, JCAMixIn.class}
+        mixins = {HornetQMixIn.class, JCAMixIn.class, CDIMixIn.class}
 )
 public class JCAOutboundBindingTest {
     private static final String ORDER_QUEUE = "OrderQueue";
