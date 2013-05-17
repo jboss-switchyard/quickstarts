@@ -29,15 +29,15 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
+import org.switchyard.component.test.mixins.jca.JCAMixIn;
+import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
 import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.component.test.mixins.cdi.CDIMixIn;
-import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
-import org.switchyard.component.test.mixins.jca.JCAMixIn;
-import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
 
 /**
  * Functional test for {@link JCAActivator}.
@@ -46,7 +46,7 @@ import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
  *
  */
 @RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(config = "switchyard-outbound-jms-test.xml", mixins = {CDIMixIn.class, HornetQMixIn.class, JCAMixIn.class})
+@SwitchYardTestCaseConfig(config = "switchyard-outbound-jms-test.xml", mixins = {HornetQMixIn.class, JCAMixIn.class, CDIMixIn.class})
 public class JCAJMSReferenceBindingTest  {
     
     private static final String OUTPUT_QUEUE = "TestQueue";

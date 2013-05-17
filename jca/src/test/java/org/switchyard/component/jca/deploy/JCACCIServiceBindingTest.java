@@ -28,16 +28,16 @@ import javax.resource.cci.RecordFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.test.BeforeDeploy;
-import org.switchyard.test.MockHandler;
-import org.switchyard.test.SwitchYardRunner;
-import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.jca.JCAMixIn;
 import org.switchyard.component.test.mixins.jca.MockRecordFactory;
 import org.switchyard.component.test.mixins.jca.MockResourceAdapter;
 import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
+import org.switchyard.test.BeforeDeploy;
+import org.switchyard.test.MockHandler;
+import org.switchyard.test.SwitchYardRunner;
+import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.test.SwitchYardTestKit;
 
 /**
  * Functional test for {@link JCAActivator}.
@@ -46,7 +46,7 @@ import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
  *
  */
 @RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(config = "switchyard-inbound-cci-test.xml", mixins = {CDIMixIn.class, JCAMixIn.class})
+@SwitchYardTestCaseConfig(config = "switchyard-inbound-cci-test.xml", mixins = {JCAMixIn.class, CDIMixIn.class})
 public class JCACCIServiceBindingTest  {
     
     private static final String ADAPTER_NAME = "myeis-ra.rar";

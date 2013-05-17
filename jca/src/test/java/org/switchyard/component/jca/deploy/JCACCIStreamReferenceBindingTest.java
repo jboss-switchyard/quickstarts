@@ -50,7 +50,7 @@ import org.switchyard.test.SwitchYardTestCaseConfig;
  *
  */
 @RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(config = "switchyard-outbound-cci-stream-test.xml", mixins = {CDIMixIn.class, JCAMixIn.class})
+@SwitchYardTestCaseConfig(config = "switchyard-outbound-cci-stream-test.xml", mixins = {JCAMixIn.class, CDIMixIn.class})
 public class JCACCIStreamReferenceBindingTest {
 
     private static final String JNDI_CONNECTION_FACTORY = "java:jboss/MyEISConnectionFactory";

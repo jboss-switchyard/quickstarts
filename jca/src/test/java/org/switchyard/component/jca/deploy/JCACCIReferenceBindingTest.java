@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.naming.InitialContext;
-import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.InteractionSpec;
 import javax.resource.cci.MappedRecord;
 import javax.resource.cci.Record;
@@ -33,17 +32,17 @@ import javax.resource.cci.Record;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.test.BeforeDeploy;
-import org.switchyard.test.Invoker;
-import org.switchyard.test.ServiceOperation;
-import org.switchyard.test.SwitchYardRunner;
-import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.jca.InteractionListener;
 import org.switchyard.component.test.mixins.jca.JCAMixIn;
 import org.switchyard.component.test.mixins.jca.MockConnectionFactory;
 import org.switchyard.component.test.mixins.jca.MockManagedConnectionFactory;
 import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
+import org.switchyard.test.BeforeDeploy;
+import org.switchyard.test.Invoker;
+import org.switchyard.test.ServiceOperation;
+import org.switchyard.test.SwitchYardRunner;
+import org.switchyard.test.SwitchYardTestCaseConfig;
 
 /**
  * Functional test for {@link JCAActivator}.
@@ -52,7 +51,7 @@ import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
  *
  */
 @RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(config = "switchyard-outbound-cci-test.xml", mixins = {CDIMixIn.class, JCAMixIn.class})
+@SwitchYardTestCaseConfig(config = "switchyard-outbound-cci-test.xml", mixins = {JCAMixIn.class, CDIMixIn.class})
 public class JCACCIReferenceBindingTest  {
     
     private static final String JNDI_CONNECTION_FACTORY = "java:jboss/MyEISConnectionFactory";
