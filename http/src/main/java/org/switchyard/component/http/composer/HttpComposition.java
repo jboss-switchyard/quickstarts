@@ -36,9 +36,6 @@ public final class HttpComposition {
     /** The http_request_info property name. */
     public static final String HTTP_REQUEST_INFO = "http_request_info";
 
-    /** The http_response_status property name. */
-    public static final String HTTP_RESPONSE_STATUS = "http_response_status";
-
     /**
      * Uses the {@link Composition} class to create a HTTP-specific MessageComposer.
      * @return the MessageComposer

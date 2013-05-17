@@ -114,39 +114,68 @@ public class HTTPMixIn extends AbstractTestMixIn {
      * @param endpointURL The HTTP endpoint URL.
      * @param request The request payload.
      * @param method The request method.
+     * @return The HTTP response code.
+     */
+    public int sendStringAndGetStatus(String endpointURL, String request, String method) {
+        HttpMethod httpMethod = sendStringAndGetMethod(endpointURL, request, method);
+        int status = httpMethod.getStatusCode();
+        httpMethod.releaseConnection();
+        return status;
+    }
+
+    /**
+     * Send the specified request payload to the specified HTTP endpoint using the method specified.
+     * @param endpointURL The HTTP endpoint URL.
+     * @param request The request payload.
+     * @param method The request method.
      * @return The HTTP response payload.
      */
     public String sendString(String endpointURL, String request, String method) {
+        String response = null;
+        try {
+            HttpMethod httpMethod = sendStringAndGetMethod(endpointURL, request, method);
+            response = httpMethod.getResponseBodyAsString();
+            httpMethod.releaseConnection();
+        } catch (IOException ioe) {
+            _logger.error("Unable to get response", ioe);
+        }
+        return response;
+    }
+
+    /**
+     * Send the specified request payload to the specified HTTP endpoint using the method specified.
+     * @param endpointURL The HTTP endpoint URL.
+     * @param request The request payload.
+     * @param method The request method.
+     * @return The HttpMethod object.
+     */
+    public HttpMethod sendStringAndGetMethod(String endpointURL, String request, String method) {
         if (_dumpMessages) {
             _logger.info("Sending a " + method + " request to [" + endpointURL + "]");
             _logger.info("Request body:[" + request + "]");
         }
+        HttpMethod httpMethod = null;
         try {
             if (method.equals(HTTP_PUT)) {
-                PutMethod httpMethod = new PutMethod(endpointURL);
-                httpMethod.setRequestEntity(new StringRequestEntity(request, _contentType, "UTF-8"));
-                return execute(httpMethod);
+                httpMethod = new PutMethod(endpointURL);
+                ((PutMethod)httpMethod).setRequestEntity(new StringRequestEntity(request, _contentType, "UTF-8"));
             } else if (method.equals(HTTP_POST)) {
-                PostMethod httpMethod = new PostMethod(endpointURL);
-                httpMethod.setRequestEntity(new StringRequestEntity(request, _contentType, "UTF-8"));
-                return execute(httpMethod);
+                httpMethod = new PostMethod(endpointURL);
+                ((PostMethod)httpMethod).setRequestEntity(new StringRequestEntity(request, _contentType, "UTF-8"));
             } else if (method.equals(HTTP_DELETE)) {
-                DeleteMethod httpMethod = new DeleteMethod(endpointURL);
-                return execute(httpMethod);
+                httpMethod = new DeleteMethod(endpointURL);
             } else if (method.equals(HTTP_OPTIONS)) {
-                OptionsMethod httpMethod = new OptionsMethod(endpointURL);
-                return execute(httpMethod);
+                httpMethod = new OptionsMethod(endpointURL);
             } else if (method.equals(HTTP_HEAD)) {
-                HeadMethod httpMethod = new HeadMethod(endpointURL);
-                return execute(httpMethod);
+                httpMethod = new HeadMethod(endpointURL);
             } else {
-                GetMethod httpMethod = new GetMethod(endpointURL);
-                return execute(httpMethod);
+                httpMethod = new GetMethod(endpointURL);
             }
+            execute(httpMethod);
         } catch (UnsupportedEncodingException e) {
             _logger.error("Unable to set request entity", e);
         }
-        return null;
+        return httpMethod;
     }
 
     /**
@@ -223,9 +252,9 @@ public class HTTPMixIn extends AbstractTestMixIn {
      * POST the specified classpath resource to the specified HTTP endpoint.
      * @param endpointURL The HTTP endpoint URL.
      * @param requestResource The classpath resource to be posted to the endpoint.
-     * @return The HTTP response payload.
+     * @return The HTTP method.
      */
-    public String postResource(String endpointURL, String requestResource) {
+    public HttpMethod postResourceAndGetMethod(String endpointURL, String requestResource) {
         if (_dumpMessages) {
             _logger.info("Sending a POST request to [" + endpointURL + "]");
             InputStream input = getTestKit().getResourceAsStream(requestResource);
@@ -247,16 +276,33 @@ public class HTTPMixIn extends AbstractTestMixIn {
 
         try {
             postMethod.setRequestEntity(new InputStreamRequestEntity(requestStream, _contentType + "; charset=utf-8"));
-            return execute(postMethod);
+            execute(postMethod);
         } finally {
             try {
                 requestStream.close();
             } catch (IOException e) {
                 Assert.fail("Unexpected exception closing HTTP request resource stream.");
-            } finally {
-                postMethod.releaseConnection();
             }
         }
+        return postMethod;
+    }
+
+    /**
+     * POST the specified classpath resource to the specified HTTP endpoint.
+     * @param endpointURL The HTTP endpoint URL.
+     * @param requestResource The classpath resource to be posted to the endpoint.
+     * @return The HTTP response payload.
+     */
+    public String postResource(String endpointURL, String requestResource) {
+        String response = null;
+        try {
+            HttpMethod httpMethod = postResourceAndGetMethod(endpointURL, requestResource);
+            response = httpMethod.getResponseBodyAsString();
+            httpMethod.releaseConnection();
+        } catch (IOException ioe) {
+            _logger.error("Unable to get response", ioe);
+        }
+        return response;
     }
 
     /**
@@ -271,6 +317,18 @@ public class HTTPMixIn extends AbstractTestMixIn {
         String response = postResource(endpointURL, requestResource);
         getTestKit().compareXMLToResource(response, expectedResponseResource);
         return response;
+    }
+    /**
+     * POST the specified classpath resource to the specified HTTP endpoint.
+     * @param endpointURL The HTTP endpoint URL.
+     * @param requestResource The classpath resource to be posted to the endpoint.
+     * @return The HTTP status code.
+     */
+    public int postResourceAndGetStatus(String endpointURL, String requestResource) {
+        HttpMethod httpMethod = postResourceAndGetMethod(endpointURL, requestResource);
+        int status = httpMethod.getStatusCode();
+        httpMethod.releaseConnection();
+        return status;
     }
 
     /**

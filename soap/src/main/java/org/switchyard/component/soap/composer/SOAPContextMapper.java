@@ -49,6 +49,11 @@ import org.w3c.dom.Node;
  */
 public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
 
+    /**
+     * The HTTP responce code.
+     */
+    public static final String HTTP_RESPONSE_STATUS = "http_response_status";
+
     private static final String[] SOAP_HEADER_LABELS = new String[]{ComponentLabel.SOAP.label(), EndpointLabel.SOAP.label()};
     private static final String[] SOAP_MIME_LABELS = new String[]{ComponentLabel.SOAP.label(), EndpointLabel.HTTP.label()};
 
@@ -80,6 +85,9 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
         SOAPMessage soapMessage = source.getSOAPMessage();
         if (soapMessage.getSOAPBody().hasFault() && (source.getSOAPFaultInfo() != null)) {
             context.setProperty(SOAPComposition.SOAP_FAULT_INFO, source.getSOAPFaultInfo()).addLabels(SOAP_HEADER_LABELS);
+        }
+        if (source.getStatus() != null) {
+            context.setProperty(HTTP_RESPONSE_STATUS, source.getStatus()).addLabels(SOAP_MIME_LABELS);
         }
         @SuppressWarnings("unchecked")
         Iterator<MimeHeader> mimeHeaders = soapMessage.getMimeHeaders().getAllHeaders();
@@ -137,7 +145,13 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
             if (value != null) {
                 String name = property.getName();
                 if (property.hasLabel(EndpointLabel.HTTP.label())) {
-                    if (matches(name)) {
+                    if (HTTP_RESPONSE_STATUS.equalsIgnoreCase(name)) {
+                        if (value instanceof String) {
+                            target.setStatus(Integer.valueOf((String) value).intValue());
+                        } else if (value instanceof Integer) {
+                            target.setStatus((Integer) value);
+                        }
+                    } else if (matches(name)) {
                         mimeHeaders.addHeader(name, String.valueOf(value));
                     }
                 } else {

@@ -37,6 +37,11 @@ import org.switchyard.component.common.label.EndpointLabel;
  */
 public class RESTEasyContextMapper extends BaseRegexContextMapper<RESTEasyBindingData> {
 
+    /**
+     * The HTTP responce code.
+     */
+    public static final String HTTP_RESPONSE_STATUS = "http_response_status";
+
     private static final String[] RESTEASY_LABELS = new String[]{ComponentLabel.RESTEASY.label(), EndpointLabel.REST.label(), EndpointLabel.HTTP.label()};
 
     /**
@@ -57,6 +62,9 @@ public class RESTEasyContextMapper extends BaseRegexContextMapper<RESTEasyBindin
                 }
             }
         }
+        if (source.getStatusCode() != null) {
+            context.setProperty(HTTP_RESPONSE_STATUS, source.getStatusCode()).addLabels(RESTEASY_LABELS);
+        }
     }
 
     /**
@@ -69,7 +77,9 @@ public class RESTEasyContextMapper extends BaseRegexContextMapper<RESTEasyBindin
         for (Property property : context.getProperties()) {
             if (property.hasLabel(EndpointLabel.HTTP.label())) {
                 String name = property.getName();
-                if (matches(name)) {
+                if (HTTP_RESPONSE_STATUS.equals(name)) {
+                    target.setStatusCode((Integer)property.getValue());
+                } else if (matches(name)) {
                     Object value = property.getValue();
                     if (value != null) {
                         if (value instanceof List) {

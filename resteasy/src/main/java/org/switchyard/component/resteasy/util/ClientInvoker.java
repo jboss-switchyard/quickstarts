@@ -157,10 +157,11 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
                 throw new RuntimeException("You have not set a base URI for the client proxy");
             }
 
-            ClientRequest request = createRequest(args, headers);
+            ClientRequest request = null;
 
             BaseClientResponse clientResponse = null;
             try {
+                request = createRequest(args, headers);
                 clientResponse = (BaseClientResponse) request.httpMethod(_httpMethod);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -175,6 +176,7 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
                 restResponse.setParameters(new Object[]{response});
                 // Propagate outgoing headers
                 restResponse.setHeaders(clientResponse.getHeaders());
+                restResponse.setStatusCode(clientResponse.getStatus());
                 if (LOGGER.isTraceEnabled()) {
                     LOGGER.trace("Incoming Headers to SwitchYard through OutboundHandler [");
                     for (Object key : clientResponse.getHeaders().keySet()) {

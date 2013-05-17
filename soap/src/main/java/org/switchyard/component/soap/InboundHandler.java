@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
@@ -158,6 +159,12 @@ public class InboundHandler extends BaseServiceHandler {
         Operation operation;
         Boolean oneWay = false;
         QName firstBodyElement = null;
+        MessageContext msgContext = null;
+
+        if (wsContext != null) {
+            // Caching the message context
+            msgContext = wsContext.getMessageContext();
+        }
 
         if ((soapMessage == null) || (soapMessage.getSOAPPart() == null)) {
             return handleException(oneWay, new SOAPException("No such operation: " + _wsdlPort.getName() + "->null"));
@@ -222,11 +229,16 @@ public class InboundHandler extends BaseServiceHandler {
                 }
                 SOAPMessage soapResponse;
                 try {
-                    soapResponse = _messageComposer.decompose(exchange, new SOAPBindingData(SOAPUtil.createMessage(_bindingId))).getSOAPMessage();
+                    SOAPBindingData bindingData = new SOAPBindingData(SOAPUtil.createMessage(_bindingId));
+                    soapResponse = _messageComposer.decompose(exchange, bindingData).getSOAPMessage();
+                    if (msgContext != null) {
+                        msgContext.put(BaseHandler.STATUS, bindingData.getStatus());
+                    }
                 } catch (SOAPException soapEx) {
                     throw soapEx;
                 } catch (Exception ex) {
-                    throw new SwitchYardException(ex.getMessage());
+                    ex.printStackTrace();
+                    throw new SwitchYardException(ex);
                 }
                 if (exchange.getState() == ExchangeState.FAULT && soapResponse.getSOAPBody().getFault() == null) {
                     return handleException(oneWay, new SOAPException("Invalid response SOAPMessage construction.  The associated SwitchYard Exchange is in a FAULT state, "

@@ -37,6 +37,11 @@ import org.switchyard.component.common.label.EndpointLabel;
  */
 public class HttpContextMapper extends BaseRegexContextMapper<HttpBindingData> {
 
+    /**
+     * The HTTP responce code.
+     */
+    public static final String HTTP_RESPONSE_STATUS = "http_response_status";
+
     private static final String[] HTTP_LABELS = new String[]{ComponentLabel.HTTP.label(), EndpointLabel.HTTP.label()};
 
     /**
@@ -46,7 +51,7 @@ public class HttpContextMapper extends BaseRegexContextMapper<HttpBindingData> {
     public void mapFrom(HttpBindingData source, Context context) throws Exception {
         if (source instanceof HttpResponseBindingData) {
             HttpResponseBindingData response = (HttpResponseBindingData) source;
-            context.setProperty(HttpComposition.HTTP_RESPONSE_STATUS, response.getStatus()).addLabels(HTTP_LABELS);
+            context.setProperty(HTTP_RESPONSE_STATUS, response.getStatus()).addLabels(HTTP_LABELS);
         } else {
             HttpRequestBindingData request = (HttpRequestBindingData) source;
             if (request.getRequestInfo() != null) {
@@ -79,16 +84,14 @@ public class HttpContextMapper extends BaseRegexContextMapper<HttpBindingData> {
             if (property.hasLabel(EndpointLabel.HTTP.label())) {
                 String name = property.getName();
                 Object value = property.getValue();
-                if (HttpComposition.HTTP_RESPONSE_STATUS.equalsIgnoreCase(name) && (target instanceof HttpResponseBindingData)) {
+                if (HTTP_RESPONSE_STATUS.equalsIgnoreCase(name) && (target instanceof HttpResponseBindingData)) {
                     HttpResponseBindingData response = (HttpResponseBindingData)target;
                     if (value instanceof String) {
                         response.setStatus(Integer.valueOf((String) value).intValue());
                     } else if (value instanceof Integer) {
                         response.setStatus((Integer) value);
                     }
-                    continue;
-                }
-                if (matches(name)) {
+                } else if (matches(name)) {
                     if (value != null) {
                         if (value instanceof List) {
                             httpHeaders.put(name, (List<String>)value);

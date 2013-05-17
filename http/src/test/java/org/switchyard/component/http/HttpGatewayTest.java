@@ -33,6 +33,7 @@ import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.http.composer.HttpComposition;
+import org.switchyard.component.http.composer.HttpContextMapper;
 import org.switchyard.component.http.config.model.HttpBindingModel;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.switchyard.config.model.ModelPuller;
@@ -133,7 +134,7 @@ public class HttpGatewayTest {
         requestMsg.getContext().setProperty("SomeRequestHeader", "BAR");
         ex.send(requestMsg);
         handler.waitForOKMessage();
-        Assert.assertEquals(200, ex.getContext().getProperty(HttpComposition.HTTP_RESPONSE_STATUS).getValue());
+        Assert.assertEquals(200, ex.getContext().getProperty(HttpContextMapper.HTTP_RESPONSE_STATUS).getValue());
     }
 
     @Test
@@ -143,7 +144,7 @@ public class HttpGatewayTest {
         Message requestMsg = ex.createMessage().setContent("magesh");
         ex.send(requestMsg);
         handler.waitForFaultMessage();
-        Assert.assertEquals(404, ex.getContext().getProperty(HttpComposition.HTTP_RESPONSE_STATUS).getValue());
+        Assert.assertEquals(404, ex.getContext().getProperty(HttpContextMapper.HTTP_RESPONSE_STATUS).getValue());
     }
 
     private static class HelloInterface extends BaseService {

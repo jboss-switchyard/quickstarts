@@ -36,12 +36,14 @@ import org.switchyard.security.credential.extractor.WebServiceContextCredentialE
  * SOAP binding data.
  * 
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> &copy; 2013 Red Hat Inc.
  */
 public class SOAPBindingData implements SecurityBindingData {
 
     private final SOAPMessage _soapMessage;
     private final WebServiceContext _webServiceContext;
     private SOAPFaultInfo _soapFaultInfo;
+    private Integer _status;
 
     /**
      * Constructs a new SOAP binding data with the specified SOAP message.
@@ -91,6 +93,22 @@ public class SOAPBindingData implements SecurityBindingData {
      */
     public WebServiceContext getWebServiceContext() {
         return _webServiceContext;
+    }
+
+    /**
+     * Get the HTTP response status.
+     * @return HTTP response status
+     */
+    public Integer getStatus() {
+        return _status;
+    }
+
+    /**
+     * Set the HTTP response status.
+     * @param status the response status
+     */
+    public void setStatus(Integer status) {
+        _status = status;
     }
 
     /**

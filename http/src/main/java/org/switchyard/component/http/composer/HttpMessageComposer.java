@@ -27,7 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.switchyard.Exchange;
 import org.switchyard.Message;
+import org.switchyard.Property;
 import org.switchyard.component.common.composer.BaseMessageComposer;
+import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.config.model.composer.MessageComposerModel;
 
 /**
@@ -63,19 +65,22 @@ public class HttpMessageComposer extends BaseMessageComposer<HttpBindingData> {
         if (message != null) {
             Object content = message.getContent();
             if (target instanceof HttpResponseBindingData) {
-                int status = HttpServletResponse.SC_OK;
-                if (content == null) {
-                    status = HttpServletResponse.SC_NO_CONTENT;
-                } else if (content instanceof HttpResponseBindingData) {
-                    status = ((HttpResponseBindingData) content).getStatus();
-                } else if ((content instanceof String) || (content instanceof byte[]) 
-                            || (content instanceof InputStream) || (content instanceof Reader)) {
-                    status = HttpServletResponse.SC_OK;
-                } else {
-                    status = HttpServletResponse.SC_BAD_GATEWAY;
+                Property responseCode = exchange.getContext().getProperty(HttpContextMapper.HTTP_RESPONSE_STATUS);
+                if (!((responseCode != null) && responseCode.hasLabel(EndpointLabel.HTTP.label()))) {
+                    int status = HttpServletResponse.SC_ACCEPTED;
+                    if (content == null) {
+                        status = HttpServletResponse.SC_NO_CONTENT;
+                    } else if (content instanceof HttpResponseBindingData) {
+                        status = ((HttpResponseBindingData) content).getStatus();
+                    } else if ((content instanceof String) || (content instanceof byte[]) 
+                                || (content instanceof InputStream) || (content instanceof Reader)) {
+                        status = HttpServletResponse.SC_OK;
+                    } else {
+                        status = HttpServletResponse.SC_BAD_GATEWAY;
+                    }
+                    HttpResponseBindingData response = (HttpResponseBindingData) target;
+                    response.setStatus(status);
                 }
-                HttpResponseBindingData response = (HttpResponseBindingData) target;
-                response.setStatus(status);
             }
             setContent(content, target);
         }

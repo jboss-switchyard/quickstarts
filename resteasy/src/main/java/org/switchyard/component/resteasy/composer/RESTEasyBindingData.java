@@ -35,6 +35,7 @@ public class RESTEasyBindingData implements BindingData {
     private Object[] _args = new Object[0];
     private MultivaluedMap<String, String> _headers;
     private String _operationName;
+    private Integer _statusCode;
 
     /**
      * Creates a new RESTEasy message.
@@ -129,5 +130,21 @@ public class RESTEasyBindingData implements BindingData {
             _headers.put(name, values);
         }
         values.add(value);
+    }
+
+    /**
+     * Gets the HTTP response status code.
+     * @return the response status code
+     */
+    public Integer getStatusCode() {
+        return _statusCode;
+    }
+
+    /**
+     * Sets the HTTP response status code.
+     * @param statusCode the response status code
+     */
+    public void setStatusCode(Integer statusCode) {
+        _statusCode = statusCode;
     }
 }

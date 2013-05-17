@@ -102,7 +102,12 @@ public final class RESTEasyProxy implements InvocationHandler {
         if (method.getReturnType().equals(Response.class)) {
             Response.ResponseBuilder builder = Response.ok();
             if (responseData != null) {
-                builder.entity(responseData.getParameters()[0]);
+                if (responseData.getStatusCode() != null) {
+                    builder.status(responseData.getStatusCode());
+                }
+                if (responseData.getParameters().length > 0) {
+                    builder.entity(responseData.getParameters()[0]);
+                }
                 for (Map.Entry<String, List<String>> entry : responseData.getHeaders().entrySet()) {
                     builder.header(entry.getKey(), entry.getValue());
                 }

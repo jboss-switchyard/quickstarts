@@ -92,7 +92,6 @@ public class RPCLiteralTest {
         _config.setSocketAddr(new SocketAddr(host, Integer.parseInt(port)));
         
         _soapInbound = new InboundHandler(_config, _domain);
-            System.out.println("_soapInbound:[" + _soapInbound + "]");
 
         _soapInbound.start();
 

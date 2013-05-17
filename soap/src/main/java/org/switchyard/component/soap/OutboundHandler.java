@@ -21,15 +21,18 @@ package org.switchyard.component.soap;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import javax.wsdl.Port;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+import javax.xml.ws.handler.Handler;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.soap.SOAPFaultException;
 
@@ -105,6 +108,11 @@ public class OutboundHandler extends BaseServiceHandler {
                 // this does not return a proper qualified Fault element and has no Detail so deferring for now
                 // _dispatcher.getRequestContext().put("jaxws.response.throwExceptionIfSOAPFault", Boolean.FALSE);
 
+                Binding binding = _dispatcher.getBinding();
+                List<Handler> handlers = binding.getHandlerChain();
+                handlers.add(new OutboundResponseHandler());
+                binding.setHandlerChain(handlers);
+
                 // Defaulting to use soapAction property in request header
                 _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
                 if (_config.getEndpointAddress() != null) {
@@ -161,6 +169,10 @@ public class OutboundHandler extends BaseServiceHandler {
                         SOAPFaultInfo faultInfo = new SOAPFaultInfo();
                         faultInfo.copyFaultInfo(response);
                         bindingData.setSOAPFaultInfo(faultInfo);
+                    }
+                    String status = (String)response.getProperty(BaseHandler.STATUS);
+                    if (!hasFault && (status != null)) {
+                        bindingData.setStatus(Integer.valueOf(status));
                     }
                     message = _messageComposer.compose(bindingData, exchange);
                 } catch (Exception e) {

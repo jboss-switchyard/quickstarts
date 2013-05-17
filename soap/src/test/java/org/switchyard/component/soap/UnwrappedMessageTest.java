@@ -63,7 +63,6 @@ public class UnwrappedMessageTest {
         Assert.assertTrue(requestDiff.toString(), requestDiff.similar());
         
         // verify reply is wrapped
-        System.out.println(reply);
         Diff replyDiff = XMLUnit.compareXML(testKit.readResourceString(WRAPPED_REPLY), reply);
         Assert.assertTrue(replyDiff.toString(), replyDiff.similar());
     }

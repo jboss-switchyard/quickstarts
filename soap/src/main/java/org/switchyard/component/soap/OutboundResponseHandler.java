@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,31 +16,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
- 
-package org.switchyard.component.http.composer;
+
+package org.switchyard.component.soap;
+
+import javax.xml.soap.SOAPException;
+import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 /**
- * HTTP response binding data.
+ * Outbound response status handler.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> &copy; 2012 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
-public class HttpResponseBindingData extends HttpBindingData {
+public class OutboundResponseHandler extends BaseHandler {
 
-    private Integer _status;
-
-    /**
-     * Get the HTTP response status.
-     * @return HTTP response status
-     */
-    public Integer getStatus() {
-        return _status;
-    }
-
-    /**
-     * Set the HTTP response status.
-     * @param status the response status
-     */
-    public void setStatus(Integer status) {
-        _status = status;
+    @Override
+    public boolean handleMessage(SOAPMessageContext context) {
+        Boolean outbound = (Boolean)context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+        if (!outbound) {
+            try {
+                context.getMessage().setProperty(STATUS, context.get(MessageContext.HTTP_RESPONSE_CODE).toString());
+            } catch (SOAPException se) {
+                throw new RuntimeException(se);
+            }
+        }
+        return true;
     }
 }
