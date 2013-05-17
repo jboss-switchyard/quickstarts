@@ -22,4 +22,6 @@ package org.switchyard.component.bean.tests;
 public interface RequestResponse {
 
     Object reply(Object message) throws ConsumerException;
+    
+    Object replyAddProperty(Object message) throws ConsumerException;
 }

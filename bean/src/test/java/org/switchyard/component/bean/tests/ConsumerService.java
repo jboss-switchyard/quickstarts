@@ -15,4 +15,6 @@ public interface ConsumerService {
     Object consumeInOutServiceThrowsRuntimeException(Object message);
     
     String domOperation(Document message);
+    
+    Object consumeInOutServiceAddProperty(Object message) throws ConsumerException;
 }

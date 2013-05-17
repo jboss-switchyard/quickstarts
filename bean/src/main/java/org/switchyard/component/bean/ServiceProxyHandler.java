@@ -33,6 +33,8 @@ import org.switchyard.ServiceReference;
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
+import org.switchyard.component.bean.internal.beanbag.BeanBagImpl;
+import org.switchyard.component.bean.internal.beanbag.BeanBagProxy;
 import org.switchyard.component.bean.internal.context.ContextProxy;
 import org.switchyard.component.bean.internal.message.MessageProxy;
 import org.switchyard.deploy.BaseServiceHandler;
@@ -158,11 +160,14 @@ public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHa
                 Object responseObject;
                 ContextProxy.setContext(exchange.getContext());
                 MessageProxy.setMessage(exchange.getMessage());
+                setBeanBag(new BeanBagImpl(exchange.getContext(), exchange.getMessage()));
+                
                 try {
                     responseObject = invocation.getMethod().invoke(_serviceBean, invocation.getArgs());
                 } finally {
                     ContextProxy.setContext(null);
                     MessageProxy.setMessage(null);
+                    setBeanBag(null);
                 }
                 
                 if (exchangePattern == ExchangePattern.IN_OUT) {
@@ -200,6 +205,13 @@ public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHa
         }
     }
 
+    private void setBeanBag(BeanBagImpl beanBag) {
+        BeanBagProxy.setBeanBag(beanBag);
+        for (ClientProxyBean proxyBean : _beanDeploymentMetaData.getClientProxies()) {
+            proxyBean.setBeanBag(beanBag);
+        }
+    }
+    
     @Override
     protected void doStart() {
         // Initialise any client proxies to the started service...

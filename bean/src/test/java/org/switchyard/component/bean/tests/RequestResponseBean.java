@@ -19,11 +19,17 @@
 
 package org.switchyard.component.bean.tests;
 
+import javax.inject.Inject;
+
+import org.switchyard.Context;
 import org.switchyard.component.bean.Service;
 
 @Service(RequestResponse.class)
 public class RequestResponseBean implements RequestResponse {
 
+    @Inject
+    Context _context;
+    
     public Object reply(Object message) throws ConsumerException {
         if(message instanceof ConsumerException) {
             throw (ConsumerException) message;
@@ -32,4 +38,13 @@ public class RequestResponseBean implements RequestResponse {
         return message;
     }
 
+    public Object replyAddProperty(Object message) throws ConsumerException {
+        if(message instanceof ConsumerException) {
+            throw (ConsumerException) message;
+        }
+
+        String val = _context.getProperty("testProp").getValue().toString();
+        return message + val;
+        
+    }
 }

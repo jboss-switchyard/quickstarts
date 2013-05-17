@@ -44,6 +44,8 @@ public class BeanConsumerTest {
     private Invoker inOnly;
     @ServiceOperation("ConsumerService.consumeInOutService")
     private Invoker inOut;
+    @ServiceOperation("ConsumerService.consumeInOutServiceAddProperty")
+    private Invoker inOutProperty;
     @ServiceOperation("ConsumerService.consumeInOutServiceThrowsRuntimeException")
     private Invoker inOutRuntimeEx;
     @ServiceOperation("ConsumerService.unknownXOp")
@@ -64,6 +66,13 @@ public class BeanConsumerTest {
         Message responseMsg = inOut.sendInOut("hello");
 
         Assert.assertEquals("hello", responseMsg.getContent());
+    }
+
+    @Test
+    public void consumeInOutServiceFromBean_new_way_property() {
+        Message responseMsg = inOutProperty.sendInOut("hello");
+        
+        Assert.assertEquals("hellotestVal", responseMsg.getContent());
     }
 
     @Test
