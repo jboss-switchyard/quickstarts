@@ -42,6 +42,7 @@ import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
+import org.switchyard.runtime.event.ExchangeInitiatedEvent;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.transform.BaseTransformer;
 
@@ -153,35 +154,81 @@ public class ExchangeImplTest {
             Assert.assertEquals("Invalid null 'message' argument in method call.", e.getMessage());
         }
     }
+    
+    @Test
+    public void testExchangeInitiatedEvent() {
+        EventCounter counter = new EventCounter();
+        _domain.addEventObserver(counter, ExchangeInitiatedEvent.class);
+        
+        // send in-only and check the count
+        ServiceReference inOnlyService = _domain.createInOnlyService(new QName("ExchangeInitiatedEvent-1"));
+        Exchange inOnly = inOnlyService.createExchange();
+        inOnly.send(inOnly.createMessage());
+        Assert.assertEquals(1, counter.initiatedCount);
+        
+        // reset count
+        counter.initiatedCount = 0;
+        
+        // send in-out and check the count
+        ServiceReference inOutService = _domain.createInOutService(
+                new QName("ExchangeInitiatedEvent-2"), new MockHandler().forwardInToOut());
+        Exchange inOut = inOutService.createExchange(new MockHandler());
+        inOut.send(inOut.createMessage());
+        Assert.assertEquals(1, counter.initiatedCount);
+    }
 
     @Test
     public void testExchangeCompletedEvent() {
-        class CompletionCounter implements EventObserver {
-            int count;
-            public void notify(EventObject event) {
-                if (event instanceof ExchangeCompletionEvent) {
-                    ++count;
-                }
-            }
-        };
-        CompletionCounter counter = new CompletionCounter();
+        EventCounter counter = new EventCounter();
         _domain.addEventObserver(counter, ExchangeCompletionEvent.class);
         
         // send in-only and check the count
         ServiceReference inOnlyService = _domain.createInOnlyService(new QName("ExchangeCompleteEvent-1"));
         Exchange inOnly = inOnlyService.createExchange();
         inOnly.send(inOnly.createMessage());
-        Assert.assertEquals(1, counter.count);
+        Assert.assertEquals(1, counter.completedCount);
         
         // reset count
-        counter.count = 0;
+        counter.completedCount = 0;
         
         // send in-out and check the count
         ServiceReference inOutService = _domain.createInOutService(
                 new QName("ExchangeCompleteEvent-2"), new MockHandler().forwardInToOut());
         Exchange inOut = inOutService.createExchange(new MockHandler());
         inOut.send(inOut.createMessage());
-        Assert.assertEquals(1, counter.count);
+        Assert.assertEquals(1, counter.completedCount);
+    }
+    
+    @Test
+    public void testAllExchangeEventsReceived() throws Exception {
+        EventCounter counter = new EventCounter();
+        _domain.addEventObserver(counter, ExchangeInitiatedEvent.class);
+        _domain.addEventObserver(counter, ExchangeCompletionEvent.class);
+        
+        // send 10 in-only messages and check the counters
+        for (int i = 0; i < 10; i++) {
+            ServiceReference inOnlyService = _domain.createInOnlyService(new QName("ExchangeEvent-0" + i));
+            Exchange inOnly = inOnlyService.createExchange();
+            inOnly.send(inOnly.createMessage());
+        }
+        
+        Assert.assertEquals(10, counter.initiatedCount);
+        Assert.assertEquals(10, counter.completedCount);
+        
+        // initialize counters
+        counter.initiatedCount = 0;
+        counter.completedCount = 0;
+        
+        // send 10 in-out and check the count
+        for (int i = 0; i < 10; i++) {
+            ServiceReference inOutService = _domain.createInOutService(
+                    new QName("ExchangeEvent-1" + i), new MockHandler().forwardInToOut());
+            Exchange inOut = inOutService.createExchange(new MockHandler());
+            inOut.send(inOut.createMessage());
+        }
+        
+        Assert.assertEquals(10, counter.initiatedCount);
+        Assert.assertEquals(10, counter.completedCount);
     }
 
     /**
@@ -348,6 +395,18 @@ public class ExchangeImplTest {
         Assert.assertEquals(String.class, exchange.getMessage().getContent().getClass());
         Assert.assertEquals(exchange.getMessage().getContent(), "testFaultTransformSequence");
     }
+    
+    class EventCounter implements EventObserver {
+        int initiatedCount;
+        int completedCount;
+        public void notify(EventObject event) {
+            if (event instanceof ExchangeInitiatedEvent) {
+                ++initiatedCount;
+            } else if (event instanceof ExchangeCompletionEvent) {
+                ++completedCount;
+            }
+        }
+    };
 
 }
 

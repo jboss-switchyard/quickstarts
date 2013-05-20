@@ -39,6 +39,7 @@ import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
+import org.switchyard.runtime.event.ExchangeInitiatedEvent;
 import org.switchyard.security.SecurityContext;
 import org.switchyard.security.SecurityExchange;
 
@@ -216,15 +217,23 @@ public class CamelExchange implements SecurityExchange {
     }
 
     private void sendInternal() {
+        ServiceDomain domain = ((SwitchYardCamelContext) _exchange.getContext()).getServiceDomain();
+        ExchangePhase sendPhase = getPhase();
+
+        // Publish exchange initiation event
+        if (ExchangePhase.IN.equals(getPhase())) {
+            _exchange.setProperty(ExchangeInitiatedEvent.EXCHANGE_INITIATED_TIME + ".start", Long.toString(System.nanoTime()));
+            domain.getEventPublisher().publish(new ExchangeInitiatedEvent(this));
+        }
+
         _exchange.getProperty(DISPATCHER, ExchangeDispatcher.class).dispatch(this);
-        if (isDone()) {
-            ServiceDomain domain = ((SwitchYardCamelContext) _exchange.getContext()).getServiceDomain();
+
+        if (isDone(sendPhase)) {
+         // Publish exchange completion event
             long duration = System.nanoTime() - _exchange.getProperty(ExchangeCompletionEvent.EXCHANGE_DURATION + ".start", 0, Long.class);
             getContext().setProperty(ExchangeCompletionEvent.EXCHANGE_DURATION, TimeUnit.NANOSECONDS.toMillis(duration))
                 .addLabels(BehaviorLabel.TRANSIENT.label());
             domain.getEventPublisher().publish(new ExchangeCompletionEvent(this));
-        } else {
-            _exchange.setProperty(ExchangeCompletionEvent.EXCHANGE_DURATION + ".start", System.nanoTime());
         }
     }
 
@@ -259,8 +268,7 @@ public class CamelExchange implements SecurityExchange {
         return _exchange.getProperty(REPLY_HANDLER, ExchangeHandler.class);
     }
 
-    private boolean isDone() {
-        ExchangePhase phase = getPhase();
+    private boolean isDone(ExchangePhase phase) {
         ExchangePattern mep = getContract().getConsumerOperation().getExchangePattern();
         return (ExchangePhase.IN.equals(phase) && ExchangePattern.IN_ONLY.equals(mep))
                 || (ExchangePhase.OUT.equals(phase) && ExchangePattern.IN_OUT.equals(mep));

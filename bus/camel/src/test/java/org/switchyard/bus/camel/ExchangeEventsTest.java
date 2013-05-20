@@ -25,6 +25,8 @@ package org.switchyard.bus.camel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.EventObject;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
@@ -44,13 +46,16 @@ import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.event.EventObserver;
 import org.switchyard.internal.ServiceReferenceImpl;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
+import org.switchyard.runtime.event.ExchangeInitiatedEvent;
 import org.switchyard.spi.Dispatcher;
 
-public class ExchangeDispatcherTest {
+public class ExchangeEventsTest {
 
     private static final String REQUEST = "REQUEST";
 	private ServiceDomain _domain;
@@ -73,7 +78,11 @@ public class ExchangeDispatcherTest {
     }
     
     @Test
-    public void testDispatchInOnly() throws Exception {
+    public void testExchangeEventsForInOnly() throws Exception {
+        EventCounter counter = new EventCounter();
+        _domain.addEventObserver(counter, ExchangeInitiatedEvent.class);
+        _domain.addEventObserver(counter, ExchangeCompletionEvent.class);
+        
         QName name = new QName("testDispatchInOnly");
         ExchangeSink sink = new ExchangeSink();
         Service service = new MockService(name, new InOnlyService(), sink);
@@ -87,13 +96,16 @@ public class ExchangeDispatcherTest {
         exchange.send(message);
         Thread.sleep(200);
 
-        Assert.assertEquals(
-                message.getContext().getProperty(Exchange.MESSAGE_ID), 
-                sink.getLastExchange().getMessage().getContext().getProperty(Exchange.MESSAGE_ID));
+        Assert.assertEquals(1, counter.initiatedCount);
+        Assert.assertEquals(1, counter.completedCount);
     }
 
     @Test
-    public void testDispatchInOut() throws Exception {
+    public void testExchangeEventsForInOut() throws Exception {
+        EventCounter counter = new EventCounter();
+        _domain.addEventObserver(counter, ExchangeInitiatedEvent.class);
+        _domain.addEventObserver(counter, ExchangeCompletionEvent.class);
+        
         QName name = new QName("testDispatchInOut");
         // provider handler
         ExchangeSink inHandler = new ExchangeSink(true);
@@ -114,15 +126,22 @@ public class ExchangeDispatcherTest {
         Exchange lastExchange = outHandler.getLastExchange();
         assertNotNull(lastExchange);
 
-//        assertEquals(REQUEST, lastExchange.getMessage().getContent());
-
-        Property messageId = message.getContext().getProperty(Exchange.MESSAGE_ID);
-        assertNotNull("Message id must be available after sending message and receiving response", messageId);
-        Property relatesTo = lastExchange.getContext().getProperty(Exchange.RELATES_TO);
-        assertNotNull("Relates to must be specified for outgoing message", relatesTo);
-        assertEquals("Relates to property should point to in message id", messageId.getValue(), relatesTo.getValue());
+        Assert.assertEquals(1, counter.initiatedCount);
+        Assert.assertEquals(1, counter.completedCount);
     }
 
+    class EventCounter implements EventObserver {
+        int initiatedCount;
+        int completedCount;
+        public void notify(EventObject event) {
+            if (event instanceof ExchangeInitiatedEvent) {
+                ++initiatedCount;
+            } else if (event instanceof ExchangeCompletionEvent) {
+                ++completedCount;
+            }
+        }
+    };
+    
     /**
      * Holds a reference to the most recent exchange received by the handler.
      */
@@ -155,4 +174,3 @@ public class ExchangeDispatcherTest {
         
     }
 }
-

@@ -42,6 +42,7 @@ import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
+import org.switchyard.runtime.event.ExchangeInitiatedEvent;
 import org.switchyard.security.SecurityContext;
 import org.switchyard.security.SecurityExchange;
 import org.switchyard.spi.Dispatcher;
@@ -215,10 +216,16 @@ public class ExchangeImpl implements SecurityExchange {
             }
             _log.warn("Fault generated during exchange without a handler: " + faultContent);
         } else {
+            // Publish exchange initiation event
+            if (ExchangePhase.IN.equals(getPhase())) {
+                getContext().setProperty(ExchangeInitiatedEvent.EXCHANGE_INITIATED_TIME + ".start", Long.toString(System.nanoTime()));
+                _domain.getEventPublisher().publish(new ExchangeInitiatedEvent(this));
+            }
+            
             _dispatch.dispatch(this);
         }
         
-        // Notify exchange completion
+        // Publish exchange completion event
         if (isDone(sendPhase)) {
             long duration = System.nanoTime() - _startTime;
             getContext().setProperty(ExchangeCompletionEvent.EXCHANGE_DURATION, 
@@ -331,7 +338,7 @@ public class ExchangeImpl implements SecurityExchange {
             }
         }
     }
-
+    
     private boolean isDone(ExchangePhase phase) {
         ExchangePattern mep = _contract.getConsumerOperation().getExchangePattern();
         return (ExchangePhase.IN.equals(phase) && ExchangePattern.IN_ONLY.equals(mep))
