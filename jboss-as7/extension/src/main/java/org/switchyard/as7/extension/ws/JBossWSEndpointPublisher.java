@@ -22,6 +22,9 @@ package org.switchyard.as7.extension.ws;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.soap.AddressingFeature;
+
 import org.jboss.wsf.spi.metadata.j2ee.serviceref.UnifiedHandlerChainMetaData;
 import org.jboss.wsf.spi.metadata.j2ee.serviceref.UnifiedHandlerChainsMetaData;
 import org.jboss.wsf.spi.metadata.j2ee.serviceref.UnifiedHandlerMetaData;
@@ -48,7 +51,7 @@ public class JBossWSEndpointPublisher extends AbstractEndpointPublisher {
     /**
      * {@inheritDoc}
      */
-    public synchronized WSEndpoint publish(final SOAPBindingModel config, final String bindingId, final InboundHandler handler) {
+    public synchronized WSEndpoint publish(final SOAPBindingModel config, final String bindingId, final InboundHandler handler, WebServiceFeature... features) {
         JBossWSEndpoint wsEndpoint = null;
         try {
             initialize(config);
@@ -75,6 +78,13 @@ public class JBossWSEndpointPublisher extends AbstractEndpointPublisher {
             chainMetadata.addHandler(handlerMetadata);
             chains.addHandlerChain(chainMetadata);
             portComponent.setHandlerChains(chains);
+            for (WebServiceFeature feature : features) {
+                if (feature instanceof AddressingFeature) {
+                    AddressingFeature addrFeature = (AddressingFeature)feature;
+                    portComponent.setAddressingEnabled(addrFeature.isEnabled());
+                    portComponent.setAddressingRequired(addrFeature.isRequired());
+                }
+            }
             wsDescMetaData.addPortComponent(portComponent);
             wsMetadata.addWebserviceDescription(wsDescMetaData);
 
