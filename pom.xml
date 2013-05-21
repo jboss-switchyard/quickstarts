@@ -777,11 +777,6 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
-                <artifactId>switchyard-forge-hornetq-plugin</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-forge-common-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -946,11 +941,6 @@
                 <artifactId>switchyard-component-camel-test</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.components</groupId>
-                <artifactId>switchyard-component-hornetq</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.switchyard.components</groupId>
@@ -1125,11 +1115,6 @@
             <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
                 <artifactId>switchyard-quickstart-camel-soap-proxy</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.quickstarts</groupId>
-                <artifactId>switchyard-quickstart-hornetq-binding</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
