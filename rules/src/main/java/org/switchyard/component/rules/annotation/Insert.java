@@ -25,7 +25,9 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.switchyard.component.common.knowledge.annotation.Mapping;
+import org.switchyard.component.common.knowledge.annotation.Global;
+import org.switchyard.component.common.knowledge.annotation.Input;
+import org.switchyard.component.common.knowledge.annotation.Output;
 
 /**
  * Insert.
@@ -38,12 +40,12 @@ import org.switchyard.component.common.knowledge.annotation.Mapping;
 public @interface Insert {
 
     /** Globals. */
-    public Mapping[] globals() default {};
+    public Global[] globals() default {};
 
     /** Inputs. */
-    public Mapping[] inputs() default {};
+    public Input[] inputs() default {};
 
     /** Outputs. */
-    public Mapping[] outputs() default {};
+    public Output[] outputs() default {};
 
 }

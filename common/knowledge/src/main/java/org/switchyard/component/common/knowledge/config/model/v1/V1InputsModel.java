@@ -18,78 +18,68 @@
  */
 package org.switchyard.component.common.knowledge.config.model.v1;
 
-import static org.switchyard.component.common.knowledge.config.model.MappingModel.MAPPING;
+import static org.switchyard.component.common.knowledge.config.model.InputModel.INPUT;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
-import org.switchyard.component.common.knowledge.config.model.MappingModel;
-import org.switchyard.component.common.knowledge.config.model.MappingsModel;
+import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.common.knowledge.config.model.InputModel;
+import org.switchyard.component.common.knowledge.config.model.InputsModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 
 /**
- * A version 1 MappingsModel.
+ * A version 1 InputsModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class V1MappingsModel extends BaseModel implements MappingsModel {
+public class V1InputsModel extends BaseModel implements InputsModel {
 
-    private List<MappingModel> _mappings = new ArrayList<MappingModel>();
+    private List<InputModel> _inputs = new ArrayList<InputModel>();
 
     /**
-     * Creates a new MappingsModel in the specified namespace.
+     * Creates a new V1InputsModel in the specified namespace.
      * @param namespace the specified namespace
      */
-    public V1MappingsModel(String namespace) {
-        this(namespace, MAPPINGS);
+    public V1InputsModel(String namespace) {
+        super(XMLHelper.createQName(namespace, INPUTS));
+        setModelChildrenOrder(INPUT);
     }
 
     /**
-     * Creates a new MappingsModel in the specified namespace and localName.
-     * @param namespace the specified namespace
-     * @param localName the specified localName
-     */
-    public V1MappingsModel(String namespace, String localName) {
-        super(new QName(namespace, localName));
-        setModelChildrenOrder(MAPPING);
-    }
-
-    /**
-     * Creates a new MappingsModel with the specified configuration and descriptor.
+     * Creates a new V1InputsModel with the specified configuration and descriptor.
      * @param config the configuration
      * @param desc the descriptor
      */
-    public V1MappingsModel(Configuration config, Descriptor desc) {
+    public V1InputsModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        for (Configuration mapping_config : config.getChildren(MAPPING)) {
-            MappingModel mapping = (MappingModel)readModel(mapping_config);
-            if (mapping != null) {
-                _mappings.add(mapping);
+        for (Configuration input_config : config.getChildren(INPUT)) {
+            InputModel input = (InputModel)readModel(input_config);
+            if (input != null) {
+                _inputs.add(input);
             }
         }
-        setModelChildrenOrder(MAPPING);
+        setModelChildrenOrder(INPUT);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized List<MappingModel> getMappings() {
-        return Collections.unmodifiableList(_mappings);
+    public synchronized List<InputModel> getInputs() {
+        return Collections.unmodifiableList(_inputs);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MappingsModel addMapping(MappingModel mapping) {
-        addChildModel(mapping);
-        _mappings.add(mapping);
+    public InputsModel addInput(InputModel input) {
+        addChildModel(input);
+        _inputs.add(input);
         return this;
     }
 

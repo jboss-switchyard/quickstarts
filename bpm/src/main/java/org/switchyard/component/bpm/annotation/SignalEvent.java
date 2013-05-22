@@ -25,7 +25,9 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.switchyard.component.common.knowledge.annotation.Mapping;
+import org.switchyard.component.common.knowledge.annotation.Global;
+import org.switchyard.component.common.knowledge.annotation.Input;
+import org.switchyard.component.common.knowledge.annotation.Output;
 
 /**
  * SignalEvent.
@@ -37,16 +39,16 @@ import org.switchyard.component.common.knowledge.annotation.Mapping;
 @Documented
 public @interface SignalEvent {
 
-    /** Id. */
-    public String id() default "";
+    /** EventId. */
+    public String eventId() default "";
 
     /** Globals. */
-    public Mapping[] globals() default {};
+    public Global[] globals() default {};
 
     /** Inputs. */
-    public Mapping[] inputs() default {};
+    public Input[] inputs() default {};
 
     /** Outputs. */
-    public Mapping[] outputs() default {};
+    public Output[] outputs() default {};
 
 }

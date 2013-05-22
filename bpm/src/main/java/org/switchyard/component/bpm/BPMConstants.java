@@ -45,16 +45,6 @@ public final class BPMConstants {
     /** {urn:switchyard-component-bpm:bpm:1.0}sessionId . */
     public static final String SESSION_ID_PROPERTY = new QName(BPM_NAMESPACE, SESSION_ID).toString();
 
-    /** signalEvent . */
-    public static final String SIGNAL_EVENT = "signalEvent";
-    /** {urn:switchyard-component-bpm:bpm:1.0}signalEvent . */
-    public static final String SIGNAL_EVENT_PROPERTY = new QName(BPM_NAMESPACE, SIGNAL_EVENT).toString();
-
-    /** signalId . */
-    public static final String SIGNAL_ID = "signalId";
-    /** {urn:switchyard-component-bpm:bpm:1.0}signalId . */
-    public static final String SIGNAL_ID_PROPERTY = new QName(BPM_NAMESPACE, SIGNAL_ID).toString();
-
     private BPMConstants() {}
 
 }

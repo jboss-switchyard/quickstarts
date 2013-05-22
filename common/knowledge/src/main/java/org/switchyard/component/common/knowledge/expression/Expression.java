@@ -44,16 +44,16 @@ public interface Expression {
     public boolean isCompiled();
 
     /**
-     * Evaluate the expression.
-     * @return the result of the evaluation
+     * Runs the expression.
+     * @return the result of running the expression
      */
-    public Object evaluate();
+    public Object run();
 
     /**
-     * Evaluate the expression.
-     * @param context the context to evaluate with
-     * @return the result of the evaluation
+     * Runs the expression.
+     * @param context the context to run with
+     * @return the result of running the expression
      */
-    public Object evaluate(Object context);
+    public Object run(Object context);
 
 }

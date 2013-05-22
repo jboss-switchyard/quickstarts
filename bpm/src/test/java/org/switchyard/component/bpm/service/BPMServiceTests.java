@@ -50,8 +50,8 @@ import org.switchyard.component.bpm.annotation.WorkItemHandler;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.BPMSwitchYardScanner;
 import org.switchyard.component.bpm.exchange.BPMExchangeHandler;
+import org.switchyard.component.common.knowledge.annotation.Input;
 import org.switchyard.component.common.knowledge.annotation.Manifest;
-import org.switchyard.component.common.knowledge.annotation.Mapping;
 import org.switchyard.component.common.knowledge.annotation.Resource;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
 import org.switchyard.metadata.InOnlyService;
@@ -92,10 +92,10 @@ public class BPMServiceTests {
         kbuilder.add(ResourceFactory.newClassPathResource(CALL_SERVICE_BPMN), ResourceType.BPMN2);
         KieBase kbase = kbuilder.newKnowledgeBase();
         KieSession ksession = kbase.newKieSession();
-        SwitchYardServiceWorkItemHandler sswih = new SwitchYardServiceWorkItemHandler();
-        sswih.setProcessRuntime(ksession);
-        sswih.setInvoker(new SwitchYardServiceInvoker(serviceDomain));
-        ksession.getWorkItemManager().registerWorkItemHandler(sswih.getName(), sswih);
+        SwitchYardServiceTaskHandler ssth = new SwitchYardServiceTaskHandler();
+        ssth.setProcessRuntime(ksession);
+        ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain));
+        ksession.getWorkItemManager().registerWorkItemHandler(ssth.getName(), ssth);
         ksession.startProcess("CallService");
         ksession.halt();
         ksession.dispose();
@@ -105,8 +105,8 @@ public class BPMServiceTests {
     @BPM(processId="AccessAttachment", manifest=@Manifest(resources=@Resource(location=ACCESS_ATTACHMENT_BPMN, type="BPMN2")))
     public interface AccessAttachment {
         @StartProcess(inputs={
-            @Mapping(expression="message.attachmentMap['someAttach']", variable="attachment"),
-            @Mapping(expression="message.content", variable="holder")
+            @Input(from="message.attachmentMap['someAttach']", to="attachment"),
+            @Input(from="message.content", to="holder")
         })
         public Object process(Object content);
     }
@@ -133,7 +133,7 @@ public class BPMServiceTests {
     public interface ControlProcess {
         @StartProcess
         public Object process(Object content);
-        @SignalEvent(id="test")
+        @SignalEvent(eventId="test")
         public void signal(Object content);
     }
 
@@ -215,10 +215,10 @@ public class BPMServiceTests {
         kbuilder.add(ResourceFactory.newClassPathResource(FAULT_RESULT_PROCESS_BPMN), ResourceType.BPMN2);
         KieBase kbase = kbuilder.newKnowledgeBase();
         KieSession ksession = kbase.newKieSession();
-        SwitchYardServiceWorkItemHandler sswih = new SwitchYardServiceWorkItemHandler();
-        sswih.setProcessRuntime(ksession);
-        sswih.setInvoker(new SwitchYardServiceInvoker(serviceDomain));
-        ksession.getWorkItemManager().registerWorkItemHandler(sswih.getName(), sswih);
+        SwitchYardServiceTaskHandler ssth = new SwitchYardServiceTaskHandler();
+        ssth.setProcessRuntime(ksession);
+        ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain));
+        ksession.getWorkItemManager().registerWorkItemHandler(ssth.getName(), ssth);
         WorkflowProcessInstance wpi = (WorkflowProcessInstance)ksession.startProcess("FaultResultProcess");
         HandlerException he = (HandlerException)wpi.getVariable("faultResult");
         if (bomb) {
@@ -254,10 +254,10 @@ public class BPMServiceTests {
         kbuilder.add(ResourceFactory.newClassPathResource(FAULT_EVENT_PROCESS_BPMN), ResourceType.BPMN2);
         KieBase kbase = kbuilder.newKnowledgeBase();
         KieSession ksession = kbase.newKieSession();
-        SwitchYardServiceWorkItemHandler sswih = new SwitchYardServiceWorkItemHandler();
-        sswih.setProcessRuntime(ksession);
-        sswih.setInvoker(new SwitchYardServiceInvoker(serviceDomain));
-        ksession.getWorkItemManager().registerWorkItemHandler(sswih.getName(), sswih);
+        SwitchYardServiceTaskHandler ssth = new SwitchYardServiceTaskHandler();
+        ssth.setProcessRuntime(ksession);
+        ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain));
+        ksession.getWorkItemManager().registerWorkItemHandler(ssth.getName(), ssth);
         WorkflowProcessInstance wpi = (WorkflowProcessInstance)ksession.startProcess("FaultEventProcess");
         HandlerException he = (HandlerException)wpi.getVariable("faultEvent");
         if (bomb) {
@@ -273,7 +273,7 @@ public class BPMServiceTests {
     @BPM(processId="ReuseHandler", manifest=@Manifest(resources=@Resource(location=REUSE_HANDLER_BPMN, type="BPMN2")),
             workItemHandlers=@WorkItemHandler(name="ReuseHandler", value=ReuseHandler.class))
     public interface ReuseHandlerProcess {
-        @StartProcess(inputs=@Mapping(expression="message.content", variable="holder"))
+        @StartProcess(inputs=@Input(from="message.content", to="holder"))
         public void process(Object content);
     }
 
@@ -296,7 +296,7 @@ public class BPMServiceTests {
             @Resource(location=RULES_FIRED_BPMN, type="BPMN2"),
             @Resource(location=RULES_FIRED_DRL, type="DRL")}))
     public interface RulesFiredProcess {
-        @StartProcess(inputs=@Mapping(expression="message.content", variable="holder"))
+        @StartProcess(inputs=@Input(from="message.content", to="holder"))
         public void process(Object content);
     }
 

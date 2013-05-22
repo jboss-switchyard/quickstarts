@@ -22,16 +22,17 @@ import static org.switchyard.component.common.knowledge.config.model.ActionsMode
 import static org.switchyard.component.common.knowledge.config.model.ChannelModel.CHANNEL;
 import static org.switchyard.component.common.knowledge.config.model.ChannelsModel.CHANNELS;
 import static org.switchyard.component.common.knowledge.config.model.ContainerModel.CONTAINER;
+import static org.switchyard.component.common.knowledge.config.model.GlobalModel.GLOBAL;
+import static org.switchyard.component.common.knowledge.config.model.GlobalsModel.GLOBALS;
+import static org.switchyard.component.common.knowledge.config.model.InputModel.INPUT;
+import static org.switchyard.component.common.knowledge.config.model.InputsModel.INPUTS;
 import static org.switchyard.component.common.knowledge.config.model.ListenerModel.LISTENER;
 import static org.switchyard.component.common.knowledge.config.model.ListenersModel.LISTENERS;
 import static org.switchyard.component.common.knowledge.config.model.LoggerModel.LOGGER;
 import static org.switchyard.component.common.knowledge.config.model.LoggersModel.LOGGERS;
 import static org.switchyard.component.common.knowledge.config.model.ManifestModel.MANIFEST;
-import static org.switchyard.component.common.knowledge.config.model.MappingModel.MAPPING;
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.GLOBALS;
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.INPUTS;
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.MAPPINGS;
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.OUTPUTS;
+import static org.switchyard.component.common.knowledge.config.model.OutputModel.OUTPUT;
+import static org.switchyard.component.common.knowledge.config.model.OutputsModel.OUTPUTS;
 import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
 import static org.switchyard.config.model.property.PropertyModel.PROPERTY;
 import static org.switchyard.config.model.resource.ResourceModel.RESOURCE;
@@ -91,10 +92,18 @@ public class V1KnowledgeMarshaller extends V1CompositeMarshaller {
             return new V1LoggerModel(config, desc);
         } else if (MANIFEST.equals(name)) {
             return new V1ManifestModel(config, desc);
-        } else if (MAPPINGS.equals(name) || GLOBALS.equals(name) || INPUTS.equals(name) || OUTPUTS.equals(name)) {
-            return new V1MappingsModel(config, desc);
-        } else if (MAPPING.equals(name)) {
-            return new V1MappingModel(config, desc);
+        } else if (GLOBALS.equals(name)) {
+            return new V1GlobalsModel(config, desc);
+        } else if (GLOBAL.equals(name)) {
+            return new V1GlobalModel(config, desc);
+        } else if (INPUTS.equals(name)) {
+            return new V1InputsModel(config, desc);
+        } else if (INPUT.equals(name)) {
+            return new V1InputModel(config, desc);
+        } else if (OUTPUTS.equals(name)) {
+            return new V1OutputsModel(config, desc);
+        } else if (OUTPUT.equals(name)) {
+            return new V1OutputModel(config, desc);
         } else if (PROPERTIES.equals(name)) {
             return new V1PropertiesModel(config, desc);
         } else if (PROPERTY.equals(name)) {

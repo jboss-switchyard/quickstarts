@@ -31,7 +31,7 @@ import javax.xml.namespace.QName;
 public class SwitchYardServiceRequest {
 
     private final QName _serviceName;
-    private final String _serviceOperationName;
+    private final String _operationName;
     private final Object _content;
     private final Map<String, Object> _context = new HashMap<String, Object>();
 
@@ -46,15 +46,15 @@ public class SwitchYardServiceRequest {
     }
 
     /**
-     * Constructs a SwitchYardServiceRequest with the specified service name, service operation name, content, and context.
+     * Constructs a SwitchYardServiceRequest with the specified service name, operation name, content, and context.
      * @param serviceName the service name
-     * @param serviceOperationName the service operation name
+     * @param operationName the operation name
      * @param content the content
      * @param context the context
      */
-    public SwitchYardServiceRequest(QName serviceName, String serviceOperationName, Object content, Map<String, Object> context) {
+    public SwitchYardServiceRequest(QName serviceName, String operationName, Object content, Map<String, Object> context) {
         _serviceName = serviceName;
-        _serviceOperationName = serviceOperationName;
+        _operationName = operationName;
         _content = content;
         if (context != null) {
             _context.putAll(context);
@@ -70,11 +70,11 @@ public class SwitchYardServiceRequest {
     }
 
     /**
-     * Gets the service operation name.
-     * @return the service operation name
+     * Gets the operation name.
+     * @return the operation name
      */
-    public String getServiceOperationName() {
-        return _serviceOperationName;
+    public String getOperationName() {
+        return _operationName;
     }
 
     /**

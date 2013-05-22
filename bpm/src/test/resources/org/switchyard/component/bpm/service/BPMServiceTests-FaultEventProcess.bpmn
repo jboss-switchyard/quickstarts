@@ -11,12 +11,12 @@
       <incoming>SequenceFlow_4</incoming>
       <terminateEventDefinition id="TerminateEventDefinition_1"/>
     </endEvent>
-    <task id="_4" tns:taskName="SwitchYard Service" name="TestService">
+    <task id="_4" tns:taskName="SwitchYard Service Task" name="TestService">
       <incoming>_1-_4</incoming>
       <outgoing>SequenceFlow_8</outgoing>
       <ioSpecification id="InputOutputSpecification_1">
         <dataInput id="DataInput_ServiceName" name="ServiceName"/>
-        <dataInput id="DataInput_1" name="FaultSignalId"/>
+        <dataInput id="DataInput_1" name="FaultEventId"/>
         <inputSet id="InputSet_1">
           <dataInputRefs>DataInput_ServiceName</dataInputRefs>
           <dataInputRefs>DataInput_1</dataInputRefs>

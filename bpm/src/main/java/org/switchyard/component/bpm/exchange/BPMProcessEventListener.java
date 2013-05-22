@@ -1,21 +1,24 @@
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2009-11, Red Hat Middleware LLC, and others contributors as indicated
- * by the @authors tag. All rights reserved.
- * See the copyright.txt in the distribution for a
+/* 
+ * JBoss, Home of Professional Open Source 
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
+ * as indicated by the @author tags. All rights reserved. 
+ * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ *
+ * This copyrighted material is made available to anyone wishing to use, 
+ * modify, copy, or redistribute it subject to the terms and conditions 
+ * of the GNU Lesser General Public License, v. 2.1. 
+ * This program is distributed in the hope that it will be useful, but WITHOUT A 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
+ * You should have received a copy of the GNU Lesser General Public License, 
+ * v.2.1 along with this distribution; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
 package org.switchyard.component.bpm.exchange;
+
+import java.util.EventObject;
 
 import org.kie.event.process.ProcessCompletedEvent;
 import org.kie.event.process.ProcessEventListener;
@@ -26,29 +29,26 @@ import org.kie.event.process.ProcessVariableChangedEvent;
 import org.switchyard.event.EventPublisher;
 
 /**
- * This process event listener routes select events to the switchyard
- * domain's event manager.
- *
+ * This process event listener routes select events to the switchyard service domain's event publisher.
  */
-public class ProcessListener implements ProcessEventListener {
+public class BPMProcessEventListener implements ProcessEventListener {
 
-    private final EventPublisher _publisher;
-    
+    private final EventPublisher _eventPublisher;
+
     /**
-     * The constructor.
-     * 
-     * @param ep The event publisher
+     * Constructs a BPMProcessEventListener with an EventPublisher.
+     * @param eventPublisher the EventPublisher
      */
-    public ProcessListener(EventPublisher ep) {
-        _publisher = ep;
+    public BPMProcessEventListener(EventPublisher eventPublisher) {
+        _eventPublisher = eventPublisher;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void beforeProcessStarted(ProcessStartedEvent event) {
-        _publisher.publish((java.util.EventObject)event);
+        _eventPublisher.publish((EventObject)event);
     }
 
     /**
@@ -70,7 +70,7 @@ public class ProcessListener implements ProcessEventListener {
      */
     @Override
     public void afterProcessCompleted(ProcessCompletedEvent event) {
-        _publisher.publish((java.util.EventObject)event);
+        _eventPublisher.publish((EventObject)event);
     }
 
     /**
@@ -113,7 +113,7 @@ public class ProcessListener implements ProcessEventListener {
      */
     @Override
     public void afterVariableChanged(ProcessVariableChangedEvent event) {
-        _publisher.publish((java.util.EventObject)event);
+        _eventPublisher.publish((EventObject)event);
     }
 
 }

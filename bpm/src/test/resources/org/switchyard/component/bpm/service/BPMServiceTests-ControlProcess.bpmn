@@ -8,7 +8,7 @@
       <incoming>_4-_3</incoming>
       <terminateEventDefinition id="TerminateEventDefinition_1"/>
     </endEvent>
-    <task id="_4" tns:taskName="SwitchYard Service" name="CallService">
+    <task id="_4" tns:taskName="SwitchYard Service Task" name="CallService">
       <incoming>_5-_4</incoming>
       <outgoing>_4-_3</outgoing>
       <ioSpecification id="InputOutputSpecification_1">

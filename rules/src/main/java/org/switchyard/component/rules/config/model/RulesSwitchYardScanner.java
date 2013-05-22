@@ -18,9 +18,6 @@
  */
 package org.switchyard.component.rules.config.model;
 
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.GLOBALS;
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.INPUTS;
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.OUTPUTS;
 import static org.switchyard.component.rules.config.model.RulesComponentImplementationModel.DEFAULT_NAMESPACE;
 
 import java.io.IOException;
@@ -31,7 +28,9 @@ import java.util.List;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
-import org.switchyard.component.common.knowledge.annotation.Mapping;
+import org.switchyard.component.common.knowledge.annotation.Global;
+import org.switchyard.component.common.knowledge.annotation.Input;
+import org.switchyard.component.common.knowledge.annotation.Output;
 import org.switchyard.component.common.knowledge.config.model.ActionModel;
 import org.switchyard.component.common.knowledge.config.model.ActionsModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeSwitchYardScanner;
@@ -121,10 +120,10 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
         JavaService javaService = JavaService.fromClass(rulesInterface);
         for (Method method : rulesClass.getDeclaredMethods()) {
             RulesActionType actionType = null;
-            String id = null;
-            Mapping[] globalMappingAnnotations = null;
-            Mapping[] inputMappingAnnotations = null;
-            Mapping[] outputMappingAnnotations = null;
+            String eventId = null;
+            Global[] globalMappingAnnotations = null;
+            Input[] inputMappingAnnotations = null;
+            Output[] outputMappingAnnotations = null;
             if (EXECUTE_FILTER.matches(method)) {
                 actionType = RulesActionType.EXECUTE;
                 Execute executeAnnotation = method.getAnnotation(Execute.class);
@@ -146,21 +145,21 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
             } else if (FIRE_UNTIL_HALT_FILTER.matches(method)) {
                 actionType = RulesActionType.FIRE_UNTIL_HALT;
                 FireUntilHalt fireUntilHaltAnnotation = method.getAnnotation(FireUntilHalt.class);
+                eventId = Strings.trimToNull(fireUntilHaltAnnotation.eventId());
                 globalMappingAnnotations = fireUntilHaltAnnotation.globals();
                 inputMappingAnnotations = fireUntilHaltAnnotation.inputs();
                 outputMappingAnnotations = fireUntilHaltAnnotation.outputs();
-                id = Strings.trimToNull(fireUntilHaltAnnotation.id());
             }
             if (actionType != null) {
                 ServiceOperation serviceOperation = javaService.getOperation(method.getName());
                 if (serviceOperation != null) {
                     ActionModel actionModel = new V1RulesActionModel();
-                    actionModel.setId(id);
+                    actionModel.setEventId(eventId);
                     actionModel.setOperation(serviceOperation.getName());
                     actionModel.setType(actionType);
-                    actionModel.setGlobals(toMappingsModel(globalMappingAnnotations, DEFAULT_NAMESPACE, GLOBALS));
-                    actionModel.setInputs(toMappingsModel(inputMappingAnnotations, DEFAULT_NAMESPACE, INPUTS));
-                    actionModel.setOutputs(toMappingsModel(outputMappingAnnotations, DEFAULT_NAMESPACE, OUTPUTS));
+                    actionModel.setGlobals(toGlobalsModel(globalMappingAnnotations, DEFAULT_NAMESPACE));
+                    actionModel.setInputs(toInputsModel(inputMappingAnnotations, DEFAULT_NAMESPACE));
+                    actionModel.setOutputs(toOutputsModel(outputMappingAnnotations, DEFAULT_NAMESPACE));
                     actionsModel.addAction(actionModel);
                 }
             }

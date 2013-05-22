@@ -18,15 +18,16 @@
  */
 package org.switchyard.component.common.knowledge.config.model.v1;
 
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.GLOBALS;
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.INPUTS;
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.MAPPINGS;
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.OUTPUTS;
+import static org.switchyard.component.common.knowledge.config.model.GlobalsModel.GLOBALS;
+import static org.switchyard.component.common.knowledge.config.model.InputsModel.INPUTS;
+import static org.switchyard.component.common.knowledge.config.model.OutputsModel.OUTPUTS;
 
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.ActionType;
 import org.switchyard.component.common.knowledge.config.model.ActionModel;
-import org.switchyard.component.common.knowledge.config.model.MappingsModel;
+import org.switchyard.component.common.knowledge.config.model.GlobalsModel;
+import org.switchyard.component.common.knowledge.config.model.InputsModel;
+import org.switchyard.component.common.knowledge.config.model.OutputsModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
@@ -38,9 +39,9 @@ import org.switchyard.config.model.Descriptor;
  */
 public abstract class V1ActionModel extends BaseModel implements ActionModel {
 
-    private MappingsModel _globals;
-    private MappingsModel _inputs;
-    private MappingsModel _outputs;
+    private GlobalsModel _globals;
+    private InputsModel _inputs;
+    private OutputsModel _outputs;
 
     /**
      * Creates a new V1ActionModel in the specified namespace.
@@ -48,7 +49,7 @@ public abstract class V1ActionModel extends BaseModel implements ActionModel {
      */
     public V1ActionModel(String namespace) {
         super(XMLHelper.createQName(namespace, ACTION));
-        setModelChildrenOrder(MAPPINGS, GLOBALS, INPUTS, OUTPUTS);
+        setModelChildrenOrder(GLOBALS, INPUTS, OUTPUTS);
     }
 
     /**
@@ -58,23 +59,23 @@ public abstract class V1ActionModel extends BaseModel implements ActionModel {
      */
     public V1ActionModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(MAPPINGS, GLOBALS, INPUTS, OUTPUTS);
+        setModelChildrenOrder(GLOBALS, INPUTS, OUTPUTS);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getId() {
-        return getModelAttribute("id");
+    public String getEventId() {
+        return getModelAttribute("eventId");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ActionModel setId(String id) {
-        setModelAttribute("id", id);
+    public ActionModel setEventId(String eventId) {
+        setModelAttribute("eventId", eventId);
         return this;
     }
 
@@ -109,9 +110,9 @@ public abstract class V1ActionModel extends BaseModel implements ActionModel {
      * {@inheritDoc}
      */
     @Override
-    public MappingsModel getGlobals() {
+    public GlobalsModel getGlobals() {
         if (_globals == null) {
-            _globals = (MappingsModel)getFirstChildModel(GLOBALS);
+            _globals = (GlobalsModel)getFirstChildModel(GLOBALS);
         }
         return _globals;
     }
@@ -120,7 +121,7 @@ public abstract class V1ActionModel extends BaseModel implements ActionModel {
      * {@inheritDoc}
      */
     @Override
-    public ActionModel setGlobals(MappingsModel globals) {
+    public ActionModel setGlobals(GlobalsModel globals) {
         setChildModel(globals);
         _globals = globals;
         return this;
@@ -130,9 +131,9 @@ public abstract class V1ActionModel extends BaseModel implements ActionModel {
      * {@inheritDoc}
      */
     @Override
-    public MappingsModel getInputs() {
+    public InputsModel getInputs() {
         if (_inputs == null) {
-            _inputs = (MappingsModel)getFirstChildModel(INPUTS);
+            _inputs = (InputsModel)getFirstChildModel(INPUTS);
         }
         return _inputs;
     }
@@ -141,7 +142,7 @@ public abstract class V1ActionModel extends BaseModel implements ActionModel {
      * {@inheritDoc}
      */
     @Override
-    public ActionModel setInputs(MappingsModel inputs) {
+    public ActionModel setInputs(InputsModel inputs) {
         setChildModel(inputs);
         _inputs = inputs;
         return this;
@@ -151,9 +152,9 @@ public abstract class V1ActionModel extends BaseModel implements ActionModel {
      * {@inheritDoc}
      */
     @Override
-    public MappingsModel getOutputs() {
+    public OutputsModel getOutputs() {
         if (_outputs == null) {
-            _outputs = (MappingsModel)getFirstChildModel(OUTPUTS);
+            _outputs = (OutputsModel)getFirstChildModel(OUTPUTS);
         }
         return _outputs;
     }
@@ -162,7 +163,7 @@ public abstract class V1ActionModel extends BaseModel implements ActionModel {
      * {@inheritDoc}
      */
     @Override
-    public ActionModel setOutputs(MappingsModel outputs) {
+    public ActionModel setOutputs(OutputsModel outputs) {
         setChildModel(outputs);
         _outputs = outputs;
         return this;

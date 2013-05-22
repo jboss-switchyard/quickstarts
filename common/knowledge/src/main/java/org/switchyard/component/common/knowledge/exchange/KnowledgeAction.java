@@ -31,36 +31,45 @@ import org.switchyard.component.common.knowledge.expression.ExpressionMapping;
  */
 public class KnowledgeAction {
 
-    private final String _id;
     private final ActionType _type;
+    private final String _eventId;
+
     private final List<ExpressionMapping> _globalExpressionMappings = new ArrayList<ExpressionMapping>();
     private final List<ExpressionMapping> _inputExpressionMappings = new ArrayList<ExpressionMapping>();
     private final List<ExpressionMapping> _outputExpressionMappings = new ArrayList<ExpressionMapping>();
 
     /**
      * Constructs a new knowledge action.
-     * @param id the id
      * @param type the type
      */
-    public KnowledgeAction(String id, ActionType type) {
-        _id = id;
-        _type = type;
+    public KnowledgeAction(ActionType type) {
+        this(type, null);
     }
 
     /**
-     * Gets the id.
-     * @return the id
+     * Constructs a new knowledge action.
+     * @param type the type
+     * @param eventId the event id
      */
-    public String getId() {
-        return _id;
+    public KnowledgeAction(ActionType type, String eventId) {
+        _type = type;
+        _eventId = eventId;
     }
 
     /**
      * Gets the type.
-     * @return type type
+     * @return the type
      */
     public ActionType getType() {
         return _type;
+    }
+
+    /**
+     * Gets the event id.
+     * @return the event id
+     */
+    public String getEventId() {
+        return _eventId;
     }
 
     /**

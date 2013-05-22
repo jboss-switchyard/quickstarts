@@ -18,49 +18,111 @@
  */
 package org.switchyard.component.bpm.service;
 
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.PARAMETER;
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.RESULT;
+
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.jbpm.process.workitem.bpmn2.ServiceTaskHandler;
-import org.kie.runtime.StatefulKnowledgeSession;
+import org.apache.log4j.Logger;
 import org.kie.runtime.process.ProcessRuntime;
 import org.kie.runtime.process.WorkItem;
+import org.kie.runtime.process.WorkItemHandler;
 import org.kie.runtime.process.WorkItemManager;
+import org.switchyard.common.lang.Strings;
+import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
+import org.switchyard.component.common.knowledge.service.SwitchYardServiceRequest;
+import org.switchyard.component.common.knowledge.service.SwitchYardServiceResponse;
 
 /**
  * SwitchYardServiceTaskHandler.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public class SwitchYardServiceTaskHandler extends SwitchYardServiceWorkItemHandler {
+public class SwitchYardServiceTaskHandler implements WorkItemHandler {
 
-    /** Service Task. */
-    public static final String SERVICE_TASK = "Service Task";
+    private static final Logger LOGGER = Logger.getLogger(SwitchYardServiceTaskHandler.class);
 
-    /** implementation. */
-    public static final String IMPLEMENTATION = "implementation";
-    /** ##SwitchYard. */
-    public static final String IMPLEMENTATION_SWITCHYARD = "##SwitchYard";
+    /** SwitchYard Service Task. */
+    public static final String SWITCHYARD_SERVICE_TASK = "SwitchYard Service Task";
 
-    /** Interface. */
-    public static final String INTERFACE = "Interface";
-    /** interfaceImplementationRef. */
-    public static final String INTERFACE_IMPLEMENTATION_REF = "interfaceImplementationRef";
+    /** ServiceName. */
+    public static final String SERVICE_NAME = "ServiceName";
     /** Operation. */
     public static final String OPERATION = "Operation";
-    /** operationImplementationRef. */
-    public static final String OPERATION_IMPLEMENTATION_REF = "operationImplementationRef";
-    /** Parameter. */
-    public static final String PARAMETER = "Parameter";
-    /** Result. */
-    public static final String RESULT = "Result";
+    /** OperationName. */
+    public static final String OPERATION_NAME = OPERATION + "Name";
+    /** ParameterName. */
+    public static final String PARAMETER_NAME = PARAMETER + "Name";
+    /** ResultName. */
+    public static final String RESULT_NAME = RESULT + "Name";
+    /** FaultResultName. */
+    public static final String FAULT_RESULT_NAME = "Fault" + RESULT_NAME;
+    /** FaultEventId. */
+    public static final String FAULT_EVENT_ID = "FaultEventId";
+    /** FaultWorkItemAction. */
+    public static final String FAULT_WORK_ITEM_ACTION = "FaultWorkItemAction";
+
+    private String _name;
+    private SwitchYardServiceInvoker _invoker;
+    private ProcessRuntime _processRuntime;
 
     /**
-     * Constructs a new SwitchYardServiceTaskHandler with the name "Service Task".
+     * Constructs a new SwitchYardServiceTaskHandler with the name "SwitchYard Service Task".
      */
     public SwitchYardServiceTaskHandler() {
-        setName(SERVICE_TASK);
+        setName(SWITCHYARD_SERVICE_TASK);
+    }
+
+    /**
+     * Gets the name.
+     * @return the name
+     */
+    public String getName() {
+        return _name;
+    }
+
+    /**
+     * Sets the name.
+     * @param name the name
+     */
+    public void setName(String name) {
+        _name = name;
+    }
+
+    /**
+     * Gets the invoker.
+     * @return the invoker
+     */
+    public SwitchYardServiceInvoker getInvoker() {
+        return _invoker;
+    }
+
+    /**
+     * Sets the invoker.
+     * @param invoker the invoker
+     */
+    public void setInvoker(SwitchYardServiceInvoker invoker) {
+        _invoker = invoker;
+    }
+
+    /**
+     * Gets the ProcessRuntime.
+     * @return the ProcessRuntime
+     */
+    public ProcessRuntime getProcessRuntime() {
+        return _processRuntime;
+    }
+
+    /**
+     * Sets the ProcessRuntime.
+     * @param processRuntime the ProcessRuntime
+     */
+    public void setProcessRuntime(ProcessRuntime processRuntime) {
+        _processRuntime = processRuntime;
     }
 
     /**
@@ -68,56 +130,130 @@ public class SwitchYardServiceTaskHandler extends SwitchYardServiceWorkItemHandl
      */
     @Override
     public void executeWorkItem(WorkItem workItem, WorkItemManager manager) {
-        String implementation = getImplementation(workItem.getParameters());
-        if (IMPLEMENTATION_SWITCHYARD.equalsIgnoreCase(implementation)) {
-            super.executeWorkItem(workItem, manager);
+        // input
+        Map<String, Object> parameters = workItem.getParameters();
+        Object content = null;
+        String parameterName = getParameterName(parameters);
+        if (parameterName != null) {
+            content = parameters.get(parameterName);
+        }
+        // invoke
+        QName serviceName = getServiceName(parameters);
+        String operationName = getOperationName(parameters);
+        SwitchYardServiceRequest request = new SwitchYardServiceRequest(serviceName, operationName, content, parameters);
+        SwitchYardServiceResponse response = getInvoker().invoke(request);
+        // output
+        Map<String, Object> results = workItem.getResults();
+        if (results == null) {
+            results = new HashMap<String, Object>();
+        }
+        results.putAll(response.getContext());
+        String resultName = getResultName(parameters);
+        if (resultName != null) {
+            results.put(resultName, response.getContent());
+        }
+        // fault
+        Object fault = response.getFault();
+        if (fault == null) {
+            manager.completeWorkItem(workItem.getId(), results);
         } else {
-            ServiceTaskHandler sth;
-            ProcessRuntime runtime = getProcessRuntime();
-            if (runtime instanceof StatefulKnowledgeSession) {
-                sth = new ServiceTaskHandler((StatefulKnowledgeSession)runtime);
+            if (fault instanceof Throwable) {
+                Throwable t = (Throwable)fault;
+                LOGGER.error("Fault encountered: " + t.getMessage(), t);
             } else {
-                sth = new ServiceTaskHandler();
+                LOGGER.error("Fault encountered: " + fault);
             }
-            sth.setClassLoader(getClass().getClassLoader());
-            sth.executeWorkItem(workItem, manager);
+            String faultResultName = getFaultResultName(parameters);
+            if (faultResultName != null) {
+                results.put(faultResultName, fault);
+            }
+            String faultEventId = getFaultEventId(parameters);
+            if (faultEventId != null) {
+                getProcessRuntime().signalEvent(faultEventId, fault, workItem.getProcessInstanceId());
+            }
+            FaultWorkItemAction faultWorkItemAction = getFaultWorkItemAction(parameters);
+            if (faultWorkItemAction != null) {
+                switch (faultWorkItemAction) {
+                    case ABORT:
+                        manager.abortWorkItem(workItem.getId());
+                        break;
+                    case COMPLETE:
+                        manager.completeWorkItem(workItem.getId(), results);
+                        break;
+                }
+            }
         }
     }
 
-    private String getImplementation(Map<String, Object> parameters) {
-        return getString(IMPLEMENTATION, parameters, null);
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
+    public void abortWorkItem(WorkItem workItem, WorkItemManager manager) {
+        // noop
+    }
+
     protected QName getServiceName(Map<String, Object> parameters) {
-        return getQName(INTERFACE_IMPLEMENTATION_REF, parameters, getQName(INTERFACE, parameters, null));
+        return getQName(SERVICE_NAME, parameters, null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getServiceOperationName(Map<String, Object> parameters) {
-        return getString(OPERATION_IMPLEMENTATION_REF, parameters, getString(OPERATION, parameters, null));
+    protected String getOperationName(Map<String, Object> parameters) {
+        return getString(OPERATION_NAME, parameters, null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getContentInputName(Map<String, Object> parameters) {
-        return PARAMETER;
+    protected String getParameterName(Map<String, Object> parameters) {
+        return getString(PARAMETER_NAME, parameters, PARAMETER);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getContentOutputName(Map<String, Object> parameters) {
-        return RESULT;
+    protected String getResultName(Map<String, Object> parameters) {
+        return getString(RESULT_NAME, parameters, RESULT);
+    }
+
+    private String getFaultResultName(Map<String, Object> parameters) {
+        return getString(FAULT_RESULT_NAME, parameters, null);
+    }
+
+    private String getFaultEventId(Map<String, Object> parameters) {
+        return getString(FAULT_EVENT_ID, parameters, null);
+    }
+
+    private FaultWorkItemAction getFaultWorkItemAction(Map<String, Object> parameters) {
+        String s = getString(FAULT_WORK_ITEM_ACTION, parameters, null);
+        if (s != null) {
+            try {
+                return FaultWorkItemAction.valueOf(s.toUpperCase());
+            } catch (IllegalArgumentException iae) {
+                LOGGER.warn(String.format("Unknown %s: %s", FaultWorkItemAction.class.getSimpleName(), iae.getMessage()));
+            }
+        }
+        return null;
+    }
+
+    protected QName getQName(String parameterName, Map<String, Object> parameters, QName defaultValue) {
+        Object serviceName = parameters.get(parameterName);
+        if (serviceName instanceof QName) {
+           return (QName)serviceName;
+        } else if (serviceName instanceof String) {
+            return XMLHelper.createQName((String)serviceName);
+        }
+        return defaultValue;
+    }
+
+    protected String getString(String parameterName, Map<String, Object> parameters, String defaultValue) {
+        String value = null;
+        Object p = parameters.get(parameterName);
+        if (p != null) {
+            value = Strings.trimToNull(String.valueOf(p));
+        }
+        if (value == null) {
+            value = defaultValue;
+        }
+        return value;
+    }
+
+    private static enum FaultWorkItemAction {
+        ABORT,
+        COMPLETE;
     }
 
 }

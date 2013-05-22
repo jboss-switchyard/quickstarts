@@ -16,28 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.knowledge;
+package org.switchyard.component.common.knowledge.config.model.v1;
+
+import org.switchyard.component.common.knowledge.config.model.InputModel;
+import org.switchyard.config.Configuration;
+import org.switchyard.config.model.Descriptor;
 
 /**
- * Rules constants.
+ * The 1st version InputModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public final class KnowledgeConstants {
+public class V1InputModel extends V1MappingModel implements InputModel {
 
-    /** default. */
-    public static final String DEFAULT = "default";
+    /**
+     * Creates a new InputModel in the specified namespace and localName.
+     * @param namespace the specified namespace
+     */
+    public V1InputModel(String namespace) {
+        super(namespace, INPUT);
+    }
 
-    /** context. */
-    public static final String CONTEXT = "context";
-    /** message. */
-    public static final String MESSAGE = "message";
-
-    /** Parameter. */
-    public static final String PARAMETER = "Parameter";
-    /** Result. */
-    public static final String RESULT = "Result";
-
-    private KnowledgeConstants() {}
+    /**
+     * Creates a new InputModel with the specified configuration and descriptor.
+     * @param config the configuration
+     * @param desc the descriptor
+     */
+    public V1InputModel(Configuration config, Descriptor desc) {
+        super(config, desc);
+    }
 
 }

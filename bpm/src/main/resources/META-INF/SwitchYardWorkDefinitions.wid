@@ -18,17 +18,17 @@
 import org.drools.process.core.datatype.impl.type.StringDataType;
 [
     [
-        "name" : "SwitchYard Service",
+        "name" : "SwitchYard Service Task",
         "parameters" : [
             "ServiceName" : new StringDataType(),
-            "ServiceOperationName" : new StringDataType(),
-            "ContentInputName" : new StringDataType(),
-            "ContentOutputName" : new StringDataType(),
+            "OperationName" : new StringDataType(),
+            "ParameterName" : new StringDataType(),
+            "ResultName" : new StringDataType(),
             "FaultResultName" : new StringDataType(),
-            "FaultSignalId" : new StringDataType(),
+            "FaultEventId" : new StringDataType(),
             "FaultWorkItemAction" : new StringDataType()
         ],
-        "displayName" : "SwitchYard Service",
+        "displayName" : "SwitchYard Service Task",
         "icon" : "org/switchyard/component/bpm/SwitchYard-16x16.gif"
     ]
 ]

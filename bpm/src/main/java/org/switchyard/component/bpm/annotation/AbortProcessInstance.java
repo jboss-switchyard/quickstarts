@@ -25,7 +25,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.switchyard.component.common.knowledge.annotation.Mapping;
+import org.switchyard.component.common.knowledge.annotation.Output;
 
 /**
  * AbortProcessInstance.
@@ -37,13 +37,7 @@ import org.switchyard.component.common.knowledge.annotation.Mapping;
 @Documented
 public @interface AbortProcessInstance {
 
-    /** Globals. */
-    public Mapping[] globals() default {};
-
-    /** Inputs. */
-    public Mapping[] inputs() default {};
-
     /** Outputs. */
-    public Mapping[] outputs() default {};
+    public Output[] outputs() default {};
 
 }

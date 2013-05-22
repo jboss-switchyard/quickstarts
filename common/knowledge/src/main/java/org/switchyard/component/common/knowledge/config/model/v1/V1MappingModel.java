@@ -18,10 +18,8 @@
  */
 package org.switchyard.component.common.knowledge.config.model.v1;
 
-import org.switchyard.Scope;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.config.model.MappingModel;
-import org.switchyard.component.common.knowledge.expression.ExpressionType;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
@@ -31,18 +29,19 @@ import org.switchyard.config.model.Descriptor;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class V1MappingModel extends BaseModel implements MappingModel {
+public abstract class V1MappingModel extends BaseModel implements MappingModel {
 
     /**
-     * Creates a new MappingModel in the specified namespace.
-     * @param namespace the namespace
+     * Creates a new V1MappingModel in the specified namespace and localName.
+     * @param namespace the specified namespace
+     * @param localName the specified localName
      */
-    public V1MappingModel(String namespace) {
-        super(XMLHelper.createQName(namespace, MAPPING));
+    public V1MappingModel(String namespace, String localName) {
+        super(XMLHelper.createQName(namespace, localName));
     }
 
     /**
-     * Creates a new MappingModel with the specified configuration and descriptor.
+     * Creates a new V1MappingModel with the specified configuration and descriptor.
      * @param config the configuration
      * @param desc the descriptor
      */
@@ -54,16 +53,16 @@ public class V1MappingModel extends BaseModel implements MappingModel {
      * {@inheritDoc}
      */
     @Override
-    public String getExpression() {
-        return getModelAttribute("expression");
+    public String getFrom() {
+        return getModelAttribute("from");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MappingModel setExpression(String expression) {
-        setModelAttribute("expression", expression);
+    public MappingModel setFrom(String from) {
+        setModelAttribute("from", from);
         return this;
     }
 
@@ -71,55 +70,17 @@ public class V1MappingModel extends BaseModel implements MappingModel {
      * {@inheritDoc}
      */
     @Override
-    public ExpressionType getExpressionType() {
-        String et = getModelAttribute("expressionType");
-        return et != null ? ExpressionType.valueOf(et) : null;
+    public String getTo() {
+        return getModelAttribute("to");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MappingModel setExpressionType(ExpressionType expressionType) {
-        String et = expressionType != null ? expressionType.name() : null;
-        setModelAttribute("expressionType", et);
+    public MappingModel setTo(String to) {
+        setModelAttribute("to", to);
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Scope getScope() {
-        String s = getModelAttribute("scope");
-        return s != null ? Scope.valueOf(s) : null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public MappingModel setScope(Scope scope) {
-        String s = scope != null ? scope.name() : null;
-        setModelAttribute("scope", s);
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getVariable() {
-        return getModelAttribute("variable");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public MappingModel setVariable(String variable) {
-        setModelAttribute("variable", variable);
-        return this;
-    }
- 
 }

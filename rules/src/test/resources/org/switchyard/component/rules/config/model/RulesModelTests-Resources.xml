@@ -22,15 +22,15 @@ MA  02110-1301, USA.
         <component name="DoStuffRules">
             <implementation.rules xmlns="urn:switchyard-component-rules:config:1.0">
                 <actions>
-                    <action id="theId" operation="process" type="FIRE_UNTIL_HALT">
+                    <action eventId="theEventId" operation="process" type="FIRE_UNTIL_HALT">
                         <globals>
-                            <mapping expression="context['foobar']" scope="EXCHANGE" variable="exchangeVar"/>
+                            <global from="context['foobar']" to="globalVar"/>
                         </globals>
                         <inputs>
-                            <mapping expression="message.content.nested" scope="MESSAGE" variable="inputVar"/>
+                            <input from="message.content.nested" to="inputVar"/>
                         </inputs>
                         <outputs>
-                            <mapping expression="message.content" scope="MESSAGE" variable="outputVar"/>
+                            <output from="outputVar" to="message.content"/>
                         </outputs>
                     </action>
                 </actions>

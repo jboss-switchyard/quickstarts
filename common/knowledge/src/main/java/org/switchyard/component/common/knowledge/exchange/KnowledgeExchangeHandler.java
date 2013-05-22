@@ -34,7 +34,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
 import org.switchyard.component.common.knowledge.session.KnowledgeSessionFactory;
-import org.switchyard.component.common.knowledge.util.Mappings;
+import org.switchyard.component.common.knowledge.util.Actions;
 import org.switchyard.component.common.knowledge.util.Resources;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.metadata.ExchangeContract;
@@ -174,7 +174,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     public void start() {
         _loader = Classes.getClassLoader(getClass());
         Resources.installTypes(_loader);
-        Mappings.registerActionMappings(_model, _actions, getDefaultAction());
+        Actions.registerActions(_model, _actions, getDefaultAction());
         _sessionFactory = KnowledgeSessionFactory.newSessionFactory(_model, _loader, _domain, getPropertyOverrides());
     }
 

@@ -11,7 +11,7 @@
       <incoming>SequenceFlow_4</incoming>
       <terminateEventDefinition id="TerminateEventDefinition_1"/>
     </endEvent>
-    <task id="_4" tns:taskName="SwitchYard Service" name="TestService">
+    <task id="_4" tns:taskName="SwitchYard Service Task" name="TestService">
       <incoming>_1-_4</incoming>
       <outgoing>SequenceFlow_1</outgoing>
       <ioSpecification id="InputOutputSpecification_1">

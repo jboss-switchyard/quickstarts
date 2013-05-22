@@ -18,29 +18,33 @@
  */
 package org.switchyard.component.common.knowledge.config.model;
 
-import org.switchyard.Scope;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.common.knowledge.LoggerType;
 import org.switchyard.component.common.knowledge.annotation.Channel;
 import org.switchyard.component.common.knowledge.annotation.Container;
+import org.switchyard.component.common.knowledge.annotation.Global;
+import org.switchyard.component.common.knowledge.annotation.Input;
 import org.switchyard.component.common.knowledge.annotation.Listener;
 import org.switchyard.component.common.knowledge.annotation.Logger;
 import org.switchyard.component.common.knowledge.annotation.Manifest;
-import org.switchyard.component.common.knowledge.annotation.Mapping;
+import org.switchyard.component.common.knowledge.annotation.Output;
 import org.switchyard.component.common.knowledge.annotation.Property;
 import org.switchyard.component.common.knowledge.annotation.Resource;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ChannelModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ChannelsModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ContainerModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1GlobalModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1GlobalsModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1InputModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1InputsModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ListenerModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ListenersModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1LoggerModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1LoggersModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ManifestModel;
-import org.switchyard.component.common.knowledge.config.model.v1.V1MappingModel;
-import org.switchyard.component.common.knowledge.config.model.v1.V1MappingsModel;
-import org.switchyard.component.common.knowledge.expression.ExpressionType;
+import org.switchyard.component.common.knowledge.config.model.v1.V1OutputModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1OutputsModel;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceChannel;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -227,38 +231,93 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
     }
 
     /**
-     * Converts mapping annotations to mappings model.
-     * @param mappingAnnotations annotations
+     * Converts globals to mappings model.
+     * @param globals globals
      * @param namespace namespace
-     * @param mappingsLocalName local name
-     * @return model
+     * @return mappings model
      */
-    protected MappingsModel toMappingsModel(Mapping[] mappingAnnotations, String namespace, String mappingsLocalName) {
-        if (mappingAnnotations == null || mappingAnnotations.length == 0) {
-            return null;
+    protected GlobalsModel toGlobalsModel(Global[] globals, String namespace) {
+        GlobalsModel globalsModel = null;
+        if (globals != null) {
+            for (Global global : globals) {
+                if (global != null) {
+                    GlobalModel globalModel = new V1GlobalModel(namespace);
+                    String from = global.from();
+                    if (!UNDEFINED.equals(from)) {
+                        globalModel.setFrom(from);
+                    }
+                    String to = global.to();
+                    if (!UNDEFINED.equals(to)) {
+                        globalModel.setTo(to);
+                    }
+                    if (globalsModel == null) {
+                        globalsModel = new V1GlobalsModel(namespace);
+                    }
+                    globalsModel.addGlobal(globalModel);
+                }
+            }
         }
-        MappingsModel mappingsModel = new V1MappingsModel(namespace, mappingsLocalName);
-        for (Mapping mappingAnnotation : mappingAnnotations) {
-            MappingModel mappingModel = new V1MappingModel(namespace);
-            String expression = mappingAnnotation.expression();
-            if (!UNDEFINED.equals(expression)) {
-                mappingModel.setExpression(expression);
+        return globalsModel;
+    }
+
+    /**
+     * Converts inputs to mappings model.
+     * @param inputs inputs
+     * @param namespace namespace
+     * @return mappings model
+     */
+    protected InputsModel toInputsModel(Input[] inputs, String namespace) {
+        InputsModel inputsModel = null;
+        if (inputs != null) {
+            for (Input input : inputs) {
+                if (input != null) {
+                    InputModel inputModel = new V1InputModel(namespace);
+                    String from = input.from();
+                    if (!UNDEFINED.equals(from)) {
+                        inputModel.setFrom(from);
+                    }
+                    String to = input.to();
+                    if (!UNDEFINED.equals(to)) {
+                        inputModel.setTo(to);
+                    }
+                    if (inputsModel == null) {
+                        inputsModel = new V1InputsModel(namespace);
+                    }
+                    inputsModel.addInput(inputModel);
+                }
             }
-            ExpressionType expressionType = mappingAnnotation.expressionType();
-            if (!ExpressionType.MVEL.equals(expressionType)) {
-                mappingModel.setExpressionType(expressionType);
-            }
-            Scope scope = mappingAnnotation.scope();
-            if (!Scope.EXCHANGE.equals(scope)) {
-                mappingModel.setScope(scope);
-            }
-            String variable = mappingAnnotation.variable();
-            if (!UNDEFINED.equals(variable)) {
-                mappingModel.setVariable(variable);
-            }
-            mappingsModel.addMapping(mappingModel);
         }
-        return mappingsModel;
+        return inputsModel;
+    }
+
+    /**
+     * Converts outputs to mappings model.
+     * @param outputs outputs
+     * @param namespace namespace
+     * @return mappings model
+     */
+    protected OutputsModel toOutputsModel(Output[] outputs, String namespace) {
+        OutputsModel outputsModel = null;
+        if (outputs != null) {
+            for (Output output : outputs) {
+                if (output != null) {
+                    OutputModel outputModel = new V1OutputModel(namespace);
+                    String from = output.from();
+                    if (!UNDEFINED.equals(from)) {
+                        outputModel.setFrom(from);
+                    }
+                    String to = output.to();
+                    if (!UNDEFINED.equals(to)) {
+                        outputModel.setTo(to);
+                    }
+                    if (outputsModel == null) {
+                        outputsModel = new V1OutputsModel(namespace);
+                    }
+                    outputsModel.addOutput(outputModel);
+                }
+            }
+        }
+        return outputsModel;
     }
 
     /**

@@ -16,28 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.knowledge;
+package org.switchyard.component.common.knowledge.config.model.v1;
+
+import org.switchyard.component.common.knowledge.config.model.GlobalModel;
+import org.switchyard.config.Configuration;
+import org.switchyard.config.model.Descriptor;
 
 /**
- * Rules constants.
+ * The 1st version GlobalModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public final class KnowledgeConstants {
+public class V1GlobalModel extends V1MappingModel implements GlobalModel {
 
-    /** default. */
-    public static final String DEFAULT = "default";
+    /**
+     * Creates a new GlobalModel in the specified namespace and localName.
+     * @param namespace the specified namespace
+     */
+    public V1GlobalModel(String namespace) {
+        super(namespace, GLOBAL);
+    }
 
-    /** context. */
-    public static final String CONTEXT = "context";
-    /** message. */
-    public static final String MESSAGE = "message";
-
-    /** Parameter. */
-    public static final String PARAMETER = "Parameter";
-    /** Result. */
-    public static final String RESULT = "Result";
-
-    private KnowledgeConstants() {}
+    /**
+     * Creates a new GlobalModel with the specified configuration and descriptor.
+     * @param config the configuration
+     * @param desc the descriptor
+     */
+    public V1GlobalModel(Configuration config, Descriptor desc) {
+        super(config, desc);
+    }
 
 }

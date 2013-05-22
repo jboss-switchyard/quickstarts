@@ -63,37 +63,54 @@ MA  02110-1301, USA.
                     <element ref="rules:inputs" minOccurs="0" maxOccurs="1"/>
                     <element ref="rules:outputs" minOccurs="0" maxOccurs="1"/>
                 </sequence>
-                <attribute name="id" type="string" use="optional"/>
+                <attribute name="eventId" type="string" use="optional"/>
                 <attribute name="operation" type="string" use="optional"/>
                 <attribute name="type" type="rules:actionType" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
 
-    <element name="globals" type="rules:MappingsType"/>
-
-    <element name="inputs" type="rules:MappingsType"/>
-
-    <element name="outputs" type="rules:MappingsType"/>
-
-    <complexType name="MappingsType">
+    <element name="globals" type="rules:GlobalsType"/>
+    <complexType name="GlobalsType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
                 <sequence>
-                    <element ref="rules:mapping" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="rules:global" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
 
-    <element name="mapping" type="rules:MappingType"/>
+    <element name="inputs" type="rules:InputsType"/>
+    <complexType name="InputsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:input" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="outputs" type="rules:OutputsType"/>
+    <complexType name="OutputsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:output" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="global" type="rules:MappingType"/>
+    <element name="input" type="rules:MappingType"/>
+    <element name="output" type="rules:MappingType"/>
     <complexType name="MappingType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
-                <attribute name="expression" type="string" use="required"/>
-                <attribute name="expressionType" type="rules:expressionType" use="optional"/>
-                <attribute name="scope" type="rules:scopeType" use="optional"/>
-                <attribute name="variable" type="string" use="optional"/>
+                <attribute name="from" type="string" use="required"/>
+                <attribute name="to" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>

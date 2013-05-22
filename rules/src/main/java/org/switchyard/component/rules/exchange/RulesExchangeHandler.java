@@ -18,11 +18,11 @@
  */
 package org.switchyard.component.rules.exchange;
 
-import static org.switchyard.component.common.knowledge.util.Mappings.getInputList;
-import static org.switchyard.component.common.knowledge.util.Mappings.getListMap;
-import static org.switchyard.component.common.knowledge.util.Mappings.getOutput;
-import static org.switchyard.component.common.knowledge.util.Mappings.setGlobals;
-import static org.switchyard.component.common.knowledge.util.Mappings.toVariable;
+import static org.switchyard.component.common.knowledge.util.Actions.getInputList;
+import static org.switchyard.component.common.knowledge.util.Actions.getListMap;
+import static org.switchyard.component.common.knowledge.util.Actions.getOutput;
+import static org.switchyard.component.common.knowledge.util.Actions.setGlobals;
+import static org.switchyard.component.common.knowledge.util.Actions.toVariable;
 
 import java.util.List;
 import java.util.Map;
@@ -53,7 +53,7 @@ import org.switchyard.component.rules.config.model.RulesComponentImplementationM
 public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponentImplementationModel> {
 
     private static final AtomicInteger FIRE_UNTIL_HALT_COUNT = new AtomicInteger();
-    private static final KnowledgeAction DEFAULT_ACTION = new KnowledgeAction(null, RulesActionType.EXECUTE);
+    private static final KnowledgeAction DEFAULT_ACTION = new KnowledgeAction(RulesActionType.EXECUTE);
 
     private Thread _fireUntilHaltThread = null;
 
@@ -79,13 +79,14 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
      */
     @Override
     public void handleAction(Exchange exchange, KnowledgeAction action) throws HandlerException {
+        Message inputMessage = exchange.getMessage();
         RulesActionType actionType = (RulesActionType)action.getType();
         switch (actionType) {
             case EXECUTE: {
                 KnowledgeSession session = newStatelessSession();
-                setGlobals(exchange, action, session, true);
-                List<Object> input = getInputList(exchange, action);
-                session.getStateless().execute(input);
+                setGlobals(inputMessage, action, session);
+                List<Object> facts = getInputList(inputMessage, action);
+                session.getStateless().execute(facts);
                 break;
             }
             case INSERT:
@@ -96,9 +97,9 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                 }
                 */
                 KnowledgeSession session = getStatefulSession();
-                setGlobals(exchange, action, session, true);
-                List<Object> input = getInputList(exchange, action);
-                for (Object fact : input) {
+                setGlobals(inputMessage, action, session);
+                List<Object> facts = getInputList(inputMessage, action);
+                for (Object fact : facts) {
                     session.getStateful().insert(fact);
                 }
                 if (RulesActionType.FIRE_ALL_RULES.equals(actionType)) {
@@ -116,32 +117,32 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                 }
                 */
                 KnowledgeSession session = getStatefulSession();
-                setGlobals(exchange, action, session, false);
+                setGlobals(inputMessage, action, session);
                 if (_fireUntilHaltThread == null) {
                     FireUntilHalt fireUntilHalt = new FireUntilHalt(this, session, getLoader());
                     session.addDisposals(fireUntilHalt);
                     _fireUntilHaltThread = fireUntilHalt.startThread();
                 }
                 final String undefinedVariable = toVariable(exchange);
-                Map<String, List<Object>> listMap = getListMap(exchange, action.getInputExpressionMappings(), true, undefinedVariable);
-                if (listMap.size() > 0) {
-                    for (Entry<String, List<Object>> entry : listMap.entrySet()) {
-                        String key = entry.getKey();
+                Map<String, List<Object>> inputMap = getListMap(inputMessage, action.getInputExpressionMappings(), true, undefinedVariable);
+                if (inputMap.size() > 0) {
+                    for (Entry<String, List<Object>> inputEntry : inputMap.entrySet()) {
+                        String key = inputEntry.getKey();
                         if (undefinedVariable.equals(key)) {
-                            String id = Strings.trimToNull(action.getId());
-                            if (id != null) {
-                                key = id;
+                            String eventId = Strings.trimToNull(action.getEventId());
+                            if (eventId != null) {
+                                key = eventId;
                             }
                         }
-                        List<Object> input = entry.getValue();
+                        List<Object> facts = inputEntry.getValue();
                         if (undefinedVariable.equals(key)) {
-                            for (Object fact : input) {
+                            for (Object fact : facts) {
                                 session.getStateful().insert(fact);
                             }
                         } else {
                             SessionEntryPoint sep = session.getStateful().getEntryPoint(key);
                             if (sep != null) {
-                                for (Object fact : input) {
+                                for (Object fact : facts) {
                                     sep.insert(fact);
                                 }
                             } else {
@@ -150,9 +151,9 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                         }
                     }
                 } else {
-                    Object content = exchange.getMessage().getContent();
-                    if (content != null) {
-                        session.getStateful().insert(content);
+                    List<Object> facts = getInputList(inputMessage, action);
+                    for (Object fact : facts) {
+                        session.getStateful().insert(fact);
                     }
                 }
                 if (isDispose(exchange)) {
@@ -164,10 +165,11 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                 throw new HandlerException("Unsupported action type: " + actionType);
             }
         }
-        Object output = getOutput(exchange, action);
+        Object output = getOutput(inputMessage, action);
         if (ExchangePattern.IN_OUT.equals(exchange.getContract().getProviderOperation().getExchangePattern())) {
-            Message message = exchange.createMessage().setContent(output);
-            exchange.send(message);
+            Message outputMessage = exchange.createMessage();
+            outputMessage.setContent(output);
+            exchange.send(outputMessage);
         }
     }
 

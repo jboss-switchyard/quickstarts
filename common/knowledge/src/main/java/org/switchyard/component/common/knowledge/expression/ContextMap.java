@@ -18,8 +18,6 @@
  */
 package org.switchyard.component.common.knowledge.expression;
 
-import static org.switchyard.Scope.MESSAGE;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -42,17 +40,9 @@ public class ContextMap implements Context, Map<String, Object> {
     private final Scope _scope;
 
     /**
-     * Wraps the specified context with Scope.IN for map operations.
-     * @param context the specified context
-     */
-    public ContextMap(Context context) {
-        this(context, MESSAGE);
-    }
-
-    /**
-     * Wraps the specified context with the specified scope for map operations.
-     * @param context the specified context
-     * @param scope the specified scope for map operations
+     * Wraps a context and scope for map operations.
+     * @param context the context
+     * @param scope the scope for map operations
      */
     public ContextMap(Context context, Scope scope) {
         _context = context;

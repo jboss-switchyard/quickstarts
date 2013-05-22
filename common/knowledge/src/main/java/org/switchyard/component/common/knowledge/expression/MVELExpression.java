@@ -84,7 +84,7 @@ public class MVELExpression implements Expression {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate() {
+    public Object run() {
         return isCompiled() ? MVEL.executeExpression(_compiled, _resolverFactory) : MVEL.eval(_expression, _resolverFactory);
     }
 
@@ -92,7 +92,7 @@ public class MVELExpression implements Expression {
      * {@inheritDoc}
      */
     @Override
-    public Object evaluate(Object context) {
+    public Object run(Object context) {
         return isCompiled() ? MVEL.executeExpression(_compiled, context, _resolverFactory) : MVEL.eval(_expression, context, _resolverFactory);
     }
 

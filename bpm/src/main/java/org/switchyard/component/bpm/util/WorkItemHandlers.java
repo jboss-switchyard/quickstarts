@@ -36,8 +36,8 @@ import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.WorkItemHandlerModel;
 import org.switchyard.component.bpm.config.model.WorkItemHandlersModel;
+import org.switchyard.component.bpm.service.StandardSwitchYardServiceTaskHandler;
 import org.switchyard.component.bpm.service.SwitchYardServiceTaskHandler;
-import org.switchyard.component.bpm.service.SwitchYardServiceWorkItemHandler;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
 import org.switchyard.exception.SwitchYardException;
 
@@ -60,8 +60,8 @@ public final class WorkItemHandlers {
     private static final Map<String, Class<? extends WorkItemHandler>> DEFAULT_HANDLERS = new HashMap<String, Class<? extends WorkItemHandler>>();
     static {
         DEFAULT_HANDLERS.put(HUMAN_TASK, LocalHTWorkItemHandler.class);
-        DEFAULT_HANDLERS.put(SwitchYardServiceTaskHandler.SERVICE_TASK, SwitchYardServiceTaskHandler.class);
-        DEFAULT_HANDLERS.put(SwitchYardServiceWorkItemHandler.SWITCHYARD_SERVICE, SwitchYardServiceWorkItemHandler.class);
+        DEFAULT_HANDLERS.put(SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE_TASK, SwitchYardServiceTaskHandler.class);
+        DEFAULT_HANDLERS.put(StandardSwitchYardServiceTaskHandler.SERVICE_TASK, StandardSwitchYardServiceTaskHandler.class);
     }
 
     /**
@@ -84,15 +84,15 @@ public final class WorkItemHandlers {
                 }
                 WorkItemHandler workItemHandler = newWorkItemHandler(workItemHandlerClass, runtime);
                 String name = workItemHandlerModel.getName();
-                if (workItemHandler instanceof SwitchYardServiceWorkItemHandler) {
-                    SwitchYardServiceWorkItemHandler syswih = (SwitchYardServiceWorkItemHandler)workItemHandler;
+                if (workItemHandler instanceof SwitchYardServiceTaskHandler) {
+                    SwitchYardServiceTaskHandler ssth = (SwitchYardServiceTaskHandler)workItemHandler;
                     if (name != null) {
-                        syswih.setName(name);
+                        ssth.setName(name);
                     } else {
-                        name = syswih.getName();
+                        name = ssth.getName();
                     }
-                    syswih.setInvoker(new SwitchYardServiceInvoker(domain, tns));
-                    syswih.setProcessRuntime(runtime);
+                    ssth.setInvoker(new SwitchYardServiceInvoker(domain, tns));
+                    ssth.setProcessRuntime(runtime);
                 }
                 if (name == null && workItemHandler instanceof AbstractHTWorkItemHandler) {
                     name = HUMAN_TASK;
@@ -108,11 +108,11 @@ public final class WorkItemHandlers {
             String name = entry.getKey();
             if (!registeredNames.contains(name)) {
                 WorkItemHandler defaultHandler = newWorkItemHandler(entry.getValue(), runtime);
-                if (defaultHandler instanceof SwitchYardServiceWorkItemHandler) {
-                    SwitchYardServiceWorkItemHandler syswih = (SwitchYardServiceWorkItemHandler)defaultHandler;
-                    syswih.setName(name);
-                    syswih.setInvoker(new SwitchYardServiceInvoker(domain, tns));
-                    syswih.setProcessRuntime(runtime);
+                if (defaultHandler instanceof SwitchYardServiceTaskHandler) {
+                    SwitchYardServiceTaskHandler ssth = (SwitchYardServiceTaskHandler)defaultHandler;
+                    ssth.setName(name);
+                    ssth.setInvoker(new SwitchYardServiceInvoker(domain, tns));
+                    ssth.setProcessRuntime(runtime);
                 }
                 runtime.getWorkItemManager().registerWorkItemHandler(name, defaultHandler);
                 registeredNames.add(name);

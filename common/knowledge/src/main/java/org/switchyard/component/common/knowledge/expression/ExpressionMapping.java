@@ -18,53 +18,79 @@
  */
 package org.switchyard.component.common.knowledge.expression;
 
-import org.switchyard.Scope;
+import org.switchyard.common.lang.Strings;
+import org.switchyard.common.property.PropertyResolver;
+import org.switchyard.common.property.SystemAndTestPropertyResolver;
+import org.switchyard.component.common.knowledge.config.model.MappingModel;
 
 /**
  * An expression mapping.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class ExpressionMapping {
+public final class ExpressionMapping {
 
-    private final Expression _expression;
-    private final Scope _scope;
-    private final String _variable;
+    private final PropertyResolver _propertyResolver;
+    private final String _from;
+    private final String _to;
+    private Expression _fromExpression = null;
+    private Expression _toExpression = null;
 
     /**
-     * Constructs an expression mapping.
-     * @param expression the expression
-     * @param scope the scope
-     * @param variable the variable
+     * Constructs an expression mapping from a mapping model.
+     * @param mappingModel the mapping model
      */
-    public ExpressionMapping(Expression expression, Scope scope, String variable) {
-        _expression = expression;
-        _scope = scope;
-        _variable = variable;
+    public ExpressionMapping(MappingModel mappingModel) {
+        PropertyResolver propertyResolver = mappingModel.getModelConfiguration().getPropertyResolver();
+        _propertyResolver = propertyResolver != null ? propertyResolver : SystemAndTestPropertyResolver.INSTANCE;
+        _from = Strings.trimToNull(mappingModel.getFrom());
+        _to = Strings.trimToNull(mappingModel.getTo());
     }
 
     /**
-     * Gets the expression.
-     * @return the expression
+     * Gets the property resolver.
+     * @return the property resolver
      */
-    public Expression getExpression() {
-        return _expression;
+    public PropertyResolver getPropertyResolver() {
+        return _propertyResolver;
     }
 
     /**
-     * Gets the scope.
-     * @return the scope
+     * Gets the from.
+     * @return the from
      */
-    public Scope getScope() {
-        return _scope;
+    public String getFrom() {
+        return _from;
     }
 
     /**
-     * Gets the variable.
-     * @return the variable
+     * Gets the from expression.
+     * @return the from expression
      */
-    public String getVariable() {
-        return _variable;
+    public Expression getFromExpression() {
+        if (_fromExpression == null && _from != null) {
+            _fromExpression = ExpressionFactory.INSTANCE.create(_from, null, _propertyResolver);
+        }
+        return _fromExpression;
+    }
+
+    /**
+     * Gets the to.
+     * @return the to
+     */
+    public String getTo() {
+        return _to;
+    }
+
+    /**
+     * Gets the to expression.
+     * @return the to expression
+     */
+    public Expression getToExpression() {
+        if (_toExpression == null && _to != null) {
+            _toExpression = ExpressionFactory.INSTANCE.create(_to, null, _propertyResolver);
+        }
+        return _toExpression;
     }
 
 }

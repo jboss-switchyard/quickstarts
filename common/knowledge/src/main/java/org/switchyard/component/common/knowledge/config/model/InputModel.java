@@ -16,38 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.knowledge.annotation;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import org.switchyard.Scope;
-import org.switchyard.component.common.knowledge.expression.ExpressionType;
+package org.switchyard.component.common.knowledge.config.model;
 
 /**
- * Mapping.
+ * InputModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@Target(TYPE)
-@Retention(RUNTIME)
-@Documented
-public @interface Mapping {
+public interface InputModel extends MappingModel {
 
-    /** Expression. */
-    public String expression();
-
-    /** Expression type. */
-    public ExpressionType expressionType() default ExpressionType.MVEL;
-
-    /** Scope. */
-    public Scope scope() default Scope.EXCHANGE;
-
-    /** Variable. */
-    public String variable() default "";
+    /** The "input" name. */
+    public static final String INPUT = "input";
 
 }

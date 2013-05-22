@@ -16,28 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.knowledge;
+package org.switchyard.component.common.knowledge.config.model;
 
 /**
- * Rules constants.
+ * OutputModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public final class KnowledgeConstants {
+public interface OutputModel extends MappingModel {
 
-    /** default. */
-    public static final String DEFAULT = "default";
-
-    /** context. */
-    public static final String CONTEXT = "context";
-    /** message. */
-    public static final String MESSAGE = "message";
-
-    /** Parameter. */
-    public static final String PARAMETER = "Parameter";
-    /** Result. */
-    public static final String RESULT = "Result";
-
-    private KnowledgeConstants() {}
+    /** The "output" name. */
+    public static final String OUTPUT = "output";
 
 }

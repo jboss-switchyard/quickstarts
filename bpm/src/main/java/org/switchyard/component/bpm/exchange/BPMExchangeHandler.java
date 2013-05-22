@@ -18,13 +18,14 @@
  */
 package org.switchyard.component.bpm.exchange;
 
-import static org.switchyard.component.common.knowledge.util.Mappings.getInputMap;
-import static org.switchyard.component.common.knowledge.util.Mappings.getOutputMap;
+import static org.switchyard.component.common.knowledge.util.Actions.getInput;
+import static org.switchyard.component.common.knowledge.util.Actions.getInputMap;
+import static org.switchyard.component.common.knowledge.util.Actions.setGlobals;
+import static org.switchyard.component.common.knowledge.util.Actions.setOutputs;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
@@ -52,7 +53,6 @@ import org.switchyard.component.bpm.BPMConstants;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.transaction.AS7TransactionHelper;
 import org.switchyard.component.bpm.util.WorkItemHandlers;
-import org.switchyard.component.common.knowledge.KnowledgeConstants;
 import org.switchyard.component.common.knowledge.exchange.KnowledgeAction;
 import org.switchyard.component.common.knowledge.exchange.KnowledgeExchangeHandler;
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
@@ -67,13 +67,13 @@ import org.switchyard.component.common.knowledge.util.Listeners;
  */
 public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImplementationModel> {
 
-    private static final KnowledgeAction DEFAULT_ACTION = new KnowledgeAction(null, BPMActionType.START_PROCESS);
+    private static final KnowledgeAction DEFAULT_ACTION = new KnowledgeAction(BPMActionType.START_PROCESS);
 
     private final boolean _persistent;
     private final String _processId;
+    private final BPMProcessEventListener _processEventListener;
     private CorrelationKeyFactory _correlationKeyFactory;
     private EntityManagerFactory _entityManagerFactory;
-    private final ProcessListener _processListener;
 
     /**
      * Constructs a new BPMExchangeHandler with the specified model and service domain.
@@ -84,7 +84,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
         super(model, domain);
         _persistent = model.isPersistent();
         _processId = model.getProcessId();
-        _processListener = new ProcessListener(domain.getEventPublisher());
+        _processEventListener = new BPMProcessEventListener(domain.getEventPublisher());
     }
 
     /**
@@ -158,6 +158,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
      */
     @Override
     public void handleAction(Exchange exchange, KnowledgeAction action) throws HandlerException {
+        Message inputMessage = exchange.getMessage();
         Message outputMessage = null;
         AS7TransactionHelper utx = new AS7TransactionHelper(_persistent);
         ExchangePattern exchangePattern = exchange.getContract().getProviderOperation().getExchangePattern();
@@ -167,7 +168,8 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                 try {
                     utx.begin();
                     KnowledgeSession session = getBPMSession(exchange);
-                    Map<String, Object> inputMap = getInputMap(exchange, action);
+                    setGlobals(inputMessage, action, session);
+                    Map<String, Object> inputMap = getInputMap(inputMessage, action);
                     ProcessInstance processInstance;
                     CorrelationKey correlationKey = getCorrelationKey(exchange);
                     if (correlationKey != null) {
@@ -189,14 +191,15 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                 try {
                     utx.begin();
                     KnowledgeSession session = getBPMSession(exchange);
+                    setGlobals(inputMessage, action, session);
                     Long processInstanceId = getProcessInstanceId(exchange, session);
-                    Object signalEvent = getSignalEvent(exchange);
-                    String signalId = getSignalId(exchange, action);
+                    Object eventObject = getInput(inputMessage, action);
+                    String eventId = action.getEventId();
                     if (processInstanceId != null) {
-                        session.getStateful().signalEvent(signalId, signalEvent, processInstanceId);
+                        session.getStateful().signalEvent(eventId, eventObject, processInstanceId);
                     } else {
                         // TODO: should we really be defaulting here to signaling all process instances?
-                        session.getStateful().signalEvent(signalId, signalEvent);
+                        session.getStateful().signalEvent(eventId, eventObject);
                     }
                     if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
                         ProcessInstance processInstance = session.getStateful().getProcessInstance(processInstanceId);
@@ -214,10 +217,11 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                     utx.begin();
                     KnowledgeSession session = getBPMSession(exchange);
                     Long processInstanceId = getProcessInstanceId(exchange, session);
-                    session.getStateful().abortProcessInstance(processInstanceId);
                     if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                        outputMessage = handleOutput(exchange, action, session, null);
+                        ProcessInstance processInstance = session.getStateful().getProcessInstance(processInstanceId);
+                        outputMessage = handleOutput(exchange, action, session, processInstance);
                     }
+                    session.getStateful().abortProcessInstance(processInstanceId);
                     utx.commit();
                 } catch (RuntimeException re) {
                     utx.rollback();
@@ -242,8 +246,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
         } else {
             session = getStatefulSession();
         }
-        Listeners.registerListener(_processListener,
-                (session.isStateful() ? session.getStateful() : session.getStateless()));
+        Listeners.registerListener(_processEventListener, session.getStateful());
         WorkItemHandlers.registerWorkItemHandlers(getModel(), getLoader(), session.getStateful(), getDomain());
         return session;
     }
@@ -276,29 +279,13 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
         return null;
     }
 
-    private Object getSignalEvent(Exchange exchange) {
-        Object signalEvent = getObject(exchange, BPMConstants.SIGNAL_EVENT_PROPERTY);
-        if (signalEvent == null) {
-            signalEvent = exchange.getMessage().getContent();
-        }
-        return signalEvent;
-    }
-
-    private String getSignalId(Exchange exchange, KnowledgeAction action) {
-        String signalId = getString(exchange, BPMConstants.SIGNAL_ID_PROPERTY);
-        if (signalId == null) {
-            signalId = action.getId();
-        }
-        return signalId;
-    }
-
     private Message handleOutput(Exchange exchange, KnowledgeAction action, KnowledgeSession session, ProcessInstance processInstance) {
         Message outputMessage = exchange.createMessage();
         Integer sessionId = session.getId();
         if (sessionId != null && sessionId.intValue() > 0) {
             exchange.getContext(outputMessage).setProperty(BPMConstants.SESSION_ID_PROPERTY, sessionId);
         }
-        Map<String, Object> expressionVariables = new HashMap<String, Object>();
+        Map<String, Object> contextOverrides = new HashMap<String, Object>();
         if (processInstance != null) {
             long processInstanceId = processInstance.getId();
             if (processInstanceId > 0) {
@@ -307,22 +294,11 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
             if (processInstance instanceof WorkflowProcessInstanceImpl) {
                 Map<String, Object> processInstanceVariables = ((WorkflowProcessInstanceImpl)processInstance).getVariables();
                 if (processInstanceVariables != null) {
-                    expressionVariables.putAll(processInstanceVariables);
+                    contextOverrides.putAll(processInstanceVariables);
                 }
             }
         }
-        Map<String, Object> output = getOutputMap(exchange, action, expressionVariables);
-        for (Entry<String, Object> entry : output.entrySet()) {
-            Object value = entry.getValue();
-            if (value != null) {
-                String key = entry.getKey();
-                if (KnowledgeConstants.CONTENT_OUTPUT.equals(key)) {
-                    outputMessage.setContent(value);
-                } else {
-                    exchange.getContext(outputMessage).setProperty(key, value);
-                }
-            }
-        }
+        setOutputs(outputMessage, action, contextOverrides);
         return outputMessage;
     }
 

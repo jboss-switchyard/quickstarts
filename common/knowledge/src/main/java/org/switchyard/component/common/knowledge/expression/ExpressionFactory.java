@@ -20,7 +20,6 @@ package org.switchyard.component.common.knowledge.expression;
 
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.property.SystemAndTestPropertyResolver;
-import org.switchyard.component.common.knowledge.config.model.MappingModel;
 
 /**
  * ExpressionFactory.
@@ -29,13 +28,23 @@ import org.switchyard.component.common.knowledge.config.model.MappingModel;
  */
 public final class ExpressionFactory {
 
-    private static final ExpressionFactory INSTANCE = new ExpressionFactory();
+    /** The singleton instance. */
+    public static final ExpressionFactory INSTANCE = new ExpressionFactory();
 
     private ExpressionFactory() {}
 
     /**
      * Creates a new Expression.
-     * @param expression the expression value
+     * @param expression the expression string
+     * @return the Expression
+     */
+    public Expression create(String expression) {
+        return create(expression, null);
+    }
+
+    /**
+     * Creates a new Expression.
+     * @param expression the expression string
      * @param expressionType the expression type
      * @return the Expression
      */
@@ -45,12 +54,15 @@ public final class ExpressionFactory {
 
     /**
      * Creates a new Expression.
-     * @param expression the expression value
+     * @param expression the expression string
      * @param expressionType the expression type
      * @param propertyResolver the property resolver
      * @return the Expression
      */
     public Expression create(String expression, ExpressionType expressionType, PropertyResolver propertyResolver) {
+        if (expressionType == null) {
+            expressionType = ExpressionType.MVEL;
+        }
         if (propertyResolver == null) {
             propertyResolver = SystemAndTestPropertyResolver.INSTANCE;
         }
@@ -58,29 +70,8 @@ public final class ExpressionFactory {
             case MVEL:
                 return new MVELExpression(expression, propertyResolver);
             default:
-                throw new IllegalArgumentException("Unknown expressionType: " + expressionType);
+                throw new IllegalArgumentException("Unknown expression type: " + expressionType);
         }
-    }
-
-    /**
-     * Creates a new Expression.
-     * @param mappingModel the mapping model which contains the expression value, expression type, and property resolver
-     * @return the Expression
-     */
-    public Expression create(MappingModel mappingModel) {
-        ExpressionType expressionType = mappingModel.getExpressionType();
-        if (expressionType == null) {
-            expressionType = ExpressionType.MVEL;
-        }
-        return create(mappingModel.getExpression(), expressionType, mappingModel.getModelConfiguration().getPropertyResolver());
-    }
-
-    /**
-     * Returns the singleton instance.
-     * @return the singleton instance
-     */
-    public static ExpressionFactory instance() {
-        return INSTANCE;
     }
 
 }

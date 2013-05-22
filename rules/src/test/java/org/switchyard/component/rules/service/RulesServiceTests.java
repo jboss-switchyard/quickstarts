@@ -29,8 +29,8 @@ import org.switchyard.Message;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.common.knowledge.annotation.Input;
 import org.switchyard.component.common.knowledge.annotation.Manifest;
-import org.switchyard.component.common.knowledge.annotation.Mapping;
 import org.switchyard.component.common.knowledge.annotation.Resource;
 import org.switchyard.component.rules.annotation.Execute;
 import org.switchyard.component.rules.annotation.Rules;
@@ -56,8 +56,8 @@ public class RulesServiceTests {
     @Rules(manifest=@Manifest(resources=@Resource(location=ACCESS_ATTACHMENT_DRL, type="DRL")))
     public interface AccessAttachment {
         @Execute(inputs={
-            @Mapping(expression="message.attachmentMap['someAttach']", variable="attachment"),
-            @Mapping(expression="message.content", variable="holder")
+            @Input(from="message.attachmentMap['someAttach']"),
+            @Input(from="message.content")
         })
         public Object process(Object content);
     }

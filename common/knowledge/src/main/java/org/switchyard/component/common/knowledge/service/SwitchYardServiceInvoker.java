@@ -85,7 +85,7 @@ public class SwitchYardServiceInvoker {
      */
     public SwitchYardServiceResponse invoke(SwitchYardServiceRequest request) {
         Map<String, Object> contextOut = new HashMap<String, Object>();
-        Object contentOutput = null;
+        Object contentOut = null;
         Object fault = null;
         try {
             QName serviceName = request.getServiceName();
@@ -107,9 +107,9 @@ public class SwitchYardServiceInvoker {
             }
             final Exchange exchangeIn;
             FaultHandler handler = new FaultHandler();
-            String serviceOperationName = request.getServiceOperationName();
-            if (serviceOperationName != null) {
-                exchangeIn = serviceReference.createExchange(serviceOperationName, handler);
+            String operationName = request.getOperationName();
+            if (operationName != null) {
+                exchangeIn = serviceReference.createExchange(operationName, handler);
             } else {
                 exchangeIn = serviceReference.createExchange(handler);
             }
@@ -117,15 +117,15 @@ public class SwitchYardServiceInvoker {
             for (Map.Entry<String,Object> entry : request.getContext().entrySet()) {
                 exchangeIn.getContext(messageIn).setProperty(entry.getKey(), entry.getValue());
             }
-            Object contentInput = request.getContent();
-            if (contentInput != null) {
-                messageIn.setContent(contentInput);
+            Object contentIn = request.getContent();
+            if (contentIn != null) {
+                messageIn.setContent(contentIn);
             }
             exchangeIn.send(messageIn);
             if (ExchangePattern.IN_OUT.equals(exchangeIn.getContract().getConsumerOperation().getExchangePattern())) {
                 Exchange exchangeOut = handler.waitForOut();
                 Message messageOut = exchangeOut.getMessage();
-                contentOutput = messageOut.getContent();
+                contentOut = messageOut.getContent();
                 for (Property property : exchangeOut.getContext(messageOut).getProperties()) {
                     contextOut.put(property.getName(), property.getValue());
                 }
@@ -134,7 +134,7 @@ public class SwitchYardServiceInvoker {
         } catch (Throwable t) {
             fault = t;
         }
-        return new SwitchYardServiceResponse(contentOutput, contextOut, fault);
+        return new SwitchYardServiceResponse(contentOut, contextOut, fault);
     }
 
     private static final class FaultHandler extends SynchronousInOutHandler {

@@ -32,17 +32,17 @@ public interface ActionModel extends Model {
     public static final String ACTION = "action";
 
     /**
-     * Gets the id attribute.
-     * @return the id attribute
+     * Gets the eventId attribute.
+     * @return the eventId attribute
      */
-    public String getId();
+    public String getEventId();
 
     /**
-     * Sets the id attribute.
-     * @param id the id attribute
+     * Sets the eventId attribute.
+     * @param eventId the eventId attribute
      * @return this ActionModel (useful for chaining)
      */
-    public ActionModel setId(String id);
+    public ActionModel setEventId(String eventId);
 
     /**
      * Gets the operation attribute.
@@ -71,42 +71,42 @@ public interface ActionModel extends Model {
     public ActionModel setType(ActionType type);
 
     /**
-     * Gets the child global mappings model.
-     * @return the child global mappings model
+     * Gets the child globals mappings model.
+     * @return the child globals mappings model
      */
-    public MappingsModel getGlobals();
+    public GlobalsModel getGlobals();
 
     /**
-     * Sets the child global mappings model.
-     * @param globals the child global mappings model
+     * Sets the child globals mappings model.
+     * @param globals the child globals mappings model
      * @return this ActionModel (useful for chaining)
      */
-    public ActionModel setGlobals(MappingsModel globals);
+    public ActionModel setGlobals(GlobalsModel globals);
 
     /**
-     * Gets the child input mappings model.
-     * @return the child input mappings model
+     * Gets the child inputs mappings model.
+     * @return the child inputs mappings model
      */
-    public MappingsModel getInputs();
+    public InputsModel getInputs();
 
     /**
-     * Sets the child input mappings model.
-     * @param inputs the child input mappings model
+     * Sets the child inputs mappings model.
+     * @param inputs the child inputs mappings model
      * @return this ActionModel (useful for chaining)
      */
-    public ActionModel setInputs(MappingsModel inputs);
+    public ActionModel setInputs(InputsModel inputs);
 
     /**
-     * Gets the child output mappings model.
-     * @return the child output mappings model
+     * Gets the child outputs mappings model.
+     * @return the child outputs mappings model
      */
-    public MappingsModel getOutputs();
+    public OutputsModel getOutputs();
 
     /**
-     * Sets the child output mappings model.
-     * @param outputs the child output mappings model
+     * Sets the child outputs mappings model.
+     * @param outputs the child outputs mappings model
      * @return this ActionModel (useful for chaining)
      */
-    public ActionModel setOutputs(MappingsModel outputs);
+    public ActionModel setOutputs(OutputsModel outputs);
 
 }

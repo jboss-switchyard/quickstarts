@@ -23,35 +23,26 @@ import java.util.List;
 import org.switchyard.config.model.Model;
 
 /**
- * A Mappings Model.
+ * A Outputs Model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface MappingsModel extends Model {
-
-    /** The "mappings" name. */
-    public static final String MAPPINGS = "mappings";
-
-    /** The "globals" name. */
-    public static final String GLOBALS = "globals";
-
-    /** The "inputs" name. */
-    public static final String INPUTS = "inputs";
+public interface OutputsModel extends Model {
 
     /** The "outputs" name. */
     public static final String OUTPUTS = "outputs";
 
     /**
-     * Gets the child mapping models.
-     * @return the child mapping models
+     * Gets the child output models.
+     * @return the child output models
      */
-    public List<MappingModel> getMappings();
+    public List<OutputModel> getOutputs();
 
     /**
-     * Adds a child mapping model.
-     * @param mapping the child mapping model
-     * @return this MappingsModel (useful for chaining)
+     * Adds a child output model.
+     * @param output the child output model
+     * @return this OutputsModel (useful for chaining)
      */
-    public MappingsModel addMapping(MappingModel mapping);
+    public OutputsModel addOutput(OutputModel output);
 
 }

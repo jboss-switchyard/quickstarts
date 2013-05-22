@@ -19,7 +19,7 @@
     <endEvent id="_3" name="EndProcess" >
         <terminateEventDefinition/>
     </endEvent>
-    <task id="_4" name="CallService" tns:taskName="SwitchYard Service" >
+    <task id="_4" name="CallService" tns:taskName="SwitchYard Service Task" >
       <ioSpecification>
         <dataInput id="_4_ServiceNameInput" name="ServiceName" />
         <inputSet>

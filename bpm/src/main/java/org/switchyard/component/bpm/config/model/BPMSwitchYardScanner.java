@@ -19,9 +19,6 @@
 package org.switchyard.component.bpm.config.model;
 
 import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.GLOBALS;
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.INPUTS;
-import static org.switchyard.component.common.knowledge.config.model.MappingsModel.OUTPUTS;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -42,9 +39,11 @@ import org.switchyard.component.bpm.config.model.v1.V1BPMActionModel;
 import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlerModel;
 import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlersModel;
-import org.switchyard.component.bpm.service.SwitchYardServiceWorkItemHandler;
+import org.switchyard.component.bpm.service.SwitchYardServiceTaskHandler;
 import org.switchyard.component.bpm.util.WorkItemHandlers;
-import org.switchyard.component.common.knowledge.annotation.Mapping;
+import org.switchyard.component.common.knowledge.annotation.Global;
+import org.switchyard.component.common.knowledge.annotation.Input;
+import org.switchyard.component.common.knowledge.annotation.Output;
 import org.switchyard.component.common.knowledge.config.model.ActionModel;
 import org.switchyard.component.common.knowledge.config.model.ActionsModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeSwitchYardScanner;
@@ -137,10 +136,10 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
         JavaService javaService = JavaService.fromClass(bpmInterface);
         for (Method method : bpmClass.getDeclaredMethods()) {
             BPMActionType actionType = null;
-            String id = null;
-            Mapping[] globalMappingAnnotations = null;
-            Mapping[] inputMappingAnnotations = null;
-            Mapping[] outputMappingAnnotations = null;
+            String eventId = null;
+            Global[] globalMappingAnnotations = null;
+            Input[] inputMappingAnnotations = null;
+            Output[] outputMappingAnnotations = null;
             if (START_PROCESS_FILTER.matches(method)) {
                 actionType = BPMActionType.START_PROCESS;
                 StartProcess startProcessAnnotation = method.getAnnotation(StartProcess.class);
@@ -150,27 +149,27 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
             } else if (SIGNAL_EVENT_FILTER.matches(method)) {
                 actionType = BPMActionType.SIGNAL_EVENT;
                 SignalEvent signalEventAnnotation = method.getAnnotation(SignalEvent.class);
+                eventId = Strings.trimToNull(signalEventAnnotation.eventId());
                 globalMappingAnnotations = signalEventAnnotation.globals();
                 inputMappingAnnotations = signalEventAnnotation.inputs();
                 outputMappingAnnotations = signalEventAnnotation.outputs();
-                id = Strings.trimToNull(signalEventAnnotation.id());
             } else if (ABORT_PROCESS_INSTANCE_FILTER.matches(method)) {
                 actionType = BPMActionType.ABORT_PROCESS_INSTANCE;
                 AbortProcessInstance abortProcessInstanceAnnotation = method.getAnnotation(AbortProcessInstance.class);
-                globalMappingAnnotations = abortProcessInstanceAnnotation.globals();
-                inputMappingAnnotations = abortProcessInstanceAnnotation.inputs();
+                globalMappingAnnotations = new Global[]{};
+                inputMappingAnnotations = new Input[]{};
                 outputMappingAnnotations = abortProcessInstanceAnnotation.outputs();
             }
             if (actionType != null) {
                 ServiceOperation serviceOperation = javaService.getOperation(method.getName());
                 if (serviceOperation != null) {
                     ActionModel actionModel = new V1BPMActionModel();
-                    actionModel.setId(id);
+                    actionModel.setEventId(eventId);
                     actionModel.setOperation(serviceOperation.getName());
                     actionModel.setType(actionType);
-                    actionModel.setGlobals(toMappingsModel(globalMappingAnnotations, DEFAULT_NAMESPACE, GLOBALS));
-                    actionModel.setInputs(toMappingsModel(inputMappingAnnotations, DEFAULT_NAMESPACE, INPUTS));
-                    actionModel.setOutputs(toMappingsModel(outputMappingAnnotations, DEFAULT_NAMESPACE, OUTPUTS));
+                    actionModel.setGlobals(toGlobalsModel(globalMappingAnnotations, DEFAULT_NAMESPACE));
+                    actionModel.setInputs(toInputsModel(inputMappingAnnotations, DEFAULT_NAMESPACE));
+                    actionModel.setOutputs(toOutputsModel(outputMappingAnnotations, DEFAULT_NAMESPACE));
                     actionsModel.addAction(actionModel);
                 }
             }
@@ -206,10 +205,10 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
             String name = workItemHandlerAnnotation.name();
             if (UNDEFINED.equals(name)) {
                 org.kie.runtime.process.WorkItemHandler wih = WorkItemHandlers.newWorkItemHandler(clazz, null);
-                if (wih instanceof SwitchYardServiceWorkItemHandler) {
-                    SwitchYardServiceWorkItemHandler syswih = (SwitchYardServiceWorkItemHandler)wih;
-                    if (syswih.getName() != null) {
-                        name = syswih.getName();
+                if (wih instanceof SwitchYardServiceTaskHandler) {
+                    SwitchYardServiceTaskHandler ssth = (SwitchYardServiceTaskHandler)wih;
+                    if (ssth.getName() != null) {
+                        name = ssth.getName();
                     }
                 } else if (wih instanceof AbstractHTWorkItemHandler) {
                     name = "Human Task";

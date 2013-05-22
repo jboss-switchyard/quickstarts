@@ -19,13 +19,14 @@
 package org.switchyard.component.rules.config.model;
 
 import org.kie.event.rule.DebugWorkingMemoryEventListener;
-import org.switchyard.Scope;
 import org.switchyard.component.common.knowledge.LoggerType;
 import org.switchyard.component.common.knowledge.annotation.Channel;
+import org.switchyard.component.common.knowledge.annotation.Global;
+import org.switchyard.component.common.knowledge.annotation.Input;
 import org.switchyard.component.common.knowledge.annotation.Listener;
 import org.switchyard.component.common.knowledge.annotation.Logger;
 import org.switchyard.component.common.knowledge.annotation.Manifest;
-import org.switchyard.component.common.knowledge.annotation.Mapping;
+import org.switchyard.component.common.knowledge.annotation.Output;
 import org.switchyard.component.common.knowledge.annotation.Property;
 import org.switchyard.component.common.knowledge.annotation.Resource;
 import org.switchyard.component.rules.annotation.FireUntilHalt;
@@ -50,10 +51,10 @@ public interface DoStuffRules extends DoStuff {
 
     @Override
     @FireUntilHalt(
-        id="theId",
-        globals=@Mapping(expression="context['foobar']", scope=Scope.EXCHANGE, variable="exchangeVar"),
-        inputs=@Mapping(expression="message.content.nested", scope=Scope.MESSAGE, variable="inputVar"),
-        outputs=@Mapping(expression="message.content", scope=Scope.MESSAGE, variable="outputVar")
+        eventId="theEventId",
+        globals=@Global(from="context['foobar']", to="globalVar"),
+        inputs=@Input(from="message.content.nested", to="inputVar"),
+        outputs=@Output(from="outputVar", to="message.content")
     )
     public void process(Object stuff);
 
