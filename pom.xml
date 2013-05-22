@@ -66,6 +66,7 @@
         <!-- maintaining this override for future flexibility -->
         <version.arquillian.openshift>1.0.0.CR7</version.arquillian.openshift>
         <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
+        <version.activemq>5.8.0</version.activemq>
         <version.antlr>3.3</version.antlr>
         <version.axiom>1.2.8</version.axiom>
         <version.batik>1.7</version.batik>
@@ -999,6 +1000,11 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-test-mixin-activemq</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
                 <artifactId>switchyard-component-test-mixin-bpm</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1822,6 +1828,38 @@
                         <artifactId>hibernate-annotations</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-broker</artifactId>
+                <version>${version.activemq}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-client</artifactId>
+                <version>${version.activemq}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-jms_1.1_spec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-openwire-legacy</artifactId>
+                <version>${version.activemq}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-ra</artifactId>
+                <version>${version.activemq}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-rar</artifactId>
+                <version>${version.activemq}</version>
+                <type>rar</type>
             </dependency>
             <dependency>
                 <groupId>org.jboss.bpm</groupId>
