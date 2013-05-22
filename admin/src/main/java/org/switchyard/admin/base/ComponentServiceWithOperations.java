@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.switchyard.Exchange;
 import org.switchyard.admin.Application;
 import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.ServiceOperation;
@@ -80,5 +81,27 @@ public abstract class ComponentServiceWithOperations extends BaseComponentServic
      * @return Supported operations.
      */
     protected abstract Collection<org.switchyard.metadata.ServiceOperation> getInterfaceOperations(InterfaceModel interfaceModel);
+
+    @Override
+    public void resetMessageMetrics() {
+        for (final ServiceOperation operation : _operations) {
+            operation.resetMessageMetrics();
+        }
+        super.resetMessageMetrics();
+    }
+
+    @Override
+    public void recordMetrics(Exchange exchange) {
+        final String operationName = exchange.getContract().getProviderOperation().getName();
+        if (operationName != null) {
+            for (final ServiceOperation operation : _operations) {
+                if (operationName.equals(operation.getName())) {
+                    operation.recordMetrics(exchange);
+                    break;
+                }
+            }
+        }
+        super.recordMetrics(exchange);
+    }
 
 }

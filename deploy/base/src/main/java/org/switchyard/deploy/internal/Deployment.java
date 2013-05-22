@@ -52,6 +52,7 @@ import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.Binding;
 import org.switchyard.deploy.Implementation;
+import org.switchyard.deploy.Lifecycle;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.deploy.event.ApplicationDeployedEvent;
 import org.switchyard.deploy.event.ApplicationUndeployedEvent;
@@ -182,6 +183,22 @@ public class Deployment extends AbstractDeployment {
         getDomain().destroy();
     }
     
+    @Override
+    public Lifecycle getGatwayLifecycle(final QName serviceName, final String bindingName) {
+        // TODO: look at a more efficient way of doing this
+        for (Activation binding : _serviceBindings) {
+            if (bindingName.equals(binding.getBindingModel().getName()) && serviceName.equals(binding.getName())) {
+                return binding.getHandler();
+            }
+        }
+        for (Activation binding : _referenceBindings) {
+            if (bindingName.equals(binding.getBindingModel().getName()) && serviceName.equals(binding.getName())) {
+                return binding.getHandler();
+            }
+        }
+        return null;
+    }
+
     /**
      * Find the deployment activator for the specified type.
      * 
@@ -261,9 +278,16 @@ public class Deployment extends AbstractDeployment {
         _log.debug("Deploying reference bindings for deployment " + getName());
         // activate bindings for each service
         for (CompositeReferenceModel reference : getConfig().getComposite().getReferences()) {
+            int bindingCount = 0;
             for (BindingModel binding : reference.getBindings()) {
                 QName refQName = reference.getQName();
-                _log.debug("Deploying binding " + binding.getType() + " for reference " 
+                ++bindingCount;
+                if (binding.getName() == null) {
+                    _log.debug("Initializing binding name for binding " + bindingCount + " for reference "
+                            + reference.getQName() + " for deployment " + getName());
+                    binding.setName("_" + reference.getName() + "_" + binding.getType() + "_" + bindingCount);
+                }
+                _log.debug("Deploying binding " + binding.getName() + " for reference " 
                         + reference.getQName() + " for deployment " + getName());
                 
                 Activator activator = findActivator(binding.getType());
@@ -272,14 +296,14 @@ public class Deployment extends AbstractDeployment {
                 }
 
                 ServiceHandler handler = activator.activateBinding(reference.getQName(), binding);
-                Activation activation = new Activation(activator, reference.getQName(), handler);
+                Activation activation = new Activation(activator, reference.getQName(), binding, handler);
                 ServiceInterface si = getCompositeReferenceInterface(reference);
                 Binding bindingMetadata = new Binding(binding);
                 validateServiceRegistration(refQName);
                 Service svc = getDomain().registerService(refQName, si, handler, null, null, bindingMetadata);
                 activation.addService(svc);
                 _referenceBindings.add(activation);
-                        
+
                 handler.start();
             }
         }
@@ -458,7 +482,7 @@ public class Deployment extends AbstractDeployment {
                 requires.addAll(requiresImpl);
 
                 ServiceHandler handler = activator.activateService(service.getQName(), component);
-                Activation activation = new Activation(activator, service.getQName(), handler);
+                Activation activation = new Activation(activator, service.getQName(), null, handler);
                 ServiceInterface serviceIntf = getComponentServiceInterface(service);
 
                 Service svc = getDomain().registerService(service.getQName(), serviceIntf, handler, requires, service.getSecurity(), impl);
@@ -498,9 +522,15 @@ public class Deployment extends AbstractDeployment {
             // Create the reference for the composite service
             ServiceReference reference = getDomain().registerServiceReference(
                     service.getQName(), getCompositeServiceInterface(service));
-            
+            int bindingCount = 0;
             for (BindingModel binding : service.getBindings()) {
-                _log.debug("Deploying binding " + binding.getType() + " for service " 
+                ++bindingCount;
+                if (binding.getName() == null) {
+                    _log.debug("Initializing binding name for binding " + bindingCount + " for service "
+                            + service.getQName() + " for deployment " + getName());
+                    binding.setName("_" + service.getName() + "_" + binding.getType() + "_" + bindingCount);
+                }
+                _log.debug("Deploying binding " + binding.getName() + " for service " 
                         + service.getQName() + " for deployment " + getName());
                 
                 Activator activator = findActivator(binding.getType());
@@ -513,7 +543,7 @@ public class Deployment extends AbstractDeployment {
                 ((ServiceReferenceImpl)reference).setConsumerMetadata(bindingMetadata);
                 
                 ServiceHandler handler = activator.activateBinding(service.getQName(), binding);
-                Activation activation = new Activation(activator, service.getQName(), handler);
+                Activation activation = new Activation(activator, service.getQName(), binding, handler);
                 activation.addReference(reference);
                 _serviceBindings.add(activation);
                 
@@ -526,9 +556,16 @@ public class Deployment extends AbstractDeployment {
        _log.debug("Undeploying service bindings for deployment " + getName());
        try {
            for (Activation activation : _serviceBindings) {
-               activation.getHandler().stop();
-               activation.getActivator().deactivateBinding(
-                       activation.getName(), activation.getHandler());
+                try {
+                    activation.getHandler().stop();
+                } catch (Throwable e) {
+                    _log.error("Error stopping service binding.", e);
+                }
+                try {
+                    activation.getActivator().deactivateBinding(activation.getName(), activation.getHandler());
+                } catch (Throwable e) {
+                    _log.error("Error deactivating service binding.", e);
+                }
 
                for (ServiceReference reference : activation.getReferences()) {
                    reference.unregister();
@@ -544,9 +581,16 @@ public class Deployment extends AbstractDeployment {
         _log.debug("Undeploying services for deployment " + getName());
         try {
             for (Activation activation : _services) {
-                activation.getHandler().stop();
-                activation.getActivator().deactivateService(
-                        activation.getName(), activation.getHandler());
+                try {
+                    activation.getHandler().stop();
+                } catch (Throwable e) {
+                    _log.error("Error stopping service.", e);
+                }
+                try {
+                    activation.getActivator().deactivateService(activation.getName(), activation.getHandler());
+                } catch (Throwable e) {
+                    _log.error("Error deactivating service.", e);
+                }
 
                 for (Service service : activation.getServices()) {
                     service.unregister();
@@ -569,9 +613,16 @@ public class Deployment extends AbstractDeployment {
         _log.debug("Undeploying reference bindings for deployment " + getName());
         try {
             for (Activation activation : _referenceBindings) {
-                activation.getHandler().stop();
-                activation.getActivator().deactivateBinding(
-                        activation.getName(), activation.getHandler());
+                try {
+                    activation.getHandler().stop();
+                } catch (Throwable e) {
+                    _log.error("Error stopping reference binding.", e);
+                }
+                try {
+                    activation.getActivator().deactivateBinding(activation.getName(), activation.getHandler());
+                } catch (Throwable e) {
+                    _log.error("Error deactivating reference binding.", e);
+                }
 
                 for (Service service : activation.getServices()) {
                     service.unregister();
@@ -677,14 +728,16 @@ public class Deployment extends AbstractDeployment {
 class Activation {
     private Activator _activator;
     private QName _name;
+    private BindingModel _bindingModel;
     private ServiceHandler _handler;
     private List<Service> _services = new LinkedList<Service>();
     private List<Service> _promotions = new LinkedList<Service>();
     private List<ServiceReference> _references = new LinkedList<ServiceReference>();
     
-    Activation(Activator activator, QName name, ServiceHandler handler) {
+    Activation(Activator activator, QName name, BindingModel bindingModel, ServiceHandler handler) {
         _activator = activator;
         _name = name;
+        _bindingModel = bindingModel;
         _handler = handler;
     }
     
@@ -696,6 +749,10 @@ class Activation {
         return _name;
     }
     
+    BindingModel getBindingModel() {
+        return _bindingModel;
+    }
+
     ServiceHandler getHandler() {
         return _handler;
     }

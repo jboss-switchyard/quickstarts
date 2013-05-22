@@ -51,4 +51,59 @@ public class ManagedBinding implements BindingMXBean {
         return _binding.getName();
     }
 
+    @Override
+    public void start() {
+        _binding.start();
+    }
+
+    @Override
+    public void stop() {
+        _binding.stop();
+    }
+
+    @Override
+    public State getState() {
+        return State.valueOf(_binding.getState().toString());
+    }
+
+    @Override
+    public int getSuccessCount() {
+        return _binding.getMessageMetrics().getSuccessCount();
+    }
+
+    @Override
+    public int getFaultCount() {
+        return _binding.getMessageMetrics().getFaultCount();
+    }
+
+    @Override
+    public int getTotalCount() {
+        return _binding.getMessageMetrics().getTotalCount();
+    }
+
+    @Override
+    public long getTotalProcessingTime() {
+        return _binding.getMessageMetrics().getTotalProcessingTime();
+    }
+
+    @Override
+    public double getAverageProcessingTime() {
+        return _binding.getMessageMetrics().getAverageProcessingTime();
+    }
+
+    @Override
+    public int getMinProcessingTime() {
+        return _binding.getMessageMetrics().getMinProcessingTime();
+    }
+
+    @Override
+    public int getMaxProcessingTime() {
+        return _binding.getMessageMetrics().getMaxProcessingTime();
+    }
+
+    @Override
+    public void reset() {
+        _binding.resetMessageMetrics();
+    }
+    
 }

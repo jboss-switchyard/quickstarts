@@ -222,7 +222,7 @@ public class CamelExchange implements SecurityExchange {
 
         // Publish exchange initiation event
         if (ExchangePhase.IN.equals(getPhase())) {
-            _exchange.setProperty(ExchangeInitiatedEvent.EXCHANGE_INITIATED_TIME + ".start", Long.toString(System.nanoTime()));
+            _exchange.setProperty(ExchangeInitiatedEvent.EXCHANGE_INITIATED_TIME, Long.toString(System.nanoTime()));
             domain.getEventPublisher().publish(new ExchangeInitiatedEvent(this));
         }
 
@@ -230,7 +230,7 @@ public class CamelExchange implements SecurityExchange {
 
         if (isDone(sendPhase)) {
          // Publish exchange completion event
-            long duration = System.nanoTime() - _exchange.getProperty(ExchangeCompletionEvent.EXCHANGE_DURATION + ".start", 0, Long.class);
+            long duration = System.nanoTime() - _exchange.getProperty(ExchangeInitiatedEvent.EXCHANGE_INITIATED_TIME, 0, Long.class);
             getContext().setProperty(ExchangeCompletionEvent.EXCHANGE_DURATION, TimeUnit.NANOSECONDS.toMillis(duration))
                 .addLabels(BehaviorLabel.TRANSIENT.label());
             domain.getEventPublisher().publish(new ExchangeCompletionEvent(this));

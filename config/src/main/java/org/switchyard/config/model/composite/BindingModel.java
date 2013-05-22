@@ -35,6 +35,19 @@ public interface BindingModel extends TypedModel {
     public static final String BINDING = "binding";
 
     /**
+     * Gets the name <b>attribute</b> of this Model (<i>not</i> the name of the wrapped Configuration).
+     * @return the name
+     */
+    public String getName();
+
+    /**
+     * Sets the name <b>attribute</b> of this Model (<i>not</i> the name of the wrapped Configuration).
+     * @param name the name
+     * @return this BindingModel (useful for chaining)
+     */
+    public BindingModel setName(String name);
+
+    /**
      * Gets the parent service model.  This method will return null if 
      * the binding model is attached to a reference instead of a service.
      * @return the parent composite model

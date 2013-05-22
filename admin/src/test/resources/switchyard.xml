@@ -36,10 +36,7 @@ MA  02110-1301, USA.
             name="m1app">
     <sca:composite name="m1app" targetNamespace="urn:m1app:example:1.0">
         <sca:service name="M1AppService" promote="SimpleService">
-            <soap:binding.soap>
-                <soap:port secure="true">MyWebService/SOAPPort</soap:port>
-                <soap:wsdl description="foobar">service.wsdl</soap:wsdl>
-            </soap:binding.soap>
+            <sca:binding.sca />
         </sca:service>
         <sca:component name="SimpleService">
             <bean:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>

@@ -93,12 +93,12 @@ public class MockActivator extends BaseActivator {
     
     class MockServiceHandler extends BaseServiceHandler {
         @Override
-        public void start() {
+        public void doStart() {
             _startCalled = true;
         }
         
         @Override
-        public void stop() {
+        public void doStop() {
             _stopCalled = true;
         }
     }

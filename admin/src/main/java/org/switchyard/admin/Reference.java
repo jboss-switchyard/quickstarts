@@ -28,7 +28,7 @@ import javax.xml.namespace.QName;
  * 
  * Represents an application dependency exported through the SwitchYard runtime.
  */
-public interface Reference {
+public interface Reference extends MessageMetricsAware {
 
     /**
      * @return the name of this reference.
@@ -51,7 +51,25 @@ public interface Reference {
     String getInterface();
 
     /**
+     * @return the operations exposed by this service.
+     */
+    List<ServiceOperation> getServiceOperations();
+
+    /**
+     * Gets service operation by name.
+     * @param operation the name of a operation provided by this service.
+     * @return the requested operation, may be null
+     */
+    ServiceOperation getServiceOperation(String operation);
+
+    /**
      * @return the application which exports this reference.
      */
     Application getApplication();
+
+    /**
+     * @param gatewayName the name of a gateway on this service.
+     * @return the named gateway
+     */
+    Binding getGateway(String gatewayName);
 }

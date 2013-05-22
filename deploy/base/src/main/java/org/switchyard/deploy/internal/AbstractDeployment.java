@@ -27,6 +27,7 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.Activator;
+import org.switchyard.deploy.Lifecycle;
 import org.switchyard.transform.internal.TransformerRegistryLoader;
 import org.switchyard.validate.internal.ValidatorRegistryLoader;
 
@@ -200,6 +201,15 @@ public abstract class AbstractDeployment {
      * Destroy the deployment.
      */
     public abstract void destroy();
+
+    /**
+     * Retrieves the Lifecycle for the specified gateway.
+     * 
+     * @param serviceName the name of the service or reference providing the gateway.
+     * @param bindingName the name of the gateway (binding)
+     * @return the Lifecycle object associated with the gateway.
+     */
+    public abstract Lifecycle getGatwayLifecycle(QName serviceName, String bindingName);
 
     /**
      * @return the SwitchYard configuration for this deployment.

@@ -60,6 +60,13 @@ public interface SwitchYard extends MessageMetricsAware {
     List<Service> getServices();
 
     /**
+     * List of references currently registered in the SwitchYard runtime.
+     * 
+     * @return list of SwitchYard references
+     */
+    List<Reference> getReferences();
+
+    /**
      * Find a component with the specified name.
      * 
      * @param name

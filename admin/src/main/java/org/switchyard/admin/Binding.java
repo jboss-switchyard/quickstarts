@@ -18,6 +18,8 @@
  */
 package org.switchyard.admin;
 
+import org.switchyard.deploy.Lifecycle;
+
 /**
  * Binding
  * 
@@ -25,7 +27,7 @@ package org.switchyard.admin;
  * 
  * @author Rob Cernich
  */
-public interface Binding {
+public interface Binding extends MessageMetricsAware, Lifecycle {
     
     /**
      * @return the type of binding (e.g. soap)

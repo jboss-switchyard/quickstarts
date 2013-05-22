@@ -20,18 +20,22 @@
 package org.switchyard.admin.base;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.Exchange;
 import org.switchyard.admin.Application;
 import org.switchyard.admin.Binding;
 import org.switchyard.admin.ComponentService;
+import org.switchyard.admin.MessageMetrics;
 import org.switchyard.admin.Service;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**
  * Base implementation for Service.
@@ -40,9 +44,9 @@ public class BaseService implements Service {
     
     private QName _name;
     private String _serviceInterface;
-    private Application _application;
+    private BaseApplication _application;
     private ComponentService _promotedService;
-    private List<Binding> _gateways = new LinkedList<Binding>();
+    private Map<String, Binding> _gateways = new LinkedHashMap<String, Binding>();
     
     /**
      * Create a new BaseService.
@@ -55,9 +59,9 @@ public class BaseService implements Service {
      */
     public BaseService(QName name,
             String serviceInterface,
-            Application application, 
+            BaseApplication application, 
             ComponentService implementation,
-            List<Binding> gateways) {
+            Map<String, Binding> gateways) {
         
         _name = name;
         _serviceInterface = serviceInterface;
@@ -72,20 +76,22 @@ public class BaseService implements Service {
      * @param serviceConfig the composite service config.
      * @param application the application containing the service.
      */
-    public BaseService(CompositeServiceModel serviceConfig, Application application) {
+    public BaseService(CompositeServiceModel serviceConfig, BaseApplication application) {
         _name = serviceConfig.getQName();
         _application = application;
         if (serviceConfig.getInterface() != null) {
             _serviceInterface = serviceConfig.getInterface().getInterface();
         }
         _promotedService = getPromotedService(application, serviceConfig);
-        _gateways = new ArrayList<Binding>();
+        _gateways = new LinkedHashMap<String, Binding>();
 
-        int idx = 1;
+        int idx = 0;
         for (BindingModel bindingModel : serviceConfig.getBindings()) {
             // Generate binding name for now until tooling and config are updated to expose it
-            String name = bindingModel.getType() + idx++;
-            _gateways.add(new BaseBinding(bindingModel.getType(), name, bindingModel.toString()));
+            ++idx;
+            String name = bindingModel.getName() == null ? "_" + _name.getLocalPart() + "_" + bindingModel.getType()
+                    + "_" + idx : bindingModel.getName();
+            _gateways.put(name, new BaseBinding(_application, _name, bindingModel.getType(), name, bindingModel.toString()));
         }
     }
     
@@ -96,7 +102,15 @@ public class BaseService implements Service {
 
     @Override
     public List<Binding> getGateways() {
-        return _gateways;
+        return new ArrayList<Binding>(_gateways.values());
+    }
+
+    @Override
+    public Binding getGateway(String gatewayName) {
+        if (_gateways.containsKey(gatewayName)) {
+            return _gateways.get(gatewayName);
+        }
+        return null;
     }
 
     @Override
@@ -120,5 +134,27 @@ public class BaseService implements Service {
             return null;
         }
         return application.getComponentService(componentServiceModel.getQName());
+    }
+
+    @Override
+    public MessageMetrics getMessageMetrics() {
+        return _promotedService.getMessageMetrics();
+    }
+
+    @Override
+    public void resetMessageMetrics() {
+        for (final Binding binding : _gateways.values()) {
+            binding.resetMessageMetrics();
+        }
+        _promotedService.resetMessageMetrics();
+    }
+
+    @Override
+    public void recordMetrics(Exchange exchange) {
+        final String gatewayName = exchange.getContext().getPropertyValue(ExchangeCompletionEvent.GATEWAY_NAME);
+        if (gatewayName != null && _gateways.containsKey(gatewayName)) {
+            _gateways.get(gatewayName).recordMetrics(exchange);
+        }
+        _promotedService.recordMetrics(exchange);
     }
 }

@@ -78,6 +78,23 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
      * {@inheritDoc}
      */
     @Override
+    public String getName() {
+        return getModelAttribute("name");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BindingModel setName(String name) {
+        setModelAttribute("name", name);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected final Model setModelChildrenOrder(String... childrenOrder) {
         Set<String> mco = new LinkedHashSet<String>();
         mco.add(OperationSelectorModel.OPERATION_SELECTOR + ".*");

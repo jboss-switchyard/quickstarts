@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,48 +16,50 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
-package org.switchyard.admin;
-
-import java.util.List;
-
-import javax.xml.namespace.QName;
+package org.switchyard.admin.mbean;
 
 /**
- * Service
- * 
- * Represents an application service exported through the SwitchYard runtime.
+ * LifecycleMXBean
+ * <p/>
+ * Common operations for manipulating object lifecycle.
  */
-public interface Service extends MessageMetricsAware {
+public interface LifecycleMXBean {
 
     /**
-     * @return the name of this service.
+     * Represents the current state of a Lifecycle object.
      */
-    QName getName();
+    public enum State {
+        /** No state. */
+        NONE,
+        /**
+         * In the process of starting, i.e. start() has been invoked, but has
+         * not yet completed.
+         */
+        STARTING,
+        /**
+         * The object has been started and is running, i.e. start() has been
+         * invoked and has successfully completed.
+         */
+        STARTED,
+        /**
+         * In the process of stopping, i.e. stop() has been invoked, but has not
+         * yet completed.
+         */
+        STOPPING;
+    }
 
     /**
-     * @return the component service promoted by this service.
+     * Start processing.
      */
-    ComponentService getPromotedService();
+    void start();
 
     /**
-     * @return the gateway bindings for this service.
+     * Stop processing.
      */
-    List<Binding> getGateways();
+    void stop();
 
     /**
-     * @return the interface implemented by this service.
+     * @return the current state of this object.
      */
-    String getInterface();
-
-    /**
-     * @return the application which exports this service.
-     */
-    Application getApplication();
-
-    /**
-     * @param gatewayName the name of a gateway on this service.
-     * @return the named gateway
-     */
-    Binding getGateway(String gatewayName);
+    State getState();
 }

@@ -18,7 +18,10 @@
  */
 package org.switchyard.admin.base;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.admin.Binding;
+import org.switchyard.deploy.Lifecycle;
 
 /**
  * BaseBinding
@@ -27,8 +30,10 @@ import org.switchyard.admin.Binding;
  * 
  * @author Rob Cernich
  */
-public class BaseBinding implements Binding {
+public class BaseBinding extends BaseMessageMetricsAware implements Binding {
 
+    private final BaseApplication _application;
+    private final QName _serviceName;
     private final String _type;
     private final String _name;
     private final String _configuration;
@@ -36,11 +41,16 @@ public class BaseBinding implements Binding {
     /**
      * Create a new BaseBinding.
      * 
+     * @param application the containing application
+     * @param serviceName the name of the service or reference providing this
+     *            binding
      * @param type the binding's type (e.g. soap)
      * @param name the binding's name
      * @param configuration the binding's raw configuration
      */
-    public BaseBinding(String type, String name, String configuration) {
+    public BaseBinding(BaseApplication application, QName serviceName, String type, String name, String configuration) {
+        _application = application;
+        _serviceName = serviceName;
         _type = type;
         _name = name;
         _configuration = configuration;
@@ -61,4 +71,31 @@ public class BaseBinding implements Binding {
         return _name;
     }
 
+    @Override
+    public void start() {
+        /*
+         * TODO: should we verify that we could retrieve the service handler?
+         * should we check the state first?
+         */
+        getGatewayLifecycle().start();
+    }
+
+    @Override
+    public void stop() {
+        /*
+         * TODO: should we verify that we could retrieve the service handler?
+         * should we check the state first?
+         */
+        getGatewayLifecycle().stop();
+    }
+
+    @Override
+    public State getState() {
+        final Lifecycle lifecycle = getGatewayLifecycle();
+        return lifecycle == null ? State.NONE : lifecycle.getState();
+    }
+
+    private Lifecycle getGatewayLifecycle() {
+        return _application.getDeployment().getGatwayLifecycle(_serviceName, _name);
+    }
 }

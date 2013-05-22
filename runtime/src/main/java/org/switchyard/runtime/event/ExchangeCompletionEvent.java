@@ -34,7 +34,12 @@ public class ExchangeCompletionEvent extends EventObject {
      * Exchange property name used to record the duration of a completed exchange.
      */
     public static final String EXCHANGE_DURATION = "org.switchyard.exchangeDurationMS";
-    
+    /**
+     * Exchange property name used to record the name of the gateway being
+     * invoked, if any.
+     */
+    public static final String GATEWAY_NAME = "org.switchyard.exchangeGatewayName";
+
     private static final long serialVersionUID = 1L;
     
     /**

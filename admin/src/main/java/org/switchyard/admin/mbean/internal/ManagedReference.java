@@ -78,4 +78,44 @@ public class ManagedReference implements ReferenceMXBean {
         return _application;
     }
 
+    @Override
+    public int getSuccessCount() {
+        return _reference.getMessageMetrics().getSuccessCount();
+    }
+
+    @Override
+    public int getFaultCount() {
+        return _reference.getMessageMetrics().getFaultCount();
+    }
+
+    @Override
+    public int getTotalCount() {
+        return _reference.getMessageMetrics().getTotalCount();
+    }
+
+    @Override
+    public long getTotalProcessingTime() {
+        return _reference.getMessageMetrics().getTotalProcessingTime();
+    }
+
+    @Override
+    public double getAverageProcessingTime() {
+        return _reference.getMessageMetrics().getAverageProcessingTime();
+    }
+
+    @Override
+    public int getMinProcessingTime() {
+        return _reference.getMessageMetrics().getMinProcessingTime();
+    }
+
+    @Override
+    public int getMaxProcessingTime() {
+        return _reference.getMessageMetrics().getMaxProcessingTime();
+    }
+
+    @Override
+    public void reset() {
+        _reference.resetMessageMetrics();
+    }
+    
 }

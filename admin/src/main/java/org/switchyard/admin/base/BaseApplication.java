@@ -39,37 +39,41 @@ import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.property.PropertyModel;
+import org.switchyard.config.model.switchyard.EsbInterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.validate.ValidateModel;
+import org.switchyard.deploy.internal.AbstractDeployment;
 
 /**
  * Base implementation of Application.
  */
 public class BaseApplication implements Application {
     
-    private QName _name;
+    private final QName _name;
     private Map<QName, Service> _services;
     private Map<QName, Reference> _references;
     private Map<QName, ComponentService> _componentServices;
     private List<Transformer> _transformers;
     private List<Validator> _validators;
-    private SwitchYardModel _config;
+    private AbstractDeployment _deployment;
+    private Map<String, String> _properties;
     
     /**
      * Create a new BaseApplication.
-     * @param name application name
-     * @param config application descriptor model
+     * @param deployment the deployment representing this application
      */
-    public BaseApplication(QName name, SwitchYardModel config) {
-        _name = name;
-        _config = config;
+    public BaseApplication(AbstractDeployment deployment) {
+        _name = deployment.getName();
+        _deployment = deployment;
         
         addTransformers();
         addValidators();
         addComponents();
         addServices();
         addReferences();
+        addProperties();
     }
 
     @Override
@@ -111,7 +115,7 @@ public class BaseApplication implements Application {
     
     @Override
     public SwitchYardModel getConfig() {
-        return _config;
+        return _deployment.getConfig();
     }
 
     @Override
@@ -141,60 +145,72 @@ public class BaseApplication implements Application {
     }
 
 
+    @Override
+    public Map<String, String> getProperties() {
+        return Collections.unmodifiableMap(_properties);
+    }
+
+    /**
+     * @return the deployment associated with this application.
+     */
+    public AbstractDeployment getDeployment() {
+        return _deployment;
+    }
+
     private void addServices() {
         _services = new LinkedHashMap<QName, Service>();
-        if (_config.getComposite().getServices() == null) {
+        if (getConfig().getComposite().getServices() == null) {
             return;
         }
         
-        for (CompositeServiceModel service : _config.getComposite().getServices()) {
+        for (CompositeServiceModel service : getConfig().getComposite().getServices()) {
             _services.put(service.getQName(), new BaseService(service, this));
         }
     }
     
     private void addReferences() {
         _references = new LinkedHashMap<QName, Reference>();
-        if (_config.getComposite().getReferences() == null) {
+        if (getConfig().getComposite().getReferences() == null) {
             return;
         }
         
-        for (CompositeReferenceModel ref : _config.getComposite().getReferences()) {
+        for (CompositeReferenceModel ref : getConfig().getComposite().getReferences()) {
             _references.put(ref.getQName(), new BaseReference(ref, this));
         }
     }
 
     private void addTransformers() {
         _transformers = new LinkedList<Transformer>();
-        if (_config.getTransforms() == null) {
+        if (getConfig().getTransforms() == null) {
             return;
         }
-        for (TransformModel transformModel : _config.getTransforms().getTransforms()) {
+        for (TransformModel transformModel : getConfig().getTransforms().getTransforms()) {
             _transformers.add(new BaseTransformer(transformModel));
         }
     }
     
     private void addValidators() {
         _validators = new LinkedList<Validator>();
-        if (_config.getValidates() == null) {
+        if (getConfig().getValidates() == null) {
             return;
         }
-        for (ValidateModel validateModel : _config.getValidates().getValidates()) {
+        for (ValidateModel validateModel : getConfig().getValidates().getValidates()) {
             _validators.add(new BaseValidator(validateModel));
         }
     }
 
     private void addComponents() {
         _componentServices = new LinkedHashMap<QName, ComponentService>();
-        if (_config.getComposite().getComponents() == null) {
+        if (getConfig().getComposite().getComponents() == null) {
             return;
         }
-        for (ComponentModel component : _config.getComposite().getComponents()) {
+        for (ComponentModel component : getConfig().getComposite().getComponents()) {
             // TODO: we need a separate node for components, to support cases
             // where the component implements no services.  Should also consider
             // multiple services per component.
             if (component.getServices().size() > 0) {
                 ComponentServiceModel service = component.getServices().get(0);
-                if (service.getInterface() == null) { 
+                if (service.getInterface() == null || EsbInterfaceModel.ESB.equals(service.getInterface().getType())) { 
                     _componentServices.put(service.getQName(), new BaseNoopComponentService(service, component, this));
                 } else if (InterfaceModel.JAVA.equals(service.getInterface().getType())) {
                     _componentServices.put(service.getQName(), new BaseJavaComponentService(service, component, this));
@@ -204,4 +220,15 @@ public class BaseApplication implements Application {
             }
         }
     }
+
+    private void addProperties() {
+        _properties = new LinkedHashMap<String, String>();
+        if (getConfig().getComposite() == null) {
+            return;
+        }
+        for (PropertyModel property : getConfig().getComposite().getProperties().values()) {
+            _properties.put(property.getName(), property.getValue());
+        }
+    }
+
 }

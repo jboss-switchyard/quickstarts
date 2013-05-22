@@ -25,16 +25,6 @@ import org.switchyard.ExchangeHandler;
  * Lifecycle-aware version of ExchangeHandler.  The deployer will invoke
  * start() and stop() in accordance with the deployment's lifecycle.
  */
-public interface ServiceHandler extends ExchangeHandler {
-    
-    /**
-     * Start processing.
-     */
-    void start();
-    
-    /**
-     * Stop processing.
-     */
-    void stop();
+public interface ServiceHandler extends ExchangeHandler, Lifecycle {
     
 }

@@ -103,6 +103,14 @@ public abstract class BaseComponentService extends BaseMessageMetricsAware imple
         return _implementationConfiguration;
     }
 
+    @Override
+    public void resetMessageMetrics() {
+        for (final ComponentReference reference : _references) {
+            reference.resetMessageMetrics();
+        }
+        super.resetMessageMetrics();
+    }
+
     private String getInterfaceName(InterfaceModel interfaceModel) {
         if (interfaceModel == null) {
             return null;

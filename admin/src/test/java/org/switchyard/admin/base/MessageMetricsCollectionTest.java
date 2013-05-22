@@ -41,6 +41,7 @@ public class MessageMetricsCollectionTest extends SwitchYardBuilderTestBase {
     private static final String OPERATION_NAME = "greet";
     private static final QName TEST_SERVICE = new QName("urn:m1app:example:1.0", "M1AppService");
     private static final QName TEST_PROMOTED_SERVICE = new QName("urn:m1app:example:1.0", "SimpleService");
+    private static final String TEST_GATEWAY = "_M1AppService_sca_1";
 
     public MessageMetricsCollectionTest() throws Exception {
         super();
@@ -71,6 +72,7 @@ public class MessageMetricsCollectionTest extends SwitchYardBuilderTestBase {
         ComponentService componentService = _switchYard.getApplication(TEST_APP).getComponentService(TEST_PROMOTED_SERVICE);
         assertEquals(10.0, componentService.getMessageMetrics().getAverageProcessingTime(), 0);
         assertEquals(10.0, componentService.getServiceOperation(OPERATION_NAME).getMessageMetrics().getAverageProcessingTime(), 0);
+        assertEquals(10.0, _switchYard.getApplication(TEST_APP).getService(TEST_SERVICE).getGateway(TEST_GATEWAY).getMessageMetrics().getAverageProcessingTime(), 0);
     }
 
     private Exchange createMock() {
@@ -83,5 +85,6 @@ public class MessageMetricsCollectionTest extends SwitchYardBuilderTestBase {
         Property property = mock(Property.class);
         when(property.getValue()).thenReturn(new Long(10));
         when(ex.getContext().getProperty(ExchangeCompletionEvent.EXCHANGE_DURATION)).thenReturn(property);
+        when(ex.getContext().getPropertyValue(ExchangeCompletionEvent.GATEWAY_NAME)).thenReturn(TEST_GATEWAY);
     }
 }

@@ -21,7 +21,10 @@ package org.switchyard.test;
 
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.deploy.Activator;
+import org.switchyard.deploy.Lifecycle;
 import org.switchyard.deploy.internal.AbstractDeployment;
 
 /**
@@ -63,5 +66,10 @@ public class SimpleTestDeployment extends AbstractDeployment {
         if (getDomain() != null) {
             getDomain().destroy();
         }
+    }
+
+    @Override
+    public Lifecycle getGatwayLifecycle(QName serviceName, String bindingName) {
+        return null;
     }
 }

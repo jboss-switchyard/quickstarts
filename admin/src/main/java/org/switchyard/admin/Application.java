@@ -20,6 +20,7 @@
 package org.switchyard.admin;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -90,4 +91,9 @@ public interface Application {
      * @return the config model for the application descriptor
      */
     public SwitchYardModel getConfig();
+    
+    /**
+     * @return the properties defined for this application.
+     */
+    public Map<String, String> getProperties();
 }

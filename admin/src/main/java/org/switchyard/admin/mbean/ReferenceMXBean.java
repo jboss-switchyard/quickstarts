@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Management interface for a composite reference consumed by a SwitchYard application.
  */
-public interface ReferenceMXBean {
+public interface ReferenceMXBean extends MessageMetricsMXBean {
 
     /**
      * Reference name.

@@ -21,7 +21,7 @@ package org.switchyard.admin.mbean;
 /**
  * Management interface for a gateway binding defined on a service or reference.
  */
-public interface BindingMXBean {
+public interface BindingMXBean extends LifecycleMXBean, MessageMetricsMXBean {
     
     /**
      * The binding type.
