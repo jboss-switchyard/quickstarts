@@ -22,6 +22,7 @@ package org.switchyard.quickstarts.soap.binding.rpc;
 import java.io.IOException;
 
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
+import org.switchyard.component.soap.util.SOAPUtil;
 
 /**
  * Client for SOAP binding.
@@ -49,8 +50,7 @@ public class SoapBindingClient {
         } else {
             HTTPMixIn http = new HTTPMixIn();
             http.initialize();
-            //System.out.println(http.sendString(SWITCHYARD_WEB_SERVICE, String.format(SOAP_TEMPLATE, args[0], "English"), HTTPMixIn.HTTP_POST));
-            System.out.println(http.postResource(SWITCHYARD_WEB_SERVICE, "/xml/soap-request.xml"));
+            SOAPUtil.prettyPrint(http.postString(SWITCHYARD_WEB_SERVICE, String.format(SOAP_TEMPLATE, args[0], "English")), System.out);
         }
     }
 }

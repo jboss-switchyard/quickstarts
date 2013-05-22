@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<route xmlns="http://camel.apache.org/schema/spring">
+  <onException>
+    <exception>org.switchyard.quickstarts.soap.addressing.ItemNotAvailable</exception>
+    <to uri="switchyard://FaultServiceExternal?operationName=fault"/>
+  </onException>
+  <from uri="switchyard://WarehouseService"/>
+  <log message="WarehouseService - message received: ${body}"/>
+  <process ref="warehouseProcessor"/>
+  <to uri="switchyard://ClientServiceExternal?operationName=order"/>
+</route>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+    <S:Header>
+        <To xmlns="http://www.w3.org/2005/08/addressing">http://www.w3.org/2005/08/addressing/anonymous</To>
+        <Action xmlns="http://www.w3.org/2005/08/addressing" S:mustUnderstand="1">http://www.w3.org/2005/08/addressing/fault</Action>
+        <MessageID xmlns="http://www.w3.org/2005/08/addressing">uuid:2ebbc3d7-f35f-4787-ab30-1f32572d681a</MessageID>
+        <RelatesTo xmlns="http://www.w3.org/2005/08/addressing">uuid:3d3fcbbb-fd43-4118-b40e-62577894f39a</RelatesTo>
+    </S:Header>
+    <S:Body>
+        <S:Fault xmlns:ns4="http://www.w3.org/2003/05/soap-envelope">
+            <faultcode>S:Server</faultcode>
+            <faultstring>org.switchyard.HandlerException: org.switchyard.quickstarts.soap.addressing.UnknownItem: Sorry Airbus is no longer available with us!</faultstring>
+        </S:Fault>
+    </S:Body>
+</S:Envelope>

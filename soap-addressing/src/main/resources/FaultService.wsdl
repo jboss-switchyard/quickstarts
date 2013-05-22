@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions targetNamespace="urn:switchyard-quickstart:soap-addressing:1.0" name="FaultService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+    xmlns:tns="urn:switchyard-quickstart:soap-addressing:1.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+    xmlns:wsp="http://www.w3.org/ns/ws-policy"
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+
+  <types>
+    <xs:schema version="1.0" targetNamespace="urn:switchyard-quickstart:soap-addressing:1.0"
+      xmlns:tns="urn:switchyard-quickstart:soap-addressing:1.0">
+
+      <xs:element name="ItemNotAvailable" type="tns:ItemNotAvailable"/>
+
+      <xs:complexType name="ItemNotAvailable">
+        <xs:sequence>
+          <xs:element name="message" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </types>
+  <message name="ItemNotAvailable">
+    <part name="fault" element="tns:ItemNotAvailable"/>
+  </message>
+  <portType name="FaultService">
+    <operation name="fault">
+      <input message="tns:ItemNotAvailable"/>
+    </operation>
+  </portType>
+  <binding name="FaultServicePortBinding" type="tns:FaultService">
+    <wsaw:UsingAddressing required="true"/>
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="fault">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+    </operation>
+  </binding>
+  <service name="FaultService">
+    <port name="FaultServicePort" binding="tns:FaultServicePortBinding">
+      <soap:address location="REPLACE_WITH_ACTUAL_URL"/>
+    </port>
+  </service>
+</definitions>
+
