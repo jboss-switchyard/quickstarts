@@ -22,63 +22,40 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>switchyard-component-test-parent</artifactId>
-    <packaging>pom</packaging>
-    <name>SwitchYard: Component Test Parent</name>
-    <description>The parent for SwitchYard component test modules</description>
-    <url>http://switchyard.org</url>
     <parent>
         <groupId>org.switchyard.components</groupId>
-        <artifactId>switchyard-components-parent</artifactId>
+        <artifactId>switchyard-component-test-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
-    <modules>
-        <module>mixins/amqp</module>
-        <module>mixins/activemq</module>
-        <module>mixins/bpm</module>
-        <module>mixins/naming</module>
-        <module>mixins/cdi</module>
-        <module>mixins/hornetq</module>
-        <module>mixins/http</module>
-        <module>mixins/jca</module>
-        <module>mixins/smooks</module>
-    </modules>
+    <artifactId>switchyard-component-test-mixin-activemq</artifactId>
+    <packaging>jar</packaging>
+    <name>SwitchYard: ActiveMQ Test MixIn</name>
+    <description>ActiveMQ Test MixIn classes</description>
+    <url>http://switchyard.org</url>
     <dependencies>
         <!-- internal dependencies -->
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-runtime</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-deploy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-test-mixin-naming</artifactId>
         </dependency>
         <!-- external dependencies -->
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>compile</scope>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-ext</artifactId>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-rar</artifactId>
+            <type>rar</type>
         </dependency>
     </dependencies>
 </project>
