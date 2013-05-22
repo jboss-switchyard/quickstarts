@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<route xmlns="http://camel.apache.org/schema/spring" id="org.switchyard.quickstarts.soap-binding-rpc">
-    <log message="Request is: ${body}" />
-    <to uri="switchyard://HelloWorldWSExternal?operationName=sayHello"/>
-    <log message="Response is: ${body}" />
-</route>
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="org.switchyard.quickstarts.soap-binding-rpc">
+        <from uri="switchyard://HelloService"/>
+        <log message="Request is: ${body}" />
+        <to uri="switchyard://HelloWorldWSExternal?operationName=sayHello"/>
+        <log message="Response is: ${body}" />
+    </route>
+</routes>
