@@ -23,6 +23,7 @@ import org.jboss.as.controller.OperationDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.as.controller.SimpleOperationDefinitionBuilder;
+import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.as.controller.descriptions.NonResolvingResourceDescriptionResolver;
 import org.jboss.dmr.ModelType;
 
@@ -61,6 +62,11 @@ interface Operations {
             .setAllowNull(true)
             .build();
 
+    SimpleAttributeDefinition PROMOTED_REFERENCE = SimpleAttributeDefinitionBuilder.create(SwitchYardModelConstants.PROMOTED_REFERENCE, ModelType.STRING)
+            .setAllowExpression(true)
+            .setAllowNull(true)
+            .build();
+
     SimpleAttributeDefinition PROMOTED_SERVICE = SimpleAttributeDefinitionBuilder.create(SwitchYardModelConstants.PROMOTED_SERVICE, ModelType.STRING)
             .setAllowExpression(true)
             .setAllowNull(true)
@@ -87,6 +93,11 @@ interface Operations {
             .build();
 
     SimpleAttributeDefinition URL = SimpleAttributeDefinitionBuilder.create(SwitchYardModelConstants.URL, ModelType.STRING)
+            .setAllowExpression(true)
+            .setAllowNull(true)
+            .build();
+
+    SimpleAttributeDefinition REFERENCE_NAME = SimpleAttributeDefinitionBuilder.create(SwitchYardModelConstants.REFERENCE_NAME, ModelType.STRING)
             .setAllowExpression(true)
             .setAllowNull(true)
             .build();
@@ -166,6 +177,13 @@ interface Operations {
             .setMaxSize(2)
             .build();
 
+    SimpleAttributeDefinition PROPERTIES = SimpleAttributeDefinitionBuilder.create(ModelDescriptionConstants.PROPERTIES, ModelType.LIST)
+            .setAllowExpression(true)
+            .setAllowNull(true)
+            .setMinSize(2)
+            .setMaxSize(2)
+            .build();
+
     SimpleAttributeDefinition SERVICES = SimpleAttributeDefinitionBuilder.create(SwitchYardModelConstants.SERVICES, ModelType.LIST)
             .setAllowExpression(true)
             .setAllowNull(true)
@@ -191,6 +209,14 @@ interface Operations {
             .setReplyType(ModelType.LIST)
             .build();
 
+    OperationDefinition LIST_REFERENCES = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.LIST_REFERENCES, new NonResolvingResourceDescriptionResolver())
+            .setReadOnly()
+            .setRuntimeOnly()
+            .setParameters(APPLICATION_NAME)
+            .setReplyParameters(NAME, APPLICATION)
+            .setReplyType(ModelType.LIST)
+            .build();
+
     OperationDefinition LIST_SERVICES = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.LIST_SERVICES, new NonResolvingResourceDescriptionResolver())
             .setReadOnly()
             .setRuntimeOnly()
@@ -203,7 +229,15 @@ interface Operations {
             .setReadOnly()
             .setRuntimeOnly()
             .setParameters(NAME)
-            .setReplyParameters(NAME, SERVICES, COMPONENT_SERVICES, TRANSFORMERS, ARTIFACTS, VALIDATORS)
+            .setReplyParameters(NAME, SERVICES, COMPONENT_SERVICES, TRANSFORMERS, ARTIFACTS, VALIDATORS, PROPERTIES)
+            .setReplyType(ModelType.LIST)
+            .build();
+
+    OperationDefinition READ_REFERENCE = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.READ_REFERENCE, new NonResolvingResourceDescriptionResolver())
+            .setReadOnly()
+            .setRuntimeOnly()
+            .setParameters(REFERENCE_NAME, APPLICATION_NAME)
+            .setReplyParameters(NAME, APPLICATION, INTERFACE, PROMOTED_REFERENCE, GATEWAYS)
             .setReplyType(ModelType.LIST)
             .build();
 
@@ -226,9 +260,27 @@ interface Operations {
     OperationDefinition SHOW_METRICS = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.SHOW_METRICS, new NonResolvingResourceDescriptionResolver())
             .setReadOnly()
             .setRuntimeOnly()
-            .setParameters(SERVICE_NAME)
+            .setParameters(SERVICE_NAME, TYPE)
             .setReplyParameters(SUCCESS_COUNT, FAULT_COUNT, TOTAL_COUNT, AVERAGE_TIME, MIN_TIME, MAX_TIME, TOTAL_TIME)
             .setReplyType(ModelType.LIST)
+            .build();
+
+    OperationDefinition RESET_METRICS = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.RESET_METRICS, new NonResolvingResourceDescriptionResolver())
+            .setReadOnly()
+            .setRuntimeOnly()
+            .setParameters(NAME, APPLICATION_NAME)
+            .build();
+
+    OperationDefinition STOP_GATEWAY = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.STOP_GATEWAY, new NonResolvingResourceDescriptionResolver())
+            .setReadOnly()
+            .setRuntimeOnly()
+            .setParameters(NAME, SERVICE_NAME, APPLICATION_NAME)
+            .build();
+
+    OperationDefinition START_GATEWAY = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.START_GATEWAY, new NonResolvingResourceDescriptionResolver())
+            .setReadOnly()
+            .setRuntimeOnly()
+            .setParameters(NAME, SERVICE_NAME, APPLICATION_NAME)
             .build();
 
 }

@@ -20,7 +20,9 @@ package org.switchyard.as7.extension.admin;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.INTERFACE;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAME;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.PROPERTIES;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.TYPE;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.VALUE;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.ARTIFACTS;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.AVERAGE_TIME;
@@ -34,9 +36,11 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.IMPLEMENTATI
 import static org.switchyard.as7.extension.SwitchYardModelConstants.MAX_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.MIN_TIME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.OPERATIONS;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.PROMOTED_REFERENCE;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.PROMOTED_SERVICE;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.REFERENCES;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICES;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.STATE;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SUCCESS_COUNT;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TO;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.TOTAL_COUNT;
@@ -46,12 +50,15 @@ import static org.switchyard.as7.extension.SwitchYardModelConstants.URL;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.VALIDATORS;
 
 import java.math.BigDecimal;
+import java.util.Map;
+
 import org.jboss.dmr.ModelNode;
 import org.switchyard.admin.Application;
 import org.switchyard.admin.Binding;
 import org.switchyard.admin.ComponentReference;
 import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.MessageMetrics;
+import org.switchyard.admin.Reference;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.ServiceOperation;
 import org.switchyard.admin.Transformer;
@@ -88,7 +95,23 @@ final public class ModelNodeCreationUtil {
      *              ],
      *          },
      *          ...
-     *      ]
+     *      ],
+     *      "references" =&gt; [
+     *          {
+     *              "name" =&gt; "referenceName",
+     *              "application" =&gt; "name",
+     *              "interface" =&gt; "interfaceName",
+     *              "promotedReference" =&gt; "promotedReferenceName",
+     *              "gateways" =&gt; [
+     *                  {
+     *                      "type" =&gt; "typeName",
+     *                      "configuration" =&gt; "&lt;?binding.foo ..."
+     *                  },
+     *                  ...
+     *              ],
+     *          },
+     *          ...
+     *      ],
      *      "componentServices" =&gt; [
      *          {
      *              "name" =&gt; "serviceName",
@@ -104,7 +127,7 @@ final public class ModelNodeCreationUtil {
      *              ],
      *          },
      *          ...
-     *      ]
+     *      ],
      *      "transformers" =&gt; [
      *          {
      *              "from" =&gt; "fromType",
@@ -112,18 +135,25 @@ final public class ModelNodeCreationUtil {
      *              "type" =&gt; "transformerType",
      *          },
      *          ...
-     *      ]
+     *      ],
      *      "artifacts" =&gt; [
      *          {
      *              "name" =&gt; "nameType",
      *              "url" =&gt; "urlType",
      *          },
      *          ...
-     *      ]
+     *      ],
      *      "validators" =&gt; [
      *          {
      *              "name" =&gt; "typeName",
      *              "type" =&gt; "XML",
+     *          },
+     *          ...
+     *      ],
+     *      "properties" =&gt; [
+     *          {
+     *              "key" =&gt; "some.key",
+     *              "value" =&gt; "value",
      *          },
      *          ...
      *      ]
@@ -137,6 +167,11 @@ final public class ModelNodeCreationUtil {
         ModelNode servicesNode = new ModelNode();
         for (Service service : application.getServices()) {
             servicesNode.add(createServiceNode(service));
+        }
+
+        ModelNode referencesNode = new ModelNode();
+        for (Reference reference : application.getReferences()) {
+            referencesNode.add(createReferenceNode(reference));
         }
 
         ModelNode componentServicesNode = new ModelNode();
@@ -163,14 +198,76 @@ final public class ModelNodeCreationUtil {
             }
         }
 
+        ModelNode propertiesNode = new ModelNode();
+        if (application.getProperties() != null) {
+            for (Map.Entry<String, String> property : application.getProperties().entrySet()) {
+                ModelNode propertyNode = new ModelNode();
+                propertyNode.get("key").set(property.getKey());
+                propertyNode.get(VALUE).set(property.getValue());
+                propertiesNode.add(propertyNode);
+            }
+        }
+
         applicationNode.get(NAME).set(application.getName().toString());
         applicationNode.get(SERVICES).set(servicesNode);
+        applicationNode.get(REFERENCES).set(referencesNode);
         applicationNode.get(COMPONENT_SERVICES).set(componentServicesNode);
         applicationNode.get(TRANSFORMERS).set(transformersNode);
         applicationNode.get(ARTIFACTS).set(artifactsNode);
         applicationNode.get(VALIDATORS).set(validatorsNode);
+        applicationNode.get(PROPERTIES).set(propertiesNode);
 
         return applicationNode;
+    }
+
+    /**
+     * Creates a new {@link ModelNode} tree from the {@link Reference}. The tree
+     * has the form: <br>
+     * <code><pre>
+     *      "name" =&gt; "referenceName",
+     *      "application" =&gt; "name",
+     *      "interface" =&gt; "interfaceName",
+     *      "promotedReference" =&gt; "promotedReferenceName",
+     *      "gateways" =&gt; [
+     *          {
+     *              "type" =&gt; "typeName",
+     *              "configuration" =&gt; "&lt;?binding.foo ..."
+     *          },
+     *          ...
+     *      ]
+     * </pre></code>
+     * 
+     * @param reference the {@link Reference} used to populate the node.
+     * @return a new {@link ModelNode}
+     */
+    public static ModelNode createReferenceNode(Reference reference) {
+        ModelNode referenceNode = new ModelNode();
+
+        referenceNode.get(NAME).set(reference.getName().toString());
+
+        referenceNode.get(APPLICATION).set(reference.getApplication().getName().toString());
+
+        String interfaceName = reference.getInterface();
+        if (interfaceName == null) {
+            referenceNode.get(INTERFACE);
+        } else {
+            referenceNode.get(INTERFACE).set(interfaceName);
+        }
+
+        String promotedReference = reference.getPromotedReference();
+        if (promotedReference == null) {
+            referenceNode.get(PROMOTED_REFERENCE);
+        } else {
+            referenceNode.get(PROMOTED_REFERENCE).set(promotedReference);
+        }
+
+        ModelNode gatewaysNode = new ModelNode();
+        for (Binding gateway : reference.getGateways()) {
+            gatewaysNode.add(createGateway(gateway));
+        }
+        referenceNode.get(GATEWAYS).set(gatewaysNode);
+
+        return referenceNode;
     }
 
     /**
@@ -281,6 +378,27 @@ final public class ModelNodeCreationUtil {
     }
 
     /**
+     * Creates a new {@link ModelNode} tree from the {@link Reference}. The tree
+     * has the form: <br>
+     * <code><pre>
+     *      "name" =&gt; "referenceName",
+     *      "application =&gt; "applicationName",
+     * </pre></code>
+     * 
+     * @param reference the {@link Reference} used to populate the node.
+     * @return a new {@link ModelNode}
+     */
+    public static ModelNode createSimpleReferenceNode(Reference reference) {
+        ModelNode referenceNode = new ModelNode();
+
+        referenceNode.get(NAME).set(reference.getName().toString());
+
+        referenceNode.get(APPLICATION).set(reference.getApplication().getName().toString());
+
+        return referenceNode;
+    }
+
+    /**
      * Creates a new {@link ModelNode} tree from the {@link Service}. The tree
      * has the form: <br>
      * <code><pre>
@@ -305,8 +423,10 @@ final public class ModelNodeCreationUtil {
      * Creates a new {@link ModelNode} tree from the {@link Service}. The tree
      * has the form: <br>
      * <code><pre>
+     *      "name" =&gt; "name",
      *      "type" =&gt; "typeName",
      *      "configuration" =&gt; "&lt;?binding.foo ..."
+     *      "state" =&gt; "STARTED",
      * </pre></code>
      * 
      * @param binding the {@link Binding} used to populate the node.
@@ -314,6 +434,12 @@ final public class ModelNodeCreationUtil {
      */
     public static ModelNode createGateway(Binding binding) {
         ModelNode gatewayNode = new ModelNode();
+
+        if (binding.getName() == null) {
+            gatewayNode.get(NAME);
+        } else {
+            gatewayNode.get(NAME).set(binding.getName());
+        }
 
         if (binding.getType() == null) {
             gatewayNode.get(TYPE);
@@ -326,6 +452,8 @@ final public class ModelNodeCreationUtil {
         } else {
             gatewayNode.get(CONFIGURATION).set(binding.getConfiguration());
         }
+
+        gatewayNode.get(STATE).set(binding.getState().toString());
 
         return gatewayNode;
     }
@@ -471,10 +599,86 @@ final public class ModelNodeCreationUtil {
     }
 
     /**
+     * Creates a new {@link ModelNode} tree from the {@link Reference} for
+     * metrics. The tree has the form: <br>
+     * <code><pre>
+     *      "name" =&gt; "referenceName",
+     *      "application" =&gt; "name",
+     *      "successCount" =&gt; "successCount",
+     *      "faultCount" =&gt; "faultCount",
+     *      "totalCount" =&gt; "totalCount",
+     *      "averageTime" =&gt; "averageTime",
+     *      "minTime" =&gt; "minTime",
+     *      "maxTime" =&gt; "maxTime",
+     *      "totalTime" =&gt; "totalTime",
+     *      "gateways" =&gt; [
+     *          {
+     *              "name" =&gt; "bindingName",
+     *              "type" =&gt; "bindingType",
+     *               "successCount" =&gt; "successCount",
+     *               "faultCount" =&gt; "faultCount",
+     *               "totalCount" =&gt; "totalCount",
+     *               "averageTime" =&gt; "averageTime",
+     *               "minTime" =&gt; "minTime",
+     *               "maxTime" =&gt; "maxTime",
+     *               "totalTime" =&gt; "totalTime",
+     *          },
+     *          ...
+     *      ],
+     *      "operations" =&gt; [
+     *          {
+     *              "name" =&gt; "operationName",
+     *               "successCount" =&gt; "successCount",
+     *               "faultCount" =&gt; "faultCount",
+     *               "totalCount" =&gt; "totalCount",
+     *               "averageTime" =&gt; "averageTime",
+     *               "minTime" =&gt; "minTime",
+     *               "maxTime" =&gt; "maxTime",
+     *               "totalTime" =&gt; "totalTime",
+     *          },
+     *          ...
+     *      ]
+     * </pre></code>
+     * 
+     * @param reference the {@link Reference} used to populate the node.
+     * @return a new {@link ModelNode}
+     */
+    public static ModelNode createReferenceMetricsNode(Reference reference) {
+        ModelNode referenceNode = new ModelNode();
+
+        referenceNode.get(NAME).set(reference.getName().toString());
+        referenceNode.get(APPLICATION).set(reference.getApplication().getName().toString());
+
+        addMetricsToNode(referenceNode, reference.getMessageMetrics());
+
+        ModelNode gatewaysNode = new ModelNode();
+        for (Binding gateway : reference.getGateways()) {
+            ModelNode gatewayNode = new ModelNode();
+            gatewayNode.get(NAME).set(gateway.getName());
+            gatewayNode.get(TYPE).set(gateway.getType());
+            addMetricsToNode(gatewayNode, gateway.getMessageMetrics());
+            gatewaysNode.add(gatewayNode);
+        }
+        referenceNode.get(GATEWAYS).set(gatewaysNode);
+
+        ModelNode operationsNode = new ModelNode();
+        for (ServiceOperation operation : reference.getServiceOperations()) {
+            ModelNode operationNode = new ModelNode();
+            operationNode.get(NAME).set(operation.getName());
+            addMetricsToNode(operationNode, operation.getMessageMetrics());
+            operationsNode.add(operationNode);
+        }
+        referenceNode.get(OPERATIONS).set(operationsNode);
+
+        return referenceNode;
+    }
+
+    /**
      * Creates a new {@link ModelNode} tree from the {@link Service} for
      * metrics. The tree has the form: <br>
      * <code><pre>
      *      "name" =&gt; "serviceName",
+     *      "application" =&gt; "name",
      *      "successCount" =&gt; "successCount",
      *      "faultCount" =&gt; "faultCount",
      *      "totalCount" =&gt; "totalCount",
@@ -507,6 +711,20 @@ final public class ModelNodeCreationUtil {
      *               "totalTime" =&gt; "totalTime",
      *          },
      *          ...
+     *      ],
+     *      "gateways" =&gt; [
+     *          {
+     *              "name" =&gt; "bindingName",
+     *              "type" =&gt; "bindingType",
+     *               "successCount" =&gt; "successCount",
+     *               "faultCount" =&gt; "faultCount",
+     *               "totalCount" =&gt; "totalCount",
+     *               "averageTime" =&gt; "averageTime",
+     *               "minTime" =&gt; "minTime",
+     *               "maxTime" =&gt; "maxTime",
+     *               "totalTime" =&gt; "totalTime",
+     *          },
+     *          ...
      *      ]
      * </pre></code>
      * 
@@ -517,6 +735,7 @@ final public class ModelNodeCreationUtil {
         ModelNode serviceNode = new ModelNode();
 
         serviceNode.get(NAME).set(service.getName().toString());
+        serviceNode.get(APPLICATION).set(service.getApplication().getName().toString());
         addMetricsToNode(serviceNode, service.getPromotedService().getMessageMetrics());
 
         ModelNode operationsNode = new ModelNode();
@@ -536,6 +755,16 @@ final public class ModelNodeCreationUtil {
             referencesNode.add(referenceNode);
         }
         serviceNode.get(REFERENCES).set(referencesNode);
+
+        ModelNode gatewaysNode = new ModelNode();
+        for (Binding gateway : service.getGateways()) {
+            ModelNode gatewayNode = new ModelNode();
+            gatewayNode.get(NAME).set(gateway.getName());
+            gatewayNode.get(TYPE).set(gateway.getType());
+            addMetricsToNode(gatewayNode, gateway.getMessageMetrics());
+            gatewaysNode.add(gatewayNode);
+        }
+        serviceNode.get(GATEWAYS).set(gatewaysNode);
 
         return serviceNode;
     }

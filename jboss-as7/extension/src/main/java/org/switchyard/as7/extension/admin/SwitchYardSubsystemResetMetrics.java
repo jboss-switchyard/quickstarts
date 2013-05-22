@@ -18,8 +18,8 @@
  */
 package org.switchyard.as7.extension.admin;
 
-import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICE_NAME;
-import static org.switchyard.as7.extension.SwitchYardModelConstants.TYPE;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAME;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION_NAME;
 
 import javax.xml.namespace.QName;
 
@@ -37,16 +37,17 @@ import org.switchyard.as7.extension.services.SwitchYardAdminService;
 /**
  * SwitchYardSubsystemShowMetrics
  * 
- * Operation returning metrics for services deployed on the SwitchYard subsystem.
+ * Operation for resetting metrics for services/references deployed on the
+ * SwitchYard subsystem.
  */
-public final class SwitchYardSubsystemShowMetrics implements OperationStepHandler {
+public final class SwitchYardSubsystemResetMetrics implements OperationStepHandler {
 
     /**
      * The global instance for this operation.
      */
-    public static final SwitchYardSubsystemShowMetrics INSTANCE = new SwitchYardSubsystemShowMetrics();
+    public static final SwitchYardSubsystemResetMetrics INSTANCE = new SwitchYardSubsystemResetMetrics();
 
-    private SwitchYardSubsystemShowMetrics() {
+    private SwitchYardSubsystemResetMetrics() {
         // forbidden inheritance
     }
 
@@ -67,36 +68,44 @@ public final class SwitchYardSubsystemShowMetrics implements OperationStepHandle
                 final ServiceController<?> controller = context.getServiceRegistry(false).getRequiredService(
                         SwitchYardAdminService.SERVICE_NAME);
                 SwitchYard switchYard = SwitchYard.class.cast(controller.getService().getValue());
-                if (operation.hasDefined(SERVICE_NAME)) {
-                    final String serviceName = operation.get(SERVICE_NAME).asString();
-                    final String type = operation.get(TYPE).asString();
-                    final QName serviceQName = QName.valueOf(serviceName);
-                    for (Application application : switchYard.getApplications()) {
-                        if (type == null || "*".equals(type) || "service".equals(type)) {
+                if (operation.hasDefined(NAME)) {
+                    final QName serviceQName = QName.valueOf(operation.get(NAME).asString());
+                    final QName applicationQName = operation.hasDefined(APPLICATION_NAME) ? QName.valueOf(operation
+                            .get(APPLICATION_NAME).asString()) : null;
+                    APPLICATION_LOOP: for (Application application : switchYard.getApplications()) {
+                        if (applicationQName == null || applicationQName.equals(application.getName())) {
                             for (Service service : application.getServices()) {
-                                if ("*".equals(serviceName) || serviceQName.equals(service.getName())) {
-                                    context.getResult().add(ModelNodeCreationUtil.createServiceMetricsNode(service));
+                                if (serviceQName.equals(service.getName())) {
+                                    // XXX: we should really be doing this on
+                                    // the service
+                                    service.getPromotedService().resetMessageMetrics();
+                                    if (applicationQName == null) {
+                                        continue APPLICATION_LOOP;
+                                    } else {
+                                        break APPLICATION_LOOP;
+                                    }
                                 }
                             }
-                        }
-                        if (type == null || "*".equals(type) || "reference".equals(type)) {
                             for (Reference reference : application.getReferences()) {
-                                if ("*".equals(serviceName) || serviceQName.equals(reference.getName())) {
-                                    context.getResult().add(ModelNodeCreationUtil.createReferenceMetricsNode(reference));
+                                if (serviceQName.equals(reference.getName())) {
+                                    reference.resetMessageMetrics();
+                                    if (applicationQName == null) {
+                                        continue APPLICATION_LOOP;
+                                    } else {
+                                        break APPLICATION_LOOP;
+                                    }
                                 }
                             }
                         }
                     }
                 } else {
-                    context.getResult().add(
-                            ModelNodeCreationUtil.addMetricsToNode(
-                                    new ModelNode(), switchYard.getMessageMetrics()));
+                    switchYard.resetMessageMetrics();
                 }
-                
+
                 context.stepCompleted();
             }
         }, OperationContext.Stage.RUNTIME);
         context.stepCompleted();
     }
-    
+
 }

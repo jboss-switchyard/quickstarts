@@ -18,8 +18,9 @@
  */
 package org.switchyard.as7.extension.admin;
 
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.NAME;
+import static org.switchyard.as7.extension.SwitchYardModelConstants.APPLICATION_NAME;
 import static org.switchyard.as7.extension.SwitchYardModelConstants.SERVICE_NAME;
-import static org.switchyard.as7.extension.SwitchYardModelConstants.TYPE;
 
 import javax.xml.namespace.QName;
 
@@ -29,24 +30,25 @@ import org.jboss.as.controller.OperationStepHandler;
 import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceController;
 import org.switchyard.admin.Application;
+import org.switchyard.admin.Binding;
 import org.switchyard.admin.Reference;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.SwitchYard;
 import org.switchyard.as7.extension.services.SwitchYardAdminService;
 
 /**
- * SwitchYardSubsystemShowMetrics
+ * SwitchYardSubsystemStopGateway
  * 
- * Operation returning metrics for services deployed on the SwitchYard subsystem.
+ * Operation for stopping a gateway.
  */
-public final class SwitchYardSubsystemShowMetrics implements OperationStepHandler {
+public final class SwitchYardSubsystemStopGateway implements OperationStepHandler {
 
     /**
      * The global instance for this operation.
      */
-    public static final SwitchYardSubsystemShowMetrics INSTANCE = new SwitchYardSubsystemShowMetrics();
+    public static final SwitchYardSubsystemStopGateway INSTANCE = new SwitchYardSubsystemStopGateway();
 
-    private SwitchYardSubsystemShowMetrics() {
+    private SwitchYardSubsystemStopGateway() {
         // forbidden inheritance
     }
 
@@ -67,36 +69,40 @@ public final class SwitchYardSubsystemShowMetrics implements OperationStepHandle
                 final ServiceController<?> controller = context.getServiceRegistry(false).getRequiredService(
                         SwitchYardAdminService.SERVICE_NAME);
                 SwitchYard switchYard = SwitchYard.class.cast(controller.getService().getValue());
-                if (operation.hasDefined(SERVICE_NAME)) {
-                    final String serviceName = operation.get(SERVICE_NAME).asString();
-                    final String type = operation.get(TYPE).asString();
-                    final QName serviceQName = QName.valueOf(serviceName);
-                    for (Application application : switchYard.getApplications()) {
-                        if (type == null || "*".equals(type) || "service".equals(type)) {
-                            for (Service service : application.getServices()) {
-                                if ("*".equals(serviceName) || serviceQName.equals(service.getName())) {
-                                    context.getResult().add(ModelNodeCreationUtil.createServiceMetricsNode(service));
-                                }
-                            }
-                        }
-                        if (type == null || "*".equals(type) || "reference".equals(type)) {
-                            for (Reference reference : application.getReferences()) {
-                                if ("*".equals(serviceName) || serviceQName.equals(reference.getName())) {
-                                    context.getResult().add(ModelNodeCreationUtil.createReferenceMetricsNode(reference));
-                                }
-                            }
-                        }
-                    }
+                final Binding binding;
+                final String bindingName = operation.get(NAME).asString();
+                final Application application = switchYard.getApplication(QName.valueOf(operation.get(APPLICATION_NAME)
+                        .asString()));
+                if (application == null) {
+                    binding = null;
                 } else {
-                    context.getResult().add(
-                            ModelNodeCreationUtil.addMetricsToNode(
-                                    new ModelNode(), switchYard.getMessageMetrics()));
+                    final QName serviceQName = QName.valueOf(operation.get(SERVICE_NAME).asString());
+                    final Service service = application.getService(serviceQName);
+                    if (service == null) {
+                        final Reference reference = application.getReference(serviceQName);
+                        if (reference == null) {
+                            binding = null;
+                        } else {
+                            binding = reference.getGateway(bindingName);
+                        }
+                    } else {
+                        binding = service.getGateway(bindingName);
+                    }
                 }
-                
-                context.stepCompleted();
+                if (binding != null) {
+                    try {
+                        binding.stop();
+                        context.stepCompleted();
+                    } catch (Throwable e) {
+                        throw new OperationFailedException(new ModelNode().set("Error starting gateway: "
+                                + e.getMessage()));
+                    }
+                    return;
+                }
+                throw new OperationFailedException(new ModelNode().set("Unknown gateway."));
             }
         }, OperationContext.Stage.RUNTIME);
         context.stepCompleted();
     }
-    
+
 }

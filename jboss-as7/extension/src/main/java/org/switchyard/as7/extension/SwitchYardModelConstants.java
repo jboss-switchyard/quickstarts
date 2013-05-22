@@ -37,6 +37,10 @@ public final class SwitchYardModelConstants {
      */
     public static final String LIST_APPLICATIONS = "list-applications";
     /**
+     * Constant for /subsystem=switchyard/:list-references operation.
+     */
+    public static final String LIST_REFERENCES = "list-references";
+    /**
      * Constant for /subsystem=switchyard/:list-services operation.
      */
     public static final String LIST_SERVICES = "list-services";
@@ -44,6 +48,10 @@ public final class SwitchYardModelConstants {
      * Constant for /subsystem=switchyard/:read-application operation.
      */
     public static final String READ_APPLICATION = "read-application";
+    /**
+     * Constant for /subsystem=switchyard/:read-reference operation.
+     */
+    public static final String READ_REFERENCE = "read-reference";
     /**
      * Constant for /subsystem=switchyard/:read-service operation.
      */
@@ -56,6 +64,18 @@ public final class SwitchYardModelConstants {
      * Constant for /subsystem=switchyard/:show-metrics operation.
      */
     public static final String SHOW_METRICS = "show-metrics";
+    /**
+     * Constant for /subsystem=switchyard/:reset-metrics operation.
+     */
+    public static final String RESET_METRICS = "reset-metrics";
+    /**
+     * Constant for /subsystem=switchyard/:stop-gateway operation.
+     */
+    public static final String STOP_GATEWAY = "stop-gateway";
+    /**
+     * Constant for /subsystem=switchyard/:start-gateway operation.
+     */
+    public static final String START_GATEWAY = "start-gateway";
     
     // nodes
     /**
@@ -111,9 +131,17 @@ public final class SwitchYardModelConstants {
      */
     public static final String OPERATIONS = "operations";
     /**
+     * Constant for model key: promotedReference.
+     */
+    public static final String PROMOTED_REFERENCE = "promotedReference";
+    /**
      * Constant for model key: promotedService.
      */
     public static final String PROMOTED_SERVICE = "promotedService";
+    /**
+     * Constant for model key: reference-name.
+     */
+    public static final String REFERENCE_NAME = "reference-name";
     /**
      * Constant for model key: references.
      */
@@ -126,6 +154,10 @@ public final class SwitchYardModelConstants {
      * Constant for model key: services.
      */
     public static final String SERVICES = "services";
+    /**
+     * Constant for model key: state.
+     */
+    public static final String STATE = "state";
     /**
      * Constant for model key: to.
      */

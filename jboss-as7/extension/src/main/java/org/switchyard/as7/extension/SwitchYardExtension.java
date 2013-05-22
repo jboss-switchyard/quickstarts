@@ -44,10 +44,15 @@ import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemGetVersion;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemListApplications;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemListReferences;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemListServices;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadApplication;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadReference;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemReadService;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemResetMetrics;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemShowMetrics;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemStartGateway;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemStopGateway;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemUsesArtifact;
 import org.switchyard.common.version.Versions;
 
@@ -111,11 +116,16 @@ public class SwitchYardExtension implements Extension {
                 .addReadWriteAttribute(Attributes.PROPERTIES, null, new ReloadRequiredWriteAttributeHandler(Attributes.PROPERTIES))
                 .addOperation(Operations.GET_VERSION, SwitchYardSubsystemGetVersion.INSTANCE)
                 .addOperation(Operations.LIST_APPLICATIONS, SwitchYardSubsystemListApplications.INSTANCE)
+                .addOperation(Operations.LIST_REFERENCES, SwitchYardSubsystemListReferences.INSTANCE)
                 .addOperation(Operations.LIST_SERVICES, SwitchYardSubsystemListServices.INSTANCE)
                 .addOperation(Operations.READ_APPLICATION, SwitchYardSubsystemReadApplication.INSTANCE)
+                .addOperation(Operations.READ_REFERENCE, SwitchYardSubsystemReadReference.INSTANCE)
                 .addOperation(Operations.READ_SERVICE, SwitchYardSubsystemReadService.INSTANCE)
                 .addOperation(Operations.USES_ARTIFACT, SwitchYardSubsystemUsesArtifact.INSTANCE)
                 .addOperation(Operations.SHOW_METRICS, SwitchYardSubsystemShowMetrics.INSTANCE)
+                .addOperation(Operations.RESET_METRICS, SwitchYardSubsystemResetMetrics.INSTANCE)
+                .addOperation(Operations.STOP_GATEWAY, SwitchYardSubsystemStopGateway.INSTANCE)
+                .addOperation(Operations.START_GATEWAY, SwitchYardSubsystemStartGateway.INSTANCE)
                 .pushChild(modulesResource).pop()
                 .pushChild(extensionsResource).pop()
                 .build();

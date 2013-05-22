@@ -18,8 +18,14 @@
  */
 package org.switchyard.test.quickstarts;
 
+import javax.xml.namespace.QName;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.as.arquillian.container.ManagementClient;
+import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
+import org.jboss.dmr.ModelNode;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -86,6 +92,55 @@ public class RestBindingQuickstartTest {
             response = httpMixIn.sendString(BASE_URL + "/inventory/remove", "", HTTPMixIn.HTTP_OPTIONS);
             Assert.assertEquals(SUCCESS, response);
 
+        } finally {
+            httpMixIn.uninitialize();
+        }
+    }
+
+    @Test
+    public void testRestartGateway(@ArquillianResource ManagementClient client) throws Exception {
+        HTTPMixIn httpMixIn = new HTTPMixIn();
+
+        httpMixIn.initialize();
+        try {
+            // Create our inventory
+            String response = httpMixIn.sendString(BASE_URL + "/inventory/create", "", HTTPMixIn.HTTP_OPTIONS);
+            Assert.assertEquals(SUCCESS, response);
+
+            // Look at our order
+            response = httpMixIn.sendString(BASE_URL + "/order/1", "", HTTPMixIn.HTTP_GET);
+            SwitchYardTestKit.compareXMLToString(response, ORDER4);
+
+            final String namespace = "urn:switchyard-quickstart:resteasy-binding:1.0";
+            final ModelNode operation = new ModelNode();
+            operation.get(ModelDescriptionConstants.OP_ADDR).add("subsystem", "switchyard");
+            operation.get(ModelDescriptionConstants.NAME).set("_OrderService_rest_1");
+            operation.get("service-name").set(new QName(namespace, "OrderService").toString());
+            operation.get("application-name").set(new QName(namespace, "OrderService").toString());
+
+            // stop the gateway
+            operation.get(ModelDescriptionConstants.OP).set("stop-gateway");
+            ModelNode result = client.getControllerClient().execute(operation);
+            Assert.assertEquals("Failed to stop gateway: " + result.toString(), ModelDescriptionConstants.SUCCESS,
+                    result.get(ModelDescriptionConstants.OUTCOME).asString());
+            // Update item descriptions in our inventory, should fail
+            Assert.assertEquals(404,
+                    httpMixIn.sendStringAndGetStatus(BASE_URL + "/inventory/update", "", HTTPMixIn.HTTP_OPTIONS));
+
+            // restart the gateway
+            operation.get(ModelDescriptionConstants.OP).set("start-gateway");
+            result = client.getControllerClient().execute(operation);
+            Assert.assertEquals("Failed to restart gateway: " + result.toString(), ModelDescriptionConstants.SUCCESS,
+                    result.get(ModelDescriptionConstants.OUTCOME).asString());
+
+            // Look at our order. if this fails, the item descriptions were
+            // updated or the gateway didn't restart.
+            response = httpMixIn.sendString(BASE_URL + "/order/1", "", HTTPMixIn.HTTP_GET);
+            SwitchYardTestKit.compareXMLToString(response, ORDER4);
+
+            // Destroy our inventory
+            response = httpMixIn.sendString(BASE_URL + "/inventory/remove", "", HTTPMixIn.HTTP_OPTIONS);
+            Assert.assertEquals(SUCCESS, response);
         } finally {
             httpMixIn.uninitialize();
         }
