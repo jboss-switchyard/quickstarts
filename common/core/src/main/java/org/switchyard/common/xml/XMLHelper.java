@@ -497,7 +497,7 @@ public final class XMLHelper {
      * @return the new document
      * @throws ParserConfigurationException for errors during creation
      */
-    private static Document getNewDocument()
+    public static Document getNewDocument()
         throws ParserConfigurationException {
         final DocumentBuilder builder = getCreationDocumentBuilder();
         synchronized (builder) {
@@ -557,10 +557,30 @@ public final class XMLHelper {
             Node child = children.item(i);
             if (child != null
                 && child.getNodeType() == Node.ELEMENT_NODE
-                && child.getNodeName() != null
-                && child.getNodeName().equals(name)) {
+                && child.getLocalName() != null
+                && child.getLocalName().equals(name)) {
                 return (Element) child;
             }
+        }
+        return null;
+    }
+
+    /**
+     * Get the sibling Element of the supplied node that matches a given tag name.
+     *
+     * @param node The DOM Node.
+     * @param name The name of the sibling node to search for.
+     * @return The sibling element with the matching tag name or null otherwise.
+     */
+    public static Element getNextSiblingElementByName(Node node, String name) {
+        Node sibling = node.getNextSibling();
+        while (sibling != null) {
+            if (sibling.getNodeType() == Node.ELEMENT_NODE
+                && sibling.getLocalName() != null
+                && sibling.getLocalName().equals(name)) {
+                return (Element) sibling;
+            }
+            sibling = sibling.getNextSibling();
         }
         return null;
     }
