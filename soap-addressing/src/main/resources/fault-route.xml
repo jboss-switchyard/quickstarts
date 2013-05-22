@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<route xmlns="http://camel.apache.org/schema/spring">
+  <from uri="switchyard://FaultService"/>
+  <log message="FaultService - message received: ${body}"/>
+  <process ref="faultProcessor"/>
+  <to uri="switchyard://FaultFileService"/>
+</route>

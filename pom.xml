@@ -61,6 +61,7 @@
         <module>rules-camel-cbr</module>
         <module>rules-interview</module>
         <module>rules-interview-container</module>
+        <module>soap-addressing</module>
         <module>soap-attachment</module>
         <module>soap-binding-rpc</module>
         <module>jca-inflow-hornetq</module>

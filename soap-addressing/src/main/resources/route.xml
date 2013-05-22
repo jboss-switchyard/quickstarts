@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<route xmlns="http://camel.apache.org/schema/spring">
+  <from uri="switchyard://OrderService"/>
+  <log message="OrderService - message received: ${body}"/>
+  <process ref="orderProcessor"/>
+  <to uri="switchyard://WarehouseServiceExternal?operationName=order"/>
+  <process ref="orderReplyProcessor"/>
+</route>
