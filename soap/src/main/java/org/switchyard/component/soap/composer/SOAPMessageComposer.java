@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
-import javax.mail.util.ByteArrayDataSource;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
@@ -33,6 +32,7 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
@@ -82,10 +82,14 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
         final SOAPMessage soapMessage = source.getSOAPMessage();
         final Message message = exchange.createMessage();
         final Boolean input = exchange.getPhase() == null;
-
         getContextMapper().mapFrom(source, exchange.getContext(message));
 
-        final SOAPBody soapBody = soapMessage.getSOAPBody();
+        final SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
+        if (envelope == null) {
+            return message;
+        }
+
+        final SOAPBody soapBody = envelope.getBody();
         if (soapBody == null) {
             throw new SOAPException("Missing SOAP body from request");
         }
@@ -157,7 +161,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
                         name = name.substring(1, name.length() - 1);
                     }
                 }
-                message.addAttachment(name, new ByteArrayDataSource(apRequest.getDataHandler().getInputStream(), apRequest.getDataHandler().getContentType()));
+                message.addAttachment(name, apRequest.getDataHandler().getDataSource());
             }
         } catch (Exception ex) {
             if (ex instanceof SOAPException) {
@@ -190,32 +194,34 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
             try {
                 // convert the message content to a form we can work with
                 Node messageNode = message.getContent(Node.class);
-                Node messageNodeImport = soapMessage.getSOAPBody().getOwnerDocument().importNode(messageNode, true);
-                if (exchange.getState() != ExchangeState.FAULT || isSOAPFaultPayload(messageNode)) {
-                    if (_documentStyle) {
-                        String opName = exchange.getContract().getProviderOperation().getName();
-                        if (_config != null && _config.isUnwrapped()) {
-                            String ns = getWrapperNamespace(opName, input);
-                            // Don't wrap if it's already wrapped
-                            if (!messageNodeImport.getLocalName().equals(opName + DOC_LIT_WRAPPED_REPLY_SUFFIX)) {
-                                Element wrapper = messageNodeImport.getOwnerDocument().createElementNS(
-                                        ns, opName + DOC_LIT_WRAPPED_REPLY_SUFFIX);
-                                wrapper.appendChild(messageNodeImport);
-                                messageNodeImport = wrapper;
+                if (messageNode != null) {
+                    Node messageNodeImport = soapMessage.getSOAPBody().getOwnerDocument().importNode(messageNode, true);
+                    if (exchange.getState() != ExchangeState.FAULT || isSOAPFaultPayload(messageNode)) {
+                        if (_documentStyle) {
+                            String opName = exchange.getContract().getProviderOperation().getName();
+                            if (_config != null && _config.isUnwrapped()) {
+                                String ns = getWrapperNamespace(opName, input);
+                                // Don't wrap if it's already wrapped
+                                if (!messageNodeImport.getLocalName().equals(opName + DOC_LIT_WRAPPED_REPLY_SUFFIX)) {
+                                    Element wrapper = messageNodeImport.getOwnerDocument().createElementNS(
+                                            ns, opName + DOC_LIT_WRAPPED_REPLY_SUFFIX);
+                                    wrapper.appendChild(messageNodeImport);
+                                    messageNodeImport = wrapper;
+                                }
                             }
                         }
+                        soapMessage.getSOAPBody().appendChild(messageNodeImport);
+                        // SOAP Attachments
+                        for (String name : message.getAttachmentMap().keySet()) {
+                            AttachmentPart apResponse = soapMessage.createAttachmentPart();
+                            apResponse.setDataHandler(new DataHandler(message.getAttachment(name)));
+                            apResponse.setContentId("<" + name + ">");
+                            soapMessage.addAttachmentPart(apResponse);
+                        }
+                    } else {
+                        // convert to SOAP Fault since ExchangeState is FAULT but the message is not SOAP Fault
+                        SOAPUtil.addFault(soapMessage).addDetail().appendChild(messageNodeImport);
                     }
-                    soapMessage.getSOAPBody().appendChild(messageNodeImport);
-                    // SOAP Attachments
-                    for (String name : message.getAttachmentMap().keySet()) {
-                        AttachmentPart apResponse = soapMessage.createAttachmentPart();
-                        apResponse.setDataHandler(new DataHandler(message.getAttachment(name)));
-                        apResponse.setContentId("<" + name + ">");
-                        soapMessage.addAttachmentPart(apResponse);
-                    }
-                } else {
-                    // convert to SOAP Fault since ExchangeState is FAULT but the message is not SOAP Fault
-                    SOAPUtil.addFault(soapMessage).addDetail().appendChild(messageNodeImport);
                 }
             } catch (Exception e) {
                 // Account for exception as payload in case of fault

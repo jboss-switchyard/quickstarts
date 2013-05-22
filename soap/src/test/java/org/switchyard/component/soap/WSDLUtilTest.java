@@ -22,6 +22,7 @@ package org.switchyard.component.soap;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
@@ -129,6 +130,39 @@ public class WSDLUtilTest {
         Assert.assertEquals(action, "uri:soap12:that:needs#tobevalid");
         action = WSDLUtil.getSoapAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "helloWS"), true);
         Assert.assertEquals(action, "");
+    }
+
+    @Test
+    public void soapAddressing() throws Exception {
+        Definition definition = WSDLUtil.readWSDL("HelloWebServiceAddressing.wsdl");
+        String targetNamespace = definition.getTargetNamespace();
+        Service service = WSDLUtil.getService(definition, new PortName("HelloAddressingService:HelloSOAPAddressingServicePort"));
+        Assert.assertNotNull(service);
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloAddressingService"));
+        Port port = WSDLUtil.getPort(service, new PortName("HelloSOAPAddressingServicePort"));
+        Assert.assertNotNull(port);
+        Addressing addressing = WSDLUtil.getAddressing(definition, port);
+        Assert.assertEquals("[Enabled:true, Required:false]", addressing.toString());
+        String action = WSDLUtil.getInputAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "sayHello"), targetNamespace, true);
+        Assert.assertEquals("urn:switchyard-component-soap:test-ws:1.0:HelloAddressingService:sayHelloRequest", action);
+        action = WSDLUtil.getOutputAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "sayHello"), targetNamespace, true);
+        Assert.assertEquals("urn:switchyard-component-soap:test-ws:1.0:HelloAddressingService:sayHelloResponse", action);
+
+        port = WSDLUtil.getPort(service, new PortName("HelloSOAPAddressingServicePort2"));
+        Assert.assertNotNull(port);
+        addressing = WSDLUtil.getAddressing(definition, port);
+        Assert.assertEquals("[Enabled:true, Required:true]", addressing.toString());
+        action = WSDLUtil.getInputAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "sayHello"), targetNamespace, true);
+        Assert.assertEquals("http://mysite/input", action);
+        action = WSDLUtil.getOutputAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "sayHello"), targetNamespace, true);
+        Assert.assertEquals("http://mysite/output", action);
+
+        port = WSDLUtil.getPort(service, new PortName("HelloSOAPAddressingServicePort3"));
+        Assert.assertNotNull(port);
+        addressing = WSDLUtil.getAddressing(definition, port);
+        Assert.assertEquals("[Enabled:true, Required:true]", addressing.toString());
+        action = WSDLUtil.getFaultAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "sayHello"), targetNamespace, "UnknownMessage", true);
+        Assert.assertEquals("urn:switchyard-component-soap:test-ws:1.0:HelloAddressingService3:sayHello:Fault:UnknownMessage", action);
     }
 
     /*

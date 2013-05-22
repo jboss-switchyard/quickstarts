@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
@@ -40,6 +41,7 @@ import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.extensions.soap12.SOAP12Operation;
@@ -53,9 +55,11 @@ import org.apache.log4j.Logger;
 import org.switchyard.ExchangePattern;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.soap.Addressing;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.exception.SwitchYardException;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 /**
@@ -68,12 +72,12 @@ public final class WSDLUtil {
     private static final Logger LOGGER = Logger.getLogger(WSDLUtil.class);
 
     /**
-     * SOAP 1.1 QName namespace.
+     * WSDL SOAP 1.1 QName namespace.
      */
     public static final String WSDL_SOAP11_URI = "http://schemas.xmlsoap.org/wsdl/soap/";
 
     /**
-     * SOAP 1.2 QName namespace.
+     * WSDL SOAP 1.2 QName namespace.
      */
     public static final String WSDL_SOAP12_URI = "http://schemas.xmlsoap.org/wsdl/soap12/";
 
@@ -81,6 +85,35 @@ public final class WSDLUtil {
      * Document style.
      */
     public static final String DOCUMENT = "document";
+
+    private static final String SCHEME_URN = "urn:";
+    private static final String STR_ACTION = "Action";
+    private static final String STR_COLON = ":";
+    private static final String STR_SLASH = "/";
+    private static final String STR_FAULT = "Fault";
+    private static final String REQUEST_SUFFIX = "Request";
+    private static final String RESPONSE_SUFFIX = "Response";
+    private static final String ATTR_ID = "Id";
+    private static final String ATTR_REQUIRED = "required";
+    private static final String ATTR_URI = "URI";
+    private static final String ELE_ADDRESSING = "Addressing";
+    private static final String ELE_ALL = "All";
+    private static final String ELE_EXACTLYONE = "ExactlyOne";
+    private static final String WSA_METADATA_URI = "http://www.w3.org/2007/05/addressing/metadata";
+    private static final String WSA_WSDL_URI = "http://www.w3.org/2006/05/addressing/wsdl";
+    private static final String POLICY_URI = "http://www.w3.org/ns/ws-policy";
+    private static final String SECURITY_UTILITY_URI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
+    // No support for WSDL2.0 yet, as CXF doesn't have it.
+    // http://cxf.apache.org/project-status.html - GSoC project just started
+    // private static final String WSDL20_URI = "http://www.w3.org/2006/01/wsdl";
+    private static final String WSDL11_URI = "http://schemas.xmlsoap.org/wsdl/";
+    private static final QName USING_WSA_QNAME = new QName(WSA_WSDL_URI, "UsingAddressing");
+    private static final QName POLICY_QNAME = new QName(POLICY_URI, "Policy");
+    private static final QName POLICY_REFERENCE_QNAME = new QName(POLICY_URI, "PolicyReference");
+    private static final QName POLICY_EXACTLYONE_QNAME = new QName(POLICY_URI, ELE_EXACTLYONE);
+    private static final QName POLICY_ALL_QNAME = new QName(POLICY_URI, ELE_ALL);
+    private static final QName WSA_QNAME = new QName(WSA_METADATA_URI, ELE_ADDRESSING);
+    private static final QName WSDL_ACTION_QNAME = new QName(WSA_WSDL_URI, STR_ACTION);
 
     private WSDLUtil() {
     }
@@ -314,6 +347,8 @@ public final class WSDLUtil {
                 if ((part.getElementName() != null) && elementName.equals(part.getElementName())
                     || (part.getTypeName() != null) && elementName.equals(part.getTypeName())) {
                     return operation;
+                } else if (elementName.getLocalPart().equals(operation.getName())) {
+                    return operation;
                 }
             }
         }
@@ -445,6 +480,206 @@ public final class WSDLUtil {
             }
         }
         return soapActionUri;
+    }
+
+    /**
+     * Get the input action value for a given operation.
+     *
+     * @param port The WSDL service port.
+     * @param operationName The SOAP Operation element QName.
+     * @param targetNamespace The target namespace.
+     * @param documentStyle true if it is 'document', false if 'rpc'.
+     * @return the input action value.
+     */
+    public static String getInputAction(final Port port, final QName operationName, String targetNamespace, Boolean documentStyle) {
+        // Overloaded methods not supported
+        Operation operation = getOperationByElement(port, operationName, documentStyle);
+        String action = null;
+        for (QName attribute : (Set<QName>)operation.getInput().getExtensionAttributes().keySet()) {
+            if (attribute.equals(WSDL_ACTION_QNAME)) {
+                Object value = operation.getInput().getExtensionAttribute(WSDL_ACTION_QNAME);
+                if (value != null) {
+                    action = ((QName)value).getLocalPart();
+                    break;
+                }
+            }
+        }
+
+        if (action == null) {
+            // http://www.w3.org/TR/2006/WD-ws-addr-wsdl-20060216/#defactionwsdl11
+            // [target namespace][delimiter][port type name][delimiter][input name]
+            String delimiter = targetNamespace.startsWith(SCHEME_URN) ? STR_COLON : STR_SLASH;
+            String namespace = targetNamespace.endsWith(delimiter) ? targetNamespace.substring(0, targetNamespace.length()-2) : targetNamespace;
+            if (operation.getInput().getName() != null) {
+                action = namespace + delimiter + port.getBinding().getPortType().getQName().getLocalPart() + delimiter + operation.getInput().getName();
+            } else {
+                action = namespace + delimiter + port.getBinding().getPortType().getQName().getLocalPart() + delimiter + operation.getName() + REQUEST_SUFFIX;
+            }
+        }
+
+        return action;
+    }
+
+    /**
+     * Get the output action value for a given operation.
+     *
+     * @param port The WSDL service port.
+     * @param operationName The SOAP Operation element QName.
+     * @param targetNamespace The target namespace.
+     * @param documentStyle true if it is 'document', false if 'rpc'.
+     * @return the output action value.
+     */
+    public static String getOutputAction(final Port port, final QName operationName, String targetNamespace, Boolean documentStyle) {
+        // Overloaded methods not supported
+        Operation operation = getOperationByElement(port, operationName, documentStyle);
+        String action = null;
+
+        for (QName attribute : (Set<QName>)operation.getOutput().getExtensionAttributes().keySet()) {
+            if (attribute.equals(WSDL_ACTION_QNAME)) {
+                Object value = operation.getOutput().getExtensionAttribute(WSDL_ACTION_QNAME);
+                if (value != null) {
+                    action = ((QName)value).getLocalPart();
+                    break;
+                }
+            }
+        }
+
+        if (action == null) {
+            // http://www.w3.org/TR/2006/WD-ws-addr-wsdl-20060216/#defactionwsdl11
+            // [target namespace][delimiter][port type name][delimiter][output name]
+            String delimiter = targetNamespace.startsWith(SCHEME_URN) ? STR_COLON : STR_SLASH;
+            String namespace = targetNamespace.endsWith(delimiter) ? targetNamespace.substring(0, targetNamespace.length()-2) : targetNamespace;
+            if (operation.getOutput().getName() != null) {
+                action = namespace + delimiter + port.getBinding().getPortType().getQName().getLocalPart() + delimiter + operation.getOutput().getName();
+            } else {
+                action = namespace + delimiter + port.getBinding().getPortType().getQName().getLocalPart() + delimiter + operation.getName() + RESPONSE_SUFFIX;
+            }
+        }
+
+        return action;
+    }
+
+    /**
+     * Get the fault action value for a given operation.
+     *
+     * @param port The WSDL service port.
+     * @param operationName The SOAP Operation element QName.
+     * @param targetNamespace The target namespace.
+     * @param faultName The fault name.
+     * @param documentStyle true if it is 'document', false if 'rpc'.
+     * @return the fault action value.
+     */
+    public static String getFaultAction(final Port port, final QName operationName, String targetNamespace, String faultName, Boolean documentStyle) {
+        // Overloaded methods not supported
+        Operation operation = getOperationByElement(port, operationName, documentStyle);
+        String action = null;
+
+        if (operation.getFault(faultName) == null) {
+            throw new IllegalArgumentException("Fault name " + faultName + " not found on operation " + operationName.getLocalPart());
+        }
+
+        for (QName attribute : (Set<QName>)operation.getFault(faultName).getExtensionAttributes().keySet()) {
+            if (attribute.equals(WSDL_ACTION_QNAME)) {
+                Object value = operation.getFault(faultName).getExtensionAttribute(WSDL_ACTION_QNAME);
+                if (value != null) {
+                    action = ((QName)value).getLocalPart();
+                    break;
+                }
+            }
+        }
+
+        if (action == null) {
+            // http://www.w3.org/TR/2006/WD-ws-addr-wsdl-20060216/#defactionwsdl11
+            // [target namespace][delimiter][port type name][delimiter][operation name][delimiter]Fault[delimiter][fault name]
+            String delimiter = targetNamespace.startsWith(SCHEME_URN) ? STR_COLON : STR_SLASH;
+            String namespace = targetNamespace.endsWith(delimiter) ? targetNamespace.substring(0, targetNamespace.length()-2) : targetNamespace;
+            action = namespace + delimiter + port.getBinding().getPortType().getQName().getLocalPart() + delimiter
+                            + operationName.getLocalPart() + delimiter + STR_FAULT + delimiter + faultName;
+        }
+
+        return action;
+    }
+
+    /**
+     * Get addressing feature.
+     *
+     * @param definition The WSDL definition.
+     * @param port The WSDL service port.
+     * @return the addressing booleans.
+     */
+    public static Addressing getAddressing(final Definition definition, final Port port) {
+        Addressing addressing = new Addressing();
+outer:  for (ExtensibilityElement element : (List<ExtensibilityElement>)port.getBinding().getExtensibilityElements()) {
+            if (element instanceof UnknownExtensibilityElement) {
+                String attrValue = null;
+                Element domElement = ((UnknownExtensibilityElement)element).getElement();
+                if (element.getElementType().equals(USING_WSA_QNAME)) {
+                    addressing.setEnabled(true);
+                    setAddressingRequired(addressing, domElement);
+                    break;
+                } else if (element.getElementType().equals(POLICY_REFERENCE_QNAME)) {
+                    String uri = getAttribute(domElement, WSDL11_URI, ATTR_URI);
+                    /*if (uri == null) {
+                        uri = getAttribute(domElement, WSDL20_URI, ATTR_URI);
+                    }*/
+                    if (uri == null) {
+                        throw new RuntimeException("Policy reference URI missing for " + port.getBinding().getQName().getLocalPart());
+                    }
+                    uri = uri.substring(1);
+                    for (ExtensibilityElement defElement : (List<ExtensibilityElement>)definition.getExtensibilityElements()) {
+                        if (defElement.getElementType().equals(POLICY_QNAME)) {
+                            Element defDomElement = ((UnknownExtensibilityElement)defElement).getElement();
+                            attrValue = getAttribute(defDomElement, SECURITY_UTILITY_URI, ATTR_ID);
+                            if ((attrValue != null)
+                                && attrValue.equals(uri)) {
+                                Element child = XMLHelper.getFirstChildElementByName(defDomElement, ELE_ADDRESSING);
+                                if (child != null) {
+                                    addressing.setEnabled(true);
+                                    setAddressingRequired(addressing, child);
+                                    break outer;
+                                } else {
+                                    child = XMLHelper.getFirstChildElementByName(defDomElement, ELE_EXACTLYONE);
+                                    if (child == null) {
+                                        throw new RuntimeException("Invalid Policy definition in WSDL.");
+                                    }
+                                    child = XMLHelper.getFirstChildElementByName(child, ELE_ALL);
+                                    while (child != null) {
+                                        Element addressingEle = XMLHelper.getFirstChildElementByName(child, ELE_ADDRESSING);
+                                        if (addressingEle != null) {
+                                            addressing.setEnabled(true);
+                                            setAddressingRequired(addressing, addressingEle);
+                                            break outer;
+                                        }
+                                        child = XMLHelper.getNextSiblingElementByName(child, ELE_ALL);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return addressing;
+    }
+
+    private static String getAttribute(Element element, String namespace, String name) {
+        String value = null;
+        if (element.hasAttributeNS(namespace, name)) {
+            value = element.getAttributeNS(namespace, name);
+        } else if (element.hasAttribute(name)) {
+            value = element.getAttribute(name);
+        }
+        return value;
+    }
+
+    private static void setAddressingRequired(Addressing addressing, Element element) {
+        String attrValue = getAttribute(element, WSDL11_URI, ATTR_REQUIRED);
+        /*if (attrValue == null) {
+            attrValue = getAttribute(element, WSDL11_URI, ATTR_REQUIRED);
+        }*/
+        if (attrValue != null) {
+            addressing.setRequired(Boolean.valueOf(attrValue));
+        }
     }
 
     /**

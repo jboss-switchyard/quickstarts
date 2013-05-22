@@ -29,9 +29,9 @@ import javax.wsdl.WSDLException;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Endpoint;
+import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.MessageContext;
 
-import org.apache.log4j.Logger;
 import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.WebServicePublishException;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
@@ -44,14 +44,12 @@ import org.switchyard.component.soap.util.WSDLUtil;
  */
 public class JAXWSEndpointPublisher extends AbstractEndpointPublisher {
 
-    private static final Logger LOGGER = Logger.getLogger(JAXWSEndpointPublisher.class);
-
     private static final String HTTP_SCHEME = "http";
 
     /**
      * {@inheritDoc}
      */
-    public synchronized WSEndpoint publish(final SOAPBindingModel config, final String bindingId, final InboundHandler handler) {
+    public synchronized WSEndpoint publish(final SOAPBindingModel config, final String bindingId, final InboundHandler handler, WebServiceFeature... features) {
         JAXWSEndpoint wsEndpoint = null;
         try {
             initialize(config);
@@ -65,12 +63,10 @@ public class JAXWSEndpointPublisher extends AbstractEndpointPublisher {
 
             String publishUrl = HTTP_SCHEME + "://" + config.getSocketAddr().getHost() + ":" + config.getSocketAddr().getPort() + "/" + getContextPath();
 
-            LOGGER.info("Publishing WebService at " + publishUrl);
-
-            wsEndpoint = new JAXWSEndpoint(bindingId, handler);
+            wsEndpoint = new JAXWSEndpoint(bindingId, handler, features);
             wsEndpoint.getEndpoint().setMetadata(metadata);
             wsEndpoint.getEndpoint().setProperties(properties);
-            wsEndpoint.getEndpoint().publish(publishUrl);
+            wsEndpoint.publish(publishUrl);
         } catch (MalformedURLException e) {
             throw new WebServicePublishException(e);
         } catch (WSDLException e) {

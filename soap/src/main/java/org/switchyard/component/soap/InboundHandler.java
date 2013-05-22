@@ -19,8 +19,11 @@
  
 package org.switchyard.component.soap;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
@@ -31,6 +34,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.soap.AddressingFeature;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
@@ -77,6 +81,8 @@ public class InboundHandler extends BaseServiceHandler {
     private String _bindingId;
     private Boolean _documentStyle = false;
     private String _targetNamespace;
+    private Addressing _addressing = new Addressing();
+    private Map<String, Operation> _operationsMap = new HashMap<String, Operation>();
 
     /**
      * Constructor.
@@ -103,10 +109,24 @@ public class InboundHandler extends BaseServiceHandler {
             // Update the portName
             portName.setServiceQName(wsdlService.getQName());
             portName.setName(_wsdlPort.getName());
+
+            _addressing = WSDLUtil.getAddressing(definition, _wsdlPort);
             _bindingId = WSDLUtil.getBindingId(_wsdlPort);
             String style = WSDLUtil.getStyle(_wsdlPort);
             _documentStyle = style.equals(WSDLUtil.DOCUMENT) ? true : false;
-            _endpoint = EndpointPublisherFactory.getEndpointPublisher().publish(_config, _bindingId, this);
+
+            if (_addressing.isEnabled()) {
+                List<BindingOperation> bindingOperations = _wsdlPort.getBinding().getBindingOperations();
+                for (BindingOperation bindingOp : bindingOperations) {
+                    String inputAction = WSDLUtil.getInputAction(_wsdlPort, new QName(_targetNamespace, bindingOp.getOperation().getName()), _targetNamespace, _documentStyle);
+                    _operationsMap.put(inputAction, bindingOp.getOperation());
+                }
+            }
+
+            _endpoint = EndpointPublisherFactory.getEndpointPublisher().publish(_config,
+                _bindingId,
+                this,
+                new AddressingFeature(_addressing.isEnabled(), _addressing.isRequired()));
 
             // Create and configure the SOAP message composer
             _messageComposer = SOAPComposition.getMessageComposer(_config);
@@ -173,8 +193,17 @@ public class InboundHandler extends BaseServiceHandler {
             LOGGER.trace("Inbound <-- Request:[" + SOAPUtil.soapMessageToString(soapMessage) + "]");
         }
         try {
-            firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
-            operation = WSDLUtil.getOperationByElement(_wsdlPort, firstBodyElement, _documentStyle);
+            String action = SOAPUtil.getAddressingAction(soapMessage);
+            if (_addressing.isEnabled() && (action != null)) {
+                // Get the operation using the action
+                operation = _operationsMap.get(action);
+                if (operation == null) {
+                    return handleException(oneWay, new SOAPException("Could not find any operation associated with WS-A Action '" + action + "'."));
+                }
+            } else {
+                firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
+                operation = WSDLUtil.getOperationByElement(_wsdlPort, firstBodyElement, _documentStyle);
+            }
             if (operation != null) {
                 operationName = operation.getName();
                 oneWay = WSDLUtil.isOneWay(operation);
@@ -237,7 +266,6 @@ public class InboundHandler extends BaseServiceHandler {
                 } catch (SOAPException soapEx) {
                     throw soapEx;
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     throw new SwitchYardException(ex);
                 }
                 if (exchange.getState() == ExchangeState.FAULT && soapResponse.getSOAPBody().getFault() == null) {

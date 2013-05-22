@@ -33,21 +33,28 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.ws.handler.MessageContext.Scope;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.log4j.Logger;
+import org.switchyard.Context;
+import org.switchyard.Property;
 import org.switchyard.common.xml.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -59,6 +66,11 @@ public final class SOAPUtil {
     private static final Logger LOGGER = Logger.getLogger(SOAPUtil.class);
 
     /**
+     * SwitchYard Context key.
+     */
+    public static final String SWITCHYARD_CONTEXT = "SWITCHYARD_CONTEXT";
+
+    /**
      * SOAP 1.1 namespace.
      */
     public static final String SOAP11_URI = "http://schemas.xmlsoap.org/soap/envelope/";
@@ -67,6 +79,11 @@ public final class SOAPUtil {
      * SOAP 1.2 namespace.
      */
     public static final String SOAP12_URI = "http://www.w3.org/2003/05/soap-envelope";
+
+    /**
+     * WS-A namespace.
+     */
+    public static final String WSA_URI = "http://www.w3.org/2005/08/addressing";
 
     /**
      * SOAP 1.1 Server Fault Qname.
@@ -87,6 +104,71 @@ public final class SOAPUtil {
      * SOAP 1.2 Fault QName.
      */
     public static final QName SOAP12_FAULT_MESSAGE_TYPE = new QName(SOAP12_URI, "Fault");
+
+    /**
+     * The WS-A Action QName.
+     */
+    public static final QName WSA_ACTION_QNAME = new QName(WSA_URI, "Action");
+
+    /**
+     * The WS-A From QName.
+     */
+    public static final QName WSA_FROM_QNAME = new QName(WSA_URI, "From");
+
+    /**
+     * The WS-A MessageID QName.
+     */
+    public static final QName WSA_MESSAGEID_QNAME = new QName(WSA_URI, "MessageID");
+
+    /**
+     * The WS-A ReplyTo QName.
+     */
+    public static final QName WSA_REPLYTO_QNAME = new QName(WSA_URI, "ReplyTo");
+
+    /**
+     * The WS-A FaultTo QName.
+     */
+    public static final QName WSA_FAULTTO_QNAME = new QName(WSA_URI, "FaultTo");
+
+    /**
+     * The WS-A RelatesTo QName.
+     */
+    public static final QName WSA_RELATESTO_QNAME = new QName(WSA_URI, "RelatesTo");
+
+    /**
+     * The WS-A To QName.
+     */
+    public static final QName WSA_TO_QNAME = new QName(WSA_URI, "To");
+
+    /**
+     * The WS-A Action QName String.
+     */
+    public static final String WSA_ACTION_STR = WSA_ACTION_QNAME.toString();
+
+    /**
+     * The WS-A From QName String.
+     */
+    public static final String WSA_FROM_STR = WSA_FROM_QNAME.toString();
+
+    /**
+     * The WS-A FaultTo QName String.
+     */
+    public static final String WSA_FAULTTO_STR = WSA_FAULTTO_QNAME.toString();
+
+    /**
+     * The WS-A ReplyTo QName String.
+     */
+    public static final String WSA_REPLYTO_STR = WSA_REPLYTO_QNAME.toString();
+
+    /**
+     * The WS-A RelatesTo QName String.
+     */
+    public static final String WSA_RELATESTO_STR = WSA_RELATESTO_QNAME.toString();
+
+    /**
+     * The WS-A To QName String.
+     */
+    public static final String WSA_TO_STR = WSA_TO_QNAME.toString();
 
     private static final boolean RETURN_STACK_TRACES = false;
     private static final String INDENT_FEATURE = "{http://xml.apache.org/xslt}indent-amount";
@@ -136,6 +218,123 @@ public final class SOAPUtil {
     }
 
     /**
+     * Determines if the envelope has addressing action header.
+     *
+     * @param soapMessage The SOAPMessage
+     * @return The action addressing header
+     * @throws SOAPException If the envelope could not be read
+     */
+    public static String getAddressingAction(SOAPMessage soapMessage) throws SOAPException {
+        String action = null;
+        Iterator<SOAPHeaderElement> headers = soapMessage.getSOAPPart().getEnvelope().getHeader().examineAllHeaderElements();
+        while (headers.hasNext()) {
+            SOAPHeaderElement element = headers.next();
+            if (element.getElementQName().equals(WSA_ACTION_QNAME)) {
+                action = element.getValue();
+                break;
+            }
+        }
+        return action;
+    }
+
+    /**
+     * Add/Replace all WS-A headers if found on the context.
+     *
+     * @param soapContext The SOAPMessageContext
+     * @return The modified envelope
+     * @throws SOAPException If the envelope could not be read
+     */
+    public static SOAPEnvelope addReplaceAddressingHeaders(SOAPMessageContext soapContext) throws SOAPException {
+        SOAPEnvelope soapEnvelope = soapContext.getMessage().getSOAPPart().getEnvelope();
+        Context context = (Context)soapContext.get(SWITCHYARD_CONTEXT);
+        if (context != null) {
+            soapEnvelope = addReplaceHeader(soapEnvelope, context, WSA_ACTION_STR);
+            soapEnvelope = addReplaceHeader(soapEnvelope, context, WSA_FROM_STR);
+            soapEnvelope = addReplaceHeader(soapEnvelope, context, WSA_TO_STR);
+            soapEnvelope = addReplaceHeader(soapEnvelope, context, WSA_REPLYTO_STR);
+            soapEnvelope = addReplaceHeader(soapEnvelope, context, WSA_FAULTTO_STR);
+            soapEnvelope = addReplaceHeader(soapEnvelope, context, WSA_RELATESTO_STR);
+        }
+        return soapEnvelope;
+    }
+
+    /**
+     * Replace a header node if the envelope has one or else add it.
+     *
+     * @param soapEnvelope The SOAPEnvelope
+     * @param context The SwitchYard Context
+     * @param property The context property
+     * @return The modified envelope
+     * @throws SOAPException If the envelope could not be read
+     */
+    public static SOAPEnvelope addReplaceHeader(SOAPEnvelope soapEnvelope, Context context, String property) throws SOAPException {
+        Node header = (Node)context.getPropertyValue(property);
+        if (header == null) {
+            // When a ReplyTo header was added in Camel messgae header JAX-WS did not generate a MessageID
+            // and ReplyTo headers. So allow lower case replyto header to be set in Camel
+            header = (Node)context.getPropertyValue(property.toLowerCase());
+        }
+        if (header != null) {
+            NodeList headers = soapEnvelope.getHeader().getElementsByTagNameNS(header.getNamespaceURI(), header.getLocalName());
+            if (headers.getLength() == 1) {
+                ((javax.xml.soap.Node)headers.item(0)).detachNode();
+            }
+            Node domNode = soapEnvelope.getHeader().getOwnerDocument().importNode((Node)header, true);
+            soapEnvelope.getHeader().appendChild(domNode);
+        }
+        return soapEnvelope;
+    }
+
+    /**
+     * Set the WS-A MessageID to context.
+     *
+     * @param context The SOAPMessageContext
+     * @throws SOAPException If the envelope could not be read
+     */
+    public static void setMessageIDtoContext(SOAPMessageContext context) throws SOAPException {
+        SOAPEnvelope soapEnvelope = context.getMessage().getSOAPPart().getEnvelope();
+        String messageID = getMessageID(soapEnvelope);
+        if (messageID != null) {
+            context.put(WSA_MESSAGEID_QNAME.getLocalPart(), messageID);
+            context.setScope(WSA_MESSAGEID_QNAME.getLocalPart(), Scope.APPLICATION);
+        }
+    }
+
+    /**
+     * Get the WS-A MessageID from the envelope.
+     *
+     * @param soapEnvelope The SOAPEnvelope
+     * @return The message id if found, null otehrwise
+     * @throws SOAPException If the envelope could not be read
+     */
+    public static String getMessageID(SOAPEnvelope soapEnvelope) throws SOAPException {
+        NodeList headers = soapEnvelope.getHeader().getElementsByTagNameNS(WSA_ACTION_QNAME.getNamespaceURI(), WSA_ACTION_QNAME.getLocalPart());
+        if (headers.getLength() == 1) {
+            return ((javax.xml.soap.Node)headers.item(0)).getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Get the To header if it is set.
+     *
+     * @param context The SwitchYard Context
+     * @return The To address
+     */
+    public static String getToAddress(Context context) {
+        String address = null;
+        Property toProp = context.getProperty(WSA_TO_STR);
+        if (toProp == null) {
+            toProp = context.getProperty(WSA_TO_STR.toLowerCase());
+        }
+        if (toProp != null) {
+            Element toEl = (Element)toProp.getValue();
+            address = toEl.getFirstChild().getNodeValue();
+        }
+        return address;
+    }
+
+    /**
      * Adds a SOAP 1.1 or 1.2 Fault element to the SOAPBody.
      *
      * @param soapMessage The SOAPMessage
@@ -146,7 +345,7 @@ public final class SOAPUtil {
         if (isSOAP12(soapMessage)) {
             return soapMessage.getSOAPBody().addFault(SOAP12_FAULT_MESSAGE_TYPE, "Send failed");
         } else {
-            return soapMessage.getSOAPBody().addFault(SOAP12_FAULT_MESSAGE_TYPE, "Send failed");
+            return soapMessage.getSOAPBody().addFault(SOAP11_FAULT_MESSAGE_TYPE, "Send failed");
         }
     }
 
@@ -253,17 +452,41 @@ public final class SOAPUtil {
      * @return String representation of SOAP message
      */
     public static String soapMessageToString(SOAPMessage msg) {
+        String str = null;
+        if (msg != null) {
+            try {
+                TransformerFactory transFactory = TransformerFactory.newInstance();
+                Transformer transformer = transFactory.newTransformer();
+                StringWriter sw = new StringWriter();
+                DOMSource source = new DOMSource(msg.getSOAPPart().getDocumentElement());
+                StreamResult result = new StreamResult(sw);
+                transformer.transform(source, result);
+                str = sw.toString();
+            } catch (Exception e) {
+                LOGGER.error("Could not parse SOAP Message", e);
+            }
+        }
+        return str;
+    }
+
+    /**
+     * Pretty print a Document element.
+     * @param element the Document element to print
+     * @param out PrintStream to print to.
+     */
+    public static void prettyPrint(Element element, PrintStream out) {
         try {
             TransformerFactory transFactory = TransformerFactory.newInstance();
             Transformer transformer = transFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(INDENT_FEATURE, INDENT_AMOUNT);
             StringWriter sw = new StringWriter();
-            DOMSource source = new DOMSource(msg.getSOAPPart().getDocumentElement());
+            DOMSource source = new DOMSource(element);
             StreamResult result = new StreamResult(sw);
             transformer.transform(source, result);
-            return sw.toString();
+            out.println(sw);
         } catch (Exception e) {
             LOGGER.error("Could not parse SOAP Message", e);
-            return null;
         }
     }
 
@@ -273,18 +496,19 @@ public final class SOAPUtil {
      * @param out PrintStream to print to.
      */
     public static void prettyPrint(SOAPMessage msg, PrintStream out) {
+        prettyPrint(msg.getSOAPPart().getDocumentElement(), out);
+    }
+
+    /**
+     * Pretty print a SOAP message.
+     * @param msg SOAPMessage to print
+     * @param out PrintStream to print to.
+     */
+    public static void prettyPrint(String msg, PrintStream out) {
         try {
-            TransformerFactory transFactory = TransformerFactory.newInstance();
-            Transformer transformer = transFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(INDENT_FEATURE, INDENT_AMOUNT);
-            StringWriter sw = new StringWriter();
-            DOMSource source = new DOMSource(msg.getSOAPPart().getDocumentElement());
-            StreamResult result = new StreamResult(sw);
-            transformer.transform(source, result);
-            out.println(sw);
+            prettyPrint(XMLHelper.getDocumentFromString(msg).getDocumentElement(), out);
         } catch (Exception e) {
-            LOGGER.error("Could not parse SOAP Message", e);
+            LOGGER.error("Could not parse Message String", e);
         }
     }
 

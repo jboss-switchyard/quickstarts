@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
@@ -32,6 +33,7 @@ import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.soap.AddressingFeature;
 import javax.xml.ws.soap.SOAPFaultException;
@@ -60,6 +62,8 @@ public class OutboundHandler extends BaseServiceHandler {
 
     private static final Logger LOGGER = Logger.getLogger(OutboundHandler.class);
 
+    private static final String NO_RESPONSE = "No response returned.";
+
     private final SOAPBindingModel _config;
 
     private MessageComposer<SOAPBindingData> _messageComposer;
@@ -67,6 +71,7 @@ public class OutboundHandler extends BaseServiceHandler {
     private Port _wsdlPort;
     private String _bindingId;
     private Boolean _documentStyle;
+    private Addressing _addressing = new Addressing();
 
     /**
      * Constructor.
@@ -84,13 +89,15 @@ public class OutboundHandler extends BaseServiceHandler {
         if (_dispatcher == null) {
             ClassLoader origLoader = Classes.getTCCL();
             try {
+                Definition definition = WSDLUtil.readWSDL(_config.getWsdl());
                 PortName portName = _config.getPort();
-                javax.wsdl.Service wsdlService = WSDLUtil.getService(_config.getWsdl(), portName);
+                javax.wsdl.Service wsdlService = WSDLUtil.getService(definition, portName);
                 _wsdlPort = WSDLUtil.getPort(wsdlService, portName);
                 // Update the portName
                 portName.setServiceQName(wsdlService.getQName());
                 portName.setName(_wsdlPort.getName());
 
+                _addressing = WSDLUtil.getAddressing(definition, _wsdlPort);
                 _bindingId = WSDLUtil.getBindingId(_wsdlPort);
                 String style = WSDLUtil.getStyle(_wsdlPort);
                 _documentStyle = style.equals(WSDLUtil.DOCUMENT) ? true : false;
@@ -104,17 +111,26 @@ public class OutboundHandler extends BaseServiceHandler {
                 // make sure we don't pollute the class loader used by the WS subsystem
                 Classes.setTCCL(getClass().getClassLoader());
                 Service service = Service.create(wsdlUrl, portName.getServiceQName());
-                _dispatcher = service.createDispatch(portName.getPortQName(), SOAPMessage.class, Service.Mode.MESSAGE, new AddressingFeature(false, false));
+                _dispatcher = service.createDispatch(portName.getPortQName(),
+                                    SOAPMessage.class,
+                                    Service.Mode.MESSAGE,
+                                    new AddressingFeature(_addressing.isEnabled(), _addressing.isRequired()));
                 // this does not return a proper qualified Fault element and has no Detail so deferring for now
                 // _dispatcher.getRequestContext().put("jaxws.response.throwExceptionIfSOAPFault", Boolean.FALSE);
 
                 Binding binding = _dispatcher.getBinding();
                 List<Handler> handlers = binding.getHandlerChain();
                 handlers.add(new OutboundResponseHandler());
+
+                if (_addressing.isEnabled()) {
+                    // Add handler to process WS-A headers
+                    handlers.add(new AddressingHandler());
+                } else {
+                    // Defaulting to use soapAction property in request header
+                    _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
+                }
                 binding.setHandlerChain(handlers);
 
-                // Defaulting to use soapAction property in request header
-                _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
                 if (_config.getEndpointAddress() != null) {
                     _dispatcher.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, _config.getEndpointAddress());
                 }
@@ -149,15 +165,35 @@ public class OutboundHandler extends BaseServiceHandler {
             }
 
             SOAPMessage request;
+            Boolean oneWay = false;
+            Boolean replyToSet = false;
+            String action = null;
             try {
                 request = _messageComposer.decompose(exchange, new SOAPBindingData(SOAPUtil.createMessage(_bindingId))).getSOAPMessage();
+
+                QName firstBodyElement = SOAPUtil.getFirstBodyElement(request);
+                action = WSDLUtil.getSoapAction(_wsdlPort, firstBodyElement, _documentStyle);
+                oneWay = WSDLUtil.isOneWay(_wsdlPort, firstBodyElement, _documentStyle);
+
+                if (_addressing.isEnabled()) {
+                    _dispatcher.getRequestContext().put(SOAPUtil.SWITCHYARD_CONTEXT, exchange.getContext());
+                    // It is a one way if a replyto address is set
+                    if ((exchange.getContext().getPropertyValue(SOAPUtil.WSA_REPLYTO_STR) != null) 
+                        || (exchange.getContext().getPropertyValue(SOAPUtil.WSA_REPLYTO_STR.toLowerCase()) != null)) {
+                        replyToSet = true;
+                    }
+                    String toAddress = SOAPUtil.getToAddress(exchange.getContext());
+                    if (toAddress != null) {
+                        _dispatcher.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, toAddress);
+                    }
+                }
             } catch (Exception e) {
                 throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
             }
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Outbound ---> Request:[" + SOAPUtil.soapMessageToString(request) + "]");
+                LOGGER.trace("Outbound ---> Request:[" + SOAPUtil.soapMessageToString(request) + "]" + (oneWay ? " oneWay " : ""));
             }
-            SOAPMessage response = invokeService(request);
+            SOAPMessage response = invokeService(request, oneWay, action);
             if (response != null) {
                 // This property vanishes once message composer processes this message
                 // so caching it here
@@ -197,25 +233,34 @@ public class OutboundHandler extends BaseServiceHandler {
     /**
      * Invoke Webservice via Dispatch API
      * @param soapMessage the SOAP request
+     * @param oneWay if it is request only operation
+     * @param action the SOAP Action
      * @return the SOAP response
      * @throws SOAPException If a Dispatch could not be created based on the SOAP message.
      */
-    private SOAPMessage invokeService(final SOAPMessage soapMessage) throws SOAPException {
+    private SOAPMessage invokeService(final SOAPMessage soapMessage, final Boolean oneWay, final String action) throws SOAPException {
 
         SOAPMessage response = null;
         try {
-            QName firstBodyElement = SOAPUtil.getFirstBodyElement(soapMessage);
-            String action = WSDLUtil.getSoapAction(_wsdlPort, firstBodyElement, _documentStyle);
-            _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, "\"" + action + "\"");
+            if (!_addressing.isEnabled() && (action != null)) {
+                _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, "\"" + action + "\"");
+            }
 
-            if (WSDLUtil.isOneWay(_wsdlPort, firstBodyElement, _documentStyle)) {
+            if (oneWay) {
                 _dispatcher.invokeOneWay(soapMessage);
                 //return empty response
-            } else {
+            }  else {
                 response = _dispatcher.invoke(soapMessage);
             }
         } catch (SOAPFaultException sfex) {
             response = SOAPUtil.generateFault(sfex, _bindingId);
+        } catch (WebServiceException wsex) {
+            if (wsex.getMessage().equals(NO_RESPONSE) && _addressing.isEnabled()) {
+                // Ignore it
+                LOGGER.warn("Sent a message with ReplyTo to a Request_Response Webservice, so no response returned!");
+            } else {
+                throw wsex;
+            }
         } catch (Exception ex) {
             throw new SOAPException("Cannot process SOAP request", ex);
         }
