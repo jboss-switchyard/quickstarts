@@ -20,21 +20,40 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<route xmlns="http://camel.apache.org/schema/spring" id="CamelMathRoute">
-    <to uri="log:test?showAll=true" />
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="CamelMathRoute">
+        <from uri="switchyard://CamelMathService"/>
+        <to uri="log:test?showAll=true" />
         <choice>
             <when>
                 <simple>${header.org.switchyard.operationName} == 'cos'</simple>
-                <to uri="switchyard://MathCos" />
+                <to uri="direct:cos" />
             </when>
             <when>
                 <simple>${header.org.switchyard.operationName} == 'abs'</simple>
-                <to uri="switchyard://MathAbs" />
+                <to uri="direct:abs" />
             </when>
             <otherwise>
                 <log message="Moving ${body} ${in.headers} to unknown" />
-                <to uri="mock:unknown" />
+                <to uri="direct:unknown" />
             </otherwise>
         </choice>
-        <to uri="switchyard://MathAll" />
-</route>
+        <to uri="direct:all" />
+    </route>
+    <route>
+        <from uri="direct:cos"/>
+        <to uri="switchyard://MathCos"/>
+    </route>
+    <route>
+        <from uri="direct:abs"/>
+        <to uri="switchyard://MathAbs"/>
+    </route>
+    <route>
+        <from uri="direct:unknown"/>
+        <to uri="mock:unknown"/>
+    </route>
+    <route>
+        <from uri="direct:all"/>
+        <to uri="switchyard://MathAll"/>
+    </route>
+</routes>

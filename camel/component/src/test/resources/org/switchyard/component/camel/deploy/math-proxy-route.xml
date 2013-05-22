@@ -20,6 +20,9 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<route xmlns="http://camel.apache.org/schema/spring" id="CamelMathProxyRoute">
-    <to uri="switchyard://MathAll" />
-</route>
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="CamelMathProxyRoute">
+        <from uri="switchyard://CamelMathService"/>
+        <to uri="switchyard://MathAll" />
+    </route>
+</routes>

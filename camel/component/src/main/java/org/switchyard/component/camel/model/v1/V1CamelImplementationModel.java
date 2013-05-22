@@ -20,25 +20,13 @@
  */
 package org.switchyard.component.camel.model.v1;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.namespace.QName;
+import static org.switchyard.component.camel.model.Constants.COMPONENT_NAMESPACE_V1;
 
-import org.apache.camel.model.Constants;
-import org.apache.camel.model.RouteDefinition;
-import org.switchyard.common.type.Classes;
-import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
 import org.switchyard.component.camel.common.model.v1.NameValueModel;
 import org.switchyard.component.camel.model.CamelComponentImplementationModel;
 import org.switchyard.config.Configuration;
-import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
-import org.switchyard.exception.SwitchYardException;
-
-import static org.switchyard.component.camel.model.Constants.COMPONENT_NAMESPACE_V1;
 
 /**
  * Version 1 implementation.
@@ -53,10 +41,6 @@ public class V1CamelImplementationModel extends V1ComponentImplementationModel
 
     // The path attribute for XML DSL routes
     private static final String PATH = "path";
-
-    private static final QName ROUTE_ELEMENT = new QName("http://camel.apache.org/schema/spring", "route");
-
-    private static JAXBContext jaxbContext = createJAXBInstance();
 
     /**
      * Create a new CamelImplementationModel.
@@ -74,50 +58,6 @@ public class V1CamelImplementationModel extends V1ComponentImplementationModel
     public V1CamelImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
         setModelChildrenOrder();
-    }
-
-    @Override
-    public RouteDefinition getRoute() {
-        RouteDefinition route = null;
-        Configuration routeConfig = getModelConfiguration().getFirstChild(ROUTE);
-        try {
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            if (routeConfig != null) {
-                route = (RouteDefinition) unmarshaller.unmarshal(routeConfig.getSource());
-            } else if (getXMLPath() != null) {
-                route = (RouteDefinition) unmarshaller.unmarshal(Classes.getResource(getXMLPath()));
-            }
-        } catch (Exception e) {
-            throw new SwitchYardException("Failed to load Camel XML route definition.", e);
-        }
-
-        String namespace = getComponent().getTargetNamespace();
-        if (route != null && namespace != null) {
-            SwitchYardRouteDefinition.addNamespaceParameter(route, namespace);
-        }
-        return route;
-    }
-
-    /**
-     * Add an empty Camel route definition to the implementation.
-     * @return the JAXB object model for the empty Camel route.
-     */
-    public RouteDefinition addRoute() {
-        if (getModelConfiguration().getFirstChild(ROUTE) != null) {
-            throw new IllegalStateException(ROUTE + " element already exists in implementation!");
-        }
-
-        Model routeModel = new BaseModel(ROUTE_ELEMENT) {};
-        addChildModel(routeModel);
-        return getRoute();
-    }
-
-    private static JAXBContext createJAXBInstance() {
-        try {
-            return JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES);
-        } catch (JAXBException e) {
-            throw new SwitchYardException(e);
-        }
     }
 
     @Override

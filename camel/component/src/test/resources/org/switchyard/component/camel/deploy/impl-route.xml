@@ -19,9 +19,12 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<route xmlns="http://camel.apache.org/schema/spring" id="CamelTestRoute">
-    <log message="ItemId [${body}]"/>
-    <to uri="switchyard://WarehouseService?operationName=hasItem"/>
-    <log message="Title Name [${body}]"/>
-    <log message="Properties [{{user.name}}, {{prop.domain}}, {{prop.composite}}, {{prop.component}}]"/>
-</route>
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="CamelTestRoute">
+        <from uri="switchyard://OrderService"/>
+        <log message="ItemId [${body}]"/>
+        <to uri="switchyard://WarehouseService?operationName=hasItem"/>
+        <log message="Title Name [${body}]"/>
+        <log message="Properties [{{user.name}}, {{prop.domain}}, {{prop.composite}}, {{prop.component}}]"/>
+    </route>
+</routes>

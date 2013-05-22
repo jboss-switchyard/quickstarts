@@ -18,6 +18,8 @@
  */
 package org.switchyard.component.camel;
 
+import java.util.List;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.Assert;
@@ -31,9 +33,11 @@ public class RouteFactoryTest {
 
     @Test
     public void createRouteFromClass() {
-        RouteDefinition route = RouteFactory.createRoute(SingleRouteService.class.getName());
+        List<RouteDefinition> routes = RouteFactory.createRoute(SingleRouteService.class.getName());
 
-        Assert.assertNotNull(route);
+        Assert.assertNotNull(routes);
+        Assert.assertEquals(1, routes.size());
+        RouteDefinition route = routes.get(0);
         Assert.assertEquals(1, route.getInputs().size());
         Assert.assertEquals(2, route.getOutputs().size());
     }

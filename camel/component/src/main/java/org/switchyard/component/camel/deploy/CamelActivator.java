@@ -39,6 +39,7 @@ import org.switchyard.component.camel.SwitchYardConsumer;
 import org.switchyard.component.camel.SwitchYardEndpoint;
 import org.switchyard.component.camel.SwitchYardPropertiesParser;
 import org.switchyard.component.camel.common.CamelConstants;
+import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
 import org.switchyard.component.camel.common.composer.CamelComposition;
 import org.switchyard.component.camel.common.deploy.BaseCamelActivator;
 import org.switchyard.component.camel.model.CamelComponentImplementationModel;
@@ -95,10 +96,10 @@ public class CamelActivator extends BaseCamelActivator {
                 (CamelComponentImplementationModel)config.getComponent().getImplementation();
         try {
             final String endpointUri = ComponentNameComposer.composeComponentUri(serviceName);
-            final RouteDefinition routeDef = getRouteDefinition(ccim);
-            checkSwitchYardReferencedServiceExist(routeDef, ccim);
-            addFromEndpointToRouteDefinition(routeDef, endpointUri);
-            getCamelContext().addRouteDefinition(routeDef);
+            final List<RouteDefinition> routeDefinitions = getRouteDefinition(ccim);
+            checkSwitchYardReferencedServiceExist(routeDefinitions, ccim);
+            verifyRouteDefinitions(routeDefinitions, ccim);
+            getCamelContext().addRouteDefinitions(routeDefinitions);
             final SwitchYardEndpoint endpoint = getCamelContext().getEndpoint(endpointUri, SwitchYardEndpoint.class);
             endpoint.setMessageComposer(CamelComposition.getMessageComposer());
             final SwitchYardConsumer consumer = endpoint.getConsumer();
@@ -108,28 +109,27 @@ public class CamelActivator extends BaseCamelActivator {
         }
     }
 
-    private void checkSwitchYardReferencedServiceExist(
-            final RouteDefinition routeDef, 
-            final CamelComponentImplementationModel ccim) {
-        
-        final List<ProcessorDefinition<?>> outputs = routeDef.getOutputs();
-        for (ProcessorDefinition<?> processorDef : outputs) {
-            if (processorDef instanceof ToDefinition) {
-                final ToDefinition to = (ToDefinition) processorDef;
-                final URI componentUri = URI.create(to.getUri());
-                if (componentUri.getScheme().equals(CamelConstants.SWITCHYARD_COMPONENT_NAME)) {
-                    final String serviceName = componentUri.getHost();
-                    final String namespace = ComponentNameComposer.getNamespaceFromURI(componentUri);
-                    final QName refServiceName = new QName(namespace, serviceName);
-                    if (!containsServiceRef(ccim.getComponent().getReferences(), serviceName)) {
-                        throw new SwitchYardException("Could find the service reference for '" + serviceName + "'" 
-                        + " which is referenced in " + to);
-                    }
-                    
-                    final ServiceReference service = getServiceDomain().getServiceReference(refServiceName);
-                    if (service == null) {
-                        throw new SwitchYardException("Could find the service name '" + serviceName + "'" 
-                        + " which is referenced in " + to);
+    private void checkSwitchYardReferencedServiceExist(List<RouteDefinition> routeDefinitions, CamelComponentImplementationModel ccim) {
+        for (RouteDefinition routeDefinition : routeDefinitions) {
+            final List<ProcessorDefinition<?>> outputs = routeDefinition.getOutputs();
+            for (ProcessorDefinition<?> processorDef : outputs) {
+                if (processorDef instanceof ToDefinition) {
+                    final ToDefinition to = (ToDefinition) processorDef;
+                    final URI componentUri = URI.create(to.getUri());
+                    if (componentUri.getScheme().equals(CamelConstants.SWITCHYARD_COMPONENT_NAME)) {
+                        final String serviceName = componentUri.getHost();
+                        final String namespace = ComponentNameComposer.getNamespaceFromURI(componentUri);
+                        final QName refServiceName = new QName(namespace, serviceName);
+                        if (!containsServiceRef(ccim.getComponent().getReferences(), serviceName)) {
+                            throw new SwitchYardException("Could find the service reference for '" + serviceName + "'" 
+                            + " which is referenced in " + to);
+                        }
+                        
+                        final ServiceReference service = getServiceDomain().getServiceReference(refServiceName);
+                        if (service == null) {
+                            throw new SwitchYardException("Could find the service name '" + serviceName + "'" 
+                            + " which is referenced in " + to);
+                        }
                     }
                 }
             }
@@ -145,35 +145,74 @@ public class CamelActivator extends BaseCamelActivator {
         return false;
     }
 
-    private void addFromEndpointToRouteDefinition(final RouteDefinition rd, final String fromEndpointUri) throws Exception {
-        final List<FromDefinition> inputs = rd.getInputs();
+    private void verifyRouteDefinitions(List<RouteDefinition> routeDefinitions, CamelComponentImplementationModel ccim) throws Exception {
+        // service name & namespace
+        // TODO what happens when we have multiple services?
+        String serviceName = ccim.getComponent().getServices().get(0).getName();
+        String compositeNs = ccim.getComponent().getComposite().getTargetNamespace();
 
-        // Make sure the route starts with a single switchyard:// endpoint
-        if (inputs.size() == 0) {
-            inputs.add(new FromDefinition(fromEndpointUri));
-        } else if (inputs.size() == 1) {
-            String routeURI = inputs.get(0).getUri();
-            if (!fromEndpointUri.equals(routeURI)) {
-                throw new SwitchYardException("Endpoint URI on route " + routeURI
-                        + " does not match expected URI : " + fromEndpointUri);
+        // number of switchyard:// consumers/from statements
+        int serviceConsumer = 0;
+        for (RouteDefinition routeDefinition : routeDefinitions) {
+            if (routeDefinition.getInputs().isEmpty()) {
+                throw new SwitchYardException("Every route must have at least one input");
             }
-        } else {
-            throw new SwitchYardException("A route can only have one 'from' endpoint");
-        }
+            for (FromDefinition fromDefinition : routeDefinition.getInputs()) {
+                URI from = URI.create(fromDefinition.getUri());
+                if (from.getScheme().equals(CamelConstants.SWITCHYARD_COMPONENT_NAME)) {
+                    if (serviceConsumer > 0) {
+                        throw new SwitchYardException("Only one switchyard input per implementation is allowed");
+                    }
+                    String host = from.getHost();
+                    String namespace = ComponentNameComposer.getNamespaceFromURI(from);
 
+                    if (!serviceName.equals(host) || !compositeNs.equals(namespace)) {
+                        throw new SwitchYardException("The implementation consumer doesn't match expected service " + serviceName + " and namespace " + namespace);
+                    }
+                    serviceConsumer++;
+                }
+            }
+
+            List<ProcessorDefinition<?>> outputs = routeDefinition.getOutputs();
+            for (ProcessorDefinition<?> processorDefinition : outputs) {
+                if (processorDefinition instanceof ToDefinition) {
+                    ToDefinition to = (ToDefinition) processorDefinition;
+                    final URI componentUri = URI.create(to.getUri());
+                    if (componentUri.getScheme().equals(CamelConstants.SWITCHYARD_COMPONENT_NAME)) {
+                        final String referenceName = componentUri.getHost();
+                        final String namespace = ComponentNameComposer.getNamespaceFromURI(componentUri);
+                        final QName refServiceName = new QName(namespace, referenceName);
+                        if (!containsServiceRef(ccim.getComponent().getReferences(), referenceName)) {
+                            throw new SwitchYardException("Could find the service reference for '" + referenceName + "'" 
+                            + " which is referenced in " + to);
+                        }
+                        
+                        final ServiceReference service = getServiceDomain().getServiceReference(refServiceName);
+                        if (service == null) {
+                            throw new SwitchYardException("Could find the service name '" + referenceName + "'" 
+                            + " which is referenced in " + to);
+                        }
+                    }
+                }
+            }
+        }
+        if (serviceConsumer != 1) {
+            throw new SwitchYardException("Can not create camel based component implementation without consuming from switchyard service");
+        }
     }
+
 
     /**
      * There are two options for Camel implementation : Spring XML or Java DSL.
      * This method figures out which one were dealing with and returns the
      * corresponding RouteDefinition.
      */
-    private RouteDefinition getRouteDefinition(CamelComponentImplementationModel model) {
-        RouteDefinition routeDef = model.getRoute();
-        if (routeDef == null && model.getJavaClass() != null) {
-            routeDef = RouteFactory.createRoute(model.getJavaClass(), model.getComponent().getTargetNamespace());
+    private List<RouteDefinition> getRouteDefinition(CamelComponentImplementationModel model) {
+        List<RouteDefinition> routes = RouteFactory.getRoutes(model);
+        for (RouteDefinition route : routes) {
+            SwitchYardRouteDefinition.addNamespaceParameter(route, model.getComponent().getTargetNamespace());
         }
-        return routeDef;
+        return routes;
     }
 
 }

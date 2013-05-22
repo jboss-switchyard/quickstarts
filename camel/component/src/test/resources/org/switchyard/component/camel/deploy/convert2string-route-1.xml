@@ -19,8 +19,11 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<route xmlns="http://camel.apache.org/schema/spring" id="CamelConvertString1">
-    <!-- <convertBodyTo type="java.lang.String"/> --> 
-    <log message="String 3 [${body}]"/>
-    <log message="String 4 [${body}]"/>
-</route>
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="CamelConvertString1">
+        <from uri="switchyard://EchoProxyService" />
+        <!-- <convertBodyTo type="java.lang.String"/> --> 
+        <log message="String 3 [${body}]"/>
+        <log message="String 4 [${body}]"/>
+    </route>
+</routes>

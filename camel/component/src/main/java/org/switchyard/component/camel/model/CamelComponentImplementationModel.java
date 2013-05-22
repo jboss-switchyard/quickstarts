@@ -20,7 +20,6 @@
  */
 package org.switchyard.component.camel.model;
 
-import org.apache.camel.model.RouteDefinition;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 
 /**
@@ -43,11 +42,6 @@ public interface CamelComponentImplementationModel extends ComponentImplementati
      * The 'camel' implementation type.
      */
     String CAMEL = "camel";
-    
-    /**
-     * The name of the Camel route element.
-     */
-    String ROUTE = "route";
 
     /**
      * The name of the Camel java element.
@@ -58,12 +52,6 @@ public interface CamelComponentImplementationModel extends ComponentImplementati
      * The name of the Camel xml element.
      */
     String XML = "xml";
-    
-    /**
-     * The Camel route definition.
-     * @return {@link RouteDefinition} The Camel {@link RouteDefinition}.
-     */
-    RouteDefinition getRoute();
     
     /**
      * Name of a Class containing one or more @Route definitions.

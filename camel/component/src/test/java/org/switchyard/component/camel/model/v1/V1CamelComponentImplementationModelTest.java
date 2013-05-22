@@ -22,22 +22,19 @@ package org.switchyard.component.camel.model.v1;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-
 import junit.framework.Assert;
 
-import org.apache.camel.model.RouteDefinition;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.switchyard.component.camel.core.model.v1.V1CamelBindingModel;
 import org.switchyard.component.camel.model.CamelComponentImplementationModel;
 import org.switchyard.component.camel.scanner.SingleRouteService;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.ComponentModel;
-import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
@@ -68,14 +65,6 @@ public class V1CamelComponentImplementationModelTest {
     }
 
     @Test
-    public void validateModelWithRouteElement() throws Exception {
-        final V1CamelImplementationModel implModel = getCamelImplementation("switchyard-implementation-beans.xml");
-        
-        validateModel(implModel);
-        assertThat(implModel.getRoute(), is(notNullValue()));
-    }
-
-    @Test
     public void validateModelWithJavaElement() throws Exception {
         final V1CamelImplementationModel implModel = getCamelImplementation("switchyard-implementation-java.xml");
 
@@ -90,7 +79,7 @@ public class V1CamelComponentImplementationModelTest {
         validateModel(implModel);
         assertThat(XML_ROUTE_PATH, is(equalTo(implModel.getXMLPath())));
     }
-    
+
     @Test
     public void addXMLPath() throws Exception {
         V1CamelImplementationModel camelConfig = new V1CamelImplementationModel();
@@ -98,37 +87,12 @@ public class V1CamelComponentImplementationModelTest {
         validateModel(camelConfig);
         Assert.assertEquals(XML_ROUTE_PATH, camelConfig.getXMLPath());
     }
-    
-    @Test
-    public void getXMLRouteFromPath() throws Exception {
-        final V1CamelImplementationModel implModel = getCamelImplementation("switchyard-implementation-xml.xml");
-        RouteDefinition route = implModel.getRoute();
-        Assert.assertNotNull(route);
-        // Verify the route was parsed correctly
-        Assert.assertTrue(route.getInputs().get(0).getUri().startsWith("switchyard://SingleRouteService"));
-    }
-    
+
     @Test
     public void writeConfig() throws Exception {
         final String control = getCamelImplementation("switchyard-implementation-java.xml").toString();
         final String test = createModel().toString();
         XMLAssert.assertXMLEqual(control, test);
-    }
-
-    @Test
-    public void addRoute() throws Exception {
-        V1ComponentModel component = new V1ComponentModel();
-        V1CamelImplementationModel impl = new V1CamelImplementationModel();
-        component.setImplementation(impl);
-        Assert.assertNull(impl.getRoute());
-        Assert.assertNotNull(impl.addRoute());
-        Assert.assertNotNull(impl.getRoute());
-
-        // adding a route again should fail
-        try {
-            impl.addRoute();
-            Assert.fail("Should not be able to add multiple routes!");
-        } catch (Exception ex) {}
     }
 
     private V1CamelImplementationModel createModel() {
