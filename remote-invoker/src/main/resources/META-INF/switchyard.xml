@@ -19,10 +19,10 @@
         <rules:actions>
           <rules:action operation="checkCredit" type="EXECUTE">
             <rules:inputs>
-              <rules:mapping expression="message.content.application" expressionType="MVEL"/>
+              <rules:input from="message.content.application"/>
             </rules:inputs>
             <rules:outputs>
-              <rules:mapping expression="message.content.application" expressionType="MVEL"/>
+              <rules:output from="message.content.application"/>
             </rules:outputs>
           </rules:action>
         </rules:actions>

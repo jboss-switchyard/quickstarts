@@ -14,10 +14,13 @@
                 <actions>
                     <action operation="submitOrder" type="START_PROCESS">
                         <inputs>
-                            <mapping expression="context['org.switchyard.messageId']" variable="messageId"/>
-                            <mapping expression="message.content" variable="contentInput"/>
-                            <mapping expression="userName" variable="userName"/>
+                            <input from="context['org.switchyard.messageId']" to="messageId"/>
+                            <input from="message.content" to="Parameter"/>
+                            <input from="userName" to="userName"/>
                         </inputs>
+                        <outputs>
+                            <output from="Result" to="message.content"/>
+                        </outputs>
                     </action>
                 </actions>
                 <!--
