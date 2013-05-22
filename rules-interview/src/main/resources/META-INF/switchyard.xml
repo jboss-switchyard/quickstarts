@@ -9,7 +9,7 @@
         <rules:actions>
           <rules:action operation="verify" type="EXECUTE">
             <rules:globals>
-              <rules:mapping expression="userName" variable="userName"/>
+              <rules:global from="userName" to="userName"/>
             </rules:globals>
           </rules:action>
         </rules:actions>

@@ -13,10 +13,10 @@
                 <actions>
                     <action operation="openTicket" type="START_PROCESS">
                         <inputs>
-                            <mapping expression="message.content" variable="ticket"/>
+                            <input from="message.content" to="ticket"/>
                         </inputs>
                         <outputs>
-                            <mapping expression="ticketAck" variable="contentOutput"/>
+                            <output from="ticketAck" to="message.content"/>
                         </outputs>
                     </action>
                 </actions>

@@ -50,20 +50,20 @@
 
     <!-- nodes -->
     <startEvent id="_1" name="StartProcess" />
-    <task id="_4" name="Open Ticket" tns:taskName="SwitchYard Service" >
+    <task id="_4" name="Open Ticket" tns:taskName="SwitchYard Service Task" >
       <ioSpecification>
         <dataInput id="_4_ticketInput" name="ticket" />
-        <dataInput id="_4_ContentInputNameInput" name="ContentInputName" />
+        <dataInput id="_4_ParameterNameInput" name="ParameterName" />
         <dataInput id="_4_ServiceNameInput" name="ServiceName" />
-        <dataInput id="_4_ServiceOperationNameInput" name="ServiceOperationName" />
-        <dataInput id="_4_ContentOutputNameInput" name="ContentOutputName" />
+        <dataInput id="_4_OperationNameInput" name="OperationName" />
+        <dataInput id="_4_ResultNameInput" name="ResultName" />
         <dataOutput id="_4_ticketAckOutput" name="ticketAck" />
         <inputSet>
           <dataInputRefs>_4_ticketInput</dataInputRefs>
-          <dataInputRefs>_4_ContentInputNameInput</dataInputRefs>
+          <dataInputRefs>_4_ParameterNameInput</dataInputRefs>
           <dataInputRefs>_4_ServiceNameInput</dataInputRefs>
-          <dataInputRefs>_4_ServiceOperationNameInput</dataInputRefs>
-          <dataInputRefs>_4_ContentOutputNameInput</dataInputRefs>
+          <dataInputRefs>_4_OperationNameInput</dataInputRefs>
+          <dataInputRefs>_4_ResultNameInput</dataInputRefs>
         </inputSet>
         <outputSet>
           <dataOutputRefs>_4_ticketAckOutput</dataOutputRefs>
@@ -74,10 +74,10 @@
         <targetRef>_4_ticketInput</targetRef>
       </dataInputAssociation>
       <dataInputAssociation>
-        <targetRef>_4_ContentInputNameInput</targetRef>
+        <targetRef>_4_ParameterNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">ticket</from>
-          <to xsi:type="tFormalExpression">_4_ContentInputNameInput</to>
+          <to xsi:type="tFormalExpression">_4_ParameterNameInput</to>
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
@@ -88,17 +88,17 @@
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
-        <targetRef>_4_ServiceOperationNameInput</targetRef>
+        <targetRef>_4_OperationNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">openTicket</from>
-          <to xsi:type="tFormalExpression">_4_ServiceOperationNameInput</to>
+          <to xsi:type="tFormalExpression">_4_OperationNameInput</to>
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
-        <targetRef>_4_ContentOutputNameInput</targetRef>
+        <targetRef>_4_ResultNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">ticketAck</from>
-          <to xsi:type="tFormalExpression">_4_ContentOutputNameInput</to>
+          <to xsi:type="tFormalExpression">_4_ResultNameInput</to>
         </assignment>
       </dataInputAssociation>
       <dataOutputAssociation>
@@ -106,17 +106,17 @@
         <targetRef>ticketAck</targetRef>
       </dataOutputAssociation>
     </task>
-    <task id="_5" name="Reject Ticket" tns:taskName="SwitchYard Service" >
+    <task id="_5" name="Reject Ticket" tns:taskName="SwitchYard Service Task" >
       <ioSpecification>
         <dataInput id="_5_ticketInput" name="ticket" />
-        <dataInput id="_5_ContentInputNameInput" name="ContentInputName" />
+        <dataInput id="_5_ParameterNameInput" name="ParameterName" />
         <dataInput id="_5_ServiceNameInput" name="ServiceName" />
-        <dataInput id="_5_ServiceOperationNameInput" name="ServiceOperationName" />
+        <dataInput id="_5_OperationNameInput" name="OperationName" />
         <inputSet>
           <dataInputRefs>_5_ticketInput</dataInputRefs>
-          <dataInputRefs>_5_ContentInputNameInput</dataInputRefs>
+          <dataInputRefs>_5_ParameterNameInput</dataInputRefs>
           <dataInputRefs>_5_ServiceNameInput</dataInputRefs>
-          <dataInputRefs>_5_ServiceOperationNameInput</dataInputRefs>
+          <dataInputRefs>_5_OperationNameInput</dataInputRefs>
         </inputSet>
         <outputSet>
         </outputSet>
@@ -126,10 +126,10 @@
         <targetRef>_5_ticketInput</targetRef>
       </dataInputAssociation>
       <dataInputAssociation>
-        <targetRef>_5_ContentInputNameInput</targetRef>
+        <targetRef>_5_ParameterNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">ticket</from>
-          <to xsi:type="tFormalExpression">_5_ContentInputNameInput</to>
+          <to xsi:type="tFormalExpression">_5_ParameterNameInput</to>
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
@@ -140,10 +140,10 @@
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
-        <targetRef>_5_ServiceOperationNameInput</targetRef>
+        <targetRef>_5_OperationNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">rejectTicket</from>
-          <to xsi:type="tFormalExpression">_5_ServiceOperationNameInput</to>
+          <to xsi:type="tFormalExpression">_5_OperationNameInput</to>
         </assignment>
       </dataInputAssociation>
     </task>
@@ -259,17 +259,17 @@ System.out.println("********** after (random for test purpose) review, ticket st
       </potentialOwner>
     </userTask>
     <exclusiveGateway id="_11" name="Gateway" gatewayDirection="Diverging" />
-    <task id="_12" name="Approve Ticket" tns:taskName="SwitchYard Service" >
+    <task id="_12" name="Approve Ticket" tns:taskName="SwitchYard Service Task" >
       <ioSpecification>
         <dataInput id="_12_ticketInput" name="ticket" />
-        <dataInput id="_12_ContentInputNameInput" name="ContentInputName" />
+        <dataInput id="_12_ParameterNameInput" name="ParameterName" />
         <dataInput id="_12_ServiceNameInput" name="ServiceName" />
-        <dataInput id="_12_ServiceOperationNameInput" name="ServiceOperationName" />
+        <dataInput id="_12_OperationNameInput" name="OperationName" />
         <inputSet>
           <dataInputRefs>_12_ticketInput</dataInputRefs>
-          <dataInputRefs>_12_ContentInputNameInput</dataInputRefs>
+          <dataInputRefs>_12_ParameterNameInput</dataInputRefs>
           <dataInputRefs>_12_ServiceNameInput</dataInputRefs>
-          <dataInputRefs>_12_ServiceOperationNameInput</dataInputRefs>
+          <dataInputRefs>_12_OperationNameInput</dataInputRefs>
         </inputSet>
         <outputSet>
         </outputSet>
@@ -279,10 +279,10 @@ System.out.println("********** after (random for test purpose) review, ticket st
         <targetRef>_12_ticketInput</targetRef>
       </dataInputAssociation>
       <dataInputAssociation>
-        <targetRef>_12_ContentInputNameInput</targetRef>
+        <targetRef>_12_ParameterNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">ticket</from>
-          <to xsi:type="tFormalExpression">_12_ContentInputNameInput</to>
+          <to xsi:type="tFormalExpression">_12_ParameterNameInput</to>
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
@@ -293,10 +293,10 @@ System.out.println("********** after (random for test purpose) review, ticket st
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
-        <targetRef>_12_ServiceOperationNameInput</targetRef>
+        <targetRef>_12_OperationNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">approveTicket</from>
-          <to xsi:type="tFormalExpression">_12_ServiceOperationNameInput</to>
+          <to xsi:type="tFormalExpression">_12_OperationNameInput</to>
         </assignment>
       </dataInputAssociation>
     </task>
@@ -346,17 +346,17 @@ System.out.println("********** after (random for test purpose) review, ticket st
         </resourceAssignmentExpression>
       </potentialOwner>
     </userTask>
-    <task id="_14" name="Close Ticket" tns:taskName="SwitchYard Service" >
+    <task id="_14" name="Close Ticket" tns:taskName="SwitchYard Service Task" >
       <ioSpecification>
         <dataInput id="_14_ticketInput" name="ticket" />
-        <dataInput id="_14_ContentInputNameInput" name="ContentInputName" />
+        <dataInput id="_14_ParameterNameInput" name="ParameterName" />
         <dataInput id="_14_ServiceNameInput" name="ServiceName" />
-        <dataInput id="_14_ServiceOperationNameInput" name="ServiceOperationName" />
+        <dataInput id="_14_OperationNameInput" name="OperationName" />
         <inputSet>
           <dataInputRefs>_14_ticketInput</dataInputRefs>
-          <dataInputRefs>_14_ContentInputNameInput</dataInputRefs>
+          <dataInputRefs>_14_ParameterNameInput</dataInputRefs>
           <dataInputRefs>_14_ServiceNameInput</dataInputRefs>
-          <dataInputRefs>_14_ServiceOperationNameInput</dataInputRefs>
+          <dataInputRefs>_14_OperationNameInput</dataInputRefs>
         </inputSet>
         <outputSet>
         </outputSet>
@@ -366,10 +366,10 @@ System.out.println("********** after (random for test purpose) review, ticket st
         <targetRef>_14_ticketInput</targetRef>
       </dataInputAssociation>
       <dataInputAssociation>
-        <targetRef>_14_ContentInputNameInput</targetRef>
+        <targetRef>_14_ParameterNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">ticket</from>
-          <to xsi:type="tFormalExpression">_14_ContentInputNameInput</to>
+          <to xsi:type="tFormalExpression">_14_ParameterNameInput</to>
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
@@ -380,27 +380,27 @@ System.out.println("********** after (random for test purpose) review, ticket st
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
-        <targetRef>_14_ServiceOperationNameInput</targetRef>
+        <targetRef>_14_OperationNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">closeTicket</from>
-          <to xsi:type="tFormalExpression">_14_ServiceOperationNameInput</to>
+          <to xsi:type="tFormalExpression">_14_OperationNameInput</to>
         </assignment>
       </dataInputAssociation>
     </task>
     <endEvent id="_15" name="End" >
         <terminateEventDefinition/>
     </endEvent>
-    <task id="_16" name="Request Details" tns:taskName="SwitchYard Service" >
+    <task id="_16" name="Request Details" tns:taskName="SwitchYard Service Task" >
       <ioSpecification>
         <dataInput id="_16_ticketInput" name="ticket" />
-        <dataInput id="_16_ContentInputNameInput" name="ContentInputName" />
+        <dataInput id="_16_ParameterNameInput" name="ParameterName" />
         <dataInput id="_16_ServiceNameInput" name="ServiceName" />
-        <dataInput id="_16_ServiceOperationNameInput" name="ServiceOperationName" />
+        <dataInput id="_16_OperationNameInput" name="OperationName" />
         <inputSet>
           <dataInputRefs>_16_ticketInput</dataInputRefs>
-          <dataInputRefs>_16_ContentInputNameInput</dataInputRefs>
+          <dataInputRefs>_16_ParameterNameInput</dataInputRefs>
           <dataInputRefs>_16_ServiceNameInput</dataInputRefs>
-          <dataInputRefs>_16_ServiceOperationNameInput</dataInputRefs>
+          <dataInputRefs>_16_OperationNameInput</dataInputRefs>
         </inputSet>
         <outputSet>
         </outputSet>
@@ -410,10 +410,10 @@ System.out.println("********** after (random for test purpose) review, ticket st
         <targetRef>_16_ticketInput</targetRef>
       </dataInputAssociation>
       <dataInputAssociation>
-        <targetRef>_16_ContentInputNameInput</targetRef>
+        <targetRef>_16_ParameterNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">ticket</from>
-          <to xsi:type="tFormalExpression">_16_ContentInputNameInput</to>
+          <to xsi:type="tFormalExpression">_16_ParameterNameInput</to>
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
@@ -424,10 +424,10 @@ System.out.println("********** after (random for test purpose) review, ticket st
         </assignment>
       </dataInputAssociation>
       <dataInputAssociation>
-        <targetRef>_16_ServiceOperationNameInput</targetRef>
+        <targetRef>_16_OperationNameInput</targetRef>
         <assignment>
           <from xsi:type="tFormalExpression">requestDetails</from>
-          <to xsi:type="tFormalExpression">_16_ServiceOperationNameInput</to>
+          <to xsi:type="tFormalExpression">_16_OperationNameInput</to>
         </assignment>
       </dataInputAssociation>
     </task>

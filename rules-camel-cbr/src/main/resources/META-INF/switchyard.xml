@@ -25,7 +25,7 @@
                 <actions>
                     <action operation="determineDestination" type="EXECUTE">
                         <inputs>
-                            <mapping expression="message.content.widget"/>
+                            <input from="message.content.widget"/>
                         </inputs>
                     </action>
                 </actions>
