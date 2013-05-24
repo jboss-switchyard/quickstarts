@@ -58,6 +58,7 @@ import org.switchyard.component.common.knowledge.exchange.KnowledgeExchangeHandl
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
 import org.switchyard.component.common.knowledge.util.Disposals;
 import org.switchyard.component.common.knowledge.util.Environments;
+import org.switchyard.component.common.knowledge.util.Listeners;
 
 /**
  * A "bpm" implementation of a KnowledgeExchangeHandler.
@@ -72,6 +73,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
     private final String _processId;
     private CorrelationKeyFactory _correlationKeyFactory;
     private EntityManagerFactory _entityManagerFactory;
+    private final ProcessListener _processListener;
 
     /**
      * Constructs a new BPMExchangeHandler with the specified model and service domain.
@@ -82,6 +84,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
         super(model, domain);
         _persistent = model.isPersistent();
         _processId = model.getProcessId();
+        _processListener = new ProcessListener(domain.getEventPublisher());
     }
 
     /**
@@ -239,6 +242,8 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
         } else {
             session = getStatefulSession();
         }
+        Listeners.registerListener(_processListener,
+                (session.isStateful() ? session.getStateful() : session.getStateless()));
         WorkItemHandlers.registerWorkItemHandlers(getModel(), getLoader(), session.getStateful(), getDomain());
         return session;
     }

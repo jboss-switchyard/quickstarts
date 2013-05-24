@@ -125,7 +125,12 @@ public final class Listeners {
         return constructor;
     }
 
-    private static void registerListener(EventListener listener, KieRuntimeEventManager runtimeEventManager) {
+    /**
+     * Registers listener.
+     * @param listener the listener
+     * @param runtimeEventManager the runtime event manager
+     */
+    public static void registerListener(EventListener listener, KieRuntimeEventManager runtimeEventManager) {
         if (runtimeEventManager instanceof StatefulKnowledgeSessionImpl) {
             StatefulKnowledgeSessionImpl sksi = (StatefulKnowledgeSessionImpl)runtimeEventManager;
             WorkingMemoryEventManager wmem = sksi.session;
