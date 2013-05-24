@@ -43,10 +43,24 @@ import org.switchyard.security.jboss.credential.extractor.HttpExchangeCredential
 
 /**
  * Publishes standalone HTTP endpoint.
+ * <p>
+ *     By default it will be published in port {@value #DEFAULT_PORT}. This can be configured making use of
+ *     <i>{@value #DEFAULT_PORT_PROPERTY}</i> system property.
+ * </p>
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
 public class StandaloneEndpointPublisher implements EndpointPublisher {
+
+    /**
+     * Default port in which the standalone publisher is started.
+     */
+    public static final int DEFAULT_PORT = 8080;
+
+    /**
+     * System property to adjust the port in which the standalone publisher is started.
+     */
+    public static final String DEFAULT_PORT_PROPERTY = "org.switchyard.component.http.standalone.port";
 
     private static final Logger LOGGER = Logger.getLogger(StandaloneEndpointPublisher.class);
 
@@ -57,7 +71,7 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
 
     static {
         try {
-            _httpServer = HttpServer.create(new InetSocketAddress(8080), 10);
+            _httpServer = HttpServer.create(new InetSocketAddress(getPort()), 10);
             _httpServer.setExecutor(null); // creates a default executor
             _httpServer.start();
         } catch (IOException ioe) {
@@ -185,5 +199,18 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
         }
 
         return requestInfo;
+    }
+
+    /**
+     * Returns the port where the standalone publisher will be started
+     * @return the port
+     */
+    static int getPort() {
+        int port = DEFAULT_PORT;
+        final String portAsStr = System.getProperty(DEFAULT_PORT_PROPERTY);
+        if (portAsStr != null) {
+            port = Integer.parseInt(portAsStr);
+        }
+        return port;
     }
 }

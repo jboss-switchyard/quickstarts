@@ -30,10 +30,25 @@ import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
 
 /**
  * Publishes standalone RESTEasy resource.
+ * <p>
+ *     By default it will be published in port {@value #DEFAULT_PORT}. This can be configured making use of
+ *     <i>{@value #DEFAULT_PORT_PROPERTY}</i> system property.
+ * </p>
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
 public class StandaloneResourcePublisher implements ResourcePublisher {
+
+    /**
+     * Default port in which the standalone publisher is started.
+     */
+    public static final int DEFAULT_PORT = 8080;
+
+    /**
+     * System property to adjust the port in which the standalone publisher is started.
+     */
+    public static final String DEFAULT_PORT_PROPERTY = "org.switchyard.component.resteasy.standalone.port";
+
     private static final Logger LOGGER = Logger.getLogger(StandaloneResourcePublisher.class);
 
     // The global standalone HttpServer
@@ -43,7 +58,7 @@ public class StandaloneResourcePublisher implements ResourcePublisher {
     static {
         try {
             _contextBuilder = new HttpContextBuilder();
-            _httpServer = HttpServer.create(new InetSocketAddress(8080), 10);
+            _httpServer = HttpServer.create(new InetSocketAddress(getPort()), 10);
             _httpServer.setExecutor(null); // creates a default executor
             _httpServer.start();
         } catch (IOException ioe) {
@@ -80,5 +95,18 @@ public class StandaloneResourcePublisher implements ResourcePublisher {
         _contextBuilder.setPath(context);
         _contextBuilder.bind(_httpServer);
         return new StandaloneResource();
+    }
+
+    /**
+     * Returns the port where the standalone publisher will be started
+     * @return the port
+     */
+    static int getPort() {
+        int port = DEFAULT_PORT;
+        final String portAsStr = System.getProperty(DEFAULT_PORT_PROPERTY);
+        if (portAsStr != null) {
+            port = Integer.parseInt(portAsStr);
+        }
+        return port;
     }
 }
