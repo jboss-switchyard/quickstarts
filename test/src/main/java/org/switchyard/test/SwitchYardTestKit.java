@@ -144,7 +144,7 @@ public class SwitchYardTestKit {
                 }
 
                 try {
-                    _configModel = createSwitchYardModel(is, createScanners(testCaseConfig));
+                    _configModel = createSwitchYardModel(is, createScanners(testCaseConfig), testCaseConfig.validate());
                 } finally {
                     try {
                         is.close();
@@ -896,7 +896,7 @@ public class SwitchYardTestKit {
         }
     }
 
-    private SwitchYardModel createSwitchYardModel(InputStream configModel, List<Scanner<V1SwitchYardModel>> scanners) {
+    private SwitchYardModel createSwitchYardModel(InputStream configModel, List<Scanner<V1SwitchYardModel>> scanners, boolean validate) {
         Assert.assertNotNull("Test 'configModel' is null.", configModel);
 
         final SwitchYardModel returnModel;
@@ -915,7 +915,9 @@ public class SwitchYardTestKit {
             } else {
                 returnModel = model;
             }
-            returnModel.assertModelValid();
+            if (validate) {
+                returnModel.assertModelValid();
+            }
             return returnModel;
         } catch (java.io.IOException ioEx) {
             throw new SwitchYardException("Failed to read switchyard config.", ioEx);

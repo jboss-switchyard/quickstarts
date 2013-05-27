@@ -54,6 +54,11 @@ public @interface SwitchYardTestCaseConfig {
     String config() default NULL_CONFIG;
 
     /**
+     * Whether validating SwitchYard configuration model or not.
+     */
+    boolean validate() default true;
+
+    /**
      * {@link Scanner Scanners} to be used in the test.
      * <p/>
      * These are the same application scanners used by the SwitchYard maven plugin.  The
