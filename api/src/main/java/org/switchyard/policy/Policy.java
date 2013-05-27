@@ -37,10 +37,11 @@ public interface Policy {
     public String getName();
 
     /**
-     * Returns the policy type.
+     * Returns whether the policy type passed in parameter is supported by this policy.
+     * @param type policy type
      * @return policy type
      */
-    public PolicyType getType();
+    public boolean supports(PolicyType type);
     
     /**
      * Returns whether the policy passed in parameter is compatible with this or not.

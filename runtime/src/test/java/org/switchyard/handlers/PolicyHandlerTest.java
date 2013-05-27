@@ -94,8 +94,8 @@ public class PolicyHandlerTest {
 	    }
 
         @Override
-        public PolicyType getType() {
-            return PolicyType.INTERACTION;
+        public boolean supports(PolicyType type) {
+            return type == PolicyType.INTERACTION;
         }
 
         @Override
@@ -116,8 +116,8 @@ public class PolicyHandlerTest {
         }
 
         @Override
-        public PolicyType getType() {
-            return PolicyType.INTERACTION;
+        public boolean supports(PolicyType type) {
+            return type == PolicyType.INTERACTION;
         }
 
         @Override

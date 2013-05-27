@@ -30,29 +30,34 @@ public class PolicyFactoryTest {
         // TransactionPolicy
         Policy p = PolicyFactory.getPolicy("managedTransaction.Global");
         Assert.assertEquals(TransactionPolicy.MANAGED_TRANSACTION_GLOBAL, p);
-        Assert.assertEquals(PolicyType.IMPLEMENTATION, p.getType());
+        Assert.assertTrue(p.supports(PolicyType.IMPLEMENTATION));
         p = PolicyFactory.getPolicy("managedTransaction.Local");
         Assert.assertEquals(TransactionPolicy.MANAGED_TRANSACTION_LOCAL, p);
-        Assert.assertEquals(PolicyType.IMPLEMENTATION, p.getType());
+        Assert.assertTrue(p.supports(PolicyType.IMPLEMENTATION));
         p = PolicyFactory.getPolicy("noManagedTransaction");
         Assert.assertEquals(TransactionPolicy.NO_MANAGED_TRANSACTION, p);
-        Assert.assertEquals(PolicyType.IMPLEMENTATION, p.getType());
+        Assert.assertTrue(p.supports(PolicyType.IMPLEMENTATION));
         p = PolicyFactory.getPolicy("propagatesTransaction");
         Assert.assertEquals(TransactionPolicy.PROPAGATES_TRANSACTION, p);
-        Assert.assertEquals(PolicyType.INTERACTION, p.getType());
+        Assert.assertTrue(p.supports(PolicyType.INTERACTION));
         p = PolicyFactory.getPolicy("suspendsTransaction");
         Assert.assertEquals(TransactionPolicy.SUSPENDS_TRANSACTION, p);
-        Assert.assertEquals(PolicyType.INTERACTION, p.getType());
+        Assert.assertTrue(p.supports(PolicyType.INTERACTION));
         // SecurityPolicy
         p = PolicyFactory.getPolicy("authorization");
         Assert.assertEquals(SecurityPolicy.AUTHORIZATION, p);
-        Assert.assertEquals(PolicyType.INTERACTION, p.getType());
+        Assert.assertTrue(p.supports(PolicyType.INTERACTION));
         p = PolicyFactory.getPolicy("clientAuthentication");
         Assert.assertEquals(SecurityPolicy.CLIENT_AUTHENTICATION, p);
-        Assert.assertEquals(PolicyType.INTERACTION, p.getType());
+        Assert.assertTrue(p.supports(PolicyType.INTERACTION));
         p = PolicyFactory.getPolicy("confidentiality");
         Assert.assertEquals(SecurityPolicy.CONFIDENTIALITY, p);
-        Assert.assertEquals(PolicyType.INTERACTION, p.getType());
+        Assert.assertTrue(p.supports(PolicyType.INTERACTION));
+        // Generic Policy
+        p = PolicyFactory.getPolicy("myGenericPolicy");
+        Assert.assertEquals("myGenericPolicy", p.getName());
+        Assert.assertTrue(p.supports(PolicyType.IMPLEMENTATION));
+        Assert.assertTrue(p.supports(PolicyType.INTERACTION));
     }
 
 }

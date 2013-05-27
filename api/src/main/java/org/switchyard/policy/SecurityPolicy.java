@@ -30,8 +30,8 @@ public enum SecurityPolicy implements Policy {
      */
     AUTHORIZATION("authorization") {
         @Override
-        public PolicyType getType() {
-            return PolicyType.INTERACTION;
+        public boolean supports(PolicyType type) {
+            return type == PolicyType.INTERACTION;
         }
     },
 
@@ -40,8 +40,8 @@ public enum SecurityPolicy implements Policy {
      */
     CLIENT_AUTHENTICATION("clientAuthentication") {
         @Override
-        public PolicyType getType() {
-            return PolicyType.INTERACTION;
+        public boolean supports(PolicyType type) {
+            return type == PolicyType.INTERACTION;
         }
     },
 
@@ -50,8 +50,8 @@ public enum SecurityPolicy implements Policy {
      */
     CONFIDENTIALITY("confidentiality") {
         @Override
-        public PolicyType getType() {
-            return PolicyType.INTERACTION;
+        public boolean supports(PolicyType type) {
+            return type == PolicyType.INTERACTION;
         }
     };
 

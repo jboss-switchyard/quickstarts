@@ -612,16 +612,16 @@ public class Deployment extends AbstractDeployment {
 
     private void validatePolicy(List<Policy> interaction, List<Policy> implementation) {
         for (int i=0; interaction != null && i<interaction.size(); i++) {
-            if (interaction.get(i).getType() != PolicyType.INTERACTION) {
-                throw new SwitchYardException("Policy '" + interaction.get(i) + "' is not interaction policy, but " + interaction.get(i).getType() + ".");
+            if (!interaction.get(i).supports(PolicyType.INTERACTION)) {
+                throw new SwitchYardException("Policy '" + interaction.get(i) + "' is not an interaction policy.");
             }
 
             Policy required = interaction.get(i).getPolicyDependency();
             if (required != null) {
-                if (required.getType() == PolicyType.INTERACTION && !interaction.contains(required)) {
+                if (required.supports(PolicyType.INTERACTION) && !interaction.contains(required)) {
                     throw new SwitchYardException("Interaction Policy '" + interaction.get(i) + "' should be requested with '" + required);
                     
-                } else if (required.getType() == PolicyType.IMPLEMENTATION && !implementation.contains(required)) {
+                } else if (required.supports(PolicyType.IMPLEMENTATION) && !implementation.contains(required)) {
                     throw new SwitchYardException("Interaction Policy '" + interaction.get(i) + "' requires '" + required
                             + "' Implementation Policy, but it does not exist. " + implementation);
                 }
@@ -635,15 +635,15 @@ public class Deployment extends AbstractDeployment {
         }
 
         for (int i=0; implementation != null && i<implementation.size(); i++) {
-            if (implementation.get(i).getType() != PolicyType.IMPLEMENTATION) {
-                throw new SwitchYardException("Policy '" + implementation.get(i) + "' is not implementation policy, but " + implementation.get(i).getType() + ".");
+            if (!implementation.get(i).supports(PolicyType.IMPLEMENTATION)) {
+                throw new SwitchYardException("Policy '" + implementation.get(i) + "' is not an implementation policy.");
             }
             
             Policy required = implementation.get(i).getPolicyDependency();
             if (required != null) {
-                if (required.getType() == PolicyType.IMPLEMENTATION && !implementation.contains(required)) {
+                if (required.supports(PolicyType.IMPLEMENTATION) && !implementation.contains(required)) {
                     throw new SwitchYardException("Implementation Policy '" + implementation.get(i) + "' should be requested with '" + required);
-                } else if (required.getType() == PolicyType.INTERACTION && !interaction.contains(required)) {
+                } else if (required.supports(PolicyType.INTERACTION) && !interaction.contains(required)) {
                     throw new SwitchYardException("Implementation Policy '" + implementation.get(i) + "' requires '" + required
                             + "' Interaction Policy, but it does not exist. " + interaction);
                 }

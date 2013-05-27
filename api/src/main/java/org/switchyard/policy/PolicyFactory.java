@@ -48,13 +48,28 @@ public final class PolicyFactory {
      * @return Policy object
      * @throws Exception failed to create Policy object
      */
-    public static Policy getPolicy(String name) throws Exception {
+    public static Policy getPolicy(final String name) throws Exception {
         for (Policy p : _policies) {
             if (p.getName().equals(name)) {
                 return p;
             }
         }
-        throw new Exception("Invalid policy name: '" + name + "' doesn't exist.");
+
+        // return Generic Policy instance for the non-built-in policy
+        return new Policy() {
+            public String getName() {
+                return name;
+            }
+            public boolean supports(PolicyType type) {
+                return true;
+            }
+            public boolean isCompatibleWith(Policy target) {
+                return true;
+            }
+            public Policy getPolicyDependency() {
+                return null;
+            }
+        };
     }
     
     /**
@@ -72,7 +87,7 @@ public final class PolicyFactory {
     public static Set<Policy> getAvailableInteractionPolicies() {
         Set<Policy> interactions = new HashSet<Policy>();
         for (Policy p : _policies) {
-            if (p.getType().equals(PolicyType.INTERACTION)) {
+            if (p.supports(PolicyType.INTERACTION)) {
                 interactions.add(p);
             }
         }
@@ -86,7 +101,7 @@ public final class PolicyFactory {
     public static Set<Policy> getAvailableImplementationPolicies() {
         Set<Policy> implementations = new HashSet<Policy>();
         for (Policy p : _policies) {
-            if (p.getType().equals(PolicyType.IMPLEMENTATION)) {
+            if (p.supports(PolicyType.IMPLEMENTATION)) {
                 implementations.add(p);
             }
         }

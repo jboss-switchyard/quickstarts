@@ -32,8 +32,8 @@ public enum TransactionPolicy implements Policy {
      */
     MANAGED_TRANSACTION_GLOBAL("managedTransaction.Global") {
         @Override
-        public PolicyType getType() {
-            return PolicyType.IMPLEMENTATION;
+        public boolean supports(PolicyType type) {
+            return type == PolicyType.IMPLEMENTATION;
         }
         @Override
         public boolean isCompatibleWith(Policy target) {
@@ -50,8 +50,8 @@ public enum TransactionPolicy implements Policy {
      */
     MANAGED_TRANSACTION_LOCAL("managedTransaction.Local") {
         @Override
-        public PolicyType getType() {
-            return PolicyType.IMPLEMENTATION;
+        public boolean supports(PolicyType type) {
+            return type == PolicyType.IMPLEMENTATION;
         }
         @Override
         public boolean isCompatibleWith(Policy target) {
@@ -74,8 +74,8 @@ public enum TransactionPolicy implements Policy {
      */
     NO_MANAGED_TRANSACTION("noManagedTransaction") {
         @Override
-        public PolicyType getType() {
-            return PolicyType.IMPLEMENTATION;
+        public boolean supports(PolicyType type) {
+            return type == PolicyType.IMPLEMENTATION;
         }
         @Override
         public boolean isCompatibleWith(Policy target) {
@@ -94,8 +94,8 @@ public enum TransactionPolicy implements Policy {
      */
     PROPAGATES_TRANSACTION("propagatesTransaction") {
         @Override
-        public PolicyType getType() {
-            return PolicyType.INTERACTION;
+        public boolean supports(PolicyType type) {
+            return type == PolicyType.INTERACTION;
         }
         @Override
         public boolean isCompatibleWith(Policy target) {
@@ -113,8 +113,8 @@ public enum TransactionPolicy implements Policy {
      */
     SUSPENDS_TRANSACTION("suspendsTransaction") {
         @Override
-        public PolicyType getType() {
-            return PolicyType.INTERACTION;
+        public boolean supports(PolicyType type) {
+            return type == PolicyType.INTERACTION;
         }
         @Override
         public boolean isCompatibleWith(Policy target) {
