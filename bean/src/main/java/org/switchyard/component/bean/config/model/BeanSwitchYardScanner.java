@@ -110,18 +110,18 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             Requires requires = serviceClass.getAnnotation(Requires.class);
             if (requires != null) {
                 for (SecurityPolicy secPolicy : requires.security()) {
-                    if (secPolicy.getType() == PolicyType.INTERACTION) {
+                    if (secPolicy.supports(PolicyType.INTERACTION)) {
                         serviceModel.addPolicyRequirement(secPolicy.getName());
-                    } else if (secPolicy.getType() == PolicyType.IMPLEMENTATION) {
+                    } else if (secPolicy.supports(PolicyType.IMPLEMENTATION)) {
                         beanModel.addPolicyRequirement(secPolicy.getName());
                     } else {
                         throw new IOException("Unknown policy: " + secPolicy);
                     }
                 }
                 for (TransactionPolicy txPolicy : requires.transaction()) {
-                    if (txPolicy.getType() == PolicyType.INTERACTION) {
+                    if (txPolicy.supports(PolicyType.INTERACTION)) {
                         serviceModel.addPolicyRequirement(txPolicy.getName());
-                    } else if (txPolicy.getType() == PolicyType.IMPLEMENTATION) {
+                    } else if (txPolicy.supports(PolicyType.IMPLEMENTATION)) {
                         beanModel.addPolicyRequirement(txPolicy.getName());
                     } else {
                         throw new IOException("Unknown policy: " + txPolicy);
@@ -167,13 +167,13 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
                 Requires refRequires = field.getAnnotation(Requires.class);
                 if (refRequires != null) {
                     for (SecurityPolicy secPolicy : refRequires.security()) {
-                        if (secPolicy.getType() != PolicyType.INTERACTION) {
+                        if (!secPolicy.supports(PolicyType.INTERACTION)) {
                             throw new IOException(String.format("Reference only could be marked with Interaction policy, but %s is not the one.", secPolicy));
                         }
                         referenceModel.addPolicyRequirement(secPolicy.getName());
                     }
                     for (TransactionPolicy txPolicy : refRequires.transaction()) {
-                        if (txPolicy.getType() != PolicyType.INTERACTION) {
+                        if (!txPolicy.supports(PolicyType.INTERACTION)) {
                             throw new IOException(String.format("Reference only could be marked with Interaction policy, but %s is not the one.", txPolicy));
                         }
                         referenceModel.addPolicyRequirement(txPolicy.getName());
