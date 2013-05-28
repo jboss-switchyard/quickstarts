@@ -34,13 +34,13 @@ import javax.jws.soap.SOAPBinding;
 @SOAPBinding(style=DOCUMENT, use=LITERAL)
 public class ReverseService {
 
-    @WebMethod
+    @WebMethod(action="urn:switchyard-quickstart:camel-soap-proxy:1.0")
     @WebResult(name="text")
     public String reverse(@WebParam(name="text") String text) {
         return new StringBuilder(text).reverse().toString();
     }
 
-    @WebMethod
+    @WebMethod(action="urn:switchyard-quickstart:camel-soap-proxy:1.0")
     @WebResult(name="text")
     public String upper(@WebParam(name="text") String text) {
         return text.toUpperCase();
