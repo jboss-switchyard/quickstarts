@@ -121,13 +121,13 @@ public class CamelActivator extends BaseCamelActivator {
                         final String namespace = ComponentNameComposer.getNamespaceFromURI(componentUri);
                         final QName refServiceName = new QName(namespace, serviceName);
                         if (!containsServiceRef(ccim.getComponent().getReferences(), serviceName)) {
-                            throw new SwitchYardException("Could find the service reference for '" + serviceName + "'" 
+                            throw new SwitchYardException("Could not find the service reference for '" + serviceName + "'" 
                             + " which is referenced in " + to);
                         }
                         
                         final ServiceReference service = getServiceDomain().getServiceReference(refServiceName);
                         if (service == null) {
-                            throw new SwitchYardException("Could find the service name '" + serviceName + "'" 
+                            throw new SwitchYardException("Could not find the service name '" + serviceName + "'" 
                             + " which is referenced in " + to);
                         }
                     }
@@ -183,13 +183,13 @@ public class CamelActivator extends BaseCamelActivator {
                         final String namespace = ComponentNameComposer.getNamespaceFromURI(componentUri);
                         final QName refServiceName = new QName(namespace, referenceName);
                         if (!containsServiceRef(ccim.getComponent().getReferences(), referenceName)) {
-                            throw new SwitchYardException("Could find the service reference for '" + referenceName + "'" 
+                            throw new SwitchYardException("Could not find the service reference for '" + referenceName + "'" 
                             + " which is referenced in " + to);
                         }
                         
                         final ServiceReference service = getServiceDomain().getServiceReference(refServiceName);
                         if (service == null) {
-                            throw new SwitchYardException("Could find the service name '" + referenceName + "'" 
+                            throw new SwitchYardException("Could not find the service name '" + referenceName + "'" 
                             + " which is referenced in " + to);
                         }
                     }

@@ -19,11 +19,10 @@
 package org.switchyard.component.camel;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -63,6 +62,11 @@ public final class RouteFactory {
         
     }
 
+    /**
+     * Returns a list of route definitions referenced by a camel implementation.
+     * @param model implementation config model
+     * @return list of route definitions
+     */
     public static List<RouteDefinition> getRoutes(CamelComponentImplementationModel model) {
         if (model.getJavaClass() != null) {
             return createRoute(model.getJavaClass(), model.getComponent().getTargetNamespace());
@@ -70,12 +74,28 @@ public final class RouteFactory {
         return loadRoute(model.getXMLPath());
     }
 
+    /**
+     * Loads a set of route definitions from an XML file.
+     * @param xmlPath path to the file containing one or more route definitions
+     * @return list of route definitions
+     */
     public static List<RouteDefinition> loadRoute(String xmlPath) {
+        List<RouteDefinition> routes = null;
+        
         try {
             Source source =  new StreamSource(Classes.getResourceAsStream(xmlPath));
-            JAXBElement<RoutesDefinition> result = JAXB_CONTEXT.createUnmarshaller().unmarshal(source, RoutesDefinition.class);
-            List<RouteDefinition> routes = result.getValue().getRoutes();
-            if (routes.isEmpty()) {
+            Object obj = JAXB_CONTEXT.createUnmarshaller().unmarshal(source);
+            
+            // Look for <routes> or <route> as top-level element
+            if (obj instanceof RoutesDefinition) {
+                routes = ((RoutesDefinition)obj).getRoutes();
+            } else if (obj instanceof RouteDefinition) {
+                routes = new ArrayList<RouteDefinition>(1);
+                routes.add((RouteDefinition)obj);
+            }
+            
+            // If we couldn't find a <route> or <routes> definition, throw an error
+            if (routes == null) {
                 throw new SwitchYardException("No routes found in XML file " + xmlPath);
             }
             return routes;
