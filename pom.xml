@@ -66,6 +66,8 @@
         <module>soap-binding-rpc</module>
         <module>jca-inflow-hornetq</module>
         <module>jca-outbound-hornetq</module>
+        <module>jca-inflow-activemq</module>
+        <module>jca-outbound-activemq</module>
         <module>transform-jaxb</module>
         <module>transform-json</module>
         <module>transform-smooks</module>
