@@ -43,6 +43,7 @@ import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.jms.Topic;
 
 import junit.framework.Assert;
 
@@ -63,6 +64,7 @@ import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
 import org.hornetq.core.remoting.impl.netty.TransportConstants;
 import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.hornetq.jms.client.HornetQQueue;
+import org.hornetq.jms.client.HornetQTopic;
 import org.hornetq.jms.server.embedded.EmbeddedJMS;
 import org.switchyard.test.MixInDependencies;
 import org.switchyard.test.mixins.AbstractTestMixIn;
@@ -592,6 +594,15 @@ public class HornetQMixIn extends AbstractTestMixIn {
      */
     public static Queue getJMSQueue(final String name) {
         return new HornetQQueue(name);
+    }
+    
+    /**
+     * Get {@link Topic} instance from core topic name.
+     * @param name core topic name
+     * @return {@link Topic} object
+     */
+    public static Topic getJMSTopic(final String name) {
+        return new HornetQTopic(name);
     }
     
     /**
