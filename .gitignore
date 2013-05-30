@@ -12,3 +12,4 @@ core/bin/
 *.iws
 .xml
 .DS_Store
+.metadata/
