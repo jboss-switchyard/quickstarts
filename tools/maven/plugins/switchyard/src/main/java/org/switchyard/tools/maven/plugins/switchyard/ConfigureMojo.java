@@ -166,6 +166,14 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
                     }
                 }
                 _outputFile = new File(od, SWITCHARD_XML_FILE_NAME);
+            } else {
+                // make sure output directory exists
+                File od = _outputFile.getParentFile();
+                if (!od.exists()) {
+                    if (!od.mkdirs()) {
+                        throw new Exception("mkdirs() on " + od + " failed.");
+                    }
+                }
             }
             getLog().info("Outputting SwitchYard configuration model to " + _outputFile.getAbsolutePath());
             writer = new BufferedWriter(new FileWriter(_outputFile));
