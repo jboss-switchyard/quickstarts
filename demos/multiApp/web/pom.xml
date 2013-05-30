@@ -112,17 +112,16 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <!-- Output to war directory -->
+                    <outputFile>${project.build.directory}/${project.build.finalName}/WEB-INF/switchyard.xml</outputFile>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <!-- Java EE 6 doesn't require web.xml, Maven needs to catch up! -->
                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <webResources>
-                        <resource>
-                            <directory>src/main/webResources</directory>
-                        </resource>
-                    </webResources>
                     <archive>
                         <manifestEntries>
                             <Dependencies>deployment.OrderService.jar</Dependencies>

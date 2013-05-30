@@ -29,7 +29,7 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
-        config = "src/main/webResources" + SwitchYardTestCaseConfig.SWITCHYARD_XML,
+        config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
         scanners = TransformSwitchYardScanner.class,
         mixins = {CDIMixIn.class, HTTPMixIn.class})
 public class WebServiceTest {

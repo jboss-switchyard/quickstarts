@@ -169,7 +169,7 @@
                     <webResources>
                         <resource>
                             <directory>target/classes/META-INF</directory>
-                            <targetPath>META-INF</targetPath>
+                            <targetPath>WEB-INF</targetPath>
                             <includes>
                                 <include>switchyard.xml</include>
                             </includes>
