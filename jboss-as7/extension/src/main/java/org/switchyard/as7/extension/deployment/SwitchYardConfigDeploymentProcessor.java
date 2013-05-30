@@ -18,6 +18,8 @@
  */
 package org.switchyard.as7.extension.deployment;
 
+import org.jboss.as.ee.structure.DeploymentType;
+import org.jboss.as.ee.structure.DeploymentTypeMarker;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -35,6 +37,7 @@ import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
 public class SwitchYardConfigDeploymentProcessor implements DeploymentUnitProcessor {
 
     private static final String SWITCHYARD_XML = "META-INF/switchyard.xml";
+    private static final String SWITCHYARD_XML_WAR = "WEB-INF/switchyard.xml";
 
     /* (non-Javadoc)
      * @see org.jboss.as.server.deployment.DeploymentUnitProcessor#deploy(org.jboss.as.server.deployment.DeploymentPhaseContext)
@@ -43,7 +46,20 @@ public class SwitchYardConfigDeploymentProcessor implements DeploymentUnitProces
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         final DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
         final ResourceRoot deploymentRoot = deploymentUnit.getAttachment(Attachments.DEPLOYMENT_ROOT);
-        final VirtualFile switchyardXml = deploymentRoot.getRoot().getChild(SWITCHYARD_XML);
+        final VirtualFile switchyardXml;
+        
+        if (DeploymentTypeMarker.isType(DeploymentType.WAR, deploymentUnit)) {
+            // switchyard.xml file located in /WEB-INF
+            final VirtualFile warSwitchYardXml = deploymentRoot.getRoot().getChild(SWITCHYARD_XML_WAR);
+            if (warSwitchYardXml.exists()) {
+                switchyardXml = warSwitchYardXml;
+            } else {
+                // fall back to original location
+                switchyardXml = deploymentRoot.getRoot().getChild(SWITCHYARD_XML);
+            }
+        } else {
+            switchyardXml = deploymentRoot.getRoot().getChild(SWITCHYARD_XML);
+        }
 
         if (!switchyardXml.exists()) {
             return;
