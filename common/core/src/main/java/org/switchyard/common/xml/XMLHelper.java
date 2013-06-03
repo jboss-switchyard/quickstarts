@@ -620,6 +620,37 @@ public final class XMLHelper {
     }
 
     /**
+     * Get the attribute value of an Element.
+     *
+     * @param element the element.
+     * @param namespace the Attribute namespace.
+     * @param name the Attribute name.
+     * @return The value of the attribute
+     */
+    public static String getAttribute(Element element, String namespace, String name) {
+        String value = null;
+        if (element.hasAttributeNS(namespace, name)) {
+            value = element.getAttributeNS(namespace, name);
+        } else if (element.hasAttribute(name)) {
+            value = element.getAttribute(name);
+        }
+        return value;
+    }
+
+    /**
+     * Check if an Element has an attribute.
+     *
+     * @param element the element.
+     * @param namespace the Attribute namespace.
+     * @param name the Attribute name.
+     * @return true if attribute exists, false otherwise
+     */
+    public static Boolean hasAttribute(Element element, String namespace, String name) {
+        String value = getAttribute(element, namespace, name);
+        return (value != null);
+    }
+
+    /**
      * Get the document builder for creation
      * @return The document builder
      * @throws ParserConfigurationException for errors during creation
