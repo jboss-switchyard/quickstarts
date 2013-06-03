@@ -73,7 +73,8 @@ public class XmlValidator extends BaseValidator<Message> {
     private boolean _isNamespaceAware;
     private List<FileEntryModel> _schemaConfig;
     private List<FileEntryModel> _catalogConfig;
-    private XMLReader _validatingParser;
+    private SAXParserFactory _parserFactory;
+    private XmlValidatorCatalogResolver _catalogResolver;
     private List<String> _schemaFileNames = new ArrayList<String>();
     private List<String> _catalogFileNames = new ArrayList<String>();
     
@@ -114,19 +115,18 @@ public class XmlValidator extends BaseValidator<Message> {
             _catalogConfig = model.getSchemaCatalogs().getEntries();
         }
         
-        setupValidatingParser();
+        setup();
     }
 
-    protected void setupValidatingParser() {
+    protected void setup() {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(new StringBuffer("Setting up XmlValidator:[").append(formatUnparsedConfigs()).append("]"));
         }
 
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-        parserFactory.setXIncludeAware(true);
-        parserFactory.setNamespaceAware(_isNamespaceAware);
+        _parserFactory = SAXParserFactory.newInstance();
+        _parserFactory.setXIncludeAware(true);
+        _parserFactory.setNamespaceAware(_isNamespaceAware);
 
-        XmlValidatorCatalogResolver catalogResolver = null;
         if (_catalogConfig != null) {
             List<String> foundCatalogs = new ArrayList<String>();
             for (FileEntryModel entry : _catalogConfig) {
@@ -152,25 +152,14 @@ public class XmlValidator extends BaseValidator<Message> {
                     buf.append(";").append(foundCatalogs.get(i));
                 }
                 manager.setCatalogFiles(buf.toString());
-                catalogResolver = new XmlValidatorCatalogResolver(manager);
-                catalogResolver.namespaceAware = _isNamespaceAware;
+                _catalogResolver = new XmlValidatorCatalogResolver(manager);
+                _catalogResolver.namespaceAware = _isNamespaceAware;
             }
         }
         
         if (XMLConstants.XML_DTD_NS_URI.equals(_schemaTypeUri)) {
             // set up for DTD validation - DTD file is located by DOCTYPE element in the Document itself
-            parserFactory.setValidating(true);
-            
-            try {
-                _validatingParser = parserFactory.newSAXParser().getXMLReader();
-                if (catalogResolver != null) {
-                    _validatingParser.setEntityResolver(catalogResolver);
-                }
-            } catch (SAXException se) {
-                throw new SwitchYardException(se);
-            } catch (ParserConfigurationException pce) {
-                throw new SwitchYardException(pce);
-            }
+            _parserFactory.setValidating(true);
             
         } else {
             // setup for XML Schema or Relax NG validation
@@ -179,8 +168,8 @@ public class XmlValidator extends BaseValidator<Message> {
             }
             
             SchemaFactory schemaFactory = SchemaFactory.newInstance(_schemaTypeUri);
-            if (catalogResolver != null) {
-                schemaFactory.setResourceResolver(catalogResolver);
+            if (_catalogResolver != null) {
+                schemaFactory.setResourceResolver(_catalogResolver);
             }
             
             List<Source> foundSchemas = new ArrayList<Source>();
@@ -200,12 +189,9 @@ public class XmlValidator extends BaseValidator<Message> {
             
             try {
                 Schema schema = schemaFactory.newSchema(foundSchemas.toArray(new Source[0]));
-                parserFactory.setSchema(schema);
-                _validatingParser = parserFactory.newSAXParser().getXMLReader();
+                _parserFactory.setSchema(schema);
             } catch (SAXException e) {
                 throw new SwitchYardException(e);
-            } catch (ParserConfigurationException pce) {
-                throw new SwitchYardException(pce);
             }
         }
     }
@@ -218,20 +204,31 @@ public class XmlValidator extends BaseValidator<Message> {
         }
         
         try {
+            XMLReader validatingParser = createValidatingParser();
             XmlValidationErrorHandler errorHandler = new XmlValidationErrorHandler(_failOnWarning);
-            _validatingParser.setErrorHandler(errorHandler);
-            _validatingParser.parse(msg.getContent(InputSource.class));
+            validatingParser.setErrorHandler(errorHandler);
+            validatingParser.parse(msg.getContent(InputSource.class));
             if (errorHandler.validationFailed()) {
                 return invalidResult(formatErrorMessage(errorHandler.getErrors()).toString());
             }
         } catch (SAXException e) {
             throw new SwitchYardException(e);
+        } catch (ParserConfigurationException pce) {
+            throw new SwitchYardException(pce);
         } catch (IOException ioe) {
             throw new SwitchYardException(ioe);
         }
         return validResult();
     }
 
+    protected XMLReader createValidatingParser() throws SAXException, ParserConfigurationException {
+        XMLReader validatingParser = _parserFactory.newSAXParser().getXMLReader();
+        if (XMLConstants.XML_DTD_NS_URI.equals(_schemaTypeUri) && _catalogResolver != null) {
+            validatingParser.setEntityResolver(_catalogResolver);
+        }
+        return validatingParser;
+    }
+    
     protected URL locateFile(String path) {
         if (path == null) {
             return null;
