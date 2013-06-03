@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.wsf.spi.classloading.ClassLoaderProvider;
 import org.jboss.wsf.spi.deployment.Endpoint;
 import org.jboss.wsf.spi.metadata.webservices.JBossWebservicesMetaData;
@@ -46,7 +46,8 @@ import org.switchyard.component.soap.endpoint.WSEndpoint;
  */
 public class JBossWSEndpoint implements WSEndpoint {
 
-    private static final Logger LOG = Logger.getLogger(JBossWSEndpoint.class);
+    private static final Logger LOGGER = Logger.getLogger("org.switchyard");
+
     private static final String HOST = "default-host";
     private static final EndpointPublisherFactory FACTORY;
 
@@ -112,7 +113,7 @@ public class JBossWSEndpoint implements WSEndpoint {
                 //undeploy endpoints
                 _publisher.destroy(_context);
             } catch (Exception e) {
-                LOG.error(e);
+                LOGGER.error(e);
             }
         }
     }

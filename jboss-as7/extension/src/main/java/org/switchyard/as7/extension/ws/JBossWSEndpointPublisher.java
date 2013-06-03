@@ -24,7 +24,9 @@ import java.util.Map;
 
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.soap.AddressingFeature;
+import javax.xml.ws.soap.MTOMFeature;
 
+import org.jboss.logging.Logger;
 import org.jboss.wsf.spi.metadata.j2ee.serviceref.UnifiedHandlerChainMetaData;
 import org.jboss.wsf.spi.metadata.j2ee.serviceref.UnifiedHandlerChainsMetaData;
 import org.jboss.wsf.spi.metadata.j2ee.serviceref.UnifiedHandlerMetaData;
@@ -43,6 +45,8 @@ import org.switchyard.component.soap.endpoint.WSEndpoint;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
 public class JBossWSEndpointPublisher extends AbstractEndpointPublisher {
+
+    private static final Logger LOGGER = Logger.getLogger("org.switchyard");
 
     private static final String SEI = "org.switchyard.component.soap.endpoint.BaseWebService";
     private static final String RESPONSE_STATUS_HANDLER = "ResponseStatusHandler";
@@ -83,6 +87,12 @@ public class JBossWSEndpointPublisher extends AbstractEndpointPublisher {
                     AddressingFeature addrFeature = (AddressingFeature)feature;
                     portComponent.setAddressingEnabled(addrFeature.isEnabled());
                     portComponent.setAddressingRequired(addrFeature.isRequired());
+                    LOGGER.info("Addressing [enabled = " + addrFeature.isEnabled() + ", required = " + addrFeature.isRequired() + "]");
+                } else if (feature instanceof MTOMFeature) {
+                    MTOMFeature mtom = (MTOMFeature)feature;
+                    portComponent.setMtomEnabled(mtom.isEnabled());
+                    portComponent.setMtomThreshold(mtom.getThreshold());
+                    LOGGER.info("MTOM [enabled = " + mtom.isEnabled() + ", threshold = " + mtom.getThreshold() + "]");
                 }
             }
             wsDescMetaData.addPortComponent(portComponent);
