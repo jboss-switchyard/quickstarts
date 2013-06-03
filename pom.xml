@@ -1170,6 +1170,11 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-quickstart-soap-mtom</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
                 <artifactId>switchyard-quickstart-bpm-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
