@@ -94,6 +94,7 @@ public class SecurityHandler extends BaseHandler {
                     }
                 }
             } else {
+                securityContext.clearCredentials();
                 _securityProvider.clear(serviceSecurity, securityContext);
             }
         }
@@ -107,6 +108,7 @@ public class SecurityHandler extends BaseHandler {
         ServiceSecurity serviceSecurity = getServiceSecurity(exchange);
         if (serviceSecurity != null) {
             SecurityContext securityContext = SecurityContext.get(exchange);
+            securityContext.clearCredentials();
             _securityProvider.clear(serviceSecurity, securityContext);
         }
     }

@@ -66,8 +66,6 @@ public class JBossJaasSecurityProvider extends JaasSecurityProvider {
                     sy_subject.getPublicCredentials().addAll(jb_subject.getPublicCredentials());
                 }
                 return true;
-            } else {
-                LOGGER.warn(String.format("SwitchYard security domain (%s) does not match JBoss security domain (%s).", sy_securityDomain, jb_securityDomain));
             }
         }
         return false;
@@ -80,8 +78,14 @@ public class JBossJaasSecurityProvider extends JaasSecurityProvider {
     public boolean clear(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
         boolean success = super.clear(serviceSecurity, securityContext);
         try {
-            // TODO: Look into only clearing the context details if the config's specified security domain matches the SecurityContextAssociation's
-            SecurityContextAssociation.clearSecurityContext();
+            org.jboss.security.SecurityContext jb_securityContext = SecurityContextAssociation.getSecurityContext();
+            if (jb_securityContext != null) {
+                String sy_securityDomain = serviceSecurity.getSecurityDomain();
+                String jb_securityDomain = jb_securityContext.getSecurityDomain();
+                if (sy_securityDomain.equals(jb_securityDomain)) {
+                    SecurityContextAssociation.clearSecurityContext();
+                }
+            }
         } catch (Throwable t) {
             LOGGER.error("Problem clearing SecurityContextAssociation: " + t.getMessage(), t);
             success = false;

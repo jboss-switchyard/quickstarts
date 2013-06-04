@@ -139,8 +139,12 @@ public class JaasSecurityProvider extends SecurityProvider {
      */
     @Override
     public boolean clear(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
-        // TODO: Look into only clearing the context details per the config's specified security domain
-        securityContext.clear();
+        if (serviceSecurity != null) {
+            String securityDomain = serviceSecurity.getSecurityDomain();
+            if (securityDomain != null) {
+                securityContext.clearSubject(securityDomain);
+            }
+        }
         return true;
     }
 

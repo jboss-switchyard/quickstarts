@@ -76,6 +76,15 @@ public final class SecurityContext {
     }
 
     /**
+     * Clears the credentials.
+     */
+    public synchronized void clearCredentials() {
+        synchronized (_credentials) {
+            _credentials.clear();
+        }
+    }
+
+    /**
      * Gets the Subject for the security domain.
      * @param securityDomain the security domain
      * @return the Subject for the security domain
@@ -87,6 +96,16 @@ public final class SecurityContext {
             _securityDomainsToSubjects.put(securityDomain, subject);
         }
         return subject;
+    }
+
+    /**
+     * Clears the Subject for the security domain.
+     * @param securityDomain the security domain
+     */
+    public synchronized void clearSubject(String securityDomain) {
+        synchronized (_securityDomainsToSubjects) {
+            _securityDomainsToSubjects.remove(securityDomain);
+        }
     }
 
     /**
@@ -111,18 +130,6 @@ public final class SecurityContext {
             }
         }
         return false;
-    }
-
-    /**
-     * Clears any and all contained state.
-     */
-    public synchronized void clear() {
-        synchronized (_credentials) {
-            _credentials.clear();
-        }
-        synchronized (_securityDomainsToSubjects) {
-            _securityDomainsToSubjects.clear();
-        }
     }
 
     /**
