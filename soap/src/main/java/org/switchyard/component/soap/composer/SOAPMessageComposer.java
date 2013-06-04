@@ -20,11 +20,14 @@
 package org.switchyard.component.soap.composer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
@@ -72,7 +75,9 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
     private static Logger _log = Logger.getLogger(SOAPMessageComposer.class);
     private SOAPMessageComposerModel _config;
     private Port _wsdlPort;
-    private Boolean _documentStyle;
+    private Boolean _documentStyle = false;
+    private Boolean _mtomEnabled = false;
+    private Boolean _xopExpand = false;
 
     /**
      * {@inheritDoc}
@@ -138,31 +143,51 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
                 }
             }
             bodyNode = bodyNode.getParentNode().removeChild(bodyNode);
-            message.setContent(new DOMSource(bodyNode));
 
             // SOAP Attachments
+            Map<String, DataSource> attachments = new HashMap<String, DataSource>();
             Iterator<AttachmentPart> aparts = (Iterator<AttachmentPart>) soapMessage.getAttachments();
             while (aparts.hasNext()) {
                 AttachmentPart apRequest = aparts.next();
-                String name = apRequest.getDataHandler().getDataSource().getName();
-                if ((name == null) || (name.length() == 0)) {
-                    String[] disposition = apRequest.getMimeHeader(CONTENT_DISPOSITION);
-                    String[] contentId = apRequest.getMimeHeader(CONTENT_ID);
-                    name = (contentId != null) ? contentId[0] : null;
-                    if ((name == null) && (disposition != null)) {
-                        int start = disposition[0].indexOf(CONTENT_DISPOSITION_NAME);
-                        String namePart = disposition[0].substring(start + CONTENT_DISPOSITION_NAME.length() + 1);
-                        int end = namePart.indexOf(CONTENT_DISPOSITION_QUOTE);
-                        name = namePart.substring(0, end);
-                    } else if (name == null) {
-                        // TODO: Identify the extension using content-type
-                        name = UUID.randomUUID() + TEMP_FILE_EXTENSION;
-                    } else if (name.startsWith(CONTENT_ID_START)) {
-                        name = name.substring(1, name.length() - 1);
+                String[] contentId = apRequest.getMimeHeader(CONTENT_ID);
+                String name = null;
+                if (_mtomEnabled) {
+                    if (contentId == null) {
+                        throw new SOAPException("Content-ID header missing for attachment part");
+                    }
+                    name = contentId[0];
+                } else {
+                    name = apRequest.getDataHandler().getDataSource().getName();
+                    if ((name == null) || (name.length() == 0)) {
+                        String[] disposition = apRequest.getMimeHeader(CONTENT_DISPOSITION);
+                        name = (contentId != null) ? contentId[0] : null;
+                        if ((name == null) && (disposition != null)) {
+                            int start = disposition[0].indexOf(CONTENT_DISPOSITION_NAME);
+                            String namePart = disposition[0].substring(start + CONTENT_DISPOSITION_NAME.length() + 1);
+                            int end = namePart.indexOf(CONTENT_DISPOSITION_QUOTE);
+                            name = namePart.substring(0, end);
+                        } else if (name == null) {
+                            // TODO: Identify the extension using content-type
+                            name = UUID.randomUUID() + TEMP_FILE_EXTENSION;
+                        }
                     }
                 }
-                message.addAttachment(name, apRequest.getDataHandler().getDataSource());
+                if (name.startsWith(CONTENT_ID_START)) {
+                    name = name.substring(1, name.length() - 1);
+                }
+                if (_mtomEnabled && _xopExpand) {
+                    // Using a different map because Camel throws java.lang.StackOverflowError
+                    // when we do message.removeAttachment(cid);
+                    attachments.put(name, apRequest.getDataHandler().getDataSource());
+                } else {
+                    message.addAttachment(name, apRequest.getDataHandler().getDataSource());
+                }
             }
+            if (_mtomEnabled && _xopExpand) {
+                // Expand xop message by inlining Base64 content
+                bodyNode = SOAPUtil.expandXop((Element)bodyNode, attachments);
+            }
+            message.setContent(new DOMSource(bodyNode));
         } catch (Exception ex) {
             if (ex instanceof SOAPException) {
                 throw (SOAPException) ex;
@@ -339,6 +364,38 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
      */
     public void setDocumentStyle(Boolean style) {
         _documentStyle = style;
+    }
+
+    /**
+     * Check if MTOM is enabled.
+     * @return true if enabled, false otherwise
+     */
+    public Boolean isMtomEnabled() {
+        return _mtomEnabled;
+    }
+
+    /**
+     * Set MTOM enabled/disabled.
+     * @param enabled true or false
+     */
+    public void setMtomEnabled(Boolean enabled) {
+        _mtomEnabled = enabled;
+    }
+
+    /**
+     * Check if XOP message should expanded.
+     * @return true if expandable, false otherwise
+     */
+    public Boolean isXopExpand() {
+        return _xopExpand;
+    }
+
+    /**
+     * Set XOP expansion.
+     * @param expand true or false
+     */
+    public void setXopExpand(Boolean expand) {
+        _xopExpand = expand;
     }
 
 }

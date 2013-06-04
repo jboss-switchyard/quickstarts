@@ -41,5 +41,9 @@ public class SOAPBindingModelTest {
         EndpointConfigModel endpointConfig = binding.getEndpointConfig();
         Assert.assertEquals("myFile", endpointConfig.getConfigFile());
         Assert.assertEquals("myName", endpointConfig.getConfigName());
+        MtomModel mtomConfig = binding.getMtomConfig();
+        Assert.assertEquals(new Boolean(true), mtomConfig.isEnabled());
+        Assert.assertEquals(new Integer(1300), mtomConfig.getThreshold());
+        Assert.assertEquals(new Boolean(true), mtomConfig.isXopExpand());
     }
 }

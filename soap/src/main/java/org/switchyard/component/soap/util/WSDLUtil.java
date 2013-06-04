@@ -29,11 +29,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
+import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Part;
@@ -42,8 +44,13 @@ import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
+import javax.wsdl.extensions.schema.Schema;
+import javax.wsdl.extensions.schema.SchemaImport;
+import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap12.SOAP12Address;
+import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.wsdl.extensions.soap12.SOAP12Operation;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
@@ -55,11 +62,13 @@ import org.apache.log4j.Logger;
 import org.switchyard.ExchangePattern;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.component.soap.Addressing;
+import org.switchyard.component.soap.Feature;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.exception.SwitchYardException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 /**
@@ -96,12 +105,17 @@ public final class WSDLUtil {
     private static final String ATTR_ID = "Id";
     private static final String ATTR_REQUIRED = "required";
     private static final String ATTR_URI = "URI";
+    private static final String ATTR_EXP_CT = "expectedContentTypes";
+    private static final String ATTR_LOCATION = "location";
     private static final String ELE_ADDRESSING = "Addressing";
     private static final String ELE_ALL = "All";
     private static final String ELE_EXACTLYONE = "ExactlyOne";
+    private static final String ELE_MTOM = "MTOM";
     private static final String WSA_METADATA_URI = "http://www.w3.org/2007/05/addressing/metadata";
     private static final String WSA_WSDL_URI = "http://www.w3.org/2006/05/addressing/wsdl";
     private static final String POLICY_URI = "http://www.w3.org/ns/ws-policy";
+    private static final String WS_MTOM_URI = "http://www.w3.org/2007/08/soap12-mtom-policy";
+    private static final String WSDL_XMIME_URI = "http://www.w3.org/2005/05/xmlmime";
     private static final String SECURITY_UTILITY_URI = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
     // No support for WSDL2.0 yet, as CXF doesn't have it.
     // http://cxf.apache.org/project-status.html - GSoC project just started
@@ -114,6 +128,8 @@ public final class WSDLUtil {
     private static final QName POLICY_ALL_QNAME = new QName(POLICY_URI, ELE_ALL);
     private static final QName WSA_QNAME = new QName(WSA_METADATA_URI, ELE_ADDRESSING);
     private static final QName WSDL_ACTION_QNAME = new QName(WSA_WSDL_URI, STR_ACTION);
+    private static final QName WSDL_MTOM_QNAME = new QName(WS_MTOM_URI, ELE_MTOM);
+    private static final QName MTOM_EXPT_QNAME = new QName(WSDL_XMIME_URI, ATTR_EXP_CT);
 
     private WSDLUtil() {
     }
@@ -290,26 +306,32 @@ public final class WSDLUtil {
     @SuppressWarnings("unchecked")
     public static String getStyle(Port port) {
         String portStyle = null;
+        String bindingStyle = null;
         for (ExtensibilityElement element : (List<ExtensibilityElement>) port.getBinding().getExtensibilityElements()) {
             if ((element instanceof SOAPBinding) && (((SOAPBinding)element).getStyle() != null)) {
-                String bindingStyle = ((SOAPBinding) element).getStyle();
-                if (bindingStyle != null) {
-                    portStyle = bindingStyle.toLowerCase();
-                }
+                 bindingStyle = ((SOAPBinding) element).getStyle();
+            } else if ((element instanceof SOAP12Binding) && (((SOAP12Binding)element).getStyle() != null)) {
+                 bindingStyle = ((SOAP12Binding) element).getStyle();
+            }
+            if (bindingStyle != null) {
+                portStyle = bindingStyle.toLowerCase();
             }
         }
 
         String operationStyle = null;
+        String currentOperationStyle = null;
         for (BindingOperation operation : (List<BindingOperation>) port.getBinding().getBindingOperations()) {
             for (ExtensibilityElement element : (List<ExtensibilityElement>) operation.getExtensibilityElements()) {
                 if (element instanceof SOAPOperation) {
-                    String currentOperationStyle = ((SOAPOperation) element).getStyle();
-                    if (currentOperationStyle != null) {
-                        if (operationStyle != null && !currentOperationStyle.equals(operationStyle)) {
-                            throw new SwitchYardException("Incompatible style of soap operation level bindings detected");
-                        }
-                        operationStyle = currentOperationStyle;
+                    currentOperationStyle = ((SOAPOperation) element).getStyle();
+                } else if (element instanceof SOAP12Operation) {
+                    currentOperationStyle = ((SOAP12Operation) element).getStyle();
+                }
+                if (currentOperationStyle != null) {
+                    if (operationStyle != null && !currentOperationStyle.equals(operationStyle)) {
+                        throw new SwitchYardException("Incompatible style of soap operation level bindings detected");
                     }
+                    operationStyle = currentOperationStyle;
                 }
             }
         }
@@ -378,18 +400,51 @@ public final class WSDLUtil {
      * Get the SOAP Binding Id for the specified {@link Port}.
      *
      * @param port The WSDL port.
+     * @param mtomEnabled MTOM feature boolean
      * @return The SOAPBinding Id found on the port.
      */
-    public static String getBindingId(Port port) {
-        String bindingId = javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING;
+    public static String getBindingId(Port port, Boolean mtomEnabled) {
+        String bindingId = null; 
         List<ExtensibilityElement> extElements = port.getExtensibilityElements();
         for (ExtensibilityElement extElement : extElements) {
-            if (extElement.getElementType().getNamespaceURI().equals(WSDL_SOAP12_URI)) {
-                bindingId = javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING;
+            if (extElement instanceof SOAP12Address) {
+                if (mtomEnabled) {
+                    bindingId = javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_MTOM_BINDING;
+                } else {
+                    bindingId = javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING;
+                }
+                break;
+            } else {
+                if (mtomEnabled) {
+                    bindingId = javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING;
+                } else {
+                    bindingId = javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING;
+                }
+                break;
             }
-            break;
         }
         return bindingId;
+    }
+
+    /**
+     * Get the SOAP Binding Id for the specified {@link Port}.
+     *
+     * @param port The WSDL port.
+     * @return The endpoint address.
+     */
+    public static String getEndpointAddress(Port port) {
+        String address = null; 
+        List<ExtensibilityElement> extElements = port.getExtensibilityElements();
+        for (ExtensibilityElement extElement : extElements) {
+            if (extElement instanceof SOAPAddress) {
+                address = ((SOAPAddress)extElement).getLocationURI();
+                break;
+            } else if (extElement instanceof SOAP12Address) {
+                address = ((SOAP12Address)extElement).getLocationURI();
+                break;
+            }
+        }
+        return address;
     }
 
     /**
@@ -601,26 +656,51 @@ public final class WSDLUtil {
     }
 
     /**
-     * Get addressing feature.
+     * Get enabled features.
      *
      * @param definition The WSDL definition.
      * @param port The WSDL service port.
-     * @return the addressing booleans.
+     * @param documentStyle true if it is 'document', false if 'rpc'.
+     * @return the feature booleans.
      */
-    public static Addressing getAddressing(final Definition definition, final Port port) {
-        Addressing addressing = new Addressing();
+    public static Feature getFeature(final Definition definition, final Port port, Boolean documentStyle) {
+        Feature feature = new Feature();
+        Boolean addressing = false;
+        Boolean mtom = false;
+        if (documentStyle) {
+            // Check if any element uses xmime:expectedContentTypes
+            for (ExtensibilityElement element : (List<ExtensibilityElement>)definition.getTypes().getExtensibilityElements()) {
+                if (element instanceof Schema) {
+                    mtom = setMtomEnabled((Schema)element);
+                    if (mtom) {
+                        feature.setMtomEnabled(true);
+                        break;
+                    }
+                }
+            }
+        } else {
+            // Check if any part uses xmime:expectedContentTypes
+            for (Message message : ((Map<String, Message>)definition.getMessages()).values()) {
+                for (Part part : (List<Part>)message.getOrderedParts(null)) {
+                    if (part.getExtensionAttribute(MTOM_EXPT_QNAME) != null) {
+                        feature.setMtomEnabled(true);
+                    }
+                }
+            }
+        }
+
 outer:  for (ExtensibilityElement element : (List<ExtensibilityElement>)port.getBinding().getExtensibilityElements()) {
             if (element instanceof UnknownExtensibilityElement) {
                 String attrValue = null;
                 Element domElement = ((UnknownExtensibilityElement)element).getElement();
                 if (element.getElementType().equals(USING_WSA_QNAME)) {
-                    addressing.setEnabled(true);
-                    setAddressingRequired(addressing, domElement);
+                    feature.setAddressingEnabled(true);
+                    setAddressingRequired(feature, domElement);
                     break;
                 } else if (element.getElementType().equals(POLICY_REFERENCE_QNAME)) {
-                    String uri = getAttribute(domElement, WSDL11_URI, ATTR_URI);
+                    String uri = XMLHelper.getAttribute(domElement, WSDL11_URI, ATTR_URI);
                     /*if (uri == null) {
-                        uri = getAttribute(domElement, WSDL20_URI, ATTR_URI);
+                        uri = XMLHelper.getAttribute(domElement, WSDL20_URI, ATTR_URI);
                     }*/
                     if (uri == null) {
                         throw new RuntimeException("Policy reference URI missing for " + port.getBinding().getQName().getLocalPart());
@@ -629,29 +709,19 @@ outer:  for (ExtensibilityElement element : (List<ExtensibilityElement>)port.get
                     for (ExtensibilityElement defElement : (List<ExtensibilityElement>)definition.getExtensibilityElements()) {
                         if (defElement.getElementType().equals(POLICY_QNAME)) {
                             Element defDomElement = ((UnknownExtensibilityElement)defElement).getElement();
-                            attrValue = getAttribute(defDomElement, SECURITY_UTILITY_URI, ATTR_ID);
+                            attrValue = XMLHelper.getAttribute(defDomElement, SECURITY_UTILITY_URI, ATTR_ID);
                             if ((attrValue != null)
                                 && attrValue.equals(uri)) {
-                                Element child = XMLHelper.getFirstChildElementByName(defDomElement, ELE_ADDRESSING);
-                                if (child != null) {
-                                    addressing.setEnabled(true);
-                                    setAddressingRequired(addressing, child);
+                                // Addressing
+                                if (!addressing) {
+                                    addressing = setAddressingEnabled(feature, defDomElement);
+                                }
+                                // MTOM
+                                if (!mtom) {
+                                    mtom = setMtomEnabled(feature, defDomElement);
+                                }
+                                if (addressing && mtom) {
                                     break outer;
-                                } else {
-                                    child = XMLHelper.getFirstChildElementByName(defDomElement, ELE_EXACTLYONE);
-                                    if (child == null) {
-                                        throw new RuntimeException("Invalid Policy definition in WSDL.");
-                                    }
-                                    child = XMLHelper.getFirstChildElementByName(child, ELE_ALL);
-                                    while (child != null) {
-                                        Element addressingEle = XMLHelper.getFirstChildElementByName(child, ELE_ADDRESSING);
-                                        if (addressingEle != null) {
-                                            addressing.setEnabled(true);
-                                            setAddressingRequired(addressing, addressingEle);
-                                            break outer;
-                                        }
-                                        child = XMLHelper.getNextSiblingElementByName(child, ELE_ALL);
-                                    }
                                 }
                             }
                         }
@@ -659,27 +729,99 @@ outer:  for (ExtensibilityElement element : (List<ExtensibilityElement>)port.get
                 }
             }
         }
-        return addressing;
+        return feature;
     }
 
-    private static String getAttribute(Element element, String namespace, String name) {
-        String value = null;
-        if (element.hasAttributeNS(namespace, name)) {
-            value = element.getAttributeNS(namespace, name);
-        } else if (element.hasAttribute(name)) {
-            value = element.getAttribute(name);
+    private static Boolean setAddressingEnabled(Feature feature, Element defDomElement) {
+        Element child = XMLHelper.getFirstChildElementByName(defDomElement, ELE_ADDRESSING);
+        if (child != null) {
+            feature.setAddressingEnabled(true);
+            setAddressingRequired(feature, child);
+            return true;
+        } else {
+            child = XMLHelper.getFirstChildElementByName(defDomElement, ELE_EXACTLYONE);
+            if (child != null) {
+                child = XMLHelper.getFirstChildElementByName(child, ELE_ALL);
+                while (child != null) {
+                    Element addressingEle = XMLHelper.getFirstChildElementByName(child, ELE_ADDRESSING);
+                    if (addressingEle != null) {
+                        feature.setAddressingEnabled(true);
+                        setAddressingRequired(feature, addressingEle);
+                        return true;
+                    }
+                    child = XMLHelper.getNextSiblingElementByName(child, ELE_ALL);
+                }
+            }
         }
-        return value;
+        return false;
     }
 
-    private static void setAddressingRequired(Addressing addressing, Element element) {
-        String attrValue = getAttribute(element, WSDL11_URI, ATTR_REQUIRED);
+    private static void setAddressingRequired(Feature feature, Element element) {
+        String attrValue = XMLHelper.getAttribute(element, WSDL11_URI, ATTR_REQUIRED);
         /*if (attrValue == null) {
-            attrValue = getAttribute(element, WSDL11_URI, ATTR_REQUIRED);
+            attrValue = XMLHelper.getAttribute(element, WSDL20_URI, ATTR_REQUIRED);
         }*/
         if (attrValue != null) {
-            addressing.setRequired(Boolean.valueOf(attrValue));
+            feature.setAddressingRequired(Boolean.valueOf(attrValue));
         }
+    }
+
+    private static Boolean setMtomEnabled(Feature feature, Element defDomElement) {
+        Element child = XMLHelper.getFirstChildElementByName(defDomElement, ELE_MTOM);
+        if (child != null) {
+            feature.setMtomEnabled(true);
+            return true;
+        } else {
+            child = XMLHelper.getFirstChildElementByName(defDomElement, ELE_EXACTLYONE);
+            if (child != null) {
+                child = XMLHelper.getFirstChildElementByName(child, ELE_ALL);
+                while (child != null) {
+                    Element addressingEle = XMLHelper.getFirstChildElementByName(child, ELE_MTOM);
+                    if (addressingEle != null) {
+                        feature.setMtomEnabled(true);
+                        return true;
+                    }
+                    child = XMLHelper.getNextSiblingElementByName(child, ELE_ALL);
+                }
+            }
+        }
+        return false;
+    }
+
+    // Caution: recursive
+    private static Boolean setMtomEnabled(Schema schema) {
+        if (schema != null) {
+            if (hasExpectedContentTypes(schema.getElement())) {
+                return true;
+            }
+            for (List<SchemaImport> c : ((Map<String, List<SchemaImport>>)schema.getImports()).values()) {
+                for (SchemaImport simport : c) {
+                    if (setMtomEnabled(simport.getReferencedSchema())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    // Caution: recursive
+    private static Boolean hasExpectedContentTypes(Element element) {
+        if (element != null) {
+            if (XMLHelper.hasAttribute(element, WSDL_XMIME_URI, ATTR_EXP_CT)) {
+                return true;
+            }
+            NodeList children = element.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node node = children.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    if (hasExpectedContentTypes((Element)node)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**

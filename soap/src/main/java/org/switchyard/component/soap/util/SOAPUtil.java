@@ -19,12 +19,16 @@
  
 package org.switchyard.component.soap.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
+import java.util.Map;
 
+import javax.activation.DataSource;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.Detail;
@@ -37,11 +41,6 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.handler.MessageContext.Scope;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 import javax.xml.ws.soap.SOAPBinding;
@@ -50,6 +49,7 @@ import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.log4j.Logger;
 import org.switchyard.Context;
 import org.switchyard.Property;
+import org.switchyard.common.codec.Base64;
 import org.switchyard.common.xml.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -84,6 +84,11 @@ public final class SOAPUtil {
      * WS-A namespace.
      */
     public static final String WSA_URI = "http://www.w3.org/2005/08/addressing";
+
+    /**
+     * MTOM XOP namespace.
+     */
+    public static final String MTOM_XOP_URI = "http://www.w3.org/2004/08/xop/include";
 
     /**
      * SOAP 1.1 Server Fault Qname.
@@ -139,6 +144,10 @@ public final class SOAPUtil {
      * The WS-A To QName.
      */
     public static final QName WSA_TO_QNAME = new QName(WSA_URI, "To");
+    /**
+     * The MTOM/XOP Include QName.
+     */
+    public static final QName MTOM_XOP_INCLUDE_QNAME = new QName(MTOM_XOP_URI, "Include");
 
     /**
      * The WS-A Action QName String.
@@ -173,6 +182,8 @@ public final class SOAPUtil {
     private static final boolean RETURN_STACK_TRACES = false;
     private static final String INDENT_FEATURE = "{http://xml.apache.org/xslt}indent-amount";
     private static final String INDENT_AMOUNT = "4";
+    private static final String CID_STR = "cid:";
+    private static final String HREF_STR = "href";
 
     /** SOAP Message Factory holder. */
     private static final MessageFactory SOAP11_MESSAGE_FACTORY;
@@ -335,6 +346,58 @@ public final class SOAPUtil {
     }
 
     /**
+     * Expand xop inlines.
+     *
+     * @param element the element to expand
+     * @param attachmentMap the attachment Map
+     * @return the expanded element
+     * @throws IOException if the xop content could not be expanded
+     */
+    public static Element expandXop(Element element, Map<String, DataSource> attachmentMap) throws IOException {
+        if (element != null) {
+            NodeList children = element.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node node = children.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    QName name = new QName(node.getNamespaceURI(), node.getLocalName());
+                    if (name.equals(MTOM_XOP_INCLUDE_QNAME)) {
+                        String contentId = XMLHelper.getAttribute((Element)node, "", HREF_STR);
+                        if (contentId.startsWith(CID_STR)) {
+                            contentId = contentId.substring(4);
+                        }
+                        if (attachmentMap.get(contentId) == null) {
+                            throw new RuntimeException("NO attachment found with name '" + contentId + "'");
+                        }
+                        InputStream is = attachmentMap.get(contentId).getInputStream();
+                        ByteArrayOutputStream os = new ByteArrayOutputStream();
+                        byte[] buff = new byte[128];
+                        int read;
+                        try {
+                            while ((read = is.read(buff)) != -1) {
+                                os.write(buff, 0, read);
+                            }
+                        } finally {
+                            os.flush();
+                            os.close();
+                            is.close();
+                        }
+                        // Encode attachment and add it here
+                        String imageString = Base64.encode(os.toByteArray());
+                        Node content = element.getOwnerDocument().createTextNode(imageString);
+                        element.removeChild(node);
+                        element.appendChild(content);
+                        attachmentMap.remove(contentId);
+                    } else {
+                        expandXop((Element)node, attachmentMap);
+                    }
+                }
+            }
+            return element;
+        }
+        return null;
+    }
+
+    /**
      * Adds a SOAP 1.1 or 1.2 Fault element to the SOAPBody.
      *
      * @param soapMessage The SOAPMessage
@@ -455,13 +518,7 @@ public final class SOAPUtil {
         String str = null;
         if (msg != null) {
             try {
-                TransformerFactory transFactory = TransformerFactory.newInstance();
-                Transformer transformer = transFactory.newTransformer();
-                StringWriter sw = new StringWriter();
-                DOMSource source = new DOMSource(msg.getSOAPPart().getDocumentElement());
-                StreamResult result = new StreamResult(sw);
-                transformer.transform(source, result);
-                str = sw.toString();
+                str = XMLHelper.toPretty(msg.getSOAPPart().getDocumentElement());
             } catch (Exception e) {
                 LOGGER.error("Could not parse SOAP Message", e);
             }
@@ -476,15 +533,7 @@ public final class SOAPUtil {
      */
     public static void prettyPrint(Element element, PrintStream out) {
         try {
-            TransformerFactory transFactory = TransformerFactory.newInstance();
-            Transformer transformer = transFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(INDENT_FEATURE, INDENT_AMOUNT);
-            StringWriter sw = new StringWriter();
-            DOMSource source = new DOMSource(element);
-            StreamResult result = new StreamResult(sw);
-            transformer.transform(source, result);
-            out.println(sw);
+            out.println(XMLHelper.toPretty(element));
         } catch (Exception e) {
             LOGGER.error("Could not parse SOAP Message", e);
         }

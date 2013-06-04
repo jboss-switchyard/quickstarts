@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="urn:switchyard-component-soap:test-ws:1.0"
+    xmlns:tns="urn:switchyard-component-soap:test-ws:1.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
+
+    <xs:element name="resize" type="tns:resize"/>
+
+    <xs:element name="resizeResponse" type="tns:resizeResponse"/>
+
+    <xs:complexType name="resize">
+      <xs:sequence>
+        <xs:element name="arg0" type="xmime:base64Binary" minOccurs="1" xmime:expectedContentTypes="image/jpeg"/>
+      </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="resizeResponse">
+      <xs:sequence>
+        <xs:element name="return" type="xmime:base64Binary" minOccurs="1" xmime:expectedContentTypes="image/jpeg"/>
+      </xs:sequence>
+    </xs:complexType>
+</xs:schema>
+

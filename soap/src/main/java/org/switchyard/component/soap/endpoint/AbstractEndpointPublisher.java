@@ -21,6 +21,8 @@ package org.switchyard.component.soap.endpoint;
 
 import java.net.MalformedURLException;
 
+import javax.xml.ws.WebServiceFeature;
+
 import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.WSDLUtil;
@@ -79,6 +81,6 @@ public abstract class AbstractEndpointPublisher implements EndpointPublisher {
      * {@inheritDoc}
      */
     public synchronized WSEndpoint publish(final SOAPBindingModel config, final String bindingId, final InboundHandler handler) {
-        return publish(config, bindingId, handler, null);
+        return publish(config, bindingId, handler, (WebServiceFeature)null);
     }
 }

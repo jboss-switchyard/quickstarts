@@ -8,13 +8,11 @@
         </layout>
     </appender>
 
-    <!--<logger name="org.switchyard">
-        <level value="TRACE" />
-    </logger>
-    -->
+    <!--
     <logger name="org.switchyard.component.soap">
         <level value="TRACE" />
     </logger>
+    -->
     <logger name="org.jboss.weld.Bootstrap">
         <level value="ERROR" />
     </logger>

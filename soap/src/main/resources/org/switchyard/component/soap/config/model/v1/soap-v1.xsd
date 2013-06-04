@@ -97,6 +97,13 @@ MA  02110-1301, USA.
                             </documentation>
                         </annotation>
                     </element>
+                    <element name="mtom" type="soap:MtomType" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                Mtom feature override. By default this feature is enabled. Use this to disable or change threshold value.
+                            </documentation>
+                        </annotation>
+                    </element>
                     <element name="endpointConfig" type="soap:EndpointConfigType" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>
@@ -119,6 +126,16 @@ MA  02110-1301, USA.
                         </annotation>
                     </element>
                 </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="MtomType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="enabled" type="boolean" use="optional"/>
+                <attribute name="threshold" type="integer" use="optional"/>
+                <attribute name="xopExpand" type="boolean" use="optional"/>
             </extension>
         </complexContent>
     </complexType>

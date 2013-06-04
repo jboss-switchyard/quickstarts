@@ -67,6 +67,8 @@ public class V1SOAPMarshaller extends BaseMarshaller {
             return new V1SOAPContextMapperModel(config, desc);
         } else if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
             return new V1SOAPMessageComposerModel(config, desc);
+        } else if (name.equals(SOAPName.mtom.name())) {
+            return new V1MtomModel(config, desc);
         } else if (name.equals(EndpointConfigModel.ENDPOINT_CONFIG)) {
             return new V1EndpointConfigModel(config, desc);
         } else if (name.equals(InterceptorsModel.IN_INTERCEPTORS) || name.equals(InterceptorsModel.OUT_INTERCEPTORS)) {

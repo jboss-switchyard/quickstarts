@@ -35,7 +35,7 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.Handler;
-import javax.xml.ws.soap.AddressingFeature;
+import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.log4j.Logger;
@@ -71,7 +71,7 @@ public class OutboundHandler extends BaseServiceHandler {
     private Port _wsdlPort;
     private String _bindingId;
     private Boolean _documentStyle;
-    private Addressing _addressing = new Addressing();
+    private Feature _feature = new Feature();
 
     /**
      * Constructor.
@@ -97,24 +97,35 @@ public class OutboundHandler extends BaseServiceHandler {
                 portName.setServiceQName(wsdlService.getQName());
                 portName.setName(_wsdlPort.getName());
 
-                _addressing = WSDLUtil.getAddressing(definition, _wsdlPort);
-                _bindingId = WSDLUtil.getBindingId(_wsdlPort);
                 String style = WSDLUtil.getStyle(_wsdlPort);
                 _documentStyle = style.equals(WSDLUtil.DOCUMENT) ? true : false;
+                _feature = WSDLUtil.getFeature(definition, _wsdlPort, _documentStyle);
+
+                // Config feature setting overrides WSDL
+                MTOMFeature mtom = _feature.getMtom(_config);
+                _bindingId = WSDLUtil.getBindingId(_wsdlPort, mtom.isEnabled());
 
                 _messageComposer = SOAPComposition.getMessageComposer(_config);
                 ((SOAPMessageComposer)_messageComposer).setDocumentStyle(_documentStyle);
                 ((SOAPMessageComposer)_messageComposer).setWsdlPort(_wsdlPort);
+                ((SOAPMessageComposer)_messageComposer).setMtomEnabled(mtom.isEnabled());
+                if (_config.getMtomConfig() != null) {
+                    ((SOAPMessageComposer)_messageComposer).setXopExpand(_config.getMtomConfig().isXopExpand());
+                }
 
                 URL wsdlUrl = WSDLUtil.getURL(_config.getWsdl());
                 LOGGER.info("Creating dispatch with WSDL " + wsdlUrl);
                 // make sure we don't pollute the class loader used by the WS subsystem
                 Classes.setTCCL(getClass().getClassLoader());
+
                 Service service = Service.create(wsdlUrl, portName.getServiceQName());
+
                 _dispatcher = service.createDispatch(portName.getPortQName(),
                                     SOAPMessage.class,
                                     Service.Mode.MESSAGE,
-                                    new AddressingFeature(_addressing.isEnabled(), _addressing.isRequired()));
+                                    _feature.getAddressing(),
+                                    mtom);
+
                 // this does not return a proper qualified Fault element and has no Detail so deferring for now
                 // _dispatcher.getRequestContext().put("jaxws.response.throwExceptionIfSOAPFault", Boolean.FALSE);
 
@@ -122,7 +133,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 List<Handler> handlers = binding.getHandlerChain();
                 handlers.add(new OutboundResponseHandler());
 
-                if (_addressing.isEnabled()) {
+                if (_feature.isAddressingEnabled()) {
                     // Add handler to process WS-A headers
                     handlers.add(new AddressingHandler());
                 } else {
@@ -175,7 +186,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 action = WSDLUtil.getSoapAction(_wsdlPort, firstBodyElement, _documentStyle);
                 oneWay = WSDLUtil.isOneWay(_wsdlPort, firstBodyElement, _documentStyle);
 
-                if (_addressing.isEnabled()) {
+                if (_feature.isAddressingEnabled()) {
                     _dispatcher.getRequestContext().put(SOAPUtil.SWITCHYARD_CONTEXT, exchange.getContext());
                     // It is a one way if a replyto address is set
                     if ((exchange.getContext().getPropertyValue(SOAPUtil.WSA_REPLYTO_STR) != null) 
@@ -242,7 +253,7 @@ public class OutboundHandler extends BaseServiceHandler {
 
         SOAPMessage response = null;
         try {
-            if (!_addressing.isEnabled() && (action != null)) {
+            if (!_feature.isAddressingEnabled() && (action != null)) {
                 _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, "\"" + action + "\"");
             }
 
@@ -255,11 +266,11 @@ public class OutboundHandler extends BaseServiceHandler {
         } catch (SOAPFaultException sfex) {
             response = SOAPUtil.generateFault(sfex, _bindingId);
         } catch (WebServiceException wsex) {
-            if (wsex.getMessage().equals(NO_RESPONSE) && _addressing.isEnabled()) {
+            if (wsex.getMessage().equals(NO_RESPONSE) && _feature.isAddressingEnabled()) {
                 // Ignore it
                 LOGGER.warn("Sent a message with ReplyTo to a Request_Response Webservice, so no response returned!");
             } else {
-                throw wsex;
+                throw new SOAPException(wsex);
             }
         } catch (Exception ex) {
             throw new SOAPException("Cannot process SOAP request", ex);

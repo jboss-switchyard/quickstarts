@@ -16,61 +16,54 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
+package org.switchyard.component.soap.config.model;
 
-package org.switchyard.component.soap;
+import org.switchyard.config.model.Model;
 
 /**
- * Addressing booleans.
+ * A Mtom Model.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
-public class Addressing {
-
-    private Boolean _enabled = false;
-    private Boolean _required = false;
+public interface MtomModel extends Model {
 
     /**
-     * Check if addressing feature is enabled.
-     * 
-     * @return true if addressing is enabled, false otherwise
+     * Get if MTOM enabled.
+     * @return true if enabled, false otherwise
      */
-    public Boolean isEnabled() {
-        return _enabled;
-    }
+    public Boolean isEnabled();
 
     /**
-     * Set if addressing is enabled.
-     * 
-     * @param enabled true if addressing is enabled, false otherwise
+     * Enable or disable MTOM feature.
+     * @param enabled true to enable, false to diable
+     * @return this MtomModel (useful for chaining)
      */
-    public void setEnabled(Boolean enabled) {
-        _enabled = enabled;
-    }
+    public MtomModel setEnabled(Boolean enabled);
 
     /**
-     * Check if addressing feature is required.
-     * 
-     * @return true if addressing is required, false otherwise
+     * Gets the threshold value.
+     * @return the configName
      */
-    public Boolean isRequired() {
-        return _required;
-    }
+    public Integer getThreshold();
 
     /**
-     * Set if addressing is required.
-     * 
-     * @param required true if addressing is required, false otherwise
+     * Sets the threshold value.
+     * @param threshold the threshold value to set
+     * @return this MtomModel (useful for chaining)
      */
-    public void setRequired(Boolean required) {
-        _required = required;
-    }
+    public MtomModel setThreshold(Integer threshold);
 
     /**
-     * Returns a String representation of this class.
-     * 
-     * @return the String representation
+     * Get if XOP expand enabled.
+     * @return true if XOP expand enabled, false otherwise
      */
-    public String toString() {
-        return "[Enabled:" + _enabled + ", Required:" +_required + "]";
-    }
+    public Boolean isXopExpand();
+
+    /**
+     * Enable or disable XOP expand feature.
+     * @param enabled true to enable, false to diable
+     * @return this MtomModel (useful for chaining)
+     */
+    public MtomModel setXopExpand(Boolean enabled);
+
 }

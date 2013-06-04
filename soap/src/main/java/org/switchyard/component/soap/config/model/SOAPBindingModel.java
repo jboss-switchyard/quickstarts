@@ -147,6 +147,19 @@ public interface SOAPBindingModel extends BindingModel {
     public SOAPBindingModel setEndpointAddress(String endpointAddress);
 
     /**
+     * Gets the mtom config.
+     * @return the mtom config
+     */
+    public MtomModel getMtomConfig();
+
+    /**
+     * Sets the mtom config.
+     * @param mtomConfig the mtom config
+     * @return this SOAPBindingModel (useful for chaining)
+     */
+    public SOAPBindingModel setMtomConfig(MtomModel mtomConfig);
+
+    /**
      * Gets the endpointConfig.
      * @return the endpointConfig
      */

@@ -28,6 +28,7 @@ import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.component.soap.config.model.EndpointConfigModel;
 import org.switchyard.component.soap.config.model.InterceptorsModel;
+import org.switchyard.component.soap.config.model.MtomModel;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.config.model.SOAPContextMapperModel;
 import org.switchyard.component.soap.config.model.SOAPMessageComposerModel;
@@ -51,6 +52,7 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
         SOAPName.socketAddr.name(),
         SOAPName.contextPath.name(),
         SOAPName.endpointAddress.name(),
+        SOAPName.mtom.name(),
         ENDPOINT_CONFIG,
         IN_INTERCEPTORS,
         OUT_INTERCEPTORS
@@ -64,6 +66,7 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
     private SocketAddr _socketAddr;
     private SOAPNameValueModel _contextPath;
     private SOAPNameValueModel _endpointAddress;
+    private MtomModel _mtomConfig;
     private EndpointConfigModel _endpointConfig;
     private InterceptorsModel _inInterceptors;
     private InterceptorsModel _outInterceptors;
@@ -261,6 +264,27 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
     @Override
     public SOAPBindingModel setEndpointAddress(String endpointAddress) {
         _endpointAddress = setNameValue(_endpointAddress, SOAPName.endpointAddress, endpointAddress);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MtomModel getMtomConfig() {
+        if (_mtomConfig == null) {
+            _mtomConfig = (MtomModel)getFirstChildModel(SOAPName.mtom.name());
+        }
+        return _mtomConfig;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SOAPBindingModel setMtomConfig(MtomModel mtomConfig) {
+        setChildModel(mtomConfig);
+        _mtomConfig = mtomConfig;
         return this;
     }
 

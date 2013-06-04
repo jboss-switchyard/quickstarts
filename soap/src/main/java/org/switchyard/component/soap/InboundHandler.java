@@ -34,7 +34,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.soap.AddressingFeature;
+import javax.xml.ws.soap.MTOMFeature;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
@@ -68,6 +68,7 @@ public class InboundHandler extends BaseServiceHandler {
 
     private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
     private static final long DEFAULT_TIMEOUT = 15000;
+    private static final int DEFAULT_FAULT_RESONSE_CODE = 500;
     private static final String MESSAGE_NAME = "org.switchyard.soap.messageName";
 
     private final SOAPBindingModel _config;
@@ -81,7 +82,7 @@ public class InboundHandler extends BaseServiceHandler {
     private String _bindingId;
     private Boolean _documentStyle = false;
     private String _targetNamespace;
-    private Addressing _addressing = new Addressing();
+    private Feature _feature = new Feature();
     private Map<String, Operation> _operationsMap = new HashMap<String, Operation>();
 
     /**
@@ -110,12 +111,11 @@ public class InboundHandler extends BaseServiceHandler {
             portName.setServiceQName(wsdlService.getQName());
             portName.setName(_wsdlPort.getName());
 
-            _addressing = WSDLUtil.getAddressing(definition, _wsdlPort);
-            _bindingId = WSDLUtil.getBindingId(_wsdlPort);
             String style = WSDLUtil.getStyle(_wsdlPort);
             _documentStyle = style.equals(WSDLUtil.DOCUMENT) ? true : false;
+            _feature = WSDLUtil.getFeature(definition, _wsdlPort, _documentStyle);
 
-            if (_addressing.isEnabled()) {
+            if (_feature.isAddressingEnabled()) {
                 List<BindingOperation> bindingOperations = _wsdlPort.getBinding().getBindingOperations();
                 for (BindingOperation bindingOp : bindingOperations) {
                     String inputAction = WSDLUtil.getInputAction(_wsdlPort, new QName(_targetNamespace, bindingOp.getOperation().getName()), _targetNamespace, _documentStyle);
@@ -123,15 +123,24 @@ public class InboundHandler extends BaseServiceHandler {
                 }
             }
 
+            // Config feature setting overrides WSDL
+            MTOMFeature mtom = _feature.getMtom(_config);
+            _bindingId = WSDLUtil.getBindingId(_wsdlPort, mtom.isEnabled());
+
             _endpoint = EndpointPublisherFactory.getEndpointPublisher().publish(_config,
                 _bindingId,
                 this,
-                new AddressingFeature(_addressing.isEnabled(), _addressing.isRequired()));
+                _feature.getAddressing(),
+                mtom);
 
             // Create and configure the SOAP message composer
             _messageComposer = SOAPComposition.getMessageComposer(_config);
             ((SOAPMessageComposer)_messageComposer).setDocumentStyle(_documentStyle);
             ((SOAPMessageComposer)_messageComposer).setWsdlPort(_wsdlPort);
+            ((SOAPMessageComposer)_messageComposer).setMtomEnabled(mtom.isEnabled());
+            if (_config.getMtomConfig() != null) {
+                ((SOAPMessageComposer)_messageComposer).setXopExpand(_config.getMtomConfig().isXopExpand());
+            }
         } catch (WSDLException e) {
             throw new WebServicePublishException(e);
         }
@@ -194,7 +203,7 @@ public class InboundHandler extends BaseServiceHandler {
         }
         try {
             String action = SOAPUtil.getAddressingAction(soapMessage);
-            if (_addressing.isEnabled() && (action != null)) {
+            if (_feature.isAddressingEnabled() && (action != null)) {
                 // Get the operation using the action
                 operation = _operationsMap.get(action);
                 if (operation == null) {
@@ -281,6 +290,9 @@ public class InboundHandler extends BaseServiceHandler {
                 return soapResponse;
             }
         } catch (SOAPException se) {
+            if (msgContext != null) {
+                msgContext.put(BaseHandler.STATUS, DEFAULT_FAULT_RESONSE_CODE);
+            }
             return handleException(oneWay, se);
         }
     }

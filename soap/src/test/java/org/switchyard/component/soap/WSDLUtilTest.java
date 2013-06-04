@@ -141,8 +141,8 @@ public class WSDLUtilTest {
         Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloAddressingService"));
         Port port = WSDLUtil.getPort(service, new PortName("HelloSOAPAddressingServicePort"));
         Assert.assertNotNull(port);
-        Addressing addressing = WSDLUtil.getAddressing(definition, port);
-        Assert.assertEquals("[Enabled:true, Required:false]", addressing.toString());
+        Feature feature = WSDLUtil.getFeature(definition, port, true);
+        Assert.assertEquals("[AddressingEnabled:true, AddressingRequired:false, MtomEnabled:false]", feature.toString());
         String action = WSDLUtil.getInputAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "sayHello"), targetNamespace, true);
         Assert.assertEquals("urn:switchyard-component-soap:test-ws:1.0:HelloAddressingService:sayHelloRequest", action);
         action = WSDLUtil.getOutputAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "sayHello"), targetNamespace, true);
@@ -150,8 +150,8 @@ public class WSDLUtilTest {
 
         port = WSDLUtil.getPort(service, new PortName("HelloSOAPAddressingServicePort2"));
         Assert.assertNotNull(port);
-        addressing = WSDLUtil.getAddressing(definition, port);
-        Assert.assertEquals("[Enabled:true, Required:true]", addressing.toString());
+        feature = WSDLUtil.getFeature(definition, port, true);
+        Assert.assertEquals("[AddressingEnabled:true, AddressingRequired:true, MtomEnabled:false]", feature.toString());
         action = WSDLUtil.getInputAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "sayHello"), targetNamespace, true);
         Assert.assertEquals("http://mysite/input", action);
         action = WSDLUtil.getOutputAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "sayHello"), targetNamespace, true);
@@ -159,10 +159,35 @@ public class WSDLUtilTest {
 
         port = WSDLUtil.getPort(service, new PortName("HelloSOAPAddressingServicePort3"));
         Assert.assertNotNull(port);
-        addressing = WSDLUtil.getAddressing(definition, port);
-        Assert.assertEquals("[Enabled:true, Required:true]", addressing.toString());
+        feature = WSDLUtil.getFeature(definition, port, true);
+        Assert.assertEquals("[AddressingEnabled:true, AddressingRequired:true, MtomEnabled:false]", feature.toString());
         action = WSDLUtil.getFaultAction(port, new QName("urn:switchyard-component-soap:test-ws:1.0", "sayHello"), targetNamespace, "UnknownMessage", true);
         Assert.assertEquals("urn:switchyard-component-soap:test-ws:1.0:HelloAddressingService3:sayHello:Fault:UnknownMessage", action);
+    }
+
+    @Test
+    public void soapMtom() throws Exception {
+        Definition definition = WSDLUtil.readWSDL("ImageServiceMtom.wsdl");
+        Service service = WSDLUtil.getService(definition, new PortName("ImageService:ImageServicePort"));
+        Assert.assertNotNull(service);
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "ImageService"));
+        Port port = WSDLUtil.getPort(service, new PortName("ImageServicePort"));
+        Assert.assertNotNull(port);
+        Feature feature = WSDLUtil.getFeature(definition, port, true);
+        Assert.assertEquals("[AddressingEnabled:false, AddressingRequired:false, MtomEnabled:true]", feature.toString());
+        port = WSDLUtil.getPort(service, new PortName("ImageServicePort2"));
+        Assert.assertNotNull(port);
+        feature = WSDLUtil.getFeature(definition, port, true);
+        Assert.assertEquals("[AddressingEnabled:false, AddressingRequired:false, MtomEnabled:true]", feature.toString());
+
+        definition = WSDLUtil.readWSDL("ImageServiceMtom2.wsdl");
+        service = WSDLUtil.getService(definition, new PortName("ImageService:ImageServicePort"));
+        Assert.assertNotNull(service);
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "ImageService"));
+        port = WSDLUtil.getPort(service, new PortName("ImageServicePort"));
+        Assert.assertNotNull(port);
+        feature = WSDLUtil.getFeature(definition, port, true);
+        Assert.assertEquals("[AddressingEnabled:false, AddressingRequired:false, MtomEnabled:true]", feature.toString());
     }
 
     /*
