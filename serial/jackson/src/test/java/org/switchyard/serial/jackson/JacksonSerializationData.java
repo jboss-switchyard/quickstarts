@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 
 import org.w3c.dom.Element;
 
@@ -182,14 +183,22 @@ public final class JacksonSerializationData {
     }
 
     public static interface Title {
+        public UUID getId();
         public String getState();
         public boolean isLiened();
     }
 
     public static final class StrictTitle implements Title {
+        private UUID _id;
         private String _state;
         private boolean _liened;
         public StrictTitle() {}
+        public UUID getId() {
+            return _id;
+        }
+        public void setId(UUID id) {
+            _id = id;
+        }
         public String getState() {
             return _state;
         }
@@ -203,14 +212,23 @@ public final class JacksonSerializationData {
             _liened = liened;
         }
         public String toString() {
-            return "StrictTitle@" + System.identityHashCode(this) + "(state=" + getState() + ", liened" + isLiened() + ")";
+            return "StrictTitle@" + System.identityHashCode(this) + "(id=" + getId() + ", state=" + getState() + ", liened" + isLiened() + ")";
         }
     }
 
     public static final class FluentTitle implements Title {
+        private UUID _id;
         private String _state;
         private boolean _liened;
         public FluentTitle() {}
+        public UUID getId() {
+            return _id;
+        }
+        // purposely returns the implementation type, for the sake of the test
+        public FluentTitle setId(UUID id) {
+            _id = id;
+            return this;
+        }
         public String getState() {
             return _state;
         }
@@ -228,7 +246,7 @@ public final class JacksonSerializationData {
             return this;
         }
         public String toString() {
-            return "FluentTitle@" + System.identityHashCode(this) + "(state=" + getState() + ", liened" + isLiened() + ")";
+            return "FluentTitle@" + System.identityHashCode(this) + "(id=" + getId() + ", state=" + getState() + ", liened" + isLiened() + ")";
         }
     }
 

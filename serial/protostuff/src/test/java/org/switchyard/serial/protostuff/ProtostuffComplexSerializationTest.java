@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import junit.framework.Assert;
 
@@ -201,22 +202,27 @@ public final class ProtostuffComplexSerializationTest {
 
     @Test
     public void testStrictBean() throws Exception {
+        final UUID id = UUID.randomUUID();
         Car car = new Car();
         StrictTitle title = new StrictTitle();
+        title.setId(id);
         title.setState("NY");
         title.setLiened(true);
         car.setTitle(title);
         car = serDeser(car, Car.class);
+        Assert.assertEquals(id, car.getTitle().getId());
         Assert.assertEquals("NY", car.getTitle().getState());
         Assert.assertTrue(car.getTitle().isLiened());
     }
 
     @Test
     public void testFluentBean() throws Exception {
+        final UUID id = UUID.randomUUID();
         Car car = new Car();
-        Title title = new FluentTitle().setState("NY").setLiened(true);
+        Title title = new FluentTitle().setId(id).setState("NY").setLiened(true);
         car.setTitle(title);
         car = serDeser(car, Car.class);
+        Assert.assertEquals(id, car.getTitle().getId());
         Assert.assertEquals("NY", car.getTitle().getState());
         Assert.assertTrue(car.getTitle().isLiened());
     }

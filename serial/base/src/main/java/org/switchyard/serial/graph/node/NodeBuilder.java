@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.activation.DataSource;
 import javax.xml.namespace.QName;
@@ -96,6 +97,10 @@ public final class NodeBuilder {
             Node node = new InputStreamNode();
             graph.putReference(id, node);
             node.compose(obj, graph);
+        } else if (isUUID(clazz)) {
+            Node node = new UUIDNode();
+            graph.putReference(id, node);
+            node.compose(obj, graph);
         } else if (isThrowable(clazz)) {
             Node node = new ThrowableNode();
             graph.putReference(id, node);
@@ -164,6 +169,10 @@ public final class NodeBuilder {
 
     static boolean isThrowable(Class<?> clazz) {
         return Throwable.class.isAssignableFrom(clazz);
+    }
+
+    static boolean isUUID(Class<?> clazz) {
+        return UUID.class.isAssignableFrom(clazz);
     }
 
     static boolean isAccessible(Class<?> clazz) {
