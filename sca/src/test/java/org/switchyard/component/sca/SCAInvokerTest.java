@@ -6,6 +6,7 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MockDomain;
 import org.switchyard.MockExchange;
@@ -76,6 +77,38 @@ public class SCAInvokerTest {
         
         Assert.assertTrue(_provider.getMessages().size() == 1);
         Assert.assertEquals(msg, _provider.getMessages().poll().getMessage());
+    }
+    
+    @Test
+    public void localInvocationWithInvalidServiceReference() throws Exception {
+        boolean fail = false;
+        
+        V1SCABindingModel config = new V1SCABindingModel();
+        config.setTarget("Blah");
+        SCAInvoker invoker = new SCAInvoker(config);
+
+        // Create one valid but unregistered reference
+        final QName SERVICE_A = new QName("urn:test", "ServiceA");
+        ServiceReference referenceA = _domain.registerServiceReference(SERVICE_A, new InOnlyService());       
+
+        Service serviceA = _domain.registerService(SERVICE_A, new InOnlyService(), null);
+        _domain.registerService(SERVICE_A, new InOnlyService(), _provider);
+        
+        MockExchange ex = new MockExchange();
+        Message msg = ex.createMessage().setContent("TEST");
+        ex.setMessage(msg);
+        ex.consumer(referenceA, new InOnlyOperation(null));
+        ex.provider(serviceA, new InOnlyOperation(null));
+        
+        // Should throw a Handler exception
+        try {
+            invoker.handleMessage(ex);
+        } catch (HandlerException e) {
+            Assert.assertEquals(e.getMessage(), "Service reference {urn:test}Blah not found in domain " + _domain.getName());
+            fail = true;
+        }
+        
+        Assert.assertTrue(fail);
     }
     
     @Test

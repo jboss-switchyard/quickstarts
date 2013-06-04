@@ -81,11 +81,14 @@ public class SCAInvoker extends BaseServiceHandler {
         }
     }
     
-    private void invokeLocal(Exchange exchange) {
+    private void invokeLocal(Exchange exchange) throws HandlerException {
         // Figure out the QName for the service were invoking
         QName serviceName = getTargetServiceName(exchange);
         // Get a handle for the reference and use a copy of the exchange to invoke it
         ServiceReference ref = exchange.getProvider().getDomain().getServiceReference(serviceName);
+        if (ref == null) {
+            throw new HandlerException("Service reference " + serviceName + " not found in domain " + exchange.getProvider().getDomain().getName());
+        }
         SynchronousInOutHandler replyHandler = new SynchronousInOutHandler();
         Exchange ex = ref.createExchange(exchange.getContract().getProviderOperation().getName(), replyHandler);
         ex.send(exchange.getMessage());
