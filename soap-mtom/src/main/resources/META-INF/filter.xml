@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="org.switchyard.quickstarts.soap-mtom.external">
+        <from uri="switchyard://ResizeService"/>
+        <log message="External Request is: ${body}" />
+        <process ref="externalCustomProcessor"/>
+        <log message="External Response is: ${body}" />
+    </route>
+</routes>

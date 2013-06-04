@@ -64,6 +64,7 @@
         <module>soap-addressing</module>
         <module>soap-attachment</module>
         <module>soap-binding-rpc</module>
+        <module>soap-mtom</module>
         <module>jca-inflow-hornetq</module>
         <module>jca-outbound-hornetq</module>
         <module>jca-inflow-activemq</module>

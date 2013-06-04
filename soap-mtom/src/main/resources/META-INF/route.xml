@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="org.switchyard.quickstarts.soap-mtom">
+        <from uri="switchyard://InternalResizeService"/>
+        <log message="Internal Request is: ${body}" />
+        <process ref="internalCustomProcessor"/>
+        <to uri="switchyard://ResizeImageService?operationName=resizeImage"/>
+        <log message="Internal Response is: ${body}" />
+        <process ref="internalResponseProcessor"/>
+    </route>
+</routes>

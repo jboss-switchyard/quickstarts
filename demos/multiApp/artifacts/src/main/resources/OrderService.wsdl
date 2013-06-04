@@ -6,9 +6,11 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
     
-  <import namespace="urn:switchyard-quickstart-demo:multiapp:1.0"
-          location="orderTypes.xsd"/>
-  
+    <types>
+      <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:import schemaLocation="orderTypes.xsd" namespace="urn:switchyard-quickstart-demo:multiapp:1.0"/>
+      </xs:schema>
+    </types>
   <message name="submitOrder">
     <part name="parameters" element="tns:submitOrder"/>
   </message>
