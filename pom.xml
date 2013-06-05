@@ -79,7 +79,7 @@
         <version.commons.net>2.2</version.commons.net>
         <version.commons.ssl>0.3.9</version.commons.ssl>
         <version.deltaspike>${version.org.apache.deltaspike}</version.deltaspike>
-        <version.drools>6.0.0.Alpha9</version.drools>
+        <version.drools>6.0.0.Beta3</version.drools>
         <version.ecj>3.5.1</version.ecj>
         <version.forge>1.2.2.Final</version.forge>
         <version.forge.arquillian>1.0.0.CR7</version.forge.arquillian>
@@ -103,28 +103,25 @@
         <version.jbosseap>6.1</version.jbosseap>
         <version.jbossws.spi>2.1.2.Final</version.jbossws.spi>
         <version.jbossws.jboss720.server.integration>4.2.0-SNAPSHOT</version.jbossws.jboss720.server.integration>
-        <version.jbpm>6.0.0.Alpha9</version.jbpm>
+        <version.jbpm>6.0.0.Beta3</version.jbpm>
         <version.jettison>1.2</version.jettison>
         <version.jsch>0.1.48</version.jsch>
         <version.jta>1.1</version.jta>
         <version.junit>4.10</version.junit>
         <version.jruby>1.7.2</version.jruby>
         <version.jython>2.5.3</version.jython>
-        <version.kie>6.0.0.Alpha9</version.kie>
+        <version.kie>6.0.0.Beta3</version.kie>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
         <version.mina>2.0.4</version.mina>
         <version.milyn>1.5.1</version.milyn>
         <version.mock.javamail>1.9</version.mock.javamail>
-        <version.mvel>2.1.4.Final</version.mvel>
-        <!--
-        <version.mysql-connector-java>5.1.19</version.mysql-connector-java>
-        -->
+        <version.mvel>2.1.5.Final</version.mvel>
         <version.netty>3.2.6.Final</version.netty>
         <!--<version.org.jboss.spec.javax.resource16>1.0.0.Final</version.org.jboss.spec.javax.resource16>-->
         <version.quartz>1.8.5</version.quartz>
         <version.qpid>0.18</version.qpid>
         <version.ognl>3.0.6</version.ognl>
-        <version.protobuf>2.4.1</version.protobuf>
+        <version.protobuf>2.5.0</version.protobuf>
         <version.protostuff>1.0.7</version.protostuff>
         <version.redhat.eap6>6.1</version.redhat.eap6>
         <version.redhat.eap6.minor>0.Alpha</version.redhat.eap6.minor>
@@ -1005,11 +1002,6 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.components</groupId>
-                <artifactId>switchyard-component-test-mixin-bpm</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.components</groupId>
                 <artifactId>switchyard-component-test-mixin-cdi</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1217,11 +1209,6 @@
             <dependency>
                 <groupId>org.switchyard.quickstarts.demos</groupId>
                 <artifactId>switchyard-quickstart-demo-helpdesk</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.quickstarts.demos</groupId>
-                <artifactId>switchyard-quickstart-demo-helpdesk-webapp</artifactId>
                 <type>war</type>
                 <version>${project.version}</version>
             </dependency>
@@ -2047,7 +2034,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
-                <artifactId>jbpm-bam</artifactId>
+                <artifactId>jbpm-audit</artifactId>
                 <version>${version.jbpm}</version>
             </dependency>
             <dependency>
@@ -2067,18 +2054,78 @@
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
+                <artifactId>jbpm-form-services</artifactId>
+                <version>${version.jbpm}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.seam.persistence</groupId>
+                        <artifactId>seam-persistence</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.seam.transaction</groupId>
+                        <artifactId>seam-transaction</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-human-task-core</artifactId>
+                <version>${version.jbpm}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.seam.persistence</groupId>
+                        <artifactId>seam-persistence</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.seam.transaction</groupId>
+                        <artifactId>seam-transaction</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.jbpm</groupId>
+                <artifactId>jbpm-human-task-workitems</artifactId>
                 <version>${version.jbpm}</version>
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
-                <artifactId>jbpm-human-task-mina</artifactId>
+                <artifactId>jbpm-kie-services</artifactId>
                 <version>${version.jbpm}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.seam.persistence</groupId>
+                        <artifactId>seam-persistence</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.seam.transaction</groupId>
+                        <artifactId>seam-transaction</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-persistence-jpa</artifactId>
                 <version>${version.jbpm}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jbpm</groupId>
+                <artifactId>jbpm-runtime-manager</artifactId>
+                <version>${version.jbpm}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jbpm</groupId>
+                <artifactId>jbpm-shared-services</artifactId>
+                <version>${version.jbpm}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.seam.persistence</groupId>
+                        <artifactId>seam-persistence</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.seam.transaction</groupId>
+                        <artifactId>seam-transaction</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
@@ -2125,12 +2172,32 @@
             </dependency>
             <dependency>
                 <groupId>org.kie.commons</groupId>
+                <artifactId>kie-commons-cdi</artifactId>
+                <version>${version.kie}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kie.commons</groupId>
                 <artifactId>kie-commons-data</artifactId>
                 <version>${version.kie}</version>
             </dependency>
             <dependency>
                 <groupId>org.kie.commons</groupId>
                 <artifactId>kie-commons-io</artifactId>
+                <version>${version.kie}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>net.sf.josql</groupId>
+                        <artifactId>josql</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>net.sf.josql</groupId>
+                        <artifactId>gentlyweb-utils</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.kie.commons</groupId>
+                <artifactId>kie-commons-regex</artifactId>
                 <version>${version.kie}</version>
             </dependency>
             <dependency>
@@ -2173,13 +2240,6 @@
                 <artifactId>mvel2</artifactId>
                 <version>${version.mvel}</version>
             </dependency>
-            <!--
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${version.mysql-connector-java}</version>
-            </dependency>
-            -->
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
