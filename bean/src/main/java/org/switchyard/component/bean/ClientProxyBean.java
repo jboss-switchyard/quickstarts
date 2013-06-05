@@ -310,7 +310,9 @@ public class ClientProxyBean implements Bean {
             } else {
                 Exchange exchange = createExchange(_service, method, null);
                 // Don't set the message content as an array unless there are multiple arguments
-                if (args.length == 1) {
+                if (args == null) {
+                    exchange.send(exchange.createMessage());
+                } else if (args.length == 1) {
                     exchange.send(exchange.createMessage().setContent(args[0]));
                 } else {
                     exchange.send(exchange.createMessage().setContent(args));

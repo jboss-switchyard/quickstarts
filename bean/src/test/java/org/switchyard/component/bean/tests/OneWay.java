@@ -21,5 +21,7 @@ package org.switchyard.component.bean.tests;
 
 public interface OneWay {
 
+    void oneWayNoArgs();
+    
     void oneWay(Object message);
 }

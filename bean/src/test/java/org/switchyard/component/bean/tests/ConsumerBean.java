@@ -41,6 +41,11 @@ public class ConsumerBean implements ConsumerService {
     private RequestResponse requestResponse;
     
     @Override
+    public void consumeInOnlyNoArgsService() {
+        oneWay.oneWayNoArgs();
+    }
+    
+    @Override
     public void consumeInOnlyService(Object message) {
         oneWay.oneWay(message);
     }

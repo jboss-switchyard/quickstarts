@@ -38,5 +38,11 @@ public class LocalTransactionBean implements OneWay {
 		// TODO Auto-generated method stub
 		
 	}
+
+    @Override
+    public void oneWayNoArgs() {
+        // TODO Auto-generated method stub
+        
+    }
     
 }

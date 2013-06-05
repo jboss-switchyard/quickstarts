@@ -27,4 +27,9 @@ public class OneWayBean implements OneWay {
     public void oneWay(Object message) {
         System.out.println("Received message in OneWayBean: " + message);
     }
+
+    @Override
+    public void oneWayNoArgs() {
+        System.out.println("OneWayNoArgsBean successfully invoked with zero arguments");
+    }
 }

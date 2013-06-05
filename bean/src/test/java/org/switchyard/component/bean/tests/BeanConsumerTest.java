@@ -38,6 +38,8 @@ import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 @SwitchYardTestCaseConfig(mixins = CDIMixIn.class)
 public class BeanConsumerTest {
 
+    @ServiceOperation("ConsumerService.consumeInOnlyNoArgsService")
+    private Invoker inOnlyNoArgs;
     @ServiceOperation("ConsumerService.consumeInOnlyService")
     private Invoker inOnly;
     @ServiceOperation("ConsumerService.consumeInOutService")
@@ -47,6 +49,11 @@ public class BeanConsumerTest {
     @ServiceOperation("ConsumerService.unknownXOp")
     private Invoker unknownXOp;
 
+    @Test
+    public void consumeInOnlyServiceFromBean_without_args() {
+        inOnlyNoArgs.sendInOnly(null);
+    }
+    
     @Test
     public void consumeInOnlyServiceFromBean_new_way() {
         inOnly.sendInOnly("hello");
