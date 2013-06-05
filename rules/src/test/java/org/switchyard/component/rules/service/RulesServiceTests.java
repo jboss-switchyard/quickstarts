@@ -66,8 +66,9 @@ public class RulesServiceTests {
     public void testAccessAttachment() throws Exception {
         final Holder holder = new Holder();
         RulesComponentImplementationModel bci_model = (RulesComponentImplementationModel)new RulesSwitchYardScanner().scan(AccessAttachment.class).getImplementation();
-        RulesExchangeHandler handler = new RulesExchangeHandler(bci_model, serviceDomain);
-        Service aaService = serviceDomain.registerService(new QName("AccessAttachment"), JavaService.fromClass(AccessAttachment.class), handler);
+        QName serviceName = new QName("AccessAttachment");
+        RulesExchangeHandler handler = new RulesExchangeHandler(bci_model, serviceDomain, serviceName);
+        Service aaService = serviceDomain.registerService(serviceName, JavaService.fromClass(AccessAttachment.class), handler);
         ServiceReference aaReference = serviceDomain.registerServiceReference(aaService.getName(), aaService.getInterface(), aaService.getProviderHandler());
         handler.start();
         Exchange exchange = aaReference.createExchange("process");

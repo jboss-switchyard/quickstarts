@@ -9,7 +9,7 @@
     <bpmn2:scriptTask id="ScriptTask_2" name="RulesFired Script" scriptFormat="http://www.java.com/java">
       <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
-      <bpmn2:script>insert(((org.kie.runtime.process.WorkflowProcessInstance)kcontext.getProcessInstance()).getVariable(&quot;holder&quot;));</bpmn2:script>
+      <bpmn2:script>insert(((org.kie.api.runtime.process.WorkflowProcessInstance)kcontext.getProcessInstance()).getVariable(&quot;holder&quot;));</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_5" tns:priority="1" name="" sourceRef="ScriptTask_2" targetRef="BusinessRuleTask_1"/>
     <bpmn2:businessRuleTask id="BusinessRuleTask_1" tns:ruleFlowGroup="RulesFired Group" name="RulesFired Task" implementation="##unspecified">

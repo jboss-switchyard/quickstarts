@@ -38,6 +38,7 @@ MA  02110-1301, USA.
                     <element ref="bpm:loggers" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:manifest" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:properties" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:userGroupCallback" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:workItemHandlers" minOccurs="0" maxOccurs="1"/>
                 </sequence>
                 <attribute name="persistent" type="boolean" use="optional"/>
@@ -277,6 +278,18 @@ MA  02110-1301, USA.
             <extension base="sca:CommonExtensionBase">
                 <attribute name="name" type="string" use="required"/>
                 <attribute name="value" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="userGroupCallback" type="bpm:UserGroupCallbackType"/>
+    <complexType name="UserGroupCallbackType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:properties" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+                <attribute name="class" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.kie.runtime.Globals;
+import org.kie.api.runtime.Globals;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.common.lang.Strings;

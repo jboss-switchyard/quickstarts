@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
 
-import org.jbpm.process.workitem.wsht.AbstractHTWorkItemHandler;
+import org.jbpm.services.task.wih.AbstractHTWorkItemHandler;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
@@ -34,9 +34,11 @@ import org.switchyard.component.bpm.annotation.AbortProcessInstance;
 import org.switchyard.component.bpm.annotation.BPM;
 import org.switchyard.component.bpm.annotation.SignalEvent;
 import org.switchyard.component.bpm.annotation.StartProcess;
+import org.switchyard.component.bpm.annotation.UserGroupCallback;
 import org.switchyard.component.bpm.annotation.WorkItemHandler;
 import org.switchyard.component.bpm.config.model.v1.V1BPMActionModel;
 import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.v1.V1UserGroupCallbackModel;
 import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlerModel;
 import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlersModel;
 import org.switchyard.component.bpm.service.SwitchYardServiceTaskHandler;
@@ -182,6 +184,7 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
         componentImplementationModel.setLoggers(toLoggersModel(bpm.loggers(), DEFAULT_NAMESPACE));
         componentImplementationModel.setManifest(toManifestModel(bpm.manifest(), DEFAULT_NAMESPACE));
         componentImplementationModel.setProperties(toPropertiesModel(bpm.properties(), DEFAULT_NAMESPACE));
+        componentImplementationModel.setUserGroupCallback(toUserGroupCallbackModel(bpm.userGroupCallback()));
         componentImplementationModel.setWorkItemHandlers(toWorkItemHandlersModel(bpm.workItemHandlers()));
         componentModel.setImplementation(componentImplementationModel);
         ComponentServiceModel componentServiceModel = new V1ComponentServiceModel();
@@ -193,6 +196,21 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
         return componentModel;
     }
 
+    private UserGroupCallbackModel toUserGroupCallbackModel(UserGroupCallback[] userGroupCallbackAnnotations) {
+        if (userGroupCallbackAnnotations == null || userGroupCallbackAnnotations.length == 0) {
+            return null;
+        }
+        UserGroupCallbackModel userGroupCallbackModel = null;
+        for (UserGroupCallback userGroupCallbackAnnotation : userGroupCallbackAnnotations) {
+            userGroupCallbackModel = new V1UserGroupCallbackModel();
+            Class<? extends org.kie.internal.task.api.UserGroupCallback> clazz = userGroupCallbackAnnotation.value();
+            userGroupCallbackModel.setClazz(clazz);
+            userGroupCallbackModel.setProperties(toPropertiesModel(userGroupCallbackAnnotation.properties(), DEFAULT_NAMESPACE));
+            break;
+        }
+        return userGroupCallbackModel;
+    }
+
     private WorkItemHandlersModel toWorkItemHandlersModel(WorkItemHandler[] workItemHandlerAnnotations) {
         if (workItemHandlerAnnotations == null || workItemHandlerAnnotations.length == 0) {
             return null;
@@ -200,11 +218,11 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
         WorkItemHandlersModel workItemHandlersModel = new V1WorkItemHandlersModel();
         for (WorkItemHandler workItemHandlerAnnotation : workItemHandlerAnnotations) {
             WorkItemHandlerModel workItemHandlerModel = new V1WorkItemHandlerModel();
-            Class<? extends org.kie.runtime.process.WorkItemHandler> clazz = workItemHandlerAnnotation.value();
+            Class<? extends org.kie.api.runtime.process.WorkItemHandler> clazz = workItemHandlerAnnotation.value();
             workItemHandlerModel.setClazz(clazz);
             String name = workItemHandlerAnnotation.name();
             if (UNDEFINED.equals(name)) {
-                org.kie.runtime.process.WorkItemHandler wih = WorkItemHandlers.newWorkItemHandler(clazz, null);
+                org.kie.api.runtime.process.WorkItemHandler wih = WorkItemHandlers.newWorkItemHandler(clazz, null, null);
                 if (wih instanceof SwitchYardServiceTaskHandler) {
                     SwitchYardServiceTaskHandler ssth = (SwitchYardServiceTaskHandler)wih;
                     if (ssth.getName() != null) {

@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
 public @interface Channel {
 
     /** The channel class. */
-    public Class<? extends org.kie.runtime.Channel> value() default UndefinedChannel.class;
+    public Class<? extends org.kie.api.runtime.Channel> value() default UndefinedChannel.class;
 
     /** The service reference interface. */
     public Class<?> interfaze() default UndefinedInterface.class;
@@ -51,7 +51,7 @@ public @interface Channel {
     public String reference() default "";
 
     /** Undefined channel. */
-    public static interface UndefinedChannel extends org.kie.runtime.Channel {};
+    public static interface UndefinedChannel extends org.kie.api.runtime.Channel {};
     /** Undefined interface. */
     public static interface UndefinedInterface {};
 

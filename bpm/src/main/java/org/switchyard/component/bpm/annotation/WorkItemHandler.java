@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
 public @interface WorkItemHandler {
 
     /** Impl class. */
-    public Class<? extends org.kie.runtime.process.WorkItemHandler> value();
+    public Class<? extends org.kie.api.runtime.process.WorkItemHandler> value();
 
     /** Name. */
     public String name() default "";

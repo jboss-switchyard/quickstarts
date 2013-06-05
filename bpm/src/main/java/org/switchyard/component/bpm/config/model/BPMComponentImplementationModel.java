@@ -64,6 +64,19 @@ public interface BPMComponentImplementationModel extends KnowledgeComponentImple
     public BPMComponentImplementationModel setProcessId(String processId);
 
     /**
+     * Gets the child userGroupCallback model.
+     * @return the child userGroupCallback model
+     */
+    public UserGroupCallbackModel getUserGroupCallback();
+
+    /**
+     * Sets the child userGroupCallback model.
+     * @param userGroupCallback the child userGroupCallback model
+     * @return this instance (useful for chaining)
+     */
+    public BPMComponentImplementationModel setUserGroupCallback(UserGroupCallbackModel userGroupCallback);
+
+    /**
      * Gets the child workItemHandlers model.
      * @return the child workItemHandlers model
      */

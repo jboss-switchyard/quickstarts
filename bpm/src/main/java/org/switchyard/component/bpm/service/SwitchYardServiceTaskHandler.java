@@ -27,10 +27,10 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.kie.runtime.process.ProcessRuntime;
-import org.kie.runtime.process.WorkItem;
-import org.kie.runtime.process.WorkItemHandler;
-import org.kie.runtime.process.WorkItemManager;
+import org.kie.api.runtime.process.ProcessRuntime;
+import org.kie.api.runtime.process.WorkItem;
+import org.kie.api.runtime.process.WorkItemHandler;
+import org.kie.api.runtime.process.WorkItemManager;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
@@ -147,7 +147,6 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
         if (results == null) {
             results = new HashMap<String, Object>();
         }
-        results.putAll(response.getContext());
         String resultName = getResultName(parameters);
         if (resultName != null) {
             results.put(resultName, response.getContent());

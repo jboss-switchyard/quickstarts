@@ -18,9 +18,9 @@
  */
 package org.switchyard.component.common.knowledge.session;
 
-import org.kie.runtime.Globals;
-import org.kie.runtime.KieSession;
-import org.kie.runtime.StatelessKieSession;
+import org.kie.api.runtime.Globals;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.StatelessKieSession;
 import org.switchyard.component.common.knowledge.util.Disposals;
 
 /**

@@ -23,7 +23,7 @@ import static org.switchyard.component.common.knowledge.KnowledgeConstants.DEFAU
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
+import javax.xml.namespace.QName;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
@@ -50,21 +50,24 @@ import org.switchyard.metadata.ServiceOperation;
 public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImplementationModel> extends BaseServiceHandler implements ServiceHandler {
 
     private final M _model;
-    private final ServiceDomain _domain;
+    private final ServiceDomain _serviceDomain;
+    private final QName _serviceName;
     private ClassLoader _loader;
     private final Map<String, KnowledgeAction> _actions = new HashMap<String, KnowledgeAction>();
     private KnowledgeSessionFactory _sessionFactory;
     private KnowledgeSession _statefulSession;
 
     /**
-     * Constructs a new KnowledgeExchangeHandler with the specified model and service domain.
+     * Constructs a new KnowledgeExchangeHandler with the specified model, service domain, and service name.
      * @param model the specified model
-     * @param domain the specified service domain
+     * @param serviceDomain the specified service domain
+     * @param serviceName the specified service name
      */
-    public KnowledgeExchangeHandler(M model, ServiceDomain domain) {
-        super(domain);
+    public KnowledgeExchangeHandler(M model, ServiceDomain serviceDomain, QName serviceName) {
+        super(serviceDomain);
         _model = model;
-        _domain = domain;
+        _serviceDomain = serviceDomain;
+        _serviceName = serviceName;
     }
 
     /**
@@ -79,8 +82,16 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * Gets the service domain.
      * @return the service domain
      */
-    protected ServiceDomain getDomain() {
-        return _domain;
+    protected ServiceDomain getServiceDomain() {
+        return _serviceDomain;
+    }
+
+    /**
+     * Gets the service name.
+     * @return the service name
+     */
+    protected QName getServiceName() {
+        return _serviceName;
     }
 
     /**
@@ -176,7 +187,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
         _loader = Classes.getClassLoader(getClass());
         Resources.installTypes(_loader);
         Actions.registerActions(_model, _actions, getDefaultAction());
-        _sessionFactory = KnowledgeSessionFactory.newSessionFactory(_model, _loader, _domain, getPropertyOverrides());
+        _sessionFactory = KnowledgeSessionFactory.newSessionFactory(_model, _loader, _serviceDomain, getPropertyOverrides());
     }
 
     /**

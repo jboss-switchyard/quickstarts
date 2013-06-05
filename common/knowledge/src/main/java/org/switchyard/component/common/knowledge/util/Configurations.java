@@ -20,11 +20,11 @@ package org.switchyard.component.common.knowledge.util;
 
 import java.util.Properties;
 
-import org.kie.KieBaseConfiguration;
-import org.kie.KnowledgeBaseFactory;
-import org.kie.builder.KnowledgeBuilderConfiguration;
-import org.kie.builder.KnowledgeBuilderFactory;
-import org.kie.runtime.KieSessionConfiguration;
+import org.kie.api.KieBaseConfiguration;
+import org.kie.api.runtime.KieSessionConfiguration;
+import org.kie.internal.KnowledgeBaseFactory;
+import org.kie.internal.builder.KnowledgeBuilderConfiguration;
+import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 
 /**

@@ -21,10 +21,10 @@ package org.switchyard.component.common.knowledge.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kie.KieServices;
-import org.kie.event.KieRuntimeEventManager;
-import org.kie.logger.KieLoggers;
-import org.kie.logger.KieRuntimeLogger;
+import org.kie.api.KieServices;
+import org.kie.api.event.KieRuntimeEventManager;
+import org.kie.api.logger.KieLoggers;
+import org.kie.api.logger.KieRuntimeLogger;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.common.knowledge.LoggerType;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;

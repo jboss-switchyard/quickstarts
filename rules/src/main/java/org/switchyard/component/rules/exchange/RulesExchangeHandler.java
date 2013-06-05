@@ -29,7 +29,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.kie.runtime.rule.SessionEntryPoint;
+import javax.xml.namespace.QName;
+
+import org.kie.api.runtime.rule.SessionEntryPoint;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
@@ -58,12 +60,13 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
     private Thread _fireUntilHaltThread = null;
 
     /**
-     * Constructs a new RulesExchangeHandler with the specified model and service domain.
+     * Constructs a new RulesExchangeHandler with the specified model, service domain, and service name.
      * @param model the specified model
-     * @param domain the specified service domain
+     * @param serviceDomain the specified service domain
+     * @param serviceName the specified service name
      */
-    public RulesExchangeHandler(RulesComponentImplementationModel model, ServiceDomain domain) {
-        super(model, domain);
+    public RulesExchangeHandler(RulesComponentImplementationModel model, ServiceDomain serviceDomain, QName serviceName) {
+        super(model, serviceDomain, serviceName);
     }
 
     /**

@@ -20,7 +20,7 @@ package org.switchyard.component.common.knowledge.service;
 
 import javax.xml.namespace.QName;
 
-import org.kie.runtime.Channel;
+import org.kie.api.runtime.Channel;
 
 /**
  * SwitchYardServiceChannel.
@@ -35,7 +35,7 @@ public class SwitchYardServiceChannel implements Channel {
     private String _name;
     private SwitchYardServiceInvoker _invoker;
     private QName _serviceName;
-    private String _serviceOperationName;
+    private String _operationName;
 
     /**
      * Constructs a new SwitchYardServiceChannel with the name "service".
@@ -93,19 +93,19 @@ public class SwitchYardServiceChannel implements Channel {
     }
 
     /**
-     * Gets the service operation name.
-     * @return the service operation name
+     * Gets the operation name.
+     * @return the operation name
      */
-    public String getServiceOperationName() {
-        return _serviceOperationName;
+    public String getOperationName() {
+        return _operationName;
     }
 
     /**
-     * Sets the service operation name.
-     * @param serviceOperationName the service operation name
+     * Sets the operation name.
+     * @param operationName the operation name
      */
-    public void setServiceOperationName(String serviceOperationName) {
-        _serviceOperationName = serviceOperationName;
+    public void setOperationName(String operationName) {
+        _operationName = operationName;
     }
 
     /**
@@ -113,7 +113,7 @@ public class SwitchYardServiceChannel implements Channel {
      */
     @Override
     public void send(Object object) {
-        getInvoker().invoke(new SwitchYardServiceRequest(getServiceName(), getServiceOperationName(), object));
+        getInvoker().invoke(new SwitchYardServiceRequest(getServiceName(), getOperationName(), object));
     }
 
 }

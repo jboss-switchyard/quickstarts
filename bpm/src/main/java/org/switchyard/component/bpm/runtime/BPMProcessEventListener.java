@@ -16,16 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.exchange;
+package org.switchyard.component.bpm.runtime;
 
 import java.util.EventObject;
 
-import org.kie.event.process.ProcessCompletedEvent;
-import org.kie.event.process.ProcessEventListener;
-import org.kie.event.process.ProcessNodeLeftEvent;
-import org.kie.event.process.ProcessNodeTriggeredEvent;
-import org.kie.event.process.ProcessStartedEvent;
-import org.kie.event.process.ProcessVariableChangedEvent;
+import org.kie.api.event.process.ProcessCompletedEvent;
+import org.kie.api.event.process.ProcessEvent;
+import org.kie.api.event.process.ProcessEventListener;
+import org.kie.api.event.process.ProcessNodeLeftEvent;
+import org.kie.api.event.process.ProcessNodeTriggeredEvent;
+import org.kie.api.event.process.ProcessStartedEvent;
+import org.kie.api.event.process.ProcessVariableChangedEvent;
 import org.switchyard.event.EventPublisher;
 
 /**
@@ -48,7 +49,7 @@ public class BPMProcessEventListener implements ProcessEventListener {
      */
     @Override
     public void beforeProcessStarted(ProcessStartedEvent event) {
-        _eventPublisher.publish((EventObject)event);
+        publish(event);
     }
 
     /**
@@ -70,7 +71,7 @@ public class BPMProcessEventListener implements ProcessEventListener {
      */
     @Override
     public void afterProcessCompleted(ProcessCompletedEvent event) {
-        _eventPublisher.publish((EventObject)event);
+        publish(event);
     }
 
     /**
@@ -113,7 +114,13 @@ public class BPMProcessEventListener implements ProcessEventListener {
      */
     @Override
     public void afterVariableChanged(ProcessVariableChangedEvent event) {
-        _eventPublisher.publish((EventObject)event);
+        publish(event);
+    }
+
+    private void publish(ProcessEvent event) {
+        if (event instanceof EventObject) {
+            _eventPublisher.publish((EventObject)event);
+        }
     }
 
 }

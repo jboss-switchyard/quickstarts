@@ -55,7 +55,7 @@ public class BPMActivator extends BaseActivator {
      */
     @Override
     public ServiceHandler activateService(QName name, ComponentModel config) {
-        BPMExchangeHandler handler = new BPMExchangeHandler((BPMComponentImplementationModel)config.getImplementation(), getServiceDomain());
+        BPMExchangeHandler handler = new BPMExchangeHandler((BPMComponentImplementationModel)config.getImplementation(), getServiceDomain(), name);
         _handlers.put(name, handler);
         return handler;
     }

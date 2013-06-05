@@ -18,8 +18,8 @@
  */
 package org.switchyard.component.common.knowledge.util;
 
-import org.kie.runtime.Channel;
-import org.kie.runtime.KieRuntime;
+import org.kie.api.runtime.Channel;
+import org.kie.api.runtime.KieRuntime;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.xml.XMLHelper;
@@ -65,7 +65,7 @@ public final class Channels {
                     }
                     sysc.setInvoker(new SwitchYardServiceInvoker(domain, tns));
                     sysc.setServiceName(XMLHelper.createQName(channelModel.getReference()));
-                    sysc.setServiceOperationName(channelModel.getOperation());
+                    sysc.setOperationName(channelModel.getOperation());
                 }
                 if (name == null) {
                     throw new SwitchYardException("Could not use null name to register channel: " + channel.getClass().getName());

@@ -86,14 +86,14 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
         ChannelsModel channelsModel = new V1ChannelsModel(namespace);
         for (Channel channelAnnotation : channelAnnotations) {
             ChannelModel channelModel = new V1ChannelModel(namespace);
-            Class<? extends org.kie.runtime.Channel> clazz = channelAnnotation.value();
+            Class<? extends org.kie.api.runtime.Channel> clazz = channelAnnotation.value();
             if (Channel.UndefinedChannel.class.isAssignableFrom(clazz)) {
                 clazz = SwitchYardServiceChannel.class;
             }
             channelModel.setClazz(clazz);
             String name = channelAnnotation.name();
             if (UNDEFINED.equals(name)) {
-                org.kie.runtime.Channel c = Construction.construct(clazz);
+                org.kie.api.runtime.Channel c = Construction.construct(clazz);
                 if (c instanceof SwitchYardServiceChannel) {
                     SwitchYardServiceChannel sysc = (SwitchYardServiceChannel)c;
                     if (sysc.getName() != null) {

@@ -18,9 +18,9 @@
  */
 package org.switchyard.component.common.knowledge.util;
 
-import org.kie.KieServices;
-import org.kie.builder.ReleaseId;
-import org.kie.runtime.KieContainer;
+import org.kie.api.KieServices;
+import org.kie.api.builder.ReleaseId;
+import org.kie.api.runtime.KieContainer;
 import org.switchyard.component.common.knowledge.config.model.ContainerModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.config.model.ManifestModel;

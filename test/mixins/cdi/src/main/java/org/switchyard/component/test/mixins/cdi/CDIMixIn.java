@@ -19,7 +19,11 @@
 
 package org.switchyard.component.test.mixins.cdi;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
@@ -37,6 +41,7 @@ import org.jboss.weld.resources.spi.ResourceLoader;
 import org.junit.Assert;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
+import org.switchyard.component.test.mixins.naming.NamingMixIn;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.exception.SwitchYardException;
@@ -44,7 +49,6 @@ import org.switchyard.test.MixInDependencies;
 import org.switchyard.test.SimpleTestDeployment;
 import org.switchyard.test.TestMixIn;
 import org.switchyard.test.mixins.AbstractTestMixIn;
-import org.switchyard.component.test.mixins.naming.NamingMixIn;
 
 /**
  * CDI Test Mix-In for deploying the Weld CDI Standalone Edition container.
@@ -55,6 +59,12 @@ import org.switchyard.component.test.mixins.naming.NamingMixIn;
 public class CDIMixIn extends AbstractTestMixIn {
     private static final String BINDING_CONTEXT = "java:comp";
     private static final String BEAN_MANAGER_NAME = "BeanManager";
+    
+    private static final Pattern[] RESOURCE_FILTER_PATTERNS = new Pattern[] {
+        Pattern.compile(".*jbpm-.*-services.*beans\\.xml"),
+        Pattern.compile(".*jbpm-runtime-manager.*beans\\.xml"),
+        Pattern.compile(".*jbpm-human-task-.*beans\\.xml")
+    };
     
     private Weld _weld;
     private WeldContainer _weldContainer;
@@ -67,8 +77,39 @@ public class CDIMixIn extends AbstractTestMixIn {
         // Deploy the weld container...
         _weld = new Weld() {
             @Override
-            protected Deployment createDeployment(ResourceLoader resourceLoader, Bootstrap bootstrap) {
-                Deployment deployment = super.createDeployment(resourceLoader, bootstrap);
+            protected Deployment createDeployment(final ResourceLoader resourceLoader, Bootstrap bootstrap) {
+                ResourceLoader filterLoader = new ResourceLoader() {
+                    public void cleanup() {
+                        resourceLoader.cleanup();
+                    }
+                    public Class<?> classForName(String name) {
+                        return resourceLoader.classForName(name);
+                    }
+                    public URL getResource(String name) {
+                        return filter(resourceLoader.getResource(name));
+                    }
+                    public Collection<URL> getResources(String name) {
+                        Collection<URL> urls = new ArrayList<URL>();
+                        for (URL url : resourceLoader.getResources(name)) {
+                            url = filter(url);
+                            if (url != null) {
+                                urls.add(url);
+                            }
+                        }
+                        return urls;
+                    }
+                    private URL filter(URL url) {
+                        if (url != null) {
+                            for (Pattern pattern : RESOURCE_FILTER_PATTERNS) {
+                                if (pattern.matcher(url.toString()).matches()) {
+                                    return null;
+                                }
+                            }
+                        }
+                        return url;
+                    }
+                };
+                Deployment deployment = super.createDeployment(filterLoader, bootstrap);
                 if (getTestKit() != null) {
                     Set<TestMixIn> optionalDependencies = getTestKit().getOptionalDependencies(CDIMixIn.this);
                     for (TestMixIn dependency : optionalDependencies) {

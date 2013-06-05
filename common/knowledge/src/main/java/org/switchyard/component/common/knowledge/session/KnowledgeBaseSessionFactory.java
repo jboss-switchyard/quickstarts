@@ -21,21 +21,21 @@ package org.switchyard.component.common.knowledge.session;
 import java.util.Map;
 import java.util.Properties;
 
-import org.kie.KieBase;
-import org.kie.KieBaseConfiguration;
-import org.kie.KieServices;
-import org.kie.KnowledgeBase;
-import org.kie.KnowledgeBaseFactory;
-import org.kie.builder.KnowledgeBuilder;
-import org.kie.builder.KnowledgeBuilderConfiguration;
-import org.kie.builder.KnowledgeBuilderError;
-import org.kie.builder.KnowledgeBuilderErrors;
-import org.kie.builder.KnowledgeBuilderFactory;
-import org.kie.persistence.jpa.KieStoreServices;
-import org.kie.runtime.Environment;
-import org.kie.runtime.KieSession;
-import org.kie.runtime.KieSessionConfiguration;
-import org.kie.runtime.StatelessKieSession;
+import org.kie.api.KieBase;
+import org.kie.api.KieBaseConfiguration;
+import org.kie.api.KieServices;
+import org.kie.api.persistence.jpa.KieStoreServices;
+import org.kie.api.runtime.Environment;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.KieSessionConfiguration;
+import org.kie.api.runtime.StatelessKieSession;
+import org.kie.internal.KnowledgeBase;
+import org.kie.internal.KnowledgeBaseFactory;
+import org.kie.internal.builder.KnowledgeBuilder;
+import org.kie.internal.builder.KnowledgeBuilderConfiguration;
+import org.kie.internal.builder.KnowledgeBuilderError;
+import org.kie.internal.builder.KnowledgeBuilderErrors;
+import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.util.Channels;
@@ -51,6 +51,7 @@ import org.switchyard.exception.SwitchYardException;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
+@SuppressWarnings("deprecation")
 class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
 
     private static final String LINE_SEPARATOR;

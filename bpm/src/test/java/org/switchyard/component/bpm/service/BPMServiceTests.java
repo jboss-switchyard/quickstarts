@@ -27,13 +27,13 @@ import javax.xml.namespace.QName;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.KieBase;
-import org.kie.builder.KnowledgeBuilder;
-import org.kie.builder.KnowledgeBuilderFactory;
-import org.kie.io.ResourceFactory;
-import org.kie.io.ResourceType;
-import org.kie.runtime.KieSession;
-import org.kie.runtime.process.WorkflowProcessInstance;
+import org.kie.api.KieBase;
+import org.kie.api.io.ResourceType;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.process.WorkflowProcessInstance;
+import org.kie.internal.builder.KnowledgeBuilder;
+import org.kie.internal.builder.KnowledgeBuilderFactory;
+import org.kie.internal.io.ResourceFactory;
 import org.switchyard.BaseHandler;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
@@ -115,8 +115,9 @@ public class BPMServiceTests {
     public void testAccessAttachment() throws Exception {
         final Holder holder = new Holder();
         BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(AccessAttachment.class).getImplementation();
-        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain);
-        Service aaService = serviceDomain.registerService(new QName("AccessAttachment"), JavaService.fromClass(AccessAttachment.class), handler);
+        QName serviceName = new QName("AccessAttachment");
+        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain, serviceName);
+        Service aaService = serviceDomain.registerService(serviceName, JavaService.fromClass(AccessAttachment.class), handler);
         ServiceReference aaReference = serviceDomain.registerServiceReference(aaService.getName(), aaService.getInterface(), aaService.getProviderHandler());
         handler.start();
         Exchange exchange = aaReference.createExchange("process");
@@ -147,8 +148,9 @@ public class BPMServiceTests {
         });
         serviceDomain.registerServiceReference(callService.getName(), callService.getInterface(), callService.getProviderHandler());
         BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(ControlProcess.class).getImplementation();
-        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain);
-        Service controlService = serviceDomain.registerService(new QName("ControlProcess"), JavaService.fromClass(ControlProcess.class), handler);
+        QName serviceName = new QName("ControlProcess");
+        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain, serviceName);
+        Service controlService = serviceDomain.registerService(serviceName, JavaService.fromClass(ControlProcess.class), handler);
         ServiceReference controlReference = serviceDomain.registerServiceReference(controlService.getName(), controlService.getInterface(), controlService.getProviderHandler());
         handler.start();
         Exchange exchange = controlReference.createExchange("process");
@@ -176,8 +178,9 @@ public class BPMServiceTests {
         });
         serviceDomain.registerServiceReference(callService.getName(), callService.getInterface(), callService.getProviderHandler());
         BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(ControlProcess.class).getImplementation();
-        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain);
-        Service controlService = serviceDomain.registerService(new QName("ControlProcess"), JavaService.fromClass(ControlProcess.class), handler);
+        QName serviceName = new QName("ControlProcess");
+        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain, serviceName);
+        Service controlService = serviceDomain.registerService(serviceName, JavaService.fromClass(ControlProcess.class), handler);
         ServiceReference controlReference = serviceDomain.registerServiceReference(controlService.getName(), controlService.getInterface(), controlService.getProviderHandler());
         handler.start();
         Exchange exchange = controlReference.createExchange("process");
@@ -279,11 +282,11 @@ public class BPMServiceTests {
 
     @Test
     public void testReuseHandler() throws Exception {
-        QName qname = new QName("ReuseHandler");
-        ServiceReference serviceRef = serviceDomain.registerServiceReference(qname, new InOnlyService("process"));
+        QName serviceName = new QName("ReuseHandler");
+        ServiceReference serviceRef = serviceDomain.registerServiceReference(serviceName, new InOnlyService("process"));
         BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(ReuseHandlerProcess.class).getImplementation();
-        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain);
-        serviceDomain.registerService(qname, new InOnlyService("process"), handler);
+        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain, serviceName);
+        serviceDomain.registerService(serviceName, new InOnlyService("process"), handler);
         handler.start();
         Exchange exchange = serviceRef.createExchange();
         exchange.send(exchange.createMessage());
@@ -303,11 +306,11 @@ public class BPMServiceTests {
     @Test
     public void testRulesFired() throws Exception {
         final Holder holder = new Holder();
-        QName qname = new QName("RulesFired");
-        ServiceReference serviceRef = serviceDomain.registerServiceReference(qname, new InOnlyService("process"));
+        QName serviceName = new QName("RulesFired");
+        ServiceReference serviceRef = serviceDomain.registerServiceReference(serviceName, new InOnlyService("process"));
         BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(RulesFiredProcess.class).getImplementation();
-        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain);
-        serviceDomain.registerService(qname, new InOnlyService("process"), handler);
+        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain, serviceName);
+        serviceDomain.registerService(serviceName, new InOnlyService("process"), handler);
         handler.start();
         Exchange exchange = serviceRef.createExchange();
         Message message = exchange.createMessage();

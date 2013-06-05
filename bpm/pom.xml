@@ -60,7 +60,7 @@
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-bam</artifactId>
+            <artifactId>jbpm-audit</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
@@ -76,11 +76,19 @@
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-form-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
             <artifactId>jbpm-human-task-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-human-task-mina</artifactId>
+            <artifactId>jbpm-human-task-workitems</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-kie-services</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
@@ -88,12 +96,15 @@
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-workitems</artifactId>
+            <artifactId>jbpm-runtime-manager</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <scope>provided</scope>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-shared-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-workitems</artifactId>
         </dependency>
     </dependencies>
 </project>

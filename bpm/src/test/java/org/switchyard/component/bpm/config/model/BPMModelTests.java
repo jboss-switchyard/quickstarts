@@ -22,21 +22,23 @@ import java.io.File;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.Assert;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.drools.event.DebugProcessEventListener;
+import org.drools.core.event.DebugProcessEventListener;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.kie.builder.ReleaseId;
-import org.kie.runtime.Channel;
-import org.kie.runtime.process.WorkItem;
-import org.kie.runtime.process.WorkItemHandler;
-import org.kie.runtime.process.WorkItemManager;
+import org.kie.api.builder.ReleaseId;
+import org.kie.api.runtime.Channel;
+import org.kie.api.runtime.process.WorkItem;
+import org.kie.api.runtime.process.WorkItemHandler;
+import org.kie.api.runtime.process.WorkItemManager;
+import org.kie.internal.task.api.UserGroupCallback;
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.Classes;
@@ -160,9 +162,14 @@ public class BPMModelTests {
             Assert.assertEquals("foobar.bpmn", resource.getLocation());
             Assert.assertEquals(ResourceType.valueOf("BPMN2"), resource.getType());
         }
-        PropertyModel property = bpm.getProperties().getProperties().get(0);
-        Assert.assertEquals("foo", property.getName());
-        Assert.assertEquals("bar", property.getValue());
+        PropertyModel bpm_property = bpm.getProperties().getProperties().get(0);
+        Assert.assertEquals("foo", bpm_property.getName());
+        Assert.assertEquals("bar", bpm_property.getValue());
+        UserGroupCallbackModel userGroupCallback = bpm.getUserGroupCallback();
+        Assert.assertEquals(TestUserGroupCallback.class, userGroupCallback.getClazz(loader));
+        PropertyModel ugc_property = userGroupCallback.getProperties().getProperties().get(0);
+        Assert.assertEquals("rab", ugc_property.getName());
+        Assert.assertEquals("oof", ugc_property.getValue());
         WorkItemHandlerModel workItemHandler = bpm.getWorkItemHandlers().getWorkItemHandlers().get(0);
         Assert.assertEquals(TestWorkItemHandler.class, workItemHandler.getClazz(loader));
         Assert.assertEquals("MyWIH", workItemHandler.getName());
@@ -243,6 +250,26 @@ public class BPMModelTests {
         @Override
         public void send(Object object) {
             System.out.println(object);
+        }
+    }
+
+    public static final class TestUserGroupCallback implements UserGroupCallback {
+        @Override
+        public boolean existsUser(String userId) {
+            System.out.println(userId);
+            return false;
+        }
+        @Override
+        public boolean existsGroup(String groupId) {
+            System.out.println(groupId);
+            return false;
+        }
+        @Override
+        public List<String> getGroupsForUser(String userId, List<String> groupIds, List<String> allExistingGroupIds) {
+            System.out.println(userId);
+            System.out.println(groupIds);
+            System.out.println(allExistingGroupIds);
+            return Collections.emptyList();
         }
     }
 

@@ -38,7 +38,7 @@ MA  02110-1301, USA.
                     <channel class="org.switchyard.component.rules.config.model.RulesModelTests$TestChannel" name="theName" operation="theOperation" reference="theReference"/>
                 </channels>
                 <listeners>
-                    <listener class="org.kie.event.rule.DebugWorkingMemoryEventListener"/>
+                    <listener class="org.kie.api.event.rule.DebugWorkingMemoryEventListener"/>
                 </listeners>
                 <loggers>
                     <logger interval="2000" log="theLog" type="CONSOLE"/>

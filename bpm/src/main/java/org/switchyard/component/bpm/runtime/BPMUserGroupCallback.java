@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,37 +16,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task;
+package org.switchyard.component.bpm.runtime;
 
-import java.util.Map;
+import java.util.Properties;
+
+import org.jbpm.services.task.identity.JBossUserGroupCallbackImpl;
 
 /**
- * Base Content functionality.
+ * A "bpm" implementation of a UserGroupCallback.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-@SuppressWarnings("serial")
-public class BaseTaskContent implements TaskContent {
-
-    private Map<String, Object> _variableMap;
+public class BPMUserGroupCallback extends JBossUserGroupCallbackImpl {
 
     /**
-     * Constructs a new BaseTaskContent with the specified variable map.
-     * @param variableMap the specified variable map (cannot be null!)
+     * Constructs a new BPMUserGroupCallback.
      */
-    public BaseTaskContent(Map<String, Object> variableMap) {
-        if (variableMap == null) {
-            throw new IllegalArgumentException("variable map cannot be null");
-        }
-        _variableMap = variableMap;
+    public BPMUserGroupCallback() {
+        super();
     }
 
     /**
-     * {@inheritDoc}
+     * Constructs a new BPMUserGroupCallback.
+     * @param location the location
      */
-    @Override
-    public Map<String, Object> getVariableMap() {
-        return _variableMap;
+    public BPMUserGroupCallback(String location) {
+        super(location);
+    }
+
+    /**
+     * Constructs a new BPMUserGroupCallback.
+     * @param userGroups the userGroups
+     */
+    public BPMUserGroupCallback(Properties userGroups) {
+        super(userGroups);
     }
 
 }

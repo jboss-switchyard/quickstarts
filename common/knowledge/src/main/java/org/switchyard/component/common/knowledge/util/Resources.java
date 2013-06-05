@@ -18,9 +18,9 @@
  */
 package org.switchyard.component.common.knowledge.util;
 
-import org.kie.KieServices;
-import org.kie.builder.KnowledgeBuilder;
-import org.kie.io.KieResources;
+import org.kie.api.KieServices;
+import org.kie.api.io.KieResources;
+import org.kie.internal.builder.KnowledgeBuilder;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
@@ -55,9 +55,9 @@ public final class Resources {
             if (resourcesModel != null) {
                 KieResources kieResources = KieServices.Factory.get().getResources();
                 for (Resource syResource : resourcesModel.getResources()) {
-                    org.kie.io.Resource kieResource = kieResources.newUrlResource(syResource.getLocationURL(loader));
+                    org.kie.api.io.Resource kieResource = kieResources.newUrlResource(syResource.getLocationURL(loader));
                     if (kieResource != null) {
-                        org.kie.io.ResourceType kieResourceType = convertResourceType(syResource.getType());
+                        org.kie.api.io.ResourceType kieResourceType = convertResourceType(syResource.getType());
                         if (kieResourceType != null) {
                             builder.add(kieResource, kieResourceType);
                         }
@@ -75,9 +75,9 @@ public final class Resources {
      */
     public static void addResource(Resource syResource, ClassLoader loader, KnowledgeBuilder builder) {
         KieResources kieResources = KieServices.Factory.get().getResources();
-        org.kie.io.Resource kieResource = kieResources.newUrlResource(syResource.getLocationURL(loader));
+        org.kie.api.io.Resource kieResource = kieResources.newUrlResource(syResource.getLocationURL(loader));
         if (kieResource != null) {
-            org.kie.io.ResourceType kieResourceType = convertResourceType(syResource.getType());
+            org.kie.api.io.ResourceType kieResourceType = convertResourceType(syResource.getType());
             if (kieResourceType != null) {
                 builder.add(kieResource, kieResourceType);
             }
@@ -89,7 +89,7 @@ public final class Resources {
      * @param syResourceType the SwitchYard resource type.
      * @return the KIE resource type
      */
-    public static org.kie.io.ResourceType convertResourceType(ResourceType syResourceType) {
+    public static org.kie.api.io.ResourceType convertResourceType(ResourceType syResourceType) {
         if (syResourceType != null) {
             String resourceTypeName = syResourceType.getName();
             if ("BPMN".equals(resourceTypeName)) {
@@ -99,7 +99,7 @@ public final class Resources {
                 // Drools ResourceType recognizes DTABLE, not XLS
                 resourceTypeName = "DTABLE";
             }
-            return org.kie.io.ResourceType.getResourceType(resourceTypeName);
+            return org.kie.api.io.ResourceType.getResourceType(resourceTypeName);
         }
         return null;
     }

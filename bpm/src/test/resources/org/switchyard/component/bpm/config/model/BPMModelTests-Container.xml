@@ -38,7 +38,7 @@ MA  02110-1301, USA.
                     <channel class="org.switchyard.component.bpm.config.model.BPMModelTests$TestChannel" name="theName" operation="theOperation" reference="theReference"/>
                 </channels>
                 <listeners>
-                    <listener class="org.drools.event.DebugProcessEventListener"/>
+                    <listener class="org.drools.core.event.DebugProcessEventListener"/>
                 </listeners>
                 <loggers>
                     <logger interval="2000" log="theLog" type="CONSOLE"/>
@@ -49,6 +49,11 @@ MA  02110-1301, USA.
                 <properties>
                     <property name="foo" value="bar"/>
                 </properties>
+                <userGroupCallback class="org.switchyard.component.bpm.config.model.BPMModelTests$TestUserGroupCallback">
+                    <properties>
+                        <property name="rab" value="oof"/>
+                    </properties>
+                </userGroupCallback>
                 <workItemHandlers>
                     <workItemHandler class="org.switchyard.component.bpm.config.model.BPMModelTests$TestWorkItemHandler" name="MyWIH"/>
                 </workItemHandlers>

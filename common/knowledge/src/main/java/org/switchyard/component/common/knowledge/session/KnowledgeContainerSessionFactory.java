@@ -21,16 +21,15 @@ package org.switchyard.component.common.knowledge.session;
 import java.util.Map;
 import java.util.Properties;
 
-import org.drools.persistence.jpa.KnowledgeStoreServiceImpl;
-import org.kie.KieBase;
-import org.kie.KieServices;
-import org.kie.builder.KieScanner;
-import org.kie.persistence.jpa.KieStoreServices;
-import org.kie.runtime.Environment;
-import org.kie.runtime.KieContainer;
-import org.kie.runtime.KieSession;
-import org.kie.runtime.KieSessionConfiguration;
-import org.kie.runtime.StatelessKieSession;
+import org.kie.api.KieBase;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieScanner;
+import org.kie.api.persistence.jpa.KieStoreServices;
+import org.kie.api.runtime.Environment;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.KieSessionConfiguration;
+import org.kie.api.runtime.StatelessKieSession;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.common.knowledge.config.model.ContainerModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
@@ -132,9 +131,7 @@ class KnowledgeContainerSessionFactory extends KnowledgeSessionFactory {
         if (_containerModel != null) {
             String baseName = _containerModel.getBaseName();
             if (baseName != null) {
-                // TODO: change back once KieServicesImpl.getStoreServices() stops failing trying to get an UNREGISTERED KieStoreServices.
-                //KieStoreServices kieStoreServices = KieServices.Factory.get().getStoreServices();
-                KieStoreServices kieStoreServices = new KnowledgeStoreServiceImpl();
+                KieStoreServices kieStoreServices = KieServices.Factory.get().getStoreServices();
                 KieBase base = _kieContainer.getKieBase(baseName);
                 KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getPropertyOverrides());
                 Environment environment = Environments.getEnvironment(environmentOverrides);

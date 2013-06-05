@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.drools.impl.EnvironmentFactory;
-import org.kie.marshalling.ObjectMarshallingStrategy;
-import org.kie.runtime.Environment;
-import org.kie.runtime.EnvironmentName;
+import org.drools.core.impl.EnvironmentFactory;
+import org.kie.api.marshalling.ObjectMarshallingStrategy;
+import org.kie.api.runtime.Environment;
+import org.kie.api.runtime.EnvironmentName;
 import org.switchyard.component.common.knowledge.environment.SerializerObjectMarshallingStrategy;
 import org.switchyard.serial.FormatType;
 import org.switchyard.serial.SerializerFactory;

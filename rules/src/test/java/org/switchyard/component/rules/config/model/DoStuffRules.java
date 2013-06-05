@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.rules.config.model;
 
-import org.kie.event.rule.DebugWorkingMemoryEventListener;
+import org.kie.api.event.rule.DebugWorkingMemoryEventListener;
 import org.switchyard.component.common.knowledge.LoggerType;
 import org.switchyard.component.common.knowledge.annotation.Channel;
 import org.switchyard.component.common.knowledge.annotation.Global;

@@ -68,6 +68,9 @@ public @interface BPM {
     /** Properties. */
     public Property[] properties() default {};
 
+    /** UserGroupCallback. */
+    public UserGroupCallback[] userGroupCallback() default {};
+
     /** WorkItemHandlers. */
     public WorkItemHandler[] workItemHandlers() default {};
 

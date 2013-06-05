@@ -16,43 +16,48 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm.task;
+package org.switchyard.component.bpm.config.model;
+
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.property.PropertiesModel;
 
 /**
- * Represents a task.
+ * A UserGroupCallback Model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface Task {
+public interface UserGroupCallbackModel extends Model {
 
     /**
-     * Gets the task id.
-     * @return the task id
+     * The userGroupCallback XML element.
      */
-    public Long getId();
+    public static final String USER_GROUP_CALLBACK = "userGroupCallback";
 
     /**
-     * Gets the task name.
-     * @return the task name
+     * Gets the UserGroupCallback class.
+     * @param loader the ClassLoader to use
+     * @return the UserGroupCallback class
      */
-    public String getName();
+    public Class<?> getClazz(ClassLoader loader);
 
     /**
-     * Gets the task status.
-     * @return the task status
+     * Sets the UserGroupCallback class.
+     * @param clazz the UserGroupCallback class
+     * @return this UserGroupCallbackModel (useful for chaining)
      */
-    public TaskStatus getStatus();
+    public UserGroupCallbackModel setClazz(Class<?> clazz);
 
     /**
-     * Gets the associated process instance id of the task.
-     * @return the associated process instance id of the task
+     * Gets the child properties model.
+     * @return the child properties model
      */
-    public Long getProcessInstanceId();
+    public PropertiesModel getProperties();
 
     /**
-     * Gets the associated task content id of the task.
-     * @return the associated task content id of the task
+     * Sets the child properties model.
+     * @param properties the child properties model
+     * @return this UserGroupCallbackModel (useful for chaining)
      */
-    public Long getTaskContentId();
+    public UserGroupCallbackModel setProperties(PropertiesModel properties);
 
 }

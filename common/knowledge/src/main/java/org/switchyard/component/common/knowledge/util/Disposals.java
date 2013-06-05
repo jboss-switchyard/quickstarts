@@ -23,10 +23,10 @@ import java.util.List;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.log4j.Logger;
-import org.kie.agent.KnowledgeAgent;
-import org.kie.builder.KieScanner;
-import org.kie.logger.KieRuntimeLogger;
-import org.kie.runtime.KieSession;
+import org.kie.api.builder.KieScanner;
+import org.kie.api.logger.KieRuntimeLogger;
+import org.kie.api.runtime.KieSession;
+import org.kie.internal.agent.KnowledgeAgent;
 import org.switchyard.component.common.knowledge.session.KnowledgeDisposal;
 
 /**

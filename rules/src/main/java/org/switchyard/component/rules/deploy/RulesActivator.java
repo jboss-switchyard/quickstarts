@@ -55,7 +55,7 @@ public class RulesActivator extends BaseActivator {
     */
     @Override
     public ServiceHandler activateService(QName name, ComponentModel config) {
-        RulesExchangeHandler handler = new RulesExchangeHandler((RulesComponentImplementationModel)config.getImplementation(), getServiceDomain());
+        RulesExchangeHandler handler = new RulesExchangeHandler((RulesComponentImplementationModel)config.getImplementation(), getServiceDomain(), name);
         _handlers.put(name, handler);
         return handler;
     }
