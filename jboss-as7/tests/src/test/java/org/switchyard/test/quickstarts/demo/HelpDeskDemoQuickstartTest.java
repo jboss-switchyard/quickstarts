@@ -22,12 +22,10 @@ import junit.framework.Assert;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
-import org.switchyard.component.test.mixins.bpm.BPMMixIn;
-import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
  * The helpdesk demo quickstart test.
@@ -38,30 +36,14 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
 public class HelpDeskDemoQuickstartTest {
 
     @Deployment(testable = false)
-    public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarDemoDeployment("switchyard-quickstart-demo-helpdesk");
+    public static WebArchive createDeployment() {
+        return ArquillianUtil.createWarDemoDeployment("switchyard-quickstart-demo-helpdesk");
     }
 
     @Test
     public void test() throws Exception {
         // Only testing that deployment is successful at this point.
         Assert.assertTrue(true);
-        // jBPM TaskServer is run externally
-        /*
-        HTTPMixIn http = new HTTPMixIn();
-        BPMMixIn bpm = new BPMMixIn();
-        http.initialize();
-        bpm.initialize();
-        try {
-            http.postResourceAndTestXML("http://localhost:8080/HelpDeskService/HelpDeskService", "/xml/soap-request.xml", "/xml/soap-response.xml");
-            bpm.connectTaskClient();
-            bpm.completeHumanTasks();
-        } finally {
-            bpm.disconnectTaskClient();
-            bpm.uninitialize();
-            http.uninitialize();
-        }
-        */
     }
 
 }

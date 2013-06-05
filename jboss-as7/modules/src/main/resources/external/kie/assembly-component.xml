@@ -25,18 +25,27 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <files>
     <file>
-      <source>src/main/resources/external/drools/module.xml</source>
-      <outputDirectory>/modules/system/layers/soa/org/drools/main</outputDirectory>
+      <source>src/main/resources/external/kie/module.xml</source>
+      <outputDirectory>/modules/system/layers/soa/org/kie/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/system/layers/soa/org/drools/main</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/kie/main</outputDirectory>
       <includes>
-        <include>org.drools:drools-compiler</include>
-        <include>org.drools:drools-core</include>
-        <include>org.drools:drools-persistence-jpa</include>
+        <include>org.kie:kie-api</include>
+        <include>org.kie:kie-ci</include>
+        <include>org.kie:kie-internal</include>
+        <include>org.kie.commons:kie-commons-cdi</include>
+        <include>org.kie.commons:kie-commons-data</include>
+        <include>org.kie.commons:kie-commons-io</include>
+        <include>org.kie.commons:kie-commons-regex</include>
+        <include>org.kie.commons:kie-commons-validation</include>
+        <include>org.kie.commons:kie-nio2-api</include>
+        <include>org.kie.commons:kie-nio2-fs</include>
+        <include>org.kie.commons:kie-nio2-jgit</include>
+        <include>org.kie.commons:kie-nio2-model</include>
       </includes>
       <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>

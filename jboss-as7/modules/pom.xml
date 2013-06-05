@@ -63,13 +63,19 @@
                                     <type>jar</type>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.switchyard.components</groupId>
-                                    <artifactId>switchyard-component-bpm</artifactId>
-                                    <version>${project.version}</version>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-persistence-jpa</artifactId>
+                                    <version>${version.jbpm}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-human-task-core</artifactId>
+                                    <version>${version.jbpm}</version>
                                     <type>jar</type>
                                 </artifactItem>
                             </artifactItems>
-                            <includes>META-INF/*.xsd,META-INF/*orm-JPA2.xml</includes>
+                            <includes>META-INF/*.xsd,META-INF/*orm.xml</includes>
                             <outputDirectory>${project.build.directory}/jbpm-switchyard</outputDirectory>
                         </configuration>
                     </execution>
@@ -633,7 +639,7 @@
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-bam</artifactId>
+            <artifactId>jbpm-audit</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
@@ -649,15 +655,31 @@
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-form-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
             <artifactId>jbpm-human-task-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-human-task-mina</artifactId>
+            <artifactId>jbpm-human-task-workitems</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-kie-services</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-persistence-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-runtime-manager</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-shared-services</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
@@ -677,11 +699,19 @@
         </dependency>
         <dependency>
             <groupId>org.kie.commons</groupId>
+            <artifactId>kie-commons-cdi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.commons</groupId>
             <artifactId>kie-commons-data</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kie.commons</groupId>
             <artifactId>kie-commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.commons</groupId>
+            <artifactId>kie-commons-regex</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kie.commons</groupId>

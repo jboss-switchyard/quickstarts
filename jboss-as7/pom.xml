@@ -240,17 +240,12 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-helpdesk</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.quickstarts.demos</groupId>
             <artifactId>switchyard-quickstart-demo-policy-transaction</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-helpdesk-webapp</artifactId>
+            <artifactId>switchyard-quickstart-demo-helpdesk</artifactId>
             <type>war</type>
             <scope>test</scope>
         </dependency>

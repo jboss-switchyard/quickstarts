@@ -20,21 +20,20 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<module xmlns="urn:jboss:module:1.0" name="org.jbpm">
+<module xmlns="urn:jboss:module:1.0" name="org.kie">
     <resources>
-        <resource-root path="jbpm-audit-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-bpmn2-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-flow-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-flow-builder-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-form-services-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-human-task-core-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-human-task-workitems-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-kie-services-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-persistence-jpa-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-runtime-manager-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-shared-services-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-switchyard-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-workitems-${version.jbpm}.jar"/>
+        <resource-root path="kie-api-${version.kie}.jar"/>
+        <resource-root path="kie-ci-${version.kie}.jar"/>
+        <resource-root path="kie-internal-${version.kie}.jar"/>
+        <resource-root path="kie-commons-cdi-${version.kie}.jar"/>
+        <resource-root path="kie-commons-data-${version.kie}.jar"/>
+        <resource-root path="kie-commons-io-${version.kie}.jar"/>
+        <resource-root path="kie-commons-regex-${version.kie}.jar"/>
+        <resource-root path="kie-commons-validation-${version.kie}.jar"/>
+        <resource-root path="kie-nio2-api-${version.kie}.jar"/>
+        <resource-root path="kie-nio2-fs-${version.kie}.jar"/>
+        <resource-root path="kie-nio2-jgit-${version.kie}.jar"/>
+        <resource-root path="kie-nio2-model-${version.kie}.jar"/>
     </resources>
     <dependencies>
         <module name="com.google.protobuf"/>
@@ -51,7 +50,7 @@
         <module name="org.javassist"/>
         <module name="org.jboss.weld.core"/>
         <module name="org.jboss.vfs"/>
-        <module name="org.kie"/>
+        <module name="org.jbpm"/>
         <module name="org.mvel.mvel2"/>
         <module name="org.slf4j"/>
     </dependencies>

@@ -25,16 +25,6 @@
         <resource-root path="drools-compiler-${version.drools}.jar"/>
         <resource-root path="drools-core-${version.drools}.jar"/>
         <resource-root path="drools-persistence-jpa-${version.drools}.jar"/>
-        <resource-root path="kie-api-${version.kie}.jar"/>
-        <resource-root path="kie-ci-${version.kie}.jar"/>
-        <resource-root path="kie-internal-${version.kie}.jar"/>
-        <resource-root path="kie-commons-data-${version.kie}.jar"/>
-        <resource-root path="kie-commons-io-${version.kie}.jar"/>
-        <resource-root path="kie-commons-validation-${version.kie}.jar"/>
-        <resource-root path="kie-nio2-api-${version.kie}.jar"/>
-        <resource-root path="kie-nio2-fs-${version.kie}.jar"/>
-        <resource-root path="kie-nio2-jgit-${version.kie}.jar"/>
-        <resource-root path="kie-nio2-model-${version.kie}.jar"/>
     </resources>
     <dependencies>
         <module name="com.google.protobuf"/>
@@ -48,7 +38,10 @@
         <module name="org.eclipse.jdt.core.compiler.ecj"/>
         <module name="org.hibernate"/>
         <module name="org.javassist"/>
+        <module name="org.jboss.weld.core"/>
+        <module name="org.jboss.vfs"/>
         <module name="org.jbpm"/>
+        <module name="org.kie"/>
         <module name="org.mvel.mvel2"/>
         <module name="org.slf4j"/>
     </dependencies>
