@@ -21,9 +21,11 @@ package org.switchyard.quickstarts.demo.policy.security.wss.username;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory;
-import org.apache.commons.httpclient.protocol.Protocol;
-import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
+import javax.net.ssl.SSLContext;
+
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.log4j.Logger;
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.lang.Strings;
@@ -80,7 +82,12 @@ public final class WorkServiceMain {
             if (policies.contains(CONFIDENTIALITY)) {
                 scheme = "https";
                 port = 8443;
-                Protocol.registerProtocol("https", new Protocol("https", (ProtocolSocketFactory)(new EasySSLProtocolSocketFactory()), port));
+                SSLContext sslcontext = SSLContext.getInstance("TLS");
+                sslcontext.init(null, null, null);
+                SSLSocketFactory sf = new SSLSocketFactory(sslcontext, SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
+                Scheme https = new Scheme(scheme, port, sf);
+                SchemeRegistry sr = new SchemeRegistry();
+                sr.register(https);
             } else {
                 scheme = "http";
                 port = 8080;
