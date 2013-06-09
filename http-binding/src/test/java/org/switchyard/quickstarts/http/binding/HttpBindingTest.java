@@ -70,7 +70,7 @@ public class HttpBindingTest {
     @Test
     public void headers() throws Exception {
         String response = http.sendString(BASE_URL + "/symbol", "headers", HTTPMixIn.HTTP_POST);
-        Assert.assertEquals("Content-type=text/xml;charset=UTF-8", response);
+        Assert.assertEquals("Content-type=text/xml; charset=UTF-8", response);
     }
 
     @Test
