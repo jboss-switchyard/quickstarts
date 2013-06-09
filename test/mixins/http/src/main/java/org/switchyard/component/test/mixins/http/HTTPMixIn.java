@@ -26,22 +26,25 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.methods.DeleteMethod;
-import org.apache.commons.httpclient.methods.FileRequestEntity;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
-import org.apache.commons.httpclient.methods.OptionsMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.switchyard.test.SwitchYardTestKit;
@@ -51,6 +54,7 @@ import org.switchyard.test.mixins.AbstractTestMixIn;
  * HTTP Test Mix In.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
 public class HTTPMixIn extends AbstractTestMixIn {
     private static Logger _logger = Logger.getLogger(HTTPMixIn.class);
@@ -86,7 +90,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
     public static final String HTTP_OPTIONS = "OPTIONS";
 
     private HttpClient _httpClient;
-    private String _contentType = "text/xml;charset=UTF-8";
+    private String _contentType = "text/xml";
     private HashMap<String,String> _requestHeaders = new HashMap<String,String>();
     private HashMap<String,String> _expectedHeaders = new HashMap<String,String>();
     private boolean _dumpMessages = false;
@@ -106,7 +110,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
 
     @Override
     public void initialize() {
-        _httpClient = new HttpClient();
+        _httpClient = new DefaultHttpClient();
     }
 
     /**
@@ -117,9 +121,9 @@ public class HTTPMixIn extends AbstractTestMixIn {
      * @return The HTTP response code.
      */
     public int sendStringAndGetStatus(String endpointURL, String request, String method) {
-        HttpMethod httpMethod = sendStringAndGetMethod(endpointURL, request, method);
-        int status = httpMethod.getStatusCode();
-        httpMethod.releaseConnection();
+        HttpResponse httpResponse = sendStringAndGetMethod(endpointURL, request, method);
+        int status = httpResponse.getStatusLine().getStatusCode();
+        EntityUtils.consumeQuietly(httpResponse.getEntity());
         return status;
     }
 
@@ -133,9 +137,8 @@ public class HTTPMixIn extends AbstractTestMixIn {
     public String sendString(String endpointURL, String request, String method) {
         String response = null;
         try {
-            HttpMethod httpMethod = sendStringAndGetMethod(endpointURL, request, method);
-            response = httpMethod.getResponseBodyAsString();
-            httpMethod.releaseConnection();
+            HttpResponse httpResponse = sendStringAndGetMethod(endpointURL, request, method);
+            response = EntityUtils.toString(httpResponse.getEntity());
         } catch (IOException ioe) {
             _logger.error("Unable to get response", ioe);
         }
@@ -147,35 +150,36 @@ public class HTTPMixIn extends AbstractTestMixIn {
      * @param endpointURL The HTTP endpoint URL.
      * @param request The request payload.
      * @param method The request method.
-     * @return The HttpMethod object.
+     * @return The HttpResponse object.
      */
-    public HttpMethod sendStringAndGetMethod(String endpointURL, String request, String method) {
+    public HttpResponse sendStringAndGetMethod(String endpointURL, String request, String method) {
         if (_dumpMessages) {
             _logger.info("Sending a " + method + " request to [" + endpointURL + "]");
             _logger.info("Request body:[" + request + "]");
         }
-        HttpMethod httpMethod = null;
+        HttpRequestBase httpMethod = null;
+        HttpResponse response = null;
         try {
             if (method.equals(HTTP_PUT)) {
-                httpMethod = new PutMethod(endpointURL);
-                ((PutMethod)httpMethod).setRequestEntity(new StringRequestEntity(request, _contentType, "UTF-8"));
+                httpMethod = new HttpPut(endpointURL);
+                ((HttpPut)httpMethod).setEntity(new StringEntity(request, _contentType, "UTF-8"));
             } else if (method.equals(HTTP_POST)) {
-                httpMethod = new PostMethod(endpointURL);
-                ((PostMethod)httpMethod).setRequestEntity(new StringRequestEntity(request, _contentType, "UTF-8"));
+                httpMethod = new HttpPost(endpointURL);
+                ((HttpPost)httpMethod).setEntity(new StringEntity(request, _contentType, "UTF-8"));
             } else if (method.equals(HTTP_DELETE)) {
-                httpMethod = new DeleteMethod(endpointURL);
+                httpMethod = new HttpDelete(endpointURL);
             } else if (method.equals(HTTP_OPTIONS)) {
-                httpMethod = new OptionsMethod(endpointURL);
+                httpMethod = new HttpOptions(endpointURL);
             } else if (method.equals(HTTP_HEAD)) {
-                httpMethod = new HeadMethod(endpointURL);
+                httpMethod = new HttpHead(endpointURL);
             } else {
-                httpMethod = new GetMethod(endpointURL);
+                httpMethod = new HttpGet(endpointURL);
             }
-            execute(httpMethod);
+            response = execute(httpMethod);
         } catch (UnsupportedEncodingException e) {
             _logger.error("Unable to set request entity", e);
         }
-        return httpMethod;
+        return response;
     }
 
     /**
@@ -190,17 +194,19 @@ public class HTTPMixIn extends AbstractTestMixIn {
             _logger.info("Request body:[" + request + "]");
         }
         
-        PostMethod postMethod = new PostMethod(endpointURL);
+        HttpPost postMethod = new HttpPost(endpointURL);
         try {
-            postMethod.setRequestEntity(new StringRequestEntity(request, _contentType, "UTF-8"));
+            postMethod.setEntity(new StringEntity(request, _contentType, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             _logger.error("Unable to set request entity", e);
         }
+        HttpResponse httpResponse = execute(postMethod);
         try {
-            return execute(postMethod);
-        } finally {
-            postMethod.releaseConnection();
+            return EntityUtils.toString(httpResponse.getEntity());
+        } catch (IOException ioe) {
+            _logger.error("Unable to get response entity", ioe);
         }
+        return null;
     }
 
     /**
@@ -211,27 +217,29 @@ public class HTTPMixIn extends AbstractTestMixIn {
      */
     public String postFile(String endpointURL, String request) {
 
-        FileRequestEntity requestEntity =
-            new FileRequestEntity(new File(request), "text/xml; charset=utf-8");
+        FileEntity requestEntity =
+            new FileEntity(new File(request), "text/xml; charset=utf-8");
 
         if (_dumpMessages) {
             _logger.info("Sending a POST request to [" + endpointURL + "]");
             ByteArrayOutputStream target = new ByteArrayOutputStream();
             try {
-                requestEntity.writeRequest(target);
+                requestEntity.writeTo(target);
                 _logger.info("Request body:[" + target.toString() + "]");
             } catch (IOException e) {
-                _logger.error("Unable to write FileRequestEntity to stream", e);
+                _logger.error("Unable to write FileEntity to stream", e);
             }
         }
 
-        PostMethod postMethod = new PostMethod(endpointURL);
-        postMethod.setRequestEntity(requestEntity);
+        HttpPost postMethod = new HttpPost(endpointURL);
+        postMethod.setEntity(requestEntity);
+        HttpResponse httpResponse = execute(postMethod);
         try {
-            return execute(postMethod);
-        } finally {
-            postMethod.releaseConnection();
+            return EntityUtils.toString(httpResponse.getEntity());
+        } catch (IOException ioe) {
+            _logger.error("Unable to get response entity", ioe);
         }
+        return null;
     }
 
     /**
@@ -254,7 +262,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
      * @param requestResource The classpath resource to be posted to the endpoint.
      * @return The HTTP method.
      */
-    public HttpMethod postResourceAndGetMethod(String endpointURL, String requestResource) {
+    public HttpResponse postResourceAndGetMethod(String endpointURL, String requestResource) {
         if (_dumpMessages) {
             _logger.info("Sending a POST request to [" + endpointURL + "]");
             InputStream input = getTestKit().getResourceAsStream(requestResource);
@@ -271,12 +279,24 @@ public class HTTPMixIn extends AbstractTestMixIn {
             }
         }
         
-        PostMethod postMethod = new PostMethod(endpointURL);
+        HttpPost postMethod = new HttpPost(endpointURL);
         InputStream requestStream = getTestKit().getResourceAsStream(requestResource);
-
+        HttpResponse response = null;
         try {
-            postMethod.setRequestEntity(new InputStreamRequestEntity(requestStream, _contentType + "; charset=utf-8"));
-            execute(postMethod);
+            if (_contentType != null) {
+                ContentType contentType = null;
+                if (_contentType.contains("charset")) {
+                    contentType = ContentType.create(_contentType);
+                } else {
+                    contentType = ContentType.create(_contentType, "utf-8");
+                }
+                postMethod.setEntity(new InputStreamEntity(requestStream, requestStream.available(), contentType));
+            } else {
+                postMethod.setEntity(new InputStreamEntity(requestStream, requestStream.available()));
+            }
+            response = execute(postMethod);
+        } catch (IOException ioe) {
+            _logger.error("Unable to get response entity", ioe);
         } finally {
             try {
                 requestStream.close();
@@ -284,7 +304,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
                 Assert.fail("Unexpected exception closing HTTP request resource stream.");
             }
         }
-        return postMethod;
+        return response;
     }
 
     /**
@@ -296,9 +316,8 @@ public class HTTPMixIn extends AbstractTestMixIn {
     public String postResource(String endpointURL, String requestResource) {
         String response = null;
         try {
-            HttpMethod httpMethod = postResourceAndGetMethod(endpointURL, requestResource);
-            response = httpMethod.getResponseBodyAsString();
-            httpMethod.releaseConnection();
+            HttpResponse httpResponse = postResourceAndGetMethod(endpointURL, requestResource);
+            response = EntityUtils.toString(httpResponse.getEntity());
         } catch (IOException ioe) {
             _logger.error("Unable to get response", ioe);
         }
@@ -325,57 +344,49 @@ public class HTTPMixIn extends AbstractTestMixIn {
      * @return The HTTP status code.
      */
     public int postResourceAndGetStatus(String endpointURL, String requestResource) {
-        HttpMethod httpMethod = postResourceAndGetMethod(endpointURL, requestResource);
-        int status = httpMethod.getStatusCode();
-        httpMethod.releaseConnection();
+        HttpResponse httpResponse = postResourceAndGetMethod(endpointURL, requestResource);
+        int status = httpResponse.getStatusLine().getStatusCode();
+        EntityUtils.consumeQuietly(httpResponse.getEntity());
         return status;
     }
 
     /**
      * Execute the supplied HTTP Method.
-     * <p/>
-     * Does not release the {@link org.apache.commons.httpclient.HttpMethod#releaseConnection() HttpMethod connection}.
      *
      * @param method The HTTP Method.
      * @return The HTTP Response.
      */
-    public String execute(HttpMethod method) {
+    public HttpResponse execute(HttpRequestBase method) {
         if (_httpClient == null) {
             Assert.fail("HTTPMixIn not initialized.  You must call the initialize() method before using this MixIn");
         }
 
         for (String key : _requestHeaders.keySet()) {
-            method.setRequestHeader(key, _requestHeaders.get(key));
+            method.setHeader(new BasicHeader(key, _requestHeaders.get(key)));
         }
 
         if (_dumpMessages) {
-            for (Header header : method.getRequestHeaders()) {
+            for (Header header : method.getAllHeaders()) {
                 _logger.info("Request header:[" + header.getName() + "=" + header.getValue() + "]");
             }
         }
 
-        String response = null;
+        HttpResponse response = null;
         try {
-            _httpClient.executeMethod(method);
-            response = method.getResponseBodyAsString();
+            response = _httpClient.execute(method);
         } catch (Exception e) {
-            try {
-                Assert.fail("Exception invoking HTTP endpoint '" + method.getURI() + "': " + e.getMessage());
-            } catch (URIException e1) {
-                _logger.error("Unexpected error", e1);
-                return null;
-            }
+            Assert.fail("Exception invoking HTTP endpoint '" + method.getURI() + "': " + e.getMessage());
         }
             
         if (_dumpMessages) {
-            for (Header header : method.getResponseHeaders()) {
+            for (Header header : response.getAllHeaders()) {
                 _logger.info("Received response header:[" + header.getName() + "=" + header.getValue() + "]");
             }
             _logger.info("Received response body:[" + response + "]");
         }
 
         for (String key : _expectedHeaders.keySet()) {
-            Header actual = method.getResponseHeader(key);
+            Header actual = response.getFirstHeader(key);
             Assert.assertNotNull("Checking response header:[" + key + "]", actual);
             Assert.assertEquals("Checking response header:[" + key + "]", _expectedHeaders.get(key), actual.getValue());
         }
@@ -440,12 +451,8 @@ public class HTTPMixIn extends AbstractTestMixIn {
     @Override
     public void uninitialize() {
         if (_httpClient != null) {
-            final HttpConnectionManager connectionManager = _httpClient.getHttpConnectionManager();
-            if (connectionManager instanceof MultiThreadedHttpConnectionManager) {
-                final MultiThreadedHttpConnectionManager multiThreadedHttpConnectionManager = (MultiThreadedHttpConnectionManager)connectionManager;
-                multiThreadedHttpConnectionManager.shutdown();
-            }
-            connectionManager.closeIdleConnections(0);
+            _httpClient.getConnectionManager().closeIdleConnections(0, TimeUnit.SECONDS);
+            _httpClient.getConnectionManager().shutdown();
         }
     }
 }

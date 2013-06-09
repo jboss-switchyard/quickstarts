@@ -19,7 +19,7 @@
 
 package org.switchyard.component.http.config.model.v1;
 
-import org.switchyard.component.http.config.model.HttpBindingModel;
+import org.switchyard.component.http.config.model.HttpNameValueModel.HttpName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
@@ -54,15 +54,24 @@ public class V1HttpMarshaller extends BaseMarshaller {
      */
     @Override
     public Model read(Configuration config) {
+        Descriptor desc = getDescriptor();
         String name = config.getName();
         if (name.startsWith(BindingModel.BINDING)) {
-            return new HttpBindingModel(config, getDescriptor());
-        }
-        if (name.equals(ContextMapperModel.CONTEXT_MAPPER)) {
+            return new V1HttpBindingModel(config, getDescriptor());
+        } else if (name.equals(ContextMapperModel.CONTEXT_MAPPER)) {
             return new V1ContextMapperModel(config, getDescriptor());
-        }
-        if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
+        } else if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
             return new V1MessageComposerModel(config, getDescriptor());
+        } else if (name.equals(HttpName.basic.name())) {
+            return new V1BasicAuthModel(config, getDescriptor());
+        } else if (name.equals(HttpName.ntlm.name())) {
+            return new V1NtlmAuthModel(config, getDescriptor());
+        } else {
+            for (HttpName n : HttpName.values()) {
+                if (n.name().equals(name)) {
+                    return new V1HttpNameValueModel(config, desc);
+                }
+            }
         }
         return null;
     }

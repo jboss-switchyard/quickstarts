@@ -42,4 +42,28 @@ MA  02110-1301, USA.
         </http:binding.http>
     </sca:reference>
 
+    <sca:reference name="AuthHttpConsumerService" promote="http-consumer" multiplicity="1..1">
+        <http:binding.http>
+            <http:address>http://localhost:8100/basic-secured-endpoint</http:address>
+            <http:method>POST</http:method>
+            <http:basic>
+                <http:user>Beal</http:user>
+                <http:password>conjecture</http:password>
+                <http:realm>Any</http:realm>
+            </http:basic>
+        </http:binding.http>
+    </sca:reference>
+
+    <sca:reference name="NtlmHttpConsumerService" promote="http-consumer" multiplicity="1..1">
+        <http:binding.http>
+            <http:address>http://192.168.1.13/index.htm</http:address>
+            <http:method>GET</http:method>
+            <http:ntlm>
+                <http:user>SwitchYard</http:user>
+                <http:password>JBoss123!</http:password>
+                <http:domain>JBOSS</http:domain>
+            </http:ntlm>
+        </http:binding.http>
+    </sca:reference>
+
 </sca:composite>

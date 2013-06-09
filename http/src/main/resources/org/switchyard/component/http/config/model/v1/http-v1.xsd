@@ -34,55 +34,92 @@ MA  02110-1301, USA.
                 <sequence>
                     <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                Specify the ContextMapper to be used.
-                            </documentation>
+                            <documentation>Specify the ContextMapper to be used.</documentation>
                         </annotation>
                     </element>
                     <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                Specify the MessageComposer to be used.
-                            </documentation>
+                            <documentation>Specify the MessageComposer to be used.</documentation>
                         </annotation>
                     </element>
                     <choice>
                         <sequence>
                             <element name="contextPath" type="string" minOccurs="0" maxOccurs="1">
                                 <annotation>
-                                <documentation>
-                                    A context path where the HTTP endpoint will be exposed for Service bindings.
-                                </documentation>
+                                    <documentation>A context path where the HTTP endpoint will be exposed for Service bindings.</documentation>
                                 </annotation>
                             </element>
                         </sequence>
                         <sequence>
                             <element name="address" type="string" minOccurs="0" maxOccurs="1">
                                 <annotation>
-                                <documentation>
-                                    A URL that points to the HTTP endpoint in case of Reference bindings.
-                                </documentation>
+                                    <documentation>A URL that points to the HTTP endpoint in case of Reference bindings.</documentation>
                                 </annotation>
                             </element>
                             <element name="method" type="string" minOccurs="0" maxOccurs="1">
                                 <annotation>
-                                <documentation>
-                                    The HTTP method.
-                                </documentation>
+                                    <documentation>The HTTP method.</documentation>
                                 </annotation>
                             </element>
                             <element name="contentType" type="string" minOccurs="0" maxOccurs="1">
                                 <annotation>
-                                <documentation>
-                                    The HTTP request's content-type header that need to be set.
-                                </documentation>
+                                    <documentation>The HTTP request's content-type header that need to be set.</documentation>
                                 </annotation>
                             </element>
+                            <choice>
+                                <element name="basic" type="http:BasicAuthenticationType" minOccurs="0" maxOccurs="1"/>
+                                <element name="ntlm" type="http:NTLMAuthenticationType" minOccurs="0" maxOccurs="1"/>
+                            </choice>
                         </sequence>
                     </choice>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-
+    <complexType name="BasicAuthenticationType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element name="user" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>User name.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="password" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>Password.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="realm" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Authentication Realm.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="host" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Authentication Host.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="port" type="integer" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Authentication Port.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="NTLMAuthenticationType">
+        <complexContent>
+            <extension base="http:BasicAuthenticationType">
+                <sequence>
+                    <element name="domain" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>The NTLM Domain.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
 </schema>

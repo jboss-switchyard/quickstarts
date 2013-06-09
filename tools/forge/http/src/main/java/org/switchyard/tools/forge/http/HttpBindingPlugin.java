@@ -33,7 +33,12 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
+import org.switchyard.component.http.config.model.BasicAuthModel;
 import org.switchyard.component.http.config.model.HttpBindingModel;
+import org.switchyard.component.http.config.model.NtlmAuthModel;
+import org.switchyard.component.http.config.model.v1.V1BasicAuthModel;
+import org.switchyard.component.http.config.model.v1.V1HttpBindingModel;
+import org.switchyard.component.http.config.model.v1.V1NtlmAuthModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
@@ -80,7 +85,7 @@ public class HttpBindingPlugin implements Plugin {
             return;
         }
 
-        HttpBindingModel binding = new HttpBindingModel();
+        HttpBindingModel binding = new V1HttpBindingModel();
         String projectName = _project.getFacet(MetadataFacet.class).getProjectName();
         if ((contextPath != null) && contextPath.length() > 0) {
             binding.setContextPath(contextPath);
@@ -100,6 +105,10 @@ public class HttpBindingPlugin implements Plugin {
      * @param address required value of the root url where the HTTP endpoints are hosted
      * @param method optional value of HTTP method used to invoke the endpoint
      * @param contentType optional value of content type of the request body
+     * @param user optional value of user name
+     * @param password optional value of password
+     * @param realm optional value of authentication realm
+     * @param domain optional value of authentication domain
      * @param out shell output
      */
     @Command(value = "bind-reference", help = "Add a SOAP binding to a reference.")
@@ -120,6 +129,22 @@ public class HttpBindingPlugin implements Plugin {
                     name = "contentType",
                     description = "The HTTP Content-Type header value that identifies the body content") 
             final String contentType,
+            @Option(required = false,
+                    name = "user",
+                    description = "The user name for authentication") 
+            final String user,
+            @Option(required = false,
+                    name = "password",
+                    description = "The password for authentication") 
+            final String password,
+            @Option(required = false,
+                    name = "realm",
+                    description = "The realm for authentication") 
+            final String realm,
+            @Option(required = false,
+                    name = "domain",
+                    description = "The NTLM domain for authentication") 
+            final String domain,
             final PipeOut out) {
 
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
@@ -130,7 +155,7 @@ public class HttpBindingPlugin implements Plugin {
             return;
         }
 
-        HttpBindingModel binding = new HttpBindingModel();
+        HttpBindingModel binding = new V1HttpBindingModel();
         if (address != null) {
             binding.setAddress(address);
         }
@@ -139,6 +164,20 @@ public class HttpBindingPlugin implements Plugin {
         }
         if (contentType != null) {
             binding.setContentType(contentType);
+        }
+        if (domain != null) {
+            NtlmAuthModel ntlm= new V1NtlmAuthModel();
+            ntlm.setUser(user);
+            ntlm.setPassword(password);
+            ntlm.setRealm(realm);
+            ntlm.setDomain(domain);
+            binding.setNtlmAuthConfig(ntlm);
+        } else {
+            BasicAuthModel basic= new V1BasicAuthModel();
+            basic.setUser(user);
+            basic.setPassword(password);
+            basic.setRealm(realm);
+            binding.setBasicAuthConfig(basic);
         }
         reference.addBinding(binding);
 

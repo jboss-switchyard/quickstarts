@@ -19,6 +19,9 @@
  
 package org.switchyard.component.http;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +29,14 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.NTCredentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.auth.params.AuthPNames;
+import org.apache.http.client.AuthCache;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -35,8 +44,14 @@ import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.params.AuthPolicy;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
@@ -70,6 +85,9 @@ public class OutboundHandler extends BaseServiceHandler {
     private String _baseAddress = "http://localhost:8080";
     private String _httpMethod = HTTP_GET;
     private String _contentType;
+    private AuthScope _authScope;
+    private AuthCache _authCache;
+    private Credentials _credentials;
 
     /**
      * Constructor.
@@ -99,6 +117,43 @@ public class OutboundHandler extends BaseServiceHandler {
         }
         // Create and configure the HTTP message composer
         _messageComposer = HttpComposition.getMessageComposer(_config);
+
+        if (_config.hasAuthentication()) {
+            // Set authentication
+            if (_config.isBasicAuth()) {
+                _authScope = createAuthScope(_config.getBasicAuthConfig().getHost(), _config.getBasicAuthConfig().getPort(), _config.getBasicAuthConfig().getRealm());
+                _credentials = new UsernamePasswordCredentials(_config.getBasicAuthConfig().getUser(), _config.getBasicAuthConfig().getPassword());
+                // Create AuthCache instance
+                _authCache = new BasicAuthCache();
+                _authCache.put(new HttpHost(_authScope.getHost(), _authScope.getPort()), new BasicScheme());
+            } else {
+                _authScope = createAuthScope(_config.getNtlmAuthConfig().getHost(), _config.getNtlmAuthConfig().getPort(), _config.getNtlmAuthConfig().getRealm());
+                _credentials = new NTCredentials(_config.getNtlmAuthConfig().getUser(),
+                                    _config.getNtlmAuthConfig().getPassword(),
+                                    "",
+                                    _config.getNtlmAuthConfig().getDomain());
+            }
+        }
+    }
+
+    private AuthScope createAuthScope(String host, String portStr, String realm) throws HttpConsumeException {
+        URL url = null;
+        try {
+            url = new URL(_baseAddress);
+        } catch (MalformedURLException mue) {
+            throw new HttpConsumeException(mue);
+        }
+        if (realm == null) {
+            realm = AuthScope.ANY_REALM;
+        }
+        int port = url.getPort();
+        if (host == null) {
+            host = url.getHost();
+        }
+        if (portStr != null) {
+            port = Integer.valueOf(portStr).intValue();
+        }
+        return new AuthScope(host, port, realm);
     }
 
     /**
@@ -115,8 +170,15 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
-        HttpClient httpclient = new DefaultHttpClient();
+        DefaultHttpClient httpclient = new DefaultHttpClient();
         try {
+            if (_credentials != null) {
+                httpclient.getCredentialsProvider().setCredentials(_authScope, _credentials);
+                List<String> authpref = new ArrayList<String>();
+                authpref.add(AuthPolicy.NTLM);
+                authpref.add(AuthPolicy.BASIC);
+                httpclient.getParams().setParameter(AuthPNames.TARGET_AUTH_PREF, authpref);
+            }
             HttpBindingData httpRequest = _messageComposer.decompose(exchange, new HttpRequestBindingData());
             HttpRequestBase request = null;
             if (_httpMethod.equals(HTTP_GET)) {
@@ -147,7 +209,19 @@ public class OutboundHandler extends BaseServiceHandler {
                 request.addHeader("Content-Type", _contentType);
             }
 
-            HttpResponse response = httpclient.execute(request);
+            HttpResponse response = null;
+            if ((_credentials != null) && (_credentials instanceof NTCredentials)) {
+                // Send a request for the Negotiation
+                response = httpclient.execute(new HttpGet(_baseAddress));
+                HttpClientUtils.closeQuietly(response);
+            }
+            if (_authCache != null) {
+                BasicHttpContext context = new BasicHttpContext();
+                context.setAttribute(ClientContext.AUTH_CACHE, _authCache);
+                response = httpclient.execute(request, context);
+            } else {
+                response = httpclient.execute(request);
+            }
             int status = response.getStatusLine().getStatusCode();
 
             HttpEntity entity = response.getEntity();

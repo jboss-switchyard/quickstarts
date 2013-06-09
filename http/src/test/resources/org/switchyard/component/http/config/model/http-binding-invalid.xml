@@ -1,3 +1,0 @@
-<http:binding.http xmlns:http="urn:switchyard-component-http:config:1.0">
-    <http:contextPath>/</http:contextPath>
-</http:binding.http>

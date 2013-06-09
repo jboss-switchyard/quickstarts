@@ -21,6 +21,7 @@ package org.switchyard.component.http.config.model;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.switchyard.component.http.config.model.BasicAuthModel;
 import org.switchyard.component.http.config.model.HttpBindingModel;
 import org.switchyard.config.model.ModelPuller;
 
@@ -33,6 +34,7 @@ public class HttpConfigModelTest {
 
     private static final String HTTP_BINDING = "http-binding.xml";
     private static final String HTTP_BINDING2 = "http-binding2.xml";
+    private static final String HTTP_BINDING_AUTH = "http-binding-auth.xml";
 
     @Test
     public void testReadConfigBinding() throws Exception {
@@ -41,5 +43,18 @@ public class HttpConfigModelTest {
         Assert.assertTrue(model.isModelValid());
         model = puller.pull(HTTP_BINDING2, getClass());
         Assert.assertTrue(model.isModelValid());
+    }
+
+    @Test
+    public void authConfigBinding() throws Exception {
+        ModelPuller<HttpBindingModel> puller = new ModelPuller<HttpBindingModel>();
+        HttpBindingModel model = puller.pull(HTTP_BINDING_AUTH, getClass());
+        Assert.assertTrue(model.isModelValid());
+        Assert.assertTrue(model.isBasicAuth());
+        BasicAuthModel authConfig = model.getBasicAuthConfig();
+        Assert.assertNotNull(authConfig);
+        Assert.assertEquals("Beal", authConfig.getUser());
+        Assert.assertEquals("conjecture", authConfig.getPassword());
+        Assert.assertEquals("Any", authConfig.getRealm());
     }
 }
