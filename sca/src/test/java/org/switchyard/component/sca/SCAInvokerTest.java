@@ -6,6 +6,7 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.MockDomain;
@@ -32,9 +33,7 @@ public class SCAInvokerTest {
     public void setUp() throws Exception {
         _domain = new MockDomain();
         _provider = new MockHandler();
-        
     }
-
     
     @Test
     public void localInvocationSameName() throws Exception {
@@ -51,7 +50,7 @@ public class SCAInvokerTest {
         invoker.handleMessage(ex);
         
         Assert.assertTrue(_provider.getMessages().size() == 1);
-        Assert.assertEquals(msg, _provider.getMessages().poll().getMessage());
+        Assert.assertEquals(msg.getContent(), _provider.getMessages().poll().getMessage().getContent());
     }
     
     @Test
@@ -76,7 +75,37 @@ public class SCAInvokerTest {
         invoker.handleMessage(ex);
         
         Assert.assertTrue(_provider.getMessages().size() == 1);
-        Assert.assertEquals(msg, _provider.getMessages().poll().getMessage());
+        Assert.assertEquals(msg.getContent(), _provider.getMessages().poll().getMessage().getContent());
+    }
+    
+    @Test
+    public void crossDomain() throws Exception {
+        V1SCABindingModel config = new V1SCABindingModel();
+        config.setTargetNamespace("urn:testb");
+        SCAInvoker invoker = new SCAInvoker(config);
+
+        // service names with different namespace
+        final QName SERVICE_A = new QName("urn:testa", "Service");
+        final QName SERVICE_B = new QName("urn:testb", "Service");
+        
+        // two domains
+        MockDomain domain1 = _domain;
+        MockDomain domain2 = new MockDomain(domain1.getServiceRegistry());
+
+        ServiceReference referenceA = domain1.registerServiceReference(SERVICE_A, new InOnlyService());
+        Service serviceA = domain1.registerService(SERVICE_A, new InOnlyService(), new MockHandler());
+        domain2.registerServiceReference(SERVICE_B, new InOnlyService());
+        domain2.registerService(SERVICE_B, new InOnlyService(), _provider);
+        
+        MockExchange ex = new MockExchange();
+        Message msg = ex.createMessage().setContent("TEST");
+        ex.setMessage(msg);
+        ex.consumer(referenceA, new InOnlyOperation(null));
+        ex.provider(serviceA, new InOnlyOperation(null));
+        invoker.handleMessage(ex);
+        
+        Assert.assertTrue(_provider.getMessages().size() == 1);
+        Assert.assertEquals(msg.getContent(), _provider.getMessages().poll().getMessage().getContent());
     }
     
     @Test
@@ -133,7 +162,7 @@ public class SCAInvokerTest {
         invoker.handleMessage(ex);
         
         Assert.assertTrue(_provider.getMessages().size() == 1);
-        Assert.assertEquals(msg, _provider.getMessages().poll().getMessage());
+        Assert.assertEquals(msg.getContent(), _provider.getMessages().poll().getMessage().getContent());
     }
     
     @Test
@@ -145,6 +174,26 @@ public class SCAInvokerTest {
         Assert.assertTrue(roundRobin instanceof RoundRobinStrategy);
         LoadBalanceStrategy random = invoker.createLoadBalancer("RandomStrategy");
         Assert.assertTrue(random instanceof RandomStrategy);
+    }
+    
+    @Test
+    public void contextPropertiesCopied() throws Exception {
+        V1SCABindingModel config = new V1SCABindingModel();
+        SCAInvoker invoker = new SCAInvoker(config);
+        
+        final QName TEST_SERVICE = new QName("urn:test", "SCAInvokerTest");
+        ServiceReference reference = _domain.createInOnlyService(TEST_SERVICE, _provider);
+        MockExchange ex = new MockExchange();
+        Message msg = ex.createMessage().setContent("TEST");
+        ex.setMessage(msg);
+        ex.getMessage().getContext().setProperty("message-prop", "abc");
+        ex.consumer(reference, new InOnlyOperation("Test"));
+        ex.provider(_domain.getServices().get(0), new InOnlyOperation("Test"));
+        invoker.handleMessage(ex);
+        
+        Assert.assertTrue(_provider.getMessages().size() == 1);
+        Exchange receivedEx = _provider.getMessages().poll();
+        Assert.assertEquals("abc", receivedEx.getMessage().getContext().getPropertyValue("message-prop"));
     }
     
     @Test

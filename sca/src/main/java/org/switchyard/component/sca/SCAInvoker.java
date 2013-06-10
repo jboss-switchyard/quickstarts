@@ -20,6 +20,7 @@ package org.switchyard.component.sca;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangeState;
@@ -91,16 +92,25 @@ public class SCAInvoker extends BaseServiceHandler {
         }
         SynchronousInOutHandler replyHandler = new SynchronousInOutHandler();
         Exchange ex = ref.createExchange(exchange.getContract().getProviderOperation().getName(), replyHandler);
-        ex.send(exchange.getMessage());
+        
+        // Can't send same message twice, so make a copy
+        Message invokeMsg = exchange.getMessage().copy();
+        Context invokeCtx = exchange.getMessage().getContext().copy();
+        invokeMsg.getContext().setProperties(invokeCtx.getProperties());
+        
+        ex.send(invokeMsg);
         if (isInOut(ex)) {
             replyHandler.waitForOut();
-            Message msg = ex.getMessage();
-            if (ExchangeState.FAULT.equals(ex.getState())) {
-                exchange.sendFault(msg);
-            } else {
-                exchange.send(msg);
+            if (ex.getMessage() != null) {
+                Message replyMsg = ex.getMessage().copy();
+                Context replyCtx = ex.getMessage().getContext().copy();
+                replyMsg.getContext().setProperties(replyCtx.getProperties());
+                if (ExchangeState.FAULT.equals(ex.getState())) {
+                    exchange.sendFault(replyMsg);
+                } else {
+                    exchange.send(replyMsg);
+                }
             }
-            
         }
     }
     
