@@ -25,13 +25,13 @@
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
         <artifactId>switchyard-quickstart-parent</artifactId>
-        <version>1.0.0.Alpha1</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-quickstart-camel-ftp-binding</artifactId>
     <name>Quickstart : Camel FTP Binding</name>
     <properties>
-        <switchyard.version>1.0.0.Alpha1</switchyard.version>
+        <switchyard.version>1.0.0-SNAPSHOT</switchyard.version>
     </properties>
     <dependencies>
         <dependency>
