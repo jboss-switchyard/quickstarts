@@ -31,7 +31,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard.console</groupId>
     <artifactId>switchyard-console-application</artifactId>
-    <version>1.0.0.Alpha1</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>SwitchYard: Management Console Application</name>
     <description>Integrated AS7 console application, which includes the SwitchYard extension.</description>
