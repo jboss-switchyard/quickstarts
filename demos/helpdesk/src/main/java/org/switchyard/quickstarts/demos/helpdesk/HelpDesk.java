@@ -18,9 +18,11 @@
  */
 package org.switchyard.quickstarts.demos.helpdesk;
 
+import static org.switchyard.quickstarts.demos.helpdesk.HelpDeskUserGroupCallback.USERS_GROUPS;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +32,12 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.switchyard.component.bpm.task.Task;
-import org.switchyard.component.bpm.task.TaskClient;
-import org.switchyard.component.bpm.task.TaskContent;
-import org.switchyard.component.bpm.task.TaskService;
+import org.kie.api.task.model.TaskSummary;
+import org.switchyard.component.bpm.runtime.BPMTaskService;
+import org.switchyard.component.bpm.runtime.BPMTaskServiceRegistry;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
@@ -46,23 +48,17 @@ public class HelpDesk {
 
     private static final Logger LOGGER = Logger.getLogger(HelpDesk.class);
     private static final String TICKET = "ticket";
-    private static final Map<String,List<String>> USERS_GROUPS = new LinkedHashMap<String,List<String>>();
-    static {
-        USERS_GROUPS.put("krisv", Arrays.asList(new String[] {"developers"}));
-        USERS_GROUPS.put("david", Arrays.asList(new String[] {"users"}));
-    }
+    private static final String EN_UK = "en-UK";
 
-    private final TaskClient _taskClient;
-    private final List<Task> _userTasks;
+    private final BPMTaskService _taskService;
+    private final List<TaskSummary> _userTasks;
     private final Map<Long, Ticket> _userTickets;
-    private String _userId;
-    
+    private String _userId = "krisv";
 
     public HelpDesk() {
-        _taskClient = TaskService.instance().newTaskClient();
-        _userTasks = Collections.synchronizedList(new ArrayList<Task>());
+        _taskService = BPMTaskServiceRegistry.getTaskService(null, new QName("urn:switchyard-quickstart-demo:helpdesk:0.1.0", "HelpDeskService"));
+        _userTasks = Collections.synchronizedList(new ArrayList<TaskSummary>());
         _userTickets = Collections.synchronizedMap(new LinkedHashMap<Long, Ticket>());
-        _userId = "krisv";
     }
 
     public String getUserId() {
@@ -87,7 +83,7 @@ public class HelpDesk {
         return usersGroups;
     }
 
-    public List<Task> getUserTasks() {
+    public List<TaskSummary> getUserTasks() {
         return _userTasks;
     }
 
@@ -104,18 +100,12 @@ public class HelpDesk {
         synchronized (_userTasks) {
             _userTasks.clear();
             _userTickets.clear();
-            try {
-                _taskClient.connect();
-                List<Task> tasks = _taskClient.getTasksAssignedAsPotentialOwner(_userId, USERS_GROUPS.get(_userId));
-                for (Task task : tasks) {
-                    _userTasks.add(task);
-                    TaskContent taskContent = _taskClient.getTaskContent(task.getTaskContentId());
-                    Map<String, Object> params = taskContent.getVariableMap();
-                    Ticket ticket = (Ticket)params.get(TICKET);
-                    _userTickets.put(task.getProcessInstanceId(), ticket);
-                }
-            } finally {
-                _taskClient.disconnect();
+            List<TaskSummary> tasks = _taskService.getTasksAssignedAsPotentialOwner(_userId, EN_UK);
+            for (TaskSummary task : tasks) {
+                _userTasks.add(task);
+                Map<String, Object> params = _taskService.getTaskContent(task.getId());
+                Ticket ticket = (Ticket)params.get(TICKET);
+                _userTickets.put(task.getProcessInstanceId(), ticket);
             }
         }
     }
@@ -123,20 +113,13 @@ public class HelpDesk {
     private void completeTasks() {
         synchronized (_userTasks) {
             if (_userTasks.size() > 0) {
-                try {
-                    _taskClient.connect();
-                    for (Task task : _userTasks) {
-                        _taskClient.claim(task.getId(), _userId, USERS_GROUPS.get(_userId));
-                        _taskClient.start(task.getId(), _userId);
-                        TaskContent taskContent = _taskClient.getTaskContent(task.getTaskContentId());
-                        Map<String, Object> results = taskContent.getVariableMap();
-                        Ticket ticket = _userTickets.get(task.getProcessInstanceId());
-                        results.put(TICKET, ticket);
-                        _taskClient.complete(task.getId(), _userId, taskContent);
-                    }
-                }
-                finally {
-                    _taskClient.disconnect();
+                for (TaskSummary task : _userTasks) {
+                    _taskService.claim(task.getId(), _userId);
+                    _taskService.start(task.getId(), _userId);
+                    Map<String, Object> results = new HashMap<String, Object>();
+                    Ticket ticket = _userTickets.get(task.getProcessInstanceId());
+                    results.put(TICKET, ticket);
+                    _taskService.complete(task.getId(), _userId, results);
                 }
             }
         }

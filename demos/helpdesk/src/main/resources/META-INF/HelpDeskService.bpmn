@@ -157,6 +157,7 @@
         <dataInput id="_8_SkippableInput" name="Skippable" />
         <dataInput id="_8_TaskNameInput" name="TaskName" />
         <dataInput id="_8_GroupIdInput" name="GroupId" />
+        <dataOutput id="_8_ticketOutput" name="ticket" />
         <inputSet>
           <dataInputRefs>_8_ticketInput</dataInputRefs>
           <dataInputRefs>_8_SkippableInput</dataInputRefs>
@@ -164,6 +165,7 @@
           <dataInputRefs>_8_GroupIdInput</dataInputRefs>
         </inputSet>
         <outputSet>
+          <dataOutputRefs>_8_ticketOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
       <dataInputAssociation>
@@ -191,6 +193,10 @@
           <to xsi:type="tFormalExpression">_8_GroupIdInput</to>
         </assignment>
       </dataInputAssociation>
+      <dataOutputAssociation>
+        <sourceRef>_8_ticketOutput</sourceRef>
+        <targetRef>ticket</targetRef>
+      </dataOutputAssociation>
       <potentialOwner>
         <resourceAssignmentExpression>
           <formalExpression></formalExpression>
@@ -202,22 +208,13 @@
         <tns:onExit-script>
           <script></script>
         </tns:onExit-script>
-        <tns:onExit-script scriptFormat="http://www.java.com/java">
-          <script>String status;
-switch (new Random().nextInt(3)) {
-    case 0: status = "approved"; break;
-    case 1: status = "rejected"; break;
-    default: status = "requested";
-}
-ticket.setStatus(status);
-System.out.println("********** after (random for test purpose) review, ticket status set to " + status + " **********");</script>
-        </tns:onExit-script>
       </extensionElements>
       <ioSpecification>
         <dataInput id="_10_ticketInput" name="ticket" />
         <dataInput id="_10_SkippableInput" name="Skippable" />
         <dataInput id="_10_TaskNameInput" name="TaskName" />
         <dataInput id="_10_GroupIdInput" name="GroupId" />
+        <dataOutput id="_10_ticketOutput" name="ticket" />
         <inputSet>
           <dataInputRefs>_10_ticketInput</dataInputRefs>
           <dataInputRefs>_10_SkippableInput</dataInputRefs>
@@ -225,6 +222,7 @@ System.out.println("********** after (random for test purpose) review, ticket st
           <dataInputRefs>_10_GroupIdInput</dataInputRefs>
         </inputSet>
         <outputSet>
+          <dataOutputRefs>_10_ticketOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
       <dataInputAssociation>
@@ -252,6 +250,10 @@ System.out.println("********** after (random for test purpose) review, ticket st
           <to xsi:type="tFormalExpression">_10_GroupIdInput</to>
         </assignment>
       </dataInputAssociation>
+      <dataOutputAssociation>
+        <sourceRef>_10_ticketOutput</sourceRef>
+        <targetRef>ticket</targetRef>
+      </dataOutputAssociation>
       <potentialOwner>
         <resourceAssignmentExpression>
           <formalExpression></formalExpression>
@@ -306,6 +308,7 @@ System.out.println("********** after (random for test purpose) review, ticket st
         <dataInput id="_13_SkippableInput" name="Skippable" />
         <dataInput id="_13_TaskNameInput" name="TaskName" />
         <dataInput id="_13_GroupIdInput" name="GroupId" />
+        <dataOutput id="_13_ticketOutput" name="ticket" />
         <inputSet>
           <dataInputRefs>_13_ticketInput</dataInputRefs>
           <dataInputRefs>_13_SkippableInput</dataInputRefs>
@@ -313,6 +316,7 @@ System.out.println("********** after (random for test purpose) review, ticket st
           <dataInputRefs>_13_GroupIdInput</dataInputRefs>
         </inputSet>
         <outputSet>
+          <dataOutputRefs>_13_ticketOutput</dataOutputRefs>
         </outputSet>
       </ioSpecification>
       <dataInputAssociation>
@@ -340,6 +344,10 @@ System.out.println("********** after (random for test purpose) review, ticket st
           <to xsi:type="tFormalExpression">_13_GroupIdInput</to>
         </assignment>
       </dataInputAssociation>
+      <dataOutputAssociation>
+        <sourceRef>_13_ticketOutput</sourceRef>
+        <targetRef>ticket</targetRef>
+      </dataOutputAssociation>
       <potentialOwner>
         <resourceAssignmentExpression>
           <formalExpression></formalExpression>

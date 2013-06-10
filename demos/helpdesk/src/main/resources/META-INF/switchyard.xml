@@ -9,7 +9,7 @@
             </binding.soap>
         </service>
         <component name="HelpDeskService">
-            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" processId="HelpDeskService">
+            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" persistent="true" processId="HelpDeskService">
                 <actions>
                     <action operation="openTicket" type="START_PROCESS">
                         <inputs>
@@ -25,9 +25,7 @@
                         <resource location="/META-INF/HelpDeskService.bpmn" type="BPMN2"/>
                     </resources>
                 </manifest>
-                <workItemHandlers>
-                    <workItemHandler class="org.jbpm.process.workitem.wsht.MinaHTWorkItemHandler" name="Human Task"/>
-                </workItemHandlers>
+                <userGroupCallback class="org.switchyard.quickstarts.demos.helpdesk.HelpDeskUserGroupCallback"/>
             </implementation.bpm>
             <service name="HelpDeskService">
                 <interface.java interface="org.switchyard.quickstarts.demos.helpdesk.HelpDeskService"/>

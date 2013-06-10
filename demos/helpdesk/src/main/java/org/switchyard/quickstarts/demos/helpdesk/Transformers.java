@@ -55,7 +55,7 @@ public class Transformers {
 
     @Transformer
     public Ticket transformToTicket(TicketAck ticketAck) {
-		Ticket ticket = new Ticket();
+        Ticket ticket = new Ticket();
         ticket.setId(ticketAck.getId());
         return ticket;
     }
