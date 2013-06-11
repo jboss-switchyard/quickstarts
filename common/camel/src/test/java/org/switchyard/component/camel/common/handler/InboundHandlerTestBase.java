@@ -69,24 +69,28 @@ public abstract class InboundHandlerTestBase {
     }
 
     protected InboundHandler<?> createInboundHandler(final String uri) {
-        return createInboundHandler(uri, null, null, null);
+        return createInboundHandler(uri, null, null, null, null);
     }
 
-    protected InboundHandler<?> createInboundHandler(final String uri, OperationSelectorModel selectorModel) {
-        return createInboundHandler(uri, selectorModel, null, null);
+    protected InboundHandler<?> createInboundHandler(final String uri, final String name, OperationSelectorModel selectorModel) {
+        return createInboundHandler(uri, name, selectorModel, null, null);
     }
 
-    protected InboundHandler<?> createInboundHandler(final String uri, MessageComposerModel composerModel) {
-        return createInboundHandler(uri, null, composerModel, null);
+    protected InboundHandler<?> createInboundHandler(final String uri, final String name, MessageComposerModel composerModel) {
+        return createInboundHandler(uri, name, null, composerModel, null);
     }
 
-    protected InboundHandler<?> createInboundHandler(final String uri, ContextMapperModel mapperModel) {
-        return createInboundHandler(uri, null, null, mapperModel);
+    protected InboundHandler<?> createInboundHandler(final String uri, final String name, ContextMapperModel mapperModel) {
+        return createInboundHandler(uri, name, null, null, mapperModel);
     }
 
-    protected InboundHandler<?> createInboundHandler(final String uri, final OperationSelectorModel selectorModel,
+    protected InboundHandler<?> createInboundHandler(final String uri, final String name, final OperationSelectorModel selectorModel,
         final MessageComposerModel composerModel, final ContextMapperModel mapperModel) {
         V1BaseCamelBindingModel camelBindingModel = new V1BaseCamelBindingModel(_configuration, new Descriptor()) {
+            @Override
+            public String getName() {
+                return name;
+            }
             @Override
             public URI getComponentURI() {
                 return URI.create(uri);
@@ -104,7 +108,7 @@ public abstract class InboundHandlerTestBase {
                 return mapperModel;
             }
         };
-        return new InboundHandler<V1BaseCamelBindingModel>(camelBindingModel, _camelContext, new QName("urn:foo", "dummyService"));
+        return new InboundHandler<V1BaseCamelBindingModel>(camelBindingModel, _camelContext, new QName("urn:foo", "dummyService"), null);
     }
 
     protected void mockTransaction(String manager) {

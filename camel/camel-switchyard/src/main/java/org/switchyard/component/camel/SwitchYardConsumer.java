@@ -24,6 +24,8 @@ import static org.switchyard.Exchange.FAULT_TYPE;
 import static org.switchyard.Exchange.OPERATION_NAME;
 import static org.switchyard.Exchange.SERVICE_NAME;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
@@ -55,6 +57,8 @@ import org.switchyard.metadata.ServiceOperation;
  * @author Daniel Bevenius
  */
 public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandler {
+
+    private AtomicReference<State> _state = new AtomicReference<State>(State.NONE);
 
     /**
      * Sole constructor.
@@ -133,19 +137,37 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
     }
 
     @Override
-    public void start() {
+    public synchronized void start() {
+        if (getState() == State.STARTED) {
+            // already started
+            return;
+        } else if (getState() != State.NONE) {
+            throw new SwitchYardException("Invalid handler state.");
+        }
+        setState(State.STARTING);
         try {
             super.start();
+            setState(State.STARTED);
         } catch (Exception ex) {
+            setState(State.NONE);
             throw new SwitchYardException(ex);
         }
     }
 
     @Override
-    public void stop() {
+    public synchronized void stop() {
+        if (getState() == State.NONE) {
+            // already stopped
+            return;
+        } else if (getState() != State.STARTED) {
+            throw new SwitchYardException("Invalid handler state.");
+        }
+        setState(State.STOPPING);
         try {
             super.stop();
+            setState(State.NONE);
         } catch (Exception ex) {
+            setState(State.STARTED);
             throw new SwitchYardException(ex);
         }
     }
@@ -198,4 +220,15 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
         //TODO: Implement error handling.
     }
 
+    @Override
+    public State getState() {
+        return _state.get();
+    }
+
+    private void setState(State newState) {
+        if (newState == null) {
+            throw new IllegalArgumentException("state cannot be null.");
+        }
+        _state.set(newState);
+    }
 }

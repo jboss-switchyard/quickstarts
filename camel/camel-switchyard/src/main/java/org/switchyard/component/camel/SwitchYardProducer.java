@@ -29,6 +29,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.camel.SwitchYardCamelContext;
@@ -39,9 +40,11 @@ import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.common.composer.SecurityBindingData;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.security.SecurityContext;
 import org.switchyard.selector.OperationSelector;
 
@@ -105,6 +108,17 @@ public class SwitchYardProducer extends DefaultProducer {
                 ((SecurityBindingData) bindingData).extractCredentials());
         }
         Message switchyardMessage = composer.compose(bindingData, switchyardExchange);
+        
+        /*
+         * initialize the gateway name on the context. this was most likely not
+         * mapped by the message composer/context mapper.
+         */
+        final String gatewayName = camelExchange.getProperty(ExchangeCompletionEvent.GATEWAY_NAME, String.class);
+        if (gatewayName != null) {
+            switchyardExchange.getContext()
+                    .setProperty(ExchangeCompletionEvent.GATEWAY_NAME, gatewayName, Scope.EXCHANGE)
+                    .addLabels(BehaviorLabel.TRANSIENT.label());
+        }
         switchyardExchange.send(switchyardMessage);
     }
 

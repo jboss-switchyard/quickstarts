@@ -44,7 +44,7 @@ public interface CamelSedaBindingModel extends CamelBindingModel {
      * @return The name that uniquely identifies the endpoint within the 
      * current CamelContext
      */
-    String getName();
+    String getEndpointName();
 
     /**
      * The name that uniquely identifies the endpoint within the 
@@ -53,7 +53,7 @@ public interface CamelSedaBindingModel extends CamelBindingModel {
      * current CamelContext
      * @return a reference to this SEDA binding model
      */
-    CamelSedaBindingModel setName(String name);
+    CamelSedaBindingModel setEndpointName(String name);
 
     /**
      * The maximum size (= capacity of the number of messages it can max hold) 

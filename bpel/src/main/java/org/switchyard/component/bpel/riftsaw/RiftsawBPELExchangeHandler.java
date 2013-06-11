@@ -35,15 +35,16 @@ import org.apache.log4j.Logger;
 import org.riftsaw.engine.BPELEngine;
 import org.riftsaw.engine.DeploymentRef;
 import org.riftsaw.engine.Fault;
-import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
-import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
+import org.switchyard.ServiceDomain;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandler;
 import org.switchyard.component.common.label.EndpointLabel;
+import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
+import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -52,7 +53,7 @@ import org.w3c.dom.Node;
  * A Riftsaw implementation of a BPEL ExchangeHandler.
  *
  */
-public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExchangeHandler {
+public class RiftsawBPELExchangeHandler extends BaseServiceHandler implements BPELExchangeHandler {
     
     private static final int UNDEPLOY_DELAY = 10000;
 
@@ -69,6 +70,8 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
     private javax.wsdl.Definition _wsdl = null;
     private javax.wsdl.PortType _portType = null;
     private long _undeployDelay=UNDEPLOY_DELAY;
+    private BPELComponentImplementationModel _model;
+    private Properties _config;
     
     private static Map<QName, QName> _serviceRefToCompositeMap=
                 new HashMap<QName, QName>();
@@ -79,9 +82,10 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
 
     /**
      * Constructs a new RiftSaw BPEL ExchangeHandler within the specified ServiceDomain.
-     *
+     * @param domain the service domain.
      */
-    public RiftsawBPELExchangeHandler() {
+    public RiftsawBPELExchangeHandler(final ServiceDomain domain) {
+        super(domain);
     }
 
     /**
@@ -100,43 +104,9 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
         
         _processName = model.getProcessQName();
         
-        // Setup configuration
-        if (config.containsKey("bpel.undeploy.delay")) {
-            try {
-                _undeployDelay = Long.parseLong(config.getProperty("bpel.undeploy.delay"));
-                
-            } catch (Exception e) {
-                LOG.error("Unable to transform property value '"
-                        +config.getProperty("bpel.undeploy.delay")
-                        +"' into undeploy delay value", e);
-            }
-        }
+        _model = model;
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Undeployment delay="+_undeployDelay+"ms");
-        }
-
-        // Check if composite is already been initialized for BPEL processes
-        QName compositeName = model.getComponent().getComposite().getQName();
-
-        if (!_serviceRefToCompositeMap.containsValue(compositeName)) {
-            try {
-                java.io.File deployFile=getDeployment();
-    
-                DeploymentRef ref=engine.deploy(getDeploymentName(), deployFile);
-    
-                _deployed.put(qname, ref);
-                
-                // Remove, in case marked for undeployment as part
-                // of replacing an existing deployed jar
-                _undeployed.remove(qname);
-            } catch (Exception e) {
-                throw new SwitchYardException(e);
-            }
-        }
-
-        SwitchYardPropertyFunction.setPropertyResolver(_processName, model.getModelConfiguration().getPropertyResolver());
-        _serviceRefToCompositeMap.put(qname, compositeName);
+        _config = config;
     }
 
     /**
@@ -240,10 +210,47 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
     /**
      * {@inheritDoc}
      */
-    public void start() {
+    protected void doStart() {
         if (LOG.isDebugEnabled()) {
             LOG.debug("START: " + _serviceName);
         }
+        // Setup configuration
+        if (_config.containsKey("bpel.undeploy.delay")) {
+            try {
+                _undeployDelay = Long.parseLong(_config.getProperty("bpel.undeploy.delay"));
+                
+            } catch (Exception e) {
+                LOG.error("Unable to transform property value '"
+                        +_config.getProperty("bpel.undeploy.delay")
+                        +"' into undeploy delay value", e);
+            }
+        }
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Undeployment delay="+_undeployDelay+"ms");
+        }
+
+        // Check if composite is already been initialized for BPEL processes
+        QName compositeName = _model.getComponent().getComposite().getQName();
+
+        if (!_serviceRefToCompositeMap.containsValue(compositeName)) {
+            try {
+                java.io.File deployFile=getDeployment();
+    
+                DeploymentRef ref=_engine.deploy(getDeploymentName(), deployFile);
+    
+                _deployed.put(_serviceName, ref);
+                
+                // Remove, in case marked for undeployment as part
+                // of replacing an existing deployed jar
+                _undeployed.remove(_serviceName);
+            } catch (Exception e) {
+                throw new SwitchYardException(e);
+            }
+        }
+
+        SwitchYardPropertyFunction.setPropertyResolver(_processName, _model.getModelConfiguration().getPropertyResolver());
+        _serviceRefToCompositeMap.put(_serviceName, compositeName);
     }
 
     /**
@@ -320,7 +327,8 @@ public class RiftsawBPELExchangeHandler extends BaseHandler implements BPELExcha
      /**
      * {@inheritDoc}
      */
-    public void stop() {
+    @Override
+    protected void doStop() {
         if (LOG.isDebugEnabled()) {
             LOG.debug("STOP: " + _serviceName);
         }

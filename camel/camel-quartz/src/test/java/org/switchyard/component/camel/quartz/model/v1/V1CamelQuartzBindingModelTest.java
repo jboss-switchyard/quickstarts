@@ -66,7 +66,7 @@ public class V1CamelQuartzBindingModelTest extends V1BaseCamelServiceBindingMode
     @Override
     protected V1CamelQuartzBindingModel createTestModel() {
         return (V1CamelQuartzBindingModel) new V1CamelQuartzBindingModel()
-            .setName(NAME)
+            .setTimerName(NAME)
             .setCron(CRON)
             .setStateful(STATEFUL)
             .setStartTime(START_TIME)
@@ -75,7 +75,7 @@ public class V1CamelQuartzBindingModelTest extends V1BaseCamelServiceBindingMode
 
     @Override
     protected void createModelAssertions(V1CamelQuartzBindingModel model) {
-        assertEquals(NAME, model.getName());
+        assertEquals(NAME, model.getTimerName());
         assertEquals(CRON, model.getCron());
         assertEquals(STATEFUL, model.isStateful());
         assertEquals(START_TIME, model.getStartTime());

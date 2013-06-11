@@ -122,4 +122,12 @@ public class CamelContextMapper extends BaseRegexContextMapper<CamelBindingData>
         }
     }
 
+    @Override
+    public void setModel(ContextMapperModel model) {
+        super.setModel(model);
+        // reinitialize camel labels. prevent accessing the model outside of initialization.
+        _camelLabels = null;
+        getCamelLabels();
+    }
+
 }

@@ -55,7 +55,7 @@ public class RESTEasyActivator extends BaseActivator {
         if (binding.isServiceBinding()) {
             return new InboundHandler(binding, getServiceDomain());
         } else {
-            return new OutboundHandler(binding);
+            return new OutboundHandler(binding, getServiceDomain());
         }
     }
 

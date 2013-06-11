@@ -42,6 +42,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.soap.composer.SOAPBindingData;
@@ -52,6 +53,8 @@ import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.deploy.BaseServiceHandler;
+import org.switchyard.label.BehaviorLabel;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**
  * Handles invoking external Webservice endpoints.
@@ -65,7 +68,7 @@ public class OutboundHandler extends BaseServiceHandler {
     private static final String NO_RESPONSE = "No response returned.";
 
     private final SOAPBindingModel _config;
-
+    private final String _gatewayName;
     private MessageComposer<SOAPBindingData> _messageComposer;
     private Dispatch<SOAPMessage> _dispatcher;
     private Port _wsdlPort;
@@ -79,13 +82,15 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     public OutboundHandler(final SOAPBindingModel config) {
         _config = config;
+        _gatewayName = config.getName();
     }
 
     /**
      * Start lifecycle.
      * @throws WebServiceConsumeException If unable to load the WSDL
      */
-    public void start() throws WebServiceConsumeException {
+    @Override
+    protected void doStart() throws WebServiceConsumeException {
         if (_dispatcher == null) {
             ClassLoader origLoader = Classes.getTCCL();
             try {
@@ -157,12 +162,6 @@ public class OutboundHandler extends BaseServiceHandler {
     }
 
     /**
-     * Stop lifecycle.
-     */
-    public void stop() {
-    }
-
-    /**
      * The handler method that invokes the actual Webservice when the
      * component is used as a WS consumer.
      * @param exchange the Exchange
@@ -170,7 +169,14 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
+        // identify ourselves
+        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName, Scope.EXCHANGE)
+                .addLabels(BehaviorLabel.TRANSIENT.label());
+
         try {
+            if (getState() != State.STARTED) {
+                throw new HandlerException("Gateway is not started: " + _gatewayName);
+            }
             if (SOAPUtil.getFactory(_bindingId) == null) {
                 throw new SOAPException("Failed to instantiate SOAP Message Factory");
             }

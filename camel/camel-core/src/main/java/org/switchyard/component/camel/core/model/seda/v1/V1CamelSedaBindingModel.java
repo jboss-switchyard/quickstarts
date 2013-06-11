@@ -75,12 +75,12 @@ public class V1CamelSedaBindingModel extends V1BaseCamelBindingModel
     }
 
     @Override
-    public String getName() {
+    public String getEndpointName() {
         return getConfig(NAME);
     }
 
     @Override
-    public V1CamelSedaBindingModel setName(String name) {
+    public V1CamelSedaBindingModel setEndpointName(String name) {
         return setConfig(NAME, name);
     }
 

@@ -32,13 +32,18 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Scope;
+import org.switchyard.ServiceDomain;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
+import org.switchyard.component.camel.common.model.CamelBindingModel;
 import org.switchyard.component.camel.common.transaction.TransactionHelper;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.label.BehaviorLabel;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**
  * A handler that is capable of calling Apache Camel components and returning responses 
@@ -58,35 +63,43 @@ public class OutboundHandler extends BaseServiceHandler {
     private final MessageComposer<CamelBindingData> _messageComposer;
     private final ProducerTemplate _producerTemplate;
     private final SwitchYardCamelContext _camelContext;
+    private final String _gatewayName;
     private final String _uri;
 
     /**
      * Constructor that will create a default {@link ProducerTemplate}.
      * 
-     * @param uri The Camel endpoint uri.
+     * @param binding The Camel binding.
      * @param context The {@link CamelContext}.
      * @param messageComposer the MessageComposer this handler should use
+     * @param domain the service domain
      */
-    public OutboundHandler(final String uri, final SwitchYardCamelContext context, MessageComposer<CamelBindingData> messageComposer) {
-        this(uri, context, messageComposer, null);
+    public OutboundHandler(final CamelBindingModel binding, final SwitchYardCamelContext context, MessageComposer<CamelBindingData> messageComposer, ServiceDomain domain) {
+        this(binding, context, messageComposer, null, domain);
     }
 
     /**
      * Constructor that allows for specifying a specific {@link ProducerTemplate}.
      * 
-     * @param uri The Camel endpoint uri.
+     * @param binding The Camel binding.
      * @param context The {@link CamelContext}.
      * @param messageComposer the MessageComposer this handler should use.
      * @param producerTemplate The {@link ProducerTemplate} to be used by this handler.
+     * @param domain the service domain
      */
-    public OutboundHandler(final String uri, final SwitchYardCamelContext context, MessageComposer<CamelBindingData> messageComposer, ProducerTemplate producerTemplate) {
-        if (uri == null) {
-            throw new IllegalArgumentException("uri argument must not be null");
+    public OutboundHandler(final CamelBindingModel binding, final SwitchYardCamelContext context, MessageComposer<CamelBindingData> messageComposer, ProducerTemplate producerTemplate, ServiceDomain domain) {
+        super(domain);
+        if (binding == null) {
+            throw new IllegalArgumentException("binding argument must not be null");
         }
         if (context == null) {
             throw new IllegalArgumentException("camelContext argument must not be null");
         }
-        _uri = uri;
+        if (binding.getComponentURI() == null) {
+            throw new IllegalArgumentException("binding uri must not be null");
+        }
+        _uri = binding.getComponentURI().toString();
+        _gatewayName = binding.getName();
         _camelContext = context;
         _messageComposer = messageComposer;
         _producerTemplate = producerTemplate == null ? _camelContext.createProducerTemplate() : producerTemplate;
@@ -98,7 +111,7 @@ public class OutboundHandler extends BaseServiceHandler {
      * Starts the {@link ProducerTemplate}.
      */
     @Override
-    public void start() {
+    protected void doStart() {
         try {
             _producerTemplate.start();
             _logger.debug("Started producer template for " + _uri);
@@ -111,7 +124,7 @@ public class OutboundHandler extends BaseServiceHandler {
      * Stops the {@link ProducerTemplate}.
      */
     @Override
-    public void stop() {
+    protected void doStop() {
         try {
             _producerTemplate.stop();
             _logger.debug("Stopped producer template for " + _uri);
@@ -125,6 +138,10 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
+        // identify ourselves
+        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName, Scope.EXCHANGE)
+                .addLabels(BehaviorLabel.TRANSIENT.label());
+
         if (isInOnly(exchange)) {
             handleInOnly(exchange);
         } else {

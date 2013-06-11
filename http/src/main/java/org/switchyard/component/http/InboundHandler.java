@@ -26,6 +26,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
@@ -40,7 +41,9 @@ import org.switchyard.component.http.endpoint.Endpoint;
 import org.switchyard.component.http.endpoint.EndpointPublisherFactory;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.security.SecurityContext;
 import org.switchyard.selector.OperationSelector;
 
@@ -54,7 +57,7 @@ public class InboundHandler extends BaseServiceHandler {
     private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
 
     private final HttpBindingModel _config;
-
+    private final String _gatewayName;
     private ServiceDomain _domain;
     private ServiceReference _serviceRef;
     private MessageComposer<HttpBindingData> _messageComposer;
@@ -67,7 +70,9 @@ public class InboundHandler extends BaseServiceHandler {
      * @param domain the service domain
      */
     public InboundHandler(final HttpBindingModel config, ServiceDomain domain) {
+        super(domain);
         _config = config;
+        _gatewayName = config.getName();
         _domain = domain;
         _operationSelector = OperationSelectorFactory
                 .getOperationSelectorFactory(HttpBindingData.class)
@@ -79,7 +84,8 @@ public class InboundHandler extends BaseServiceHandler {
      *
      * @throws HttpPublishException If unable to publish the service
      */
-    public void start() throws HttpPublishException {
+    @Override
+    protected void doStart() throws HttpPublishException {
         try {
             _serviceRef = _domain.getServiceReference(_config.getServiceName());
             String contextPath = _config.getContextPath();
@@ -105,6 +111,11 @@ public class InboundHandler extends BaseServiceHandler {
         try {
             SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
             Exchange exchange = _serviceRef.createExchange(getOperationName(input), inOutHandler);
+
+            // identify ourselves
+            exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName, Scope.EXCHANGE)
+                    .addLabels(BehaviorLabel.TRANSIENT.label());
+
             Message message = _messageComposer.compose(input, exchange);
             SecurityContext.get(exchange).getCredentials().addAll(input.extractCredentials());
             if (exchange.getContract().getConsumerOperation().getExchangePattern() == ExchangePattern.IN_ONLY) {
@@ -124,7 +135,8 @@ public class InboundHandler extends BaseServiceHandler {
     /**
      * Stop lifecycle.
      */
-    public void stop() {
+    @Override
+    protected void doStop() {
         _endpoint.stop();
     }
 

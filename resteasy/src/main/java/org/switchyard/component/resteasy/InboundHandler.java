@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
@@ -36,6 +37,8 @@ import org.switchyard.component.resteasy.resource.Resource;
 import org.switchyard.component.resteasy.resource.ResourcePublisherFactory;
 import org.switchyard.component.resteasy.util.ClassUtil;
 import org.switchyard.deploy.BaseServiceHandler;
+import org.switchyard.label.BehaviorLabel;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**
  * Handles RESTEasy requests to invoke a SwitchYard service.
@@ -47,6 +50,7 @@ public class InboundHandler extends BaseServiceHandler {
     private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
 
     private final RESTEasyBindingModel _config;
+    private final String _gatewayName;
     private ServiceDomain _domain;
     private ServiceReference _service;
     private Resource _resource;
@@ -58,7 +62,9 @@ public class InboundHandler extends BaseServiceHandler {
      * @param domain the service domain
      */
     public InboundHandler(final RESTEasyBindingModel config, ServiceDomain domain) {
+        super(domain);
         _config = config;
+        _gatewayName = config.getName();
         _domain = domain;
     }
 
@@ -67,7 +73,8 @@ public class InboundHandler extends BaseServiceHandler {
      *
      * @throws RESTEasyPublishException If unable to publish the service
      */
-    public void start() throws RESTEasyPublishException {
+    @Override
+    protected void doStart() throws RESTEasyPublishException {
         String[] resourceIntfs = _config.getInterfacesAsArray();
         try {
             _service = _domain.getServiceReference(_config.getServiceName());
@@ -96,6 +103,11 @@ public class InboundHandler extends BaseServiceHandler {
         RESTEasyBindingData output = new RESTEasyBindingData();
         SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
         Exchange exchange = _service.createExchange(restMessageRequest.getOperationName(), inOutHandler);
+
+        // identify ourselves
+        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName, Scope.EXCHANGE)
+                .addLabels(BehaviorLabel.TRANSIENT.label());
+
         Message message = null;
         try {
             message = _messageComposer.compose(restMessageRequest, exchange);
@@ -120,7 +132,8 @@ public class InboundHandler extends BaseServiceHandler {
     /**
      * Stop lifecycle.
      */
-    public void stop() {
+    @Override
+    protected void doStop() {
         _resource.stop();
     }
 

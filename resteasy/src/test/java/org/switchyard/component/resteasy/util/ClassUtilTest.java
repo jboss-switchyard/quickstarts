@@ -25,6 +25,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.component.resteasy.InboundHandler;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
+import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
 import org.switchyard.component.resteasy.util.support.Item;
 
 /**
@@ -35,7 +36,7 @@ import org.switchyard.component.resteasy.util.support.Item;
 public class ClassUtilTest extends InboundHandler {
 
     public ClassUtilTest() {
-        super(null, null);
+        super(new RESTEasyBindingModel(), null);
     }
 
     @Test

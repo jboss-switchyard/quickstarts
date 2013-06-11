@@ -85,7 +85,7 @@ public class RESTEasyGatewayTest {
         CompositeReferenceModel compositeReference = composite.getReferences().get(0);
         _configRef = (RESTEasyBindingModel)compositeReference.getBindings().get(0);
 
-        _restOutbound = new OutboundHandler(_configRef);
+        _restOutbound = new OutboundHandler(_configRef, null);
         // Massive hack for Test Runner. Register both a service and a reference binding.
         _domain.registerService(_configRef.getServiceName(), new HelloRESTEasyInterface(), _restOutbound);
         _domain.registerServiceReference(_configRef.getServiceName(), new HelloRESTEasyInterface());

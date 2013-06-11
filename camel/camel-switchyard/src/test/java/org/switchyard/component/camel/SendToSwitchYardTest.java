@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
 import org.switchyard.Property;
-import org.switchyard.Scope;
 import org.switchyard.component.camel.common.handler.InboundHandler;
 import org.switchyard.component.camel.common.model.v1.V1BaseCamelBindingModel;
 import org.switchyard.component.camel.util.Composer;
@@ -66,7 +65,7 @@ public class SendToSwitchYardTest extends SwitchYardComponentTestBase {
         MockHandler mock = new MockHandler().forwardInToOut();
         _serviceDomain.registerService(_serviceName, _metadata, mock);
         _serviceDomain.registerServiceReference(_serviceName, _metadata);
-        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", new V1MessageComposerModel().setClazz(Composer.class.getName()));
+        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", "input", new V1MessageComposerModel().setClazz(Composer.class.getName()));
         handler.start();
 
         sendBody("direct:input", PAYLOAD);
@@ -84,7 +83,7 @@ public class SendToSwitchYardTest extends SwitchYardComponentTestBase {
         MockHandler mock = new MockHandler().forwardInToOut();
         _serviceDomain.registerService(_serviceName, _metadata, mock);
         _serviceDomain.registerServiceReference(_serviceName, _metadata);
-        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", new V1ContextMapperModel().setClazz(Mapper.class.getName()));
+        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", "direct", new V1ContextMapperModel().setClazz(Mapper.class.getName()));
         handler.start();
 
         sendBody("direct:input", PAYLOAD);
@@ -105,7 +104,7 @@ public class SendToSwitchYardTest extends SwitchYardComponentTestBase {
         MockHandler mock = new MockHandler().forwardInToOut();
         _serviceDomain.registerService(_serviceName, _metadata, mock);
         _serviceDomain.registerServiceReference(_serviceName, _metadata);
-        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", new V1StaticOperationSelectorModel().setOperationName(OPERATION_NAME));
+        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", "input", new V1StaticOperationSelectorModel().setOperationName(OPERATION_NAME));
         handler.start();
 
         sendBody("direct:input", PAYLOAD);
@@ -124,7 +123,7 @@ public class SendToSwitchYardTest extends SwitchYardComponentTestBase {
         JavaService metadata = JavaService.fromClass(TestService.class);
         _serviceDomain.registerService(_serviceName, metadata, mock);
         _serviceDomain.registerServiceReference(_serviceName, metadata);
-        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", new V1StaticOperationSelectorModel().setOperationName("missing"));
+        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", "input", new V1StaticOperationSelectorModel().setOperationName("missing"));
         handler.start();
 
         sendBody("direct:input", PAYLOAD);
@@ -132,25 +131,29 @@ public class SendToSwitchYardTest extends SwitchYardComponentTestBase {
         handler.stop();
     }
 
-    protected InboundHandler<?> createInboundHandler(QName serviceName, String uri) {
-        return createInboundHandler(serviceName, uri, null, null, null);
+    protected InboundHandler<?> createInboundHandler(QName serviceName, String uri, final String name) {
+        return createInboundHandler(serviceName, uri, name, null, null, null);
     }
 
-    protected InboundHandler<?> createInboundHandler(QName serviceName, String uri, OperationSelectorModel selectorModel) {
-        return createInboundHandler(serviceName, uri, selectorModel, null, null);
+    protected InboundHandler<?> createInboundHandler(QName serviceName, String uri, final String name, OperationSelectorModel selectorModel) {
+        return createInboundHandler(serviceName, uri, name, selectorModel, null, null);
     }
 
-    protected InboundHandler<?> createInboundHandler(QName serviceName, String uri, MessageComposerModel composerModel) {
-        return createInboundHandler(serviceName, uri, null, composerModel, null);
+    protected InboundHandler<?> createInboundHandler(QName serviceName, String uri, final String name, MessageComposerModel composerModel) {
+        return createInboundHandler(serviceName, uri, name, null, composerModel, null);
     }
 
-    protected InboundHandler<?> createInboundHandler(QName serviceName, String uri, ContextMapperModel mapperModel) {
-        return createInboundHandler(serviceName, uri, null, null, mapperModel);
+    protected InboundHandler<?> createInboundHandler(QName serviceName, String uri, final String name, ContextMapperModel mapperModel) {
+        return createInboundHandler(serviceName, uri, name, null, null, mapperModel);
     }
 
-    protected InboundHandler<?> createInboundHandler(QName serviceName, final String uri, final OperationSelectorModel selectorModel,
+    protected InboundHandler<?> createInboundHandler(QName serviceName, final String uri, final String name, final OperationSelectorModel selectorModel,
         final MessageComposerModel composerModel, final ContextMapperModel mapperModel) {
         V1BaseCamelBindingModel camelBindingModel = new V1BaseCamelBindingModel(_configuration, new Descriptor()) {
+            @Override
+            public String getName() {
+                return name;
+            }
             @Override
             public URI getComponentURI() {
                 return URI.create(uri);
@@ -168,6 +171,6 @@ public class SendToSwitchYardTest extends SwitchYardComponentTestBase {
                 return mapperModel;
             }
         };
-        return new InboundHandler<V1BaseCamelBindingModel>(camelBindingModel, _camelContext, serviceName);
+        return new InboundHandler<V1BaseCamelBindingModel>(camelBindingModel, _camelContext, serviceName, null);
     }
 }

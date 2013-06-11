@@ -57,6 +57,7 @@ public class SCAEndpoint extends BaseServiceHandler {
             ServiceDomain domain,
             RemoteEndpointPublisher endpointPublisher,
             RemoteRegistry registry) {
+        super(domain);
         _bindingModel = bindingModel;
         _endpointPublisher = endpointPublisher;
         _domain = domain;
@@ -64,7 +65,7 @@ public class SCAEndpoint extends BaseServiceHandler {
     }
     
     @Override
-    public void start() {
+    protected void doStart() {
         QName serviceName = _bindingModel.getService().getQName();
         _endpointPublisher.addService(serviceName, _domain);
         List<Service> services = _domain.getServices(serviceName);
@@ -86,7 +87,7 @@ public class SCAEndpoint extends BaseServiceHandler {
     }
     
     @Override
-    public void stop() {
+    protected void doStop() {
         if (_bindingModel.isClustered() && _registry != null) {
             _registry.removeEndpoint(_endpoint);
         }

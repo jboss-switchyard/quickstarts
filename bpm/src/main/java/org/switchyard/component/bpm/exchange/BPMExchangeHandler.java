@@ -91,25 +91,25 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
      * {@inheritDoc}
      */
     @Override
-    public void start() {
+    protected void doStart() {
         _correlationKeyFactory = KieInternalServices.Factory.get().newCorrelationKeyFactory();
         if (_persistent) {
             _entityManagerFactory = Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa");
         }
-        super.start();
+        super.doStart();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void stop() {
+    protected void doStop() {
         _correlationKeyFactory = null;
         if (_entityManagerFactory != null) {
             Disposals.newDisposal(_entityManagerFactory).dispose();
             _entityManagerFactory = null;
         }
-        super.stop();
+        super.doStop();
     }
 
     /**

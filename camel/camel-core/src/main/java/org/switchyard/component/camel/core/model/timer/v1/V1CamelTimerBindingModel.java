@@ -80,12 +80,12 @@ public class V1CamelTimerBindingModel extends V1BaseCamelBindingModel
     }
 
     @Override
-    public String getName() {
+    public String getTimerName() {
         return getConfig(NAME);
     }
 
     @Override
-    public V1CamelTimerBindingModel setName(String name) {
+    public V1CamelTimerBindingModel setTimerName(String name) {
         return setConfig(NAME, name);
     }
 

@@ -55,6 +55,8 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Scope;
+import org.switchyard.ServiceDomain;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.http.composer.HttpComposition;
 import org.switchyard.component.http.composer.HttpBindingData;
@@ -62,6 +64,8 @@ import org.switchyard.component.http.composer.HttpRequestBindingData;
 import org.switchyard.component.http.composer.HttpResponseBindingData;
 import org.switchyard.component.http.config.model.HttpBindingModel;
 import org.switchyard.deploy.BaseServiceHandler;
+import org.switchyard.label.BehaviorLabel;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**
  * Handles invoking external HTTP services.
@@ -80,7 +84,7 @@ public class OutboundHandler extends BaseServiceHandler {
     private static final String HTTP_OPTIONS = "OPTIONS";
 
     private final HttpBindingModel _config;
-
+    private final String _gatewayName;
     private MessageComposer<HttpBindingData> _messageComposer;
     private String _baseAddress = "http://localhost:8080";
     private String _httpMethod = HTTP_GET;
@@ -92,9 +96,12 @@ public class OutboundHandler extends BaseServiceHandler {
     /**
      * Constructor.
      * @param config the configuration settings
+     * @param domain the service domain
      */
-    public OutboundHandler(final HttpBindingModel config) {
+    public OutboundHandler(final HttpBindingModel config, final ServiceDomain domain) {
+        super(domain);
         _config = config;
+        _gatewayName = config.getName();
     }
 
     /**
@@ -102,7 +109,8 @@ public class OutboundHandler extends BaseServiceHandler {
      *
      * @throws HttpConsumeException If unable to load or access a HTTP uri
      */
-    public void start() throws HttpConsumeException {
+    @Override
+    protected void doStart() throws HttpConsumeException {
         String address = _config.getAddress();
         if (address != null) {
             _baseAddress = address;
@@ -157,12 +165,6 @@ public class OutboundHandler extends BaseServiceHandler {
     }
 
     /**
-     * Stop lifecycle.
-     */
-    public void stop() {
-    }
-
-    /**
      * The handler method that invokes the actual HTTP service when the
      * component is used as a HTTP consumer.
      * @param exchange the Exchange
@@ -170,6 +172,13 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
+        // identify ourselves
+        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName, Scope.EXCHANGE)
+                .addLabels(BehaviorLabel.TRANSIENT.label());
+        if (getState() != State.STARTED) {
+            throw new HandlerException("Gateway is not started: " + _gatewayName);
+        }
+
         DefaultHttpClient httpclient = new DefaultHttpClient();
         try {
             if (_credentials != null) {

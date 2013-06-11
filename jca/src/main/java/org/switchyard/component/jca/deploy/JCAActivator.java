@@ -193,7 +193,7 @@ public class JCAActivator extends BaseActivator {
             inflowMetaData.setBatchSize(batchCommit.getBatchSize());
         }
 
-        return new InboundHandler(inflowMetaData);
+        return new InboundHandler(inflowMetaData, getServiceDomain());
         
     }
     
@@ -254,7 +254,7 @@ public class JCAActivator extends BaseActivator {
             processor.setInteractionSpec(interactSpecClassName, interactSpecProps);
         }
 
-        return new OutboundHandler(processor);
+        return new OutboundHandler(processor, getServiceDomain());
     }
     
     private String stripDotRarSuffix(final String raName) {

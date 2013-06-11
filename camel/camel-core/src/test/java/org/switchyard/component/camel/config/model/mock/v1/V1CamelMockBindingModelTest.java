@@ -47,7 +47,7 @@ public class V1CamelMockBindingModelTest extends V1BaseCamelServiceBindingModelT
 
     @Override
     protected V1CamelMockBindingModel createTestModel() {
-        return new V1CamelMockBindingModel().setName(NAME).setReportGroup(REPORT_GROUP);
+        return new V1CamelMockBindingModel().setEndpointName(NAME).setReportGroup(REPORT_GROUP);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class V1CamelMockBindingModelTest extends V1BaseCamelServiceBindingModelT
 
     @Override
     protected void createModelAssertions(V1CamelMockBindingModel model) {
-        assertEquals(NAME, model.getName());
+        assertEquals(NAME, model.getEndpointName());
         assertEquals(REPORT_GROUP, model.getReportGroup());
     }
 

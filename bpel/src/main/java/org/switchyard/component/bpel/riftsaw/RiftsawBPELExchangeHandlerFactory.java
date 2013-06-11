@@ -32,7 +32,7 @@ public class RiftsawBPELExchangeHandlerFactory extends BPELExchangeHandlerFactor
      */
     @Override
     public BPELExchangeHandler newBPELExchangeHandler(ServiceDomain serviceDomain) {
-        return new RiftsawBPELExchangeHandler();
+        return new RiftsawBPELExchangeHandler(serviceDomain);
     }
 
 }

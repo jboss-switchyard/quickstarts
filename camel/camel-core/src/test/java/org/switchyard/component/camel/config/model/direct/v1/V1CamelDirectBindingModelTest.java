@@ -51,12 +51,12 @@ public class V1CamelDirectBindingModelTest extends V1BaseCamelServiceBindingMode
 
     @Override
     protected void createModelAssertions(V1CamelDirectBindingModel model) {
-        assertEquals(NAME, model.getName());
+        assertEquals(NAME, model.getEndpointName());
     }
 
     @Override
     protected V1CamelDirectBindingModel createTestModel() {
-        return new V1CamelDirectBindingModel().setName(NAME);
+        return new V1CamelDirectBindingModel().setEndpointName(NAME);
     }
 
 }

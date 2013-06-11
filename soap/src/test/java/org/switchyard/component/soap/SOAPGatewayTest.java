@@ -179,6 +179,7 @@ public class SOAPGatewayTest {
         SOAPBindingModel config2 = new V1SOAPBindingModel();
         config2.setWsdl(_serviceURL.toExternalForm() + "?wsdl");
         config2.setServiceName(_consumerService11.getServiceName());
+        config2.setName("testGateway");
         _soapOutbound11_1 = new OutboundHandler(config2);
         _soapOutbound11_1.start();
         // Hack for Test Runner. Register a service to test outbound.
@@ -187,6 +188,7 @@ public class SOAPGatewayTest {
         SOAPBindingModel config3 = new V1SOAPBindingModel();
         config3.setWsdl(_config.getWsdl());
         config3.setServiceName(_consumerCPWsdl.getServiceName());
+        config3.setName("testGateway");
         _soapOutbound11_2 = new OutboundHandler(config3);
         _soapOutbound11_2.start();
         // Hack for Test Runner. Register a service to test outbound.
@@ -213,6 +215,7 @@ public class SOAPGatewayTest {
         SOAPBindingModel config4 = new V1SOAPBindingModel();
         config4.setWsdl(serviceURL.toExternalForm() + "?wsdl");
         config4.setServiceName(_consumerService12.getServiceName());
+        config4.setName("testGateway");
         _soapOutbound12_1 = new OutboundHandler(config4);
         _soapOutbound12_1.start();
         // Hack for Test Runner. Register a service to test outbound.

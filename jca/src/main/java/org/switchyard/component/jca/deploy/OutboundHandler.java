@@ -24,8 +24,12 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Scope;
+import org.switchyard.ServiceDomain;
 import org.switchyard.component.jca.processor.AbstractOutboundProcessor;
 import org.switchyard.deploy.BaseServiceHandler;
+import org.switchyard.label.BehaviorLabel;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**
  * An ExchangeHandler for JCA outbound binding.
@@ -36,28 +40,37 @@ import org.switchyard.deploy.BaseServiceHandler;
 public class OutboundHandler extends BaseServiceHandler {
     
     private AbstractOutboundProcessor _processor;
+    private final String _gatewayName;
 
     /**
      * Constructor.
      * 
      * @param processor {@link AbstractOutboundProcessor}
+     * @param domain the service domain
      */
-    public OutboundHandler(AbstractOutboundProcessor processor) {
+    public OutboundHandler(AbstractOutboundProcessor processor, ServiceDomain domain) {
+        super(domain);
         _processor = processor;
+        _gatewayName = processor.getJCABindingModel().getName();
     }
 
     @Override
-    public void start() {
+    protected void doStart() {
         _processor.initialize();
     }
     
     @Override
-    public void stop() {
+    protected void doStop() {
         _processor.uninitialize();
     }
     
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
+        // identify ourselves
+        exchange.getContext()
+                .setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName,
+                        Scope.EXCHANGE).addLabels(BehaviorLabel.TRANSIENT.label());
+
         Message out = _processor.process(exchange);
         if (exchange.getContract().getProviderOperation().getExchangePattern() == ExchangePattern.IN_OUT) {
             exchange.send(out);

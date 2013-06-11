@@ -72,12 +72,12 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     }
 
     @Override
-    public String getName() {
+    public String getTimerName() {
         return getConfig(NAME);
     }
 
     @Override
-    public V1CamelQuartzBindingModel setName(String name) {
+    public V1CamelQuartzBindingModel setTimerName(String name) {
         return setConfig(NAME, name);
     }
 
@@ -126,7 +126,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
         Configuration modelConfiguration = getModelConfiguration();
         List<Configuration> children = modelConfiguration.getChildren();
 
-        String baseUri = QUARTZ + "://" + getName();
+        String baseUri = QUARTZ + "://" + getTimerName();
 
         QueryString queryStr = new QueryString();
         traverseConfiguration(children, queryStr, NAME);

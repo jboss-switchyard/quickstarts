@@ -35,7 +35,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.component.clojure.config.model.ClojureComponentImplementationModel;
 import org.switchyard.component.clojure.config.model.ClojureScriptModel;
-import org.switchyard.deploy.ServiceHandler;
+import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
 import clojure.lang.Var;
@@ -46,7 +46,7 @@ import clojure.lang.Var;
  * @author Daniel Bevenius
  *
  */
-public class ClojureHandler implements ServiceHandler {
+public class ClojureHandler extends BaseServiceHandler {
     
     private final ClojureComponentImplementationModel _implModel;
     private Var _var;
@@ -63,7 +63,8 @@ public class ClojureHandler implements ServiceHandler {
     /**
      * Loads the Clojure script.
      */
-    public void start() {
+    @Override
+    protected void doStart() {
         try {
             final ClojureScriptModel scriptModel = _implModel.getScriptModel();
             _var = scriptModel != null 
@@ -77,6 +78,7 @@ public class ClojureHandler implements ServiceHandler {
     @Override
     public void stop() {
         // Nothing to do here
+        // leave state alone
     }
     
     private InputStreamReader loadInputStream(final String scriptFile) throws IOException {

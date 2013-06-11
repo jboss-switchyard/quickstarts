@@ -112,7 +112,6 @@ public class JMSProcessor extends AbstractOutboundProcessor {
 
     @Override
     public void uninitialize() {
-        _destination = null;
         _connectionFactory = null;
     }
 

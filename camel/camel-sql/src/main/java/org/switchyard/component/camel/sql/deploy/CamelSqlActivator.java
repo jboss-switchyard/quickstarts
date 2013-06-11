@@ -43,7 +43,7 @@ public class CamelSqlActivator extends BaseBindingActivator {
 
     @SuppressWarnings("unchecked")
     protected <T extends CamelBindingModel> InboundHandler<T> createInboundHandler(QName serviceName, T binding) {
-        return (InboundHandler<T>) new CamelSqlInboundHandler((CamelSqlBindingModel) binding, getCamelContext(), serviceName);
+        return (InboundHandler<T>) new CamelSqlInboundHandler((CamelSqlBindingModel) binding, getCamelContext(), serviceName, getServiceDomain());
     }
 
 }

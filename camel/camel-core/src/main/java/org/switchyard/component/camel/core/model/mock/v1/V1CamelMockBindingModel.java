@@ -69,12 +69,12 @@ public class V1CamelMockBindingModel  extends V1BaseCamelBindingModel
     }
 
     @Override
-    public String getName() {
+    public String getEndpointName() {
         return getConfig(NAME);
     }
 
     @Override
-    public V1CamelMockBindingModel setName(String name) {
+    public V1CamelMockBindingModel setEndpointName(String name) {
         return setConfig(NAME, name);
     }
 

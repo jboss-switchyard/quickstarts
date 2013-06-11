@@ -39,14 +39,14 @@ public interface CamelMockBindingModel extends CamelBindingModel {
      * The name that uniquely identifies the endpoint.
      * @return The name that uniquely identifies the endpoint
      */
-    String getName();
+    String getEndpointName();
 
     /**
      * The name that uniquely identifies the endpoint.
      * @param name the name that uniquely identifies the endpoint
      * @return a reference to this Mock binding model
      */
-    CamelMockBindingModel setName(String name);
+    CamelMockBindingModel setEndpointName(String name);
 
     /**
      * An integer that specifies a group size for throughput logging. 

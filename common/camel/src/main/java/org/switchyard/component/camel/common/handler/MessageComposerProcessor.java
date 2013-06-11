@@ -32,7 +32,7 @@ import org.switchyard.component.common.composer.MessageComposer;
  */
 public class MessageComposerProcessor implements Processor {
 
-    private final CamelBindingModel _bindingModel;
+    private final MessageComposer<CamelBindingData> _composer;
 
     /**
      * Creates new processor.
@@ -40,15 +40,13 @@ public class MessageComposerProcessor implements Processor {
      * @param bindingModel Camel binding model bound to service interface.
      */
     public MessageComposerProcessor(CamelBindingModel bindingModel) {
-        this._bindingModel = bindingModel;
+        _composer = CamelComposition.getMessageComposer(bindingModel);
     }
 
     @Override
     public void process(org.apache.camel.Exchange exchange) throws Exception {
-        MessageComposer<CamelBindingData> composer = CamelComposition.getMessageComposer(_bindingModel);
-
         Message in = exchange.getIn();
-        in.setHeader(MESSAGE_COMPOSER_HEADER, composer);
+        in.setHeader(MESSAGE_COMPOSER_HEADER, _composer);
         exchange.setOut(in.copy());
     }
 

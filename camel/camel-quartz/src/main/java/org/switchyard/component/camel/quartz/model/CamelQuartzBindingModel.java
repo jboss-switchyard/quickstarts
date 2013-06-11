@@ -40,14 +40,14 @@ public interface CamelQuartzBindingModel extends CamelBindingModel {
      * Returns the name of the timer.
      * @return timer name
      */
-    String getName();
+    String getTimerName();
     
     /**
      * Sets the name of the timer.
      * @param name timer name
      * @return a reference to this config model
      */
-    CamelQuartzBindingModel setName(String name);
+    CamelQuartzBindingModel setTimerName(String name);
 
     /**
      * Returns the cron expression for this quartz endpoint.

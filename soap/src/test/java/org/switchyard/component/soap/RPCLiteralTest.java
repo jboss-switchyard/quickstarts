@@ -101,6 +101,7 @@ public class RPCLiteralTest {
         SOAPBindingModel config2 = new V1SOAPBindingModel();
         config2.setWsdl(_serviceURL.toExternalForm() + "?wsdl");
         config2.setServiceName(consumerService.getServiceName());
+        config2.setName("testGateway");
         _soapOutbound = new OutboundHandler(config2);
         _soapOutbound.start();
         _domain.registerService(consumerService.getServiceName(), new OrderServiceInterface(), _soapOutbound);

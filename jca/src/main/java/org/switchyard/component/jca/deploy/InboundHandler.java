@@ -29,6 +29,7 @@ import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 
+import org.switchyard.ServiceDomain;
 import org.switchyard.component.jca.EndpointProxy;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
@@ -47,15 +48,18 @@ public class InboundHandler extends BaseServiceHandler implements MessageEndpoin
      * Constructor.
      * 
      * @param metadata {@link JCAInflowDeploymentMetaData}
+     * @param domain the service domain
      */
-    public InboundHandler(JCAInflowDeploymentMetaData metadata) {
+    public InboundHandler(JCAInflowDeploymentMetaData metadata, ServiceDomain domain) {
+        super(domain);
         _metadata = metadata;
     }
     
     /**
      * Activate JCA message inflow endpoint.
      */
-    public void start() {
+    @Override
+    protected void doStart() {
         _metadata.getMessageEndpoint().initialize();
         try {
             _metadata.getResourceAdapter().endpointActivation(this, _metadata.getActivationSpec());
@@ -65,7 +69,7 @@ public class InboundHandler extends BaseServiceHandler implements MessageEndpoin
     }
     
     @Override
-    public void stop() {
+    protected void doStop() {
         _metadata.getResourceAdapter().endpointDeactivation(this, _metadata.getActivationSpec());
         _metadata.getMessageEndpoint().uninitialize();
     }

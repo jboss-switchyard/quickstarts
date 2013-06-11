@@ -112,25 +112,25 @@ public class HttpGatewayTest {
         CompositeReferenceModel compositeReference = composite.getReferences().get(0);
         _configRef = (HttpBindingModel)compositeReference.getBindings().get(0);
 
-        _httpOutbound = new OutboundHandler(_configRef);
+        _httpOutbound = new OutboundHandler(_configRef, null);
         _domain.registerService(_configRef.getServiceName(), new HelloInterface(), _httpOutbound);
         _httpOutbound.start();
 
         compositeReference = composite.getReferences().get(1);
         _configRef2 = (HttpBindingModel)compositeReference.getBindings().get(0);
-        _httpOutbound2 = new OutboundHandler(_configRef2);
+        _httpOutbound2 = new OutboundHandler(_configRef2, null);
         _domain.registerService(_configRef2.getServiceName(), new HelloInterface(), _httpOutbound2);
         _httpOutbound2.start();
 
         compositeReference = composite.getReferences().get(2);
         _configRef3 = (HttpBindingModel)compositeReference.getBindings().get(0);
-        _httpOutbound3 = new OutboundHandler(_configRef3);
+        _httpOutbound3 = new OutboundHandler(_configRef3, null);
         _domain.registerService(_configRef3.getServiceName(), new HelloInterface(), _httpOutbound3);
         _httpOutbound3.start();
 
         compositeReference = composite.getReferences().get(3);
         _configRef4 = (HttpBindingModel)compositeReference.getBindings().get(0);
-        _httpOutbound4 = new OutboundHandler(_configRef4);
+        _httpOutbound4 = new OutboundHandler(_configRef4, null);
         _domain.registerService(_configRef4.getServiceName(), new HelloInterface(), _httpOutbound4);
         _httpOutbound4.start();
     }

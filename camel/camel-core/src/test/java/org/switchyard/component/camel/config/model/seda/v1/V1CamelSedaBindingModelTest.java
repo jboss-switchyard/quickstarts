@@ -54,7 +54,7 @@ public class V1CamelSedaBindingModelTest extends V1BaseCamelServiceBindingModelT
 
     @Override
     protected void createModelAssertions(V1CamelSedaBindingModel model) {
-        assertEquals(NAME, model.getName());
+        assertEquals(NAME, model.getEndpointName());
         assertEquals(SIZE, model.getSize());
         assertEquals(CONCURRENT_CONSUMERS, model.getConcurrentConsumers());
         assertEquals(WAIT_FOR_TASK_TO_COMPLETE, model.getWaitForTaskToComplete());
@@ -65,7 +65,7 @@ public class V1CamelSedaBindingModelTest extends V1BaseCamelServiceBindingModelT
 
     @Override
     protected V1CamelSedaBindingModel createTestModel() {
-        return new V1CamelSedaBindingModel().setName(NAME)
+        return new V1CamelSedaBindingModel().setEndpointName(NAME)
             .setSize(SIZE)
             .setConcurrentConsumers(CONCURRENT_CONSUMERS)
             .setWaitForTaskToComplete(WAIT_FOR_TASK_TO_COMPLETE)

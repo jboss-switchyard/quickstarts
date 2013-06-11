@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
+import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.common.composer.MessageComposer;
@@ -32,9 +33,11 @@ import org.switchyard.component.jca.composer.JCABindingData;
 import org.switchyard.component.jca.composer.JCAComposition;
 import org.switchyard.component.jca.config.model.JCABindingModel;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.selector.OperationSelector;
 
 /**
@@ -51,6 +54,7 @@ public abstract class AbstractInflowEndpoint {
     private ServiceReference _serviceRef;
     private boolean _transacted = false;
     private ClassLoader _appClassLoader;
+    private String _gatewayName;
     
     /**
      * initialize.
@@ -73,6 +77,7 @@ public abstract class AbstractInflowEndpoint {
      */
     public AbstractInflowEndpoint setJCABindingModel(JCABindingModel model) {
         _jcaBindingModel = model;
+        _gatewayName = model.getName();
         return this;
     }
     
@@ -202,6 +207,12 @@ public abstract class AbstractInflowEndpoint {
             PolicyUtil.provide(exchange, TransactionPolicy.PROPAGATES_TRANSACTION);
             PolicyUtil.provide(exchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
         }
+
+        // identify ourselves
+        exchange.getContext()
+                .setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName, Scope.EXCHANGE)
+                .addLabels(BehaviorLabel.TRANSIENT.label());
+
         return exchange;
         
     }

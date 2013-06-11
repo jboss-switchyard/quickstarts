@@ -21,6 +21,7 @@ package org.switchyard.component.camel.sql.deploy;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.model.RouteDefinition;
+import org.switchyard.ServiceDomain;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
@@ -40,10 +41,11 @@ public class CamelSqlInboundHandler extends InboundHandler<CamelSqlBindingModel>
      * @param camelBindingModel The CamelBindingModel.
      * @param camelContext The camel context instance.
      * @param serviceName The target service name.
+     * @param domain the service domain.
      */
     public CamelSqlInboundHandler(CamelSqlBindingModel camelBindingModel,
-        SwitchYardCamelContext camelContext, QName serviceName) {
-        super(camelBindingModel, camelContext, serviceName);
+        SwitchYardCamelContext camelContext, QName serviceName, ServiceDomain domain) {
+        super(camelBindingModel, camelContext, serviceName, domain);
     }
 
     @Override

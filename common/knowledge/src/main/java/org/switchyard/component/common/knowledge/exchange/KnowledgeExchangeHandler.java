@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
@@ -36,6 +35,7 @@ import org.switchyard.component.common.knowledge.session.KnowledgeSession;
 import org.switchyard.component.common.knowledge.session.KnowledgeSessionFactory;
 import org.switchyard.component.common.knowledge.util.Actions;
 import org.switchyard.component.common.knowledge.util.Resources;
+import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
@@ -47,7 +47,7 @@ import org.switchyard.metadata.ServiceOperation;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImplementationModel> extends BaseHandler implements ServiceHandler {
+public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImplementationModel> extends BaseServiceHandler implements ServiceHandler {
 
     private final M _model;
     private final ServiceDomain _domain;
@@ -62,6 +62,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * @param domain the specified service domain
      */
     public KnowledgeExchangeHandler(M model, ServiceDomain domain) {
+        super(domain);
         _model = model;
         _domain = domain;
     }
@@ -171,7 +172,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * {@inheritDoc}
      */
     @Override
-    public void start() {
+    protected void doStart() {
         _loader = Classes.getClassLoader(getClass());
         Resources.installTypes(_loader);
         Actions.registerActions(_model, _actions, getDefaultAction());
@@ -182,7 +183,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * {@inheritDoc}
      */
     @Override
-    public void stop() {
+    protected void doStop() {
         _loader = null;
         _actions.clear();
         try {

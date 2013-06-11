@@ -100,11 +100,12 @@ public class OutboundHandlerTest extends CamelTestSupport {
     public void setupSwitchyardService() {
         bindingModel = mock(CamelBindingModel.class);
         when(bindingModel.getComponentURI()).thenReturn(URI.create("direct:to"));
+        when(bindingModel.getName()).thenReturn("mockOutputHandler");
         _messageComposer = CamelComposition.getMessageComposer();
         _serviceDomain.registerService(_targetService.getServiceName(),
             new InOnlyService(), 
-            new OutboundHandler(bindingModel.getComponentURI().toString(),
-                (SwitchYardCamelContext) context, _messageComposer
+            new OutboundHandler(bindingModel,
+                (SwitchYardCamelContext) context, _messageComposer, null
             )
         );
         _service = _serviceDomain.registerServiceReference(
@@ -133,8 +134,8 @@ public class OutboundHandlerTest extends CamelTestSupport {
         _messageComposer = CamelComposition.getMessageComposer();
         _serviceDomain.registerService(_targetService.getServiceName(),
             new InOnlyService(), 
-            new OutboundHandler(bindingModel.getComponentURI().toString(),
-                (SwitchYardCamelContext) context, _messageComposer
+            new OutboundHandler(bindingModel,
+                (SwitchYardCamelContext) context, _messageComposer, null
             )
         );
         _service = _serviceDomain.registerServiceReference(
@@ -187,22 +188,31 @@ public class OutboundHandlerTest extends CamelTestSupport {
     @Test
     public void throwsIllegalArgumentExceptionIfBindingModelIsNull() {
         exception.expect(IllegalArgumentException.class);
-        exception.expectMessage("uri argument must not be null");
-        new OutboundHandler(null, mock(SwitchYardCamelContext.class), _messageComposer);
+        exception.expectMessage("binding argument must not be null");
+        new OutboundHandler(null, mock(SwitchYardCamelContext.class), _messageComposer, null);
+    }
+
+    @Test
+    public void throwsIllegalArgumentExceptionIfBindingModelURIIsNull() {
+        CamelBindingModel emptyURIModel = mock(CamelBindingModel.class);
+        when(bindingModel.getComponentURI()).thenReturn(null);
+        exception.expect(IllegalArgumentException.class);
+        exception.expectMessage("binding uri must not be null");
+        new OutboundHandler(emptyURIModel, mock(SwitchYardCamelContext.class), _messageComposer, null);
     }
 
     @Test
     public void throwsIllegalArgumentExceptionIfCamelContextIsNull() {
         exception.expect(IllegalArgumentException.class);
         exception.expectMessage("camelContext argument must not be null");
-        new OutboundHandler("mockuri", null, _messageComposer);
+        new OutboundHandler(bindingModel, null, _messageComposer, null);
     }
 
     @Test
     public void startStop() throws Exception {
         final ProducerTemplate producerTemplate = mock(ProducerTemplate.class);
-        final OutboundHandler outboundHandler = new OutboundHandler(bindingModel.getComponentURI().toString(),
-            (SwitchYardCamelContext) context, _messageComposer, producerTemplate);
+        final OutboundHandler outboundHandler = new OutboundHandler(bindingModel,
+            (SwitchYardCamelContext) context, _messageComposer, producerTemplate, null);
         outboundHandler.start();
         outboundHandler.stop();
         verify(producerTemplate).start();

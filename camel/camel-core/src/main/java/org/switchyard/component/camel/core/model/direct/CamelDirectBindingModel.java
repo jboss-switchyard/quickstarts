@@ -32,13 +32,13 @@ public interface CamelDirectBindingModel extends CamelBindingModel {
      * The name can be any String to uniquely identify the endpoint.
      * @return the unique identifier for the endpoint
      */
-    String getName();
+    String getEndpointName();
 
     /**
      * The name can be any String to uniquely identify the endpoint.
      * @param name the unique identifier for the endpoint
      * @return a reference to this Direct binding model
      */
-    CamelDirectBindingModel setName(String name);
+    CamelDirectBindingModel setEndpointName(String name);
 
 }

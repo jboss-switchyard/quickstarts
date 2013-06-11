@@ -39,6 +39,7 @@ public class SCAInvokerTest {
     public void localInvocationSameName() throws Exception {
         V1SCABindingModel config = new V1SCABindingModel();
         SCAInvoker invoker = new SCAInvoker(config);
+        invoker.start();
         
         final QName TEST_SERVICE = new QName("urn:test", "SCAInvokerTest");
         ServiceReference reference = _domain.createInOnlyService(TEST_SERVICE, _provider);
@@ -58,6 +59,7 @@ public class SCAInvokerTest {
         V1SCABindingModel config = new V1SCABindingModel();
         config.setTarget("ServiceB");
         SCAInvoker invoker = new SCAInvoker(config);
+        invoker.start();
 
         // Serivce A is for app 1, Service B is for app 2
         final QName SERVICE_A = new QName("urn:test", "ServiceA");
@@ -83,6 +85,7 @@ public class SCAInvokerTest {
         V1SCABindingModel config = new V1SCABindingModel();
         config.setTargetNamespace("urn:testb");
         SCAInvoker invoker = new SCAInvoker(config);
+        invoker.start();
 
         // service names with different namespace
         final QName SERVICE_A = new QName("urn:testa", "Service");
@@ -115,6 +118,7 @@ public class SCAInvokerTest {
         V1SCABindingModel config = new V1SCABindingModel();
         config.setTarget("Blah");
         SCAInvoker invoker = new SCAInvoker(config);
+        invoker.start();
 
         // Create one valid but unregistered reference
         final QName SERVICE_A = new QName("urn:test", "ServiceA");
@@ -145,6 +149,7 @@ public class SCAInvokerTest {
         V1SCABindingModel config = new V1SCABindingModel();
         config.setTargetNamespace("urn:app2");
         SCAInvoker invoker = new SCAInvoker(config);
+        invoker.start();
 
         // urn:app1 is for app 1, urn:app2 is for app 2
         final QName SERVICE_A = new QName("urn:app1", "ServiceA");
@@ -169,6 +174,7 @@ public class SCAInvokerTest {
     public void createOOTBLoadBalancers() throws Exception {
         V1SCABindingModel config = new V1SCABindingModel();
         SCAInvoker invoker = new SCAInvoker(config);
+        invoker.start();
         
         LoadBalanceStrategy roundRobin = invoker.createLoadBalancer("RoundRobinStrategy");
         Assert.assertTrue(roundRobin instanceof RoundRobinStrategy);
@@ -180,6 +186,7 @@ public class SCAInvokerTest {
     public void contextPropertiesCopied() throws Exception {
         V1SCABindingModel config = new V1SCABindingModel();
         SCAInvoker invoker = new SCAInvoker(config);
+        invoker.start();
         
         final QName TEST_SERVICE = new QName("urn:test", "SCAInvokerTest");
         ServiceReference reference = _domain.createInOnlyService(TEST_SERVICE, _provider);
@@ -200,6 +207,7 @@ public class SCAInvokerTest {
     public void createCustomLoadBalancers() throws Exception {
         V1SCABindingModel config = new V1SCABindingModel();
         SCAInvoker invoker = new SCAInvoker(config);
+        invoker.start();
         
         LoadBalanceStrategy lb = invoker.createLoadBalancer("org.switchyard.component.sca.MyLoadBalancer");
         Assert.assertTrue(lb instanceof MyLoadBalancer);

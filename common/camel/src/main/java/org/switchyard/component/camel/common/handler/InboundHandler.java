@@ -25,7 +25,9 @@ import java.net.URI;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.model.RouteDefinition;
+import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
+import org.switchyard.ServiceDomain;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
@@ -33,6 +35,7 @@ import org.switchyard.component.camel.common.model.CamelBindingModel;
 import org.switchyard.component.camel.common.transaction.TransactionHelper;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**
  * An ExchangeHandler that acts as a gateway/entrypoint for Camel Components.
@@ -49,6 +52,7 @@ import org.switchyard.exception.SwitchYardException;
  */
 public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHandler {
 
+    private static Logger _logger = Logger.getLogger(InboundHandler.class);
     private final T _camelBindingModel;
     private final SwitchYardCamelContext _camelContext;
     private final QName _serviceName;
@@ -59,8 +63,10 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
      * @param camelBindingModel The {@link CamelBindingModel}.
      * @param camelContext The camel context instance.
      * @param serviceName The target service name.
+     * @param domain the service domain.
      */
-    public InboundHandler(final T camelBindingModel, final SwitchYardCamelContext camelContext, final QName serviceName) {
+    public InboundHandler(final T camelBindingModel, final SwitchYardCamelContext camelContext, final QName serviceName, final ServiceDomain domain) {
+        super(domain);
         _camelBindingModel = camelBindingModel;
         _camelContext = camelContext;
         _serviceName = serviceName;
@@ -81,6 +87,7 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
         final SwitchYardRouteDefinition route = new SwitchYardRouteDefinition(getServiceName());
 
         route.routeId(getRouteId()).from(getComponentUri().toString())
+            .setProperty(ExchangeCompletionEvent.GATEWAY_NAME).simple(getBindingModel().getName(), String.class)
             .process(new MessageComposerProcessor(getBindingModel()))
             .process(new OperationSelectorProcessor(getServiceName(), getBindingModel()));
         return addTransactionPolicy(route);
@@ -92,7 +99,8 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
      * @return Camel route id.
      */
     public String getRouteId() {
-        return getBindingModel().getClass().getSimpleName() + "/" + getServiceName().getLocalPart() + "@" + getBindingModel().getComponentURI().hashCode();
+        return getBindingModel().getClass().getSimpleName() + "/" + getServiceName().getLocalPart() + "@"
+                + getBindingModel().getName() + "#" + getBindingModel().getComponentURI().hashCode();
     }
 
     protected QName getServiceName() {
@@ -139,9 +147,14 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
      * Will create the Camel route and add it to the camel context.
      */
     @Override
-    public void start() {
+    protected void doStart() {
         try {
             RouteDefinition route = _camelContext.getRouteDefinition(getRouteId());
+            if (route == null) {
+                // may have been removed if this was stopped
+                route = createRouteDefinition();
+                _camelContext.addRouteDefinition(route);
+            }
             if (route.isStartable(_camelContext)) {
                 _camelContext.startRoute(getRouteId());
             }
@@ -154,12 +167,16 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
      * Suspends the route.
      */
     @Override
-    public void stop() {
+    protected void doStop() {
         try {
             _camelContext.stopRoute(getRouteId());
-            _camelContext.removeRoute(getRouteId());
         } catch (Exception ex) {
             throw new SwitchYardException("Failed to stop route for service " + _serviceName, ex);
+        }
+        try {
+            _camelContext.removeRoute(getRouteId());
+        } catch (Exception ex) {
+            _logger.warn("Failed to remove route for service " + _serviceName, ex);
         }
     }
 

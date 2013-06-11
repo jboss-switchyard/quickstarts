@@ -23,27 +23,27 @@ MA  02110-1301, USA.
            name="m1app">
 
     <sca:service name="SampleHttpProviderService" promote="SomeProviderService">
-        <http:binding.http>
+        <http:binding.http name="testGateway">
             <http:contextPath>http</http:contextPath>
         </http:binding.http>
     </sca:service>
 
     <sca:reference name="SampleHttpConsumerService" promote="http-consumer" multiplicity="1..1">
-        <http:binding.http>
+        <http:binding.http name="testGateway">
             <http:address>http://localhost:8080/http?param=value&amp;param1=value1&amp;param1=value2</http:address>
             <http:method>POST</http:method>
         </http:binding.http>
     </sca:reference>
 
     <sca:reference name="InvalidHttpConsumerService" promote="http-consumer" multiplicity="1..1">
-        <http:binding.http>
+        <http:binding.http name="testGateway">
             <http:address>http://localhost:8080/invalid</http:address>
             <http:method>POST</http:method>
         </http:binding.http>
     </sca:reference>
 
     <sca:reference name="AuthHttpConsumerService" promote="http-consumer" multiplicity="1..1">
-        <http:binding.http>
+        <http:binding.http name="testGateway">
             <http:address>http://localhost:8100/basic-secured-endpoint</http:address>
             <http:method>POST</http:method>
             <http:basic>
@@ -55,7 +55,7 @@ MA  02110-1301, USA.
     </sca:reference>
 
     <sca:reference name="NtlmHttpConsumerService" promote="http-consumer" multiplicity="1..1">
-        <http:binding.http>
+        <http:binding.http name="testGateway">
             <http:address>http://192.168.1.13/index.htm</http:address>
             <http:method>GET</http:method>
             <http:ntlm>

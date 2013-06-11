@@ -35,6 +35,7 @@ import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.internal.context.ContextProxy;
 import org.switchyard.component.bean.internal.message.MessageProxy;
+import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
@@ -48,7 +49,7 @@ import org.switchyard.exception.SwitchYardException;
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
-public class ServiceProxyHandler implements ServiceHandler {
+public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHandler {
 
     private static Logger _logger = Logger.getLogger(ServiceProxyHandler.class);
 
@@ -131,6 +132,10 @@ public class ServiceProxyHandler implements ServiceHandler {
         }
     }
     
+    protected ClassLoader getDeploymentClassLoader() {
+        return _beanDeploymentMetaData.getDeploymentClassLoader();
+    }
+
     /**
      * Handle the Service bean invocation.
      *
@@ -196,7 +201,7 @@ public class ServiceProxyHandler implements ServiceHandler {
     }
 
     @Override
-    public void start() {
+    protected void doStart() {
         // Initialise any client proxies to the started service...
         for (ClientProxyBean proxyBean : _beanDeploymentMetaData.getClientProxies()) {
             if (_references.containsKey(proxyBean.getServiceName())) {
@@ -208,5 +213,6 @@ public class ServiceProxyHandler implements ServiceHandler {
     @Override
     public void stop() {
         // NOP
+        // leave state alone
     }
 }

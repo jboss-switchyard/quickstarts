@@ -62,7 +62,7 @@ public class V1CamelTimerBindingModelTest extends V1BaseCamelServiceBindingModel
 
     @Override
     protected void createModelAssertions(V1CamelTimerBindingModel model) {
-        assertEquals(NAME, model.getName());
+        assertEquals(NAME, model.getTimerName());
         assertEquals(referenceDate.toString(), model.getTime().toString());
         assertEquals(PATTERN, model.getPattern());
         assertEquals(PERIOD, model.getPeriod());
@@ -73,7 +73,7 @@ public class V1CamelTimerBindingModelTest extends V1BaseCamelServiceBindingModel
 
     @Override
     protected V1CamelTimerBindingModel createTestModel() {
-        return new V1CamelTimerBindingModel().setName(NAME)
+        return new V1CamelTimerBindingModel().setTimerName(NAME)
             .setTime(referenceDate)
             .setPattern(PATTERN)
             .setPeriod(PERIOD)

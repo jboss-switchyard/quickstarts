@@ -35,14 +35,14 @@ public interface CamelTimerBindingModel extends CamelBindingModel {
      * The timer name.
      * @return the timer name
      */
-    String getName();
+    String getTimerName();
 
     /**
      * Specify the timer name.
      * @param name the timer name
      * @return a reference to this Camel Timer binding model
      */
-    CamelTimerBindingModel setName(String name);
+    CamelTimerBindingModel setTimerName(String name);
 
     /**
      * A java.util.Date the first event should be generated. 

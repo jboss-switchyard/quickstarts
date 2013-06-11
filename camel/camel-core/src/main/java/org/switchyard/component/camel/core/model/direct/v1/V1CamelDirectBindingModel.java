@@ -63,12 +63,12 @@ public class V1CamelDirectBindingModel extends V1BaseCamelBindingModel
     }
 
     @Override
-    public String getName() {
+    public String getEndpointName() {
         return getConfig(NAME);
     }
 
     @Override
-    public V1CamelDirectBindingModel setName(String name) {
+    public V1CamelDirectBindingModel setEndpointName(String name) {
         return setConfig(NAME, name);
     }
 

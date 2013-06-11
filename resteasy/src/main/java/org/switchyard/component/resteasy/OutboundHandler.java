@@ -29,6 +29,8 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Scope;
+import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.resteasy.composer.RESTEasyComposition;
@@ -38,6 +40,8 @@ import org.switchyard.component.resteasy.resource.ResourcePublisherFactory;
 import org.switchyard.component.resteasy.util.ClientInvoker;
 import org.switchyard.component.resteasy.util.MethodInvoker;
 import org.switchyard.deploy.BaseServiceHandler;
+import org.switchyard.label.BehaviorLabel;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**
  * Handles invoking external RESTEasy services.
@@ -50,6 +54,7 @@ public class OutboundHandler extends BaseServiceHandler {
     private static final Class<?>[] CLASS_ARG_ARRAY = {Class.class};
 
     private final RESTEasyBindingModel _config;
+    private final String _gatewayName;
     private String _baseAddress = "http://localhost:8080";
     private Map<String, MethodInvoker> _methodMap = new HashMap<String, MethodInvoker>();
     private MessageComposer<RESTEasyBindingData> _messageComposer;
@@ -58,9 +63,12 @@ public class OutboundHandler extends BaseServiceHandler {
     /**
      * Constructor.
      * @param config the configuration settings
+     * @param domain the service domain.
      */
-    public OutboundHandler(final RESTEasyBindingModel config) {
+    public OutboundHandler(final RESTEasyBindingModel config, final ServiceDomain domain) {
+        super(domain);
         _config = config;
+        _gatewayName = config.getName();
     }
 
     /**
@@ -68,36 +76,32 @@ public class OutboundHandler extends BaseServiceHandler {
      *
      * @throws RESTEasyConsumeException If unable to load the REST interface
      */
-    public void start() throws RESTEasyConsumeException {
-        String resourceIntfs = _config.getInterfaces();
-        String address = _config.getAddress();
-        if (address != null) {
-            _baseAddress = address;
-        }
-        String path = _baseAddress;
-        String contextPath = _config.getContextPath();
-        if ((contextPath != null) && !ResourcePublisherFactory.ignoreContext()) {
-            path = path + "/" + contextPath;
-        }
-        StringTokenizer st = new StringTokenizer(resourceIntfs, ",");
-        while (st.hasMoreTokens()) {
-            String className = st.nextToken().trim();
-            Class<?> clazz = Classes.forName(className);
-            for (Method method : clazz.getMethods()) {
-                // ignore the as method to allow declaration in client interfaces
-                if (!("as".equals(method.getName()) && Arrays.equals(method.getParameterTypes(), CLASS_ARG_ARRAY))) {
-                    _methodMap.put(method.getName(), new ClientInvoker(path, clazz, method));
+    protected void doStart() throws RESTEasyConsumeException {
+        if (_methodMap.isEmpty()) {
+            String resourceIntfs = _config.getInterfaces();
+            String address = _config.getAddress();
+            if (address != null) {
+                _baseAddress = address;
+            }
+            String path = _baseAddress;
+            String contextPath = _config.getContextPath();
+            if ((contextPath != null) && !ResourcePublisherFactory.ignoreContext()) {
+                path = path + "/" + contextPath;
+            }
+            StringTokenizer st = new StringTokenizer(resourceIntfs, ",");
+            while (st.hasMoreTokens()) {
+                String className = st.nextToken().trim();
+                Class<?> clazz = Classes.forName(className);
+                for (Method method : clazz.getMethods()) {
+                    // ignore the as method to allow declaration in client interfaces
+                    if (!("as".equals(method.getName()) && Arrays.equals(method.getParameterTypes(), CLASS_ARG_ARRAY))) {
+                        _methodMap.put(method.getName(), new ClientInvoker(path, clazz, method));
+                    }
                 }
             }
+            // Create and configure the RESTEasy message composer
+            _messageComposer = RESTEasyComposition.getMessageComposer(_config);
         }
-        // Create and configure the RESTEasy message composer
-        _messageComposer = RESTEasyComposition.getMessageComposer(_config);
-    }
-
-    /**
-     * Stop lifecycle.
-     */
-    public void stop() {
     }
 
     /**
@@ -108,6 +112,13 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
+        // identify ourselves
+        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName, Scope.EXCHANGE)
+                .addLabels(BehaviorLabel.TRANSIENT.label());
+        if (getState() != State.STARTED) {
+            throw new HandlerException("Gateway is not started: " + _gatewayName);
+        }
+
         final String opName = exchange.getContract().getProviderOperation().getName();
 
         RESTEasyBindingData restRequest = null;
