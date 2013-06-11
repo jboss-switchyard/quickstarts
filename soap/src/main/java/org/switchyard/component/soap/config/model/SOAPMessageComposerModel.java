@@ -29,7 +29,7 @@ public interface SOAPMessageComposerModel extends MessageComposerModel {
      * Indicates whether the composer is in "unwrapped" mode.
      * @return true if the composer is in unwrapped mode, false otherwise
      */
-    boolean isUnwrapped();
+    Boolean isUnwrapped();
 
     /**
      * Specifies that the composer should operate in "unwrapped" mode.

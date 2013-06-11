@@ -198,4 +198,9 @@ public interface SOAPBindingModel extends BindingModel {
      */
     public SOAPBindingModel setOutInterceptors(InterceptorsModel outInterceptors);
 
+    /**
+     * Indicates whether the composer is in "unwrapped" mode.
+     * @return true if the composer is in unwrapped mode, false otherwise
+     */
+    public Boolean isUnwrapped();
 }

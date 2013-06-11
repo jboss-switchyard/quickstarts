@@ -54,7 +54,7 @@ public class V1SOAPMessageComposerModel extends V1MessageComposerModel implement
     }
 
     @Override
-    public boolean isUnwrapped() {
+    public Boolean isUnwrapped() {
         String unwrap = getModelAttribute("unwrapped");
         return unwrap != null && Boolean.valueOf(unwrap);
     }

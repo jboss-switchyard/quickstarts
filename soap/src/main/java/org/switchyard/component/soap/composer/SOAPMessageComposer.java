@@ -46,7 +46,6 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.component.common.composer.BaseMessageComposer;
-import org.switchyard.component.soap.config.model.SOAPMessageComposerModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
 import org.w3c.dom.Element;
@@ -73,11 +72,11 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
     private static final String TEMP_FILE_EXTENSION = ".tmp";
 
     private static Logger _log = Logger.getLogger(SOAPMessageComposer.class);
-    private SOAPMessageComposerModel _config;
     private Port _wsdlPort;
     private Boolean _documentStyle = false;
     private Boolean _mtomEnabled = false;
     private Boolean _xopExpand = false;
+    private Boolean _unwrapped = false;
 
     /**
      * {@inheritDoc}
@@ -128,7 +127,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
 
             Node bodyNode = bodyChildren.get(0);
             if (_documentStyle) {
-                if (_config != null && _config.isUnwrapped()) {
+                if (_unwrapped) {
                     String opName = exchange.getContract().getConsumerOperation().getName();
                     // peel off the operation wrapper, if present
                     if (opName != null && opName.equals(bodyNode.getLocalName())) {
@@ -224,7 +223,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
                     if (exchange.getState() != ExchangeState.FAULT || isSOAPFaultPayload(messageNode)) {
                         if (_documentStyle) {
                             String opName = exchange.getContract().getProviderOperation().getName();
-                            if (_config != null && _config.isUnwrapped()) {
+                            if (_unwrapped) {
                                 String ns = getWrapperNamespace(opName, input);
                                 // Don't wrap if it's already wrapped
                                 if (!messageNodeImport.getLocalName().equals(opName + DOC_LIT_WRAPPED_REPLY_SUFFIX)) {
@@ -266,22 +265,6 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
         }
 
         return target;
-    }
-    
-    /**
-     * Gets the SOAPMessageComposerModel config.
-     * @return the SOAPMessageComposerModel
-     */
-    public SOAPMessageComposerModel getComposerConfig() {
-        return _config;
-    }
-
-    /**
-     * Sets the SOAPMessageComposerModel config.
-     * @param composerConfig configuration
-     */
-    public void setComposerConfig(SOAPMessageComposerModel composerConfig) {
-        _config = composerConfig;
     }
 
     private boolean isSOAPFaultPayload(org.w3c.dom.Node messageNode) {
@@ -396,6 +379,22 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
      */
     public void setXopExpand(Boolean expand) {
         _xopExpand = expand;
+    }
+
+    /**
+     * Check if composer has set unwrap.
+     * @return true if expandable, false otherwise
+     */
+    public Boolean isUnwrapped() {
+        return _unwrapped;
+    }
+
+    /**
+     * Set unwrap flag.
+     * @param unwrapped true or false
+     */
+    public void setUnwrapped(Boolean unwrapped) {
+        _unwrapped = unwrapped;
     }
 
 }

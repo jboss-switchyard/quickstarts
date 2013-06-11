@@ -361,6 +361,14 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean isUnwrapped() {
+        return getSOAPMessageComposer() != null && getSOAPMessageComposer().isUnwrapped();
+    }
+
     private SOAPNameValueModel getNameValue(SOAPName name) {
         return (SOAPNameValueModel)getFirstChildModel(name.name());
     }

@@ -81,6 +81,7 @@ public class InboundHandler extends BaseServiceHandler {
     private Port _wsdlPort;
     private String _bindingId;
     private Boolean _documentStyle = false;
+    private Boolean _unwrapped = false;
     private String _targetNamespace;
     private Feature _feature = new Feature();
     private Map<String, Operation> _operationsMap = new HashMap<String, Operation>();
@@ -113,6 +114,7 @@ public class InboundHandler extends BaseServiceHandler {
 
             String style = WSDLUtil.getStyle(_wsdlPort);
             _documentStyle = style.equals(WSDLUtil.DOCUMENT) ? true : false;
+            _unwrapped = _config.isUnwrapped();
             _feature = WSDLUtil.getFeature(definition, _wsdlPort, _documentStyle);
 
             if (_feature.isAddressingEnabled()) {
@@ -138,6 +140,7 @@ public class InboundHandler extends BaseServiceHandler {
             ((SOAPMessageComposer)_messageComposer).setDocumentStyle(_documentStyle);
             ((SOAPMessageComposer)_messageComposer).setWsdlPort(_wsdlPort);
             ((SOAPMessageComposer)_messageComposer).setMtomEnabled(mtom.isEnabled());
+            ((SOAPMessageComposer)_messageComposer).setUnwrapped(_unwrapped);
             if (_config.getMtomConfig() != null) {
                 ((SOAPMessageComposer)_messageComposer).setXopExpand(_config.getMtomConfig().isXopExpand());
             }
@@ -245,7 +248,7 @@ public class InboundHandler extends BaseServiceHandler {
             }
 
             // Do not perfom this check if the message has been unwrapped
-            if (_config.getSOAPMessageComposer() == null || !_config.getSOAPMessageComposer().isUnwrapped()) {
+            if (!_unwrapped) {
                 assertComposedMessageOK(message, operation);
             }
 

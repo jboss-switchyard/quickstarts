@@ -52,11 +52,6 @@ public final class SOAPComposition {
         SOAPContextMapperModel scmm = sbm != null ? sbm.getSOAPContextMapper() : null;
         SOAPMessageComposerModel mcm = sbm != null ? sbm.getSOAPMessageComposer() : null;
         MessageComposer<SOAPBindingData> mc = Composition.getMessageComposer(SOAPBindingData.class, scmm, mcm);
-        if (mc instanceof SOAPMessageComposer && mcm != null) {
-            SOAPMessageComposer smc = (SOAPMessageComposer)mc;
-            smc.setComposerConfig(mcm);
-            
-        }
         ContextMapper<SOAPBindingData> cm = mc.getContextMapper();
         if (cm instanceof SOAPContextMapper && scmm != null) {
             ((SOAPContextMapper)cm).setSOAPHeadersType(scmm.getSOAPHeadersType());
