@@ -52,8 +52,8 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
         SOAPName.socketAddr.name(),
         SOAPName.contextPath.name(),
         SOAPName.endpointAddress.name(),
-        SOAPName.mtom.name(),
         ENDPOINT_CONFIG,
+        SOAPName.mtom.name(),
         IN_INTERCEPTORS,
         OUT_INTERCEPTORS
     };

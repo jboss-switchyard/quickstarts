@@ -30,14 +30,16 @@ import org.switchyard.config.model.ModelPuller;
  */
 public class SOAPBindingModelTest {
 
-    private static final String SOAP_BINDING = "soap-binding-reference.xml";
+    private static final String SOAP_BINDING_SERVICE = "soap-binding-service.xml";
+    private static final String SOAP_BINDING_REFERENCE = "soap-binding-reference.xml";
+    private static final String SOAP_BINDING_INVALID = "soap-binding-invalid.xml";
 
     @Test
-    public void testReadConfigBinding() throws Exception {
+    public void serviceBinding() throws Exception {
         ModelPuller<SOAPBindingModel> puller = new ModelPuller<SOAPBindingModel>();
-        SOAPBindingModel binding = puller.pull(SOAP_BINDING, getClass());
+        SOAPBindingModel binding = puller.pull(SOAP_BINDING_SERVICE, getClass());
         binding.assertModelValid();
-        Assert.assertEquals("http://modified.com/phantom", binding.getEndpointAddress());
+        Assert.assertEquals("myendpoint", binding.getContextPath());
         EndpointConfigModel endpointConfig = binding.getEndpointConfig();
         Assert.assertEquals("myFile", endpointConfig.getConfigFile());
         Assert.assertEquals("myName", endpointConfig.getConfigName());
@@ -45,5 +47,24 @@ public class SOAPBindingModelTest {
         Assert.assertEquals(new Boolean(true), mtomConfig.isEnabled());
         Assert.assertEquals(new Integer(1300), mtomConfig.getThreshold());
         Assert.assertEquals(new Boolean(true), mtomConfig.isXopExpand());
+    }
+
+    @Test
+    public void referenceBinding() throws Exception {
+        ModelPuller<SOAPBindingModel> puller = new ModelPuller<SOAPBindingModel>();
+        SOAPBindingModel binding = puller.pull(SOAP_BINDING_REFERENCE, getClass());
+        binding.assertModelValid();
+        Assert.assertEquals("http://modified.com/phantom", binding.getEndpointAddress());
+        MtomModel mtomConfig = binding.getMtomConfig();
+        Assert.assertEquals(new Boolean(true), mtomConfig.isEnabled());
+        Assert.assertEquals(new Integer(1300), mtomConfig.getThreshold());
+        Assert.assertEquals(new Boolean(true), mtomConfig.isXopExpand());
+    }
+
+    @Test
+    public void invalidBinding() throws Exception {
+        ModelPuller<SOAPBindingModel> puller = new ModelPuller<SOAPBindingModel>();
+        SOAPBindingModel binding = puller.pull(SOAP_BINDING_INVALID, getClass());
+        Assert.assertTrue(!binding.isModelValid());
     }
 }

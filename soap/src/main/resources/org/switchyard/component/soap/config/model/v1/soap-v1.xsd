@@ -50,79 +50,61 @@ MA  02110-1301, USA.
                 <sequence>
                     <element name="contextMapper" type="soap:ContextMapperType" minOccurs="0" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                Specify the ContextMapper to be used.
-                            </documentation>
+                            <documentation>Specify the ContextMapper to be used.</documentation>
                         </annotation>
                     </element>
                     <element name="messageComposer" type="soap:MessageComposerType" minOccurs="0" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                Specify the MessageComposer to be used.
-                            </documentation>
+                            <documentation>Specify the MessageComposer to be used.</documentation>
                         </annotation>
                     </element>
                     <element name="wsdl" type="string" minOccurs="1" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                A WSDL file name that can be found in classpath else can be a file://, http:// or https:// URL location.
-                            </documentation>
+                            <documentation>A WSDL file name that can be found in classpath else can be a file://, http:// or https:// URL location.</documentation>
                         </annotation>
                     </element>
                     <element name="wsdlPort" type="soap:wsdlPortType" minOccurs="0" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                Specify the WSDL port to be used. The string can be in the form {namespaceURI}serviceName:portName", with the "{namespaceURI}" and "serviceName:" part being optional.
-                            </documentation>
+                            <documentation>Specify the WSDL port to be used. The string can be in the form {namespaceURI}serviceName:portName", with the "{namespaceURI}" and "serviceName:" part being optional.</documentation>
                         </annotation>
                     </element>
-                    <element name="socketAddr" type="string" minOccurs="0" maxOccurs="1">
-                        <annotation>
-                            <documentation>
-                                Specify the IP Socket Address to be used. The string can be in the form "hostName/ipAddress:portNumber", with the "hostName/ipAddress:" or ":portNumber" part being optional.
-                            </documentation>
-                        </annotation>
-                    </element>
-                    <element name="contextPath" type="string" minOccurs="0" maxOccurs="1">
-                        <annotation>
-                            <documentation>
-                                The context path used in the HTTP URL
-                            </documentation>
-                        </annotation>
-                    </element>
-                    <element name="endpointAddress" type="string" minOccurs="0" maxOccurs="1">
-                        <annotation>
-                            <documentation>
-                                The endpoint address override
-                            </documentation>
-                        </annotation>
-                    </element>
+                    <choice>
+                        <sequence>
+                            <element name="socketAddr" type="string" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                    <documentation>Specify the IP Socket Address to be used. The string can be in the form "hostName/ipAddress:portNumber", with the "hostName/ipAddress:" or ":portNumber" part being optional. Applicable only for service bindings.</documentation>
+                                </annotation>
+                            </element>
+                            <element name="contextPath" type="string" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                    <documentation>The context path used in the HTTP URL where the endpoint will be hosted. Applicable only for service bindings.</documentation>
+                                </annotation>
+                            </element>
+                            <element name="endpointConfig" type="soap:EndpointConfigType" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                    <documentation>The JBossWS @EndpointConfig to add</documentation>
+                                </annotation>
+                            </element>
+                        </sequence>
+                        <element name="endpointAddress" type="string" minOccurs="0" maxOccurs="1">
+                            <annotation>
+                                <documentation>The endpoint address override. Applicable only for reference bindings.</documentation>
+                            </annotation>
+                        </element>
+                    </choice>
                     <element name="mtom" type="soap:MtomType" minOccurs="0" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                Mtom feature override. By default this feature is enabled. Use this to disable or change threshold value.
-                            </documentation>
-                        </annotation>
-                    </element>
-                    <element name="endpointConfig" type="soap:EndpointConfigType" minOccurs="0" maxOccurs="1">
-                        <annotation>
-                            <documentation>
-                                The JBossWS @EndpointConfig to add
-                            </documentation>
+                            <documentation>Mtom feature override. By default this feature is enabled. Use this to disable or change threshold value.</documentation>
                         </annotation>
                     </element>
                     <element name="inInterceptors" type="soap:InterceptorsType" minOccurs="0" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                The Apache CXF @InInterceptors to add
-                            </documentation>
+                            <documentation>The Apache CXF @InInterceptors to add</documentation>
                         </annotation>
                     </element>
                     <element name="outInterceptors" type="soap:InterceptorsType" minOccurs="0" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                The Apache CXF @OutInterceptors to add
-                            </documentation>
+                            <documentation>The Apache CXF @OutInterceptors to add</documentation>
                         </annotation>
                     </element>
                 </sequence>
