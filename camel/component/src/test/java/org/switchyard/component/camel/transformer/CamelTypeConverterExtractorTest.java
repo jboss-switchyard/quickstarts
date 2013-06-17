@@ -42,7 +42,7 @@ import org.junit.Test;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.metadata.java.JavaService;
-import org.switchyard.transform.TransformerRegistryLoader;
+import org.switchyard.transform.internal.TransformerRegistryLoader;
 
 /**
  * Test for {@link CamelTypeConverterExtractor}
