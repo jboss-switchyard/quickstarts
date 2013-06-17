@@ -29,8 +29,8 @@ import org.junit.Test;
 import org.switchyard.annotations.Transformer;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.BaseTransformer;
-import org.switchyard.transform.TransformerTypes;
-import org.switchyard.transform.TransformerUtil;
+import org.switchyard.transform.internal.TransformerTypes;
+import org.switchyard.transform.internal.TransformerUtil;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>

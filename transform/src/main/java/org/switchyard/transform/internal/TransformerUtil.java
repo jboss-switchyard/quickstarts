@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.transform;
+package org.switchyard.transform.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,6 +34,8 @@ import org.apache.log4j.Logger;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.java.JavaService;
+import org.switchyard.transform.BaseTransformer;
+import org.switchyard.transform.Transformer;
 
 /**
  * Transformer Utility methods.

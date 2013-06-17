@@ -25,9 +25,9 @@ import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.Transformer;
-import org.switchyard.transform.TransformerFactory;
 import org.switchyard.transform.config.model.JAXBTransformModel;
 import org.switchyard.transform.config.model.JavaTransformType;
+import org.switchyard.transform.internal.TransformerFactory;
 
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlType;

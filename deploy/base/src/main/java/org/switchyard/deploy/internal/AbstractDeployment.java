@@ -27,8 +27,8 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.Activator;
-import org.switchyard.transform.TransformerRegistryLoader;
-import org.switchyard.validate.ValidatorRegistryLoader;
+import org.switchyard.transform.internal.TransformerRegistryLoader;
+import org.switchyard.validate.internal.ValidatorRegistryLoader;
 
 /**
  * Abstract SwitchYard application deployment.

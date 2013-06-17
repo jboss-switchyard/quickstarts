@@ -34,9 +34,9 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.transform.v1.V1TransformsModel;
-import org.switchyard.transform.TransformerTypes;
-import org.switchyard.transform.TransformerUtil;
 import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
+import org.switchyard.transform.internal.TransformerTypes;
+import org.switchyard.transform.internal.TransformerUtil;
 
 /**
  * Scanner for {@link org.switchyard.transform.Transformer} implementations.

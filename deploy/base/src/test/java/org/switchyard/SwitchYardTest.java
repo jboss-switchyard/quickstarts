@@ -36,6 +36,7 @@ import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.BaseActivator;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.deploy.ServiceHandler;
+import org.switchyard.standalone.SwitchYard;
 
 public class SwitchYardTest {
 

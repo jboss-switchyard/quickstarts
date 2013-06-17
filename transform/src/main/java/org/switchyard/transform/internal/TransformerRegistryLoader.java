@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.transform;
+package org.switchyard.transform.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +37,8 @@ import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.exception.DuplicateTransformerException;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.transform.Transformer;
+import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.config.model.JavaTransformModel;
 
 /**
@@ -231,7 +233,7 @@ public class TransformerRegistryLoader {
 
         Class<?> factoryClass = transformerFactoryClass.value();
         if (!TransformerFactory.class.isAssignableFrom(factoryClass)) {
-            throw new SwitchYardException("Invalid TransformerFactory implementation.  Must implement '" + org.switchyard.transform.TransformerFactory.class.getName() + "'.");
+            throw new SwitchYardException("Invalid TransformerFactory implementation.  Must implement '" + org.switchyard.transform.internal.TransformerFactory.class.getName() + "'.");
         }
 
         try {

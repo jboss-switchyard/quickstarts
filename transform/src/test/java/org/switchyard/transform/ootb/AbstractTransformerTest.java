@@ -23,7 +23,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.switchyard.internal.DefaultMessage;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
-import org.switchyard.transform.TransformerRegistryLoader;
+import org.switchyard.transform.internal.TransformerRegistryLoader;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>

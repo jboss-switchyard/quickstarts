@@ -25,8 +25,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.Transformer;
-import org.switchyard.transform.TransformerFactory;
 import org.switchyard.transform.config.model.JSONTransformModel;
+import org.switchyard.transform.internal.TransformerFactory;
 
 /**
  * JSON Transformer factory.

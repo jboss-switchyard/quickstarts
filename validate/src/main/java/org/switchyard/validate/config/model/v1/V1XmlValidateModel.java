@@ -23,12 +23,13 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.config.model.validate.v1.V1BaseValidateModel;
-import org.switchyard.validate.ValidatorFactoryClass;
 import org.switchyard.validate.config.model.SchemaCatalogsModel;
 import org.switchyard.validate.config.model.SchemaFilesModel;
 import org.switchyard.validate.config.model.XmlSchemaType;
 import org.switchyard.validate.config.model.XmlValidateModel;
-import org.switchyard.validate.xml.XmlValidatorFactory;
+import org.switchyard.validate.internal.ValidatorFactoryClass;
+import org.switchyard.validate.xml.internal.XmlValidatorFactory;
+
 import javax.xml.namespace.QName;
 
 /**

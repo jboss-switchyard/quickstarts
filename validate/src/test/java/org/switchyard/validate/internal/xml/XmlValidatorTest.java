@@ -30,7 +30,7 @@ import org.switchyard.internal.DefaultMessage;
 import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.AbstractValidatorTestCase;
-import org.switchyard.validate.xml.XmlValidator;
+import org.switchyard.validate.xml.internal.XmlValidator;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 

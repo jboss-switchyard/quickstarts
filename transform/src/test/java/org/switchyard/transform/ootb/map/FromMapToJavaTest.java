@@ -24,7 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.Transformer;
-import org.switchyard.transform.TransformerUtil;
+import org.switchyard.transform.internal.TransformerUtil;
 import org.switchyard.transform.ootb.map.ordermodel.Item;
 import org.switchyard.transform.ootb.map.ordermodel.Order;
 

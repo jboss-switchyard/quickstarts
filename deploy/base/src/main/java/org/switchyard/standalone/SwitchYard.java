@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard;
+package org.switchyard.standalone;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.switchyard.ServiceDomain;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.ActivatorLoader;
 import org.switchyard.deploy.ServiceDomainManager;

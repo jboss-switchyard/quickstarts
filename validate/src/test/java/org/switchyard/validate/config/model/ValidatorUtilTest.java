@@ -30,8 +30,8 @@ import org.switchyard.annotations.Validator;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.validate.BaseValidator;
 import org.switchyard.validate.ValidationResult;
-import org.switchyard.validate.ValidatorTypes;
-import org.switchyard.validate.ValidatorUtil;
+import org.switchyard.validate.internal.ValidatorTypes;
+import org.switchyard.validate.internal.ValidatorUtil;
 
 /**
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>

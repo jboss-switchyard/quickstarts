@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.metadata.java.JavaService;
-import org.switchyard.transform.TransformerRegistryLoader;
+import org.switchyard.transform.internal.TransformerRegistryLoader;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 

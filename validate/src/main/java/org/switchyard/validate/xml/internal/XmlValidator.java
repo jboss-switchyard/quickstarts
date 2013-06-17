@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.validate.xml;
+package org.switchyard.validate.xml.internal;
 
 import java.io.File;
 import java.io.IOException;

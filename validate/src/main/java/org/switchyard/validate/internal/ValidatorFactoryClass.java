@@ -16,27 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.validate.xml;
 
-import org.apache.log4j.Logger;
-import org.switchyard.validate.Validator;
-import org.switchyard.validate.ValidatorFactory;
-import org.switchyard.validate.config.model.XmlValidateModel;
+package org.switchyard.validate.internal;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * Transformer factory class annotation.
+ *
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public final class XmlValidatorFactory implements ValidatorFactory<XmlValidateModel>{
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Inherited
+public @interface ValidatorFactoryClass {
 
-    private static final Logger LOGGER = Logger.getLogger(XmlValidatorFactory.class);
-    
     /**
-     * Create a {@link Validator} instance from the supplied {@link XmlValidateModel}.
-     * @param model the XML Validator model. 
-     * @return the Transformer instance.
+     * The component factory class.
      */
-    public Validator newValidator(XmlValidateModel model) {
-        return new XmlValidator(model.getName(), model);
-    }
-    
+    Class<? extends ValidatorFactory> value();
 }

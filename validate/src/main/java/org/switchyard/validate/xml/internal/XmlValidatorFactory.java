@@ -16,42 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard.validate;
+package org.switchyard.validate.xml.internal;
 
-import javax.xml.namespace.QName;
+import org.apache.log4j.Logger;
+import org.switchyard.validate.Validator;
+import org.switchyard.validate.config.model.XmlValidateModel;
+import org.switchyard.validate.internal.ValidatorFactory;
 
 /**
- * Validator data types.
- *
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-public class ValidatorTypes {
+public final class XmlValidatorFactory implements ValidatorFactory<XmlValidateModel>{
 
-    private QName _name;
-
+    private static final Logger LOGGER = Logger.getLogger(XmlValidatorFactory.class);
+    
     /**
-     * Public constructor.
-     *
-     * @param name type.
+     * Create a {@link Validator} instance from the supplied {@link XmlValidateModel}.
+     * @param model the XML Validator model. 
+     * @return the Transformer instance.
      */
-    ValidatorTypes(QName name) {
-        this._name = name;
+    public Validator newValidator(XmlValidateModel model) {
+        return new XmlValidator(model.getName(), model);
     }
-
-    /**
-     * Get name.
-     *
-     * @return name.
-     */
-    public QName getName() {
-        return _name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return String.format("%s [name=%s]", getClass().getSimpleName(), getName());
-    }
+    
 }

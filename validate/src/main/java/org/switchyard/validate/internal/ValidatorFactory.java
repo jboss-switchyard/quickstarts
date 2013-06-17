@@ -1,3 +1,4 @@
+package org.switchyard.validate.internal;
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
@@ -17,26 +18,24 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.transform;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+
+import org.switchyard.config.model.validate.ValidateModel;
+import org.switchyard.validate.Validator;
 
 /**
- * Transformer factory class annotation.
+ * Validator Factory.
  *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
+ *
+ * @param <T> ValidatorModel type.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Inherited
-public @interface TransformerFactoryClass {
+public interface ValidatorFactory<T extends ValidateModel> {
 
     /**
-     * The component factory class.
+     * Create a new {@link Validator} instance.
+     * @param model The Validator config model.
+     * @return The Validator instance.
      */
-    Class<? extends TransformerFactory> value();
+    Validator<?> newValidator(T model);
 }

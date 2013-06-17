@@ -36,9 +36,9 @@ import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.transform.AbstractTransformerTestCase;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
-import org.switchyard.transform.TransformerRegistryLoader;
 import org.switchyard.transform.config.model.v1.V1XsltTransformModel;
-import org.switchyard.transform.xslt.XsltTransformer;
+import org.switchyard.transform.internal.TransformerRegistryLoader;
+import org.switchyard.transform.xslt.internal.XsltTransformer;
 import org.xml.sax.SAXException;
 
 /**

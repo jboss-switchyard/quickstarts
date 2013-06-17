@@ -20,7 +20,7 @@
 package org.switchyard.deployment;
 
 import org.apache.log4j.Logger;
-import org.switchyard.SwitchYard;
+import org.switchyard.standalone.SwitchYard;
 import org.switchyard.deploy.internal.AbstractDeployment;
 
 import javax.servlet.ServletContext;

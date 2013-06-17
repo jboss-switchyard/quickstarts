@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.validate;
+package org.switchyard.validate.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +33,8 @@ import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.exception.DuplicateValidatorException;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.validate.Validator;
+import org.switchyard.validate.ValidatorRegistry;
 
 /**
  * {@link ValidatorRegistry} loader class.

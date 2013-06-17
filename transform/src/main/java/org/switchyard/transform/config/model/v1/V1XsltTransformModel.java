@@ -24,9 +24,9 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
-import org.switchyard.transform.TransformerFactoryClass;
 import org.switchyard.transform.config.model.XsltTransformModel;
-import org.switchyard.transform.xslt.XsltTransformFactory;
+import org.switchyard.transform.internal.TransformerFactoryClass;
+import org.switchyard.transform.xslt.internal.XsltTransformFactory;
 
 /**
  * @author Alejandro Montenegro <a

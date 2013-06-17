@@ -25,6 +25,7 @@ import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.config.model.validate.ValidatesModel;
+import org.switchyard.validate.internal.ValidatorUtil;
 
 import java.io.IOException;
 import java.io.InputStream;

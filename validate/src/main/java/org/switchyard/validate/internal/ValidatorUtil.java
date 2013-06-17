@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.validate;
+package org.switchyard.validate.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,6 +37,9 @@ import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.java.JavaService;
+import org.switchyard.validate.BaseValidator;
+import org.switchyard.validate.ValidationResult;
+import org.switchyard.validate.Validator;
 import org.switchyard.validate.config.model.JavaValidateModel;
 
 /**
@@ -360,12 +363,12 @@ public final class ValidatorUtil {
 
         Class<?> factoryClass = validatorFactoryClass.value();
 
-        if (!org.switchyard.validate.ValidatorFactory.class.isAssignableFrom(factoryClass)) {
-            throw new SwitchYardException("Invalid ValidatorFactory implementation.  Must implement '" + org.switchyard.validate.ValidatorFactory.class.getName() + "'.");
+        if (!org.switchyard.validate.internal.ValidatorFactory.class.isAssignableFrom(factoryClass)) {
+            throw new SwitchYardException("Invalid ValidatorFactory implementation.  Must implement '" + org.switchyard.validate.internal.ValidatorFactory.class.getName() + "'.");
         }
 
         try {
-            return (org.switchyard.validate.ValidatorFactory) factoryClass.newInstance();
+            return (org.switchyard.validate.internal.ValidatorFactory) factoryClass.newInstance();
         } catch (Exception e) {
             throw new SwitchYardException("Failed to create an instance of ValidatorFactory '" + factoryClass.getName() + "'.  Class must have a public default constructor and not be abstract.");
         }

@@ -8,6 +8,7 @@ import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
+import org.switchyard.transform.internal.TransformerRegistryLoader;
 
 public class TransformerRegistryLoaderTest {
 

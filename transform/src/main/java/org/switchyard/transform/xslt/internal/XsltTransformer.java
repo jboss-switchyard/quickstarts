@@ -18,7 +18,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.transform.xslt;
+package org.switchyard.transform.xslt.internal;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.ErrorListener;

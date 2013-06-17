@@ -16,27 +16,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
+package org.switchyard.validate.internal;
 
-package org.switchyard.validate;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.xml.namespace.QName;
 
 /**
- * Transformer factory class annotation.
+ * Validator data types.
  *
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Inherited
-public @interface ValidatorFactoryClass {
+public class ValidatorTypes {
+
+    private QName _name;
 
     /**
-     * The component factory class.
+     * Public constructor.
+     *
+     * @param name type.
      */
-    Class<? extends ValidatorFactory> value();
+    ValidatorTypes(QName name) {
+        this._name = name;
+    }
+
+    /**
+     * Get name.
+     *
+     * @return name.
+     */
+    public QName getName() {
+        return _name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("%s [name=%s]", getClass().getSimpleName(), getName());
+    }
 }

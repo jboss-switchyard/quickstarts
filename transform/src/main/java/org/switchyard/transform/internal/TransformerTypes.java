@@ -16,24 +16,54 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
+package org.switchyard.transform.internal;
 
-package org.switchyard.transform;
-
-import org.switchyard.config.model.transform.TransformModel;
+import javax.xml.namespace.QName;
 
 /**
- * Transformer Factory.
+ * Transformer data types.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
- *
- * @param <T> TransformerModel type.
  */
-public interface TransformerFactory<T extends TransformModel> {
+public class TransformerTypes {
+
+    private QName _from;
+    private QName _to;
 
     /**
-     * Create a new {@link Transformer} instance.
-     * @param model The Transformer config model.
-     * @return The Transformer instance.
+     * Public constructor.
+     *
+     * @param from From type.
+     * @param to   To type.
      */
-    Transformer<?, ?> newTransformer(T model);
+    TransformerTypes(QName from, QName to) {
+        this._from = from;
+        this._to = to;
+    }
+
+    /**
+     * Get from.
+     *
+     * @return from.
+     */
+    public QName getFrom() {
+        return _from;
+    }
+
+    /**
+     * Get to.
+     *
+     * @return to.
+     */
+    public QName getTo() {
+        return _to;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return String.format("%s [from=%s, to=%s]", getClass().getSimpleName(), getFrom(), getTo());
+    }
 }

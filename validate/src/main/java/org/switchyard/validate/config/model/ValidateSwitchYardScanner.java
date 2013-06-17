@@ -34,9 +34,9 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.config.model.validate.v1.V1ValidatesModel;
-import org.switchyard.validate.ValidatorTypes;
-import org.switchyard.validate.ValidatorUtil;
 import org.switchyard.validate.config.model.v1.V1JavaValidateModel;
+import org.switchyard.validate.internal.ValidatorTypes;
+import org.switchyard.validate.internal.ValidatorUtil;
 
 /**
  * Scanner for {@link org.switchyard.validate.Validator} implementations.

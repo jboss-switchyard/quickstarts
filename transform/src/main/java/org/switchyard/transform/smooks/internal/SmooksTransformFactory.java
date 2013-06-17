@@ -23,9 +23,9 @@ import org.milyn.Smooks;
 import org.milyn.javabean.binding.model.ModelSet;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.Transformer;
-import org.switchyard.transform.TransformerFactory;
 import org.switchyard.transform.config.model.SmooksTransformModel;
 import org.switchyard.transform.config.model.SmooksTransformType;
+import org.switchyard.transform.internal.TransformerFactory;
 
 import javax.xml.namespace.QName;
 

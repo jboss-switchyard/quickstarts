@@ -1,4 +1,3 @@
-package org.switchyard.validate;
 /*
  * JBoss, Home of Professional Open Source
  * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
@@ -18,23 +17,24 @@ package org.switchyard.validate;
  * MA  02110-1301, USA.
  */
 
+package org.switchyard.transform.internal;
 
-
-import org.switchyard.config.model.validate.ValidateModel;
+import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.transform.Transformer;
 
 /**
- * Validator Factory.
+ * Transformer Factory.
  *
- * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
+ * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  *
- * @param <T> ValidatorModel type.
+ * @param <T> TransformerModel type.
  */
-public interface ValidatorFactory<T extends ValidateModel> {
+public interface TransformerFactory<T extends TransformModel> {
 
     /**
-     * Create a new {@link Validator} instance.
-     * @param model The Validator config model.
-     * @return The Validator instance.
+     * Create a new {@link Transformer} instance.
+     * @param model The Transformer config model.
+     * @return The Transformer instance.
      */
-    Validator<?> newValidator(T model);
+    Transformer<?, ?> newTransformer(T model);
 }
