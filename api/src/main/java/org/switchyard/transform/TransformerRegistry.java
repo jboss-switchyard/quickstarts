@@ -19,6 +19,7 @@
 
 package org.switchyard.transform;
 
+import java.util.List;
 import javax.xml.namespace.QName;
 
 /**
@@ -64,4 +65,26 @@ public interface TransformerRegistry {
      * @return transformer
      */
     Transformer<?, ?> getTransformer(QName from, QName to);
+    
+    /**
+     * Get a list of currently registered Transformers.
+     * @return ArrayList<Transformer<?,?>> list of currently registered transformers.
+     */
+    List<Transformer<?,?>> getRegisteredTransformers();
+    
+    /**
+     * Get a transform sequence wiring transformers.
+     * @param from from
+     * @param to to
+     * @return transformer
+     */
+    TransformSequence getTransformSequence(QName from, QName to);
+    
+    /**
+     * Set an instance of a TransformResolver.
+     * @param resolver resolver
+     * @return 
+     */    
+    void setTransfomResolver(TransformResolver resolver);
+
 }

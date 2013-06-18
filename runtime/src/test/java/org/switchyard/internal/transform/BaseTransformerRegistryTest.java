@@ -25,8 +25,10 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.internal.DefaultMessage;
 import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.BaseTransformer;
+import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
@@ -100,6 +102,22 @@ public class BaseTransformerRegistryTest {
 
         transformer = _registry.getTransformer(getType(D.class), new QName("target1"));
     }
+ 
+    @Test
+    public void testGetTransformSequence() {
+        final QName A = new QName("a");
+        final QName B = new QName("b");
+        final QName C = new QName("c");
+        
+        BaseTransformerRegistry _registry = new BaseTransformerRegistry();
+        _registry.addTransformer(new TestTransformer2(A, B));
+        _registry.addTransformer(new TestTransformer2(B, C));
+        
+        TransformSequence transformSequence = _registry.getTransformSequence(A, C);
+        DefaultMessage message = new DefaultMessage().setContent(A);
+        transformSequence.apply(message, _registry);
+        Assert.assertEquals(C, message.getContent());      
+    }
 
     private void addTransformer(Class<?> type) {
         QName fromType = getType(type);
@@ -126,6 +144,24 @@ public class BaseTransformerRegistryTest {
         @Override
         public Object transform(Object from) {
             return from;
+        }
+    }
+    
+    private class TestTransformer2 extends BaseTransformer {
+
+        private QName from;
+        private QName to;
+
+        private TestTransformer2(QName from, QName to) {
+            super(from, to);
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        public Object transform(Object from) {
+            Assert.assertEquals(this.from, from);
+            return to;
         }
     }
 }

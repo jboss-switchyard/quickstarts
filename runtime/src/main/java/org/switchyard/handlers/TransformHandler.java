@@ -91,6 +91,11 @@ public class TransformHandler extends BaseHandler {
         }
         
         // Apply transforms to the message...
+        TransformSequence transformSequence = _registry.getTransformSequence(TransformSequence.getCurrentMessageType(exchange), TransformSequence.getTargetMessageType(exchange));
+        if (transformSequence != null) {
+            exchange.getContext().setProperty(TransformSequence.class.getName(), transformSequence);
+        }
+    
         TransformSequence.applySequence(exchange, _registry);
         if (!TransformSequence.assertTransformsApplied(exchange)) {
             QName actualPayloadType = TransformSequence.getCurrentMessageType(exchange);

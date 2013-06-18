@@ -36,6 +36,8 @@ import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.event.EventPublisher;
 import org.switchyard.event.TransformerAddedEvent;
 import org.switchyard.event.TransformerRemovedEvent;
+import org.switchyard.transform.TransformResolver;
+import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
@@ -58,6 +60,7 @@ public class BaseTransformerRegistry implements TransformerRegistry {
         new ConcurrentHashMap<NameKey, Transformer<?,?>>();
 
     private EventPublisher _eventPublisher;
+    private TransformResolver _transformResolver = new BaseTransformResolver(this);
 
     /**
      * Constructor.
@@ -121,6 +124,11 @@ public class BaseTransformerRegistry implements TransformerRegistry {
         }
 
         return transformer;
+    }
+
+    @Override
+    public TransformSequence getTransformSequence(QName from, QName to) {        
+        return _transformResolver.resolveSequence(from, to);
     }
 
     @Override
@@ -198,6 +206,16 @@ public class BaseTransformerRegistry implements TransformerRegistry {
         return removed;
     }
     
+    @Override
+    public List<Transformer<?, ?>> getRegisteredTransformers() {
+        return new ArrayList<Transformer<?, ?>>(_transformers.values());
+    }
+
+    @Override
+    public void setTransfomResolver(TransformResolver resolver) {
+        this._transformResolver = resolver;        
+    }
+
     // Convenience method to guard against cases when an event publisher has 
     // not been set.
     private void publishEvent(EventObject event) {
