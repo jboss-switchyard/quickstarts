@@ -21,10 +21,15 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-security-jboss</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard: Security - JBoss</name>
     <description>The JBoss security library.</description>
     <url>http://switchyard.org</url>
+    <properties>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.security.jboss.*
+        </switchyard.osgi.export.pkg>
+    </properties>
     <dependencies>
         <!-- internal dependencies -->
         <dependency>

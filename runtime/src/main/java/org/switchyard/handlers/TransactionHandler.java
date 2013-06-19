@@ -25,6 +25,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
 import org.switchyard.Property;
+import org.switchyard.ProviderRegistry;
 import org.switchyard.Scope;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.policy.PolicyUtil;
@@ -55,12 +56,14 @@ public class TransactionHandler implements ExchangeHandler {
      * Create a new TransactionHandler.
      */
     public TransactionHandler() {
-        try {
-            _transactionManager = (TransactionManager)
-                new InitialContext().lookup(JNDI_TRANSACTION_MANAGER);
-        } catch (javax.naming.NamingException nmEx) {
-            _log.debug("Unable to find TransactionManager in JNDI at " + JNDI_TRANSACTION_MANAGER 
-                    + " - Transaction Policy handling will not be available.");
+        _transactionManager = ProviderRegistry.getProvider(TransactionManager.class);
+        if (_transactionManager == null) {
+            try {
+                _transactionManager = (TransactionManager) new InitialContext().lookup(JNDI_TRANSACTION_MANAGER);
+            } catch (javax.naming.NamingException nmEx) {
+                _log.debug("Unable to find TransactionManager in JNDI at " + TransactionHandler.JNDI_TRANSACTION_MANAGER
+                        + " - Transaction Policy handling will not be available.");
+            }
         }
     }
     

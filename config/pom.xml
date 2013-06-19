@@ -21,10 +21,15 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-config</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard: Configuration</name>
     <description>The SwitchYard Configuration library.</description>
     <url>http://switchyard.org</url>
+    <properties>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.config.*
+        </switchyard.osgi.export.pkg>
+    </properties>
     <dependencies>
         <!-- internal dependencies -->
         <dependency>

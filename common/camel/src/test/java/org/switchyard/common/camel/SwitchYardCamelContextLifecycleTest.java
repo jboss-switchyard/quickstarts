@@ -24,11 +24,11 @@ import org.switchyard.MockDomain;
  */
 public class SwitchYardCamelContextLifecycleTest {
 
-    private SwitchYardCamelContext context;
+    private SwitchYardCamelContextImpl context;
 
     @Before
     public void setUp() {
-        context = new SwitchYardCamelContext();
+        context = new SwitchYardCamelContextImpl();
         context.setServiceDomain(new MockDomain());
     }
 

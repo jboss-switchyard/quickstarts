@@ -21,10 +21,15 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-serial-jackson</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard: Serial - Jackson</name>
     <description>The Jackson serialization library.</description>
     <url>http://switchyard.org</url>
+    <properties>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.serial.jackson.*
+        </switchyard.osgi.export.pkg>
+    </properties>
     <dependencies>
         <!-- internal dependencies -->
         <dependency>

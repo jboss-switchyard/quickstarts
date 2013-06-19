@@ -21,10 +21,28 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-transform</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard: Transform</name>
     <description>The SwitchYard Transform library.</description>
     <url>http://switchyard.org</url>
+    <properties>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.transform.config.*;
+            org.switchyard.transform.internal.*;
+            org.switchyard.transform.jaxb.*;
+            org.switchyard.transform.json.*;
+            org.switchyard.transform.ootb.*;
+            org.switchyard.transform.smooks.*;
+            org.switchyard.transform.xslt.*;
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.import>
+            org.milyn.*;resolution:=optional,
+            javax.enterprise.inject.spi;resolution:=optional,
+            org.switchyard.common.cdi;resolution:=optional;${switchyard.osgi.import.switchyard.version},
+            org.switchyard.config.model;org.switchyard.*;${switchyard.osgi.import.switchyard.version},
+            *
+        </switchyard.osgi.import>
+    </properties>
     <dependencies>
         <!-- internal dependencies -->
         <dependency>

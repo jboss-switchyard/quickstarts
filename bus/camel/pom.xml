@@ -21,10 +21,15 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-bus-camel</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard: Camel Exchange Bus</name>
     <description>Bus provider using Camel Core</description>
     <url>http://switchyard.org</url>
+    <properties>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.bus.camel.*
+        </switchyard.osgi.export.pkg>
+    </properties>
     <dependencies>
         <!-- internal dependencies -->
         <dependency>

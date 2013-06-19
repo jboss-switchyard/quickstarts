@@ -27,6 +27,7 @@ import org.jboss.logging.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
+import org.switchyard.ProviderRegistry;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
@@ -35,7 +36,8 @@ import org.switchyard.security.context.SecurityContext;
 import org.switchyard.security.context.SecurityContextManager;
 import org.switchyard.security.credential.ConfidentialityCredential;
 import org.switchyard.security.credential.PrincipalCredential;
-import org.switchyard.security.provider.SecurityProvider;
+import org.switchyard.security.spi.JaasSecurityProvider;
+import org.switchyard.security.spi.SecurityProvider;
 
 /**
  * A security ExchangeHandler implementation.
@@ -68,8 +70,12 @@ public class SecurityHandler extends BaseHandler {
      */
     public SecurityHandler(ServiceDomain serviceDomain, SecurityAction securityAction) {
         _securityContextManager = new SecurityContextManager(serviceDomain);
-        _securityProvider = SecurityProvider.instance();
-        _securityAction = securityAction;
+        SecurityProvider provider = ProviderRegistry.getProvider(SecurityProvider.class);
+        if (provider == null) {
+            provider = new JaasSecurityProvider();
+        }
+        _securityProvider = provider;
+        _securityAction = action;
     }
 
     /**

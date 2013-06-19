@@ -21,10 +21,18 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-runtime</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard: Runtime</name>
     <description>The core runtime library.</description>
     <url>http://switchyard.org</url>
+    <properties>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.handlers.*;
+            org.switchyard.internal.*;
+            org.switchyard.runtime.*;
+            org.switchyard.spi.*
+        </switchyard.osgi.export.pkg>
+    </properties>
     <build>
         <plugins>
             <plugin>

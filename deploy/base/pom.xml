@@ -21,10 +21,13 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-deploy</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard: Deploy </name>
     <description>The Deploy SPI.</description>
     <url>http://switchyard.org</url>
+    <properties>
+        <switchyard.osgi.export.pkg>org.switchyard.deploy.*;org.switchyard.standalone.*</switchyard.osgi.export.pkg>
+    </properties>
     <dependencies>
         <!-- internal dependencies -->
         <dependency>

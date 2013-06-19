@@ -13,11 +13,7 @@
  */
 package org.switchyard.security.provider;
 
-import java.util.Iterator;
-import java.util.ServiceLoader;
-
 import org.switchyard.ServiceSecurity;
-import org.switchyard.security.BaseSecurityLogger;
 import org.switchyard.security.context.SecurityContext;
 
 /**
@@ -25,29 +21,15 @@ import org.switchyard.security.context.SecurityContext;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public abstract class SecurityProvider {
-
-    private static final SecurityProvider INSTANCE;
-    static {
-        SecurityProvider instance;
-        try {
-            ServiceLoader<SecurityProvider> services = ServiceLoader.load(SecurityProvider.class, SecurityProvider.class.getClassLoader());
-            Iterator<SecurityProvider> iterator = services.iterator();
-            instance = iterator.hasNext() ? iterator.next() : null;
-        } catch (Throwable t) {
-            instance = null;
-        }
-        INSTANCE = instance != null ? instance : new JaasSecurityProvider();
-        BaseSecurityLogger.ROOT_LOGGER.usingSecurityProviderImplementation(INSTANCE.getClass().getName());
-    }
-
+public interface SecurityProvider {
+    
    /**
     * Authenticates the SecurityContext for the ServiceSecurity.
     * @param serviceSecurity the ServiceSecurity
     * @param securityContext the SecurityContext
     * @return whether authentication was successful
     */
-   public abstract boolean authenticate(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+   boolean authenticate(ServiceSecurity serviceSecurity, SecurityContext securityContext);
 
    /**
     * Propagates any existing container-specific (most likely thread-local) security information into the SecurityContext.
@@ -55,7 +37,7 @@ public abstract class SecurityProvider {
     * @param securityContext the SecurityContext
     * @return whether propagation was successful
     */
-   public abstract boolean propagate(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+   boolean propagate(ServiceSecurity serviceSecurity, SecurityContext securityContext);
 
    /**
      * Adds the ServiceSecurity's runAs Role to the SecurityContext's Subject.
@@ -63,7 +45,7 @@ public abstract class SecurityProvider {
      * @param securityContext the SecurityContext
      * @return whether adding the runAs Role was successful
     */
-   public abstract boolean addRunAs(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+   boolean addRunAs(ServiceSecurity serviceSecurity, SecurityContext securityContext);
 
    /**
     * Checks if the Subject associated in the SecurityContext has at least one of the allowed roles in the ServiceSecurity.
@@ -71,7 +53,7 @@ public abstract class SecurityProvider {
     * @param securityContext the SecurityContext
     * @return whether the allowed roles check was successful
     */
-   public abstract boolean checkRolesAllowed(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+   boolean checkRolesAllowed(ServiceSecurity serviceSecurity, SecurityContext securityContext);
 
    /**
     * Clears the SecurityContext and any underlying SecurityContextAssociation.
@@ -79,14 +61,5 @@ public abstract class SecurityProvider {
     * @param securityContext the SecurityContext
     * @return whether the clear was successful
     */
-   public abstract boolean clear(ServiceSecurity serviceSecurity, SecurityContext securityContext);
-
-   /**
-    * Gets the singleton instance of the SecurityProvider.
-    * @return the singleton instance of the SecurityProvider
-    */
-   public static final SecurityProvider instance() {
-       return INSTANCE;
-   }
-
+   boolean clear(ServiceSecurity serviceSecurity, SecurityContext securityContext);
 }

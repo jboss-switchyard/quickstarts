@@ -21,10 +21,23 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-validate</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard: Validate</name>
     <description>The SwitchYard Validate library.</description>
     <url>http://switchyard.org</url>
+    <properties>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.validate.config.*;
+            org.switchyard.validate.internal.*;
+            org.switchyard.validate.xml.*;
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.import>
+            javax.enterprise.inject.spi;resolution:=optional,
+            org.switchyard.common.cdi;resolution:=optional;${switchyard.osgi.import.switchyard.version},
+            org.switchyard.config.model;org.switchyard.*;${switchyard.osgi.import.switchyard.version},
+            *
+        </switchyard.osgi.import>
+    </properties>
     <dependencies>
         <!-- internal dependencies -->
         <dependency>

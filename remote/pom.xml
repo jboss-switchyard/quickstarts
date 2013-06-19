@@ -21,10 +21,20 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-remote</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard: Remote</name>
     <description>Library used to communicate with remote SwitchYard instances</description>
     <url>http://switchyard.org</url>
+    <properties>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.remote.*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.import>
+            org.switchyard.*;${switchyard.osgi.import.switchyard.version},
+            org.infinispan*;resolution:=optional,
+            *
+        </switchyard.osgi.import>
+    </properties>
     <dependencies>
         <!-- internal dependencies -->
         <dependency>

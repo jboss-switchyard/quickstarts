@@ -52,7 +52,7 @@ import org.w3c.dom.ls.LSResourceResolver;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
-public final class Descriptor {
+public class Descriptor {
 
     /** The default location to looks for a Descriptor's Properties.  ALL properties found with this name via {@link org.switchyard.common.type.Classes#getResources(String, Class)} will be combined. */
     public static final String DEFAULT_PROPERTIES = "/org/switchyard/config/model/descriptor.properties";

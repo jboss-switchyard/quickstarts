@@ -46,6 +46,7 @@ import org.switchyard.bus.camel.handler.RuntimeErrorInHandler;
 import org.switchyard.bus.camel.handler.RuntimeErrorInterceptor;
 import org.switchyard.bus.camel.handler.TypeInterceptor;
 import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.common.camel.SwitchYardCamelContextImpl;
 import org.switchyard.internal.ServiceReferenceImpl;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutOperation;
@@ -57,13 +58,13 @@ public class CamelExchangeBusTest {
     private final static String TEST_CONTENT = "Some content to sent";
 
     private CamelExchangeBus _provider;
-    private SwitchYardCamelContext _camelContext;
+    private SwitchYardCamelContextImpl _camelContext;
     private MockDomain _domain;
 
     @Before
     public void setUp() throws Exception {
         _domain = new MockDomain();
-        _camelContext = new SwitchYardCamelContext();
+        _camelContext = new SwitchYardCamelContextImpl();
         _camelContext.setServiceDomain(_domain);
         _provider = new CamelExchangeBus(_camelContext);
         _provider.init(_domain);

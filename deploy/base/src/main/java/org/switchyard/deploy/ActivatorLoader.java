@@ -15,9 +15,9 @@ package org.switchyard.deploy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
 
 import org.jboss.logging.Logger;
+import org.switchyard.ProviderRegistry;
 import org.switchyard.ServiceDomain;
 
 /**
@@ -40,8 +40,7 @@ public final class ActivatorLoader {
      */
     public static List<Activator> createActivators(ServiceDomain serviceDomain) {
         List<Activator> activators = new ArrayList<Activator>();
-        ServiceLoader<Component> componentLoader = ServiceLoader.load(Component.class);
-        for (Component component : componentLoader) {
+        for (Component component : ProviderRegistry.getProviders(Component.class)) {
             Activator activator = component.createActivator(serviceDomain);
             _log.debug("Registered activator " + activator.getClass());
             activators.add(activator);

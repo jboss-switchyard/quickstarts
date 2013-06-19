@@ -84,7 +84,7 @@ public abstract class AbstractDeployment {
     /**
      * Set the parent deployment.
      * <p/>
-     * This must be called before calling {@link #init(org.switchyard.ServiceDomain)}.
+     * This must be called before calling {@link #init(org.switchyard.ServiceDomain,List)}.
      * @param parentDeployment The parent deployment.
      */
     public void setParentDeployment(AbstractDeployment parentDeployment) {
