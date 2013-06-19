@@ -93,7 +93,7 @@ public class TransformHandler extends BaseHandler {
         // Apply transforms to the message...
         TransformSequence transformSequence = _registry.getTransformSequence(TransformSequence.getCurrentMessageType(exchange), TransformSequence.getTargetMessageType(exchange));
         if (transformSequence != null) {
-            exchange.getContext().setProperty(TransformSequence.class.getName(), transformSequence);
+            transformSequence.associateWith(exchange.getMessage());
         }
     
         TransformSequence.applySequence(exchange, _registry);

@@ -1,6 +1,6 @@
 package org.switchyard.internal.transform;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.xml.namespace.QName;
 
@@ -14,55 +14,72 @@ import org.switchyard.transform.TransformerRegistry;
  * direct/indirect transform sequences.
  */
 public class BaseTransformResolver implements TransformResolver {
+    
+    /**
+     * The maximum number of edges to travel in the graph to connect two nodes.
+     */
+    public static final int DEFAULT_HOPS = 2;
+    
+    private int _hops = DEFAULT_HOPS;
     private TransformerRegistry _registry;
 
     /**
      * Create a new TransformResolver instance.
      */    
     public BaseTransformResolver() {
-        super();
+        
     }
 
+    /**
+     * Create a new transform resolver that will traverse the graph the specified distance
+     * when searching for transform sequences.
+     * @param numHops max number of edges to travel when searching for a sequence
+     */
+    public BaseTransformResolver(int numHops) {
+        _hops = numHops;
+    }
 
     /**
      * Create a new TransformResolver instance and associate it with a TransformRegistry.
-     * @param registry set of transformers to add to registry
+     * @param registry registry to use when searching for a transform path
      */
     public BaseTransformResolver(TransformerRegistry registry) {
-        super();
-        this._registry = registry;
+        _registry = registry;
+    }
+    
+    /**
+     * Create a new TransformResolver instance and associate it with a TransformRegistry.
+     * @param registry set of transformers to add to registry
+     * @param numHops max number of edges to travel when searching for a sequence
+     */
+    public BaseTransformResolver(TransformerRegistry registry, int numHops) {
+        _registry = registry;
+        _hops = numHops;
     }
 
 
     @Override
     public TransformSequence resolveSequence(QName from, QName to) {
-        ArrayList<Transformer<?,?>> fromMatches = new ArrayList<Transformer<?,?>>();
-        ArrayList<Transformer<?,?>> toMatches = new ArrayList<Transformer<?,?>>();
-        TransformSequence transformSequence = null;
+        // if either one of these is null then there's no chance a sequence will be found
+        if (from == null || to == null) {
+            return null;
+        }
         
-        for (Transformer<?,?> entry : _registry.getRegisteredTransformers()) {
-            if ((entry.getFrom().equals(from)) && (entry.getTo().equals(to))) {
-                transformSequence = TransformSequence.from(entry.getFrom()).to(entry.getTo());
-                break;
-            } else if (entry.getFrom().equals(from)) {
-                fromMatches.add(entry);
-            } else if (entry.getTo().equals(to)) {
-                toMatches.add(entry);
-            }            
+        // if there's a direct hit, set that and bail
+        if (_registry.hasTransformer(from, to)) {
+            return TransformSequence.from(from).to(to);
         }
 
-        if (transformSequence == null) {
-            // match 1st occurence of the first level of indirection (A->B,B->C instead of A->C)
-            for (Transformer<?,?> fromTransformer : fromMatches) {
-                for (Transformer<?,?> toTransformer : toMatches) {
-                    if (fromTransformer.getTo().equals(toTransformer.getFrom())) {
-                        transformSequence = TransformSequence.from(fromTransformer.getFrom()).to(fromTransformer.getTo()).to(to);
-                        break;
-                    }
-                }
+        TransformSequence transformSequence = null;
+        LinkedList<QName> path = new LinkedList<QName>();
+        
+        // walk the graph to see if we can resolve the path
+        if (resolvePath(path, from, to, _hops)) {
+            transformSequence = TransformSequence.from(from);
+            for (QName type : path) {
+                transformSequence.to(type);
             }
         }
-        
         return transformSequence;
     }
 
@@ -82,5 +99,33 @@ public class BaseTransformResolver implements TransformResolver {
         this._registry = registry;
     }
 
+    /**
+     * Recursive depth-first(ish) search for connected types in the transform registry.  There
+     * is no path weighting applied, so the first connection wins. There is no logic to detect 
+     * cycles since the limit parameter prevents infinite loops.
+     */
+    @SuppressWarnings("rawtypes")
+    boolean resolvePath(LinkedList<QName> path, QName fromType, QName toType, int limit) {
+        // check search limit
+        if (limit < 0) {
+            return false;
+        }
+        --limit;
+        
+        // have we arrived at our destination?
+        if (fromType.equals(toType)) {
+            return true;
+        }
+        
+        // go fish
+        for (Transformer fromT : _registry.getTransformersFrom(fromType)) {
+            if (resolvePath(path, fromT.getTo(), toType, limit)) {
+                path.addFirst(fromT.getTo());
+                return true;
+            }
+        }
+        
+        return false;
+    }
     
 }

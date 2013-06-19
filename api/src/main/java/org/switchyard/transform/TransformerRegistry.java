@@ -73,6 +73,20 @@ public interface TransformerRegistry {
     List<Transformer<?,?>> getRegisteredTransformers();
     
     /**
+     * Returns a list of transformers that transform from the specified type.
+     * @param type the type transformed from
+     * @return list of transformers
+     */
+    public List<Transformer<?,?>> getTransformersFrom(QName type);
+    
+    /**
+     * Returns a list of transformers that transform to the specified type.
+     * @param type the type transformed to
+     * @return list of transformers
+     */
+    public List<Transformer<?,?>> getTransformersTo(QName type);
+    
+    /**
      * Get a transform sequence wiring transformers.
      * @param from from
      * @param to to

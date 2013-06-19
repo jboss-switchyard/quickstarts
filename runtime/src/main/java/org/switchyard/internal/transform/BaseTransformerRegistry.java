@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EventObject;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -209,6 +210,32 @@ public class BaseTransformerRegistry implements TransformerRegistry {
     @Override
     public List<Transformer<?, ?>> getRegisteredTransformers() {
         return new ArrayList<Transformer<?, ?>>(_transformers.values());
+    }
+    
+    @Override
+    public List<Transformer<?,?>> getTransformersFrom(QName type) {
+        List<Transformer<?,?>> transforms = new LinkedList<Transformer<?,?>>();
+        
+        for (NameKey key : _transformers.keySet()) {
+            if (key.getFrom() != null && key.getFrom().equals(type)) {
+                transforms.add(_transformers.get(key));
+            }
+        }
+        
+        return transforms;
+    }
+
+    @Override
+    public List<Transformer<?,?>> getTransformersTo(QName type) {
+        List<Transformer<?,?>> transforms = new LinkedList<Transformer<?,?>>();
+        
+        for (NameKey key : _transformers.keySet()) {
+            if (key.getTo() != null && key.getTo().equals(type)) {
+                transforms.add(_transformers.get(key));
+            }
+        }
+        
+        return transforms;
     }
 
     @Override
