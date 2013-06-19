@@ -11,12 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.component.camel;
+package org.switchyard.component.camel.switchyard;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.common.camel.SwitchYardCamelContextImpl;
 import org.switchyard.component.camel.common.CamelConstants;
 
 /**
@@ -26,11 +27,11 @@ public abstract class SwitchYardComponentTestBase extends CamelTestSupport {
 
     protected ServiceDomain _serviceDomain;
 
-    protected SwitchYardCamelContext _camelContext;
+    protected SwitchYardCamelContextImpl _camelContext;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        _camelContext = new SwitchYardCamelContext(false);
+        _camelContext = new SwitchYardCamelContextImpl(false);
         _camelContext.setServiceDomain(_serviceDomain);
         return _camelContext;
     }

@@ -48,21 +48,26 @@ public class JAXWSEndpoint implements Endpoint {
         wsProvider.setInvocationClassLoader(Classes.getTCCL());
         // Hook the handler
         wsProvider.setConsumer(handler);
-        _endpoint = javax.xml.ws.Endpoint.create(bindingId, wsProvider);
+        
         try {
-            Method method = _endpoint.getBinding().getClass().getSuperclass().getMethod("addFeature", new Class<?>[]{WebServiceFeature.class});
-            for (WebServiceFeature feature : features) {
-                method.invoke(_endpoint.getBinding(), feature);
+            _endpoint = javax.xml.ws.Endpoint.create(bindingId, wsProvider, features);
+        } catch (NoSuchMethodError t) {
+            _endpoint = javax.xml.ws.Endpoint.create(bindingId, wsProvider);
+            try {
+                Method method = _endpoint.getBinding().getClass().getSuperclass().getMethod("addFeature", new Class<?>[]{WebServiceFeature.class});
+                for (WebServiceFeature feature : features) {
+                    method.invoke(_endpoint.getBinding(), feature);
+                }
+            } catch (NoSuchMethodException nsme) {
+                // Silent fail
+                LOGGER.error(nsme);
+            } catch (IllegalAccessException iae) {
+                // Silent fail
+                LOGGER.error(iae);
+            } catch (InvocationTargetException ite) {
+                // Silent fail
+                LOGGER.error(ite);
             }
-        } catch (NoSuchMethodException nsme) {
-            // Silent fail
-            LOGGER.error(nsme);
-        } catch (IllegalAccessException iae) {
-            // Silent fail
-            LOGGER.error(iae);
-        } catch (InvocationTargetException ite) {
-            // Silent fail
-            LOGGER.error(ite);
         }
     }
 

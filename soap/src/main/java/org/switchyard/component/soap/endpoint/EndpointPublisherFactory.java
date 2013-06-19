@@ -16,6 +16,7 @@ package org.switchyard.component.soap.endpoint;
 
 import java.util.ServiceLoader;
 
+import org.switchyard.ProviderRegistry;
 import org.switchyard.component.soap.WebServicePublishException;
 
 /**
@@ -29,9 +30,12 @@ public final class EndpointPublisherFactory {
 
     static {
         try {
-            PUBLISHER = ServiceLoader.load(EndpointPublisher.class).iterator().next();
+            PUBLISHER = ProviderRegistry.getProvider(EndpointPublisher.class);
         } catch (Exception e) {
             throw new WebServicePublishException(e);
+        }
+        if (PUBLISHER == null) {
+            throw new WebServicePublishException("Unable to find EndpointPublisher");
         }
     }
 

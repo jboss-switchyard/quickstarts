@@ -20,11 +20,24 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>switchyard-component-camel</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard: Camel Component :: SwitchYard component</name>
     <url>http://switchyard.org</url>
     <properties>
         <directory.camel.resources>${project.build.directory}/dependency/camel/resources</directory.camel.resources>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.component.camel,
+            org.switchyard.component.camel.deploy,
+            org.switchyard.component.camel.model,
+            org.switchyard.component.camel.model.v1,
+            org.switchyard.component.camel.transformer,
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.import>
+            org.switchyard.config.model;org.switchyard.*;${switchyard.osgi.import.switchyard.version},
+            org.apache.camel.spring.*;resolution:=optional,
+            org.springframework.transaction*;resolution:=optional,
+            *
+        </switchyard.osgi.import>
     </properties>
     <dependencies>
         <dependency>

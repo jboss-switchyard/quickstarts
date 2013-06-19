@@ -22,6 +22,17 @@
     </parent>
     <artifactId>switchyard-component-soap</artifactId>
     <name>SwitchYard: SOAP Component</name>
+    <packaging>bundle</packaging>
+    <properties>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.component.soap.*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.import>
+            org.switchyard.*;${switchyard.osgi.import.switchyard.version},
+            org.switchyard.config.model;${switchyard.osgi.import.switchyard.version},
+            *
+        </switchyard.osgi.import>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -138,6 +149,17 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>2.6.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>2.6.8</version>
         </dependency>
     </dependencies>
 </project>

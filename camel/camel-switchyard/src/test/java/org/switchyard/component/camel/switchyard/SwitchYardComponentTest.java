@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.component.camel;
+package org.switchyard.component.camel.switchyard;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -45,7 +45,7 @@ import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 
 /**
- * Test for {@link SwitchYardComponent}.
+ * Test for {@link org.switchyard.component.camel.switchyard.SwitchYardComponent}.
  * 
  * @author Daniel Bevenius
  */

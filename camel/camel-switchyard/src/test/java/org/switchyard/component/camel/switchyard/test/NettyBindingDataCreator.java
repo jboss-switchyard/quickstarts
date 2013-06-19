@@ -11,31 +11,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.component.camel.test;
-
-import java.util.HashSet;
-import java.util.Set;
+package org.switchyard.component.camel.switchyard.test;
 
 import org.apache.camel.Message;
+import org.switchyard.component.camel.common.composer.BindingDataCreator;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
-import org.switchyard.component.common.composer.SecurityBindingData;
-import org.switchyard.security.credential.ConfidentialityCredential;
-import org.switchyard.security.credential.Credential;
 
 /**
- * Secure binding data for test endpoint.
+ * Dedicated binding creator which handles NettyEndpoint exchanges.
  */
-public class SecureBindingData extends CamelBindingData implements SecurityBindingData {
-
-    public SecureBindingData(Message message) {
-        super(message);
-    }
+public class NettyBindingDataCreator implements BindingDataCreator<CamelBindingData> {
 
     @Override
-    public Set<Credential> extractCredentials() {
-        Set<Credential> credentials = new HashSet<Credential>();
-        credentials.add(new ConfidentialityCredential(true));
-        return credentials;
+    public CamelBindingData createBindingData(Message message) {
+        return new SecureBindingData(message);
     }
 
 }

@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.component.camel.util;
+package org.switchyard.component.camel.switchyard.util;
 
 import org.switchyard.Context;
 import org.switchyard.Scope;

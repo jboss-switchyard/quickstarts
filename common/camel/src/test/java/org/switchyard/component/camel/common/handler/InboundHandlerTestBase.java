@@ -30,6 +30,7 @@ import org.junit.BeforeClass;
 import org.mockito.Mockito;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.common.camel.SwitchYardCamelContextImpl;
 import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.model.v1.V1BaseCamelBindingModel;
 import org.switchyard.component.camel.common.transaction.TransactionManagerFactory;
@@ -58,7 +59,7 @@ public abstract class InboundHandlerTestBase {
 
     @Before
     public void startUp() {
-        _camelContext = new SwitchYardCamelContext(false);
+        _camelContext = new SwitchYardCamelContextImpl(false);
         _camelContext.addComponent("switchyard", new MockComponent());
         _configuration = mock(Configuration.class);
     }

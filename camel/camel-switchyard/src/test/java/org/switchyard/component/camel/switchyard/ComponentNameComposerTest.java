@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.component.camel;
+package org.switchyard.component.camel.switchyard;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -22,9 +22,10 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.junit.Test;
+import org.switchyard.component.camel.switchyard.ComponentNameComposer;
 
 /**
- * Tests for {@link ComponentNameComposer}.
+ * Tests for {@link org.switchyard.component.camel.switchyard.ComponentNameComposer}.
  * 
  * @author Daniel Bevenius
  */

@@ -14,17 +14,15 @@
 
 package org.switchyard.component.bean.deploy;
 
+
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
+import org.switchyard.common.cdi.CDIUtil;
 import org.switchyard.component.bean.ClientProxyBean;
 import org.switchyard.component.bean.BeanMessages;
 import org.switchyard.component.bean.internal.ReferenceInvokerBean;
@@ -155,75 +153,20 @@ public class BeanDeploymentMetaData {
      * @return The BeanDeploymentMetaData.
      */
     public static BeanDeploymentMetaData lookupBeanDeploymentMetaData() {
-        try {
-            BeanManager beanManager = getCDIBeanManager();
-
-            Set<Bean<?>> beans = beanManager.getBeans(BeanDeploymentMetaData.class);
-            if (beans.isEmpty()) {
-                throw BeanMessages.MESSAGES.failedToLookupBeanDeploymentMetaDataFromBeanManagerMustBeBoundIntoBeanManagerPerhapsSwitchYardCDIExtensionsNotProperlyInstalledInContainer();
-            }
-            if (beans.size() > 1) {
-                throw BeanMessages.MESSAGES.failedToLookupBeanDeploymentMetaDataFromBeanManagerMultipleBeansResolvedForType(BeanDeploymentMetaData.class.getName());
-            }
-
-            BeanDeploymentMetaDataCDIBean bean = (BeanDeploymentMetaDataCDIBean) beans.iterator().next();
-
-            return bean.getBeanMetaData();
-        } catch (NamingException e) {
-            throw BeanMessages.MESSAGES.failedToLookupBeanManagerMustBeBoundIntoJavaCompAsPerCDISpecification(e);
-        }
-    }
-
-    /**
-     * Get the CDI BeanManager for the current context.
-     * @return The CDI BeanManager for the current context.
-     * @throws NamingException Error looking up BeanManager instance.
-     */
-    public static BeanManager getCDIBeanManager() throws NamingException {
-        BeanManager beanManager = getCDIBeanManager("java:comp");
-
+        BeanManager beanManager = CDIUtil.lookupBeanManager();
         if (beanManager == null) {
-            beanManager = getCDIBeanManager("java:comp/env");
-            if (beanManager == null) {
-                throw BeanMessages.MESSAGES.nameBeanManagerIsNotBoundInThisContext();
-            }
+            throw BeanMessages.MESSAGES.nameBeanManagerIsNotBoundInThisContext();
+        }
+        
+        Set<Bean<?>> beans = beanManager.getBeans(BeanDeploymentMetaData.class);
+        if (beans.isEmpty()) {
+            throw BeanMessages.MESSAGES.failedToLookupBeanDeploymentMetaDataFromBeanManagerMustBeBoundIntoBeanManagerPerhapsSwitchYardCDIExtensionsNotProperlyInstalledInContainer();
+        }
+        if (beans.size() > 1) {
+            throw BeanMessages.MESSAGES.failedToLookupBeanDeploymentMetaDataFromBeanManagerMultipleBeansResolvedForType(BeanDeploymentMetaData.class.getName());
         }
 
-        return beanManager;
-    }
-
-    private static BeanManager getCDIBeanManager(String jndiLocation) {
-        Context javaComp = getJavaComp(jndiLocation);
-
-        if (javaComp != null) {
-            try {
-                return (BeanManager) javaComp.lookup("BeanManager");
-            } catch (NamingException e) {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    private static Context getJavaComp(String jndiName) {
-        InitialContext initialContext = null;
-
-        try {
-            initialContext = new InitialContext();
-            return (Context) initialContext.lookup(jndiName);
-        } catch (NamingException e) {
-            return null;
-        } catch (Exception e) {
-            throw BeanMessages.MESSAGES.unexpectedExceptionRetrieving(jndiName, e);
-        } finally {
-            if (initialContext != null) {
-                try {
-                    initialContext.close();
-                } catch (NamingException e) {
-                    throw BeanMessages.MESSAGES.unexpectedErrorClosingInitialContext(e);
-                }
-            }
-        }
+        BeanDeploymentMetaDataCDIBean bean = (BeanDeploymentMetaDataCDIBean) beans.iterator().next();
+        return bean.getBeanMetaData();
     }
 }

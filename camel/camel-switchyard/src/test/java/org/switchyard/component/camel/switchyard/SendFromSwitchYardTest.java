@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.component.camel;
+package org.switchyard.component.camel.switchyard;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -30,8 +30,8 @@ import org.switchyard.component.camel.common.composer.CamelContextMapper;
 import org.switchyard.component.camel.common.composer.CamelMessageComposer;
 import org.switchyard.component.camel.common.handler.OutboundHandler;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
-import org.switchyard.component.camel.util.Composer;
-import org.switchyard.component.camel.util.Mapper;
+import org.switchyard.component.camel.switchyard.util.Composer;
+import org.switchyard.component.camel.switchyard.util.Mapper;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.config.model.composite.CompositeReferenceModel;

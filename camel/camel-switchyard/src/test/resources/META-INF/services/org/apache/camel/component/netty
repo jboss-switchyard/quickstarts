@@ -1,1 +1,1 @@
-class=org.switchyard.component.camel.test.NettyComponent
+class=org.switchyard.component.camel.switchyard.test.NettyComponent

@@ -11,22 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.component.camel.test;
+package org.switchyard.component.camel.switchyard.test;
 
-import java.util.Map;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.component.direct.DirectComponent;
+import org.apache.camel.component.direct.DirectEndpoint;
 
 /**
- * Dummy component for test purposes.
+ * Dummy endpoint for testing purposes.
  */
-public class NettyComponent extends DirectComponent {
+public class NettyEndpoint extends DirectEndpoint {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new NettyEndpoint(uri, this);
-        setProperties(endpoint, parameters);
-        return endpoint;
+    public NettyEndpoint(String uri, NettyComponent component) {
+        super(uri, component);
     }
 
 }
