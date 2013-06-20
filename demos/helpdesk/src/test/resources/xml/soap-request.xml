@@ -5,7 +5,7 @@
     <soap:Body>
         <helpdesk:openTicket>
             <ticket>
-                <id>TCKT-17761852</id>
+                <id>TICKET_ID</id>
             </ticket>
         </helpdesk:openTicket>
     </soap:Body>

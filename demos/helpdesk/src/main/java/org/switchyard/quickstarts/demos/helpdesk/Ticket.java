@@ -10,7 +10,7 @@
  * of the GNU Lesser General Public License, v. 2.1. 
  * This program is distributed in the hope that it will be useful, but WITHOUT A 
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
+ * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more detailss. 
  * You should have received a copy of the GNU Lesser General Public License, 
  * v.2.1 along with this distribution; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
@@ -28,6 +28,7 @@ public class Ticket implements Serializable {
 
     private String _id;
     private String _status;
+    private String _details;
 
     public String getId() {
         return _id;
@@ -43,6 +44,14 @@ public class Ticket implements Serializable {
 
     public void setStatus(String status) {
         _status = status;
+    }
+
+    public String getDetails() {
+        return _details;
+    }
+
+    public void setDetails(String details) {
+        _details = details;
     }
 
 }

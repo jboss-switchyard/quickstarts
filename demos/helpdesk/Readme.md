@@ -3,11 +3,19 @@ Introduction
 This quickstart demonstrates the usage of a BPM service in conjuction with a SOAP gateway.
 A BPM process (HelpDeskService.bpmn) is deployed as the service, and a SOAP gateway is deployed using the specified WSDL (HelpDeskService.wsdl).
 First, a ticket is opened and a developer has to review it.
-The code then randomly decides whether or not the ticket is approved, rejected or more details should be requested.  (This is to simulate a human evaluation.)
+Completion of human tasks gets done via a JSF web application, which provides a form that allows two different people (krisv, a developer, and david, a user) to complete their work.
 If the ticket is approved, the developer has to resolve the ticket, then it is closed.
 If the ticket is rejected, no further action is necessary.
 If more details are requested, a user must provide more details. Then, the process loops back to the review stage again.
 Finally, the process reaches its end.
+
+If you would like to have BAM (Business Activity Monitoring) events from the process execution get stored in the database, uncomment these lines in
+src/main/java/org/switchyard/quickstarts/demos/helpdesk/HelpDeskServiceProcess.java:
+```
+//import org.jbpm.process.audit.JPAWorkingMemoryDbLogger;
+//import org.switchyard.component.common.knowledge.annotation.Listener;
+//listeners={@Listener(JPAWorkingMemoryDbLogger.class)},
+```
 
 ![Helpdesk Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/demos/helpdesk/helpdesk.jpg)
 
@@ -22,56 +30,40 @@ Running the quickstart
 JBoss AS 7
 ----------
 1. Build the quickstart:
+   mvn clean install
 
-        mvn clean install
+2. Start the application server:
+    ${AS}/bin/standalone.sh
 
-2. Run the test:
+3. Deploy the web application:
+   mvn jboss-as:deploy
 
-        mvn -Dtest=HelpDeskTests test
+4. In a web browser window, use the web application:
+    Browse to http://localhost:8080/helpdesk/
+    Select the User you want to act as.
+    Note that you can toggle back and forth between users. (This would normally be automatically chosen based on the logged on user.)
+    So far there are no processes started, so there are no tasks.
+
+5. In a different console window, start a process (this will use the SOAP gateway):
+    mvn exec:java
+    You can do this as many times as you wish, starting as many processes as you wish.
+
+6. Going back to your web browser window:
+    As krisv (a developer), click the Submit button to get the list of tasks.
+    As krisv, review the tasks you want to perform and click the Submit button again.
+    As david (a user), click the Submit button to get the list of tasks. He will only have tasks if more details were required.
+    If there were user tasks, check the tasks you want to complete and click the Submit button again.
+    Continue toggling back and forth as the users until all tasks are completed.
+    You can view the application server output in its console window to see the progression of the progress.
 
 Expected Output:
 ================
-(Note: Remember that the review has a random outcome, thus your output might differ from below.)
+(Note: Your outcome might be different from below based on the result of the ticket review.)
 ```
-Running org.switchyard.quickstarts.demos.helpdesk.HelpDeskTests
-INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] Starting jBPM TaskServer on 127.0.0.1:9123...
-INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] jBPM TaskServer started on 127.0.0.1:9123.
-INFO  [org.switchyard.component.soap.InboundHandler] Publishing WebService at http://127.0.0.1:18001/HelpDeskService
-INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] ********** opening ticket **********
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Connecting jBPM TaskClient to 127.0.0.1:9123...
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] jBPM TaskClient connected to 127.0.0.1:9123.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 0 tasks for david.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 1 task for krisv.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 1 claimed by krisv.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 1 started by krisv.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 1 completed by krisv.
-********** after (random for test purpose) review, ticket status set to requested **********
-INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] ********** requesting details **********
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 1 task for david.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 2 claimed by david.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 2 started by david.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 2 completed by david.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 0 tasks for krisv.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 0 tasks for david.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 1 task for krisv.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 3 claimed by krisv.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 3 started by krisv.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 3 completed by krisv.
-********** after (random for test purpose) review, ticket status set to approved **********
-INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] ********** approving ticket **********
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 0 tasks for david.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 1 task for krisv.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 4 claimed by krisv.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 4 started by krisv.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Task 4 completed by krisv.
-INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] ********** closing ticket **********
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 0 tasks for david.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Found 0 tasks for krisv.
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] Disconnecting jBPM TaskClient from 127.0.0.1:9123...
-DEBUG [org.switchyard.component.bpm.task.impl.TaskClientImpl] jBPM TaskClient disconnected from 127.0.0.1:9123.
-INFO  [org.switchyard.component.soap.InboundHandler] WebService {urn:switchyard-quickstart-demo:helpdesk:1.0}HelpDeskService:HelpDeskServicePort stopped.
-INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] Stopping jBPM TaskServer on 127.0.0.1:9123...
-INFO  [org.switchyard.component.bpm.task.impl.TaskServerImpl] jBPM TaskServer on 127.0.0.1:9123 stopped.
+INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] (http-/127.0.0.1:8080-2) ********** opening ticket **********
+INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] (http-/127.0.0.1:8080-1) ********** requesting details **********
+INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] (http-/127.0.0.1:8080-1) ********** approving ticket **********
+INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] (http-/127.0.0.1:8080-1) ********** closing ticket **********
 ```
 
 ## Further Reading

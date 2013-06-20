@@ -18,33 +18,30 @@
  */
 package org.switchyard.quickstarts.demos.helpdesk;
 
-import java.io.Serializable;
+import org.apache.log4j.Logger;
+import org.switchyard.common.io.pull.StringPuller;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
+ * HelpDeskMain.
+ *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@SuppressWarnings("serial")
-public class TicketAck implements Serializable {
+public final class HelpDeskMain {
 
-    private String _id;
-    private boolean _received;
+    private static final Logger LOGGER = Logger.getLogger(HelpDeskMain.class);
 
-    public String getId() {
-        return _id;
-    }
-
-    public TicketAck setId(String id) {
-        _id = id;
-        return this;
-    }
-
-    public boolean isReceived() {
-        return _received;
-    }
-
-    public TicketAck setReceived(boolean received) {
-        _received = received;
-        return this;
+    public static void main(String... args) throws Exception {
+        final String ticketId = "TCKT-" + System.currentTimeMillis();
+        final String soapRequest = new StringPuller().pull("/xml/soap-request.xml").replaceAll("TICKET_ID", ticketId);
+        final HTTPMixIn http = new HTTPMixIn();
+        http.initialize();
+        try {
+            http.postString("http://localhost:8080/HelpDeskService/HelpDeskService", soapRequest);
+            LOGGER.info("Started helpdesk process with ticket id: " + ticketId);
+        } finally {
+            http.uninitialize();
+        }
     }
 
 }

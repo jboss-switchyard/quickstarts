@@ -75,7 +75,6 @@
         <module>transform-xslt</module>
         <module>validate-xml</module>
         <module>demos/helpdesk</module>
-        <module>demos/helpdesk-webapp</module>
         <module>demos/orders</module>
         <module>demos/webapp-deploy</module>
         <module>demos/multiApp</module>
