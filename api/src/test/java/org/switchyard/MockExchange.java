@@ -135,4 +135,13 @@ public class MockExchange implements Exchange {
         return null;
     }
 
+    @Override
+    public ExchangePattern getPattern() {
+        ExchangePattern pattern = null;
+        if (getContract() != null) {
+            pattern = getContract().getConsumerOperation().getExchangePattern();
+        }
+        return pattern;
+    }
+
 }

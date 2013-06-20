@@ -285,4 +285,13 @@ public class CamelExchange implements SecurityExchange {
         return exchange.getProperty(FAULT, false, Boolean.class);
     }
 
+    @Override
+    public ExchangePattern getPattern() {
+        ExchangePattern pattern = null;
+        if (getContract() != null) {
+            pattern = getContract().getConsumerOperation().getExchangePattern();
+        }
+        return pattern;
+    }
+
 }

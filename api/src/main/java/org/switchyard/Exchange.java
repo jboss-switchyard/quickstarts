@@ -167,4 +167,11 @@ public interface Exchange {
      */
     ExchangeHandler getReplyHandler();
 
+    /**
+     * Provides the consumer's view of the message exchange pattern.  This 
+     * method is equivalent to getContract().getConsumerOperation().getExchangePattern().
+     * Note that if consumer information has not been set, this method will return null!
+     * @return the consumer's exchange pattern or null if no consumer info is set on the exchange
+     */
+    ExchangePattern getPattern();
 }

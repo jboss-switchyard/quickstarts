@@ -86,6 +86,11 @@ public class TransactionHandler implements ExchangeHandler {
     
     @Override
     public void handleFault(Exchange exchange) {
+        // if no TM is available, there's nothing to do
+        if (_transactionManager == null) {
+            return;
+        }
+        
         try {
             Property rollbackOnFaultProperty = exchange.getContext().getProperty(Exchange.ROLLBACK_ON_FAULT);
             if (rollbackOnFaultProperty != null && rollbackOnFaultProperty.getValue() != null

@@ -130,11 +130,15 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
             .processRef(PROVIDER_CALLBACK.name())
             .processRef(TRANSACTION_HANDLER.name())
             .addOutput(createFilterDefinition());
+        
         tryDefinition
             .doCatch(Exception.class)
             .processRef(ERROR_HANDLING.name())
             .processRef(TRANSACTION_HANDLER.name())
             .addOutput(createFilterDefinition());
+        
+        tryDefinition.doFinally()
+            .processRef(CONSUMER_CALLBACK.name());
     }
 
     private ExpressionNode createFilterDefinition() {
@@ -143,8 +147,7 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
             .processRef(VALIDATION.name())
             .processRef(TRANSFORMATION.name())
             .processRef(VALIDATION.name())
-            .processRef(SECURITY.name())
-            .processRef(CONSUMER_CALLBACK.name());
+            .processRef(SECURITY.name());
     }
 
     /**

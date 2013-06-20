@@ -177,6 +177,15 @@ public class ExchangeImpl implements SecurityExchange {
         return _replyHandler;
     }
 
+    @Override
+    public ExchangePattern getPattern() {
+        ExchangePattern pattern = null;
+        if (getContract() != null) {
+            pattern = getContract().getConsumerOperation().getExchangePattern();
+        }
+        return pattern;
+    }
+
     /**
      * Internal send method common to sendFault and sendMessage.  This method
      * assumes that the exchange phase has been assigned for the send and that

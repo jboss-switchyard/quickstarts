@@ -30,6 +30,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.namespace.QName;
 
+import junit.framework.Assert;
+
 import org.apache.camel.Processor;
 import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.spi.RouteContext;
@@ -109,6 +111,19 @@ public class CamelExchangeBusTest {
         Exchange exchange = sendMessage(ref, TEST_CONTENT);
 
         assertNoCause("Service is not implemented", exchange);
+    }
+    
+    /**
+     * Verify consumer callback is called when fault occurs on InOnly.
+     */
+    @Test
+    public void testFaultReportedOnInOnly() {
+        ServiceReference ref = registerInOnlyService("inOut", new ErrorExchangeHandler());
+        MockHandler consumer = new MockHandler();
+        Exchange exchange = ref.createExchange(consumer);
+        exchange.send(exchange.createMessage().setContent("test"));
+        
+        Assert.assertEquals(1, consumer.waitForFaultMessage().getFaults().size());
     }
 
     /**
@@ -229,6 +244,13 @@ public class CamelExchangeBusTest {
         return registerInOutService(name, new MockHandler().forwardInToOut());
     }
 
+    private ServiceReference registerInOnlyService(String name, ExchangeHandler handler) {
+        ServiceReferenceImpl reference = new ServiceReferenceImpl(new QName(name), new InOnlyService(), _domain);
+        _domain.registerService(new QName(name), new InOnlyService(), handler);
+        reference.setDispatcher(_provider.createDispatcher(reference));
+        return reference;
+    }
+    
     private ServiceReference registerInOutService(String name, ExchangeHandler handler) {
         ServiceReferenceImpl reference = new ServiceReferenceImpl(new QName(name), new InOutService(), _domain);
         _domain.registerService(new QName(name), new InOutService(), handler);

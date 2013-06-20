@@ -23,6 +23,7 @@ package org.switchyard.bus.camel.processors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangeState;
 import org.switchyard.bus.camel.CamelExchange;
 
@@ -38,7 +39,10 @@ public class ConsumerCallbackProcessor implements Processor {
         if (syEx.getState() == ExchangeState.FAULT) {
             syEx.getReplyHandler().handleFault(syEx);
         } else {
-            syEx.getReplyHandler().handleMessage(syEx);
+            // Only call back with reply messages if the MEP is In-Out
+            if (ExchangePattern.IN_OUT.equals(syEx.getPattern())) {
+                syEx.getReplyHandler().handleMessage(syEx);
+            }
         }
     }
 }
