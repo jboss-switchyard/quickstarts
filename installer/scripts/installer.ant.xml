@@ -19,12 +19,13 @@
 
 <project name="SwitchYard AS7 Installer" default="install" basedir=".">
 
-	<!--  The following -D properties can be used to control install behavior:
-	         o AS7_PATH = path to AS7 install - prevents input prompt
-			 o SKIP_BPEL_CONSOLE = do not install BPEL console
-	         o SKIP_FORGE = do not install forge
+    <!--  The following -D properties can be used to control install behavior:
+             o AS7_PATH = path to AS7 install - prevents input prompt
+             o SKIP_BPEL_CONSOLE = do not install BPEL console
+             o SKIP_FORGE = do not install forge
              o SKIP_AS7 = do not install SwitchYard to AS7
-	 -->
+             o SKIP_WS_UPGRADE = do not upgrade WS integration
+     -->
 
     <property file="installer.properties"/>
 
@@ -213,6 +214,7 @@
         <condition property="switchyardResourcesAlreadyInstalled">
           <or>
             <available file="switchyard" filepath="${INSTALL_PATH}/modules/org" />
+            <available file="switchyard" filepath="${INSTALL_PATH}/modules/system/layers/soa" />
             <isset property="SKIP_AS7"/>
           </or>
         </condition>
@@ -220,6 +222,12 @@
           <or>
             <available file="switchyard-bpel-console.war" filepath="${INSTALL_PATH}/standalone/deployments" />
             <isset property="SKIP_BPEL_CONSOLE"/>
+          </or>
+        </condition>
+        <condition property="FinalGA">
+          <or>
+            <available file="jbossws-spi-2.1.2.Final-redhat-1.jar" filepath="${INSTALL_PATH}/modules/system/layers/base/org/jboss/ws/spi/main" />
+            <isset property="SKIP_WS_UPGRADE"/>
           </or>
         </condition>
 
@@ -306,8 +314,8 @@
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
 
-		<antcall target="transform-jbossws-spi-module" />
-		<antcall target="transform-jbossws-jboss720-server-integration-module" />
+        <antcall target="transform-jbossws-spi-module" />
+        <antcall target="transform-jbossws-jboss720-server-integration-module" />
     </target>
 
     <target name="unzipQuickstartResources" unless="quickstartResourcesAlreadyInstalled">
@@ -361,7 +369,7 @@
         </pathconvert>
     </target>
 
-	<target name="transform-jbossws-spi-module">
+	<target name="transform-jbossws-spi-module" unless="FinalGA">
         <xslt style="res/jbossws-spi_module.xsl"
               basedir="${AS7_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"
               destdir="${AS7_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"
@@ -374,7 +382,7 @@
         </move>
     </target>
 
-	<target name="transform-jbossws-jboss720-server-integration-module">
+	<target name="transform-jbossws-jboss720-server-integration-module" unless="FinalGA">
         <xslt style="res/jbossws-jboss720-server-integration_module.xsl"
               basedir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/webservices/main"
               destdir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/webservices/main"
