@@ -24,7 +24,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-camel-service</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard Quickstart: camel-service</name>
     <description>Quickstart : Camel Service</description>
     <licenses>
@@ -35,9 +35,12 @@
         </license>
     </licenses>
     <properties>
+        <deploy.skip>true</deploy.skip>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
-        <deploy.skip>true</deploy.skip>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.quickstarts.camel.service*
+        </switchyard.osgi.export.pkg>
     </properties>
     <dependencies>
         <dependency>
