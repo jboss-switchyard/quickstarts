@@ -54,7 +54,8 @@ public class OutboundHandler extends BaseServiceHandler {
     private static final Class<?>[] CLASS_ARG_ARRAY = {Class.class};
 
     private final RESTEasyBindingModel _config;
-    private final String _gatewayName;
+    private final String _bindingName;
+    private final String _referenceName;
     private String _baseAddress = "http://localhost:8080";
     private Map<String, MethodInvoker> _methodMap = new HashMap<String, MethodInvoker>();
     private MessageComposer<RESTEasyBindingData> _messageComposer;
@@ -68,7 +69,8 @@ public class OutboundHandler extends BaseServiceHandler {
     public OutboundHandler(final RESTEasyBindingModel config, final ServiceDomain domain) {
         super(domain);
         _config = config;
-        _gatewayName = config.getName();
+        _bindingName = config.getName();
+        _referenceName = config.getReference().getName();
     }
 
     /**
@@ -113,10 +115,11 @@ public class OutboundHandler extends BaseServiceHandler {
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
         // identify ourselves
-        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName, Scope.EXCHANGE)
+        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _bindingName, Scope.EXCHANGE)
                 .addLabels(BehaviorLabel.TRANSIENT.label());
         if (getState() != State.STARTED) {
-            throw new HandlerException("Gateway is not started: " + _gatewayName);
+            throw new HandlerException(String.format("Reference binding \"%s/%s\" is not started.", _referenceName,
+                    _bindingName));
         }
 
         final String opName = exchange.getContract().getProviderOperation().getName();

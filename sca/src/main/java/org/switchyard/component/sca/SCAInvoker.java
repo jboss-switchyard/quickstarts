@@ -48,7 +48,8 @@ import org.switchyard.runtime.event.ExchangeCompletionEvent;
 public class SCAInvoker extends BaseServiceHandler {
     
     private final SCABindingModel _config;
-    private final String _gatewayName;
+    private final String _bindingName;
+    private final String _referenceName;
     private ClusteredInvoker _invoker;
     
     /**
@@ -57,7 +58,8 @@ public class SCAInvoker extends BaseServiceHandler {
      */
     public SCAInvoker(SCABindingModel config) {
         _config = config;
-        _gatewayName = config.getName();
+        _bindingName = config.getName();
+        _referenceName = config.getReference().getName();
     }
     
     /**
@@ -78,11 +80,12 @@ public class SCAInvoker extends BaseServiceHandler {
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
         // identify ourselves
-        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName, Scope.EXCHANGE)
+        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _bindingName, Scope.EXCHANGE)
                 .addLabels(BehaviorLabel.TRANSIENT.label());
 
         if (getState() != State.STARTED) {
-            throw new HandlerException("Gateway is not started: " + _gatewayName);
+            throw new HandlerException(String.format("Reference binding \"%s/%s\" is not started.", _referenceName,
+                    _bindingName));
         }
         try {
             if (_config.isClustered()) {

@@ -63,7 +63,8 @@ public class OutboundHandler extends BaseServiceHandler {
     private final MessageComposer<CamelBindingData> _messageComposer;
     private final ProducerTemplate _producerTemplate;
     private final SwitchYardCamelContext _camelContext;
-    private final String _gatewayName;
+    private final String _bindingName;
+    private final String _referenceName;
     private final String _uri;
 
     /**
@@ -99,7 +100,8 @@ public class OutboundHandler extends BaseServiceHandler {
             throw new IllegalArgumentException("binding uri must not be null");
         }
         _uri = binding.getComponentURI().toString();
-        _gatewayName = binding.getName();
+        _bindingName = binding.getName();
+        _referenceName = binding.getReference().getName();
         _camelContext = context;
         _messageComposer = messageComposer;
         _producerTemplate = producerTemplate == null ? _camelContext.createProducerTemplate() : producerTemplate;
@@ -139,9 +141,13 @@ public class OutboundHandler extends BaseServiceHandler {
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
         // identify ourselves
-        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName, Scope.EXCHANGE)
+        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _bindingName, Scope.EXCHANGE)
                 .addLabels(BehaviorLabel.TRANSIENT.label());
 
+        if (getState() != State.STARTED) {
+            throw new HandlerException(String.format("Reference binding \"%s/%s\" is not started.", _referenceName,
+                    _bindingName));
+        }
         if (isInOnly(exchange)) {
             handleInOnly(exchange);
         } else {

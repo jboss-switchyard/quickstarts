@@ -13,6 +13,8 @@ import org.switchyard.MockDomain;
 import org.switchyard.MockExchange;
 import org.switchyard.Service;
 import org.switchyard.ServiceReference;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
+import org.switchyard.config.model.composite.v1.V1CompositeReferenceModel;
 import org.switchyard.config.model.composite.v1.V1SCABindingModel;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.InOnlyOperation;
@@ -37,7 +39,15 @@ public class SCAInvokerTest {
     
     @Test
     public void localInvocationSameName() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel();
+        V1SCABindingModel config = new V1SCABindingModel() {
+            @Override
+            public String getName() {
+                return "testBinding";
+            }
+            public CompositeReferenceModel getReference() {
+                return new V1CompositeReferenceModel();
+            };
+        };
         SCAInvoker invoker = new SCAInvoker(config);
         invoker.start();
         
@@ -56,7 +66,15 @@ public class SCAInvokerTest {
     
     @Test
     public void localInvocationTarget() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel();
+        V1SCABindingModel config = new V1SCABindingModel() {
+            @Override
+            public String getName() {
+                return "testBinding";
+            }
+            public CompositeReferenceModel getReference() {
+                return new V1CompositeReferenceModel();
+            };
+        };
         config.setTarget("ServiceB");
         SCAInvoker invoker = new SCAInvoker(config);
         invoker.start();
@@ -82,7 +100,15 @@ public class SCAInvokerTest {
     
     @Test
     public void crossDomain() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel();
+        V1SCABindingModel config = new V1SCABindingModel() {
+            @Override
+            public String getName() {
+                return "testBinding";
+            }
+            public CompositeReferenceModel getReference() {
+                return new V1CompositeReferenceModel();
+            };
+        };
         config.setTargetNamespace("urn:testb");
         SCAInvoker invoker = new SCAInvoker(config);
         invoker.start();
@@ -115,7 +141,15 @@ public class SCAInvokerTest {
     public void localInvocationWithInvalidServiceReference() throws Exception {
         boolean fail = false;
         
-        V1SCABindingModel config = new V1SCABindingModel();
+        V1SCABindingModel config = new V1SCABindingModel() {
+            @Override
+            public String getName() {
+                return "testBinding";
+            }
+            public CompositeReferenceModel getReference() {
+                return new V1CompositeReferenceModel();
+            };
+        };
         config.setTarget("Blah");
         SCAInvoker invoker = new SCAInvoker(config);
         invoker.start();
@@ -146,7 +180,15 @@ public class SCAInvokerTest {
     
     @Test
     public void localInvocationTargetNamespace() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel();
+        V1SCABindingModel config = new V1SCABindingModel() {
+            @Override
+            public String getName() {
+                return "testBinding";
+            }
+            public CompositeReferenceModel getReference() {
+                return new V1CompositeReferenceModel();
+            };
+        };
         config.setTargetNamespace("urn:app2");
         SCAInvoker invoker = new SCAInvoker(config);
         invoker.start();
@@ -172,7 +214,15 @@ public class SCAInvokerTest {
     
     @Test
     public void createOOTBLoadBalancers() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel();
+        V1SCABindingModel config = new V1SCABindingModel() {
+            @Override
+            public String getName() {
+                return "testBinding";
+            }
+            public CompositeReferenceModel getReference() {
+                return new V1CompositeReferenceModel();
+            };
+        };
         SCAInvoker invoker = new SCAInvoker(config);
         invoker.start();
         
@@ -184,7 +234,15 @@ public class SCAInvokerTest {
     
     @Test
     public void contextPropertiesCopied() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel();
+        V1SCABindingModel config = new V1SCABindingModel() {
+            @Override
+            public String getName() {
+                return "testBinding";
+            }
+            public CompositeReferenceModel getReference() {
+                return new V1CompositeReferenceModel();
+            };
+        };
         SCAInvoker invoker = new SCAInvoker(config);
         invoker.start();
         
@@ -205,7 +263,15 @@ public class SCAInvokerTest {
     
     @Test
     public void createCustomLoadBalancers() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel();
+        V1SCABindingModel config = new V1SCABindingModel() {
+            @Override
+            public String getName() {
+                return "testBinding";
+            }
+            public CompositeReferenceModel getReference() {
+                return new V1CompositeReferenceModel();
+            };
+        };
         SCAInvoker invoker = new SCAInvoker(config);
         invoker.start();
         

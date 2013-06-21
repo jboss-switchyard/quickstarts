@@ -39,6 +39,7 @@ import org.switchyard.component.camel.util.Composer;
 import org.switchyard.component.camel.util.Mapper;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.test.SwitchYardRunner;
@@ -53,6 +54,7 @@ public class SendFromSwitchYardTest extends SwitchYardComponentTestBase {
     private static final String OPERATION_NAME = "foo";
     private MockEndpoint _mock;
     private CamelBindingModel _bindingModel;
+    private CompositeReferenceModel _referenceModel = mock(CompositeReferenceModel.class);
 
     @Before
     public void startUp() {
@@ -60,6 +62,7 @@ public class SendFromSwitchYardTest extends SwitchYardComponentTestBase {
         _bindingModel = mock(CamelBindingModel.class);
         when(_bindingModel.getComponentURI()).thenReturn(URI.create(ENDPOINT_URI));
         when(_bindingModel.getName()).thenReturn("testGateway");
+        when(_bindingModel.getReference()).thenReturn(_referenceModel);
     }
 
     @Test
@@ -84,7 +87,11 @@ public class SendFromSwitchYardTest extends SwitchYardComponentTestBase {
         QName serviceName = new QName("urn:test", "Service");
         ServiceInterface metadata = new InOnlyService(OPERATION_NAME);
 
-        OutboundHandler handler = new OutboundHandler(_bindingModel, _camelContext, messageComposer, null);
+        OutboundHandler handler = new OutboundHandler(_bindingModel, _camelContext, messageComposer, null) {
+            {
+                setState(State.STARTED);
+            }
+        };
         _serviceDomain.registerService(serviceName, metadata, handler);
         return _serviceDomain.registerServiceReference(serviceName, metadata).createExchange(OPERATION_NAME);
     }

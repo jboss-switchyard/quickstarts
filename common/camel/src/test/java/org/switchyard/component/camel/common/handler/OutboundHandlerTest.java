@@ -58,6 +58,7 @@ import org.switchyard.component.camel.common.transaction.TransactionManagerFacto
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.naming.NamingMixIn;
+import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.test.Invoker;
@@ -85,6 +86,7 @@ public class OutboundHandlerTest extends CamelTestSupport {
     @ServiceOperation("TargetService")
     private Invoker _targetService;
 
+    private CompositeReferenceModel referenceModel = mock(CompositeReferenceModel.class);
     private MessageComposer<CamelBindingData> _messageComposer;
     private ServiceReference _service;
 
@@ -101,12 +103,17 @@ public class OutboundHandlerTest extends CamelTestSupport {
         bindingModel = mock(CamelBindingModel.class);
         when(bindingModel.getComponentURI()).thenReturn(URI.create("direct:to"));
         when(bindingModel.getName()).thenReturn("mockOutputHandler");
+        when(bindingModel.getReference()).thenReturn(referenceModel);
         _messageComposer = CamelComposition.getMessageComposer();
         _serviceDomain.registerService(_targetService.getServiceName(),
             new InOnlyService(), 
             new OutboundHandler(bindingModel,
                 (SwitchYardCamelContext) context, _messageComposer, null
-            )
+            ) {
+            {
+                setState(State.STARTED);
+            }
+        }
         );
         _service = _serviceDomain.registerServiceReference(
             _targetService.getServiceName(), new InOnlyService());
@@ -131,12 +138,17 @@ public class OutboundHandlerTest extends CamelTestSupport {
 
         bindingModel = mock(CamelBindingModel.class);
         when(bindingModel.getComponentURI()).thenReturn(URI.create("transaction:foo?transactionManager=%23jtaTransactionManager"));
+        when(bindingModel.getReference()).thenReturn(referenceModel);
         _messageComposer = CamelComposition.getMessageComposer();
         _serviceDomain.registerService(_targetService.getServiceName(),
             new InOnlyService(), 
             new OutboundHandler(bindingModel,
                 (SwitchYardCamelContext) context, _messageComposer, null
-            )
+            ) {
+            {
+                setState(State.STARTED);
+            }
+        }
         );
         _service = _serviceDomain.registerServiceReference(
             _targetService.getServiceName(), new InOnlyService());

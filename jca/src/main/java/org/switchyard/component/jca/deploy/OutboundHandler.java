@@ -40,7 +40,8 @@ import org.switchyard.runtime.event.ExchangeCompletionEvent;
 public class OutboundHandler extends BaseServiceHandler {
     
     private AbstractOutboundProcessor _processor;
-    private final String _gatewayName;
+    private final String _bindingName;
+    private final String _referenceName;
 
     /**
      * Constructor.
@@ -51,7 +52,8 @@ public class OutboundHandler extends BaseServiceHandler {
     public OutboundHandler(AbstractOutboundProcessor processor, ServiceDomain domain) {
         super(domain);
         _processor = processor;
-        _gatewayName = processor.getJCABindingModel().getName();
+        _bindingName = processor.getJCABindingModel().getName();
+        _referenceName = processor.getJCABindingModel().getReference().getName();
     }
 
     @Override
@@ -68,8 +70,12 @@ public class OutboundHandler extends BaseServiceHandler {
     public void handleMessage(final Exchange exchange) throws HandlerException {
         // identify ourselves
         exchange.getContext()
-                .setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName,
+                .setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _bindingName,
                         Scope.EXCHANGE).addLabels(BehaviorLabel.TRANSIENT.label());
+        if (getState() != State.STARTED) {
+            throw new HandlerException(String.format("Reference binding \"%s/%s\" is not started.", _referenceName,
+                    _bindingName));
+        }
 
         Message out = _processor.process(exchange);
         if (exchange.getContract().getProviderOperation().getExchangePattern() == ExchangePattern.IN_OUT) {

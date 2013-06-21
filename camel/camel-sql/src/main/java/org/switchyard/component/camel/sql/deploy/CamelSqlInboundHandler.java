@@ -26,9 +26,11 @@ import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
 import org.switchyard.component.camel.common.handler.InboundHandler;
+import org.switchyard.component.camel.common.handler.MessageComposerProcessor;
 import org.switchyard.component.camel.common.handler.OperationSelectorProcessor;
 import org.switchyard.component.camel.sql.model.CamelSqlBindingModel;
 import org.switchyard.exception.SwitchYardException;
+import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**
  * Inbound handler for SQL binding. Creates additional route elements for service bindings.
@@ -63,6 +65,8 @@ public class CamelSqlInboundHandler extends InboundHandler<CamelSqlBindingModel>
             definition.routeId(getRouteId())
                 .from(getBindingModel().getTimerURI(getRouteId()).toString())
                 .to(getBindingModel().getComponentURI().toString())
+                .setProperty(ExchangeCompletionEvent.GATEWAY_NAME).simple(getBindingModel().getName(), String.class)
+                .process(new MessageComposerProcessor(getBindingModel()))
                 .process(new OperationSelectorProcessor(serviceName, bindingModel));
             return addTransactionPolicy(definition);
         }

@@ -68,7 +68,8 @@ public class OutboundHandler extends BaseServiceHandler {
     private static final String NO_RESPONSE = "No response returned.";
 
     private final SOAPBindingModel _config;
-    private final String _gatewayName;
+    private final String _bindingName;
+    private final String _referenceName;
     private MessageComposer<SOAPBindingData> _messageComposer;
     private Dispatch<SOAPMessage> _dispatcher;
     private Port _wsdlPort;
@@ -82,7 +83,8 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     public OutboundHandler(final SOAPBindingModel config) {
         _config = config;
-        _gatewayName = config.getName();
+        _bindingName = config.getName();
+        _referenceName = config.getReference().getName();
     }
 
     /**
@@ -170,12 +172,13 @@ public class OutboundHandler extends BaseServiceHandler {
     @Override
     public void handleMessage(final Exchange exchange) throws HandlerException {
         // identify ourselves
-        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName, Scope.EXCHANGE)
+        exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _bindingName, Scope.EXCHANGE)
                 .addLabels(BehaviorLabel.TRANSIENT.label());
 
         try {
             if (getState() != State.STARTED) {
-                throw new HandlerException("Gateway is not started: " + _gatewayName);
+                throw new HandlerException(String.format("Reference binding \"%s/%s\" is not started.", _referenceName,
+                        _bindingName));
             }
             if (SOAPUtil.getFactory(_bindingId) == null) {
                 throw new SOAPException("Failed to instantiate SOAP Message Factory");
