@@ -29,9 +29,20 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-quickstart-camel-netty-binding</artifactId>
+    <packaging>bundle</packaging>
     <name>Quickstart : Camel Netty Binding</name>
     <properties>
         <maven.exec.mainClass>org.switchyard.quickstarts.camel.netty.binding.TCPClient</maven.exec.mainClass>
+
+        <switchyard.osgi.export.pkg>
+            org.switchyard.quickstarts.camel.netty.binding*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.require.capability>
+            org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
+            org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
+            osgi.extender; filter:="(osgi.extender=pax.cdi)"
+        </switchyard.osgi.require.capability>
+        <switchyard.osgi.provide.capability />
     </properties>
     <dependencies>
         <dependency>

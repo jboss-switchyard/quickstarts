@@ -30,9 +30,12 @@
     </parent>
     <artifactId>switchyard-quickstart-camel-service</artifactId>
     <name>Quickstart : Camel Service</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <properties>
         <switchyard.version>1.0.0-SNAPSHOT</switchyard.version>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.quickstarts.camel.service*
+        </switchyard.osgi.export.pkg>
     </properties>
     <dependencies>
         <dependency>

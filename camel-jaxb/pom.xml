@@ -29,9 +29,14 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-quickstart-camel-jaxb</artifactId>
+    <packaging>bundle</packaging>
     <name>Quickstart : Camel JAXB</name>
     <properties>
         <switchyard.version>1.0.0-SNAPSHOT</switchyard.version>
+
+        <switchyard.osgi.export.pkg>
+            org.switchyard.quickstarts.camel.jaxb*
+        </switchyard.osgi.export.pkg>
     </properties>
     <dependencies>
         <dependency>

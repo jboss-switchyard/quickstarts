@@ -28,9 +28,20 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>switchyard-quickstart-camel-amqp-binding</artifactId>
+    <packaging>bundle</packaging>
     <name>Quickstart : Camel AMQP Binding</name>
     <properties>
         <maven.exec.mainClass>org.switchyard.quickstarts.camel.amqp.binding.QpidServer</maven.exec.mainClass>
+
+        <switchyard.osgi.export.pkg>
+            org.switchyard.quickstarts.camel.amqp.binding*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.require.capability>
+            org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
+            org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
+            osgi.extender; filter:="(osgi.extender=pax.cdi)"
+        </switchyard.osgi.require.capability>
+        <switchyard.osgi.provide.capability />
     </properties>
     <dependencies>
         <dependency>
