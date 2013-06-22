@@ -20,11 +20,11 @@ package org.switchyard.component.bpm.config.model.v1;
 
 import static org.switchyard.component.bpm.config.model.UserGroupCallbackModel.USER_GROUP_CALLBACK;
 import static org.switchyard.component.bpm.config.model.WorkItemHandlersModel.WORK_ITEM_HANDLERS;
-import static org.switchyard.component.common.knowledge.config.model.ActionsModel.ACTIONS;
 import static org.switchyard.component.common.knowledge.config.model.ChannelsModel.CHANNELS;
 import static org.switchyard.component.common.knowledge.config.model.ListenersModel.LISTENERS;
 import static org.switchyard.component.common.knowledge.config.model.LoggersModel.LOGGERS;
 import static org.switchyard.component.common.knowledge.config.model.ManifestModel.MANIFEST;
+import static org.switchyard.component.common.knowledge.config.model.OperationsModel.OPERATIONS;
 import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
 
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
@@ -49,7 +49,7 @@ public class V1BPMComponentImplementationModel extends V1KnowledgeComponentImple
      */
     public V1BPMComponentImplementationModel() {
         super(BPM, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(ACTIONS, CHANNELS, LISTENERS, LOGGERS, MANIFEST, PROPERTIES, USER_GROUP_CALLBACK, WORK_ITEM_HANDLERS);
+        setModelChildrenOrder(CHANNELS, LISTENERS, LOGGERS, MANIFEST, OPERATIONS, PROPERTIES, USER_GROUP_CALLBACK, WORK_ITEM_HANDLERS);
     }
 
     /**
@@ -60,7 +60,7 @@ public class V1BPMComponentImplementationModel extends V1KnowledgeComponentImple
      */
     public V1BPMComponentImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(ACTIONS, CHANNELS, LISTENERS, LOGGERS, MANIFEST, PROPERTIES, USER_GROUP_CALLBACK, WORK_ITEM_HANDLERS);
+        setModelChildrenOrder(CHANNELS, LISTENERS, LOGGERS, MANIFEST, OPERATIONS, PROPERTIES, USER_GROUP_CALLBACK, WORK_ITEM_HANDLERS);
     }
 
     /**

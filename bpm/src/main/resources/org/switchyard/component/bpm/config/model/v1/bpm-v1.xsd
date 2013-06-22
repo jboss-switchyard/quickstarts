@@ -32,11 +32,11 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="sca:Implementation">
                 <sequence>
-                    <element ref="bpm:actions" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:channels" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:listeners" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:loggers" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:manifest" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:operations" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:properties" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:userGroupCallback" minOccurs="0" maxOccurs="1"/>
                     <element ref="bpm:workItemHandlers" minOccurs="0" maxOccurs="1"/>
@@ -46,99 +46,6 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
-
-    <element name="actions" type="bpm:ActionsType"/>
-    <complexType name="ActionsType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <sequence>
-                    <element ref="bpm:action" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="action" type="bpm:ActionType"/>
-    <complexType name="ActionType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <sequence>
-                    <element ref="bpm:globals" minOccurs="0" maxOccurs="1"/>
-                    <element ref="bpm:inputs" minOccurs="0" maxOccurs="1"/>
-                    <element ref="bpm:outputs" minOccurs="0" maxOccurs="1"/>
-                </sequence>
-                <attribute name="eventId" type="string" use="optional"/>
-                <attribute name="operation" type="string" use="optional"/>
-                <attribute name="type" type="bpm:actionType" use="optional"/>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="globals" type="bpm:GlobalsType"/>
-    <complexType name="GlobalsType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <sequence>
-                    <element ref="bpm:global" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="inputs" type="bpm:InputsType"/>
-    <complexType name="InputsType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <sequence>
-                    <element ref="bpm:input" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="outputs" type="bpm:OutputsType"/>
-    <complexType name="OutputsType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <sequence>
-                    <element ref="bpm:output" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="global" type="bpm:MappingType"/>
-    <element name="input" type="bpm:MappingType"/>
-    <element name="output" type="bpm:MappingType"/>
-    <complexType name="MappingType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <attribute name="from" type="string" use="required"/>
-                <attribute name="to" type="string" use="optional"/>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <simpleType name="expressionType">
-        <restriction base="string">
-            <enumeration value="MVEL"/>
-        </restriction>
-    </simpleType>
-
-    <simpleType name="scopeType">
-        <restriction base="string">
-            <enumeration value="MESSAGE"/>
-            <enumeration value="EXCHANGE"/>
-        </restriction>
-    </simpleType>
-
-    <simpleType name="actionType">
-        <restriction base="string">
-            <enumeration value="START_PROCESS"/>
-            <enumeration value="SIGNAL_EVENT"/>
-            <enumeration value="ABORT_PROCESS_INSTANCE"/>
-        </restriction>
-    </simpleType>
 
     <element name="channels" type="bpm:ChannelsType"/>
     <complexType name="ChannelsType">
@@ -260,6 +167,99 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
+
+    <element name="operations" type="bpm:OperationsType"/>
+    <complexType name="OperationsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:operation" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="operation" type="bpm:OperationType"/>
+    <complexType name="OperationType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:globals" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:inputs" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:outputs" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:faults" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+                <attribute name="eventId" type="string" use="optional"/>
+                <attribute name="name" type="string" use="optional"/>
+                <attribute name="type" type="bpm:operationType" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="globals" type="bpm:GlobalsType"/>
+    <complexType name="GlobalsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:global" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="inputs" type="bpm:InputsType"/>
+    <complexType name="InputsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:input" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="outputs" type="bpm:OutputsType"/>
+    <complexType name="OutputsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:output" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="faults" type="bpm:FaultsType"/>
+    <complexType name="FaultsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:fault" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="global" type="bpm:MappingType"/>
+    <element name="input" type="bpm:MappingType"/>
+    <element name="output" type="bpm:MappingType"/>
+    <element name="fault" type="bpm:MappingType"/>
+    <complexType name="MappingType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="from" type="string" use="required"/>
+                <attribute name="to" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="operationType">
+        <restriction base="string">
+            <enumeration value="START_PROCESS"/>
+            <enumeration value="SIGNAL_EVENT"/>
+            <enumeration value="ABORT_PROCESS_INSTANCE"/>
+        </restriction>
+    </simpleType>
 
     <element name="properties" type="bpm:PropertiesType"/>
     <complexType name="PropertiesType">

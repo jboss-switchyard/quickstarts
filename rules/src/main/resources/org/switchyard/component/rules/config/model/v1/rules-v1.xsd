@@ -32,110 +32,16 @@ MA  02110-1301, USA.
         <complexContent>
             <extension base="sca:Implementation">
                 <sequence>
-                    <element ref="rules:actions" minOccurs="0" maxOccurs="1"/>
                     <element ref="rules:channels" minOccurs="0" maxOccurs="1"/>
                     <element ref="rules:listeners" minOccurs="0" maxOccurs="1"/>
                     <element ref="rules:loggers" minOccurs="0" maxOccurs="1"/>
                     <element ref="rules:manifest" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:operations" minOccurs="0" maxOccurs="1"/>
                     <element ref="rules:properties" minOccurs="0" maxOccurs="1"/>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-
-    <element name="actions" type="rules:ActionsType"/>
-    <complexType name="ActionsType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <sequence>
-                    <element ref="rules:action" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="action" type="rules:ActionType"/>
-    <complexType name="ActionType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <sequence>
-                    <element ref="rules:globals" minOccurs="0" maxOccurs="1"/>
-                    <element ref="rules:inputs" minOccurs="0" maxOccurs="1"/>
-                    <element ref="rules:outputs" minOccurs="0" maxOccurs="1"/>
-                </sequence>
-                <attribute name="eventId" type="string" use="optional"/>
-                <attribute name="operation" type="string" use="optional"/>
-                <attribute name="type" type="rules:actionType" use="optional"/>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="globals" type="rules:GlobalsType"/>
-    <complexType name="GlobalsType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <sequence>
-                    <element ref="rules:global" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="inputs" type="rules:InputsType"/>
-    <complexType name="InputsType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <sequence>
-                    <element ref="rules:input" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="outputs" type="rules:OutputsType"/>
-    <complexType name="OutputsType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <sequence>
-                    <element ref="rules:output" minOccurs="0" maxOccurs="unbounded"/>
-                </sequence>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <element name="global" type="rules:MappingType"/>
-    <element name="input" type="rules:MappingType"/>
-    <element name="output" type="rules:MappingType"/>
-    <complexType name="MappingType">
-        <complexContent>
-            <extension base="sca:CommonExtensionBase">
-                <attribute name="from" type="string" use="required"/>
-                <attribute name="to" type="string" use="optional"/>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <simpleType name="expressionType">
-        <restriction base="string">
-            <enumeration value="MVEL"/>
-        </restriction>
-    </simpleType>
-
-    <simpleType name="scopeType">
-        <restriction base="string">
-            <enumeration value="MESSAGE"/>
-            <enumeration value="EXCHANGE"/>
-        </restriction>
-    </simpleType>
-
-    <simpleType name="actionType">
-        <restriction base="string">
-            <enumeration value="EXECUTE"/>
-            <enumeration value="INSERT"/>
-            <enumeration value="FIRE_ALL_RULES"/>
-            <enumeration value="FIRE_UNTIL_HALT"/>
-        </restriction>
-    </simpleType>
 
     <element name="channels" type="rules:ChannelsType"/>
     <complexType name="ChannelsType">
@@ -257,6 +163,100 @@ MA  02110-1301, USA.
             </extension>
         </complexContent>
     </complexType>
+
+    <element name="operations" type="rules:OperationsType"/>
+    <complexType name="OperationsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:operation" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="operation" type="rules:OperationType"/>
+    <complexType name="OperationType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:globals" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:inputs" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:outputs" minOccurs="0" maxOccurs="1"/>
+                    <element ref="rules:faults" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+                <attribute name="eventId" type="string" use="optional"/>
+                <attribute name="name" type="string" use="optional"/>
+                <attribute name="type" type="rules:operationType" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="globals" type="rules:GlobalsType"/>
+    <complexType name="GlobalsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:global" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="inputs" type="rules:InputsType"/>
+    <complexType name="InputsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:input" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="outputs" type="rules:OutputsType"/>
+    <complexType name="OutputsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:output" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="faults" type="rules:FaultsType"/>
+    <complexType name="FaultsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="rules:fault" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="global" type="rules:MappingType"/>
+    <element name="input" type="rules:MappingType"/>
+    <element name="output" type="rules:MappingType"/>
+    <element name="fault" type="rules:MappingType"/>
+    <complexType name="MappingType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="from" type="string" use="required"/>
+                <attribute name="to" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="operationType">
+        <restriction base="string">
+            <enumeration value="EXECUTE"/>
+            <enumeration value="INSERT"/>
+            <enumeration value="FIRE_ALL_RULES"/>
+            <enumeration value="FIRE_UNTIL_HALT"/>
+        </restriction>
+    </simpleType>
 
     <element name="properties" type="rules:PropertiesType"/>
     <complexType name="PropertiesType">

@@ -21,7 +21,7 @@ package org.switchyard.component.bpm.config.model.v1;
 import static org.switchyard.component.bpm.config.model.UserGroupCallbackModel.USER_GROUP_CALLBACK;
 import static org.switchyard.component.bpm.config.model.WorkItemHandlerModel.WORK_ITEM_HANDLER;
 import static org.switchyard.component.bpm.config.model.WorkItemHandlersModel.WORK_ITEM_HANDLERS;
-import static org.switchyard.component.common.knowledge.config.model.ActionModel.ACTION;
+import static org.switchyard.component.common.knowledge.config.model.OperationModel.OPERATION;
 
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1KnowledgeMarshaller;
@@ -64,8 +64,8 @@ public class V1BPMMarshaller extends V1KnowledgeMarshaller {
         Descriptor desc = getDescriptor();
         if (IMPLEMENTATION_BPM.equals(name)) {
             return new V1BPMComponentImplementationModel(config, desc);
-        } else if (ACTION.equals(name)) {
-            return new V1BPMActionModel(config, desc);
+        } else if (OPERATION.equals(name)) {
+            return new V1BPMOperationModel(config, desc);
         } else if (USER_GROUP_CALLBACK.equals(name)) {
             return new V1UserGroupCallbackModel(config, desc);
         } else if (WORK_ITEM_HANDLERS.equals(name)) {

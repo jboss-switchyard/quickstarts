@@ -19,6 +19,7 @@
 package org.switchyard.component.common.knowledge.expression;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
@@ -46,7 +47,7 @@ public class MVELExpression implements Expression {
      */
     public MVELExpression(String expression, PropertyResolver propertyResolver) {
         _expression = expression;
-        _resolverFactory = new PropertyResolverFactory(propertyResolver);
+        _resolverFactory = new ResolverFactory(propertyResolver);
         compile();
     }
 
@@ -93,15 +94,32 @@ public class MVELExpression implements Expression {
      */
     @Override
     public Object run(Object context) {
-        return isCompiled() ? MVEL.executeExpression(_compiled, context, _resolverFactory) : MVEL.eval(_expression, context, _resolverFactory);
+        ResolverFactory.setContext(context);
+        try {
+            return isCompiled() ? MVEL.executeExpression(_compiled, context, _resolverFactory) : MVEL.eval(_expression, context, _resolverFactory);
+        } finally {
+            ResolverFactory.setContext(null);
+        }
     }
 
     @SuppressWarnings("serial")
-    private static final class PropertyResolverFactory extends ImmutableDefaultFactory {
+    private static final class ResolverFactory extends ImmutableDefaultFactory {
+
+        private static final ThreadLocal<Map<String, Object>> CONTEXT = new ThreadLocal<Map<String, Object>>();
+
+        @SuppressWarnings("unchecked")
+        private static void setContext(Object context) {
+            CONTEXT.set(context instanceof Map ? (Map<String, Object>)context : null);
+        }
+
+        private static boolean containsContext(String name) {
+            Map<String, Object> context = CONTEXT.get();
+            return context != null && context.containsKey(name);
+        }
 
         private final PropertyResolver _propertyResolver;
 
-        private PropertyResolverFactory(PropertyResolver propertyResolver) {
+        private ResolverFactory(PropertyResolver propertyResolver) {
             _propertyResolver = propertyResolver;
         }
 
@@ -110,7 +128,7 @@ public class MVELExpression implements Expression {
          */
         @Override
         public boolean isResolveable(String name) {
-            return name != null && _propertyResolver.resolveProperty(name) != null;
+            return name != null && (!containsContext(name) || _propertyResolver.resolveProperty(name) != null);
         }
 
         /**
@@ -118,7 +136,7 @@ public class MVELExpression implements Expression {
          */
         @Override
         public VariableResolver getVariableResolver(String name) {
-            Object value = name != null ? _propertyResolver.resolveProperty(name) : null;
+            Object value = isResolveable(name) ? _propertyResolver.resolveProperty(name) : null;
             return new SimpleValueResolver(value);
         }
 

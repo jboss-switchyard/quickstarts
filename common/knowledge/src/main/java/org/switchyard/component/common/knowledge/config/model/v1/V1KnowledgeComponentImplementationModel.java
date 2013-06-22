@@ -18,19 +18,19 @@
  */
 package org.switchyard.component.common.knowledge.config.model.v1;
 
-import static org.switchyard.component.common.knowledge.config.model.ActionsModel.ACTIONS;
 import static org.switchyard.component.common.knowledge.config.model.ChannelsModel.CHANNELS;
 import static org.switchyard.component.common.knowledge.config.model.ListenersModel.LISTENERS;
 import static org.switchyard.component.common.knowledge.config.model.LoggersModel.LOGGERS;
 import static org.switchyard.component.common.knowledge.config.model.ManifestModel.MANIFEST;
+import static org.switchyard.component.common.knowledge.config.model.OperationsModel.OPERATIONS;
 import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
 
-import org.switchyard.component.common.knowledge.config.model.ActionsModel;
 import org.switchyard.component.common.knowledge.config.model.ChannelsModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.config.model.ListenersModel;
 import org.switchyard.component.common.knowledge.config.model.LoggersModel;
 import org.switchyard.component.common.knowledge.config.model.ManifestModel;
+import org.switchyard.component.common.knowledge.config.model.OperationsModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
@@ -43,11 +43,11 @@ import org.switchyard.config.model.property.PropertiesModel;
  */
 public abstract class V1KnowledgeComponentImplementationModel extends V1ComponentImplementationModel implements KnowledgeComponentImplementationModel {
 
-    private ActionsModel _actions;
     private ChannelsModel _channels;
     private ListenersModel _listeners;
     private LoggersModel _loggers;
     private ManifestModel _manifest;
+    private OperationsModel _operations;
     private PropertiesModel _properties;
 
 
@@ -67,27 +67,6 @@ public abstract class V1KnowledgeComponentImplementationModel extends V1Componen
      */
     public V1KnowledgeComponentImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ActionsModel getActions() {
-        if (_actions == null) {
-            _actions = (ActionsModel)getFirstChildModel(ACTIONS);
-        }
-        return _actions;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public KnowledgeComponentImplementationModel setActions(ActionsModel actions) {
-        setChildModel(actions);
-        _actions = actions;
-        return this;
     }
 
     /**
@@ -171,6 +150,27 @@ public abstract class V1KnowledgeComponentImplementationModel extends V1Componen
     public KnowledgeComponentImplementationModel setManifest(ManifestModel manifest) {
         setChildModel(manifest);
         _manifest = manifest;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public OperationsModel getOperations() {
+        if (_operations == null) {
+            _operations = (OperationsModel)getFirstChildModel(OPERATIONS);
+        }
+        return _operations;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public KnowledgeComponentImplementationModel setOperations(OperationsModel operations) {
+        setChildModel(operations);
+        _operations = operations;
         return this;
     }
 

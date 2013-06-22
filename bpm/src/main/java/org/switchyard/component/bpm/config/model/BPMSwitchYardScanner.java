@@ -29,27 +29,28 @@ import org.jbpm.services.task.wih.AbstractHTWorkItemHandler;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
-import org.switchyard.component.bpm.BPMActionType;
+import org.switchyard.component.bpm.BPMOperationType;
 import org.switchyard.component.bpm.annotation.AbortProcessInstance;
 import org.switchyard.component.bpm.annotation.BPM;
 import org.switchyard.component.bpm.annotation.SignalEvent;
 import org.switchyard.component.bpm.annotation.StartProcess;
 import org.switchyard.component.bpm.annotation.UserGroupCallback;
 import org.switchyard.component.bpm.annotation.WorkItemHandler;
-import org.switchyard.component.bpm.config.model.v1.V1BPMActionModel;
+import org.switchyard.component.bpm.config.model.v1.V1BPMOperationModel;
 import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1UserGroupCallbackModel;
 import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlerModel;
 import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlersModel;
 import org.switchyard.component.bpm.service.SwitchYardServiceTaskHandler;
 import org.switchyard.component.bpm.util.WorkItemHandlers;
+import org.switchyard.component.common.knowledge.annotation.Fault;
 import org.switchyard.component.common.knowledge.annotation.Global;
 import org.switchyard.component.common.knowledge.annotation.Input;
 import org.switchyard.component.common.knowledge.annotation.Output;
-import org.switchyard.component.common.knowledge.config.model.ActionModel;
-import org.switchyard.component.common.knowledge.config.model.ActionsModel;
+import org.switchyard.component.common.knowledge.config.model.OperationModel;
+import org.switchyard.component.common.knowledge.config.model.OperationsModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeSwitchYardScanner;
-import org.switchyard.component.common.knowledge.config.model.v1.V1ActionsModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1OperationsModel;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -134,50 +135,55 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
             processId = bpmName;
         }
         componentImplementationModel.setProcessId(processId);
-        ActionsModel actionsModel = new V1ActionsModel(DEFAULT_NAMESPACE);
+        OperationsModel operationsModel = new V1OperationsModel(DEFAULT_NAMESPACE);
         JavaService javaService = JavaService.fromClass(bpmInterface);
         for (Method method : bpmClass.getDeclaredMethods()) {
-            BPMActionType actionType = null;
+            BPMOperationType operationType = null;
             String eventId = null;
             Global[] globalMappingAnnotations = null;
             Input[] inputMappingAnnotations = null;
             Output[] outputMappingAnnotations = null;
+            Fault[] faultMappingAnnotations = null;
             if (START_PROCESS_FILTER.matches(method)) {
-                actionType = BPMActionType.START_PROCESS;
+                operationType = BPMOperationType.START_PROCESS;
                 StartProcess startProcessAnnotation = method.getAnnotation(StartProcess.class);
                 globalMappingAnnotations = startProcessAnnotation.globals();
                 inputMappingAnnotations = startProcessAnnotation.inputs();
                 outputMappingAnnotations = startProcessAnnotation.outputs();
+                faultMappingAnnotations = startProcessAnnotation.faults();
             } else if (SIGNAL_EVENT_FILTER.matches(method)) {
-                actionType = BPMActionType.SIGNAL_EVENT;
+                operationType = BPMOperationType.SIGNAL_EVENT;
                 SignalEvent signalEventAnnotation = method.getAnnotation(SignalEvent.class);
                 eventId = Strings.trimToNull(signalEventAnnotation.eventId());
                 globalMappingAnnotations = signalEventAnnotation.globals();
                 inputMappingAnnotations = signalEventAnnotation.inputs();
                 outputMappingAnnotations = signalEventAnnotation.outputs();
+                faultMappingAnnotations = signalEventAnnotation.faults();
             } else if (ABORT_PROCESS_INSTANCE_FILTER.matches(method)) {
-                actionType = BPMActionType.ABORT_PROCESS_INSTANCE;
+                operationType = BPMOperationType.ABORT_PROCESS_INSTANCE;
                 AbortProcessInstance abortProcessInstanceAnnotation = method.getAnnotation(AbortProcessInstance.class);
                 globalMappingAnnotations = new Global[]{};
                 inputMappingAnnotations = new Input[]{};
                 outputMappingAnnotations = abortProcessInstanceAnnotation.outputs();
+                faultMappingAnnotations = abortProcessInstanceAnnotation.faults();
             }
-            if (actionType != null) {
+            if (operationType != null) {
                 ServiceOperation serviceOperation = javaService.getOperation(method.getName());
                 if (serviceOperation != null) {
-                    ActionModel actionModel = new V1BPMActionModel();
-                    actionModel.setEventId(eventId);
-                    actionModel.setOperation(serviceOperation.getName());
-                    actionModel.setType(actionType);
-                    actionModel.setGlobals(toGlobalsModel(globalMappingAnnotations, DEFAULT_NAMESPACE));
-                    actionModel.setInputs(toInputsModel(inputMappingAnnotations, DEFAULT_NAMESPACE));
-                    actionModel.setOutputs(toOutputsModel(outputMappingAnnotations, DEFAULT_NAMESPACE));
-                    actionsModel.addAction(actionModel);
+                    OperationModel operationModel = new V1BPMOperationModel();
+                    operationModel.setEventId(eventId);
+                    operationModel.setName(serviceOperation.getName());
+                    operationModel.setType(operationType);
+                    operationModel.setGlobals(toGlobalsModel(globalMappingAnnotations, DEFAULT_NAMESPACE));
+                    operationModel.setInputs(toInputsModel(inputMappingAnnotations, DEFAULT_NAMESPACE));
+                    operationModel.setOutputs(toOutputsModel(outputMappingAnnotations, DEFAULT_NAMESPACE));
+                    operationModel.setFaults(toFaultsModel(faultMappingAnnotations, DEFAULT_NAMESPACE));
+                    operationsModel.addOperation(operationModel);
                 }
             }
         }
-        if (!actionsModel.getActions().isEmpty()) {
-            componentImplementationModel.setActions(actionsModel);
+        if (!operationsModel.getOperations().isEmpty()) {
+            componentImplementationModel.setOperations(operationsModel);
         }
         componentImplementationModel.setChannels(toChannelsModel(bpm.channels(), DEFAULT_NAMESPACE, componentModel));
         componentImplementationModel.setListeners(toListenersModel(bpm.listeners(), DEFAULT_NAMESPACE));

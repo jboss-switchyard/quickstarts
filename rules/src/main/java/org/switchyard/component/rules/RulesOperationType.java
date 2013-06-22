@@ -16,19 +16,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.common.knowledge;
+package org.switchyard.component.rules;
+
+import org.switchyard.component.common.knowledge.OperationType;
 
 /**
- * Represents action types.
+ * Represents rules operation types.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface ActionType {
+public enum RulesOperationType implements OperationType {
 
-    /**
-     * Gets the name.
-     * @return the name
-     */
-    public String name();
+    /** The execute type. */
+    EXECUTE,
+    /** The insert type. */
+    INSERT,
+    /** The fire all rules type. */
+    FIRE_ALL_RULES,
+    /** The fire until halt type. */
+    FIRE_UNTIL_HALT;
 
 }

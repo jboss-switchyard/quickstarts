@@ -28,20 +28,21 @@ import java.util.List;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
+import org.switchyard.component.common.knowledge.annotation.Fault;
 import org.switchyard.component.common.knowledge.annotation.Global;
 import org.switchyard.component.common.knowledge.annotation.Input;
 import org.switchyard.component.common.knowledge.annotation.Output;
-import org.switchyard.component.common.knowledge.config.model.ActionModel;
-import org.switchyard.component.common.knowledge.config.model.ActionsModel;
+import org.switchyard.component.common.knowledge.config.model.OperationModel;
+import org.switchyard.component.common.knowledge.config.model.OperationsModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeSwitchYardScanner;
-import org.switchyard.component.common.knowledge.config.model.v1.V1ActionsModel;
-import org.switchyard.component.rules.RulesActionType;
+import org.switchyard.component.common.knowledge.config.model.v1.V1OperationsModel;
+import org.switchyard.component.rules.RulesOperationType;
 import org.switchyard.component.rules.annotation.Execute;
 import org.switchyard.component.rules.annotation.FireAllRules;
 import org.switchyard.component.rules.annotation.FireUntilHalt;
 import org.switchyard.component.rules.annotation.Insert;
 import org.switchyard.component.rules.annotation.Rules;
-import org.switchyard.component.rules.config.model.v1.V1RulesActionModel;
+import org.switchyard.component.rules.config.model.v1.V1RulesOperationModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesComponentImplementationModel;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
@@ -116,56 +117,62 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
         ComponentModel componentModel = new V1ComponentModel();
         componentModel.setName(rulesName);
         RulesComponentImplementationModel componentImplementationModel = new V1RulesComponentImplementationModel();
-        ActionsModel actionsModel = new V1ActionsModel(DEFAULT_NAMESPACE);
+        OperationsModel operationsModel = new V1OperationsModel(DEFAULT_NAMESPACE);
         JavaService javaService = JavaService.fromClass(rulesInterface);
         for (Method method : rulesClass.getDeclaredMethods()) {
-            RulesActionType actionType = null;
+            RulesOperationType operationType = null;
             String eventId = null;
             Global[] globalMappingAnnotations = null;
             Input[] inputMappingAnnotations = null;
             Output[] outputMappingAnnotations = null;
+            Fault[] faultMappingAnnotations = null;
             if (EXECUTE_FILTER.matches(method)) {
-                actionType = RulesActionType.EXECUTE;
+                operationType = RulesOperationType.EXECUTE;
                 Execute executeAnnotation = method.getAnnotation(Execute.class);
                 globalMappingAnnotations = executeAnnotation.globals();
                 inputMappingAnnotations = executeAnnotation.inputs();
                 outputMappingAnnotations = executeAnnotation.outputs();
+                faultMappingAnnotations = executeAnnotation.faults();
             } else if (INSERT_FILTER.matches(method)) {
-                actionType = RulesActionType.INSERT;
+                operationType = RulesOperationType.INSERT;
                 Insert insertAnnotation = method.getAnnotation(Insert.class);
                 globalMappingAnnotations = insertAnnotation.globals();
                 inputMappingAnnotations = insertAnnotation.inputs();
                 outputMappingAnnotations = insertAnnotation.outputs();
+                faultMappingAnnotations = insertAnnotation.faults();
             } else if (FIRE_ALL_RULES_FILTER.matches(method)) {
-                actionType = RulesActionType.FIRE_ALL_RULES;
+                operationType = RulesOperationType.FIRE_ALL_RULES;
                 FireAllRules fireAllRulesAnnotation = method.getAnnotation(FireAllRules.class);
                 globalMappingAnnotations = fireAllRulesAnnotation.globals();
                 inputMappingAnnotations = fireAllRulesAnnotation.inputs();
                 outputMappingAnnotations = fireAllRulesAnnotation.outputs();
+                faultMappingAnnotations = fireAllRulesAnnotation.faults();
             } else if (FIRE_UNTIL_HALT_FILTER.matches(method)) {
-                actionType = RulesActionType.FIRE_UNTIL_HALT;
+                operationType = RulesOperationType.FIRE_UNTIL_HALT;
                 FireUntilHalt fireUntilHaltAnnotation = method.getAnnotation(FireUntilHalt.class);
                 eventId = Strings.trimToNull(fireUntilHaltAnnotation.eventId());
                 globalMappingAnnotations = fireUntilHaltAnnotation.globals();
                 inputMappingAnnotations = fireUntilHaltAnnotation.inputs();
                 outputMappingAnnotations = fireUntilHaltAnnotation.outputs();
+                faultMappingAnnotations = fireUntilHaltAnnotation.faults();
             }
-            if (actionType != null) {
+            if (operationType != null) {
                 ServiceOperation serviceOperation = javaService.getOperation(method.getName());
                 if (serviceOperation != null) {
-                    ActionModel actionModel = new V1RulesActionModel();
-                    actionModel.setEventId(eventId);
-                    actionModel.setOperation(serviceOperation.getName());
-                    actionModel.setType(actionType);
-                    actionModel.setGlobals(toGlobalsModel(globalMappingAnnotations, DEFAULT_NAMESPACE));
-                    actionModel.setInputs(toInputsModel(inputMappingAnnotations, DEFAULT_NAMESPACE));
-                    actionModel.setOutputs(toOutputsModel(outputMappingAnnotations, DEFAULT_NAMESPACE));
-                    actionsModel.addAction(actionModel);
+                    OperationModel operationModel = new V1RulesOperationModel();
+                    operationModel.setEventId(eventId);
+                    operationModel.setName(serviceOperation.getName());
+                    operationModel.setType(operationType);
+                    operationModel.setGlobals(toGlobalsModel(globalMappingAnnotations, DEFAULT_NAMESPACE));
+                    operationModel.setInputs(toInputsModel(inputMappingAnnotations, DEFAULT_NAMESPACE));
+                    operationModel.setOutputs(toOutputsModel(outputMappingAnnotations, DEFAULT_NAMESPACE));
+                    operationModel.setFaults(toFaultsModel(faultMappingAnnotations, DEFAULT_NAMESPACE));
+                    operationsModel.addOperation(operationModel);
                 }
             }
         }
-        if (!actionsModel.getActions().isEmpty()) {
-            componentImplementationModel.setActions(actionsModel);
+        if (!operationsModel.getOperations().isEmpty()) {
+            componentImplementationModel.setOperations(operationsModel);
         }
         componentImplementationModel.setChannels(toChannelsModel(rules.channels(), DEFAULT_NAMESPACE, componentModel));
         componentImplementationModel.setListeners(toListenersModel(rules.listeners(), DEFAULT_NAMESPACE));

@@ -25,6 +25,7 @@ import org.switchyard.component.bpm.annotation.UserGroupCallback;
 import org.switchyard.component.bpm.annotation.WorkItemHandler;
 import org.switchyard.component.common.knowledge.LoggerType;
 import org.switchyard.component.common.knowledge.annotation.Channel;
+import org.switchyard.component.common.knowledge.annotation.Fault;
 import org.switchyard.component.common.knowledge.annotation.Global;
 import org.switchyard.component.common.knowledge.annotation.Input;
 import org.switchyard.component.common.knowledge.annotation.Listener;
@@ -61,7 +62,8 @@ public interface DoStuffProcess extends DoStuff {
         eventId="theEventId",
         globals=@Global(from="context['foobar']", to="globalVar"),
         inputs=@Input(from="message.content.nested", to="inputVar"),
-        outputs=@Output(from="outputVar", to="message.content")
+        outputs=@Output(from="outputVar", to="message.content"),
+        faults=@Fault(from="faultVar", to="message.content")
     )
     public void process(Object stuff);
 

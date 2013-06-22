@@ -18,10 +18,11 @@
  */
 package org.switchyard.component.common.knowledge.config.model.v1;
 
-import static org.switchyard.component.common.knowledge.config.model.ActionsModel.ACTIONS;
 import static org.switchyard.component.common.knowledge.config.model.ChannelModel.CHANNEL;
 import static org.switchyard.component.common.knowledge.config.model.ChannelsModel.CHANNELS;
 import static org.switchyard.component.common.knowledge.config.model.ContainerModel.CONTAINER;
+import static org.switchyard.component.common.knowledge.config.model.FaultModel.FAULT;
+import static org.switchyard.component.common.knowledge.config.model.FaultsModel.FAULTS;
 import static org.switchyard.component.common.knowledge.config.model.GlobalModel.GLOBAL;
 import static org.switchyard.component.common.knowledge.config.model.GlobalsModel.GLOBALS;
 import static org.switchyard.component.common.knowledge.config.model.InputModel.INPUT;
@@ -31,6 +32,7 @@ import static org.switchyard.component.common.knowledge.config.model.ListenersMo
 import static org.switchyard.component.common.knowledge.config.model.LoggerModel.LOGGER;
 import static org.switchyard.component.common.knowledge.config.model.LoggersModel.LOGGERS;
 import static org.switchyard.component.common.knowledge.config.model.ManifestModel.MANIFEST;
+import static org.switchyard.component.common.knowledge.config.model.OperationsModel.OPERATIONS;
 import static org.switchyard.component.common.knowledge.config.model.OutputModel.OUTPUT;
 import static org.switchyard.component.common.knowledge.config.model.OutputsModel.OUTPUTS;
 import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
@@ -74,14 +76,10 @@ public class V1KnowledgeMarshaller extends V1CompositeMarshaller {
     public Model read(Configuration config) {
         String name = config.getName();
         Descriptor desc = getDescriptor();
-        if (ACTIONS.equals(name)) {
-            return new V1ActionsModel(config, desc);
-        } else if (CHANNELS.equals(name)) {
+        if (CHANNELS.equals(name)) {
             return new V1ChannelsModel(config, desc);
         } else if (CHANNEL.equals(name)) {
             return new V1ChannelModel(config, desc);
-        } else if (CONTAINER.equals(name)) {
-            return new V1ContainerModel(config, desc);
         } else if (LISTENERS.equals(name)) {
             return new V1ListenersModel(config, desc);
         } else if (LISTENER.equals(name)) {
@@ -92,6 +90,14 @@ public class V1KnowledgeMarshaller extends V1CompositeMarshaller {
             return new V1LoggerModel(config, desc);
         } else if (MANIFEST.equals(name)) {
             return new V1ManifestModel(config, desc);
+        } else if (CONTAINER.equals(name)) {
+            return new V1ContainerModel(config, desc);
+        } else if (RESOURCES.equals(name)) {
+            return new V1ResourcesModel(config, desc);
+        } else if (RESOURCE.equals(name)) {
+            return new V1ResourceModel(config, desc);
+        } else if (OPERATIONS.equals(name)) {
+            return new V1OperationsModel(config, desc);
         } else if (GLOBALS.equals(name)) {
             return new V1GlobalsModel(config, desc);
         } else if (GLOBAL.equals(name)) {
@@ -104,14 +110,14 @@ public class V1KnowledgeMarshaller extends V1CompositeMarshaller {
             return new V1OutputsModel(config, desc);
         } else if (OUTPUT.equals(name)) {
             return new V1OutputModel(config, desc);
+        } else if (FAULTS.equals(name)) {
+            return new V1FaultsModel(config, desc);
+        } else if (FAULT.equals(name)) {
+            return new V1FaultModel(config, desc);
         } else if (PROPERTIES.equals(name)) {
             return new V1PropertiesModel(config, desc);
         } else if (PROPERTY.equals(name)) {
             return new V1PropertyModel(config, desc);
-        } else if (RESOURCES.equals(name)) {
-            return new V1ResourcesModel(config, desc);
-        } else if (RESOURCE.equals(name)) {
-            return new V1ResourceModel(config, desc);
         }
         return super.read(config);
     }

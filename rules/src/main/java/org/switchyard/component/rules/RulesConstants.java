@@ -30,6 +30,11 @@ public final class RulesConstants {
     /** urn:switchyard-component-rules:rules:1.0 . */
     public static final String RULES_NAMESPACE = "urn:switchyard-component-rules:rules:1.0";
 
+    /** sessionId . */
+    public static final String SESSION_ID = "sessionId";
+    /** {urn:switchyard-component-rules:rules:1.0}sessionId . */
+    public static final String SESSION_ID_PROPERTY = new QName(RULES_NAMESPACE, SESSION_ID).toString();
+
     /** continue . */
     public static final String CONTINUE = "continue";
     /** {urn:switchyard-component-rules:rules:1.0}continue . */

@@ -29,19 +29,6 @@ import org.switchyard.config.model.property.PropertiesModel;
 public interface KnowledgeComponentImplementationModel extends ComponentImplementationModel {
 
     /**
-     * Gets the child actions model.
-     * @return the child actions model
-     */
-    public ActionsModel getActions();
-
-    /**
-     * Sets the child actions model.
-     * @param actions the child actions model
-     * @return this KnowledgeComponentImplementationModel (useful for chaining)
-     */
-    public KnowledgeComponentImplementationModel setActions(ActionsModel actions);
-
-    /**
      * Gets the child channels model.
      * @return the child channels model
      */
@@ -92,6 +79,19 @@ public interface KnowledgeComponentImplementationModel extends ComponentImplemen
      * @return this KnowledgeComponentImplementationModel (useful for chaining)
      */
     public KnowledgeComponentImplementationModel setManifest(ManifestModel manifest);
+
+    /**
+     * Gets the child operations model.
+     * @return the child operations model
+     */
+    public OperationsModel getOperations();
+
+    /**
+     * Sets the child operations model.
+     * @param operations the child operations model
+     * @return this KnowledgeComponentImplementationModel (useful for chaining)
+     */
+    public KnowledgeComponentImplementationModel setOperations(OperationsModel operations);
 
     /**
      * Gets the child properties model.

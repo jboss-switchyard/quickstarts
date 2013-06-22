@@ -16,36 +16,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.rules.config.model.v1;
+package org.switchyard.component.bpm.config.model.v1;
 
-import static org.switchyard.component.rules.config.model.RulesComponentImplementationModel.DEFAULT_NAMESPACE;
+import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
 
-import org.switchyard.component.common.knowledge.ActionType;
-import org.switchyard.component.common.knowledge.config.model.v1.V1ActionModel;
-import org.switchyard.component.rules.RulesActionType;
+import org.switchyard.component.common.knowledge.OperationType;
+import org.switchyard.component.common.knowledge.config.model.v1.V1OperationModel;
+import org.switchyard.component.bpm.BPMOperationType;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
 /**
- * The 1st version RulesOperationModel.
+ * The 1st version BPMOperationModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class V1RulesActionModel extends V1ActionModel {
+public class V1BPMOperationModel extends V1OperationModel {
 
     /**
-     * Creates a new V1RulesActionModel.
+     * Creates a new V1BPMOperationModel.
      */
-    public V1RulesActionModel() {
+    public V1BPMOperationModel() {
         super(DEFAULT_NAMESPACE);
     }
 
     /**
-     * Creates a new V1RulesActionModel with the specified configuration and descriptor.
+     * Creates a new V1BPMOperationModel with the specified configuration and descriptor.
      * @param config the configuration
      * @param desc the descriptor
      */
-    public V1RulesActionModel(Configuration config, Descriptor desc) {
+    public V1BPMOperationModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -53,9 +53,9 @@ public class V1RulesActionModel extends V1ActionModel {
      * {@inheritDoc}
      */
     @Override
-    public ActionType getType() {
+    public OperationType getType() {
         String type = getModelAttribute("type");
-        return type != null ? RulesActionType.valueOf(type) : null;
+        return type != null ? BPMOperationType.valueOf(type) : null;
     }
 
 }

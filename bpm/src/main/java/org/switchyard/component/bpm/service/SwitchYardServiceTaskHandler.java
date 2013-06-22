@@ -18,24 +18,28 @@
  */
 package org.switchyard.component.bpm.service;
 
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.FAULT;
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.PARAMETER;
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.RESULT;
 
-import java.util.HashMap;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
+import org.jbpm.bpmn2.handler.WorkItemHandlerRuntimeException;
 import org.kie.api.runtime.process.ProcessRuntime;
 import org.kie.api.runtime.process.WorkItem;
 import org.kie.api.runtime.process.WorkItemHandler;
 import org.kie.api.runtime.process.WorkItemManager;
+import org.switchyard.HandlerException;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceRequest;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceResponse;
+import org.switchyard.exception.SwitchYardException;
 
 /**
  * SwitchYardServiceTaskHandler.
@@ -59,12 +63,12 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
     public static final String PARAMETER_NAME = PARAMETER + "Name";
     /** ResultName. */
     public static final String RESULT_NAME = RESULT + "Name";
-    /** FaultResultName. */
-    public static final String FAULT_RESULT_NAME = "Fault" + RESULT_NAME;
+    /** FaultName. */
+    public static final String FAULT_NAME = FAULT + "Name";
     /** FaultEventId. */
-    public static final String FAULT_EVENT_ID = "FaultEventId";
-    /** FaultWorkItemAction. */
-    public static final String FAULT_WORK_ITEM_ACTION = "FaultWorkItemAction";
+    public static final String FAULT_EVENT_ID = FAULT + "EventId";
+    /** FaultAction. */
+    public static final String FAULT_ACTION = FAULT + "Action";
 
     private String _name;
     private SwitchYardServiceInvoker _invoker;
@@ -130,58 +134,91 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
      */
     @Override
     public void executeWorkItem(WorkItem workItem, WorkItemManager manager) {
-        // input
+        // parameters (input)
         Map<String, Object> parameters = workItem.getParameters();
         Object content = null;
         String parameterName = getParameterName(parameters);
         if (parameterName != null) {
             content = parameters.get(parameterName);
         }
-        // invoke
+        // service invocation
         QName serviceName = getServiceName(parameters);
         String operationName = getOperationName(parameters);
         SwitchYardServiceRequest request = new SwitchYardServiceRequest(serviceName, operationName, content, parameters);
         SwitchYardServiceResponse response = getInvoker().invoke(request);
-        // output
+        // results (output)
         Map<String, Object> results = workItem.getResults();
-        if (results == null) {
-            results = new HashMap<String, Object>();
-        }
-        String resultName = getResultName(parameters);
-        if (resultName != null) {
-            results.put(resultName, response.getContent());
-        }
-        // fault
         Object fault = response.getFault();
         if (fault == null) {
+            // result (success)
+            String resultName = getResultName(parameters);
+            if (resultName != null) {
+                Object result = response.getContent();
+                results.put(resultName, result);
+            }
             manager.completeWorkItem(workItem.getId(), results);
         } else {
+            // fault (failure)
+            fault = unwrapFault(fault);
+            String emsg;
             if (fault instanceof Throwable) {
-                Throwable t = (Throwable)fault;
-                LOGGER.error("Fault encountered: " + t.getMessage(), t);
+                emsg = String.format("Fault encountered [%s(message=%s)]: %s", fault.getClass().getName(), ((Throwable)fault).getMessage(), fault);
             } else {
-                LOGGER.error("Fault encountered: " + fault);
+                emsg = String.format("Fault encountered [%s]: %s", fault.getClass().getName(), fault);
             }
-            String faultResultName = getFaultResultName(parameters);
-            if (faultResultName != null) {
-                results.put(faultResultName, fault);
+            LOGGER.error(emsg);
+            String faultName = getFaultName(parameters);
+            if (faultName != null) {
+                results.put(faultName, fault);
             }
             String faultEventId = getFaultEventId(parameters);
             if (faultEventId != null) {
                 getProcessRuntime().signalEvent(faultEventId, fault, workItem.getProcessInstanceId());
             }
-            FaultWorkItemAction faultWorkItemAction = getFaultWorkItemAction(parameters);
-            if (faultWorkItemAction != null) {
-                switch (faultWorkItemAction) {
-                    case ABORT:
+            FaultAction faultAction = getFaultAction(parameters);
+            if (faultAction != null) {
+                switch (faultAction) {
+                    case ABORT: {
                         manager.abortWorkItem(workItem.getId());
                         break;
-                    case COMPLETE:
+                    }
+                    case COMPLETE: {
                         manager.completeWorkItem(workItem.getId(), results);
                         break;
+                    }
+                    case THROW: {
+                    // default: {
+                        final RuntimeException runtimeException;
+                        if (fault instanceof RuntimeException) {
+                            runtimeException = (RuntimeException)fault;
+                        } else {
+                            Throwable cause = fault instanceof Throwable ? (Throwable)fault : new SwitchYardException(emsg);
+                            WorkItemHandlerRuntimeException wihre = new WorkItemHandlerRuntimeException(cause, emsg);
+                            wihre.setStackTrace(cause.getStackTrace());
+                            wihre.setInformation(WorkItemHandlerRuntimeException.WORKITEMHANDLERTYPE, getClass().getSimpleName());
+                            runtimeException = wihre;
+                        }
+                        throw runtimeException;
+                    }
                 }
             }
         }
+    }
+
+    private Object unwrapFault(Object fault) {
+        if (fault instanceof HandlerException) {
+            Throwable cause = ((HandlerException)fault).getCause();
+            if (cause != null) {
+                return unwrapFault(cause);
+            }
+        }
+        if (fault instanceof InvocationTargetException) {
+            Throwable cause = ((InvocationTargetException)fault).getCause();
+            if (cause != null) {
+                return unwrapFault(cause);
+            }
+        }
+        return fault;
     }
 
     /**
@@ -200,29 +237,29 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
         return getString(OPERATION_NAME, parameters, null);
     }
 
-    protected String getParameterName(Map<String, Object> parameters) {
+    private String getParameterName(Map<String, Object> parameters) {
         return getString(PARAMETER_NAME, parameters, PARAMETER);
     }
 
-    protected String getResultName(Map<String, Object> parameters) {
+    private String getResultName(Map<String, Object> parameters) {
         return getString(RESULT_NAME, parameters, RESULT);
     }
 
-    private String getFaultResultName(Map<String, Object> parameters) {
-        return getString(FAULT_RESULT_NAME, parameters, null);
+    private String getFaultName(Map<String, Object> parameters) {
+        return getString(FAULT_NAME, parameters, FAULT);
     }
 
     private String getFaultEventId(Map<String, Object> parameters) {
         return getString(FAULT_EVENT_ID, parameters, null);
     }
 
-    private FaultWorkItemAction getFaultWorkItemAction(Map<String, Object> parameters) {
-        String s = getString(FAULT_WORK_ITEM_ACTION, parameters, null);
+    private FaultAction getFaultAction(Map<String, Object> parameters) {
+        String s = getString(FAULT_ACTION, parameters, null);
         if (s != null) {
             try {
-                return FaultWorkItemAction.valueOf(s.toUpperCase());
+                return FaultAction.valueOf(s.toUpperCase());
             } catch (IllegalArgumentException iae) {
-                LOGGER.warn(String.format("Unknown %s: %s", FaultWorkItemAction.class.getSimpleName(), iae.getMessage()));
+                LOGGER.warn(String.format("Unknown %s: %s", FaultAction.class.getSimpleName(), iae.getMessage()));
             }
         }
         return null;
@@ -250,9 +287,10 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
         return value;
     }
 
-    private static enum FaultWorkItemAction {
+    private static enum FaultAction {
         ABORT,
-        COMPLETE;
+        COMPLETE,
+        THROW;
     }
 
 }

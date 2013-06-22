@@ -30,6 +30,11 @@ public final class BPMConstants {
     /** urn:switchyard-component-bpm:bpm:1.0 . */
     public static final String BPM_NAMESPACE = "urn:switchyard-component-bpm:bpm:1.0";
 
+    /** sessionId . */
+    public static final String SESSION_ID = "sessionId";
+    /** {urn:switchyard-component-bpm:bpm:1.0}sessionId . */
+    public static final String SESSION_ID_PROPERTY = new QName(BPM_NAMESPACE, SESSION_ID).toString();
+
     /** processInstanceId . */
     public static final String PROCESS_INSTANCE_ID = "processInstanceId";
     /** {urn:switchyard-component-bpm:bpm:1.0}processInstanceId . */
@@ -39,11 +44,6 @@ public final class BPMConstants {
     public static final String CORRELATION_KEY = "correlationKey";
     /** {urn:switchyard-component-bpm:bpm:1.0}correlationKey . */
     public static final String CORRELATION_KEY_PROPERTY = new QName(BPM_NAMESPACE, CORRELATION_KEY).toString();
-
-    /** sessionId . */
-    public static final String SESSION_ID = "sessionId";
-    /** {urn:switchyard-component-bpm:bpm:1.0}sessionId . */
-    public static final String SESSION_ID_PROPERTY = new QName(BPM_NAMESPACE, SESSION_ID).toString();
 
     private BPMConstants() {}
 

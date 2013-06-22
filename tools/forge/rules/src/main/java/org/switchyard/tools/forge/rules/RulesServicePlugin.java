@@ -42,12 +42,12 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.common.io.resource.ResourceType;
-import org.switchyard.component.common.knowledge.config.model.ActionModel;
-import org.switchyard.component.common.knowledge.config.model.v1.V1ActionsModel;
+import org.switchyard.component.common.knowledge.config.model.OperationModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ManifestModel;
-import org.switchyard.component.rules.RulesActionType;
-import org.switchyard.component.rules.config.model.v1.V1RulesActionModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1OperationsModel;
+import org.switchyard.component.rules.RulesOperationType;
 import org.switchyard.component.rules.config.model.v1.V1RulesComponentImplementationModel;
+import org.switchyard.component.rules.config.model.v1.V1RulesOperationModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
@@ -165,10 +165,10 @@ public class RulesServicePlugin implements Plugin {
         
         // Create the Rules implementation model and add it to the component model
         V1RulesComponentImplementationModel rules = new V1RulesComponentImplementationModel();
-        V1ActionsModel actions = new V1ActionsModel(DEFAULT_NAMESPACE);
-        ActionModel action = new V1RulesActionModel().setOperation("operation").setType(RulesActionType.EXECUTE);
-        actions.addAction(action);
-        rules.setActions(actions);
+        V1OperationsModel operations = new V1OperationsModel(DEFAULT_NAMESPACE);
+        OperationModel operation = (OperationModel)new V1RulesOperationModel().setType(RulesOperationType.EXECUTE).setName("operation");
+        operations.addOperation(operation);
+        rules.setOperations(operations);
         V1ManifestModel manifest = new V1ManifestModel(DEFAULT_NAMESPACE);
         V1ResourcesModel resources = new V1ResourcesModel(DEFAULT_NAMESPACE);
         resources.addResource(new V1ResourceModel(DEFAULT_NAMESPACE).setLocation(rulesDefinition).setType(ResourceType.valueOf("DRL")));

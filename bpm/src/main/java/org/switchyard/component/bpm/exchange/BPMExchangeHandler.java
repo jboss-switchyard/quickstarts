@@ -18,10 +18,11 @@
  */
 package org.switchyard.component.bpm.exchange;
 
-import static org.switchyard.component.common.knowledge.util.Actions.getInput;
-import static org.switchyard.component.common.knowledge.util.Actions.getInputMap;
-import static org.switchyard.component.common.knowledge.util.Actions.setGlobals;
-import static org.switchyard.component.common.knowledge.util.Actions.setOutputs;
+import static org.switchyard.component.common.knowledge.util.Operations.getInput;
+import static org.switchyard.component.common.knowledge.util.Operations.getInputMap;
+import static org.switchyard.component.common.knowledge.util.Operations.setFaults;
+import static org.switchyard.component.common.knowledge.util.Operations.setGlobals;
+import static org.switchyard.component.common.knowledge.util.Operations.setOutputs;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,13 +47,14 @@ import org.kie.internal.KieInternalServices;
 import org.kie.internal.process.CorrelationAwareProcessRuntime;
 import org.kie.internal.process.CorrelationKey;
 import org.kie.internal.process.CorrelationKeyFactory;
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.lang.Strings;
-import org.switchyard.component.bpm.BPMActionType;
+import org.switchyard.component.bpm.BPMOperationType;
 import org.switchyard.component.bpm.BPMConstants;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.runtime.BPMProcessEventListener;
@@ -62,7 +64,7 @@ import org.switchyard.component.bpm.runtime.BPMTaskServiceRegistry;
 import org.switchyard.component.bpm.transaction.AS7TransactionHelper;
 import org.switchyard.component.bpm.util.UserGroupCallbacks;
 import org.switchyard.component.bpm.util.WorkItemHandlers;
-import org.switchyard.component.common.knowledge.exchange.KnowledgeAction;
+import org.switchyard.component.common.knowledge.exchange.KnowledgeOperation;
 import org.switchyard.component.common.knowledge.exchange.KnowledgeExchangeHandler;
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
 import org.switchyard.component.common.knowledge.util.Disposals;
@@ -76,7 +78,7 @@ import org.switchyard.component.common.knowledge.util.Listeners;
  */
 public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImplementationModel> {
 
-    private static final KnowledgeAction DEFAULT_ACTION = new KnowledgeAction(BPMActionType.START_PROCESS);
+    private static final KnowledgeOperation DEFAULT_OPERATION = new KnowledgeOperation(BPMOperationType.START_PROCESS);
 
     private final boolean _persistent;
     private final String _processId;
@@ -176,27 +178,30 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
      * {@inheritDoc}
      */
     @Override
-    public KnowledgeAction getDefaultAction() {
-        return DEFAULT_ACTION;
+    public KnowledgeOperation getDefaultOperation() {
+        return DEFAULT_OPERATION;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void handleAction(Exchange exchange, KnowledgeAction action) throws HandlerException {
+    public void handleOperation(Exchange exchange, KnowledgeOperation operation) throws HandlerException {
+        Integer sessionId = null;
+        Long processInstanceId = null;
         Message inputMessage = exchange.getMessage();
-        Message outputMessage = null;
-        AS7TransactionHelper utx = new AS7TransactionHelper(_persistent);
         ExchangePattern exchangePattern = exchange.getContract().getProviderOperation().getExchangePattern();
-        BPMActionType actionType = (BPMActionType)action.getType();
-        switch (actionType) {
+        Map<String, Object> expressionContext = new HashMap<String, Object>();
+        AS7TransactionHelper utx = new AS7TransactionHelper(_persistent);
+        BPMOperationType operationType = (BPMOperationType)operation.getType();
+        switch (operationType) {
             case START_PROCESS: {
                 try {
                     utx.begin();
                     KnowledgeSession session = getBPMSession(exchange);
-                    setGlobals(inputMessage, action, session);
-                    Map<String, Object> inputMap = getInputMap(inputMessage, action);
+                    sessionId = session.getId();
+                    setGlobals(inputMessage, operation, session);
+                    Map<String, Object> inputMap = getInputMap(inputMessage, operation);
                     ProcessInstance processInstance;
                     CorrelationKey correlationKey = getCorrelationKey(exchange);
                     if (correlationKey != null) {
@@ -204,8 +209,10 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                     } else {
                         processInstance = session.getStateful().startProcess(_processId, inputMap);
                     }
+                    processInstanceId = Long.valueOf(processInstance.getId());
                     if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                        outputMessage = handleOutput(exchange, action, session, processInstance);
+                        expressionContext.putAll(getGlobalVariables(session));
+                        expressionContext.putAll(getProcessInstanceVariables(processInstance));
                     }
                     utx.commit();
                 } catch (RuntimeException re) {
@@ -218,19 +225,24 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                 try {
                     utx.begin();
                     KnowledgeSession session = getBPMSession(exchange);
-                    setGlobals(inputMessage, action, session);
-                    Long processInstanceId = getProcessInstanceId(exchange, session);
-                    Object eventObject = getInput(inputMessage, action);
-                    String eventId = action.getEventId();
+                    sessionId = session.getId();
+                    setGlobals(inputMessage, operation, session);
+                    processInstanceId = getProcessInstanceId(exchange, session);
+                    Object eventObject = getInput(inputMessage, operation);
+                    String eventId = operation.getEventId();
                     if (processInstanceId != null) {
                         session.getStateful().signalEvent(eventId, eventObject, processInstanceId);
+                        if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
+                            expressionContext.putAll(getGlobalVariables(session));
+                            ProcessInstance processInstance = session.getStateful().getProcessInstance(processInstanceId);
+                            expressionContext.putAll(getProcessInstanceVariables(processInstance));
+                        }
                     } else {
                         // TODO: should we really be defaulting here to signaling all process instances?
                         session.getStateful().signalEvent(eventId, eventObject);
-                    }
-                    if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                        ProcessInstance processInstance = session.getStateful().getProcessInstance(processInstanceId);
-                        outputMessage = handleOutput(exchange, action, session, processInstance);
+                        if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
+                            expressionContext.putAll(getGlobalVariables(session));
+                        }
                     }
                     utx.commit();
                 } catch (RuntimeException re) {
@@ -243,10 +255,12 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                 try {
                     utx.begin();
                     KnowledgeSession session = getBPMSession(exchange);
-                    Long processInstanceId = getProcessInstanceId(exchange, session);
+                    sessionId = session.getId();
+                    processInstanceId = getProcessInstanceId(exchange, session);
                     if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
+                        expressionContext.putAll(getGlobalVariables(session));
                         ProcessInstance processInstance = session.getStateful().getProcessInstance(processInstanceId);
-                        outputMessage = handleOutput(exchange, action, session, processInstance);
+                        expressionContext.putAll(getProcessInstanceVariables(processInstance));
                     }
                     session.getStateful().abortProcessInstance(processInstanceId);
                     utx.commit();
@@ -257,11 +271,25 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                 break;
             }
             default: {
-                throw new HandlerException("Unsupported action type: " + actionType);
+                throw new HandlerException("Unsupported operation type: " + operationType);
             }
         }
-        if (outputMessage != null) {
-            exchange.send(outputMessage);
+        if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
+            Message outputMessage = exchange.createMessage();
+            Context outputContext = exchange.getContext(outputMessage);
+            if (sessionId != null && sessionId.intValue() > 0) {
+                outputContext.setProperty(BPMConstants.SESSION_ID_PROPERTY, sessionId);
+            }
+            if (processInstanceId != null && processInstanceId.longValue() > 0) {
+                outputContext.setProperty(BPMConstants.PROCESSS_INSTANCE_ID_PROPERTY, processInstanceId);
+            }
+            setFaults(outputMessage, operation, expressionContext);
+            if (outputMessage.getContent() != null) {
+                exchange.sendFault(outputMessage);
+            } else {
+                setOutputs(outputMessage, operation, expressionContext);
+                exchange.send(outputMessage);
+            }
         }
     }
 
@@ -307,27 +335,15 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
         return null;
     }
 
-    private Message handleOutput(Exchange exchange, KnowledgeAction action, KnowledgeSession session, ProcessInstance processInstance) {
-        Message outputMessage = exchange.createMessage();
-        Integer sessionId = session.getId();
-        if (sessionId != null && sessionId.intValue() > 0) {
-            exchange.getContext(outputMessage).setProperty(BPMConstants.SESSION_ID_PROPERTY, sessionId);
-        }
-        Map<String, Object> contextOverrides = new HashMap<String, Object>();
-        if (processInstance != null) {
-            long processInstanceId = processInstance.getId();
-            if (processInstanceId > 0) {
-                exchange.getContext(outputMessage).setProperty(BPMConstants.PROCESSS_INSTANCE_ID_PROPERTY, Long.valueOf(processInstanceId));
-            }
-            if (processInstance instanceof WorkflowProcessInstanceImpl) {
-                Map<String, Object> processInstanceVariables = ((WorkflowProcessInstanceImpl)processInstance).getVariables();
-                if (processInstanceVariables != null) {
-                    contextOverrides.putAll(processInstanceVariables);
-                }
+    private Map<String, Object> getProcessInstanceVariables(ProcessInstance processInstance) {
+        Map<String, Object> processInstanceVariables = new HashMap<String, Object>();
+        if (processInstance instanceof WorkflowProcessInstanceImpl) {
+            Map<String, Object> var = ((WorkflowProcessInstanceImpl)processInstance).getVariables();
+            if (var != null) {
+                processInstanceVariables.putAll(var);
             }
         }
-        setOutputs(outputMessage, action, contextOverrides);
-        return outputMessage;
+        return processInstanceVariables;
     }
 
 }

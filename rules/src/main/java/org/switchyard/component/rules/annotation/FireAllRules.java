@@ -25,6 +25,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.switchyard.component.common.knowledge.annotation.Fault;
 import org.switchyard.component.common.knowledge.annotation.Global;
 import org.switchyard.component.common.knowledge.annotation.Input;
 import org.switchyard.component.common.knowledge.annotation.Output;
@@ -47,5 +48,8 @@ public @interface FireAllRules {
 
     /** Outputs. */
     public Output[] outputs() default {};
+
+    /** Faults. */
+    public Fault[] faults() default {};
 
 }

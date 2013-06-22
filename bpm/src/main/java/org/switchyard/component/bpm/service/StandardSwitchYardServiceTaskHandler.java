@@ -18,9 +18,6 @@
  */
 package org.switchyard.component.bpm.service;
 
-import static org.switchyard.component.common.knowledge.KnowledgeConstants.PARAMETER;
-import static org.switchyard.component.common.knowledge.KnowledgeConstants.RESULT;
-
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -99,22 +96,6 @@ public class StandardSwitchYardServiceTaskHandler extends SwitchYardServiceTaskH
     @Override
     protected String getOperationName(Map<String, Object> parameters) {
         return getString(OPERATION, parameters, getString(OPERATION_IMPLEMENTATION_REF, parameters, null));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getParameterName(Map<String, Object> parameters) {
-        return PARAMETER;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getResultName(Map<String, Object> parameters) {
-        return RESULT;
     }
 
 }

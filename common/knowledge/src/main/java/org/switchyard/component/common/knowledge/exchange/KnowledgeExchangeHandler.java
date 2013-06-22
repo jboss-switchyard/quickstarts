@@ -23,7 +23,10 @@ import static org.switchyard.component.common.knowledge.KnowledgeConstants.DEFAU
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.xml.namespace.QName;
+
+import org.kie.api.runtime.Globals;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
@@ -33,7 +36,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
 import org.switchyard.component.common.knowledge.session.KnowledgeSessionFactory;
-import org.switchyard.component.common.knowledge.util.Actions;
+import org.switchyard.component.common.knowledge.util.Operations;
 import org.switchyard.component.common.knowledge.util.Resources;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.deploy.ServiceHandler;
@@ -53,7 +56,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     private final ServiceDomain _serviceDomain;
     private final QName _serviceName;
     private ClassLoader _loader;
-    private final Map<String, KnowledgeAction> _actions = new HashMap<String, KnowledgeAction>();
+    private final Map<String, KnowledgeOperation> _operations = new HashMap<String, KnowledgeOperation>();
     private KnowledgeSessionFactory _sessionFactory;
     private KnowledgeSession _statefulSession;
 
@@ -186,7 +189,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     protected void doStart() {
         _loader = Classes.getClassLoader(getClass());
         Resources.installTypes(_loader);
-        Actions.registerActions(_model, _actions, getDefaultAction());
+        Operations.registerOperations(_model, _operations, getDefaultOperation());
         _sessionFactory = KnowledgeSessionFactory.newSessionFactory(_model, _loader, _serviceDomain, getPropertyOverrides());
     }
 
@@ -196,7 +199,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     @Override
     protected void doStop() {
         _loader = null;
-        _actions.clear();
+        _operations.clear();
         try {
             disposeStatefulSession();
         } finally {
@@ -205,16 +208,16 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     }
 
     /**
-     * Gets the default knowledge action.
-     * @return the default knowledge action
+     * Gets the default knowledge operation.
+     * @return the default knowledge operation
      */
-    public abstract KnowledgeAction getDefaultAction();
+    public abstract KnowledgeOperation getDefaultOperation();
 
-    private KnowledgeAction getAction(ServiceOperation serviceOperation) {
+    private KnowledgeOperation getOperation(ServiceOperation serviceOperation) {
         if (serviceOperation != null) {
             String operationName = Strings.trimToNull(serviceOperation.getName());
             if (operationName != null) {
-                return _actions.get(operationName);
+                return _operations.get(operationName);
             }
         }
         return null;
@@ -227,26 +230,26 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     public final void handleMessage(Exchange exchange) throws HandlerException {
         if (ExchangePhase.IN.equals(exchange.getPhase())) {
             ExchangeContract contract = exchange.getContract();
-            KnowledgeAction action = getAction(contract.getProviderOperation());
-            if (action == null) {
-                action = getAction(contract.getConsumerOperation());
+            KnowledgeOperation operation = getOperation(contract.getProviderOperation());
+            if (operation == null) {
+                operation = getOperation(contract.getConsumerOperation());
             }
-            if (action == null) {
-                // we use "default" here instead of getDefaultAction() so that a
-                // user can define a operation="default" in their switchyard.xml
-                action = _actions.get(DEFAULT);
+            if (operation == null) {
+                // we use "default" here instead of getDefaultOperation() so that a
+                // user can define a name="default" in their switchyard.xml
+                operation = _operations.get(DEFAULT);
             }
-            handleAction(exchange, action);
+            handleOperation(exchange, operation);
         }
     }
 
     /**
-     * Handles a knowledge action.
+     * Handles a knowledge operation.
      * @param exchange the exchange
-     * @param action the action
+     * @param operation the operation
      * @throws HandlerException oops
      */
-    public abstract void handleAction(Exchange exchange, KnowledgeAction action) throws HandlerException;
+    public abstract void handleOperation(Exchange exchange, KnowledgeOperation operation) throws HandlerException;
 
     /**
      * Gets a primitive boolean context property.
@@ -338,4 +341,24 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
         return exchange.getContext().getPropertyValue(name);
     }
 
+    /**
+     * Gets the global variables from the session.
+     * @param session the session
+     * @return the global variables
+     */
+    protected Map<String, Object> getGlobalVariables(KnowledgeSession session) {
+        Map<String, Object> globalVariables = new HashMap<String, Object>();
+        if (session != null) {
+            Globals globals = session.getGlobals();
+            if (globals != null) {
+                for (String key : globals.getGlobalKeys()) {
+                    Object value = globals.get(key);
+                    globalVariables.put(key, value);
+                }
+            }
+        }
+
+        return globalVariables;
+    }
+ 
 }

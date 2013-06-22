@@ -27,7 +27,8 @@ public final class KnowledgeConstants {
 
     /** default. */
     public static final String DEFAULT = "default";
-
+    /** globals. */
+    public static final String GLOBALS = "globals";
     /** context. */
     public static final String CONTEXT = "context";
     /** message. */
@@ -37,6 +38,8 @@ public final class KnowledgeConstants {
     public static final String PARAMETER = "Parameter";
     /** Result. */
     public static final String RESULT = "Result";
+    /** Fault. */
+    public static final String FAULT = "Fault";
 
     private KnowledgeConstants() {}
 

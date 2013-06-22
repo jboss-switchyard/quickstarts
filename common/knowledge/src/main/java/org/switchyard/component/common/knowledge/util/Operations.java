@@ -20,6 +20,8 @@ package org.switchyard.component.common.knowledge.util;
 
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.CONTEXT;
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.DEFAULT;
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.FAULT;
+import static org.switchyard.component.common.knowledge.KnowledgeConstants.GLOBALS;
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.MESSAGE;
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.PARAMETER;
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.RESULT;
@@ -29,22 +31,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.kie.api.runtime.Globals;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.common.lang.Strings;
-import org.switchyard.component.common.knowledge.ActionType;
-import org.switchyard.component.common.knowledge.config.model.ActionModel;
-import org.switchyard.component.common.knowledge.config.model.ActionsModel;
+import org.switchyard.component.common.knowledge.OperationType;
+import org.switchyard.component.common.knowledge.config.model.FaultModel;
+import org.switchyard.component.common.knowledge.config.model.FaultsModel;
 import org.switchyard.component.common.knowledge.config.model.GlobalModel;
 import org.switchyard.component.common.knowledge.config.model.GlobalsModel;
 import org.switchyard.component.common.knowledge.config.model.InputModel;
 import org.switchyard.component.common.knowledge.config.model.InputsModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
+import org.switchyard.component.common.knowledge.config.model.OperationModel;
+import org.switchyard.component.common.knowledge.config.model.OperationsModel;
 import org.switchyard.component.common.knowledge.config.model.OutputModel;
 import org.switchyard.component.common.knowledge.config.model.OutputsModel;
-import org.switchyard.component.common.knowledge.exchange.KnowledgeAction;
+import org.switchyard.component.common.knowledge.exchange.KnowledgeOperation;
 import org.switchyard.component.common.knowledge.expression.ContextMap;
 import org.switchyard.component.common.knowledge.expression.Expression;
 import org.switchyard.component.common.knowledge.expression.ExpressionFactory;
@@ -53,64 +58,70 @@ import org.switchyard.component.common.knowledge.session.KnowledgeSession;
 import org.switchyard.exception.SwitchYardException;
 
 /**
- * Action functions.
+ * Operation functions.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public final class Actions {
+public final class Operations {
 
     /**
-     * Registers actions.
+     * Registers operations.
      * @param model the model
-     * @param actions the actions
-     * @param defaultAction the default action
+     * @param operations the operations
+     * @param defaultOperation the default operation
      */
-    public static void registerActions(KnowledgeComponentImplementationModel model, Map<String, KnowledgeAction> actions, KnowledgeAction defaultAction) {
-        ActionsModel actionsModel = model.getActions();
-        if (actionsModel != null) {
-            for (ActionModel actionModel : actionsModel.getActions()) {
-                String operation = Strings.trimToNull(actionModel.getOperation());
-                if (operation == null) {
-                    operation = DEFAULT;
+    public static void registerOperations(KnowledgeComponentImplementationModel model, Map<String, KnowledgeOperation> operations, KnowledgeOperation defaultOperation) {
+        OperationsModel operationsModel = model.getOperations();
+        if (operationsModel != null) {
+            for (OperationModel operationModel : operationsModel.getOperations()) {
+                String name = Strings.trimToNull(operationModel.getName());
+                if (name == null) {
+                    name = DEFAULT;
                 }
-                ActionType type = actionModel.getType();
+                OperationType type = operationModel.getType();
                 if (type == null) {
-                    type = defaultAction.getType();
+                    type = defaultOperation.getType();
                 }
-                String eventId = actionModel.getEventId();
+                String eventId = operationModel.getEventId();
                 if (eventId == null) {
-                    eventId = defaultAction.getEventId();
+                    eventId = defaultOperation.getEventId();
                 }
-                KnowledgeAction action = new KnowledgeAction(type, eventId);
-                mapExpressions(actionModel, action);
-                if (actions.containsKey(operation)) {
-                    throw new SwitchYardException(String.format("cannot register %s action due to duplicate operation: %s", type, operation));
+                KnowledgeOperation operation = new KnowledgeOperation(type, eventId);
+                mapExpressions(operationModel, operation);
+                if (operations.containsKey(name)) {
+                    throw new SwitchYardException(String.format("cannot register %s operation due to duplicate name: %s", type, name));
                 }
-                actions.put(operation, action);
+                operations.put(name, operation);
             }
         }
-        if (!actions.containsKey(DEFAULT)) {
-            actions.put(DEFAULT, defaultAction);
+        if (!operations.containsKey(DEFAULT)) {
+            operations.put(DEFAULT, defaultOperation);
         }
     }
 
-    private static void mapExpressions(ActionModel actionModel, KnowledgeAction action) {
-        GlobalsModel globalsModel = actionModel.getGlobals();
+    private static void mapExpressions(OperationModel operationModel, KnowledgeOperation operation) {
+        GlobalsModel globalsModel = operationModel.getGlobals();
         if (globalsModel != null) {
             for (GlobalModel globalModel : globalsModel.getGlobals()) {
-                action.getGlobalExpressionMappings().add(new ExpressionMapping(globalModel));
+                operation.getGlobalExpressionMappings().add(new ExpressionMapping(globalModel));
             }
         }
-        InputsModel inputsModel = actionModel.getInputs();
+        InputsModel inputsModel = operationModel.getInputs();
         if (inputsModel != null) {
             for (InputModel inputModel : inputsModel.getInputs()) {
-                action.getInputExpressionMappings().add(new ExpressionMapping(inputModel));
+                operation.getInputExpressionMappings().add(new ExpressionMapping(inputModel));
             }
         }
-        OutputsModel outputsModel = actionModel.getOutputs();
+        OutputsModel outputsModel = operationModel.getOutputs();
         if (outputsModel != null) {
             for (OutputModel outputModel : outputsModel.getOutputs()) {
-                action.getOutputExpressionMappings().add(new ExpressionMapping(outputModel));
+                operation.getOutputExpressionMappings().add(new ExpressionMapping(outputModel));
+            }
+        }
+        FaultsModel faultsModel = operationModel.getFaults();
+        if (faultsModel != null) {
+            for (FaultModel faultModel : faultsModel.getFaults()) {
+                operation.getFaultExpressionMappings().add(new ExpressionMapping(faultModel));
             }
         }
     }
@@ -118,25 +129,30 @@ public final class Actions {
     /**
      * Sets the globals.
      * @param message the message
-     * @param action the action
+     * @param operation the operation
      * @param session the session
      */
-    public static void setGlobals(Message message, KnowledgeAction action, KnowledgeSession session) {
+    public static void setGlobals(Message message, KnowledgeOperation operation, KnowledgeSession session) {
         Globals globals = session.getGlobals();
-        Map<String, Object> map = getMap(message, action.getGlobalExpressionMappings(), null);
-        for (Entry<String, Object> entry : map.entrySet()) {
-            globals.set(entry.getKey(), entry.getValue());
+        Map<String, Object> globalsMap = new HashMap<String, Object>();
+        globalsMap.put(GLOBALS, new ConcurrentHashMap<String, Object>());
+        Map<String, Object> expressionMap = getMap(message, operation.getGlobalExpressionMappings(), null);
+        if (expressionMap != null) {
+            globalsMap.putAll(expressionMap);
+        }
+        for (Entry<String, Object> globalsEntry : globalsMap.entrySet()) {
+            globals.set(globalsEntry.getKey(), globalsEntry.getValue());
         }
     }
 
     /**
      * Gets the input.
      * @param message the message
-     * @param action the action
+     * @param operation the operation
      * @return the input
      */
-    public static Object getInput(Message message, KnowledgeAction action) {
-        List<Object> list = getList(message, action.getInputExpressionMappings());
+    public static Object getInput(Message message, KnowledgeOperation operation) {
+        List<Object> list = getList(message, operation.getInputExpressionMappings());
         switch (list.size()) {
             case 0:
                 return message.getContent();
@@ -150,12 +166,12 @@ public final class Actions {
     /**
      * Gets an input list.
      * @param message the message
-     * @param action the action
+     * @param operation the operation
      * @return the input list
      */
-    public static List<Object> getInputList(Message message, KnowledgeAction action) {
+    public static List<Object> getInputList(Message message, KnowledgeOperation operation) {
         List<Object> list = new ArrayList<Object>();
-        List<ExpressionMapping> inputs = action.getInputExpressionMappings();
+        List<ExpressionMapping> inputs = operation.getInputExpressionMappings();
         if (inputs.size() > 0) {
             list.addAll(getList(message, inputs));
         } else {
@@ -167,12 +183,12 @@ public final class Actions {
     /**
      * Gets an input map.
      * @param message the message
-     * @param action the action
+     * @param operation the operation
      * @return the input map
      */
-    public static Map<String, Object> getInputMap(Message message, KnowledgeAction action) {
+    public static Map<String, Object> getInputMap(Message message, KnowledgeOperation operation) {
         Map<String, Object> map = new HashMap<String, Object>();
-        List<ExpressionMapping> inputs = action.getInputExpressionMappings();
+        List<ExpressionMapping> inputs = operation.getInputExpressionMappings();
         if (inputs.size() > 0) {
             map.putAll(getMap(message, inputs, null));
         } else {
@@ -185,32 +201,29 @@ public final class Actions {
     }
 
     /**
-     * Gets an output.
+     * Sets the outputs.
      * @param message the message
-     * @param action the action
-     * @return the output
+     * @param operation the operation
+     * @param contextOverrides the context overrides
      */
-    public static Object getOutput(Message message, KnowledgeAction action) {
-        List<Object> list = getList(message, action.getOutputExpressionMappings());
-        switch (list.size()) {
-            case 0:
-                return null;
-            case 1:
-                return list.get(0);
-            default:
-                return list;
-        }
+    public static void setOutputs(Message message, KnowledgeOperation operation, Map<String, Object> contextOverrides) {
+        setOutputsOrFaults(message, operation.getOutputExpressionMappings(), contextOverrides, RESULT);
     }
 
     /**
-     * Sets the outputs.
+     * Sets the faults.
      * @param message the message
-     * @param action the action
+     * @param operation the operation
      * @param contextOverrides the context overrides
      */
-    public static void setOutputs(Message message, KnowledgeAction action, Map<String, Object> contextOverrides) {
+    public static void setFaults(Message message, KnowledgeOperation operation, Map<String, Object> contextOverrides) {
+        setOutputsOrFaults(message, operation.getFaultExpressionMappings(), contextOverrides, FAULT);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void setOutputsOrFaults(Message message, List<ExpressionMapping> expressionMappings, Map<String, Object> expressionContext, String defaultReturnVariable) {
         Map<String, List<ExpressionMapping>> toListMap = new HashMap<String, List<ExpressionMapping>>();
-        for (ExpressionMapping expressionMapping : action.getOutputExpressionMappings()) {
+        for (ExpressionMapping expressionMapping : expressionMappings) {
             String to = expressionMapping.getTo();
             if (to != null) {
                 List<ExpressionMapping> toList = toListMap.get(to);
@@ -222,7 +235,16 @@ public final class Actions {
             }
         }
         if (toListMap.size() == 0) {
-            Object output = contextOverrides.get(RESULT);
+            Object output = null;
+            if (expressionContext != null) {
+                output = expressionContext.get(defaultReturnVariable);
+                if (output == null) {
+                    output = expressionContext.get(GLOBALS);
+                    if (output instanceof Map) {
+                        output = ((Map<String, Object>)output).get(defaultReturnVariable);
+                    }
+                }
+            }
             if (output != null) {
                 message.setContent(output);
             }
@@ -234,7 +256,7 @@ public final class Actions {
                     if (to_em == null) {
                         to_em = from_em;
                     }
-                    Object from_value = run(message, from_em.getFromExpression(), contextOverrides);
+                    Object from_value = run(message, from_em.getFromExpression(), expressionContext);
                     if (from_value != null) {
                         from_list.add(from_value);
                     }
@@ -252,10 +274,10 @@ public final class Actions {
                         break;
                 }
                 String output_var = toVariable(output);
-                contextOverrides.put(output_var, output);
+                expressionContext.put(output_var, output);
                 String output_to = to_em.getTo() + " = " + output_var;
                 Expression output_to_expr = ExpressionFactory.INSTANCE.create(output_to, null, to_em.getPropertyResolver());
-                run(message, output_to_expr, contextOverrides);
+                run(message, output_to_expr, expressionContext);
             }
         }
     }
@@ -295,7 +317,7 @@ public final class Actions {
         return getListMap(message, expressionMappings, expand, undefinedVariable, null);
     }
 
-    private static Map<String, List<Object>> getListMap(Message message, List<ExpressionMapping> expressionMappings, boolean expand, String undefinedVariable, Map<String, Object> contextOverrides) {
+    private static Map<String, List<Object>> getListMap(Message message, List<ExpressionMapping> expressionMappings, boolean expand, String undefinedVariable, Map<String, Object> expressionContext) {
         Map<String, List<Object>> map = new HashMap<String, List<Object>>();
         if (expressionMappings != null) {
             for (ExpressionMapping em : expressionMappings) {
@@ -309,7 +331,7 @@ public final class Actions {
                         list = new ArrayList<Object>();
                         map.put(variable, list);
                     }
-                    Object value = run(message, em.getFromExpression(), contextOverrides);
+                    Object value = run(message, em.getFromExpression(), expressionContext);
                     if (expand) {
                         expand(value, list);
                     } else if (value != null) {
@@ -321,16 +343,15 @@ public final class Actions {
         return map;
     }
 
-    private static Object run(Message message, Expression expression, Map<String, Object> contextOverrides) {
-        Map<String, Object> expressionContext = new HashMap<String, Object>();
-        expressionContext.put(CONTEXT, new ContextMap(message.getContext(), Scope.MESSAGE));
-        expressionContext.put(MESSAGE, message);
-        if (contextOverrides != null) {
-            for (Entry<String, Object> contextOverride : contextOverrides.entrySet()) {
-                expressionContext.put(contextOverride.getKey(), contextOverride.getValue());
-            }
+    private static Object run(Message message, Expression expression, Map<String, Object> expressionContext) {
+        Map<String, Object> context = new HashMap<String, Object>();
+        if (expressionContext != null) {
+            context.putAll(expressionContext);
         }
-        return expression.run(expressionContext);
+        // these always take precedence!
+        context.put(CONTEXT, new ContextMap(message.getContext(), Scope.MESSAGE));
+        context.put(MESSAGE, message);
+        return expression.run(context);
     }
 
     private static void expand(Object value, List<Object> list) {
@@ -356,6 +377,6 @@ public final class Actions {
         return ("_var" + System.identityHashCode(object)).replaceFirst("-", "_");
     }
 
-    private Actions() {}
+    private Operations() {}
 
 }

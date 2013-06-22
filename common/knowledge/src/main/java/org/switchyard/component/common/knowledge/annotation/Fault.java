@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,24 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.rules;
+package org.switchyard.component.common.knowledge.annotation;
 
-import org.switchyard.component.common.knowledge.ActionType;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Represents rules action types.
+ * Fault.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public enum RulesActionType implements ActionType {
+@Target(TYPE)
+@Retention(RUNTIME)
+@Documented
+public @interface Fault {
 
-    /** The execute type. */
-    EXECUTE,
-    /** The insert type. */
-    INSERT,
-    /** The fire all rules type. */
-    FIRE_ALL_RULES,
-    /** The fire until halt type. */
-    FIRE_UNTIL_HALT;
+    /** From. */
+    public String from();
+
+    /** To. */
+    public String to() default "";
 
 }

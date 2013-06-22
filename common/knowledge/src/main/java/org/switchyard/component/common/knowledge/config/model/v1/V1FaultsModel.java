@@ -18,69 +18,68 @@
  */
 package org.switchyard.component.common.knowledge.config.model.v1;
 
-import static org.switchyard.component.common.knowledge.config.model.ActionModel.ACTION;
+import static org.switchyard.component.common.knowledge.config.model.FaultModel.FAULT;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
-import org.switchyard.component.common.knowledge.config.model.ActionModel;
-import org.switchyard.component.common.knowledge.config.model.ActionsModel;
+import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.common.knowledge.config.model.FaultModel;
+import org.switchyard.component.common.knowledge.config.model.FaultsModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 
 /**
- * A version 1 ActionsModel.
+ * A version 1 FaultsModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class V1ActionsModel extends BaseModel implements ActionsModel {
+public class V1FaultsModel extends BaseModel implements FaultsModel {
 
-    private List<ActionModel> _actions = new ArrayList<ActionModel>();
+    private List<FaultModel> _faults = new ArrayList<FaultModel>();
 
     /**
-     * Creates a new OperationsModel in the specified namespace.
+     * Creates a new V1FaultsModel in the specified namespace.
      * @param namespace the specified namespace
      */
-    public V1ActionsModel(String namespace) {
-        super(new QName(namespace, ACTIONS));
-        setModelChildrenOrder(ACTION);
+    public V1FaultsModel(String namespace) {
+        super(XMLHelper.createQName(namespace, FAULTS));
+        setModelChildrenOrder(FAULT);
     }
 
     /**
-     * Creates a new OperationsModel with the specified configuration and descriptor.
+     * Creates a new V1FaultsModel with the specified configuration and descriptor.
      * @param config the configuration
      * @param desc the descriptor
      */
-    public V1ActionsModel(Configuration config, Descriptor desc) {
+    public V1FaultsModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        for (Configuration action_config : config.getChildren(ACTION)) {
-            ActionModel action = (ActionModel)readModel(action_config);
-            if (action != null) {
-                _actions.add(action);
+        for (Configuration fault_config : config.getChildren(FAULT)) {
+            FaultModel fault = (FaultModel)readModel(fault_config);
+            if (fault != null) {
+                _faults.add(fault);
             }
         }
-        setModelChildrenOrder(ACTION);
+        setModelChildrenOrder(FAULT);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized List<ActionModel> getActions() {
-        return Collections.unmodifiableList(_actions);
+    public synchronized List<FaultModel> getFaults() {
+        return Collections.unmodifiableList(_faults);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ActionsModel addAction(ActionModel action) {
-        addChildModel(action);
-        _actions.add(action);
+    public FaultsModel addFault(FaultModel fault) {
+        addChildModel(fault);
+        _faults.add(fault);
         return this;
     }
 

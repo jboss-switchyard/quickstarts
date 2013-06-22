@@ -18,11 +18,11 @@
  */
 package org.switchyard.component.rules.config.model.v1;
 
-import static org.switchyard.component.common.knowledge.config.model.ActionsModel.ACTIONS;
 import static org.switchyard.component.common.knowledge.config.model.ChannelsModel.CHANNELS;
 import static org.switchyard.component.common.knowledge.config.model.ListenersModel.LISTENERS;
 import static org.switchyard.component.common.knowledge.config.model.LoggersModel.LOGGERS;
 import static org.switchyard.component.common.knowledge.config.model.ManifestModel.MANIFEST;
+import static org.switchyard.component.common.knowledge.config.model.OperationsModel.OPERATIONS;
 import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
 
 import org.switchyard.component.common.knowledge.config.model.v1.V1KnowledgeComponentImplementationModel;
@@ -42,7 +42,7 @@ public class V1RulesComponentImplementationModel extends V1KnowledgeComponentImp
      */
     public V1RulesComponentImplementationModel() {
         super(RULES, DEFAULT_NAMESPACE);
-        setModelChildrenOrder(ACTIONS, CHANNELS, LISTENERS, LOGGERS, MANIFEST, PROPERTIES);
+        setModelChildrenOrder(CHANNELS, LISTENERS, LOGGERS, MANIFEST, OPERATIONS, PROPERTIES);
     }
 
     /**
@@ -53,7 +53,7 @@ public class V1RulesComponentImplementationModel extends V1KnowledgeComponentImp
      */
     public V1RulesComponentImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(ACTIONS, CHANNELS, LISTENERS, LOGGERS, MANIFEST, PROPERTIES);
+        setModelChildrenOrder(CHANNELS, LISTENERS, LOGGERS, MANIFEST, OPERATIONS, PROPERTIES);
     }
 
 }

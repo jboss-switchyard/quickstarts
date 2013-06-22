@@ -18,7 +18,7 @@
  */
 package org.switchyard.component.rules.config.model.v1;
 
-import static org.switchyard.component.common.knowledge.config.model.ActionModel.ACTION;
+import static org.switchyard.component.common.knowledge.config.model.OperationModel.OPERATION;
 
 import org.switchyard.component.common.knowledge.config.model.v1.V1KnowledgeMarshaller;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
@@ -61,8 +61,8 @@ public class V1RulesMarshaller extends V1KnowledgeMarshaller {
         Descriptor desc = getDescriptor();
         if (IMPLEMENTATION_RULES.equals(name)) {
             return new V1RulesComponentImplementationModel(config, desc);
-        } else if (ACTION.equals(name)) {
-            return new V1RulesActionModel(config, desc);
+        } else if (OPERATION.equals(name)) {
+            return new V1RulesOperationModel(config, desc);
         }
         return super.read(config);
     }

@@ -16,22 +16,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.bpm;
+package org.switchyard.component.common.knowledge.config.model.v1;
 
-import org.switchyard.component.common.knowledge.ActionType;
+import org.switchyard.component.common.knowledge.config.model.FaultModel;
+import org.switchyard.config.Configuration;
+import org.switchyard.config.model.Descriptor;
 
 /**
- * Represents bpm action types.
+ * The 1st version FaultModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public enum BPMActionType implements ActionType {
+public class V1FaultModel extends V1MappingModel implements FaultModel {
 
-    /** The start process type. */
-    START_PROCESS,
-    /** The signal event type. */
-    SIGNAL_EVENT,
-    /** The abort process instance type. */
-    ABORT_PROCESS_INSTANCE;
+    /**
+     * Creates a new FaultModel in the specified namespace and localName.
+     * @param namespace the specified namespace
+     */
+    public V1FaultModel(String namespace) {
+        super(namespace, FAULT);
+    }
+
+    /**
+     * Creates a new FaultModel with the specified configuration and descriptor.
+     * @param config the configuration
+     * @param desc the descriptor
+     */
+    public V1FaultModel(Configuration config, Descriptor desc) {
+        super(config, desc);
+    }
 
 }

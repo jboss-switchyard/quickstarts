@@ -18,18 +18,18 @@
  */
 package org.switchyard.component.common.knowledge.config.model;
 
-import org.switchyard.component.common.knowledge.ActionType;
-import org.switchyard.config.model.Model;
+import org.switchyard.component.common.knowledge.OperationType;
+import org.switchyard.config.model.NamedModel;
 
 /**
- * An Action Model.
+ * An Operation Model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface ActionModel extends Model {
+public interface OperationModel extends NamedModel {
 
-    /** The "action" name. */
-    public static final String ACTION = "action";
+    /** The "operation" name. */
+    public static final String OPERATION = "operation";
 
     /**
      * Gets the eventId attribute.
@@ -40,35 +40,22 @@ public interface ActionModel extends Model {
     /**
      * Sets the eventId attribute.
      * @param eventId the eventId attribute
-     * @return this ActionModel (useful for chaining)
+     * @return this OperationModel (useful for chaining)
      */
-    public ActionModel setEventId(String eventId);
-
-    /**
-     * Gets the operation attribute.
-     * @return the operation attribute
-     */
-    public String getOperation();
-
-    /**
-     * Sets the operation attribute.
-     * @param operation the operation attribute
-     * @return this ActionModel (useful for chaining)
-     */
-    public ActionModel setOperation(String operation);
+    public OperationModel setEventId(String eventId);
 
     /**
      * Gets the type attribute.
      * @return the type attribute
      */
-    public ActionType getType();
+    public OperationType getType();
 
     /**
      * Sets the type attribute.
      * @param type the type attribute
-     * @return this ActionModel (useful for chaining)
+     * @return this OperationModel (useful for chaining)
      */
-    public ActionModel setType(ActionType type);
+    public OperationModel setType(OperationType type);
 
     /**
      * Gets the child globals mappings model.
@@ -79,9 +66,9 @@ public interface ActionModel extends Model {
     /**
      * Sets the child globals mappings model.
      * @param globals the child globals mappings model
-     * @return this ActionModel (useful for chaining)
+     * @return this OperationModel (useful for chaining)
      */
-    public ActionModel setGlobals(GlobalsModel globals);
+    public OperationModel setGlobals(GlobalsModel globals);
 
     /**
      * Gets the child inputs mappings model.
@@ -92,9 +79,9 @@ public interface ActionModel extends Model {
     /**
      * Sets the child inputs mappings model.
      * @param inputs the child inputs mappings model
-     * @return this ActionModel (useful for chaining)
+     * @return this OperationModel (useful for chaining)
      */
-    public ActionModel setInputs(InputsModel inputs);
+    public OperationModel setInputs(InputsModel inputs);
 
     /**
      * Gets the child outputs mappings model.
@@ -105,8 +92,21 @@ public interface ActionModel extends Model {
     /**
      * Sets the child outputs mappings model.
      * @param outputs the child outputs mappings model
-     * @return this ActionModel (useful for chaining)
+     * @return this OperationModel (useful for chaining)
      */
-    public ActionModel setOutputs(OutputsModel outputs);
+    public OperationModel setOutputs(OutputsModel outputs);
+
+    /**
+     * Gets the child faults mappings model.
+     * @return the child faults mappings model
+     */
+    public FaultsModel getFaults();
+
+    /**
+     * Sets the child faults mappings model.
+     * @param faults the child faults mappings model
+     * @return this OperationModel (useful for chaining)
+     */
+    public OperationModel setFaults(FaultsModel faults);
 
 }

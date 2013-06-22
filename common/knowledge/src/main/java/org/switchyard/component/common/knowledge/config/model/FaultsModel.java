@@ -23,26 +23,26 @@ import java.util.List;
 import org.switchyard.config.model.Model;
 
 /**
- * An Actions Model.
+ * A Faults Model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public interface ActionsModel extends Model {
+public interface FaultsModel extends Model {
 
-    /** The "actions" name. */
-    public static final String ACTIONS = "actions";
-
-    /**
-     * Gets the child action models.
-     * @return the child action models
-     */
-    public List<ActionModel> getActions();
+    /** The "faults" name. */
+    public static final String FAULTS = "faults";
 
     /**
-     * Adds a child action model.
-     * @param action the child action model
-     * @return this ActionsModel (useful for chaining)
+     * Gets the child fault models.
+     * @return the child fault models
      */
-    public ActionsModel addAction(ActionModel action);
+    public List<FaultModel> getFaults();
+
+    /**
+     * Adds a child fault model.
+     * @param fault the child fault model
+     * @return this FaultsModel (useful for chaining)
+     */
+    public FaultsModel addFault(FaultModel fault);
 
 }

@@ -16,43 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.rules.annotation;
-
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import org.switchyard.component.common.knowledge.annotation.Fault;
-import org.switchyard.component.common.knowledge.annotation.Global;
-import org.switchyard.component.common.knowledge.annotation.Input;
-import org.switchyard.component.common.knowledge.annotation.Output;
+package org.switchyard.component.common.knowledge.config.model;
 
 /**
- * FireUntilHalt.
+ * FaultModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@Target(METHOD)
-@Retention(RUNTIME)
-@Documented
-public @interface FireUntilHalt {
+public interface FaultModel extends MappingModel {
 
-    /** EventId. */
-    public String eventId() default "";
-
-    /** Globals. */
-    public Global[] globals() default {};
-
-    /** Inputs. */
-    public Input[] inputs() default {};
-
-    /** Outputs. */
-    public Output[] outputs() default {};
-
-    /** Faults. */
-    public Fault[] faults() default {};
+    /** The "fault" name. */
+    public static final String FAULT = "fault";
 
 }

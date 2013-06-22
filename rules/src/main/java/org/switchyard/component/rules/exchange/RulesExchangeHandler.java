@@ -18,12 +18,14 @@
  */
 package org.switchyard.component.rules.exchange;
 
-import static org.switchyard.component.common.knowledge.util.Actions.getInputList;
-import static org.switchyard.component.common.knowledge.util.Actions.getListMap;
-import static org.switchyard.component.common.knowledge.util.Actions.getOutput;
-import static org.switchyard.component.common.knowledge.util.Actions.setGlobals;
-import static org.switchyard.component.common.knowledge.util.Actions.toVariable;
+import static org.switchyard.component.common.knowledge.util.Operations.getInputList;
+import static org.switchyard.component.common.knowledge.util.Operations.getListMap;
+import static org.switchyard.component.common.knowledge.util.Operations.setFaults;
+import static org.switchyard.component.common.knowledge.util.Operations.setGlobals;
+import static org.switchyard.component.common.knowledge.util.Operations.setOutputs;
+import static org.switchyard.component.common.knowledge.util.Operations.toVariable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.xml.namespace.QName;
 
 import org.kie.api.runtime.rule.SessionEntryPoint;
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
@@ -39,11 +42,11 @@ import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
-import org.switchyard.component.common.knowledge.exchange.KnowledgeAction;
+import org.switchyard.component.common.knowledge.exchange.KnowledgeOperation;
 import org.switchyard.component.common.knowledge.exchange.KnowledgeExchangeHandler;
 import org.switchyard.component.common.knowledge.session.KnowledgeDisposal;
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
-import org.switchyard.component.rules.RulesActionType;
+import org.switchyard.component.rules.RulesOperationType;
 import org.switchyard.component.rules.RulesConstants;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 
@@ -55,7 +58,7 @@ import org.switchyard.component.rules.config.model.RulesComponentImplementationM
 public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponentImplementationModel> {
 
     private static final AtomicInteger FIRE_UNTIL_HALT_COUNT = new AtomicInteger();
-    private static final KnowledgeAction DEFAULT_ACTION = new KnowledgeAction(RulesActionType.EXECUTE);
+    private static final KnowledgeOperation DEFAULT_OPERATION = new KnowledgeOperation(RulesOperationType.EXECUTE);
 
     private Thread _fireUntilHaltThread = null;
 
@@ -73,23 +76,30 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
      * {@inheritDoc}
      */
     @Override
-    public KnowledgeAction getDefaultAction() {
-        return DEFAULT_ACTION;
+    public KnowledgeOperation getDefaultOperation() {
+        return DEFAULT_OPERATION;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void handleAction(Exchange exchange, KnowledgeAction action) throws HandlerException {
+    public void handleOperation(Exchange exchange, KnowledgeOperation operation) throws HandlerException {
+        Integer sessionId = null;
         Message inputMessage = exchange.getMessage();
-        RulesActionType actionType = (RulesActionType)action.getType();
-        switch (actionType) {
+        ExchangePattern exchangePattern = exchange.getContract().getProviderOperation().getExchangePattern();
+        Map<String, Object> expressionContext = new HashMap<String, Object>();
+        RulesOperationType operationType = (RulesOperationType)operation.getType();
+        switch (operationType) {
             case EXECUTE: {
                 KnowledgeSession session = newStatelessSession();
-                setGlobals(inputMessage, action, session);
-                List<Object> facts = getInputList(inputMessage, action);
+                sessionId = session.getId();
+                setGlobals(inputMessage, operation, session);
+                List<Object> facts = getInputList(inputMessage, operation);
                 session.getStateless().execute(facts);
+                if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
+                    expressionContext.putAll(getGlobalVariables(session));
+                }
                 break;
             }
             case INSERT:
@@ -100,13 +110,17 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                 }
                 */
                 KnowledgeSession session = getStatefulSession();
-                setGlobals(inputMessage, action, session);
-                List<Object> facts = getInputList(inputMessage, action);
+                sessionId = session.getId();
+                setGlobals(inputMessage, operation, session);
+                List<Object> facts = getInputList(inputMessage, operation);
                 for (Object fact : facts) {
                     session.getStateful().insert(fact);
                 }
-                if (RulesActionType.FIRE_ALL_RULES.equals(actionType)) {
+                if (RulesOperationType.FIRE_ALL_RULES.equals(operationType)) {
                     session.getStateful().fireAllRules();
+                }
+                if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
+                    expressionContext.putAll(getGlobalVariables(session));
                 }
                 if (isDispose(exchange)) {
                     disposeStatefulSession();
@@ -120,19 +134,20 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                 }
                 */
                 KnowledgeSession session = getStatefulSession();
-                setGlobals(inputMessage, action, session);
+                sessionId = session.getId();
+                setGlobals(inputMessage, operation, session);
                 if (_fireUntilHaltThread == null) {
                     FireUntilHalt fireUntilHalt = new FireUntilHalt(this, session, getLoader());
                     session.addDisposals(fireUntilHalt);
                     _fireUntilHaltThread = fireUntilHalt.startThread();
                 }
                 final String undefinedVariable = toVariable(exchange);
-                Map<String, List<Object>> inputMap = getListMap(inputMessage, action.getInputExpressionMappings(), true, undefinedVariable);
+                Map<String, List<Object>> inputMap = getListMap(inputMessage, operation.getInputExpressionMappings(), true, undefinedVariable);
                 if (inputMap.size() > 0) {
                     for (Entry<String, List<Object>> inputEntry : inputMap.entrySet()) {
                         String key = inputEntry.getKey();
                         if (undefinedVariable.equals(key)) {
-                            String eventId = Strings.trimToNull(action.getEventId());
+                            String eventId = Strings.trimToNull(operation.getEventId());
                             if (eventId != null) {
                                 key = eventId;
                             }
@@ -154,10 +169,13 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                         }
                     }
                 } else {
-                    List<Object> facts = getInputList(inputMessage, action);
+                    List<Object> facts = getInputList(inputMessage, operation);
                     for (Object fact : facts) {
                         session.getStateful().insert(fact);
                     }
+                }
+                if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
+                    expressionContext.putAll(getGlobalVariables(session));
                 }
                 if (isDispose(exchange)) {
                     disposeStatefulSession();
@@ -165,14 +183,22 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                 break;
             }
             default: {
-                throw new HandlerException("Unsupported action type: " + actionType);
+                throw new HandlerException("Unsupported operation type: " + operationType);
             }
         }
-        Object output = getOutput(inputMessage, action);
-        if (ExchangePattern.IN_OUT.equals(exchange.getContract().getProviderOperation().getExchangePattern())) {
+        if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
             Message outputMessage = exchange.createMessage();
-            outputMessage.setContent(output);
-            exchange.send(outputMessage);
+            Context outputContext = exchange.getContext(outputMessage);
+            if (sessionId != null && sessionId.intValue() > 0) {
+                outputContext.setProperty(RulesConstants.SESSION_ID_PROPERTY, sessionId);
+            }
+            setFaults(outputMessage, operation, expressionContext);
+            if (outputMessage.getContent() != null) {
+                exchange.sendFault(outputMessage);
+            } else {
+                setOutputs(outputMessage, operation, expressionContext);
+                exchange.send(outputMessage);
+            }
         }
     }
 

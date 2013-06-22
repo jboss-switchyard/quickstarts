@@ -21,46 +21,47 @@ package org.switchyard.component.common.knowledge.exchange;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.switchyard.component.common.knowledge.ActionType;
+import org.switchyard.component.common.knowledge.OperationType;
 import org.switchyard.component.common.knowledge.expression.ExpressionMapping;
 
 /**
- * A Knowledge action.
+ * A Knowledge operation.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class KnowledgeAction {
+public class KnowledgeOperation {
 
-    private final ActionType _type;
+    private final OperationType _type;
     private final String _eventId;
 
     private final List<ExpressionMapping> _globalExpressionMappings = new ArrayList<ExpressionMapping>();
     private final List<ExpressionMapping> _inputExpressionMappings = new ArrayList<ExpressionMapping>();
     private final List<ExpressionMapping> _outputExpressionMappings = new ArrayList<ExpressionMapping>();
+    private final List<ExpressionMapping> _faultExpressionMappings = new ArrayList<ExpressionMapping>();
 
     /**
-     * Constructs a new knowledge action.
-     * @param type the type
+     * Constructs a new knowledge operation.
+     * @param type the operation type
      */
-    public KnowledgeAction(ActionType type) {
+    public KnowledgeOperation(OperationType type) {
         this(type, null);
     }
 
     /**
-     * Constructs a new knowledge action.
-     * @param type the type
+     * Constructs a new knowledge operation.
+     * @param type the operation type
      * @param eventId the event id
      */
-    public KnowledgeAction(ActionType type, String eventId) {
+    public KnowledgeOperation(OperationType type, String eventId) {
         _type = type;
         _eventId = eventId;
     }
 
     /**
-     * Gets the type.
-     * @return the type
+     * Gets the operation type.
+     * @return the operation type
      */
-    public ActionType getType() {
+    public OperationType getType() {
         return _type;
     }
 
@@ -94,6 +95,14 @@ public class KnowledgeAction {
      */
     public List<ExpressionMapping> getOutputExpressionMappings() {
         return _outputExpressionMappings;
+    }
+
+    /**
+     * Gets the fault expression mappings.
+     * @return the fault expression mappings.
+     */
+    public List<ExpressionMapping> getFaultExpressionMappings() {
+        return _faultExpressionMappings;
     }
 
 }
