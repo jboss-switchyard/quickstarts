@@ -10,21 +10,21 @@
         </service>
         <component name="HelpDeskService">
             <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" persistent="true" processId="HelpDeskService">
-                <actions>
-                    <action operation="openTicket" type="START_PROCESS">
+                <manifest>
+                    <resources>
+                        <resource location="/META-INF/HelpDeskService.bpmn" type="BPMN2"/>
+                    </resources>
+                </manifest>
+                <operations>
+                    <operation name="openTicket" type="START_PROCESS">
                         <inputs>
                             <input from="message.content" to="ticket"/>
                         </inputs>
                         <outputs>
                             <output from="ticketAck" to="message.content"/>
                         </outputs>
-                    </action>
-                </actions>
-                <manifest>
-                    <resources>
-                        <resource location="/META-INF/HelpDeskService.bpmn" type="BPMN2"/>
-                    </resources>
-                </manifest>
+                    </operation>
+                </operations>
                 <userGroupCallback class="org.switchyard.quickstarts.demos.helpdesk.HelpDeskUserGroupCallback"/>
             </implementation.bpm>
             <service name="HelpDeskService">
