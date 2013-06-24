@@ -11,18 +11,6 @@
         </service>
         <component name="ProcessOrder">
             <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" processId="ProcessOrder">
-                <actions>
-                    <action operation="submitOrder" type="START_PROCESS">
-                        <inputs>
-                            <input from="context['org.switchyard.messageId']" to="messageId"/>
-                            <input from="message.content" to="Parameter"/>
-                            <input from="userName" to="userName"/>
-                        </inputs>
-                        <outputs>
-                            <output from="Result" to="message.content"/>
-                        </outputs>
-                    </action>
-                </actions>
                 <!--
                 <listeners>
                     <listener class="org.drools.event.DebugProcessEventListener"/>
@@ -33,6 +21,18 @@
                         <resource location="META-INF/ProcessOrder.bpmn" type="BPMN2"/>
                     </resources>
                 </manifest>
+                <operations>
+                    <operation name="submitOrder" type="START_PROCESS">
+                        <inputs>
+                            <input from="message.content" to="Parameter"/>
+                            <input from="context['org.switchyard.messageId']" to="messageId"/>
+                            <input from="userName" to="userName"/>
+                        </inputs>
+                        <outputs>
+                            <output from="Result" to="message.content"/>
+                        </outputs>
+                    </operation>
+                </operations>
             </implementation.bpm>
             <service name="ProcessOrder">
                 <interface.java interface="org.switchyard.quickstarts.bpm.service.ProcessOrder"/>

@@ -22,18 +22,18 @@
         </component>
         <component name="DestinationService">
             <implementation.rules xmlns="urn:switchyard-component-rules:config:1.0">
-                <actions>
-                    <action operation="determineDestination" type="EXECUTE">
-                        <inputs>
-                            <input from="message.content.widget"/>
-                        </inputs>
-                    </action>
-                </actions>
                 <manifest>
                     <resources>
                         <resource location="/META-INF/DestinationServiceRules.drl" type="DRL"/>
                     </resources>
                 </manifest>
+                <operations>
+                    <operation name="determineDestination" type="EXECUTE">
+                        <inputs>
+                            <input from="message.content.widget"/>
+                        </inputs>
+                    </operation>
+                </operations>
             </implementation.rules>
             <service name="DestinationService">
                 <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.DestinationService"/>

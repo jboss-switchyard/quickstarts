@@ -1,6 +1,5 @@
 package org.switchyard.quickstarts.demo.cluster
-import org.switchyard.Message
-global Message message
+global java.util.Map globals
 
 rule "ApproveCredit"
     when
@@ -8,6 +7,7 @@ rule "ApproveCredit"
     then
         System.out.println("Credit Service : Approving credit for " + app.getName());
         app.setApproved(true);
+        globals.put("Result", app);
 end
 
 rule "DenyCredit"
@@ -16,4 +16,5 @@ rule "DenyCredit"
     then
         System.out.println("Credit Service : Denying credit for " + app.getName());
         app.setApproved(false);
+        globals.put("Result", app);
 end

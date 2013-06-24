@@ -6,16 +6,16 @@
     </sca:service>
     <sca:component name="Interview">
       <rules:implementation.rules>
-        <rules:actions>
-          <rules:action operation="verify" type="EXECUTE">
-            <rules:globals>
-              <rules:global from="userName" to="userName"/>
-            </rules:globals>
-          </rules:action>
-        </rules:actions>
         <rules:manifest>
           <rules:container sessionName="rules-interview-container"/>
         </rules:manifest>
+        <rules:operations>
+          <rules:operation name="verify" type="EXECUTE">
+            <rules:globals>
+              <rules:global from="userName" to="userName"/>
+            </rules:globals>
+          </rules:operation>
+        </rules:operations>
       </rules:implementation.rules>
       <sca:service name="Interview">
         <sca:interface.java interface="org.switchyard.quickstarts.rules.interview.Interview"/>
