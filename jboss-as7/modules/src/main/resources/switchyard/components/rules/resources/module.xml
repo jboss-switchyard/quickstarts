@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ JBoss, Home of Professional Open Source
-  ~ Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+  ~ Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
   ~ as indicated by the @author tags. All rights reserved.
   ~ See the copyright.txt in the distribution for a
   ~ full listing of individual contributors.
@@ -22,7 +22,6 @@
         <resource-root path="switchyard-component-rules-${project.version}.jar"/>
     </resources>
     <dependencies>
-        <module name="javax.api"/>
         <module name="org.apache.log4j"/>
         <module name="org.drools" export="true"/>
         <module name="org.kie" export="true"/>

@@ -46,58 +46,8 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack-jbpm-switchyard</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.jbpm</groupId>
-                                    <artifactId>jbpm-bpmn2</artifactId>
-                                    <version>${version.jbpm}</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.jbpm</groupId>
-                                    <artifactId>jbpm-persistence-jpa</artifactId>
-                                    <version>${version.jbpm}</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.jbpm</groupId>
-                                    <artifactId>jbpm-human-task-core</artifactId>
-                                    <version>${version.jbpm}</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                            </artifactItems>
-                            <includes>META-INF/*.xsd,META-INF/*orm.xml</includes>
-                            <outputDirectory>${project.build.directory}/jbpm-switchyard</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <id>make-jbpm-switchyard-assembly</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>jbpm-switchyard</finalName>
-                            <descriptors>
-                                <descriptor>${basedir}/src/main/resources/external/jbpm/jbpm-switchyard-assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>make-assembly</id>
                         <phase>package</phase>
@@ -498,6 +448,10 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.bpm</groupId>
+            <artifactId>activity-monitor-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.bpm</groupId>
             <artifactId>gwt-console-rpc</artifactId>
         </dependency>
         <dependency>
@@ -623,121 +577,6 @@
             <artifactId>deltaspike-core-api</artifactId>
         </dependency>
         <!--
-        KIE/Drools/jBPM...
-        -->
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-compiler</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-persistence-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-audit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-bpmn2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-flow</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-flow-builder</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-form-services</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-human-task-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-human-task-workitems</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-kie-services</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-persistence-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-runtime-manager</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-shared-services</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-workitems</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie</groupId>
-            <artifactId>kie-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie</groupId>
-            <artifactId>kie-ci</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie</groupId>
-            <artifactId>kie-internal</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-commons-cdi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-commons-data</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-commons-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-commons-regex</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-commons-validation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-nio2-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-nio2-fs</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-nio2-jgit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-nio2-model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.bpm</groupId>
-            <artifactId>activity-monitor-model</artifactId>
-        </dependency>
-        <!--
         Clojure...
         -->
         <dependency>
@@ -751,36 +590,16 @@
         </dependency>
         <!-- misc external dependencies -->
         <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.python</groupId>
             <artifactId>jython</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.saxon</groupId>
             <artifactId>saxonhe</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr-runtime</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.mina</groupId>
-            <artifactId>mina-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jdt.core.compiler</groupId>
-            <artifactId>ecj</artifactId>
         </dependency>
         <dependency>
             <groupId>org.freemarker</groupId>
@@ -793,10 +612,6 @@
         <dependency>
             <groupId>org.milyn</groupId>
             <artifactId>milyn-smooks-all</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mvel</groupId>
-            <artifactId>mvel2</artifactId>
         </dependency>
         <dependency>
             <groupId>wsdl4j</groupId>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright 2013, Red Hat, Inc., and individual contributors
+  ~ as indicated by the @author tags. See the copyright.txt file in the
+  ~ distribution for a full listing of individual contributors.
+  ~
+  ~ This is free software; you can redistribute it and/or modify it
+  ~ under the terms of the GNU Lesser General Public License as
+  ~ published by the Free Software Foundation; either version 2.1 of
+  ~ the License, or (at your option) any later version.
+  ~
+  ~ This software is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ Lesser General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Lesser General Public
+  ~ License along with this software; if not, write to the Free
+  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+<module xmlns="urn:jboss:module:1.0" name="org.jbpm">
+    <resources>
+        <resource-root path="jbpm-audit-${version.jbpm}.jar"/>
+        <resource-root path="jbpm-bpmn2-${version.jbpm}.jar"/>
+        <resource-root path="jbpm-flow-${version.jbpm}.jar"/>
+        <resource-root path="jbpm-flow-builder-${version.jbpm}.jar"/>
+        <resource-root path="jbpm-form-services-${version.jbpm}.jar"/>
+        <resource-root path="jbpm-human-task-core-${version.jbpm}.jar"/>
+        <resource-root path="jbpm-human-task-workitems-${version.jbpm}.jar"/>
+        <resource-root path="jbpm-kie-services-${version.jbpm}.jar"/>
+        <resource-root path="jbpm-meta-inf-${version.jbpm}.jar"/>
+        <resource-root path="jbpm-persistence-jpa-${version.jbpm}.jar"/>
+        <resource-root path="jbpm-runtime-manager-${version.jbpm}.jar"/>
+        <resource-root path="jbpm-shared-services-${version.jbpm}.jar"/>
+        <resource-root path="jbpm-workitems-${version.jbpm}.jar"/>
+    </resources>
+    <dependencies>
+        <module name="com.google.protobuf"/>
+        <module name="javax.api"/>
+        <module name="javax.enterprise.api"/>
+        <module name="javax.persistence.api" export="true"/>
+        <module name="javax.transaction.api" export="true"/>
+        <module name="org.drools"/>
+        <module name="org.hibernate" export="true"/>
+        <module name="org.javassist"/>
+        <module name="org.jboss.weld.core"/>
+        <module name="org.kie"/>
+        <module name="org.mvel"/>
+        <module name="org.slf4j"/>
+    </dependencies>
+</module>

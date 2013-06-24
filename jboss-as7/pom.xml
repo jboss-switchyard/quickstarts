@@ -33,6 +33,7 @@
     <name>SwitchYard: AS7 Parent</name>
     <description>SwitchYard AS7 Parent</description>
     <modules>
+        <module>kiedroolsjbpm</module>
         <module>modules</module>
         <module>tests</module>
         <module>extension</module>

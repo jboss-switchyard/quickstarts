@@ -71,11 +71,9 @@
 
       <!-- ## External assembly references ## -->
 
-      <componentDescriptor>src/main/resources/external/antlr/antlr-runtime/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/apache/commons/collections/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/apache/commons/net/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/apache/deltaspike/core-api/assembly-component.xml</componentDescriptor>
-      <componentDescriptor>src/main/resources/external/apache/mina/mina-core/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/batik/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/beanshell/assembly-component.xml</componentDescriptor>
 
@@ -97,18 +95,12 @@
       <componentDescriptor>src/main/resources/external/camel/spring/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/sql/assembly-component.xml</componentDescriptor>
 
-      <componentDescriptor>src/main/resources/external/drools/assembly-component.xml</componentDescriptor>
-      <componentDescriptor>src/main/resources/external/eclipse/jdt/core/compiler/ecj/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/freemarker/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/groovy/assembly-component.xml</componentDescriptor>
-      <componentDescriptor>src/main/resources/external/jbpm/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/jcraft/jsch/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/jruby/assembly-component.xml</componentDescriptor>
-      <componentDescriptor>src/main/resources/external/kie/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/milyn/assembly-component.xml</componentDescriptor>
-      <componentDescriptor>src/main/resources/external/mvel/mvel2/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/ognl/assembly-component.xml</componentDescriptor>
-      <componentDescriptor>src/main/resources/external/protobuf/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/python/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/quartz/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/rhino/assembly-component.xml</componentDescriptor>
@@ -116,7 +108,6 @@
       <componentDescriptor>src/main/resources/external/saxon/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/springframework/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/ws-impl/assembly-component.xml</componentDescriptor>
-      <componentDescriptor>src/main/resources/external/xstream/assembly-component.xml</componentDescriptor>
 
       <!--JBossWS-CXF assemblies -->
       <componentDescriptor>src/main/resources/external/jbossws/jbossws-spi/assembly-component.xml</componentDescriptor>

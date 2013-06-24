@@ -30,6 +30,6 @@
         <module name="org.slf4j"/>
         <module name="javax.api"/>
         <module name="org.apache.camel.core"/>
-        <module name="org.mvel.mvel2"/>
+        <module name="org.mvel"/>
     </dependencies>
 </module>

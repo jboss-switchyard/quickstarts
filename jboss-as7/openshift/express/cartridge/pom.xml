@@ -41,7 +41,25 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>install-switchyard</id>
+                        <id>install-as7-kiedroolsjbpm</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-as7-kiedroolsjbpm</artifactId>
+                                    <type>zip</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${cartridge.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-as7-modules</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>unpack</goal>
