@@ -141,12 +141,12 @@ public class SecurityHandler extends BaseHandler {
         ServiceSecurity serviceSecurity = null;
         Service service = exchange.getProvider();
         if (service != null) {
-            serviceSecurity = service.getSecurity();
+            serviceSecurity = service.getServiceMetadata().getSecurity();
         }
         if (serviceSecurity == null) {
             ServiceReference serviceReference = exchange.getConsumer();
             if (serviceReference != null) {
-                serviceSecurity = serviceReference.getSecurity();
+                serviceSecurity = serviceReference.getServiceMetadata().getSecurity();
             }
         }
         return serviceSecurity;

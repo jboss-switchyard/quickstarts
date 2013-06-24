@@ -32,6 +32,7 @@ import org.switchyard.admin.Binding;
 import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.MessageMetrics;
 import org.switchyard.admin.Service;
+import org.switchyard.admin.Throttling;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
@@ -47,6 +48,7 @@ public class BaseService implements Service {
     private BaseApplication _application;
     private ComponentService _promotedService;
     private Map<String, Binding> _gateways = new LinkedHashMap<String, Binding>();
+    private Throttling _throttling;
     
     /**
      * Create a new BaseService.
@@ -68,6 +70,7 @@ public class BaseService implements Service {
         _application = application;
         _promotedService = implementation;
         _gateways = gateways;
+        _throttling = new ServiceThrottling(this, null);
     }
     
     /**
@@ -93,6 +96,7 @@ public class BaseService implements Service {
                     + "_" + idx : bindingModel.getName();
             _gateways.put(name, new BaseBinding(_application, _name, bindingModel.getType(), name, bindingModel.toString()));
         }
+        _throttling = new ServiceThrottling(this, serviceConfig.getExtensions());
     }
     
     @Override
@@ -126,6 +130,11 @@ public class BaseService implements Service {
     @Override
     public QName getName() {
         return _name;
+    }
+
+    @Override
+    public Throttling getThrottling() {
+        return _throttling;
     }
 
     private ComponentService getPromotedService(Application application, CompositeServiceModel compositeService) {

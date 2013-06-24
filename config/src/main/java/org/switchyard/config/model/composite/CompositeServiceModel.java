@@ -92,4 +92,16 @@ public interface CompositeServiceModel extends NamedModel {
      */
     public CompositeServiceModel setInterface(InterfaceModel interfaze);
 
+    /**
+     * Gets the child extensions model.
+     * @return the child extensions model
+     */
+    public ExtensionsModel getExtensions();
+    
+    /**
+     * Sets the child extensions model.
+     * @param extensions child extensions model
+     * @return this CompositeServiceModel (useful for chaining)
+     */
+    public CompositeServiceModel setExtensions(ExtensionsModel extensions);
 }

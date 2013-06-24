@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceMetadata;
 import org.switchyard.ServiceReference;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.event.DomainShutdownEvent;
@@ -45,9 +46,7 @@ import org.switchyard.event.ServiceRegistrationEvent;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.internal.validate.BaseValidatorRegistry;
 import org.switchyard.metadata.InOutService;
-import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.policy.Policy;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
 import org.switchyard.spi.ServiceRegistry;
@@ -132,21 +131,21 @@ public class DomainImpl implements ServiceDomain {
     }
 
     @Override
-    public Service registerService(QName serviceName, ServiceInterface metadata, 
+    public Service registerService(QName serviceName, ServiceInterface contract, 
             ExchangeHandler handler) {
-        return registerService(serviceName, metadata, handler, null, null, null);
+        return registerService(serviceName, contract, handler, null);
     }
 
     @Override
     public Service registerService(QName serviceName,
-            ServiceInterface metadata, ExchangeHandler handler, List<Policy> requires, String securityName, Registrant owner) {
+            ServiceInterface contract, ExchangeHandler handler, ServiceMetadata metadata) {
         
         // If no service interface is provided, we default to InOutService
-        if (metadata == null) {
-            metadata = new InOutService();
+        if (contract == null) {
+            contract = new InOutService();
         }
         // Create the service 
-        Service service = new ServiceImpl(serviceName, metadata, this, handler, requires, securityName, owner);
+        Service service = new ServiceImpl(serviceName, contract, this, handler, metadata);
         // register the service
         _serviceRegistry.registerService(service);
         _eventManager.publish(new ServiceRegistrationEvent(service));
@@ -155,21 +154,20 @@ public class DomainImpl implements ServiceDomain {
 
     @Override
     public ServiceReference registerServiceReference(QName serviceName,
-            ServiceInterface metadata) {
-        return registerServiceReference(serviceName, metadata, null, null, null, null, null);
+            ServiceInterface contract) {
+        return registerServiceReference(serviceName, contract, null);
     }
 
     @Override
     public ServiceReference registerServiceReference(QName serviceName,
-            ServiceInterface metadata, ExchangeHandler handler) {
-        return registerServiceReference(serviceName, metadata, handler, null, null, null, null);
+            ServiceInterface contract, ExchangeHandler handler) {
+        return registerServiceReference(serviceName, contract, handler, null);
     }
     
     @Override
     public ServiceReference registerServiceReference(QName serviceName,
-            ServiceInterface metadata, ExchangeHandler handler,
-            List<Policy> provides, List<Policy> requires, String securityName, Registrant owner) {
-        ServiceReferenceImpl reference = new ServiceReferenceImpl(serviceName, metadata, this, provides, requires, securityName, handler, owner);
+            ServiceInterface contract, ExchangeHandler handler,  ServiceMetadata metadata) {
+        ServiceReferenceImpl reference = new ServiceReferenceImpl(serviceName, contract, this, handler, metadata);
         Dispatcher dispatch = _exchangeBus.createDispatcher(reference);
         reference.setDispatcher(dispatch);
         _serviceRegistry.registerServiceReference(reference);

@@ -19,13 +19,9 @@
 
 package org.switchyard;
 
-import java.util.List;
-
 import javax.xml.namespace.QName;
 
-import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.policy.Policy;
 
 /**
  * A service registered with the SwitchYard runtime.
@@ -56,26 +52,14 @@ public interface Service {
     ServiceDomain getDomain();
     
     /**
-     * Gets the security.
-     * @return the security
-     */
-    ServiceSecurity getSecurity();
-    
-    /**
-     * Returns a list of required policies for this service.
-     * @return list of required policy
-     */
-    List<Policy> getRequiredPolicies();
-    
-    /**
      * Return the exchange handler representing the provider.
      * @return provider's exchange handler
      */
     ExchangeHandler getProviderHandler();
     
     /**
-     * Return the provider metadata associated with this service.
-     * @return provider metadata
+     * Return runtime metadata associated with this service.
+     * @return runtime service metadata
      */
-    Registrant getProviderMetadata();
+    ServiceMetadata getServiceMetadata();
 }

@@ -121,23 +121,23 @@ public class DeploymentTest {
         // check metadata is included for services and references
         Service implService = deployment.getDomain().getServices(
                 new QName("urn:test:config-mock-binding:1.0", "TestService")).get(0);
-        Assert.assertNotNull(implService.getProviderMetadata());
-        Assert.assertTrue(implService.getProviderMetadata().getConfig() instanceof ComponentImplementationModel);
+        Assert.assertNotNull(implService.getServiceMetadata().getRegistrant());
+        Assert.assertTrue(implService.getServiceMetadata().getRegistrant().getConfig() instanceof ComponentImplementationModel);
         
         Service bindingService = deployment.getDomain().getServices(
                 new QName("urn:test:config-mock-binding:1.0", "TestReference")).get(0);
-        Assert.assertNotNull(bindingService.getProviderMetadata());
-        Assert.assertTrue(bindingService.getProviderMetadata().getConfig() instanceof BindingModel);
+        Assert.assertNotNull(bindingService.getServiceMetadata().getRegistrant());
+        Assert.assertTrue(bindingService.getServiceMetadata().getRegistrant().getConfig() instanceof BindingModel);
         
         ServiceReference implReference = deployment.getDomain().getServiceReference(
                 new QName("urn:test:config-mock-binding:1.0", "TestReference"));
-        Assert.assertNotNull(implReference.getConsumerMetadata());
-        Assert.assertTrue(implReference.getConsumerMetadata().getConfig() instanceof ComponentImplementationModel);
+        Assert.assertNotNull(implReference.getServiceMetadata().getRegistrant());
+        Assert.assertTrue(implReference.getServiceMetadata().getRegistrant().getConfig() instanceof ComponentImplementationModel);
         
         ServiceReference bindingReference = deployment.getDomain().getServiceReference(
                 new QName("urn:test:config-mock-binding:1.0", "TestService"));
-        Assert.assertNotNull(bindingReference.getConsumerMetadata());
-        Assert.assertTrue(bindingReference.getConsumerMetadata().getConfig() instanceof BindingModel);
+        Assert.assertNotNull(bindingReference.getServiceMetadata().getRegistrant());
+        Assert.assertTrue(bindingReference.getServiceMetadata().getRegistrant().getConfig() instanceof BindingModel);
     }
     
     @Test

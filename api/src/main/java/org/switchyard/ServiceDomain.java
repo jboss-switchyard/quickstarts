@@ -27,9 +27,7 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.event.EventObserver;
 import org.switchyard.event.EventPublisher;
-import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.policy.Policy;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.validate.ValidatorRegistry;
 
@@ -54,11 +52,11 @@ public interface ServiceDomain {
      * @param serviceName the name of the service
      * @param handler the handler to use to process exchanges directed at this
      * service
-     * @param metadata service interface details
+     * @param contract service interface details
      * @return the registered service
      */
     Service registerService(QName serviceName,
-            ServiceInterface metadata,
+            ServiceInterface contract,
             ExchangeHandler handler);
     
     /**
@@ -67,17 +65,13 @@ public interface ServiceDomain {
      * @param handler the handler to use to process exchanges directed at this
      * service
      * @param contract service interface details
-     * @param requires policy requirements for the service
-     * @param securityName the security name
-     * @param owner metadata related to the entity registering the service
+     * @param metadata runtime metadata associated with the service
      * @return the registered service
      */
     Service registerService(QName serviceName,
             ServiceInterface contract,
             ExchangeHandler handler,
-            List<Policy> requires,
-            String securityName,
-            Registrant owner);
+            ServiceMetadata metadata);
     
     /**
      * Register a service reference with the domain.
@@ -91,13 +85,13 @@ public interface ServiceDomain {
     /**
      * Register a service reference with the domain.
      * @param serviceName the name of the reference
-     * @param metadata service consumer contract
+     * @param contract service consumer contract
      * @param handler the handler to use to process replies from the service
      * @return a reference to the registered service that can be used to
      * unregister when required
      */
     ServiceReference registerServiceReference(QName serviceName,
-            ServiceInterface metadata,
+            ServiceInterface contract,
             ExchangeHandler handler);
     
     /**
@@ -105,20 +99,14 @@ public interface ServiceDomain {
      * @param serviceName the name of the reference
      * @param contract service consumer contract
      * @param handler the handler to use to process replies from the service
-     * @param provides policies provided by the reference
-     * @param requires policies required for the reference
-     * @param securityName the security name
-     * @param owner metadata related to the entity registering the reference
+     * @param metadata runtime metadata associated with the service
      * @return a reference to the registered service that can be used to
      * unregister when required
      */
     ServiceReference registerServiceReference(QName serviceName,
             ServiceInterface contract,
             ExchangeHandler handler,
-            List<Policy> provides,
-            List<Policy> requires,
-            String securityName,
-            Registrant owner);
+            ServiceMetadata metadata);
     
     /**
      * Fetches a registered service reference for the specified name.

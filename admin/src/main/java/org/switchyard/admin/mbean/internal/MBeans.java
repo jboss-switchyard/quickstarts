@@ -30,6 +30,7 @@ import org.switchyard.admin.ComponentReference;
 import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.Reference;
 import org.switchyard.admin.Service;
+import org.switchyard.admin.Throttling;
 import org.switchyard.admin.Transformer;
 import org.switchyard.admin.Validator;
 import org.switchyard.exception.SwitchYardException;
@@ -53,6 +54,7 @@ public final class MBeans {
     static final String COMPONENT_SERVICE = "type=ComponentService,name=";
     static final String COMPONENT_REFERENCE = "type=ComponentReference,name=";
     static final String LOCAL_MANAGEMENT = "type=Management.Local";
+    static final String THROTTLING = "type=Throttling,service=";
     
     private static MBeanServer _server = ManagementFactory.getPlatformMBeanServer();
     private static Logger _log = Logger.getLogger(MBeans.class);
@@ -89,6 +91,7 @@ public final class MBeans {
         for (Service service : application.getServices()) {
             ManagedService mSvc = new ManagedService(service, mApp);
             registerMBean(mSvc, getObjectName(service));
+            registerMBean(mSvc.getThrottling(), getObjectName(service, service.getThrottling()));
             // register service bindings
             for (Binding binding : service.getGateways()) {
                 ManagedBinding mBind = new ManagedBinding(binding);
@@ -143,6 +146,7 @@ public final class MBeans {
         // Unregister composite services
         for (Service service : application.getServices()) {
             unregisterMBean(getObjectName(service));
+            unregisterMBean(getObjectName(service, service.getThrottling()));
             for (Binding binding : service.getGateways()) {
                 unregisterMBean(getObjectName(service, binding));
             }
@@ -230,6 +234,11 @@ public final class MBeans {
         return toName(DOMAIN + ":" 
                 + BINDING + ObjectName.quote(binding.getName()) 
                 + ",reference=" + ObjectName.quote(reference.getName().toString()));
+    }
+    
+    static ObjectName getObjectName(Service service, Throttling throttling) {
+        return toName(DOMAIN + ":" 
+                + THROTTLING + ObjectName.quote(service.getName().toString()));
     }
     
     private static ObjectName toName(String nameStr) {

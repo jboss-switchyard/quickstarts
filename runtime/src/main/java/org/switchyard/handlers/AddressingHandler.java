@@ -81,7 +81,7 @@ public class AddressingHandler extends BaseHandler {
         
         // set provider contract and details on exchange
         exchange.provider(service, providerOp);
-        for (Policy policy : service.getRequiredPolicies()) {
+        for (Policy policy : service.getServiceMetadata().getRequiredPolicies()) {
             PolicyUtil.require(exchange, policy);
         }
     }

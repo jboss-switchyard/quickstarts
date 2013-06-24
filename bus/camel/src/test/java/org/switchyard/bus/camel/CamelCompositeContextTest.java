@@ -42,7 +42,7 @@ public class CamelCompositeContextTest {
     @Test
     public void testCopyFromExchange() throws Exception {
         ServiceReference inOnly = new ServiceReferenceImpl(
-            new QName("exchange-copy"), new InOnlyService(), _domain);
+            new QName("exchange-copy"), new InOnlyService(), _domain, null);
         ExchangeDispatcher dispatch = _provider.createDispatcher(inOnly);
         
         Exchange ex = dispatch.createExchange(null, ExchangePattern.IN_ONLY);

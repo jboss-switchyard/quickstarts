@@ -48,6 +48,7 @@ import org.switchyard.bus.camel.audit.FaultInterceptStrategy;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.metadata.qos.Throttling;
 
 /**
  * Route builder which creates mediation necessary to handle communication inside SwitchYard.
@@ -63,6 +64,17 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
 
         public String toString() {
             return "IN_OUT_CHECK";
+        }
+    };
+    
+    private static final Predicate THROTTLE_CHECK = new Predicate() {
+        @Override
+        public boolean matches(Exchange exchange) {
+            return exchange.getIn().getHeader(Throttling.MAX_REQUESTS) != null;
+        }
+
+        public String toString() {
+            return "THROTTLE_CHECK";
         }
     };
 
@@ -118,6 +130,8 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
         // definition.onException(Throwable.class).processRef(FATAL_ERROR.name());
 
         TryDefinition tryDefinition = definition.doTry();
+        addThrottling(tryDefinition);
+        
         tryDefinition
             .processRef(DOMAIN_HANDLERS.name())
             .processRef(ADDRESSING.name())
@@ -162,5 +176,15 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
             return Collections.emptyMap();
         }
         return result;
+    }
+    
+    private void addThrottling(TryDefinition route) {
+        route.filter(THROTTLE_CHECK)
+            .throttle(header(Throttling.MAX_REQUESTS))
+            // throttle needs a child process, so we'll just remove the header
+            // using an empty process definition causes some of the interceptors
+            // to blow chunks, specifically audit interceptors
+            .removeHeader(Throttling.MAX_REQUESTS)
+            .end().end();
     }
 }

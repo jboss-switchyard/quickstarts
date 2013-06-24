@@ -55,4 +55,9 @@ public interface ServiceMXBean {
      * @return the application which exports this reference.
      */
     ApplicationMXBean getApplication();
+    
+    /**
+     * @return throttling details associated with this service.
+     */
+    ThrottlingMXBean getThrottling();
 }

@@ -19,13 +19,9 @@
 
 package org.switchyard;
 
-import java.util.List;
-
 import javax.xml.namespace.QName;
 
-import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.policy.Policy;
 
 /**
  * A service registered with the SwitchYard runtime.
@@ -48,12 +44,6 @@ public interface ServiceReference {
     * @return the service interface
     */
     ServiceInterface getInterface();
-    
-    /**
-     * Gets the security.
-     * @return the security
-     */
-    ServiceSecurity getSecurity();
     
     /**
      * Creates a new Exchange to invoke this service.  Since this method does
@@ -91,28 +81,10 @@ public interface ServiceReference {
      */
     Exchange createExchange(String operation, ExchangeHandler handler);
     
-    /**
-     * Returns a list of required policies for this service reference.
-     * @return list of required policy
-     */
-     List<Policy> getRequiredPolicies();
-
-     /**
-     * Returns a list of policies provided by this service reference.
-     * @return list of provided policy
-     */
-     List<Policy> getProvidedPolicies();
-     
      /**
       * Unregisters this service reference from the domain it's registered in.
       */
      void unregister();
-     
-     /**
-      * Return the consumer metadata associated with this service.
-      * @return consumer metadata
-      */
-     Registrant getConsumerMetadata();
 
      /**
      * Wire this service reference to a registered service.  The default wiring
@@ -127,4 +99,11 @@ public interface ServiceReference {
       * @return wired service name
       */
      QName getTargetServiceName();
+     
+     /**
+      * Return runtime metadata associated with this service reference.
+      * @return runtime service reference metadata
+      */
+     ServiceMetadata getServiceMetadata();
+     
 }

@@ -1,6 +1,6 @@
 /* 
  * JBoss, Home of Professional Open Source 
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @author tags. All rights reserved. 
  * See the copyright.txt in the distribution for a 
  * full listing of individual contributors.
@@ -16,53 +16,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-
-package org.switchyard.admin;
-
-import java.util.List;
-
-import javax.xml.namespace.QName;
+package org.switchyard.admin.mbean;
 
 /**
- * Service
- * 
- * Represents an application service exported through the SwitchYard runtime.
+ * ThrottlingMXBean
+ * <p/>
+ * Throttling details associated with a management object.
  */
-public interface Service extends MessageMetricsAware {
+public interface ThrottlingMXBean {
 
     /**
-     * @return the name of this service.
+     * @return true if throttling is enabled.
      */
-    QName getName();
+    boolean isEnabled();
 
     /**
-     * @return the component service promoted by this service.
+     * enable throttling for the associated object.
      */
-    ComponentService getPromotedService();
+    void enable();
 
     /**
-     * @return the gateway bindings for this service.
+     * disable throttling for the associated object.
      */
-    List<Binding> getGateways();
+    void disable();
 
     /**
-     * @return the interface implemented by this service.
+     * @return the maximum number of requests per time period.
      */
-    String getInterface();
+    int getMaxRequests();
 
     /**
-     * @return the application which exports this service.
+     * @param maxRequests the maximumn number of requests per time period.
      */
-    Application getApplication();
+    void setMaxRequests(int maxRequests);
 
     /**
-     * @param gatewayName the name of a gateway on this service.
-     * @return the named gateway
+     * @return the time period, in milliseconds, over which requests are
+     *         counted.
      */
-    Binding getGateway(String gatewayName);
-
-    /**
-     * @return throttling details associated with this service.
-     */
-    Throttling getThrottling();
+    long getTimePeriod();
 }

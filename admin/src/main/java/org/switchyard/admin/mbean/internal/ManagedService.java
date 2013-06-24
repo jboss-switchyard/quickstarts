@@ -25,6 +25,7 @@ import org.switchyard.admin.Service;
 import org.switchyard.admin.mbean.ApplicationMXBean;
 import org.switchyard.admin.mbean.BindingMXBean;
 import org.switchyard.admin.mbean.ServiceMXBean;
+import org.switchyard.admin.mbean.ThrottlingMXBean;
 
 /**
  * Implementation of ServiceMXBean.
@@ -34,6 +35,7 @@ public class ManagedService implements ServiceMXBean {
     private Service _service;
     private ManagedApplication _parent;
     private List<BindingMXBean> _bindings = new ArrayList<BindingMXBean>();
+    private ThrottlingMXBean _throttling;
     
     /**
      * Creates a new ManagedService.
@@ -43,6 +45,7 @@ public class ManagedService implements ServiceMXBean {
     public ManagedService(Service service, ManagedApplication parent) {
         _service = service;
         _parent = parent;
+        _throttling = new ManagedThrottling(service.getThrottling());
     }
 
     @Override
@@ -76,6 +79,11 @@ public class ManagedService implements ServiceMXBean {
     @Override
     public ApplicationMXBean getApplication() {
         return _parent;
+    }
+
+    @Override
+    public ThrottlingMXBean getThrottling() {
+        return _throttling;
     }
 
 }

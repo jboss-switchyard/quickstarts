@@ -19,8 +19,6 @@
 
 package org.switchyard.internal;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
@@ -28,12 +26,12 @@ import javax.xml.namespace.QName;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
+import org.switchyard.ServiceMetadata;
 import org.switchyard.ServiceReference;
-import org.switchyard.ServiceSecurity;
 import org.switchyard.event.ReferenceUnregistrationEvent;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.metadata.ServiceMetadataBuilder;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.Policy;
 import org.switchyard.policy.PolicyUtil;
@@ -49,24 +47,23 @@ public class ServiceReferenceImpl implements ServiceReference {
     private QName _name;
     private ServiceInterface _interface;
     private DomainImpl _domain;
-    private List<Policy> _requires;
-    private List<Policy> _provides;
-    private String _securityName;
     private ExchangeHandler _handler;
     private Dispatcher _dispatcher;
-    private Registrant _consumerMetadata;
     private QName _targetServiceName;
+    private ServiceMetadata _metadata;
     
     /**
      * Creates a new reference to a service.
      * @param name name of the service reference
      * @param serviceInterface the service interface
      * @param domain domain in which the service is used 
+     * @param metadata service metadata
      */
     public ServiceReferenceImpl(QName name,
             ServiceInterface serviceInterface,
-            DomainImpl domain) {
-        this(name, serviceInterface, domain, null, null, null, null, null);
+            DomainImpl domain,
+            ServiceMetadata metadata) {
+        this(name, serviceInterface, domain, null, metadata);
     }
 
     /**
@@ -74,39 +71,21 @@ public class ServiceReferenceImpl implements ServiceReference {
      * @param name name of the service reference
      * @param serviceInterface the service interface
      * @param domain domain in which the service is used
-     * @param provides list of policies provided by this reference
-     * @param requires list of policies required for this reference
-     * @param securityName the security name
      * @param handler handler used to process reply faults/messages
-     * @param consumerMetadata information related to the consumer
+     * @param metadata service metadata
      */
     public ServiceReferenceImpl(QName name,
             ServiceInterface serviceInterface,
             DomainImpl domain,
-            List<Policy> provides,
-            List<Policy> requires,
-            String securityName,
             ExchangeHandler handler,
-            Registrant consumerMetadata) {
+            ServiceMetadata metadata) {
         
         _name = name;
         _interface = serviceInterface;
         _handler = handler;
         _domain = domain;
-        _consumerMetadata = consumerMetadata;
         _targetServiceName = name;
-        
-        if (provides != null) {
-            _provides = provides;
-        } else {
-            _provides = Collections.emptyList();
-        }
-        if (requires != null) {
-            _requires = requires;
-        } else {
-            _requires = Collections.emptyList();
-        }
-        _securityName = securityName;
+        _metadata = metadata != null ? metadata : ServiceMetadataBuilder.create().build();
     }
     
     @Override
@@ -147,10 +126,10 @@ public class ServiceReferenceImpl implements ServiceReference {
         Exchange ex = _dispatcher.createExchange(handler, op.getExchangePattern());
         ex.consumer(this, op);
 
-        for (Policy policy : _requires) {
+        for (Policy policy : _metadata.getRequiredPolicies()) {
             PolicyUtil.require(ex, policy);
         }
-        for (Policy policy : _provides) {
+        for (Policy policy : _metadata.getProvidedPolicies()) {
             PolicyUtil.provide(ex, policy);
         }
         return ex;
@@ -164,16 +143,6 @@ public class ServiceReferenceImpl implements ServiceReference {
     @Override
     public QName getName() {
         return _name;
-    }
-
-    @Override
-    public List<Policy> getRequiredPolicies() {
-        return Collections.unmodifiableList(_requires);
-    }
-    
-    @Override
-    public List<Policy> getProvidedPolicies() {
-        return Collections.unmodifiableList(_provides);
     }
     
     @Override
@@ -201,10 +170,12 @@ public class ServiceReferenceImpl implements ServiceReference {
         return _domain;
     }
     
+    /*
     @Override
     public ServiceSecurity getSecurity() {
         return _domain != null ? _domain.getServiceSecurity(_securityName) : null;
     }
+    */
     
     /**
      * Specifies the exchange bus dispatcher to use for this reference.
@@ -217,21 +188,6 @@ public class ServiceReferenceImpl implements ServiceReference {
     }
 
     @Override
-    public Registrant getConsumerMetadata() {
-        return _consumerMetadata;
-    }
-    
-    /**
-     * Specifies the consumer metadata associated with this service reference.
-     * @param consumer consumer metadata
-     * @return this ServiceReference instance
-     */
-    public ServiceReferenceImpl setConsumerMetadata(Registrant consumer) {
-        _consumerMetadata = consumer;
-        return this;
-    }
-
-    @Override
     public void wire(QName serviceName) {
         _targetServiceName = serviceName;
     }
@@ -239,6 +195,12 @@ public class ServiceReferenceImpl implements ServiceReference {
     @Override
     public QName getTargetServiceName() {
         return _targetServiceName;
+    }
+    
+
+    @Override
+    public ServiceMetadata getServiceMetadata() {
+        return _metadata;
     }
     
     @Override

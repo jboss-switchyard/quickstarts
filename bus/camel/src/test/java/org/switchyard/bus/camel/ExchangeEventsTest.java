@@ -86,7 +86,7 @@ public class ExchangeEventsTest {
         QName name = new QName("testDispatchInOnly");
         ExchangeSink sink = new ExchangeSink();
         Service service = new MockService(name, new InOnlyService(), sink);
-        ServiceReference reference = new ServiceReferenceImpl(name, new InOnlyService(), null);
+        ServiceReference reference = new ServiceReferenceImpl(name, new InOnlyService(), null, null);
         ExchangeDispatcher dispatch = _provider.createDispatcher(reference);
 
         Exchange exchange = new CamelExchange(dispatch, new DefaultExchange(_camelContext), sink);
@@ -113,7 +113,7 @@ public class ExchangeEventsTest {
         ExchangeSink outHandler = new ExchangeSink();
 
         Service service = new MockService(name, new InOutService(), inHandler);
-        ServiceReference reference = new ServiceReferenceImpl(name, new InOutService(), null);
+        ServiceReference reference = new ServiceReferenceImpl(name, new InOutService(), null, null);
         Dispatcher dispatch = _provider.createDispatcher(reference);
 
         Exchange exchange = dispatch.createExchange(outHandler, ExchangePattern.IN_OUT);

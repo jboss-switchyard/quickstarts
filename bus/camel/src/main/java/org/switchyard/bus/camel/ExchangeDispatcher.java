@@ -30,6 +30,8 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
 import org.switchyard.ServiceReference;
+import org.switchyard.label.BehaviorLabel;
+import org.switchyard.metadata.qos.Throttling;
 import org.switchyard.spi.Dispatcher;
 
 /**
@@ -71,13 +73,27 @@ public class ExchangeDispatcher implements Dispatcher {
 
     @Override
     public void dispatch(final Exchange exchange) {
-        if (exchange instanceof CamelExchange) {
-            if (exchange.getPhase().equals(ExchangePhase.IN)) {
-                _producer.send("direct:" + exchange.getConsumer().getName(), ((CamelExchange) exchange).getExchange());
-            }
-        } else {
+        // We can only send Camel exchanges through the camel bus
+        if (!CamelExchange.class.isInstance(exchange)) {
             throw new IllegalArgumentException("Camel Bus accepts only CamelExchanges");
         }
+        CamelExchange camelEx = (CamelExchange)exchange;
+        
+        // For camel exchanges, the only phase we care about is IN.  The dispatch method can also
+        // be called on the OUT path, but that should be handled by the IN_OUT filter in the Camel
+        // bus route.
+        if (!exchange.getPhase().equals(ExchangePhase.IN)) {
+            return;
+        }
+
+        Throttling throttling = _reference.getServiceMetadata().getThrottling();
+        if (throttling != null && throttling.getMaxRequests() > 0) {
+            exchange.getMessage().getContext().setProperty(
+                    Throttling.MAX_REQUESTS, throttling.getMaxRequests())
+                    .addLabels(BehaviorLabel.TRANSIENT.label());
+        }
+        _producer.send("direct:" + exchange.getConsumer().getName(), camelEx.getExchange());
+        
     }
 
 }

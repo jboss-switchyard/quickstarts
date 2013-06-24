@@ -19,18 +19,15 @@
 
 package org.switchyard.bus.camel;
 
-import java.util.List;
-
 import javax.xml.namespace.QName;
 
 import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.ServiceSecurity;
+import org.switchyard.ServiceMetadata;
 import org.switchyard.metadata.InOnlyService;
-import org.switchyard.metadata.Registrant;
 import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.policy.Policy;
+import org.switchyard.metadata.ServiceMetadataBuilder;
 
 public class MockService implements Service {
     
@@ -69,23 +66,13 @@ public class MockService implements Service {
     }
 
     @Override
-    public ServiceSecurity getSecurity() {
-        return null;
-    }
-
-    @Override
-    public List<Policy> getRequiredPolicies() {
-        return null;
-    }
-
-    @Override
     public ExchangeHandler getProviderHandler() {
         return _handler;
     }
 
     @Override
-    public Registrant getProviderMetadata() {
-        return null;
+    public ServiceMetadata getServiceMetadata() {
+        return ServiceMetadataBuilder.create().build();
     }
 
 }

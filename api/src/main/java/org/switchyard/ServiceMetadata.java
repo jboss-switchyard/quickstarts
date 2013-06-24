@@ -17,52 +17,49 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.admin;
+package org.switchyard;
 
 import java.util.List;
 
-import javax.xml.namespace.QName;
+import org.switchyard.metadata.Registrant;
+import org.switchyard.metadata.qos.Throttling;
+import org.switchyard.policy.Policy;
 
 /**
- * Service
- * 
- * Represents an application service exported through the SwitchYard runtime.
+ * Contains runtime details on services and service references registered
+ * in SwitchYard.  Instances of ServiceMetadata can be created and updated
+ * using the ServiceMetadataBuilder class.
  */
-public interface Service extends MessageMetricsAware {
+public interface ServiceMetadata {
 
     /**
-     * @return the name of this service.
+     * Gets the security.
+     * @return the security
      */
-    QName getName();
-
+    ServiceSecurity getSecurity();
+    
     /**
-     * @return the component service promoted by this service.
+     * Returns a list of required policies for this service reference.
+     * @return list of required policy
      */
-    ComponentService getPromotedService();
+    List<Policy> getRequiredPolicies();
 
     /**
-     * @return the gateway bindings for this service.
+     * Returns a list of policies provided by this service reference.
+     * @return list of provided policy
      */
-    List<Binding> getGateways();
-
+    List<Policy> getProvidedPolicies();
+    
     /**
-     * @return the interface implemented by this service.
+     * Return the consumer metadata associated with this service.
+     * @return consumer metadata
      */
-    String getInterface();
-
+    Registrant getRegistrant();
+    
     /**
-     * @return the application which exports this service.
-     */
-    Application getApplication();
-
-    /**
-     * @param gatewayName the name of a gateway on this service.
-     * @return the named gateway
-     */
-    Binding getGateway(String gatewayName);
-
-    /**
-     * @return throttling details associated with this service.
+     * Return the throttling configuration associated with a service reference.  Throttling
+     * config only applies to consumers via service references.
+     * @return throttling config
      */
     Throttling getThrottling();
 }

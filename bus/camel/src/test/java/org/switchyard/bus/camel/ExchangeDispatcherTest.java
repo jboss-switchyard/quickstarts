@@ -25,6 +25,8 @@ package org.switchyard.bus.camel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
@@ -48,6 +50,8 @@ import org.switchyard.internal.ServiceReferenceImpl;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.metadata.ServiceMetadataBuilder;
+import org.switchyard.metadata.qos.Throttling;
 import org.switchyard.spi.Dispatcher;
 
 public class ExchangeDispatcherTest {
@@ -77,7 +81,7 @@ public class ExchangeDispatcherTest {
         QName name = new QName("testDispatchInOnly");
         ExchangeSink sink = new ExchangeSink();
         Service service = new MockService(name, new InOnlyService(), sink);
-        ServiceReference reference = new ServiceReferenceImpl(name, new InOnlyService(), null);
+        ServiceReference reference = new ServiceReferenceImpl(name, new InOnlyService(), null, null);
         ExchangeDispatcher dispatch = _provider.createDispatcher(reference);
 
         Exchange exchange = new CamelExchange(dispatch, new DefaultExchange(_camelContext), sink);
@@ -91,6 +95,36 @@ public class ExchangeDispatcherTest {
                 message.getContext().getProperty(Exchange.MESSAGE_ID), 
                 sink.getLastExchange().getMessage().getContext().getProperty(Exchange.MESSAGE_ID));
     }
+    
+    @Test
+    public void throttle() throws Exception {
+        QName name = new QName("testDispatchInOnly");
+        final ExchangeSink sink = new ExchangeSink(1000);
+        final Service service = new MockService(name, new InOnlyService(), sink);
+        final ServiceReference reference = new ServiceReferenceImpl(name, new InOnlyService(), null, null);
+        final ExchangeDispatcher dispatch = _provider.createDispatcher(reference);
+        
+        // Set throttling to 1 per second
+        Throttling throttle = new Throttling().setMaxRequests(1);
+        ServiceMetadataBuilder.update(reference.getServiceMetadata()).throttling(throttle);
+                
+        final int NUM_SENDS = 5;
+        for (int i = 0; i < NUM_SENDS; i++) {
+            new Thread(new Runnable() {
+                public void run() {
+                    Exchange exchange = dispatch.createExchange(sink, ExchangePattern.IN_ONLY);
+                    exchange.consumer(reference, reference.getInterface().getOperation(ServiceInterface.DEFAULT_OPERATION));
+                    exchange.provider(service, service.getInterface().getOperation(ServiceInterface.DEFAULT_OPERATION));
+                    Message message = exchange.createMessage();
+                    exchange.send(message);
+                }
+            }).start();
+        }
+        
+        Thread.sleep(500);
+        Assert.assertTrue("Concurrent requests were not throttled!", 
+                sink.getReceivedCount() < NUM_SENDS);
+    }
 
     @Test
     public void testDispatchInOut() throws Exception {
@@ -101,7 +135,7 @@ public class ExchangeDispatcherTest {
         ExchangeSink outHandler = new ExchangeSink();
 
         Service service = new MockService(name, new InOutService(), inHandler);
-        ServiceReference reference = new ServiceReferenceImpl(name, new InOutService(), null);
+        ServiceReference reference = new ServiceReferenceImpl(name, new InOutService(), null, null);
         Dispatcher dispatch = _provider.createDispatcher(reference);
 
         Exchange exchange = dispatch.createExchange(outHandler, ExchangePattern.IN_OUT);
@@ -131,9 +165,15 @@ public class ExchangeDispatcherTest {
         static final String REPLY = "REPLY";
         private Exchange _lastExchange;
         private boolean _reply;
+        private int _wait;
+        private AtomicInteger _numExchanges = new AtomicInteger();
         
         ExchangeSink() {
             this(false);
+        }
+        
+        ExchangeSink(int wait) {
+            _wait = wait;
         }
         
         ExchangeSink(boolean reply) {
@@ -142,11 +182,23 @@ public class ExchangeDispatcherTest {
 
         @Override
         public void handleMessage(Exchange exchange) throws HandlerException {
+            _numExchanges.incrementAndGet();
             _lastExchange = exchange;
+            
+            try {
+                Thread.sleep(_wait);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+            
             if (_reply) {
                 exchange.getContext().setProperty(REPLY, true);
                 exchange.send(exchange.createMessage().setContent(REPLY));
             }
+        }
+        
+        public int getReceivedCount() {
+            return _numExchanges.get();
         }
         
         Exchange getLastExchange() {

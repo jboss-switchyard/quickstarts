@@ -256,6 +256,29 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
     
+    <element name="throttling" type="swyd:ThrottlingType"/>
+    <complexType name="ThrottlingType">
+        <annotation>
+            <documentation xml:lang="en">
+                SCA extension for configuring throttling details.
+            </documentation>
+        </annotation>
+        <attribute name="timePeriod" type="swyd:propLong" use="optional" default="1000">
+          <annotation>
+              <documentation xml:lang="en">
+                  The time period in milliseconds over which requests are counted.  Defaults to 1000 (1 second).
+              </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="maxRequests" type="swyd:propInteger" use="required">
+          <annotation>
+              <documentation xml:lang="en">
+                  The maximum number of requests which can be processed during the specified timePeriod.
+              </documentation>
+          </annotation>
+        </attribute>
+    </complexType>
+    
     <!-- binding.sca extensions -->
     <attribute name="target" type="string"/>
     <attribute name="targetNamespace" type="string"/>
