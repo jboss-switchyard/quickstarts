@@ -37,11 +37,9 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.util.AnnotationLiteral;
 
-import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
-import org.switchyard.Message;
 import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
@@ -84,8 +82,6 @@ public class ClientProxyBean implements Bean {
      */
     private Object _proxyBean;
 
-    private BeanBag _beanBag;
-    
     /**
      * Public constructor.
      *
@@ -97,7 +93,7 @@ public class ClientProxyBean implements Bean {
     public ClientProxyBean(String serviceName, Class<?> proxyInterface, Set<Annotation> qualifiers, BeanDeploymentMetaData beanDeploymentMetaData) {
         this._serviceName = serviceName;
         this._serviceInterface = proxyInterface;
-        
+
         if (qualifiers != null) {
             this._qualifiers = qualifiers;
         } else {
@@ -263,14 +259,6 @@ public class ClientProxyBean implements Bean {
     }
 
     /**
-     * Set BeanBag instance.
-     * @param beanBag BeanBag
-     */
-    public void setBeanBag(BeanBag beanBag) {
-        _beanBag = beanBag;
-    }
-
-    /**
      * Dynamic proxy {@link InvocationHandler}.
      */
     private class ClientProxyInvocationHandler implements InvocationHandler {
@@ -291,13 +279,11 @@ public class ClientProxyBean implements Bean {
                 SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
 
                 Exchange exchangeIn = createExchange(_service, method, inOutHandler);
-                Message message = exchangeIn.createMessage();
-                mergeFromBeanBagContext(exchangeIn);
                 // Don't set the message content as an array unless there are multiple arguments
                 if (args != null && args.length == 1) {
-                    exchangeIn.send(message.setContent(args[0]));
+                    exchangeIn.send(exchangeIn.createMessage().setContent(args[0]));
                 } else {
-                    exchangeIn.send(message.setContent(args));
+                    exchangeIn.send(exchangeIn.createMessage().setContent(args));
                 }
 
                 Exchange exchangeOut = inOutHandler.waitForOut();
@@ -323,15 +309,13 @@ public class ClientProxyBean implements Bean {
                 }
             } else {
                 Exchange exchange = createExchange(_service, method, null);
-                Message message = exchange.createMessage();
-                mergeFromBeanBagContext(exchange);
                 // Don't set the message content as an array unless there are multiple arguments
                 if (args == null) {
-                    exchange.send(message);
+                    exchange.send(exchange.createMessage());
                 } else if (args.length == 1) {
-                    exchange.send(message.setContent(args[0]));
+                    exchange.send(exchange.createMessage().setContent(args[0]));
                 } else {
-                    exchange.send(message.setContent(args));
+                    exchange.send(exchange.createMessage().setContent(args));
                 }
 
                 return null;
@@ -347,12 +331,5 @@ public class ClientProxyBean implements Bean {
             return service.createExchange(operationName, responseExchangeHandler);
         }
 
-        private void mergeFromBeanBagContext(Exchange exchange) {
-            Context beanBagContext = _beanBag.getInContext(getServiceName());
-            Context exchangeContext = exchange.getContext();
-             exchangeContext.setProperties(beanBagContext.getProperties());
-        }
-
     }
-
 }

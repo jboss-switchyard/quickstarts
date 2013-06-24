@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.component.bean.BeanBag;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.w3c.dom.Document;
@@ -40,9 +39,6 @@ public class ConsumerBean implements ConsumerService {
     
     @Inject @Reference
     private RequestResponse requestResponse;
-    
-    @Inject
-    private BeanBag beanBag;
     
     @Override
     public void consumeInOnlyNoArgsService() {
@@ -83,12 +79,6 @@ public class ConsumerBean implements ConsumerService {
         }
     }
 
-    @Override
-    public Object consumeInOutServiceAddProperty(Object message) throws ConsumerException {
-        beanBag.getInContext("RequestResponse").setProperty("testProp", "testVal");
-        return requestResponse.replyAddProperty(message);
-    }
-    
     @Override
     public String domOperation(Document message) {
         try {
