@@ -79,8 +79,8 @@
         <version.commons.net>2.2</version.commons.net>
         <version.commons.ssl>0.3.9</version.commons.ssl>
         <version.deltaspike>${version.org.apache.deltaspike}</version.deltaspike>
-        <version.drools>6.0.0.Beta3</version.drools>
-        <version.ecj>3.5.1</version.ecj>
+        <version.drools>6.0.0.Beta4</version.drools>
+        <version.ecj>3.7.2</version.ecj>
         <version.forge>1.2.2.Final</version.forge>
         <version.forge.arquillian>1.0.0.CR7</version.forge.arquillian>
         <version.forge.jboss.interceptor>2.0.0.Final</version.forge.jboss.interceptor>
@@ -103,20 +103,19 @@
         <version.jbosseap>6.1</version.jbosseap>
         <version.jbossws.spi>2.1.2.Final</version.jbossws.spi>
         <version.jbossws.jboss720.server.integration>4.2.0-SNAPSHOT</version.jbossws.jboss720.server.integration>
-        <version.jbpm>6.0.0.Beta3</version.jbpm>
+        <version.jbpm>6.0.0.Beta4</version.jbpm>
         <version.jettison>1.2</version.jettison>
         <version.jsch>0.1.48</version.jsch>
         <version.jta>1.1</version.jta>
         <version.junit>4.10</version.junit>
         <version.jruby>1.7.2</version.jruby>
         <version.jython>2.5.3</version.jython>
-        <version.kie>6.0.0.Beta3</version.kie>
+        <version.kie>6.0.0.Beta4</version.kie>
         <version.littleproxy>0.5.3</version.littleproxy>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
-        <version.mina>2.0.4</version.mina>
         <version.milyn>1.5.1</version.milyn>
         <version.mock.javamail>1.9</version.mock.javamail>
-        <version.mvel>2.1.5.Final</version.mvel>
+        <version.mvel>2.1.6.Final</version.mvel>
         <version.netty>3.2.6.Final</version.netty>
         <!--<version.org.jboss.spec.javax.resource16>1.0.0.Final</version.org.jboss.spec.javax.resource16>-->
         <version.quartz>1.8.5</version.quartz>
@@ -140,7 +139,7 @@
         <version.xml-apis>1.3.04</version.xml-apis>
         <version.xmlbeans>2.2.0</version.xmlbeans>
         <version.xmlunit>1.1</version.xmlunit>
-        <version.xstream>1.4.1</version.xstream>
+        <version.xstream>1.4.3</version.xstream>
     </properties>
     <scm>
         <connection>scm:git:ssh//github.com/switchyard/core.git</connection>
@@ -1713,11 +1712,6 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>${version.maven.plugin.plugin}</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.mina</groupId>
-                <artifactId>mina-core</artifactId>
-                <version>${version.mina}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.qpid</groupId>
