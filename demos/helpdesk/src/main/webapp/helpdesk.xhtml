@@ -48,21 +48,21 @@
                             <td>
                                 <h:dataTable value="#{helpDesk.userTasks}" var="task" bgcolor="#F1F1F1" border="10" cellpadding="5" cellspacing="3" dir="ltr" frame="hsides" rules="all">
                                     <h:column>
-                                        <c:facet name="header">Task ID</c:facet>
+                                        <c:facet name="header">ID</c:facet>
                                         <h:outputText value="#{task.id}"/>
                                     </h:column>
                                     <h:column>
-                                        <c:facet name="header">Name / Status</c:facet>
+                                        <c:facet name="header">Name (Status)</c:facet>
                                         <h:outputText value="#{task.name}"/><p/>
                                         (<h:outputText value="#{task.status}"/>)
                                     </h:column>
                                     <h:column>
-                                        <c:facet name="header">Ticket / Status</c:facet>
+                                        <c:facet name="header">Ticket (status)</c:facet>
                                         <h:outputText value="#{helpDesk.userTickets[task.processInstanceId].id}"/><p/>
                                         (<h:outputText value="#{helpDesk.userTickets[task.processInstanceId].status}"/>)
                                     </h:column>
                                     <h:column>
-                                        <c:facet name="header">Step / Action</c:facet>
+                                        <c:facet name="header">Step [Action]</c:facet>
                                         <ui:fragment rendered="#{helpDesk.groupId == 'developers'}">
                                             <ui:fragment rendered="#{task.name == 'Review Ticket'}">
                                                 Review Ticket<p/>
