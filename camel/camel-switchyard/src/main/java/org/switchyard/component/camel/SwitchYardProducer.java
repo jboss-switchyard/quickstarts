@@ -28,6 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
+import org.switchyard.ExchangePhase;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
@@ -88,10 +89,14 @@ public class SwitchYardProducer extends DefaultProducer {
     public void process(final org.apache.camel.Exchange camelExchange) throws Exception {
         final String targetUri = camelExchange.getProperty(org.apache.camel.Exchange.TO_ENDPOINT, String.class);
         ServiceDomain domain = ((SwitchYardCamelContext) camelExchange.getContext()).getServiceDomain();
-
         final ServiceReference serviceRef = lookupServiceReference(targetUri, domain);
-        MessageComposer<CamelBindingData> composer = getMessageComposer(camelExchange);
 
+        // set a flag to indicate whether this producer endpoint is used within a service route
+        boolean isGatewayRoute = camelExchange.getProperty(SwitchYardConsumer.IMPLEMENTATION_ROUTE) == null;
+        
+        // the composer is not used for switchyard:// endpoints invoked from service routes
+        MessageComposer<CamelBindingData> composer = 
+                isGatewayRoute ? getMessageComposer(camelExchange) : null;
         final Exchange switchyardExchange = createSwitchyardExchange(camelExchange, serviceRef, composer);
 
         // Set appropriate policy based on Camel exchange properties
@@ -99,7 +104,23 @@ public class SwitchYardProducer extends DefaultProducer {
             PolicyUtil.provide(switchyardExchange, TransactionPolicy.PROPAGATES_TRANSACTION);
             PolicyUtil.provide(switchyardExchange, TransactionPolicy.MANAGED_TRANSACTION_GLOBAL);
         }
-
+        
+        // Message composition depends on whether this switchyard:// endpoint is called from
+        // a Camel service implementation or a Camel gateway
+        Message switchyardMessage;
+        if (isGatewayRoute) {
+            switchyardMessage = composeForGateway(composer, camelExchange, switchyardExchange);
+        } else {
+            switchyardMessage = ExchangeMapper.mapCamelToSwitchYard(
+                    camelExchange, switchyardExchange, ExchangePhase.IN);
+        }
+        
+        switchyardExchange.send(switchyardMessage);
+    }
+    
+    private Message composeForGateway(MessageComposer<CamelBindingData> composer, 
+            org.apache.camel.Exchange camelExchange, Exchange switchyardExchange) throws Exception {
+        
         BindingDataCreator<?> bindingCreator = getBindingDataCreator(camelExchange);
         CamelBindingData bindingData = bindingCreator.createBindingData(camelExchange.getIn());
         if (bindingData instanceof SecurityBindingData) {
@@ -107,7 +128,6 @@ public class SwitchYardProducer extends DefaultProducer {
             SecurityContext.get(switchyardExchange).getCredentials().addAll(
                 ((SecurityBindingData) bindingData).extractCredentials());
         }
-        Message switchyardMessage = composer.compose(bindingData, switchyardExchange);
         
         /*
          * initialize the gateway name on the context. this was most likely not
@@ -119,7 +139,8 @@ public class SwitchYardProducer extends DefaultProducer {
                     .setProperty(ExchangeCompletionEvent.GATEWAY_NAME, gatewayName, Scope.EXCHANGE)
                     .addLabels(BehaviorLabel.TRANSIENT.label());
         }
-        switchyardExchange.send(switchyardMessage);
+        
+        return composer.compose(bindingData, switchyardExchange);
     }
 
     /**
@@ -195,7 +216,7 @@ public class SwitchYardProducer extends DefaultProducer {
                 operationName = ops.iterator().next().getName();
             } else {
                 // See if the existing camel operation exists on the target service
-                String camelOp = camelExchange.getIn().getHeader(Exchange.OPERATION_NAME, String.class);
+                String camelOp = camelExchange.getProperty(Exchange.OPERATION_NAME, String.class);
                 if (serviceRef.getInterface().getOperation(camelOp) != null) {
                     operationName = camelOp;
                 }

@@ -26,7 +26,6 @@ import static org.switchyard.Exchange.SERVICE_NAME;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.Endpoint;
@@ -35,17 +34,12 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
+import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
-import org.switchyard.Property;
-import org.switchyard.Scope;
-import org.switchyard.common.camel.ContextPropertyUtil;
-import org.switchyard.common.camel.HandlerDataSource;
-import org.switchyard.common.camel.SwitchYardMessage;
 import org.switchyard.Message;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.ServiceOperation;
 
 /**
@@ -59,6 +53,12 @@ import org.switchyard.metadata.ServiceOperation;
 public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandler {
 
     private AtomicReference<State> _state = new AtomicReference<State>(State.NONE);
+    
+    /**
+     * Used to flag an exchange as originating from a service implementation route.
+     */
+    public static final String IMPLEMENTATION_ROUTE = 
+            "org.switchyard.component.camel.implementation";
 
     /**
      * Sole constructor.
@@ -72,30 +72,17 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
 
     @Override
     public void handleMessage(final Exchange switchyardExchange) throws HandlerException {
-        org.apache.camel.Exchange camelExchange = getEndpoint().createExchange(isInOut(switchyardExchange) ? org.apache.camel.ExchangePattern.InOut : org.apache.camel.ExchangePattern.InOnly);
-        DefaultMessage targetMessage = new SwitchYardMessage();
-        targetMessage.setBody(switchyardExchange.getMessage().getContent());
-
-        for (Property property : switchyardExchange.getContext().getProperties()) {
-            if (property.hasLabel(BehaviorLabel.TRANSIENT.label()) || ContextPropertyUtil.isReservedProperty(property.getName(), property.getScope())) {
-                continue;
-            }
-
-            if (Scope.EXCHANGE.equals(property.getScope())) {
-                camelExchange.setProperty(property.getName(), property.getValue());
-            } else {
-                targetMessage.setHeader(property.getName(), property.getValue());
-            }
-        }
-
-        for (String attachementName : switchyardExchange.getMessage().getAttachmentMap().keySet()) {
-            targetMessage.addAttachment(attachementName, new DataHandler(switchyardExchange.getMessage().getAttachment(attachementName)));
-        }
+        org.apache.camel.Exchange camelExchange = getEndpoint().createExchange(
+                isInOut(switchyardExchange) ? org.apache.camel.ExchangePattern.InOut : org.apache.camel.ExchangePattern.InOnly);
+        DefaultMessage targetMessage = ExchangeMapper.mapSwitchYardToCamel(switchyardExchange, camelExchange);
+        
+        // mark this as an exchange for a camel implementation service
+        camelExchange.setProperty(IMPLEMENTATION_ROUTE, true);
 
         ServiceOperation operation = switchyardExchange.getContract().getProviderOperation();
-        targetMessage.setHeader(OPERATION_NAME, operation.getName());
-        targetMessage.setHeader(FAULT_TYPE, operation.getFaultType());
-        targetMessage.setHeader(SERVICE_NAME, switchyardExchange.getProvider().getName());
+        camelExchange.setProperty(OPERATION_NAME, operation.getName());
+        camelExchange.setProperty(FAULT_TYPE, operation.getFaultType());
+        camelExchange.setProperty(SERVICE_NAME, switchyardExchange.getProvider().getName());
         camelExchange.setIn(targetMessage);
 
         invokeCamelProcessor(camelExchange);
@@ -180,34 +167,9 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
         }
     }
 
-    private void sendResponse(org.apache.camel.Exchange camelExchange, final Exchange switchyardExchange) throws HandlerException {
-        final org.apache.camel.Message camelMessage;
-        if (camelExchange.hasOut()) {
-            camelMessage = camelExchange.getOut();
-        } else {
-            camelMessage = camelExchange.getIn();
-        }
-
-        org.switchyard.Message message = switchyardExchange.createMessage();
-        message.setContent(camelMessage.getBody());
-
-        for (String property : camelExchange.getProperties().keySet()) {
-            if (ContextPropertyUtil.isReservedProperty(property, Scope.EXCHANGE)) {
-                continue;
-            }
-            message.getContext().setProperty(property, camelExchange.getProperty(property), Scope.EXCHANGE);
-        }
-        for (String header : camelMessage.getHeaders().keySet()) {
-            if (ContextPropertyUtil.isReservedProperty(header, Scope.MESSAGE)) {
-                continue;
-            }
-            message.getContext().setProperty(header, camelMessage.getHeader(header), Scope.MESSAGE);
-        }
-
-        for (String attachementName : camelMessage.getAttachmentNames()) {
-            message.addAttachment(attachementName, new HandlerDataSource(camelMessage.getAttachment(attachementName)));
-        }
-
+    private void sendResponse(org.apache.camel.Exchange camelExchange, final Exchange switchyardExchange) throws HandlerException {     
+        Message message = ExchangeMapper.mapCamelToSwitchYard(
+                camelExchange, switchyardExchange, ExchangePhase.OUT);
         switchyardExchange.send(message);
     }
 

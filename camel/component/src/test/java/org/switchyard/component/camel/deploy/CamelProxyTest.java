@@ -58,16 +58,24 @@ public class CamelProxyTest {
     @Test
     public void shouldInvokeDifferentOperations() throws Exception {
         MockEndpoint all = _camelContext.getEndpoint("mock:all", MockEndpoint.class);
-        all.expectedBodiesReceived(100.0, 101.0, 11.0);
-
-        all.message(0).header(Exchange.OPERATION_NAME).isEqualTo("abs");
-        all.message(1).header(Exchange.OPERATION_NAME).isEqualTo("cos");
-        all.message(2).header(Exchange.OPERATION_NAME).isEqualTo("pow");
-
-        invoker.operation("abs").sendInOut(100.0);
+        
+        all.expectedBodiesReceived(100.0);
+        all.expectedPropertyReceived(Exchange.OPERATION_NAME, "pow");
+        invoker.operation("pow").sendInOut(100.0);
+        all.assertIsSatisfied();
+        
+        all.reset();
+        
+        all.expectedBodiesReceived(101.0);
+        all.expectedPropertyReceived(Exchange.OPERATION_NAME, "cos");
         invoker.operation("cos").sendInOut(101.0);
-        invoker.operation("pow").sendInOut(11.0);
+        all.assertIsSatisfied();
 
+        all.reset();
+        
+        all.expectedBodiesReceived(11.0);
+        all.expectedPropertyReceived(Exchange.OPERATION_NAME, "pow");
+        invoker.operation("pow").sendInOut(11.0);
         all.assertIsSatisfied();
     }
 

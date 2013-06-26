@@ -102,9 +102,9 @@ public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> 
         }
 
         ServiceOperation operation = exchange.getContract().getProviderOperation();
-        targetMessage.setHeader(OPERATION_NAME, operation.getName());
-        targetMessage.setHeader(FAULT_TYPE, operation.getFaultType());
-        targetMessage.setHeader(SERVICE_NAME, exchange.getProvider().getName());
+        target.getMessage().getExchange().setProperty(OPERATION_NAME, operation.getName());
+        target.getMessage().getExchange().setProperty(FAULT_TYPE, operation.getFaultType());
+        target.getMessage().getExchange().setProperty(SERVICE_NAME, exchange.getProvider().getName());
 
         targetMessage.setBody(sourceMessage.getContent());
         return target;

@@ -26,11 +26,11 @@
         <to uri="log:test?showAll=true" />
         <choice>
             <when>
-                <simple>${header.org.switchyard.operationName} == 'cos'</simple>
+                <simple>${property.org.switchyard.operationName} == 'cos'</simple>
                 <to uri="direct:cos" />
             </when>
             <when>
-                <simple>${header.org.switchyard.operationName} == 'abs'</simple>
+                <simple>${property.org.switchyard.operationName} == 'abs'</simple>
                 <to uri="direct:abs" />
             </when>
             <otherwise>

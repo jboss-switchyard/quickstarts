@@ -70,18 +70,18 @@ public class CamelMathTest {
         all.expectedMessageCount(2);
         all.expectedBodiesReceived(100.0, 101.0);
         // in this case 
-        all.expectedHeaderReceived(Exchange.SERVICE_NAME, MATH_ALL_SERVICE_NS);
-        all.expectedHeaderReceived(Exchange.SERVICE_NAME, MATH_ALL_SERVICE_NS);
+        all.expectedPropertyReceived(Exchange.SERVICE_NAME, MATH_ALL_SERVICE_NS);
+        all.expectedPropertyReceived(Exchange.SERVICE_NAME, MATH_ALL_SERVICE_NS);
 
         MockEndpoint cos = _camelContext.getEndpoint("mock:cos", MockEndpoint.class);
         cos.expectedMessageCount(1);
         cos.expectedBodiesReceived(101.0);
-        cos.expectedHeaderReceived(Exchange.SERVICE_NAME, MATH_COS_SERVICE_NS);
+        cos.expectedPropertyReceived(Exchange.SERVICE_NAME, MATH_COS_SERVICE_NS);
 
         MockEndpoint abs = _camelContext.getEndpoint("mock:abs", MockEndpoint.class);
         abs.expectedMessageCount(1);
         abs.expectedBodiesReceived(100.0);
-        abs.expectedHeaderReceived(Exchange.SERVICE_NAME, MATH_ABS_SERVICE_NS);
+        abs.expectedPropertyReceived(Exchange.SERVICE_NAME, MATH_ABS_SERVICE_NS);
 
         invoker.operation("abs").sendInOut(100.0);
         invoker.operation("cos").sendInOut(101.0);
@@ -96,9 +96,9 @@ public class CamelMathTest {
     public void shouldReahUnknown() throws Exception {
         MockEndpoint unknown = _camelContext.getEndpoint("mock:unknown", MockEndpoint.class);
         unknown.expectedBodiesReceived(10.1);
-        unknown.expectedHeaderReceived(Exchange.OPERATION_NAME, "pow");
-        unknown.expectedHeaderReceived(Exchange.SERVICE_NAME, MATH_SERVICE_NS);
-        unknown.expectedHeaderReceived(Exchange.FAULT_TYPE, "java:" + IllegalArgumentException.class.getName());
+        unknown.expectedPropertyReceived(Exchange.OPERATION_NAME, "pow");
+        unknown.expectedPropertyReceived(Exchange.SERVICE_NAME, MATH_SERVICE_NS);
+        unknown.expectedPropertyReceived(Exchange.FAULT_TYPE, "java:" + IllegalArgumentException.class.getName());
 
         invoker.operation("pow").sendInOut(10.1);
 

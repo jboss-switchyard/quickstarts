@@ -73,8 +73,7 @@ public class CamelResponseHandler implements ExchangeHandler {
     @Override
     public void handleMessage(final Exchange switchYardExchange) throws HandlerException {
         try {
-            Message camelMsg = getCamelMessage();
-            _messageComposer.decompose(switchYardExchange, new CamelBindingData(camelMsg));
+            compose(switchYardExchange);
         } catch (Exception e) {
             throw new HandlerException(e);
         }
@@ -98,12 +97,26 @@ public class CamelResponseHandler implements ExchangeHandler {
         }
 
         try {
-            Message message = getCamelMessage();
-            _messageComposer.decompose(exchange, new CamelBindingData(message));
-            message.setFault(true);
+            Message camelMsg = compose(exchange);
+            camelMsg.setFault(true);
         } catch (Exception e) {
             _camelExchange.setException(e);
         }
     }
 
+    private Message compose(Exchange exchange) throws Exception {
+        Message camelMsg;
+        if (_messageComposer != null) {
+            camelMsg = getCamelMessage();
+            _messageComposer.decompose(exchange, new CamelBindingData(camelMsg));
+        } else {
+            camelMsg = ExchangeMapper.mapSwitchYardToCamel(exchange, _camelExchange);
+            if (isInOnly()) {
+                _camelExchange.setIn(camelMsg);
+            } else {
+                _camelExchange.setOut(camelMsg);
+            }
+        }
+        return camelMsg;
+    }
 }
