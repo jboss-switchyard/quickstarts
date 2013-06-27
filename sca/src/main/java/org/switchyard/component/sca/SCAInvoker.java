@@ -31,7 +31,6 @@ import org.switchyard.ServiceReference;
 import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.config.model.composite.SCABindingModel;
 import org.switchyard.deploy.BaseServiceHandler;
-import org.switchyard.deploy.Lifecycle.State;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.remote.RemoteMessage;
@@ -115,7 +114,7 @@ public class SCAInvoker extends BaseServiceHandler {
         invokeMsg.getContext().setProperties(invokeCtx.getProperties());
         
         ex.send(invokeMsg);
-        if (isInOut(ex)) {
+        if (ExchangePattern.IN_OUT.equals(ex.getPattern())) {
             replyHandler.waitForOut();
             if (ex.getMessage() != null) {
                 Message replyMsg = ex.getMessage().copy();
@@ -127,10 +126,13 @@ public class SCAInvoker extends BaseServiceHandler {
                     exchange.send(replyMsg);
                 }
             }
+        } else if (ExchangeState.FAULT.equals(ex.getState())) {
+            // Even though this is in-only, we need to report a runtime fault on send
+            throw createHandlerException(ex.getMessage());
         }
     }
     
-    private void invokeRemote(Exchange exchange) {
+    private void invokeRemote(Exchange exchange) throws HandlerException {
         // Figure out the QName for the service were invoking
         QName serviceName = getTargetServiceName(exchange);
 
@@ -142,7 +144,11 @@ public class SCAInvoker extends BaseServiceHandler {
 
         try {
             RemoteMessage reply = _invoker.invoke(request);
-            if (isInOut(exchange) && reply != null) {
+            if (reply == null) {
+                return;
+            }
+            
+            if (ExchangePattern.IN_OUT.equals(exchange.getPattern())) {
                 Message msg = exchange.createMessage();
                 msg.setContent(reply.getContent());
                 Context replyCtx = reply.getContext();
@@ -153,6 +159,11 @@ public class SCAInvoker extends BaseServiceHandler {
                     exchange.sendFault(msg);
                 } else {
                     exchange.send(msg);
+                }
+            } else {
+                // still need to account for runtime exceptions on in-only
+                if (reply.isFault()) {
+                    throw createHandlerException(reply.getContent());
                 }
             }
         } catch (java.io.IOException ioEx) {
@@ -167,6 +178,24 @@ public class SCAInvoker extends BaseServiceHandler {
         String targetName = _config.hasTarget() ? _config.getTarget() : service.getLocalPart();
         String targetNS = _config.hasTargetNamespace() ? _config.getTargetNamespace() : service.getNamespaceURI();
         return new QName(targetNS, targetName);
+    }
+    
+    private HandlerException createHandlerException(Message message) {
+        return createHandlerException(message == null ? null : message.getContent());
+    }
+    
+    private HandlerException createHandlerException(Object content) {
+        HandlerException ex;
+        if (content == null) {
+            ex = new HandlerException("Runtime fault occurred without exception details!");
+        } else if (content instanceof HandlerException) {
+            ex = (HandlerException)content;
+        } else if (content instanceof Throwable) {
+            ex = new HandlerException((Throwable)content);
+        } else {
+            ex = new HandlerException(content.toString());
+        }
+        return ex;
     }
     
     
@@ -186,10 +215,5 @@ public class SCAInvoker extends BaseServiceHandler {
                 throw new SwitchYardException("Unable to instantiate strategy class: " + strategy, ex);
             }
         }
-    }
-    
-    private boolean isInOut(Exchange exchange) {
-        return ExchangePattern.IN_OUT.equals(
-                exchange.getContract().getConsumerOperation().getExchangePattern());
     }
 }

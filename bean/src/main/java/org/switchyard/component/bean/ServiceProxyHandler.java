@@ -140,9 +140,9 @@ public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHa
      * Handle the Service bean invocation.
      *
      * @param exchange The Exchange instance.
-     * @throws BeanComponentException Error invoking Bean component operation.
+     * @throws HandlerException Error invoking Bean component operation.
      */
-    private void handle(Exchange exchange) throws BeanComponentException {
+    private void handle(Exchange exchange) throws HandlerException {
         Invocation invocation = _serviceMetadata.getInvocation(exchange);
 
         if (invocation != null) {
@@ -180,11 +180,10 @@ public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHa
                 
                 // if the exception is declared on service interface, use sendFault, otherwise throw an exception
                 Throwable faultContent = ex;
+                if (faultContent instanceof InvocationTargetException) {
+                    faultContent = ((InvocationTargetException)ex).getTargetException();
+                }
                 if (exchangePattern == ExchangePattern.IN_OUT) {
-                    if (faultContent instanceof InvocationTargetException) {
-                        faultContent = ((InvocationTargetException)ex).getTargetException();
-                    }
-                    
                     for (Class<?> expectedFault : invocation.getMethod().getExceptionTypes()) {
                         if (expectedFault.isAssignableFrom(faultContent.getClass())) {
                             exchange.sendFault(exchange.createMessage().setContent(faultContent));
@@ -192,8 +191,7 @@ public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHa
                         }
                     }
                 }
-                throw new BeanComponentException(faultContent);
-                
+                throw new HandlerException(faultContent);
             }
         } else {
             throw new SwitchYardException("Unexpected error.  BeanServiceMetadata should return an Invocation instance, or throw a BeanComponentException.");

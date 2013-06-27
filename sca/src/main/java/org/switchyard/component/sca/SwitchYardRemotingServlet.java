@@ -89,22 +89,30 @@ public class SwitchYardRemotingServlet extends HttpServlet {
                 _log.debug("Invoking service " + msg.getService());
             }
             ex.send(m);
-            // check if a reply is expected
-            if (ex.getContract().getProviderOperation().getExchangePattern().equals(ExchangePattern.IN_OUT)) {
+            
+            // handle reply or fault
+            RemoteMessage reply = null;
+            if (ExchangePattern.IN_OUT.equals(ex.getPattern())) {
                 replyHandler.waitForOut();
-                RemoteMessage reply = createReplyMessage(ex);
+                reply = createReplyMessage(ex);
+            } else if (ExchangeState.FAULT.equals(ex.getState())) {
+                // Even though this is in-only, we need to report a runtime fault on send
+                reply = createReplyMessage(ex);
+            }
+            
+            // If there's a reply, send it back
+            if (reply != null) {
                 OutputStream out = response.getOutputStream();
-                
                 if (_log.isDebugEnabled()) {
                     _log.debug("Writing reply message to HTTP response stream " + msg.getService());
                 }
                 _serializer.serialize(reply, RemoteMessage.class, out);
                 out.flush();
             } else {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 if (_log.isDebugEnabled()) {
                     _log.debug("No content to return for invocation of " + msg.getService());
                 }
-                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
         } catch (SwitchYardException syEx) {
             if (_log.isDebugEnabled()) {

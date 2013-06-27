@@ -22,14 +22,15 @@ package org.switchyard.component.bean.tests;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.component.bean.BeanComponentException;
+import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.component.bean.BeanComponentException;
-import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 
 /*
  * Assorted methods for testing a CDI bean consuming a service in SwitchYard.
@@ -105,8 +106,8 @@ public class BeanConsumerTest {
         } catch (InvocationFaultException infEx) {
             System.out.println(infEx.getFaultMessage().getContent());
             Message faultMsg = infEx.getFaultMessage();
-            Assert.assertTrue(faultMsg.getContent() instanceof BeanComponentException);
-            Assert.assertEquals("throw me a remote exception please!!", faultMsg.getContent(BeanComponentException.class).getCause().getCause().getMessage());
+            Assert.assertTrue(faultMsg.getContent() instanceof HandlerException);
+            Assert.assertEquals("throw me a remote exception please!!", faultMsg.getContent(HandlerException.class).getCause().getCause().getMessage());
         }
     }
 }
