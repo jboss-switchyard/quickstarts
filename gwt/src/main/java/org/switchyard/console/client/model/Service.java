@@ -69,4 +69,14 @@ public interface Service extends HasQName {
      */
     public void setApplication(String application);
 
+    /**
+     * @return the throttling details for this service
+     */
+    public Throttling getThrottling();
+
+    /**
+     * @param throttling details for this service
+     */
+    public void setThrottling(Throttling throttling);
+
 }

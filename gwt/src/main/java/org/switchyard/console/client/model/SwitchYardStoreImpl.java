@@ -37,13 +37,16 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.jboss.as.console.client.core.ApplicationProperties;
 import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
 import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
+import org.jboss.as.console.client.widgets.forms.ApplicationMetaData;
+import org.jboss.as.console.client.widgets.forms.EntityAdapter;
+import org.jboss.as.console.client.widgets.forms.Mutator;
+import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.dmr.client.ModelNode;
 import org.switchyard.console.client.BeanFactory;
 import org.switchyard.console.client.NameTokens;
@@ -80,25 +83,25 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
     private static final String STOP_GATEWAY = "stop-gateway";
     private static final String START_GATEWAY = "start-gateway";
     private static final String SWITCHYARD = NameTokens.SUBSYSTEM;
+    private static final String THROTTLING = "throttling";
+    private static final String UPDATE_THROTTLING = "update-throttling";
 
     private final DispatchAsync _dispatcher;
-
     private final BeanFactory _factory;
-
-    private final ApplicationProperties _bootstrap;
+    private final ApplicationMetaData _metadata;
 
     /**
      * Create a new SwitchYardStoreImpl.
      * 
      * @param dispatcher the injected dispatcher.
      * @param factory the injected bean factory.
-     * @param bootstrap the injected bootstrap context.
+     * @param metadata the injected application metadata.
      */
     @Inject
-    public SwitchYardStoreImpl(DispatchAsync dispatcher, BeanFactory factory, ApplicationProperties bootstrap) {
+    public SwitchYardStoreImpl(DispatchAsync dispatcher, BeanFactory factory, ApplicationMetaData metadata) {
         this._dispatcher = dispatcher;
         this._factory = factory;
-        this._bootstrap = bootstrap;
+        this._metadata = metadata;
     }
 
     @Override
@@ -774,6 +777,60 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                         + response.getFailureDescription()));
             }
         });
+    }
+
+    @Override
+    public void updateThrottling(final Service service, final Throttling throttling, final AsyncCallback<Void> callback) {
+        // /subsystem=switchyard:update-throttling(service-name=name, application-name=applicationName, throttling=throttling)
+
+        final EntityAdapter<Throttling> entityAdapter = new EntityAdapter<Throttling>(Throttling.class, _metadata);
+        final ModelNode operation = new ModelNode();
+        final ModelNode address = RuntimeBaseAddress.get();
+        operation.get(OP).set(UPDATE_THROTTLING);
+        address.add(SUBSYSTEM, SWITCHYARD);
+        operation.get(OP_ADDR).set(address);
+        operation.get(SERVICE_NAME).set(service.getName());
+        operation.get(APPLICATION_NAME).set(service.getApplication());
+        operation.get(THROTTLING).set(entityAdapter.fromEntity(throttling));
+
+        _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(DMRResponse result) {
+                final ModelNode response = result.get();
+                if (!response.hasDefined(FAILED)) {
+                    callback.onSuccess(null);
+                    return;
+                }
+                callback.onFailure(new Exception("Failure updating throttling details for " + service.localName() + ": "
+                        + response.getFailureDescription()));
+            }
+        });
+    }
+
+    @Override
+    public <T> T processChangeSet(final Class<T> type, final T original, final Map<String, Object> changeSet,
+            final boolean merge) {
+        final List<PropertyBinding> properties = _metadata.getBeanMetaData(type).getProperties();
+        final T newEntity = (T) _metadata.getFactory(type).create();
+        @SuppressWarnings("unchecked")
+        final Mutator<T> mutator = _metadata.getMutator(type);
+
+        for (PropertyBinding property : properties) {
+            final String javaName = property.getJavaName();
+            Object propertyValue = mutator.getValue(original, javaName);
+            Object changed = changeSet.get(javaName);
+            if (changed != null && !changed.equals(propertyValue)) {
+                mutator.setValue(newEntity, javaName, changed);
+            } else if (merge) {
+                mutator.setValue(newEntity, javaName, propertyValue);
+            }
+        }
+        return newEntity;
     }
 
     private SystemDetails createSystemDetails(final ModelNode systemDetailsNode) {

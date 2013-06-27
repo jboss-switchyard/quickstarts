@@ -31,6 +31,7 @@ import org.switchyard.console.client.model.Reference;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.ServiceMetrics;
 import org.switchyard.console.client.model.SystemDetails;
+import org.switchyard.console.client.model.Throttling;
 import org.switchyard.console.client.model.Transformer;
 import org.switchyard.console.components.client.model.Component;
 
@@ -107,5 +108,10 @@ public interface BeanFactory extends AutoBeanFactory {
      * @return a new AutoBean<ArtifactReference>
      */
     AutoBean<ArtifactReference> artifactReference();
+
+    /**
+     * @return a new AutoBean<Throttling>
+     */
+    AutoBean<Throttling> throttling();
 
 }

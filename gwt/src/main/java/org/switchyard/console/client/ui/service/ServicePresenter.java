@@ -20,6 +20,7 @@
 package org.switchyard.console.client.ui.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
@@ -27,6 +28,7 @@ import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.model.Binding;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.SwitchYardStore;
+import org.switchyard.console.client.model.Throttling;
 import org.switchyard.console.client.ui.runtime.RuntimePresenter;
 
 import com.google.gwt.core.client.Scheduler;
@@ -142,6 +144,29 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
     }
 
     /**
+     * Updates the throttling configuration for the specified service.
+     * 
+     * @param service the service
+     * @param throttling the new throttling configuration
+     * @param changeset what changed from the original configuration
+     */
+    public void updateThrottling(Service service, Throttling throttling, Map<String, Object> changeset) {
+        _switchYardStore.updateThrottling(service,
+                _switchYardStore.processChangeSet(Throttling.class, throttling, changeset, false),
+                new AsyncCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void dummy) {
+                        getEventBus().fireEvent(new ResetPresentersEvent());
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        Console.error("Unknown error", caught.getMessage());
+                    }
+                });
+    }
+
+    /**
      * Notifies the presenter that the user has selected a service. The
      * presenter will load the service details and pass them back to the view to
      * be displayed.
@@ -220,7 +245,7 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
 
     private void loadService() {
         if (_serviceName == null || _applicationName == null) {
-            getView().setService(_switchYardStore.getBeanFactory().service().as());
+            getView().setService(null);
             return;
         }
         _switchYardStore.loadService(_serviceName, _applicationName, new AsyncCallback<Service>() {

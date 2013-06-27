@@ -20,6 +20,7 @@
 package org.switchyard.console.client.model;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.switchyard.console.client.BeanFactory;
@@ -193,4 +194,25 @@ public interface SwitchYardStore {
      */
     void stopGateway(String name, String serviceName, String applicationName, AsyncCallback<Void> callback);
 
+    /**
+     * Updates the throttling configuration for the specified service.
+     * 
+     * @param service the service
+     * @param throttling the new throttling configuration
+     * @param callback the callback
+     */
+    void updateThrottling(Service service, Throttling throttling, AsyncCallback<Void> callback);
+
+    /**
+     * Create a new object from the change set.
+     * 
+     * @param <T> the type of object
+     * @param type the type of object
+     * @param original the original object
+     * @param changeSet the changes
+     * @param merge true if the new object should include values merged from the
+     *            original
+     * @return a new object
+     */
+    <T> T processChangeSet(Class<T> type, T original, Map<String, Object> changeSet, boolean merge);
 }
