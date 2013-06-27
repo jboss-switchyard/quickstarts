@@ -55,6 +55,7 @@ import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.Binding;
+import org.switchyard.deploy.ComponentNames;
 import org.switchyard.deploy.Implementation;
 import org.switchyard.deploy.Lifecycle;
 import org.switchyard.deploy.ServiceHandler;
@@ -459,8 +460,11 @@ public class Deployment extends AbstractDeployment {
             
             // register a reference for each one declared in the component
             for (ComponentReferenceModel reference : component.getReferences()) {
-                _log.debug("Registering reference " + reference.getQName()
-                       + " for component " + component.getImplementation().getType() + " for deployment " + getName());
+                // Create the reference name qualified with component name to ensure uniqueness
+                QName refName = ComponentNames.qualify(component.getQName(),  reference.getQName());
+                               
+                _log.debug("Registering reference " + refName + " for component " 
+                        + component.getImplementation().getType() + " for deployment " + getName());
             
                 // Component Reference bindings not allowed, check to see if we find one and throw an exception
                 List<Model> models = reference.getModelChildren();
@@ -484,17 +488,24 @@ public class Deployment extends AbstractDeployment {
                         .security(getDomain().getServiceSecurity(reference.getSecurity()))
                         .requiredPolicies(requires).registrant(impl)
                         .build();
-                ServiceReference svcRef = getDomain().registerServiceReference(
-                        reference.getQName(), refIntf, null, metadata);
+                ServiceReference svcRef = getDomain().registerServiceReference(refName, refIntf, null, metadata);
 
+                boolean wired = false;
                 // wire a reference if the name is different from promoted name
                 for (CompositeReferenceModel compositeReference : getConfig().getComposite().getReferences()) {
                     ComponentReferenceModel componentReference = compositeReference.getComponentReference();
                     if (componentReference != null && componentReference.equals(reference)) {
                         if (!componentReference.getQName().equals(compositeReference.getQName())) {
                             svcRef.wire(compositeReference.getQName());
+                            wired = true;
+                            break;
                         }
                     }
+                }
+                
+                // if we didn't wire to a promoted reference, then default to unqualified service name
+                if (!wired) {
+                    svcRef.wire(ComponentNames.unqualify(svcRef));
                 }
                 references.add(svcRef);
             }

@@ -130,7 +130,7 @@ public class DeploymentTest {
         Assert.assertTrue(bindingService.getServiceMetadata().getRegistrant().getConfig() instanceof BindingModel);
         
         ServiceReference implReference = deployment.getDomain().getServiceReference(
-                new QName("urn:test:config-mock-binding:1.0", "TestReference"));
+                new QName("urn:test:config-mock-binding:1.0", "TestService/TestReference"));
         Assert.assertNotNull(implReference.getServiceMetadata().getRegistrant());
         Assert.assertTrue(implReference.getServiceMetadata().getRegistrant().getConfig() instanceof ComponentImplementationModel);
         
@@ -266,7 +266,7 @@ public class DeploymentTest {
         
         // Test the reference
         ServiceReference reference = serviceDomain.getServiceReference(
-                new QName("urn:switchyard-interface-esb", "SomeOtherService"));
+                new QName("urn:switchyard-interface-esb", "HelloService/SomeOtherService"));
         Assert.assertNotNull(reference);
         Assert.assertEquals(EsbInterfaceModel.ESB, service.getInterface().getType());
         ServiceOperation rop = reference.getInterface().getOperation(ServiceInterface.DEFAULT_OPERATION);
