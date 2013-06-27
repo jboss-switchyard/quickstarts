@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   ~ JBoss, Home of Professional Open Source.
   ~ Copyright 2010, Red Hat, Inc., and individual contributors
@@ -19,13 +20,7 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-            targetNamespace="urn:jboss:domain:switchyard:1.0"
-            xmlns="urn:jboss:domain:switchyard:1.0"
-            elementFormDefault="qualified"
-            attributeFormDefault="unqualified"
-            version="1.0">
+<xs:schema xmlns="urn:jboss:domain:switchyard:1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:jboss:domain:switchyard:1.0" version="1.0">
 
     <!-- The SwitchYard subsystem root element -->
     <xs:element name="subsystem" type="subsystemType"/>
@@ -39,38 +34,49 @@
             </xs:documentation>
         </xs:annotation>
         <xs:all>
-            <xs:element name="socket-binding" type="socketBindingsType" use="optional"/>
-            <xs:element name="modules" type="modulesType" minOccurs="0"/>
-            <xs:element name="extensions" type="extensionsType" minOccurs="0"/>
-            <xs:element name="properties" type="propertiesType" use="optional"/>
+            <xs:element name="socket-binding" type="socketBindingsType" minOccurs="0"/>
+            <xs:element minOccurs="0" name="modules" type="modulesType"/>
+            <xs:element minOccurs="0" name="extensions" type="extensionsType"/>
+            <xs:element name="properties" type="propertiesType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 
     <xs:complexType name="modulesType">
-        <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element name="module" type="moduleType"/>
         </xs:choice>
     </xs:complexType>
 
     <xs:complexType name="moduleType">
-        <xs:documentation>
-        <![CDATA[
-            The SwitchYard subsystem component's module identifier.
-        ]]>
-        </xs:documentation>
-        <xs:attribute name="identifier" type="xs:string" use="required"/>
-        <xs:documentation>
-        <![CDATA[
-            The SwitchYard subsystem component's implementation class.
-        ]]>
-        </xs:documentation>
-        <xs:attribute name="implClass" type="xs:string" use="required"/>
-        <xs:documentation>
-        <![CDATA[
-            The SwitchYard subsystem component's global properties.
-        ]]>
-        </xs:documentation>
-        <xs:element name="properties" type="propertiesType" use="optional"/>
+        <xs:all>
+            <xs:element name="properties" type="propertiesType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        <![CDATA[
+                            The SwitchYard subsystem component's global properties.
+                        ]]>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="identifier" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <![CDATA[
+                        The SwitchYard subsystem component's module identifier.
+                    ]]>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="implClass" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <![CDATA[
+                        The SwitchYard subsystem component's implementation class.
+                    ]]>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="socketBindingsType">
@@ -85,22 +91,27 @@
     </xs:complexType>
 
     <xs:complexType name="propertiesType">
-        <xs:any></xs:any>
+        <xs:sequence>
+            <xs:any/>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="extensionsType">
-        <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element name="module" type="extensionType"/>
         </xs:choice>
     </xs:complexType>
 
     <xs:complexType name="extensionType">
-        <xs:documentation>
-        <![CDATA[
-            The SwitchYard subsystem component's module identifier.
-        ]]>
-        </xs:documentation>
-        <xs:attribute name="identifier" type="xs:string" use="required"/>
+        <xs:attribute name="identifier" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <![CDATA[
+                        The SwitchYard subsystem component's module identifier.
+                    ]]>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
 </xs:schema>

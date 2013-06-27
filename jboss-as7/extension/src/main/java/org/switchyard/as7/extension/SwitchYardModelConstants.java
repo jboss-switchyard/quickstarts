@@ -76,6 +76,10 @@ public final class SwitchYardModelConstants {
      * Constant for /subsystem=switchyard/:start-gateway operation.
      */
     public static final String START_GATEWAY = "start-gateway";
+    /**
+     * Constant for /subsystem=switchyard/:update-throttling operation.
+     */
+    public static final String UPDATE_THROTTLING = "update-throttling";
     
     // nodes
     /**
@@ -159,6 +163,10 @@ public final class SwitchYardModelConstants {
      */
     public static final String STATE = "state";
     /**
+     * Constant for model key: throttling.
+     */
+    public static final String THROTTLING = "throttling";
+    /**
      * Constant for model key: to.
      */
     public static final String TO = "to";
@@ -213,7 +221,19 @@ public final class SwitchYardModelConstants {
      * Constant for model key: totalTime.
      */
     public static final String TOTAL_TIME = "totalTime";
-    
+
+    /**
+     * Constant for model key: enabled.
+     */
+    public static final String ENABLED = "enabled";
+    /**
+     * Constant for model key: maxRequests.
+     */
+    public static final String MAX_REQUESTS = "maxRequests";
+    /**
+     * Constant for model key: timePeriod.
+     */
+    public static final String TIME_PERIOD = "timePeriod";
 
     private SwitchYardModelConstants() {
     }

@@ -53,6 +53,7 @@ import org.switchyard.as7.extension.admin.SwitchYardSubsystemResetMetrics;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemShowMetrics;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemStartGateway;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemStopGateway;
+import org.switchyard.as7.extension.admin.SwitchYardSubsystemUpdateThrottling;
 import org.switchyard.as7.extension.admin.SwitchYardSubsystemUsesArtifact;
 import org.switchyard.common.version.Versions;
 
@@ -126,6 +127,7 @@ public class SwitchYardExtension implements Extension {
                 .addOperation(Operations.RESET_METRICS, SwitchYardSubsystemResetMetrics.INSTANCE)
                 .addOperation(Operations.STOP_GATEWAY, SwitchYardSubsystemStopGateway.INSTANCE)
                 .addOperation(Operations.START_GATEWAY, SwitchYardSubsystemStartGateway.INSTANCE)
+                .addOperation(Operations.UPDATE_THROTTLING, SwitchYardSubsystemUpdateThrottling.INSTANCE)
                 .pushChild(modulesResource).pop()
                 .pushChild(extensionsResource).pop()
                 .build();

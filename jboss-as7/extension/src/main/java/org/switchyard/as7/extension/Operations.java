@@ -198,6 +198,10 @@ interface Operations {
             .setMaxSize(5)
             .build();
 
+    SimpleAttributeDefinition THROTTLING = SimpleAttributeDefinitionBuilder.create(SwitchYardModelConstants.THROTTLING, ModelType.OBJECT)
+            .setAllowExpression(true)
+            .build();
+
     OperationDefinition GET_VERSION = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.GET_VERSION, new NonResolvingResourceDescriptionResolver())
             .setReadOnly()
             .build();
@@ -283,4 +287,9 @@ interface Operations {
             .setParameters(NAME, SERVICE_NAME, APPLICATION_NAME)
             .build();
 
+    OperationDefinition UPDATE_THROTTLING = new SimpleOperationDefinitionBuilder(SwitchYardModelConstants.UPDATE_THROTTLING, new NonResolvingResourceDescriptionResolver())
+            .setReadOnly()
+            .setRuntimeOnly()
+            .setParameters(SERVICE_NAME, APPLICATION_NAME, THROTTLING)
+            .build();
 }
