@@ -111,6 +111,7 @@
         <version.jruby>1.7.2</version.jruby>
         <version.jython>2.5.3</version.jython>
         <version.kie>6.0.0.Beta3</version.kie>
+        <version.littleproxy>0.5.3</version.littleproxy>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
         <version.mina>2.0.4</version.mina>
         <version.milyn>1.5.1</version.milyn>
@@ -2381,6 +2382,11 @@
                 <groupId>org.jboss.ws</groupId>
                 <artifactId>jbossws-jboss720-server-integration</artifactId>
                 <version>${version.jbossws.jboss720.server.integration}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.littleshoot</groupId>
+                <artifactId>littleproxy</artifactId>
+                <version>${version.littleproxy}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
