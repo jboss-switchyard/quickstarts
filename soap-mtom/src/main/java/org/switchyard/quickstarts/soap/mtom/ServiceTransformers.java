@@ -40,9 +40,9 @@ import org.w3c.dom.NodeList;
 public class ServiceTransformers {
 
     private static String SOAP_RESPONSE_TEMPLATE =
-              "<ns2:imageResponse xmlns:ns2=\"urn:switchyard-quickstart:soap-mtom:1.0\">"
+              "<imageResponse xmlns=\"urn:switchyard-quickstart:soap-mtom:1.0\">"
             + "<xop:Include xmlns:xop=\"http://www.w3.org/2004/08/xop/include\" href=\"cid:%s\"/>"
-            + "</ns2:imageResponse>";
+            + "</imageResponse>";
 
     private static String SOAP_EXTERNAL_REQUEST_TEMPLATE =
               "<ns2:image xmlns:ns2=\"urn:switchyard-quickstart:soap-mtom-external:1.0\">"

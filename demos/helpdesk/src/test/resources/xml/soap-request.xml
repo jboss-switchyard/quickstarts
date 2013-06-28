@@ -2,6 +2,7 @@
 <soap:Envelope
     xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
     xmlns:helpdesk="urn:switchyard-quickstart-demo:helpdesk:1.0">
+    <soap:Header/>
     <soap:Body>
         <helpdesk:openTicket>
             <ticket>

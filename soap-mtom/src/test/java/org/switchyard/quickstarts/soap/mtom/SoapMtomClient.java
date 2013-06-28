@@ -46,7 +46,9 @@ public class SoapMtomClient {
         if (img == null) {
             throw new IllegalStateException("Failed to load 'switchyard_icon.jpeg' image from classpath!");
         }
-        Image response = imageService.resizeImage(img);
-        return response;
+        //Image response = imageService.resizeImage(img);
+        javax.xml.ws.Holder<Image> holder = new javax.xml.ws.Holder<Image>(img);
+        imageService.resizeImage(holder);
+        return holder.value;
     }
 }
