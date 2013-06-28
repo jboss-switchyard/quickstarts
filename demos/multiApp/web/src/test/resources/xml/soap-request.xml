@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Header/>
 	<soap:Body>
 		<orders:submitOrder xmlns:orders="urn:switchyard-quickstart-demo:orders:1.0">
 			<order>

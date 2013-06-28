@@ -2,6 +2,7 @@
 <soap:Envelope
     xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
     xmlns:policy-security-basic="urn:switchyard-quickstart-demo:policy-security-basic:0.1.0">
+    <soap:Header/>
     <soap:Body>
         <policy-security-basic:doWork>
             <work>

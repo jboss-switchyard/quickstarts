@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
-    <S:Body>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
         <ns2:reverseResponse xmlns:ns2="urn:switchyard-quickstart:camel-soap-proxy:1.0">
             <text>raboof</text>
         </ns2:reverseResponse>
-    </S:Body>
-</S:Envelope>
+    </soap:Body>
+</soap:Envelope>

@@ -52,25 +52,18 @@ public class SoapAddressingTest {
     public void testSwitchYardWebService() throws Exception {
         _httpMixIn.postResourceAndTestXML(SWITCHYARD_WEB_SERVICE, "/xml/soap-request.xml", "/xml/soap-addressing-missing.xml");
         Assert.assertEquals(202, _httpMixIn.postResourceAndGetStatus(SWITCHYARD_WEB_SERVICE, "/xml/soap-request-replyto.xml"));
-        // Although FaultTo is set this should return 200, since there is no fault generated
-        Assert.assertEquals(200, _httpMixIn.postResourceAndGetStatus(SWITCHYARD_WEB_SERVICE, "/xml/soap-request-faultto.xml"));
+        Assert.assertEquals(500, _httpMixIn.postResourceAndGetStatus(SWITCHYARD_WEB_SERVICE, "/xml/soap-request-faultto.xml"));
     }
 
     @Test
     public void fault() throws Exception {
         String response = SoapAddressingClient.sendMessage("Airbus", "3");
         org.switchyard.component.soap.util.SOAPUtil.prettyPrint(response, System.out);
-        Assert.assertTrue(response.contains("<To xmlns=\"http://www.w3.org/2005/08/addressing\">http://www.w3.org/2005/08/addressing/anonymous</To>"));
-        Assert.assertTrue(response.contains("http://www.w3.org/2005/08/addressing/fault"));
+        Assert.assertTrue(response.contains("<RelatesTo xmlns=\"http://www.w3.org/2005/08/addressing\">uuid:3d3fcbbb-fd43-4118-b40e-62577894f39a</RelatesTo>"));
         // Fault detail is not generated due to HandlerException?
         Assert.assertTrue(response.contains("org.switchyard.quickstarts.soap.addressing.UnknownItem: Sorry, Airbus is no longer available with us!"));
     }
 
-    /**
-     * Does not work under JDK 6, due to a JDK bug.
-     * Works fine under JDK 7.
-     */
-    @Ignore
     @Test
     public void wsAddressingReplyTo() throws Exception {
         String response = SoapAddressingClient.sendMessage("Boeing", "10");
@@ -83,7 +76,7 @@ public class SoapAddressingTest {
     }
 
     /**
-     * Could not get this to work yet.
+     * Could not get this to work yet due to Exception transformation. All method Exceptions, when mapped to Fault should be transformed as SOAPFault.
      */
     @Ignore
     @Test

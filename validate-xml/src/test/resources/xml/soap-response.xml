@@ -1,4 +1,5 @@
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header/>
    <SOAP-ENV:Body>
       <orders:orderAck xmlns:orders="urn:switchyard-quickstart:validate-xml:0.1.0">
          <orderId>PO-19838-XYZ</orderId>

@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header/>
     <SOAP-ENV:Body>
         <orders:submitOrderResponse xmlns:orders="urn:switchyard-quickstart-demo:orders:1.0">
             <orderAck>

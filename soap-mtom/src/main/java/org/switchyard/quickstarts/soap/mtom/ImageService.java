@@ -28,9 +28,9 @@ public interface ImageService {
      *     returns byte[]
      */
     @WebMethod
-    @WebResult(name = "imageResponse", partName = "jpeg")
-    public Image resizeImage(
-        @WebParam(name = "image", partName = "jpeg")
-        Image resizeImage);
+    //@WebResult(name = "imageResponse", partName = "jpeg")
+    public void resizeImage(
+        @WebParam(mode = WebParam.Mode.INOUT, name = "image", partName = "jpeg")
+        javax.xml.ws.Holder<Image> resizeImage);
 
 }

@@ -45,6 +45,9 @@
     <logger name="org.jboss.resteasy">
         <level value="TRACE"/>
     </logger>
+    <logger name="org.switchyard.component.resteasy">
+        <level value="TRACE"/>
+    </logger>
 
 	<root>
 		<level value="INFO"/>

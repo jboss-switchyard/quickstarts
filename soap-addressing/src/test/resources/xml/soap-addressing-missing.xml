@@ -1,14 +1,10 @@
 <?xml version="1.0" ?>
-<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
-    <S:Header>
-        <FaultDetail xmlns="http://www.w3.org/2005/08/addressing">
-            <ProblemHeaderQName>{http://www.w3.org/2005/08/addressing}Action</ProblemHeaderQName>
-        </FaultDetail>
-    </S:Header>
-    <S:Body>
-        <SOAP-ENV:Fault xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-            <faultcode xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns0="http://www.w3.org/2005/08/addressing" xmlns="">ns0:MessageAddressingHeaderRequired</faultcode>
-            <faultstring xmlns="">A required header representing a Message Addressing Property is not present</faultstring>
-        </SOAP-ENV:Fault>
-    </S:Body>
-</S:Envelope>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Header/>
+    <soap:Body>
+        <soap:Fault>
+            <faultcode xmlns:ns1="http://www.w3.org/2005/08/addressing">ns1:MessageAddressingHeaderRequired</faultcode>
+            <faultstring>A required header representing a Message Addressing Property is not present</faultstring>
+        </soap:Fault>
+    </soap:Body>
+</soap:Envelope>
