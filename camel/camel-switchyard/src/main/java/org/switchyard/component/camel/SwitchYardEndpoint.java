@@ -89,7 +89,7 @@ public class SwitchYardEndpoint extends DefaultEndpoint {
         }
         return _messageComposer;
     }
-
+    
     /**
      * Creates a event driven consumer as opposed to a polling consumer.
      * @param processor processor used by consumer

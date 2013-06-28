@@ -36,6 +36,7 @@ public class SwitchYardServiceChannel implements Channel {
     private SwitchYardServiceInvoker _invoker;
     private QName _serviceName;
     private String _operationName;
+    private QName _componentName;
 
     /**
      * Constructs a new SwitchYardServiceChannel with the name "service".
@@ -74,6 +75,22 @@ public class SwitchYardServiceChannel implements Channel {
      */
     public void setInvoker(SwitchYardServiceInvoker invoker) {
         _invoker = invoker;
+    }
+    
+    /**
+     * Set the service component name associated with this invoker.
+     * @param componentName service component name
+     */
+    public void setComponentName(QName componentName) {
+        _componentName = componentName;
+    }
+    
+    /**
+     * Get the service component name associated with this invoker.
+     * @return service component name
+     */
+    public QName getComponentName() {
+        return _componentName;
     }
 
     /**

@@ -39,6 +39,7 @@ import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceRequest;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceResponse;
+import org.switchyard.deploy.ComponentNames;
 import org.switchyard.exception.SwitchYardException;
 
 /**
@@ -73,6 +74,7 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
     private String _name;
     private SwitchYardServiceInvoker _invoker;
     private ProcessRuntime _processRuntime;
+    private QName _componentName;
 
     /**
      * Constructs a new SwitchYardServiceTaskHandler with the name "SwitchYard Service Task".
@@ -112,6 +114,22 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
     public void setInvoker(SwitchYardServiceInvoker invoker) {
         _invoker = invoker;
     }
+    
+    /**
+     * Set the service component name associated with this invoker.
+     * @param componentName service component name
+     */
+    public void setComponentName(QName componentName) {
+        _componentName = componentName;
+    }
+    
+    /**
+     * Get the service component name associated with this invoker.
+     * @return service component name
+     */
+    public QName getComponentName() {
+        return _componentName;
+    }
 
     /**
      * Gets the ProcessRuntime.
@@ -143,6 +161,9 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
         }
         // service invocation
         QName serviceName = getServiceName(parameters);
+        if (_componentName != null) {
+            serviceName = ComponentNames.qualify(_componentName, serviceName);
+        }
         String operationName = getOperationName(parameters);
         SwitchYardServiceRequest request = new SwitchYardServiceRequest(serviceName, operationName, content, parameters);
         SwitchYardServiceResponse response = getInvoker().invoke(request);

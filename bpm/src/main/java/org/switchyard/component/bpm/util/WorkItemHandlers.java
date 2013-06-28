@@ -100,6 +100,7 @@ public final class WorkItemHandlers {
                     } else {
                         name = ssth.getName();
                     }
+                    ssth.setComponentName(model.getComponent().getQName());
                     ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain, tns));
                     ssth.setProcessRuntime(processRuntime);
                 }
@@ -120,6 +121,7 @@ public final class WorkItemHandlers {
                 if (defaultHandler instanceof SwitchYardServiceTaskHandler) {
                     SwitchYardServiceTaskHandler ssth = (SwitchYardServiceTaskHandler)defaultHandler;
                     ssth.setName(name);
+                    ssth.setComponentName(model.getComponent().getQName());
                     ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain, tns));
                     ssth.setProcessRuntime(processRuntime);
                 }

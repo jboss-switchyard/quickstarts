@@ -89,7 +89,8 @@ public class SwitchYardProducer extends DefaultProducer {
     public void process(final org.apache.camel.Exchange camelExchange) throws Exception {
         final String targetUri = camelExchange.getProperty(org.apache.camel.Exchange.TO_ENDPOINT, String.class);
         ServiceDomain domain = ((SwitchYardCamelContext) camelExchange.getContext()).getServiceDomain();
-        final ServiceReference serviceRef = lookupServiceReference(targetUri, domain);
+        final ServiceReference serviceRef = lookupServiceReference(targetUri, domain, 
+                camelExchange.getProperty(SwitchYardConsumer.COMPONENT_NAME, QName.class));
 
         // set a flag to indicate whether this producer endpoint is used within a service route
         boolean isGatewayRoute = camelExchange.getProperty(SwitchYardConsumer.IMPLEMENTATION_ROUTE) == null;
@@ -177,8 +178,8 @@ public class SwitchYardProducer extends DefaultProducer {
         return composer == null ? _messageComposer : composer;
     }
 
-    private ServiceReference lookupServiceReference(final String targetUri, ServiceDomain domain) {
-        final QName serviceName = composeSwitchYardServiceName(_namespace, targetUri);
+    private ServiceReference lookupServiceReference(final String targetUri, ServiceDomain domain, QName componentName) {
+        final QName serviceName = composeSwitchYardServiceName(_namespace, targetUri, componentName);
         final ServiceReference serviceRef = domain.getServiceReference(serviceName);
         if (serviceRef == null) {
             throw new NullPointerException("No ServiceReference was found for uri [" + targetUri + "]");

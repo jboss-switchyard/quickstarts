@@ -27,6 +27,7 @@ import org.switchyard.component.bean.ServiceProxyHandler;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.deploy.BaseActivator;
+import org.switchyard.deploy.ComponentNames;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
@@ -63,7 +64,8 @@ public class BeanComponentActivator extends BaseActivator {
             for (ComponentReferenceModel reference : config.getReferences()) {
                 for (ClientProxyBean proxyBean : _beanDeploymentMetaData.getClientProxies()) {
                     if (reference.getQName().getLocalPart().equals(proxyBean.getServiceName())) {
-                        proxyBean.setService(getServiceDomain().getServiceReference(reference.getQName()));
+                        QName refName = ComponentNames.qualify(config.getQName(), reference.getQName());
+                        proxyBean.setService(getServiceDomain().getServiceReference(refName));
                     }
                 }
             }
@@ -75,7 +77,8 @@ public class BeanComponentActivator extends BaseActivator {
             if (descriptor.getServiceName().equals(serviceName.getLocalPart())) {
                 ServiceProxyHandler handler = descriptor.getHandler();
                 for (ComponentReferenceModel reference : config.getReferences()) {
-                    handler.addReference(getServiceDomain().getServiceReference(reference.getQName()));
+                    QName refName = ComponentNames.qualify(config.getQName(), reference.getQName());
+                    handler.addReference(getServiceDomain().getServiceReference(refName));
                 }
                 handler.injectImplementationProperties(resolver);
                 return handler;

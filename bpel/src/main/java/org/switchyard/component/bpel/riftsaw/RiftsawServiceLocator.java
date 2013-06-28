@@ -40,6 +40,7 @@ import org.switchyard.component.bpel.BPELFault;
 import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
 import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
+import org.switchyard.deploy.ComponentNames;
 import org.switchyard.exception.DeliveryException;
 import org.switchyard.exception.SwitchYardException;
 import org.w3c.dom.Element;
@@ -156,7 +157,7 @@ public class RiftsawServiceLocator implements ServiceLocator {
             javax.wsdl.Definition wsdl=WSDLHelper.getWSDLDefinition(crm.getInterface().getInterface());
             javax.wsdl.PortType portType=WSDLHelper.getPortType(crm.getInterface().getInterface(), wsdl);
             
-            re.register(portType, crm.getQName());
+            re.register(portType, crm.getQName(), crm.getComponent().getQName());
 
         } else {
             throw new SwitchYardException("Could not find BPEL implementation associated with reference");
@@ -175,16 +176,20 @@ public class RiftsawServiceLocator implements ServiceLocator {
                     new java.util.Vector<javax.wsdl.PortType>();
         private java.util.List<QName> _services=
                     new java.util.Vector<QName>();
+        
+        private QName _componentName;
 
         /**
          * This method registers the wsdl, port type and service details.
          *
          * @param portType The port type
          * @param service The SwitchYard service
+         * @param componentName the service component name for this registry entry
          */
-        public void register(javax.wsdl.PortType portType, QName service) {
+        public void register(javax.wsdl.PortType portType, QName service, QName componentName) {
             _portTypes.add(portType);
             _services.add(service);
+            _componentName = componentName;
         }
         
         /**
@@ -200,7 +205,8 @@ public class RiftsawServiceLocator implements ServiceLocator {
             Service ret = null;
             for (int index = 0, count = _services.size(); index < count; ++index) {
                 if (serviceName.equals(_services.get(index))) {
-                    ServiceReference sref = serviceDomain.getServiceReference(serviceName);
+                    QName refName = ComponentNames.qualify(_componentName, serviceName);
+                    ServiceReference sref = serviceDomain.getServiceReference(refName);
                     if (sref != null) {
                         ret = new ServiceProxy(sref, _portTypes.get(index));
                     }

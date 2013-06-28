@@ -148,6 +148,8 @@ public class BPMServiceTests {
         });
         serviceDomain.registerServiceReference(callService.getName(), callService.getInterface(), callService.getProviderHandler());
         BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(ControlProcess.class).getImplementation();
+        // setting the component name to null so that the service reference doesn't use the component-qualified name
+        bci_model.getComponent().setName(null);
         QName serviceName = new QName("ControlProcess");
         BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain, serviceName);
         Service controlService = serviceDomain.registerService(serviceName, JavaService.fromClass(ControlProcess.class), handler);
@@ -178,6 +180,8 @@ public class BPMServiceTests {
         });
         serviceDomain.registerServiceReference(callService.getName(), callService.getInterface(), callService.getProviderHandler());
         BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(ControlProcess.class).getImplementation();
+        // setting the component name to null so that the service reference doesn't use the component-qualified name
+        bci_model.getComponent().setName(null);
         QName serviceName = new QName("ControlProcess");
         BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain, serviceName);
         Service controlService = serviceDomain.registerService(serviceName, JavaService.fromClass(ControlProcess.class), handler);

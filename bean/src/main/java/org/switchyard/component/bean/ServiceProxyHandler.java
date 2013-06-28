@@ -24,6 +24,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
@@ -36,6 +38,7 @@ import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.internal.context.ContextProxy;
 import org.switchyard.component.bean.internal.message.MessageProxy;
 import org.switchyard.deploy.BaseServiceHandler;
+import org.switchyard.deploy.ComponentNames;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
@@ -107,7 +110,8 @@ public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHa
      * @param reference service reference
      */
     public void addReference(ServiceReference reference) {
-        _references.put(reference.getName().getLocalPart(), reference);
+        QName refName = ComponentNames.unqualify(reference);
+        _references.put(refName.getLocalPart(), reference);
     }
 
     /**

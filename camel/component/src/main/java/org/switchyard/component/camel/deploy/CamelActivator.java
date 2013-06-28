@@ -46,6 +46,7 @@ import org.switchyard.component.camel.model.CamelComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
+import org.switchyard.deploy.ComponentNames;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.exception.SwitchYardException;
 
@@ -97,42 +98,15 @@ public class CamelActivator extends BaseCamelActivator {
         try {
             final String endpointUri = ComponentNameComposer.composeComponentUri(serviceName);
             final List<RouteDefinition> routeDefinitions = getRouteDefinition(ccim);
-            checkSwitchYardReferencedServiceExist(routeDefinitions, ccim);
             verifyRouteDefinitions(routeDefinitions, ccim);
             getCamelContext().addRouteDefinitions(routeDefinitions);
             final SwitchYardEndpoint endpoint = getCamelContext().getEndpoint(endpointUri, SwitchYardEndpoint.class);
             endpoint.setMessageComposer(CamelComposition.getMessageComposer());
             final SwitchYardConsumer consumer = endpoint.getConsumer();
+            consumer.setComponentName(config.getComponent().getQName());
             return consumer;
         } catch (final Exception e) {
             throw new SwitchYardException(e.getMessage(), e);
-        }
-    }
-
-    private void checkSwitchYardReferencedServiceExist(List<RouteDefinition> routeDefinitions, CamelComponentImplementationModel ccim) {
-        for (RouteDefinition routeDefinition : routeDefinitions) {
-            final List<ProcessorDefinition<?>> outputs = routeDefinition.getOutputs();
-            for (ProcessorDefinition<?> processorDef : outputs) {
-                if (processorDef instanceof ToDefinition) {
-                    final ToDefinition to = (ToDefinition) processorDef;
-                    final URI componentUri = URI.create(to.getUri());
-                    if (componentUri.getScheme().equals(CamelConstants.SWITCHYARD_COMPONENT_NAME)) {
-                        final String serviceName = componentUri.getHost();
-                        final String namespace = ComponentNameComposer.getNamespaceFromURI(componentUri);
-                        final QName refServiceName = new QName(namespace, serviceName);
-                        if (!containsServiceRef(ccim.getComponent().getReferences(), serviceName)) {
-                            throw new SwitchYardException("Could not find the service reference for '" + serviceName + "'" 
-                            + " which is referenced in " + to);
-                        }
-                        
-                        final ServiceReference service = getServiceDomain().getServiceReference(refServiceName);
-                        if (service == null) {
-                            throw new SwitchYardException("Could not find the service name '" + serviceName + "'" 
-                            + " which is referenced in " + to);
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -187,9 +161,11 @@ public class CamelActivator extends BaseCamelActivator {
                             + " which is referenced in " + to);
                         }
                         
-                        final ServiceReference service = getServiceDomain().getServiceReference(refServiceName);
+                        QName qualifiedRefName = ComponentNames.qualify(
+                                ccim.getComponent().getQName(), refServiceName);
+                        final ServiceReference service = getServiceDomain().getServiceReference(qualifiedRefName);
                         if (service == null) {
-                            throw new SwitchYardException("Could not find the service name '" + referenceName + "'" 
+                            throw new SwitchYardException("Could not find the service name '" + qualifiedRefName + "'" 
                             + " which is referenced in " + to);
                         }
                     }

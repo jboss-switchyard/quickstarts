@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
+import org.switchyard.deploy.ComponentNames;
 
 import static org.switchyard.component.camel.common.CamelConstants.SWITCHYARD_COMPONENT_NAME;
 
@@ -62,12 +63,19 @@ public final class ComponentNameComposer {
      * 
      * @param namespace the service namespace
      * @param uri a string uri.
+     * @param componentName service componentName
      * @return QName a SwitchYard service name
      */
-    public static QName composeSwitchYardServiceName(final String namespace, final String uri) {
+    public static QName composeSwitchYardServiceName(
+            final String namespace, final String uri, final QName componentName) {
         final URI create = URI.create(uri);
         final String path = create.getAuthority();
-        return XMLHelper.createQName(namespace, path);
+        if (componentName != null) {
+            return ComponentNames.qualify(componentName.getLocalPart(), path, namespace);
+        } else {
+            return XMLHelper.createQName(namespace, path);
+        }
+        
     }
 
     /**

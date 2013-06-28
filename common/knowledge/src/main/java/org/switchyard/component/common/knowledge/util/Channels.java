@@ -64,6 +64,7 @@ public final class Channels {
                         name = sysc.getName();
                     }
                     sysc.setInvoker(new SwitchYardServiceInvoker(domain, tns));
+                    sysc.setComponentName(model.getComponent().getQName());
                     sysc.setServiceName(XMLHelper.createQName(channelModel.getReference()));
                     sysc.setOperationName(channelModel.getOperation());
                 }
