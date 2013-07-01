@@ -9,4 +9,3 @@ rule "${service.name}"
         // insert consequence here
 end
 
-

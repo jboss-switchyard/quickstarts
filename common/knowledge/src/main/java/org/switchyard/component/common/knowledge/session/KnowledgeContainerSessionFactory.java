@@ -104,7 +104,7 @@ class KnowledgeContainerSessionFactory extends KnowledgeSessionFactory {
             }
             String baseName = _containerModel.getBaseName();
             if (baseName != null) {
-                KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getPropertyOverrides());
+                KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getLoader(), getPropertyOverrides());
                 return _kieContainer.getKieBase(baseName).newStatelessKieSession(sessionConfiguration);
             }
         }
@@ -120,7 +120,7 @@ class KnowledgeContainerSessionFactory extends KnowledgeSessionFactory {
             }
             String baseName = _containerModel.getBaseName();
             if (baseName != null) {
-                KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getPropertyOverrides());
+                KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getLoader(), getPropertyOverrides());
                 return _kieContainer.getKieBase(baseName).newKieSession(sessionConfiguration, environment);
             }
         }
@@ -133,7 +133,7 @@ class KnowledgeContainerSessionFactory extends KnowledgeSessionFactory {
             if (baseName != null) {
                 KieStoreServices kieStoreServices = KieServices.Factory.get().getStoreServices();
                 KieBase base = _kieContainer.getKieBase(baseName);
-                KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getPropertyOverrides());
+                KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getLoader(), getPropertyOverrides());
                 Environment environment = Environments.getEnvironment(environmentOverrides);
                 KieSession session = null;
                 if (sessionId != null) {
