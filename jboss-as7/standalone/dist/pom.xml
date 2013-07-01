@@ -231,6 +231,7 @@
                 <artifactId>xml-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>transform</goal>
                         </goals>
@@ -292,7 +293,7 @@
                 <executions>
                     <execution>
                         <id>assembly-dist</id>
-                        <phase>package</phase>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -306,7 +307,7 @@
                     </execution>
                     <execution>
                         <id>assembly-full-dist</id>
-                        <phase>package</phase>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
