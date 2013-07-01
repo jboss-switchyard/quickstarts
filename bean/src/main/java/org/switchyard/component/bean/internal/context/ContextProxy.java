@@ -129,8 +129,8 @@ public class ContextProxy implements Context {
      * {@inheritDoc}
      */
     @Override
-    public Context copy() {
-        return getContext().copy();
+    public void mergeInto(Context context) {
+        getContext().mergeInto(context);
     }
 
     /**

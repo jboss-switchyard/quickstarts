@@ -110,16 +110,14 @@ public class SCAInvoker extends BaseServiceHandler {
         
         // Can't send same message twice, so make a copy
         Message invokeMsg = exchange.getMessage().copy();
-        Context invokeCtx = exchange.getMessage().getContext().copy();
-        invokeMsg.getContext().setProperties(invokeCtx.getProperties());
+        exchange.getContext().mergeInto(invokeMsg.getContext());
         
         ex.send(invokeMsg);
         if (ExchangePattern.IN_OUT.equals(ex.getPattern())) {
             replyHandler.waitForOut();
             if (ex.getMessage() != null) {
                 Message replyMsg = ex.getMessage().copy();
-                Context replyCtx = ex.getMessage().getContext().copy();
-                replyMsg.getContext().setProperties(replyCtx.getProperties());
+                ex.getContext().mergeInto(replyMsg.getContext());
                 if (ExchangeState.FAULT.equals(ex.getState())) {
                     exchange.sendFault(replyMsg);
                 } else {
@@ -140,7 +138,7 @@ public class SCAInvoker extends BaseServiceHandler {
             .setDomain(exchange.getProvider().getDomain().getName())
             .setService(serviceName)
             .setContent(exchange.getMessage().getContent());
-        request.setContext(exchange.getContext());
+        exchange.getContext().mergeInto(request.getContext());
 
         try {
             RemoteMessage reply = _invoker.invoke(request);
@@ -153,7 +151,7 @@ public class SCAInvoker extends BaseServiceHandler {
                 msg.setContent(reply.getContent());
                 Context replyCtx = reply.getContext();
                 if (replyCtx != null) {
-                    msg.getContext().setProperties(replyCtx.copy().getProperties());
+                    replyCtx.mergeInto(exchange.getContext());
                 }
                 if (reply.isFault()) {
                     exchange.sendFault(msg);

@@ -137,10 +137,10 @@ public class ContextMap implements Context, Map<String, Object> {
         _context.setProperties(properties);
         return this;
     }
-
+    
     @Override
-    public Context copy() {
-        return _context.copy();
+    public void mergeInto(Context context) {
+        _context.mergeInto(context);
     }
 
     @Override

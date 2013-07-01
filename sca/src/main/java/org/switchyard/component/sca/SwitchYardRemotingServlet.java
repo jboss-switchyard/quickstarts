@@ -159,7 +159,7 @@ public class SwitchYardRemotingServlet extends HttpServlet {
         reply.setDomain(exchange.getProvider().getDomain().getName())
             .setOperation(exchange.getContract().getConsumerOperation().getName())
             .setService(exchange.getConsumer().getName());
-        reply.setContext(exchange.getContext());
+        exchange.getContext().mergeInto(reply.getContext());
 
         if (exchange.getMessage() != null) {
             reply.setContent(exchange.getMessage().getContent());
