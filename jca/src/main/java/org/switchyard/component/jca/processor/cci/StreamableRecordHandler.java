@@ -23,6 +23,7 @@ import javax.resource.cci.Interaction;
 
 import org.switchyard.Exchange;
 import org.switchyard.Message;
+import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.jca.composer.StreamableRecordBindingData;
 
 /**
@@ -33,12 +34,21 @@ import org.switchyard.component.jca.composer.StreamableRecordBindingData;
  */
 public class StreamableRecordHandler extends RecordHandler<StreamableRecordBindingData> {
 
+    private MessageComposer<StreamableRecordBindingData> _composer;
+    
+    /**
+     * Constructor which creates the message composer. 
+     */
+    public StreamableRecordHandler() {
+        _composer = getMessageComposer(StreamableRecordBindingData.class);
+    }
+    
     @Override
     public Message handle(Exchange exchange, Connection conn, Interaction interact) throws Exception {
         StreamableRecord record = new StreamableRecord();
         StreamableRecord outRecord = new StreamableRecord();
         interact.execute(getInteractionSpec(), getMessageComposer(StreamableRecordBindingData.class).decompose(exchange, new StreamableRecordBindingData(record)).getRecord(), outRecord);
-        return getMessageComposer(StreamableRecordBindingData.class).compose(new StreamableRecordBindingData(outRecord), exchange);
+        return _composer.compose(new StreamableRecordBindingData(outRecord), exchange);
     }
 
 }
