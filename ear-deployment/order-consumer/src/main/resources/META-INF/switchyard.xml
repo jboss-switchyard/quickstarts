@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:sy="urn:switchyard-config:switchyard:1.0" xmlns:camel="urn:switchyard-component-camel-core:config:1.0" xmlns:camel_1="urn:switchyard-component-camel:config:1.0" xmlns:jms="urn:switchyard-component-camel-jms:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:soap="urn:switchyard-component-soap:config:1.0" targetNamespace="urn:switchyard-quickstart:ear-order-consumer:0.1.0">
+  <sca:composite name="consumer-service" targetNamespace="urn:switchyard-quickstart:ear-order-consumer:0.1.0">
+    <sca:service name="OrderInput" promote="OrderInputComponent/OrderInput">
+      <jms:binding.jms>
+        <jms:contextMapper/>
+        <jms:queue>EAROrderRequestQueue</jms:queue>
+        <jms:connectionFactory>#ConnectionFactory</jms:connectionFactory>
+        <jms:replyTo>EAROrderReplyQueue</jms:replyTo>
+      </jms:binding.jms>
+    </sca:service>
+    <sca:component name="OrderInputComponent">
+      <camel_1:implementation.camel>
+        <camel_1:xml path="META-INF/route.xml"/>
+      </camel_1:implementation.camel>
+      <sca:service name="OrderInput">
+        <sca:interface.wsdl interface="OrderService.wsdl#wsdl.porttype(OrderService)"/>
+      </sca:service>
+      <sca:reference name="OrderService">
+        <sca:interface.wsdl interface="OrderService.wsdl#wsdl.porttype(OrderService)"/>
+      </sca:reference>
+    </sca:component>
+    <sca:reference name="OrderService" multiplicity="0..1" promote="OrderInputComponent/OrderService">
+      <sca:interface.wsdl interface="OrderService.wsdl#wsdl.porttype(OrderService)"/>
+      <sca:binding.sca sy:targetNamespace="urn:switchyard-quickstart:ear-order-service:0.1.0"/>
+    </sca:reference>
+  </sca:composite>
+</switchyard>
