@@ -86,11 +86,18 @@ MA  02110-1301, USA.
                                 </annotation>
                             </element>
                         </sequence>
-                        <element name="endpointAddress" type="string" minOccurs="0" maxOccurs="1">
-                            <annotation>
-                                <documentation>The endpoint address override. Applicable only for reference bindings.</documentation>
-                            </annotation>
-                        </element>
+                        <sequence>
+                            <element name="endpointAddress" type="string" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                    <documentation>The endpoint address override. Applicable only for reference bindings.</documentation>
+                                </annotation>
+                            </element>
+                            <element name="proxy" type="soap:ProxyType" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                    <documentation>Http proxy settings.</documentation>
+                                </annotation>
+                            </element>
+                        </sequence>
                     </choice>
                     <element name="mtom" type="soap:MtomType" minOccurs="0" maxOccurs="1">
                         <annotation>
@@ -105,6 +112,40 @@ MA  02110-1301, USA.
                     <element name="outInterceptors" type="soap:InterceptorsType" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>The Apache CXF @OutInterceptors to add</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ProxyType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element name="type" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy Type. Default is HTTP. Allowed values are HTTP and SOCKS</documentation>
+                        </annotation>
+                    </element>
+                    <element name="host" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy Host.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="port" type="integer" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy Port.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="user" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy user name.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="password" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy password.</documentation>
                         </annotation>
                     </element>
                 </sequence>

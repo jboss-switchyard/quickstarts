@@ -1,0 +1,9 @@
+<http:binding.http xmlns:http="urn:switchyard-component-http:config:1.0">
+    <http:address>http://localhost:8080/basic-secured-endpoint</http:address>
+    <http:proxy>
+        <http:host>host</http:host>
+        <http:port>8090</http:port>
+        <http:user>Beal</http:user>
+        <http:password>conjecture</http:password>
+    </http:proxy>
+</http:binding.http>

@@ -29,6 +29,7 @@ import org.switchyard.config.model.composite.BindingModel;
  * A SOAPBinding Model.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
 public interface SOAPBindingModel extends BindingModel {
 
@@ -145,6 +146,19 @@ public interface SOAPBindingModel extends BindingModel {
      * @return this SOAPBindingModel (useful for chaining)
      */
     public SOAPBindingModel setEndpointAddress(String endpointAddress);
+
+    /**
+     * Gets the proxy config.
+     * @return the proxy config
+     */
+    public ProxyModel getProxyConfig();
+
+    /**
+     * Sets the proxy config.
+     * @param proxyConfig the proxy config
+     * @return this SOAPBindingModel (useful for chaining)
+     */
+    public SOAPBindingModel setProxyConfig(ProxyModel proxyConfig);
 
     /**
      * Gets the mtom config.

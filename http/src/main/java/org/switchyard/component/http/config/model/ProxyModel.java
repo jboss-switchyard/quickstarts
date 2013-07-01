@@ -16,41 +16,67 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.soap.config.model;
+package org.switchyard.component.http.config.model;
 
 import org.switchyard.config.model.Model;
 
 /**
- * A SOAP Value Model.
+ * A Proxy Configuration Model.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
-public interface SOAPNameValueModel extends Model {
-
-    /** Known XML element names. */
-    public enum SOAPName {
-        /** Known XML element names. */
-        wsdl, wsdlPort, socketAddr, contextPath, endpointAddress, mtom, proxy, user, password, host, port, type;
-    }
+public interface ProxyModel extends Model {
 
     /**
-     * Gets the name.
-     * @return the name
+     * Get host.
+     * @return authentication host
      */
-    public SOAPName getName();
+    public String getHost();
 
     /**
-     * Gets the value.
-     * @return the value
+     * Set host.
+     * @param host the authentication host
+     * @return this ProxyModel
      */
-    public String getValue();
+    public ProxyModel setHost(String host);
 
     /**
-     * Sets the value.
-     * @param value the value
-     * @return this SOAPValueModel (useful for chaining)
+     * Get authentication port.
+     * @return authentication port
      */
-    public SOAPNameValueModel setValue(String value);
+    public String getPort();
+
+    /**
+     * Set authentication port.
+     * @param port the authentication port
+     * @return this ProxyModel
+     */
+    public ProxyModel setPort(String port);
+
+    /**
+     * Get user name.
+     * @return authentication username
+     */
+    public String getUser();
+
+    /**
+     * Set user name.
+     * @param user the user name
+     * @return this ProxyModel
+     */
+    public ProxyModel setUser(String user);
+
+    /**
+     * Get user password.
+     * @return authentication password
+     */
+    public String getPassword();
+
+    /**
+     * Set user password.
+     * @param password the user password
+     * @return this ProxyModel
+     */
+    public ProxyModel setPassword(String password);
 
 }

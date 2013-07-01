@@ -38,6 +38,11 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
+import org.apache.cxf.jaxws.DispatchImpl;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
+import org.apache.cxf.transports.http.configuration.ProxyServerType;
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
@@ -153,6 +158,24 @@ public class OutboundHandler extends BaseServiceHandler {
                     _dispatcher.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, _config.getEndpointAddress());
                 }
 
+                // Proxy authentication
+                if (_config.getProxyConfig() != null) {
+                    HTTPConduit conduit = (HTTPConduit)((DispatchImpl)_dispatcher).getClient().getConduit();
+                    HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+                    httpClientPolicy.setProxyServerType(ProxyServerType.fromValue(_config.getProxyConfig().getType()));
+                    httpClientPolicy.setProxyServer(_config.getProxyConfig().getHost());
+                    if (_config.getProxyConfig().getPort() != null) {
+                        httpClientPolicy.setProxyServerPort(Integer.valueOf(_config.getProxyConfig().getPort()).intValue());
+                    }
+                    conduit.setClient(httpClientPolicy);
+                    if (_config.getProxyConfig().getUser() != null) {
+                        ProxyAuthorizationPolicy policy = new ProxyAuthorizationPolicy();
+                        policy.setUserName(_config.getProxyConfig().getUser());
+                        policy.setPassword(_config.getProxyConfig().getPassword());
+                        conduit.setProxyAuthorization(policy);
+                    }
+                }
+
             } catch (MalformedURLException e) {
                 throw new WebServiceConsumeException(e);
             } catch (WSDLException wsdle) {
@@ -161,6 +184,12 @@ public class OutboundHandler extends BaseServiceHandler {
                 Classes.setTCCL(origLoader);
             }
         }
+    }
+
+    /**
+     * Stop lifecycle.
+     */
+    public void stop() {
     }
 
     /**

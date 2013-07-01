@@ -19,7 +19,7 @@
 
 package org.switchyard.component.resteasy.config.model.v1;
 
-import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
+import org.switchyard.component.resteasy.config.model.RESTEasyNameValueModel.RESTEasyName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
@@ -54,15 +54,22 @@ public class V1RESTEasyMarshaller extends BaseMarshaller {
      */
     @Override
     public Model read(Configuration config) {
+        Descriptor desc = getDescriptor();
         String name = config.getName();
         if (name.startsWith(BindingModel.BINDING)) {
-            return new RESTEasyBindingModel(config, getDescriptor());
-        }
-        if (name.equals(ContextMapperModel.CONTEXT_MAPPER)) {
-            return new V1ContextMapperModel(config, getDescriptor());
-        }
-        if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
-            return new V1MessageComposerModel(config, getDescriptor());
+            return new V1RESTEasyBindingModel(config, desc);
+        } else if (name.equals(ContextMapperModel.CONTEXT_MAPPER)) {
+            return new V1ContextMapperModel(config, desc);
+        } else if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
+            return new V1MessageComposerModel(config, desc);
+        } else if (name.equals(RESTEasyName.proxy.name())) {
+            return new V1ProxyModel(config, desc);
+        } else {
+            for (RESTEasyName n : RESTEasyName.values()) {
+                if (n.name().equals(name)) {
+                    return new V1RESTEasyNameValueModel(config, desc);
+                }
+            }
         }
         return null;
     }

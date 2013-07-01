@@ -1,5 +1,4 @@
 <rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:1.0">
     <rest:interfaces>org.switchyard.quickstarts.rest.binding.OrderResource,org.switchyard.quickstarts.rest.binding.TestResource</rest:interfaces>
-    <rest:address>http://localhost:8080</rest:address>
     <rest:contextPath>rest-binding</rest:contextPath>
 </rest:binding.rest>

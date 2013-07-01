@@ -34,6 +34,7 @@ import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
+import org.switchyard.component.resteasy.config.model.v1.V1RESTEasyBindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
@@ -85,7 +86,7 @@ public class RESTEasyBindingPlugin implements Plugin {
             return;
         }
 
-        RESTEasyBindingModel binding = new RESTEasyBindingModel();
+        RESTEasyBindingModel binding = new V1RESTEasyBindingModel();
         binding.setInterfaces(interfaces);
         String projectName = _project.getFacet(MetadataFacet.class).getProjectName();
         if ((contextPath != null) && contextPath.length() > 0) {
@@ -135,7 +136,7 @@ public class RESTEasyBindingPlugin implements Plugin {
             return;
         }
 
-        RESTEasyBindingModel binding = new RESTEasyBindingModel();
+        RESTEasyBindingModel binding = new V1RESTEasyBindingModel();
         binding.setInterfaces(interfaces);
         if (address != null) {
             binding.setAddress(address);

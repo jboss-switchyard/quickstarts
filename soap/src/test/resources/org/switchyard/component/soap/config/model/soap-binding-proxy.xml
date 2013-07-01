@@ -1,0 +1,11 @@
+<soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
+    <soap:wsdl>Foo.wsdl</soap:wsdl>
+    <soap:endpointAddress>http://modified.com/phantom</soap:endpointAddress>
+    <soap:proxy>
+        <soap:type>HTTP</soap:type>
+        <soap:host>192.168.1.2</soap:host>
+        <soap:port>9090</soap:port>
+        <soap:user>user</soap:user>
+        <soap:password>password</soap:password>
+    </soap:proxy>
+</soap:binding.soap>

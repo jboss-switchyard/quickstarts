@@ -50,9 +50,19 @@ import javax.net.ssl.SSLContext;
  */
 public class NettyJaxrsServer implements EmbeddedJaxrsServer
 {
+   /**
+    * Default port in which the standalone publisher is started.
+    */
+   public static final int DEFAULT_PORT = 8080;
+
+   /**
+    * System property to adjust the port in which the standalone publisher is started.
+    */
+   public static final String DEFAULT_PORT_PROPERTY = "org.switchyard.component.resteasy.standalone.port";
+
    protected ServerBootstrap bootstrap;
    protected Channel channel;
-   protected int port = 8080;
+   protected int port = DEFAULT_PORT;
    protected ResteasyDeployment deployment = new ResteasyDeployment();
    protected String root = "";
    protected SecurityDomain domain;
@@ -157,7 +167,7 @@ public class NettyJaxrsServer implements EmbeddedJaxrsServer
       bootstrap.setPipelineFactory(factory);
 
       // Bind and start to accept incoming connections.
-      channel = bootstrap.bind(new InetSocketAddress(port));
+      channel = bootstrap.bind(new InetSocketAddress(getDefaultPort()));
    }
 
    @Override
@@ -167,4 +177,17 @@ public class NettyJaxrsServer implements EmbeddedJaxrsServer
       bootstrap.releaseExternalResources();
       deployment.stop();
    }
+
+    /**
+     * Returns the port where the standalone publisher will be started
+     * @return the port
+     */
+    static int getDefaultPort() {
+        int port = DEFAULT_PORT;
+        final String portAsStr = System.getProperty(DEFAULT_PORT_PROPERTY);
+        if (portAsStr != null) {
+            port = Integer.parseInt(portAsStr);
+        }
+        return port;
+    }
 }

@@ -21,6 +21,7 @@ package org.switchyard.component.resteasy.config.model;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.switchyard.component.resteasy.config.model.ProxyModel;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
 import org.switchyard.config.model.ModelPuller;
 
@@ -33,6 +34,7 @@ public class RESTEasyConfigModelTest {
 
     private static final String REST_BINDING = "rest-binding.xml";
     private static final String REST_BINDING_INVALID = "rest-binding-invalid.xml";
+    private static final String REST_BINDING_PROXY = "rest-binding-proxy.xml";
 
     @Test
     public void testReadConfigBinding() throws Exception {
@@ -41,5 +43,18 @@ public class RESTEasyConfigModelTest {
         Assert.assertTrue(model.isModelValid());
         model = puller.pull(REST_BINDING_INVALID, getClass());
         Assert.assertFalse(model.isModelValid());
+    }
+
+    @Test
+    public void proxyConfigBinding() throws Exception {
+        ModelPuller<RESTEasyBindingModel> puller = new ModelPuller<RESTEasyBindingModel>();
+        RESTEasyBindingModel model = puller.pull(REST_BINDING_PROXY, getClass());
+        Assert.assertTrue(model.isModelValid());
+        ProxyModel proxyConfig = model.getProxyConfig();
+        Assert.assertNotNull(proxyConfig);
+        Assert.assertEquals("host", proxyConfig.getHost());
+        Assert.assertEquals("8090", proxyConfig.getPort());
+        Assert.assertEquals("Beal", proxyConfig.getUser());
+        Assert.assertEquals("conjecture", proxyConfig.getPassword());
     }
 }

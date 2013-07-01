@@ -150,6 +150,19 @@ public interface HttpBindingModel extends BindingModel {
     public HttpBindingModel setNtlmAuthConfig(NtlmAuthModel config);
 
     /**
+     * Gets the proxy config.
+     * @return the proxy config
+     */
+    public ProxyModel getProxyConfig();
+
+    /**
+     * Sets the proxy config.
+     * @param proxyConfig the proxy config
+     * @return this HttpBindingModel (useful for chaining)
+     */
+    public HttpBindingModel setProxyConfig(ProxyModel proxyConfig);
+
+    /**
      * Check if Basic authentication is set.
      * @return true if Basic, false otherwise
      */

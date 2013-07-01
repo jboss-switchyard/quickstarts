@@ -66,6 +66,8 @@ public class V1HttpMarshaller extends BaseMarshaller {
             return new V1BasicAuthModel(config, getDescriptor());
         } else if (name.equals(HttpName.ntlm.name())) {
             return new V1NtlmAuthModel(config, getDescriptor());
+        } else if (name.equals(HttpName.proxy.name())) {
+            return new V1ProxyModel(config, desc);
         } else {
             for (HttpName n : HttpName.values()) {
                 if (n.name().equals(name)) {

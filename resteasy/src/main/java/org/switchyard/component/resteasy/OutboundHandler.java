@@ -97,7 +97,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 for (Method method : clazz.getMethods()) {
                     // ignore the as method to allow declaration in client interfaces
                     if (!("as".equals(method.getName()) && Arrays.equals(method.getParameterTypes(), CLASS_ARG_ARRAY))) {
-                        _methodMap.put(method.getName(), new ClientInvoker(path, clazz, method));
+                        _methodMap.put(method.getName(), new ClientInvoker(path, clazz, method, _config.getProxyConfig()));
                     }
                 }
             }
@@ -147,7 +147,7 @@ public class OutboundHandler extends BaseServiceHandler {
             // Our transformer magic transforms the entity appropriately here :)
             exchange.send(out);
         } catch (Exception e) {
-            final String m = "Unexpected exception composing inbound Message";
+            final String m = "Unexpected exception composing inbound Message from Outbound";
             LOGGER.error(m, e);
             throw new HandlerException(m, e);
         }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -365,8 +366,9 @@ public final class SOAPUtil {
                         if (contentId.startsWith(CID_STR)) {
                             contentId = contentId.substring(4);
                         }
+                        contentId = URLDecoder.decode(contentId, "UTF-8");
                         if (attachmentMap.get(contentId) == null) {
-                            throw new RuntimeException("NO attachment found with name '" + contentId + "'");
+                            throw new RuntimeException("No attachment found with name '" + contentId + "'");
                         }
                         InputStream is = attachmentMap.get(contentId).getInputStream();
                         ByteArrayOutputStream os = new ByteArrayOutputStream();

@@ -26,6 +26,7 @@ import org.switchyard.component.http.config.model.HttpBindingModel;
 import org.switchyard.component.http.config.model.HttpNameValueModel;
 import org.switchyard.component.http.config.model.HttpNameValueModel.HttpName;
 import org.switchyard.component.http.config.model.NtlmAuthModel;
+import org.switchyard.component.http.config.model.ProxyModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.v1.V1BindingModel;
@@ -43,7 +44,8 @@ public class V1HttpBindingModel extends V1BindingModel implements HttpBindingMod
         HttpName.method.name(),
         HttpName.contentType.name(),
         HttpName.basic.name(),
-        HttpName.ntlm.name()
+        HttpName.ntlm.name(),
+        HttpName.proxy.name()
     };
 
     private Configuration _environment;
@@ -56,6 +58,7 @@ public class V1HttpBindingModel extends V1BindingModel implements HttpBindingMod
     private HttpNameValueModel _contentType;
     private BasicAuthModel _basicAuth;
     private NtlmAuthModel _ntlmAuth;
+    private ProxyModel _proxyConfig;
 
     /**
      * Constructor.
@@ -208,6 +211,27 @@ public class V1HttpBindingModel extends V1BindingModel implements HttpBindingMod
     public HttpBindingModel setNtlmAuthConfig(NtlmAuthModel config) {
         setChildModel(config);
         _ntlmAuth = config;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ProxyModel getProxyConfig() {
+        if (_proxyConfig == null) {
+            _proxyConfig = (ProxyModel)getFirstChildModel(HttpName.proxy.name());
+        }
+        return _proxyConfig;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HttpBindingModel setProxyConfig(ProxyModel proxyConfig) {
+        setChildModel(proxyConfig);
+        _proxyConfig = proxyConfig;
         return this;
     }
 

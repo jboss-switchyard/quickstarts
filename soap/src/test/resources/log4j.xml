@@ -9,15 +9,18 @@
     </appender>
 
     <!--
+    -->
     <logger name="org.switchyard.component.soap">
         <level value="TRACE" />
     </logger>
-    -->
     <logger name="org.jboss.weld.Bootstrap">
         <level value="ERROR" />
     </logger>
-    <logger name="org.apache.commons.httpclient.HttpMethodBase">
-        <level value="ERROR" />
+    <logger name="org.apache.cxf.transport">
+        <level value="TRACE" />
+    </logger>
+    <logger name="org.apache.cxf.binding.soap">
+        <level value="TRACE" />
     </logger>
     <logger name="org.jboss.interceptor.util.InterceptionTypeRegistry">
         <level value="ERROR" />

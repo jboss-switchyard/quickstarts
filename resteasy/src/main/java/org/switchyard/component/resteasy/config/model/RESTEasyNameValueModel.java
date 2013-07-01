@@ -17,28 +17,28 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.component.http.config.model;
+package org.switchyard.component.resteasy.config.model;
 
 import org.switchyard.config.model.Model;
 
 /**
- * A HTTP value model.
+ * A RESTEasy value model.
  * 
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
-public interface HttpNameValueModel extends Model {
+public interface RESTEasyNameValueModel extends Model {
 
     /** Known XML element names. */
-    public enum HttpName {
+    public enum RESTEasyName {
         /** Known XML element names. */
-        address, contextPath, method, contentType, basic, ntlm, user, password, realm, domain, host, port, proxy;
+        interfaces, address, contextPath, proxy, host, port, user, password;
     }
 
     /**
      * Gets the name.
      * @return the name
      */
-    public HttpName getName();
+    public RESTEasyName getName();
 
     /**
      * Gets the value.
@@ -49,8 +49,8 @@ public interface HttpNameValueModel extends Model {
     /**
      * Sets the value.
      * @param value the value
-     * @return this HttpValueModel (useful for chaining)
+     * @return this RESTEasyValueModel (useful for chaining)
      */
-    public HttpNameValueModel setValue(String value);
+    public RESTEasyNameValueModel setValue(String value);
 
 }

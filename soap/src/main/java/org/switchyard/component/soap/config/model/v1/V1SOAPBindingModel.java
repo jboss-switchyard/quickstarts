@@ -29,6 +29,7 @@ import org.switchyard.component.soap.PortName;
 import org.switchyard.component.soap.config.model.EndpointConfigModel;
 import org.switchyard.component.soap.config.model.InterceptorsModel;
 import org.switchyard.component.soap.config.model.MtomModel;
+import org.switchyard.component.soap.config.model.ProxyModel;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.config.model.SOAPContextMapperModel;
 import org.switchyard.component.soap.config.model.SOAPMessageComposerModel;
@@ -43,6 +44,7 @@ import org.switchyard.config.model.composite.v1.V1BindingModel;
  * The 1st version SOAPBindingModel.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
 public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingModel {
 
@@ -52,6 +54,7 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
         SOAPName.socketAddr.name(),
         SOAPName.contextPath.name(),
         SOAPName.endpointAddress.name(),
+        SOAPName.proxy.name(),
         ENDPOINT_CONFIG,
         SOAPName.mtom.name(),
         IN_INTERCEPTORS,
@@ -66,6 +69,7 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
     private SocketAddr _socketAddr;
     private SOAPNameValueModel _contextPath;
     private SOAPNameValueModel _endpointAddress;
+    private ProxyModel _proxyConfig;
     private MtomModel _mtomConfig;
     private EndpointConfigModel _endpointConfig;
     private InterceptorsModel _inInterceptors;
@@ -264,6 +268,27 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
     @Override
     public SOAPBindingModel setEndpointAddress(String endpointAddress) {
         _endpointAddress = setNameValue(_endpointAddress, SOAPName.endpointAddress, endpointAddress);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ProxyModel getProxyConfig() {
+        if (_proxyConfig == null) {
+            _proxyConfig = (ProxyModel)getFirstChildModel(SOAPName.proxy.name());
+        }
+        return _proxyConfig;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SOAPBindingModel setProxyConfig(ProxyModel proxyConfig) {
+        setChildModel(proxyConfig);
+        _proxyConfig = proxyConfig;
         return this;
     }
 

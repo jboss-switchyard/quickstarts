@@ -34,39 +34,65 @@ MA  02110-1301, USA.
                 <sequence>
                     <element name="contextMapper" type="swyd:ContextMapperType"  minOccurs="0" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                Specify the ContextMapper to be used.
-                            </documentation>
+                            <documentation>Specify the ContextMapper to be used.</documentation>
                         </annotation>
                     </element>
                     <element name="messageComposer" type="swyd:MessageComposerType" minOccurs="0" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                Specify the MessageComposer to be used.
-                            </documentation>
+                            <documentation>Specify the MessageComposer to be used.</documentation>
                         </annotation>
                     </element>
                     <element name="interfaces" type="string" minOccurs="1" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                A comma separated list of interfaces or abstract/empty classes with REST annotations.
-                            </documentation>
+                            <documentation>A comma separated list of interfaces or abstract/empty classes with REST annotations.</documentation>
                         </annotation>
                     </element>
-                    <element name="address" type="string" minOccurs="0" maxOccurs="1">
+                    <choice>
+                        <element name="contextPath" type="string" minOccurs="0" maxOccurs="1">
+                            <annotation>
+                                <documentation>A URI string that represents the root context where this service is hosted.</documentation>
+                            </annotation>
+                        </element>
+                        <sequence>
+                            <element name="address" type="string" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                    <documentation>A URL that points to the root path of resources. This is only applicable for Reference bindings. It is optional and if not specified will default to http://127.0.0.1:8080/.</documentation>
+                                </annotation>
+                            </element>
+                            <element name="proxy" type="rest:ProxyType" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                    <documentation>Http proxy settings.</documentation>
+                                </annotation>
+                            </element>
+                        </sequence>
+                    </choice>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ProxyType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element name="host" type="string" minOccurs="0" maxOccurs="1">
                         <annotation>
-                        <documentation>
-                            A URL that points to the root path of resources. This is only applicable for Reference bindings.
-                            It is optional and if not specified will default to http://127.0.0.1:8080/.
-                        </documentation>
+                            <documentation>Proxy Host.</documentation>
                         </annotation>
                     </element>
-                    <element name="contextPath" type="string" minOccurs="0" maxOccurs="1">
+                    <element name="port" type="integer" minOccurs="0" maxOccurs="1">
                         <annotation>
-                        <documentation>
-                            A URI string that represents the root context where this service is hosted. Optional for Reference
-                            bindings, but recommend for Service bindings as the default context may not be usable in certain containers.
-                        </documentation>
+                            <documentation>Proxy Port.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="user" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy user name.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="password" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy password.</documentation>
                         </annotation>
                     </element>
                 </sequence>

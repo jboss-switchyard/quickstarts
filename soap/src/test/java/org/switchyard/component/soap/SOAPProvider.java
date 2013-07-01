@@ -70,11 +70,17 @@ public class SOAPProvider extends BaseHandler {
                 exchange.sendFault(message);
             } else {
                 Property soapActionProp = exchange.getContext().getProperty("Soapaction");
+                if (soapActionProp == null) {
+                    soapActionProp = exchange.getContext().getProperty("SOAPAction");
+                }
                 String soapAction = "";
                 if (soapActionProp != null) {
                     soapAction = (String) soapActionProp.getValue();
                 } else {
                     soapActionProp = exchange.getContext().getProperty("Content-Type");
+                    if (soapActionProp == null) {
+                        soapActionProp = exchange.getContext().getProperty("Content-type");
+                    }
                     if (soapActionProp != null) {
                         soapAction = (String) soapActionProp.getValue();
                     }

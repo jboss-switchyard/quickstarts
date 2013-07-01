@@ -33,6 +33,7 @@ public class SOAPBindingModelTest {
     private static final String SOAP_BINDING_SERVICE = "soap-binding-service.xml";
     private static final String SOAP_BINDING_REFERENCE = "soap-binding-reference.xml";
     private static final String SOAP_BINDING_INVALID = "soap-binding-invalid.xml";
+    private static final String SOAP_BINDING_PROXY = "soap-binding-proxy.xml";
 
     @Test
     public void serviceBinding() throws Exception {
@@ -66,5 +67,19 @@ public class SOAPBindingModelTest {
         ModelPuller<SOAPBindingModel> puller = new ModelPuller<SOAPBindingModel>();
         SOAPBindingModel binding = puller.pull(SOAP_BINDING_INVALID, getClass());
         Assert.assertTrue(!binding.isModelValid());
+    }
+
+    @Test
+    public void proxyBinding() throws Exception {
+        ModelPuller<SOAPBindingModel> puller = new ModelPuller<SOAPBindingModel>();
+        SOAPBindingModel binding = puller.pull(SOAP_BINDING_PROXY, getClass());
+        binding.assertModelValid();
+        Assert.assertEquals("http://modified.com/phantom", binding.getEndpointAddress());
+        ProxyModel proxyConfig = binding.getProxyConfig();
+        Assert.assertEquals("192.168.1.2", proxyConfig.getHost());
+        Assert.assertEquals("9090", proxyConfig.getPort());
+        Assert.assertEquals("user", proxyConfig.getUser());
+        Assert.assertEquals("password", proxyConfig.getPassword());
+        Assert.assertEquals("HTTP", proxyConfig.getType());
     }
 }

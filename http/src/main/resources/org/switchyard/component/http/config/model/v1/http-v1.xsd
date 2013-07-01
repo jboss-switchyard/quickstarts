@@ -70,6 +70,11 @@ MA  02110-1301, USA.
                                 <element name="basic" type="http:BasicAuthenticationType" minOccurs="0" maxOccurs="1"/>
                                 <element name="ntlm" type="http:NTLMAuthenticationType" minOccurs="0" maxOccurs="1"/>
                             </choice>
+                            <element name="proxy" type="http:ProxyType" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                    <documentation>Http proxy settings.</documentation>
+                                </annotation>
+                            </element>
                         </sequence>
                     </choice>
                 </sequence>
@@ -116,6 +121,34 @@ MA  02110-1301, USA.
                     <element name="domain" type="string" maxOccurs="1">
                         <annotation>
                             <documentation>The NTLM Domain.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="ProxyType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element name="host" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy Host.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="port" type="integer" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy Port.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="user" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy user name.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="password" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy password.</documentation>
                         </annotation>
                     </element>
                 </sequence>

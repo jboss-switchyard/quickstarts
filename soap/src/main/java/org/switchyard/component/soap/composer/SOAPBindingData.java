@@ -26,6 +26,7 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.apache.log4j.Logger;
 import org.switchyard.component.common.composer.SecurityBindingData;
 import org.switchyard.security.credential.Credential;
 import org.switchyard.security.credential.extractor.SOAPMessageCredentialExtractor;
@@ -39,6 +40,7 @@ import org.switchyard.security.credential.extractor.WebServiceContextCredentialE
  * @author Magesh Kumar B <mageshbk@jboss.com> &copy; 2013 Red Hat Inc.
  */
 public class SOAPBindingData implements SecurityBindingData {
+    private static Logger _log = Logger.getLogger(SOAPMessageComposer.class);
 
     private final SOAPMessage _soapMessage;
     private final WebServiceContext _webServiceContext;
@@ -119,7 +121,12 @@ public class SOAPBindingData implements SecurityBindingData {
         Set<Credential> credentials = new HashSet<Credential>();
         credentials.addAll(new SOAPMessageCredentialExtractor().extract(getSOAPMessage()));
         credentials.addAll(new WebServiceContextCredentialExtractor().extract(getWebServiceContext()));
-        credentials.addAll(new ServletRequestCredentialExtractor().extract(getServletRequest()));
+        try {
+            credentials.addAll(new ServletRequestCredentialExtractor().extract(getServletRequest()));
+        } catch (UnsupportedOperationException uoe) {
+            // Ignore. This can happen with JBossWS http transport
+            _log.warn("Credentials are ignored for ServletRequest!");
+        }
         return credentials;
     }
 

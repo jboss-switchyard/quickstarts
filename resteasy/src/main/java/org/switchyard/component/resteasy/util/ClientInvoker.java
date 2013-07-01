@@ -36,12 +36,26 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.ext.Providers;
 
 import org.apache.log4j.Logger;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.ChallengeState;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.BaseClientResponse;
 import org.jboss.resteasy.client.core.ClientInterceptorRepositoryImpl;
 import org.jboss.resteasy.client.core.ClientInvokerInterceptorFactory;
+import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
 import org.jboss.resteasy.client.core.extractors.ClientErrorHandler;
 import org.jboss.resteasy.client.core.extractors.ClientRequestContext;
 import org.jboss.resteasy.client.core.extractors.DefaultEntityExtractorFactory;
@@ -54,6 +68,7 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.util.MediaTypeHelper;
 import org.jboss.resteasy.util.IsHttpMethod;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
+import org.switchyard.component.resteasy.config.model.ProxyModel;
 
 /**
  * Client Invoker for RESTEasy gateway. Code lifted from RESTEasy.
@@ -94,6 +109,18 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
      * @param method The JAX-RS Resource Class's method
      */
     public ClientInvoker(String basePath, Class<?> resourceClass, Method method) {
+        this(basePath, resourceClass, method, null);
+    }
+
+    /**
+     * Create a RESTEasy invoker client.
+     *
+     * @param basePath The base path for the class
+     * @param resourceClass The JAX-RS Resource Class
+     * @param method The JAX-RS Resource Class's method
+     * @param proxy Any proxy configuration
+     */
+    public ClientInvoker(String basePath, Class<?> resourceClass, Method method, ProxyModel proxy) {
         Set<String> httpMethods = IsHttpMethod.getHttpMethods(method);
         _baseUri = createUri(basePath);
         if ((httpMethods == null || httpMethods.size() == 0) && method.isAnnotationPresent(Path.class) && method.getReturnType().isInterface()) {
@@ -120,6 +147,27 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
         _marshallers = ClientMarshallerFactory.createMarshallers(_resourceClass, _method, _providerFactory, null);
         _accepts = MediaTypeHelper.getProduces(_resourceClass, method, null);
         ClientInvokerInterceptorFactory.applyDefaultInterceptors(this, _providerFactory, _resourceClass, _method);
+        // Proxy settings
+        HttpClient httpclient = ((ApacheHttpClient4Executor)_executor).getHttpClient();
+        if (proxy != null) {
+            HttpHost proxyHost = null;
+            if (proxy.getPort() != null) {
+                proxyHost = new HttpHost(proxy.getHost(), Integer.valueOf(proxy.getPort()).intValue());
+            } else {
+                proxyHost = new HttpHost(proxy.getHost(), -1);
+            }
+            if (proxy.getUser() != null) {
+                AuthScope authScope = new AuthScope(proxy.getHost(), Integer.valueOf(proxy.getPort()).intValue(), AuthScope.ANY_REALM);
+                Credentials credentials = new UsernamePasswordCredentials(proxy.getUser(), proxy.getPassword());
+                AuthCache authCache = new BasicAuthCache();
+                authCache.put(proxyHost, new BasicScheme(ChallengeState.PROXY));
+                ((DefaultHttpClient)httpclient).getCredentialsProvider().setCredentials(authScope, credentials);
+                BasicHttpContext context = new BasicHttpContext();
+                context.setAttribute(ClientContext.AUTH_CACHE, authCache);
+                ((ApacheHttpClient4Executor)_executor).setHttpContext(context);
+            }
+            httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+        }
     }
 
     private static String createSubResourcePath(String base, Method method) {

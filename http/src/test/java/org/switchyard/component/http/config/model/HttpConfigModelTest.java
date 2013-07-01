@@ -23,6 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.component.http.config.model.BasicAuthModel;
 import org.switchyard.component.http.config.model.HttpBindingModel;
+import org.switchyard.component.http.config.model.ProxyModel;
 import org.switchyard.config.model.ModelPuller;
 
 /**
@@ -35,6 +36,7 @@ public class HttpConfigModelTest {
     private static final String HTTP_BINDING = "http-binding.xml";
     private static final String HTTP_BINDING2 = "http-binding2.xml";
     private static final String HTTP_BINDING_AUTH = "http-binding-auth.xml";
+    private static final String HTTP_BINDING_PROXY = "http-binding-proxy.xml";
 
     @Test
     public void testReadConfigBinding() throws Exception {
@@ -56,5 +58,18 @@ public class HttpConfigModelTest {
         Assert.assertEquals("Beal", authConfig.getUser());
         Assert.assertEquals("conjecture", authConfig.getPassword());
         Assert.assertEquals("Any", authConfig.getRealm());
+    }
+
+    @Test
+    public void proxyConfigBinding() throws Exception {
+        ModelPuller<HttpBindingModel> puller = new ModelPuller<HttpBindingModel>();
+        HttpBindingModel model = puller.pull(HTTP_BINDING_PROXY, getClass());
+        Assert.assertTrue(model.isModelValid());
+        ProxyModel proxyConfig = model.getProxyConfig();
+        Assert.assertNotNull(proxyConfig);
+        Assert.assertEquals("host", proxyConfig.getHost());
+        Assert.assertEquals("8090", proxyConfig.getPort());
+        Assert.assertEquals("Beal", proxyConfig.getUser());
+        Assert.assertEquals("conjecture", proxyConfig.getPassword());
     }
 }

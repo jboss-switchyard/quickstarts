@@ -32,6 +32,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.ChallengeState;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -47,6 +48,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.client.utils.HttpClientUtils;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
@@ -93,6 +95,7 @@ public class OutboundHandler extends BaseServiceHandler {
     private AuthScope _authScope;
     private AuthCache _authCache;
     private Credentials _credentials;
+    private HttpHost _proxyHost;
 
     /**
      * Constructor.
@@ -135,13 +138,28 @@ public class OutboundHandler extends BaseServiceHandler {
                 _credentials = new UsernamePasswordCredentials(_config.getBasicAuthConfig().getUser(), _config.getBasicAuthConfig().getPassword());
                 // Create AuthCache instance
                 _authCache = new BasicAuthCache();
-                _authCache.put(new HttpHost(_authScope.getHost(), _authScope.getPort()), new BasicScheme());
+                _authCache.put(new HttpHost(_authScope.getHost(), _authScope.getPort()), new BasicScheme(ChallengeState.TARGET));
             } else {
                 _authScope = createAuthScope(_config.getNtlmAuthConfig().getHost(), _config.getNtlmAuthConfig().getPort(), _config.getNtlmAuthConfig().getRealm());
                 _credentials = new NTCredentials(_config.getNtlmAuthConfig().getUser(),
                                     _config.getNtlmAuthConfig().getPassword(),
                                     "",
                                     _config.getNtlmAuthConfig().getDomain());
+            }
+        }
+        if (_config.getProxyConfig() != null) {
+            if (_config.getProxyConfig().getPort() != null) {
+                _proxyHost = new HttpHost(_config.getProxyConfig().getHost(), Integer.valueOf(_config.getProxyConfig().getPort()).intValue());
+            } else {
+                _proxyHost = new HttpHost(_config.getProxyConfig().getHost(), -1);
+            }
+            if (_config.getProxyConfig().getUser() != null) {
+                _authScope = createAuthScope(_config.getProxyConfig().getHost(), _config.getProxyConfig().getPort(), null);
+                _credentials = new UsernamePasswordCredentials(_config.getProxyConfig().getUser(), _config.getProxyConfig().getPassword());
+                if (_authCache == null) {
+                    _authCache = new BasicAuthCache();
+                }
+                _authCache.put(_proxyHost, new BasicScheme(ChallengeState.PROXY));
             }
         }
     }
@@ -190,6 +208,9 @@ public class OutboundHandler extends BaseServiceHandler {
                 authpref.add(AuthPolicy.NTLM);
                 authpref.add(AuthPolicy.BASIC);
                 httpclient.getParams().setParameter(AuthPNames.TARGET_AUTH_PREF, authpref);
+            }
+            if (_proxyHost != null) {
+                httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, _proxyHost);
             }
             HttpBindingData httpRequest = _messageComposer.decompose(exchange, new HttpRequestBindingData());
             HttpRequestBase request = null;
