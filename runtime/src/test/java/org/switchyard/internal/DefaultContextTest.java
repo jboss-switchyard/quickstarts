@@ -137,7 +137,8 @@ public class DefaultContextTest {
         _context.setProperty("b", "b");
         _context.setProperty("c", "c").addLabels(TRANSIENT);
         
-        Context newCtx = _context.copy();
+        Context newCtx = new DefaultContext(Scope.EXCHANGE);
+        _context.mergeInto(newCtx);
         Assert.assertEquals(0, newCtx.getProperties(TRANSIENT).size());
         Assert.assertEquals(1, newCtx.getProperties().size());
     }
@@ -147,7 +148,8 @@ public class DefaultContextTest {
         _context.setProperty("exchange", "val");
         _context.setProperty("in", "val");
         _context.setProperty("out", "val");
-        Context ctx = _context.copy();
+        Context ctx = new DefaultContext(Scope.EXCHANGE);
+        _context.mergeInto(ctx);
         // verify that all fields were copied
         Assert.assertEquals(
                 _context.getProperty("exchange"),

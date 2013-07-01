@@ -101,6 +101,20 @@ public class ContextProperty implements Property {
         }
         return this;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Property addLabels(Set<String> labels) {
+        for (String label : labels) {
+            label = normalizeLabel(label);
+            if (label != null) {
+                _labels.add(label);
+            }
+        }
+        return this;
+    }
 
     /**
      * {@inheritDoc}

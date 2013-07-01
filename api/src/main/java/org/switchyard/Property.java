@@ -56,6 +56,13 @@ public interface Property {
      * @return this property (useful for chaining)
      */
     Property addLabels(String... labels);
+    
+    /**
+     * Adds a set of labels to the property.
+     * @param labels the labels to add
+     * @return this property (useful for chaining)
+     */
+    Property addLabels(Set<String> labels);
 
     /**
      * Removes labels from the property.

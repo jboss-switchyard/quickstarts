@@ -26,6 +26,8 @@ import org.apache.camel.Message;
 import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
+import org.switchyard.common.camel.ContextPropertyUtil;
+import org.switchyard.label.BehaviorLabel;
 
 /**
  * Implementation of {@link Context} specific to Camel Exchange Bus.
@@ -60,8 +62,16 @@ public class CamelCompositeContext implements Context {
     }
 
     @Override
-    public Context copy() {
-        return new CamelCompositeContext(_exchange);
+    public void mergeInto(Context context) {
+        for (Property property : getProperties()) {
+            if (ContextPropertyUtil.isReservedProperty(property.getName(), property.getScope())
+                    || property.hasLabel(BehaviorLabel.TRANSIENT.label())) {
+                continue;
+            }
+
+            context.setProperty(property.getName(), property.getValue(), property.getScope())
+                .addLabels(property.getLabels());
+        }
     }
 
     @Override

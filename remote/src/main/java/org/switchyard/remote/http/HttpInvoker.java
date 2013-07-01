@@ -24,7 +24,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.log4j.Logger;
-import org.switchyard.Context;
 import org.switchyard.remote.RemoteInvoker;
 import org.switchyard.remote.RemoteMessage;
 import org.switchyard.serial.FormatType;
@@ -81,12 +80,6 @@ public class HttpInvoker implements RemoteInvoker {
         conn.addRequestProperty(SERVICE_HEADER, request.getService().toString());
         conn.connect();
         OutputStream os = conn.getOutputStream();
-        
-        // Sanitize context properties
-        if (request.getContext() != null) {
-            Context ctx = request.getContext().copy();
-            request.setContext(ctx);
-        }
         
         // Write the request message
         _serializer.serialize(request, RemoteMessage.class, os);

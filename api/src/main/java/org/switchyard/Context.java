@@ -28,11 +28,15 @@ import java.util.Set;
 public interface Context {
 
     /**
-     * Creates a shallow copy of the existing Context including all properties in all scopes.
-     * Properties with a label of Labels.TRANSIENT are not included in the copy.
-     * @return a copy of this context
+     * Merges the properties in this Context instance into the specified Context instance, 
+     * adding missing values and overwriting existing values.  A shallow copy of 
+     * context property values is performed, so values that are references will be shared
+     * between the two contexts.
+     * <br><br>
+     * Properties with a label of Labels.TRANSIENT are not included in the merge.
+     * @param context context properties are copied from this context
      */
-    Context copy();
+    void mergeInto(Context context);
 
     /**
      * Retrieves the named property within this context, regardless

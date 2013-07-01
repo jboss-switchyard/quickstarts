@@ -16,8 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard;
+package org.switchyard.internal;
 
+import org.switchyard.Context;
+import org.switchyard.Property;
+import org.switchyard.Scope;
 import org.switchyard.label.BehaviorLabel;
 
 /**
@@ -38,8 +41,8 @@ public final class ContextUtil {
     public static Context copy(Context source, Context destination) {
         for (Property property : source.getProperties()) {
             if (!property.hasLabel(BehaviorLabel.TRANSIENT.label())) {
-                String[] labels = property.getLabels().toArray(new String[property.getLabels().size()]);
-                destination.setProperty(property.getName(), property.getValue()).addLabels(labels);
+                destination.setProperty(property.getName(), property.getValue())
+                    .addLabels(property.getLabels());
             }
         }
         return destination;

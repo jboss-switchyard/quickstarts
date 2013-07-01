@@ -23,13 +23,10 @@ import java.io.StringReader;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.switchyard.Context;
 import org.switchyard.HandlerException;
-import org.switchyard.Scope;
 import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.exception.SwitchYardException;
-import org.switchyard.internal.DefaultContext;
 import org.switchyard.serial.FormatType;
 import org.switchyard.serial.Serializer;
 import org.switchyard.serial.SerializerFactory;
@@ -53,9 +50,7 @@ public final class RemoteMessageTest {
         final String expectedXML = "<one number=\"1\"><two number=\"2\"/></one>";
         final Element expectedDOM = new ElementPuller().pull(new StringReader(expectedXML));
         RemoteMessage msg = new RemoteMessage();
-        Context ctx = new DefaultContext(Scope.MESSAGE);
-        ctx.setProperty("one", expectedDOM);
-        msg.setContext(ctx);
+        msg.getContext().setProperty("one", expectedDOM);
         msg = serDeser(msg, RemoteMessage.class);
         final Element actualDOM = (Element)msg.getContext().getProperty("one").getValue();
         final String actualXML = XMLHelper.toString(actualDOM);

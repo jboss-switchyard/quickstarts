@@ -19,19 +19,18 @@
 
 package org.switchyard.internal;
 
+import static org.switchyard.internal.ContextUtil.checkScope;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.switchyard.Context;
-import org.switchyard.ContextUtil;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 import org.switchyard.serial.graph.AccessType;
 import org.switchyard.serial.graph.Strategy;
-
-import static org.switchyard.ContextUtil.checkScope;
 
 /**
  * Base context implementation.
@@ -115,8 +114,8 @@ public class DefaultContext implements Context {
     }
 
     @Override
-    public Context copy() {
-        return ContextUtil.copy(this, new DefaultContext(_scope, new HashMap<String, Property>()));
+    public void mergeInto(Context context) {
+        ContextUtil.copy(this, context);
     }
 
     @Override

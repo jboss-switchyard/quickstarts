@@ -19,6 +19,7 @@
 package org.switchyard.bus.camel;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +33,11 @@ public abstract class CamelPropertyBase implements Property {
 
     @Override
     public Set<String> getLabels() {
-        return getLabelsBag().get(getName());
+        Set<String> labels = getLabelsBag().get(getName());
+        if (labels == null) {
+            labels = Collections.emptySet();
+        }
+        return labels;
     }
 
     @Override
@@ -41,6 +46,15 @@ public abstract class CamelPropertyBase implements Property {
             getLabelsBag().put(getName(), new HashSet<String>());
         }
         getLabelsBag().get(getName()).addAll(Arrays.asList(labels));
+        return this;
+    }
+    
+    @Override
+    public Property addLabels(Set<String> labels) {
+        if (!getLabelsBag().containsKey(getName())) {
+            getLabelsBag().put(getName(), new HashSet<String>());
+        }
+        getLabelsBag().get(getName()).addAll(labels);
         return this;
     }
 

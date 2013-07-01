@@ -24,8 +24,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.switchyard.label.BehaviorLabel;
-
 /**
  * MockContext.
  *
@@ -38,12 +36,6 @@ public class MockContext implements Context {
 
     public MockContext() {}
     
-    private MockContext(Map<String, Property> exchangeProps,
-            Map<String, Property> msgProps) {
-        _exchangeProperties.putAll(exchangeProps);
-        _messageProperties.putAll(msgProps);
-    }
-
     private Map<String,Property> getPropertiesMap(Scope scope) {
         switch (scope) {
             case MESSAGE:
@@ -160,10 +152,14 @@ public class MockContext implements Context {
     }
 
     @Override
-    public Context copy() {
-        MockContext ctx = new MockContext(_exchangeProperties, _messageProperties);
-        ctx.removeProperties(BehaviorLabel.TRANSIENT.label());
-        return ctx;
+    public void mergeInto(Context context) {
+        // brute force with no bells since this is only a mock object
+        for (Property property : _exchangeProperties.values()) {
+            context.setProperty(property.getName(), property.getValue(), Scope.EXCHANGE);
+        }
+        for (Property property : _messageProperties.values()) {
+            context.setProperty(property.getName(), property.getValue(), Scope.MESSAGE);
+        }
     }
 
     @Override

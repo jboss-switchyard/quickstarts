@@ -27,13 +27,24 @@ import java.util.Set;
 import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
+import org.switchyard.serial.graph.AccessType;
+import org.switchyard.serial.graph.Strategy;
 
 /**
- * Composite context keep multiple scopes maped to context instances.
+ * Composite context holds multiple scopes mapped to context instances.
  */
+@Strategy(access=AccessType.FIELD)
 public class CompositeContext implements Context {
 
     private Map<Scope, Context> _contexts = new HashMap<Scope, Context>();
+    
+    /**
+     * Create a new composite context with empty EXCHANGE and MESSAGE contexts.
+     */
+    public CompositeContext() {
+        _contexts.put(Scope.EXCHANGE, new DefaultContext(Scope.EXCHANGE));
+        _contexts.put(Scope.MESSAGE, new DefaultContext(Scope.MESSAGE));
+    }
 
     /**
      * Attach given context to specified scope.
@@ -46,12 +57,10 @@ public class CompositeContext implements Context {
     }
 
     @Override
-    public Context copy() {
-        CompositeContext ctx = new CompositeContext();
+    public void mergeInto(Context context) {
         for (Entry<Scope, Context> entry : _contexts.entrySet()) {
-            ctx.setContext(entry.getKey(), entry.getValue().copy());
+            entry.getValue().mergeInto(context);
         }
-        return ctx;
     }
 
     @Override

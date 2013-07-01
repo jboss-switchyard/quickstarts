@@ -160,7 +160,8 @@ public class CamelMessage extends SwitchYardMessage implements Message {
      * Mark message as sent.
      */
     public void sent() {
-        getContext().setProperty(CamelExchange.MESSAGE_SENT, true).addLabels(BehaviorLabel.TRANSIENT.name());
+        getContext().setProperty(CamelExchange.MESSAGE_SENT, true)
+            .addLabels(BehaviorLabel.TRANSIENT.label());
     }
 
     /**

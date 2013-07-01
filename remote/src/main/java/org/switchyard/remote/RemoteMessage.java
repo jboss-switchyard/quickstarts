@@ -21,6 +21,7 @@ package org.switchyard.remote;
 import javax.xml.namespace.QName;
 
 import org.switchyard.Context;
+import org.switchyard.internal.CompositeContext;
 import org.switchyard.serial.graph.AccessType;
 import org.switchyard.serial.graph.Strategy;
 
@@ -41,7 +42,7 @@ public class RemoteMessage {
      * Create an empty remote message.
      */
     public RemoteMessage() {
-        
+        _context = new CompositeContext();
     }
     
     /**
@@ -60,16 +61,6 @@ public class RemoteMessage {
      */
     public Context getContext() {
         return _context;
-    }
-    
-    /**
-     * Specifies the context properties for the invocation.
-     * @param context context properties
-     * @return a reference to this RemoteMessage
-     */
-    public RemoteMessage setContext(Context context) {
-        _context = context;
-        return this;
     }
     
     /**

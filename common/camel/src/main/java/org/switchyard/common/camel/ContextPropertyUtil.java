@@ -38,6 +38,7 @@ public final class ContextPropertyUtil {
      * @return True if property is used internally.
      */
     public static boolean isReservedProperty(String propertyName, Scope scope) {
-        return propertyName.startsWith("org.switchyard.bus.camel");
+        return propertyName.startsWith("org.switchyard.bus.camel")
+                || propertyName.startsWith("org.switchyard.component.camel");
     }
 }
