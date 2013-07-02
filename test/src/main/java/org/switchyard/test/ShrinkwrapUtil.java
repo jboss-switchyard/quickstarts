@@ -29,6 +29,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.resolver.api.ResolutionException;
 import org.junit.Assert;
 
@@ -100,6 +101,31 @@ public final class ShrinkwrapUtil {
      */
     public static WebArchive getWebArchive(String groupId, String artifactId, String version) {
         return getArchive(groupId, artifactId, version, WebArchive.class, "war");
+    }
+    
+    /**
+     * Get a SwitchYard maven Enterprise Artifact Archive.
+     * <p/>
+     * Gets the SwitchYard version from the mandatory {@link #SWITCHYARD_VERSION} env property.
+     *
+     * @param groupId    Maven groupId
+     * @param artifactId Maven artifactId.
+     * @return The Maven artifact archive.
+     */
+    public static EnterpriseArchive getSwitchYardEarArchive(String groupId, String artifactId) {
+        return getEarArchive(groupId, artifactId, getSwitchYardVersion());
+    }
+
+    /**
+     * Get a maven Enterprise Artifact Archive.
+     *
+     * @param groupId    Maven groupId
+     * @param artifactId Maven artifactId.
+     * @param version    Artifact version.
+     * @return The Maven artifact archive.
+     */
+    public static EnterpriseArchive getEarArchive(String groupId, String artifactId, String version) {
+        return getArchive(groupId, artifactId, version, EnterpriseArchive.class, "ear");
     }
 
     /**
