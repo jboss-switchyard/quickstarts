@@ -33,7 +33,9 @@ import javax.transaction.UserTransaction;
 import junit.framework.Assert;
 
 import org.apache.log4j.Logger;
-import org.jboss.as.connector.ConnectorServices;
+import org.hornetq.core.version.Version;
+import org.hornetq.utils.VersionLoader;
+import org.jboss.as.connector.util.ConnectorServices;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -64,8 +66,6 @@ public class JCAMixIn extends AbstractTestMixIn implements TransactionMixInParti
     private static final String MOCK_DEFAULT_MCF_CLASS = "org.switchyard.test.mixins.jca.MockManagedConnectionFactory";
     private static final String MOCK_RESOURCE_ADAPTER_XML = "jcamixin-mock-ra.xml";
     private static final String HORNETQ_RESOURCE_ADAPTER_XML = "jcamixin-hornetq-ra.xml";
-    private static final String ENV_HORNETQ_VERSION = "HORNETQ_VERSION";
-    private static final String ENV_NETTY_VERSION = "NETTY_VERSION";
     
     private Logger _logger = Logger.getLogger(JCAMixIn.class);
     private SwitchYardIronJacamarHandler _ironJacamar;
@@ -205,12 +205,19 @@ public class JCAMixIn extends AbstractTestMixIn implements TransactionMixInParti
     }
 
     private void deployHornetQResourceAdapter(String raName, Map<String, String> connDefs) {
-        String hqVersion = System.getenv(ENV_HORNETQ_VERSION);
-        String nettyVersion = System.getenv(ENV_NETTY_VERSION);
+        Version version = VersionLoader.getVersion();
+        String hqVersion = version.getMajorVersion()
+                + "." + version.getMinorVersion()
+                + "." + version.getMicroVersion()
+                + "." + version.getVersionSuffix();
+        String nettyVersion = org.jboss.netty.util.Version.ID;
+        if (nettyVersion.indexOf('-') != -1) {
+            nettyVersion = nettyVersion.substring(0, nettyVersion.indexOf('-'));
+        }
         
         ResourceAdapterArchive raa =
                 ShrinkWrap.create(ResourceAdapterArchive.class, stripDotRarSuffix(raName == null ? "hornetq-ra.rar" : raName) + ".rar");
-        raa.addAsLibrary(ShrinkwrapUtil.getArchive("org.jboss.netty", "netty", nettyVersion, JavaArchive.class, "jar"));
+        raa.addAsLibrary(ShrinkwrapUtil.getArchive("io.netty", "netty", nettyVersion, JavaArchive.class, "jar"));
         raa.addAsLibrary(ShrinkwrapUtil.getArchive("org.hornetq", "hornetq-ra", hqVersion, JavaArchive.class, "jar"));
         raa.addAsLibrary(ShrinkwrapUtil.getArchive("org.hornetq", "hornetq-core-client", hqVersion, JavaArchive.class, "jar"));
         raa.addAsLibrary(ShrinkwrapUtil.getArchive("org.hornetq", "hornetq-jms-client", hqVersion, JavaArchive.class, "jar"));

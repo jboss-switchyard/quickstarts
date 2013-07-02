@@ -10,4 +10,5 @@ bin/
 *.iws
 .DS_Store
 jca/transaction.log
+transaction.log.*
 itests/transaction.log
