@@ -1118,6 +1118,27 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-quickstart-ear-deployment-artifacts</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-quickstart-ear-deployment-order-consumer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-quickstart-ear-deployment-order-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-quickstart-ear-deployment-assembly</artifactId>
+                <type>ear</type>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
                 <artifactId>switchyard-quickstart-http-binding</artifactId>
                 <version>${project.version}</version>
             </dependency>
