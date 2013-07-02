@@ -55,6 +55,7 @@
         <module>camel-service</module>
         <module>camel-soap-proxy</module>
         <module>camel-bus-cdi</module>
+        <module>ear-deployment</module>
         <module>http-binding</module>
         <module>remote-invoker</module>
         <module>rest-binding</module>
