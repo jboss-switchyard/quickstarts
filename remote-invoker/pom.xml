@@ -30,7 +30,7 @@
     </parent>
     <artifactId>switchyard-quickstart-remote-invoker</artifactId>
     <packaging>jar</packaging>
-    <name>Quickstart : Remove Invoker</name>
+    <name>Quickstart : Remote Invoker</name>
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>

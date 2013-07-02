@@ -7,6 +7,7 @@ bin/
 components-file/bin/
 core/bin/
 .checkstyle
+transaction.log
 *.iml
 *.ipr
 *.iws
