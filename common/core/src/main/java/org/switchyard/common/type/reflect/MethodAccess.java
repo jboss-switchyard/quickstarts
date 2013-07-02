@@ -21,6 +21,8 @@ package org.switchyard.common.type.reflect;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.switchyard.common.lang.Strings;
+
 /**
  * Access via wrapped read and write Methods.
  *
@@ -52,23 +54,33 @@ public final class MethodAccess<T> implements Access<T> {
      */
     public MethodAccess(Class<?> clazz, String readMethodName, String writeMethodName) {
         Method readMethod;
-        try {
-            readMethod = clazz.getDeclaredMethod(readMethodName);
-        } catch (NoSuchMethodException nsfe1) {
+        readMethodName = Strings.trimToNull(readMethodName);
+        if (readMethodName == null) {
+            readMethod = null;
+        } else {
             try {
-                readMethod = clazz.getMethod(readMethodName);
-            } catch (NoSuchMethodException nsfe2) {
-                readMethod = null;
+                readMethod = clazz.getDeclaredMethod(readMethodName);
+            } catch (NoSuchMethodException nsfe1) {
+                try {
+                    readMethod = clazz.getMethod(readMethodName);
+                } catch (NoSuchMethodException nsfe2) {
+                    readMethod = null;
+                }
             }
         }
         Method writeMethod;
-        try {
-            writeMethod = clazz.getDeclaredMethod(writeMethodName);
-        } catch (NoSuchMethodException nsfe1) {
+        writeMethodName = Strings.trimToNull(writeMethodName);
+        if (writeMethodName == null) {
+            writeMethod = null;
+        } else {
             try {
-                writeMethod = clazz.getMethod(writeMethodName);
-            } catch (NoSuchMethodException nsfe2) {
-                writeMethod = null;
+                writeMethod = clazz.getDeclaredMethod(writeMethodName);
+            } catch (NoSuchMethodException nsfe1) {
+                try {
+                    writeMethod = clazz.getMethod(writeMethodName);
+                } catch (NoSuchMethodException nsfe2) {
+                    writeMethod = null;
+                }
             }
         }
         setMethods(readMethod, writeMethod);

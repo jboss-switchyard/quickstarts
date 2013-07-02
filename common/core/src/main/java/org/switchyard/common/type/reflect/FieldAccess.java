@@ -21,6 +21,8 @@ package org.switchyard.common.type.reflect;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
+import org.switchyard.common.lang.Strings;
+
 /**
  * Access via a wrapped Field.
  *
@@ -47,13 +49,18 @@ public final class FieldAccess<T> implements Access<T> {
      */
     public FieldAccess(Class<?> clazz, String fieldName) {
         Field field;
-        try {
-            field = clazz.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException nsfe1) {
+        fieldName = Strings.trimToNull(fieldName);
+        if (fieldName == null) {
+            field = null;
+        } else {
             try {
-                field = clazz.getField(fieldName);
-            } catch (NoSuchFieldException nsfe2) {
-                throw new RuntimeException(nsfe1);
+                field = clazz.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException nsfe1) {
+                try {
+                    field = clazz.getField(fieldName);
+                } catch (NoSuchFieldException nsfe2) {
+                    field = null;
+                }
             }
         }
         setField(field);
