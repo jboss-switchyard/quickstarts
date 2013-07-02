@@ -123,7 +123,11 @@ public class HTTPMixIn extends AbstractTestMixIn {
     public int sendStringAndGetStatus(String endpointURL, String request, String method) {
         HttpResponse httpResponse = sendStringAndGetMethod(endpointURL, request, method);
         int status = httpResponse.getStatusLine().getStatusCode();
-        EntityUtils.consumeQuietly(httpResponse.getEntity());
+        if (httpResponse.getEntity().getContentLength() == -1) {
+            _httpClient.getConnectionManager().closeIdleConnections(0, TimeUnit.SECONDS);
+        } else {
+            EntityUtils.consumeQuietly(httpResponse.getEntity());
+        }
         return status;
     }
 
@@ -317,6 +321,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
         String response = null;
         try {
             HttpResponse httpResponse = postResourceAndGetMethod(endpointURL, requestResource);
+            int status = httpResponse.getStatusLine().getStatusCode();
             response = EntityUtils.toString(httpResponse.getEntity());
         } catch (IOException ioe) {
             _logger.error("Unable to get response", ioe);
@@ -346,7 +351,11 @@ public class HTTPMixIn extends AbstractTestMixIn {
     public int postResourceAndGetStatus(String endpointURL, String requestResource) {
         HttpResponse httpResponse = postResourceAndGetMethod(endpointURL, requestResource);
         int status = httpResponse.getStatusLine().getStatusCode();
-        EntityUtils.consumeQuietly(httpResponse.getEntity());
+        if (httpResponse.getEntity().getContentLength() == -1) {
+            _httpClient.getConnectionManager().closeIdleConnections(0, TimeUnit.SECONDS);
+        } else {
+            EntityUtils.consumeQuietly(httpResponse.getEntity());
+        }
         return status;
     }
 

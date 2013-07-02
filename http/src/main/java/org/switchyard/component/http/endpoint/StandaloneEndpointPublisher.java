@@ -123,7 +123,11 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
                             exchange.sendResponseHeaders(httpResponse.getStatus(), httpResponse.getBodyBytes().available());
                             httpResponse.writeBodyToStream(exchange.getResponseBody());
                         } else {
-                            exchange.sendResponseHeaders(httpResponse.getStatus(), 0);
+                            if ((httpResponse != null) && (httpResponse.getStatus() != null)) {
+                                exchange.sendResponseHeaders(httpResponse.getStatus(), 0);
+                            } else {
+                                exchange.sendResponseHeaders(HttpServletResponse.SC_ACCEPTED, 0);
+                            }
                         }
                     } else {
                         exchange.sendResponseHeaders(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 0);

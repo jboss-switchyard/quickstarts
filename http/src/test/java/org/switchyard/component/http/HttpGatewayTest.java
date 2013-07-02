@@ -48,6 +48,8 @@ import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.metadata.BaseService;
+import org.switchyard.metadata.InOnlyOperation;
+import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceOperation;
@@ -82,12 +84,11 @@ public class HttpGatewayTest {
     @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}NtlmHttpConsumerService")
     private Invoker _consumerService4;
 
-    private HttpBindingModel _config;
-    private HttpBindingModel _configRef;
-    private HttpBindingModel _configRef2;
-    private HttpBindingModel _configRef3;
-    private HttpBindingModel _configRef4;
+    @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}OneWayHttpConsumerService")
+    private Invoker _inOnlyConsumerService;
+
     private InboundHandler _httpInbound;
+    private InboundHandler _httpInbound2;
     private OutboundHandler _httpOutbound;
     private OutboundHandler _httpOutbound2;
     private OutboundHandler _httpOutbound3;
@@ -101,43 +102,52 @@ public class HttpGatewayTest {
         composite.assertModelValid();
 
         CompositeServiceModel compositeService = composite.getServices().get(0);
-        _config = (HttpBindingModel)compositeService.getBindings().get(0);
+        HttpBindingModel config = (HttpBindingModel)compositeService.getBindings().get(0);
 
         // Massive hack for Test Runner. Register both a service and a reference binding.
-        _domain.registerService(_config.getServiceName(), new InOutService(), mockService);
-        _domain.registerServiceReference(_config.getServiceName(), new HelloInterface());
-        _httpInbound = new InboundHandler(_config, _domain);
+        _domain.registerService(config.getServiceName(), new InOutService(), mockService);
+        _domain.registerServiceReference(config.getServiceName(), new HelloInterface());
+        _httpInbound = new InboundHandler(config, _domain);
         _httpInbound.start();
 
-        CompositeReferenceModel compositeReference = composite.getReferences().get(0);
-        _configRef = (HttpBindingModel)compositeReference.getBindings().get(0);
+        compositeService = composite.getServices().get(1);
+        HttpBindingModel config2 = (HttpBindingModel)compositeService.getBindings().get(0);
 
-        _httpOutbound = new OutboundHandler(_configRef, null);
-        _domain.registerService(_configRef.getServiceName(), new HelloInterface(), _httpOutbound);
+        _domain.registerService(config2.getServiceName(), new InOnlyService(), new MockHandler());
+        _domain.registerServiceReference(config2.getServiceName(), new HelloInterface());
+        _httpInbound2 = new InboundHandler(config2, _domain);
+        _httpInbound2.start();
+
+        CompositeReferenceModel compositeReference = composite.getReferences().get(0);
+        HttpBindingModel configRef = (HttpBindingModel)compositeReference.getBindings().get(0);
+
+        _httpOutbound = new OutboundHandler(configRef, null);
+        _domain.registerService(configRef.getServiceName(), new HelloInterface(), _httpOutbound);
         _httpOutbound.start();
 
         compositeReference = composite.getReferences().get(1);
-        _configRef2 = (HttpBindingModel)compositeReference.getBindings().get(0);
-        _httpOutbound2 = new OutboundHandler(_configRef2, null);
-        _domain.registerService(_configRef2.getServiceName(), new HelloInterface(), _httpOutbound2);
+        HttpBindingModel configRef2 = (HttpBindingModel)compositeReference.getBindings().get(0);
+        _httpOutbound2 = new OutboundHandler(configRef2, null);
+        _domain.registerService(configRef2.getServiceName(), new HelloInterface(), _httpOutbound2);
         _httpOutbound2.start();
 
         compositeReference = composite.getReferences().get(2);
-        _configRef3 = (HttpBindingModel)compositeReference.getBindings().get(0);
-        _httpOutbound3 = new OutboundHandler(_configRef3, null);
-        _domain.registerService(_configRef3.getServiceName(), new HelloInterface(), _httpOutbound3);
+        HttpBindingModel configRef3 = (HttpBindingModel)compositeReference.getBindings().get(0);
+        _httpOutbound3 = new OutboundHandler(configRef3, null);
+        _domain.registerService(configRef3.getServiceName(), new HelloInterface(), _httpOutbound3);
         _httpOutbound3.start();
 
         compositeReference = composite.getReferences().get(3);
-        _configRef4 = (HttpBindingModel)compositeReference.getBindings().get(0);
-        _httpOutbound4 = new OutboundHandler(_configRef4, null);
-        _domain.registerService(_configRef4.getServiceName(), new HelloInterface(), _httpOutbound4);
+        HttpBindingModel configRef4 = (HttpBindingModel)compositeReference.getBindings().get(0);
+        _httpOutbound4 = new OutboundHandler(configRef4, null);
+        _domain.registerService(configRef4.getServiceName(), new HelloInterface(), _httpOutbound4);
         _httpOutbound4.start();
     }
 
     @After
     public void tearDown() throws Exception {
         _httpInbound.stop();
+        _httpInbound2.stop();
         _httpOutbound.stop();
         _httpOutbound2.stop();
         _httpOutbound3.stop();
@@ -148,6 +158,12 @@ public class HttpGatewayTest {
         String response = httpMixIn.sendString("http://localhost:8080/http", "magesh", HTTPMixIn.HTTP_POST);
         Assert.assertEquals(1, mockService.getMessages().size());
         Assert.assertEquals("magesh", response);
+    }
+
+    @Test
+    public void httpOneWayStatusTest() throws Exception {
+        int status = httpMixIn.sendStringAndGetStatus("http://localhost:8080/oneway", "magesh", HTTPMixIn.HTTP_POST);
+        Assert.assertEquals(202, status);
     }
 
     @Test
@@ -197,9 +213,10 @@ public class HttpGatewayTest {
     }
 
     private static class HelloInterface extends BaseService {
-        private static Set<ServiceOperation> _operations = new HashSet<ServiceOperation>(1);
+        private static Set<ServiceOperation> _operations = new HashSet<ServiceOperation>(2);
         static {
             _operations.add(new InOutOperation("sayHello", STRING_QNAME, STRING_QNAME));
+            _operations.add(new InOnlyOperation("oneWay", STRING_QNAME));
         }
         public HelloInterface() {
             super(_operations);

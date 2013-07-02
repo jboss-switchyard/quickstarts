@@ -20,11 +20,20 @@ MA  02110-1301, USA.
 <sca:composite xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
            targetNamespace="urn:http:test:1.0"
            xmlns:http="urn:switchyard-component-http:config:1.0"
+           xmlns:swyd="urn:switchyard-config:switchyard:1.0"
            name="m1app">
 
     <sca:service name="SampleHttpProviderService" promote="SomeProviderService">
         <http:binding.http name="testGateway">
+            <swyd:operationSelector operationName="sayHello"/>
             <http:contextPath>http</http:contextPath>
+        </http:binding.http>
+    </sca:service>
+
+    <sca:service name="OneWayHttpProviderService" promote="SomeOtherProviderService">
+        <http:binding.http name="oneWayGateway">
+            <swyd:operationSelector operationName="oneWay"/>
+            <http:contextPath>oneway</http:contextPath>
         </http:binding.http>
     </sca:service>
 
