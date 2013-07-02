@@ -19,6 +19,7 @@
 
 package org.switchyard.test;
 
+import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
@@ -83,5 +84,18 @@ public abstract class ArquillianUtil {
      */
     public static WebArchive createWarQSDeployment(String artifactId) {
         return ShrinkwrapUtil.getSwitchYardWebArchive(QS_GID, artifactId);
+    }
+    
+    /**
+     * Create a SwitchYard Quickstart Deployment.
+     * <p/>
+     * Uses "org.switchyard.quickstarts" as the groupId and gets the SwitchYard
+     * version from the mandatory SWITCHYARD_VERSION env property.
+     *
+     * @param artifactId Maven artifactId.
+     * @return The Maven artifact archive.
+     */
+    public static EnterpriseArchive createEarQSDeployment(String artifactId) {
+        return ShrinkwrapUtil.getSwitchYardEarArchive(QS_GID, artifactId);
     }
 }

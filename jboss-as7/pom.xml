@@ -144,6 +144,12 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-quickstart-ear-deployment-assembly</artifactId>
+            <type>ear</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-quickstart-http-binding</artifactId>
             <scope>test</scope>
         </dependency>
