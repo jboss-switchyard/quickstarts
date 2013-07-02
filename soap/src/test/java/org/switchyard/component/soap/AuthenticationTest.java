@@ -26,27 +26,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.littleshoot.proxy.DefaultHttpProxyServer;
-import org.littleshoot.proxy.HttpFilter;
-import org.littleshoot.proxy.HttpProxyServer;
-import org.littleshoot.proxy.ProxyAuthorizationHandler;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.net.SocketAddr;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.composer.SOAPComposition;
-import org.switchyard.component.soap.config.model.ProxyModel;
+import org.switchyard.component.soap.config.model.NtlmAuthModel;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
-import org.switchyard.component.soap.config.model.v1.V1ProxyModel;
+import org.switchyard.component.soap.config.model.v1.V1NtlmAuthModel;
 import org.switchyard.component.soap.config.model.v1.V1SOAPBindingModel;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.CompositeModel;
@@ -64,16 +58,13 @@ import org.switchyard.test.SwitchYardRunner;
 import org.w3c.dom.Node;
 
 /**
- * Contains tests for Http proxy support on SOAPGateway. Thanks to alessio.soldano@jboss.com!
+ * Contains tests for Http authentication support on SOAPGateway.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
 @RunWith(SwitchYardRunner.class)
-public class HttpProxyTest {
+public class AuthenticationTest {
 
-    private static final int PROXYPORT = 9090;
-    private static final String PROXY_USER = "foo";
-    private static final String PROXY_PWD = "bar";
     private static final String METHOD_NAME = "sayHello";
 
     private static final String input = "<test:sayHello xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
@@ -85,33 +76,21 @@ public class HttpProxyTest {
 
     private ServiceDomain _domain;
 
-    @org.switchyard.test.ServiceOperation("unknown-host")
-    private Invoker _proxyConsumerService1;
-    @org.switchyard.test.ServiceOperation("proxy-auth-required")
-    private Invoker _proxyConsumerService2;
+    @org.switchyard.test.ServiceOperation("auth-required")
+    private Invoker _authConsumerService1;
     @org.switchyard.test.ServiceOperation("all-is-well")
-    private Invoker _proxyConsumerService3;
+    private Invoker _authConsumerService2;
 
     private SOAPBindingModel _config;
     private InboundHandler _soapInbound;
     
     private static ModelPuller<CompositeModel> _puller;
-    private HttpProxyServer _proxyServer;
 
 
     @Before
     public void setUp() throws Exception {
         String host = System.getProperty("org.switchyard.test.soap.host", "localhost");
         String port = System.getProperty("org.switchyard.test.soap.port", "8080");
-        _proxyServer = new DefaultHttpProxyServer(PROXYPORT);
-        ProxyAuthorizationHandler authorizationHandler = new ProxyAuthorizationHandler() {
-            @Override
-            public boolean authenticate(String user, String pwd) {
-                return (PROXY_USER.equals(user) && PROXY_PWD.equals(pwd));
-            }
-        };
-        _proxyServer.addProxyAuthenticationHandler(authorizationHandler);
-        _proxyServer.start();
 
         _puller = new ModelPuller<CompositeModel>();
 
@@ -136,74 +115,57 @@ public class HttpProxyTest {
             }
         };
         config.setWsdl(serviceURL.toExternalForm() + "?wsdl");
-        config.setServiceName(_proxyConsumerService1.getServiceName());
-        config.setName("proxy-test");
-        config.setEndpointAddress("http://unreachablehost/HelloWebService");
+        config.setServiceName(_authConsumerService1.getServiceName());
+        config.setName("auth-test");
+        config.setEndpointAddress("http://192.168.169.4/index.htm");
 
         // Service consumer or Reference binding
         OutboundHandler soapProxyOutbound1 = new OutboundHandler(config);
         soapProxyOutbound1.start();
-        _domain.registerService(_proxyConsumerService1.getServiceName(), new HelloWebServiceInterface(), soapProxyOutbound1);
+        _domain.registerService(_authConsumerService1.getServiceName(), new HelloWebServiceInterface(), soapProxyOutbound1);
 
-        ProxyModel proxy = new V1ProxyModel();
-        proxy.setHost(host);
-        proxy.setPort("" + PROXYPORT);
-        config.setProxyConfig(proxy);
-        config.setEndpointAddress(serviceURL.toExternalForm());
-        config.setServiceName(_proxyConsumerService2.getServiceName());
+        NtlmAuthModel auth = new V1NtlmAuthModel();
+        auth.setUser("SwitchYard");
+        auth.setPassword("JBoss123!");
+        auth.setDomain("JBOSS");
+        config.setNtlmAuthConfig(auth);
+        config.setServiceName(_authConsumerService2.getServiceName());
 
         // Service consumer or Reference binding
         OutboundHandler soapProxyOutbound2 = new OutboundHandler(config);
         soapProxyOutbound2.start();
-        _domain.registerService(_proxyConsumerService2.getServiceName(), new HelloWebServiceInterface(), soapProxyOutbound2);
-
-        proxy.setUser(PROXY_USER);
-        proxy.setPassword(PROXY_PWD);
-        config.setProxyConfig(proxy);
-        config.setServiceName(_proxyConsumerService3.getServiceName());
-
-        // Service consumer or Reference binding
-        OutboundHandler soapProxyOutbound3 = new OutboundHandler(config);
-        soapProxyOutbound3.start();
-        _domain.registerService(_proxyConsumerService3.getServiceName(), new HelloWebServiceInterface(), soapProxyOutbound3);
-
-        XMLUnit.setIgnoreWhitespace(true);
+        _domain.registerService(_authConsumerService2.getServiceName(), new HelloWebServiceInterface(), soapProxyOutbound2);
     }
-    
+
     @After
     public void tearDown() throws Exception {
         _soapInbound.stop();
-        _proxyServer.stop();
     }
 
-    @Ignore // Can be tested offline
-    @Test
-    public void unknownHost() throws Exception {
-        try {
-            Message responseMsg = _proxyConsumerService1.operation(METHOD_NAME).sendInOut(input);
-        } catch (Exception e) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            e.printStackTrace(new PrintStream(baos));
-            Assert.assertTrue(baos.toString().contains("UnknownHostException: unreachablehost"));
-        }
-    }
-
+    @Ignore // This can be tested only offline.
     @Test
     public void authenticationMissing() throws Exception {
         try {
-            Message responseMsg = _proxyConsumerService2.operation(METHOD_NAME).sendInOut(input);
+            Message responseMsg = _authConsumerService1.operation(METHOD_NAME).sendInOut(input);
         } catch (Exception e) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             e.printStackTrace(new PrintStream(baos));
-            Assert.assertTrue(baos.toString().contains("407: Proxy Authentication Required"));
+            Assert.assertTrue(baos.toString().contains("401: Unauthorized"));
         }
     }
 
+    @Ignore // This can be tested only offline.
     @Test
     public void allIsWell() throws Exception {
-        Message responseMsg = _proxyConsumerService3.operation(METHOD_NAME).sendInOut(input);
-        String response = XMLHelper.toString(responseMsg.getContent(Node.class));
-        XMLAssert.assertXMLEqual(output, response);
+        try {
+            Message responseMsg = _authConsumerService2.operation(METHOD_NAME).sendInOut(input);
+        } catch (Exception e) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            e.printStackTrace(new PrintStream(baos));
+            // Because the local server is not setup with a SOAP Endpoint or to allow POST method.
+            // If we get to this point then we are good.
+            Assert.assertTrue(baos.toString().contains("405: Method Not Allowed"));
+        }
     }
 
     private static class HelloWebServiceInterface extends BaseService {

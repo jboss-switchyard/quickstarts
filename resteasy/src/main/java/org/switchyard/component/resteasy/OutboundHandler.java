@@ -97,7 +97,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 for (Method method : clazz.getMethods()) {
                     // ignore the as method to allow declaration in client interfaces
                     if (!("as".equals(method.getName()) && Arrays.equals(method.getParameterTypes(), CLASS_ARG_ARRAY))) {
-                        _methodMap.put(method.getName(), new ClientInvoker(path, clazz, method, _config.getProxyConfig()));
+                        _methodMap.put(method.getName(), new ClientInvoker(path, clazz, method, _config));
                     }
                 }
             }

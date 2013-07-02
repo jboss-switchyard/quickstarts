@@ -34,6 +34,7 @@ public class SOAPBindingModelTest {
     private static final String SOAP_BINDING_REFERENCE = "soap-binding-reference.xml";
     private static final String SOAP_BINDING_INVALID = "soap-binding-invalid.xml";
     private static final String SOAP_BINDING_PROXY = "soap-binding-proxy.xml";
+    private static final String SOAP_BINDING_AUTH = "soap-binding-auth.xml";
 
     @Test
     public void serviceBinding() throws Exception {
@@ -69,6 +70,7 @@ public class SOAPBindingModelTest {
         Assert.assertTrue(!binding.isModelValid());
     }
 
+
     @Test
     public void proxyBinding() throws Exception {
         ModelPuller<SOAPBindingModel> puller = new ModelPuller<SOAPBindingModel>();
@@ -82,4 +84,17 @@ public class SOAPBindingModelTest {
         Assert.assertEquals("password", proxyConfig.getPassword());
         Assert.assertEquals("HTTP", proxyConfig.getType());
     }
+
+    @Test
+    public void authBinding() throws Exception {
+        ModelPuller<SOAPBindingModel> puller = new ModelPuller<SOAPBindingModel>();
+        SOAPBindingModel binding = puller.pull(SOAP_BINDING_AUTH, getClass());
+        binding.assertModelValid();
+        Assert.assertEquals("http://modified.com/phantom", binding.getEndpointAddress());
+        NtlmAuthModel authConfig = binding.getNtlmAuthConfig();
+        Assert.assertEquals("user", authConfig.getUser());
+        Assert.assertEquals("password", authConfig.getPassword());
+        Assert.assertEquals("domain", authConfig.getDomain());
+    }
+
 }

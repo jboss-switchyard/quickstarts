@@ -146,6 +146,43 @@ public interface SOAPBindingModel extends BindingModel {
      * @return this SOAPBindingModel (useful for chaining)
      */
     public SOAPBindingModel setEndpointAddress(String endpointAddress);
+    /**
+     * Gets the basic config.
+     * @return the basic config
+     */
+    public BasicAuthModel getBasicAuthConfig();
+
+    /**
+     * Sets the basic config.
+     * @param config the basic config
+     * @return this SOAPBindingModel
+     */
+    public SOAPBindingModel setBasicAuthConfig(BasicAuthModel config);
+
+    /**
+     * Gets the ntlm config.
+     * @return the ntlm config
+     */
+    public NtlmAuthModel getNtlmAuthConfig();
+
+    /**
+     * Sets the ntlm config.
+     * @param config the ntlm config
+     * @return this SOAPBindingModel
+     */
+    public SOAPBindingModel setNtlmAuthConfig(NtlmAuthModel config);
+
+    /**
+     * Check if Basic authentication is set.
+     * @return true if Basic, false otherwise
+     */
+    public Boolean isBasicAuth();
+
+    /**
+     * Check if authentication is set.
+     * @return true if set, false otherwise
+     */
+    public Boolean hasAuthentication();
 
     /**
      * Gets the proxy config.

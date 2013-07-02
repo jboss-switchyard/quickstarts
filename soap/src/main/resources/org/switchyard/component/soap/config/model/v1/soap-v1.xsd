@@ -92,6 +92,10 @@ MA  02110-1301, USA.
                                     <documentation>The endpoint address override. Applicable only for reference bindings.</documentation>
                                 </annotation>
                             </element>
+                            <choice>
+                                <element name="basic" type="soap:BasicAuthenticationType" minOccurs="0" maxOccurs="1"/>
+                                <element name="ntlm" type="soap:NTLMAuthenticationType" minOccurs="0" maxOccurs="1"/>
+                            </choice>
                             <element name="proxy" type="soap:ProxyType" minOccurs="0" maxOccurs="1">
                                 <annotation>
                                     <documentation>Http proxy settings.</documentation>
@@ -119,6 +123,37 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
+    <complexType name="BasicAuthenticationType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element name="user" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>User name.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="password" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>Password.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="NTLMAuthenticationType">
+        <complexContent>
+            <extension base="soap:BasicAuthenticationType">
+                <sequence>
+                    <element name="domain" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>The NTLM Domain.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
     <complexType name="ProxyType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">

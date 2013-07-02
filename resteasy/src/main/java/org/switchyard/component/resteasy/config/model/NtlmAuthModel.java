@@ -16,42 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.component.soap.config.model;
-
-import org.switchyard.config.model.Model;
+package org.switchyard.component.resteasy.config.model;
 
 /**
- * A SOAP Value Model.
+ * A NTLM Authentication Model.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
-public interface SOAPNameValueModel extends Model {
-
-    /** Known XML element names. */
-    public enum SOAPName {
-        /** Known XML element names. */
-
-        wsdl, wsdlPort, socketAddr, contextPath, endpointAddress, mtom, proxy, user, password, host, port, type, basic, ntlm, domain;
-    }
+public interface NtlmAuthModel extends BasicAuthModel {
 
     /**
-     * Gets the name.
-     * @return the name
+     * Get the NTLM domain.
+     * @return domain name
      */
-    public SOAPName getName();
+    public String getDomain();
 
     /**
-     * Gets the value.
-     * @return the value
+     * Set the NTLM domain.
+     * @param domain the domain name
+     * @return this NTLMAuthModel
      */
-    public String getValue();
-
-    /**
-     * Sets the value.
-     * @param value the value
-     * @return this SOAPValueModel (useful for chaining)
-     */
-    public SOAPNameValueModel setValue(String value);
-
+    public NtlmAuthModel setDomain(String domain);
 }

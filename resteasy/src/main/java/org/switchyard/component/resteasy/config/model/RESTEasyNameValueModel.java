@@ -31,7 +31,7 @@ public interface RESTEasyNameValueModel extends Model {
     /** Known XML element names. */
     public enum RESTEasyName {
         /** Known XML element names. */
-        interfaces, address, contextPath, proxy, host, port, user, password;
+        interfaces, address, contextPath, basic, ntlm, user, password, realm, domain, host, port, proxy;
     }
 
     /**

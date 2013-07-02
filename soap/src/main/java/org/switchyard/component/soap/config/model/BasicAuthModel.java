@@ -21,37 +21,36 @@ package org.switchyard.component.soap.config.model;
 import org.switchyard.config.model.Model;
 
 /**
- * A SOAP Value Model.
+ * A Basic Authentication Model.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
-public interface SOAPNameValueModel extends Model {
-
-    /** Known XML element names. */
-    public enum SOAPName {
-        /** Known XML element names. */
-
-        wsdl, wsdlPort, socketAddr, contextPath, endpointAddress, mtom, proxy, user, password, host, port, type, basic, ntlm, domain;
-    }
+public interface BasicAuthModel extends Model {
 
     /**
-     * Gets the name.
-     * @return the name
+     * Get user name.
+     * @return authentication username
      */
-    public SOAPName getName();
+    public String getUser();
 
     /**
-     * Gets the value.
-     * @return the value
+     * Set user name.
+     * @param user the user name
+     * @return this BasicAuthModel
      */
-    public String getValue();
+    public BasicAuthModel setUser(String user);
 
     /**
-     * Sets the value.
-     * @param value the value
-     * @return this SOAPValueModel (useful for chaining)
+     * Get user password.
+     * @return authentication password
      */
-    public SOAPNameValueModel setValue(String value);
+    public String getPassword();
+
+    /**
+     * Set user password.
+     * @param password the user password
+     * @return this BasicAuthModel
+     */
+    public BasicAuthModel setPassword(String password);
 
 }

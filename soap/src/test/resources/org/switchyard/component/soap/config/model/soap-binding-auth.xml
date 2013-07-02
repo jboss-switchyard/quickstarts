@@ -1,0 +1,9 @@
+<soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
+    <soap:wsdl>Foo.wsdl</soap:wsdl>
+    <soap:endpointAddress>http://modified.com/phantom</soap:endpointAddress>
+    <soap:ntlm>
+        <soap:user>user</soap:user>
+        <soap:password>password</soap:password>
+        <soap:domain>domain</soap:domain>
+    </soap:ntlm>
+</soap:binding.soap>

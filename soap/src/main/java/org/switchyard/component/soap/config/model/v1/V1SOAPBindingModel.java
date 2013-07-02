@@ -28,7 +28,9 @@ import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.component.soap.config.model.EndpointConfigModel;
 import org.switchyard.component.soap.config.model.InterceptorsModel;
+import org.switchyard.component.soap.config.model.BasicAuthModel;
 import org.switchyard.component.soap.config.model.MtomModel;
+import org.switchyard.component.soap.config.model.NtlmAuthModel;
 import org.switchyard.component.soap.config.model.ProxyModel;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.config.model.SOAPContextMapperModel;
@@ -54,6 +56,8 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
         SOAPName.socketAddr.name(),
         SOAPName.contextPath.name(),
         SOAPName.endpointAddress.name(),
+        SOAPName.basic.name(),
+        SOAPName.ntlm.name(),
         SOAPName.proxy.name(),
         ENDPOINT_CONFIG,
         SOAPName.mtom.name(),
@@ -69,6 +73,8 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
     private SocketAddr _socketAddr;
     private SOAPNameValueModel _contextPath;
     private SOAPNameValueModel _endpointAddress;
+    private BasicAuthModel _basicAuth;
+    private NtlmAuthModel _ntlmAuth;
     private ProxyModel _proxyConfig;
     private MtomModel _mtomConfig;
     private EndpointConfigModel _endpointConfig;
@@ -269,6 +275,58 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
     public SOAPBindingModel setEndpointAddress(String endpointAddress) {
         _endpointAddress = setNameValue(_endpointAddress, SOAPName.endpointAddress, endpointAddress);
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public BasicAuthModel getBasicAuthConfig() {
+        if (_basicAuth == null) {
+            _basicAuth = (BasicAuthModel)getFirstChildModel(SOAPName.basic.name());
+        }
+        return _basicAuth;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SOAPBindingModel setBasicAuthConfig(BasicAuthModel config) {
+        setChildModel(config);
+        _basicAuth = config;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public NtlmAuthModel getNtlmAuthConfig() {
+        if (_ntlmAuth == null) {
+            _ntlmAuth = (NtlmAuthModel)getFirstChildModel(SOAPName.ntlm.name());
+        }
+        return _ntlmAuth;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SOAPBindingModel setNtlmAuthConfig(NtlmAuthModel config) {
+        setChildModel(config);
+        _ntlmAuth = config;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Boolean isBasicAuth() {
+        return (getBasicAuthConfig() != null) ? true : false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Boolean hasAuthentication() {
+        return ((getBasicAuthConfig() != null) || (getNtlmAuthConfig() != null)) ? true : false;
     }
 
     /**

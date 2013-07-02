@@ -21,6 +21,8 @@ package org.switchyard.component.resteasy.config.model.v1;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.component.resteasy.config.model.BasicAuthModel;
+import org.switchyard.component.resteasy.config.model.NtlmAuthModel;
 import org.switchyard.component.resteasy.config.model.ProxyModel;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
 import org.switchyard.component.resteasy.config.model.RESTEasyNameValueModel;
@@ -41,6 +43,8 @@ public class V1RESTEasyBindingModel extends V1BindingModel implements RESTEasyBi
         RESTEasyName.interfaces.name(),
         RESTEasyName.contextPath.name(),
         RESTEasyName.address.name(),
+        RESTEasyName.basic.name(),
+        RESTEasyName.ntlm.name(),
         RESTEasyName.proxy.name()
     };
 
@@ -50,6 +54,8 @@ public class V1RESTEasyBindingModel extends V1BindingModel implements RESTEasyBi
     private RESTEasyNameValueModel _address;
     private RESTEasyNameValueModel _interfaces;
     private RESTEasyNameValueModel _contextPath;
+    private BasicAuthModel _basicAuth;
+    private NtlmAuthModel _ntlmAuth;
     private ProxyModel _proxyConfig;
 
     /**
@@ -146,6 +152,58 @@ public class V1RESTEasyBindingModel extends V1BindingModel implements RESTEasyBi
     public RESTEasyBindingModel setContextPath(String contextPath) {
         _contextPath = setNameValue(_contextPath, RESTEasyName.contextPath, contextPath);
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public BasicAuthModel getBasicAuthConfig() {
+        if (_basicAuth == null) {
+            _basicAuth = (BasicAuthModel)getFirstChildModel(RESTEasyName.basic.name());
+        }
+        return _basicAuth;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public RESTEasyBindingModel setBasicAuthConfig(BasicAuthModel config) {
+        setChildModel(config);
+        _basicAuth = config;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public NtlmAuthModel getNtlmAuthConfig() {
+        if (_ntlmAuth == null) {
+            _ntlmAuth = (NtlmAuthModel)getFirstChildModel(RESTEasyName.ntlm.name());
+        }
+        return _ntlmAuth;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public RESTEasyBindingModel setNtlmAuthConfig(NtlmAuthModel config) {
+        setChildModel(config);
+        _ntlmAuth = config;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Boolean isBasicAuth() {
+        return (getBasicAuthConfig() != null) ? true : false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Boolean hasAuthentication() {
+        return ((getBasicAuthConfig() != null) || (getNtlmAuthConfig() != null)) ? true : false;
     }
 
     /**

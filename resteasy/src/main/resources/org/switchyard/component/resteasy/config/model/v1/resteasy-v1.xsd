@@ -59,6 +59,10 @@ MA  02110-1301, USA.
                                     <documentation>A URL that points to the root path of resources. This is only applicable for Reference bindings. It is optional and if not specified will default to http://127.0.0.1:8080/.</documentation>
                                 </annotation>
                             </element>
+                            <choice>
+                                <element name="basic" type="rest:BasicAuthenticationType" minOccurs="0" maxOccurs="1"/>
+                                <element name="ntlm" type="rest:NTLMAuthenticationType" minOccurs="0" maxOccurs="1"/>
+                            </choice>
                             <element name="proxy" type="rest:ProxyType" minOccurs="0" maxOccurs="1">
                                 <annotation>
                                     <documentation>Http proxy settings.</documentation>
@@ -71,6 +75,52 @@ MA  02110-1301, USA.
         </complexContent>
     </complexType>
 
+    <complexType name="BasicAuthenticationType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element name="user" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>User name.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="password" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>Password.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="realm" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Authentication Realm.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="host" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Authentication Host.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="port" type="integer" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Authentication Port.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="NTLMAuthenticationType">
+        <complexContent>
+            <extension base="rest:BasicAuthenticationType">
+                <sequence>
+                    <element name="domain" type="string" maxOccurs="1">
+                        <annotation>
+                            <documentation>The NTLM Domain.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
     <complexType name="ProxyType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
@@ -83,16 +133,6 @@ MA  02110-1301, USA.
                     <element name="port" type="integer" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>Proxy Port.</documentation>
-                        </annotation>
-                    </element>
-                    <element name="user" type="string" maxOccurs="1">
-                        <annotation>
-                            <documentation>Proxy user name.</documentation>
-                        </annotation>
-                    </element>
-                    <element name="password" type="string" maxOccurs="1">
-                        <annotation>
-                            <documentation>Proxy password.</documentation>
                         </annotation>
                     </element>
                 </sequence>

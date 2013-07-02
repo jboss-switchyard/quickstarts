@@ -38,6 +38,7 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.jaxws.DispatchImpl;
 import org.apache.cxf.transport.http.HTTPConduit;
@@ -158,9 +159,9 @@ public class OutboundHandler extends BaseServiceHandler {
                     _dispatcher.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, _config.getEndpointAddress());
                 }
 
+                HTTPConduit conduit = (HTTPConduit)((DispatchImpl)_dispatcher).getClient().getConduit();
                 // Proxy authentication
                 if (_config.getProxyConfig() != null) {
-                    HTTPConduit conduit = (HTTPConduit)((DispatchImpl)_dispatcher).getClient().getConduit();
                     HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
                     httpClientPolicy.setProxyServerType(ProxyServerType.fromValue(_config.getProxyConfig().getType()));
                     httpClientPolicy.setProxyServer(_config.getProxyConfig().getHost());
@@ -174,6 +175,23 @@ public class OutboundHandler extends BaseServiceHandler {
                         policy.setPassword(_config.getProxyConfig().getPassword());
                         conduit.setProxyAuthorization(policy);
                     }
+                }
+                if (_config.hasAuthentication()) {
+                    AuthorizationPolicy policy = new AuthorizationPolicy();
+                    // Set authentication
+                    if (_config.isBasicAuth()) {
+                        policy.setUserName(_config.getBasicAuthConfig().getUser());
+                        policy.setPassword(_config.getBasicAuthConfig().getPassword());
+                        policy.setAuthorizationType("Basic");
+                    } else {
+                        policy.setUserName(_config.getNtlmAuthConfig().getDomain() + "\\" + _config.getNtlmAuthConfig().getUser());
+                        policy.setPassword(_config.getNtlmAuthConfig().getPassword());
+                        HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+                        httpClientPolicy.setConnectionTimeout(36000);
+                        httpClientPolicy.setAllowChunking(false);
+                        conduit.setClient(httpClientPolicy);
+                    }
+                    conduit.setAuthorization(policy);
                 }
 
             } catch (MalformedURLException e) {

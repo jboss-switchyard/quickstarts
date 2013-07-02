@@ -62,6 +62,10 @@ public class V1RESTEasyMarshaller extends BaseMarshaller {
             return new V1ContextMapperModel(config, desc);
         } else if (name.equals(MessageComposerModel.MESSAGE_COMPOSER)) {
             return new V1MessageComposerModel(config, desc);
+        } else if (name.equals(RESTEasyName.basic.name())) {
+            return new V1BasicAuthModel(config, desc);
+        } else if (name.equals(RESTEasyName.ntlm.name())) {
+            return new V1NtlmAuthModel(config, desc);
         } else if (name.equals(RESTEasyName.proxy.name())) {
             return new V1ProxyModel(config, desc);
         } else {

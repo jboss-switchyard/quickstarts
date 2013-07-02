@@ -36,10 +36,12 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.ext.Providers;
 
 import org.apache.log4j.Logger;
+
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.ChallengeState;
 import org.apache.http.auth.Credentials;
+import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.HttpClient;
@@ -69,6 +71,7 @@ import org.jboss.resteasy.util.MediaTypeHelper;
 import org.jboss.resteasy.util.IsHttpMethod;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 import org.switchyard.component.resteasy.config.model.ProxyModel;
+import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
 
 /**
  * Client Invoker for RESTEasy gateway. Code lifted from RESTEasy.
@@ -109,6 +112,7 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
      * @param method The JAX-RS Resource Class's method
      */
     public ClientInvoker(String basePath, Class<?> resourceClass, Method method) {
+
         this(basePath, resourceClass, method, null);
     }
 
@@ -118,9 +122,9 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
      * @param basePath The base path for the class
      * @param resourceClass The JAX-RS Resource Class
      * @param method The JAX-RS Resource Class's method
-     * @param proxy Any proxy configuration
+     * @param model Configuration model
      */
-    public ClientInvoker(String basePath, Class<?> resourceClass, Method method, ProxyModel proxy) {
+    public ClientInvoker(String basePath, Class<?> resourceClass, Method method, RESTEasyBindingModel model) {
         Set<String> httpMethods = IsHttpMethod.getHttpMethods(method);
         _baseUri = createUri(basePath);
         if ((httpMethods == null || httpMethods.size() == 0) && method.isAnnotationPresent(Path.class) && method.getReturnType().isInterface()) {
@@ -147,27 +151,62 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
         _marshallers = ClientMarshallerFactory.createMarshallers(_resourceClass, _method, _providerFactory, null);
         _accepts = MediaTypeHelper.getProduces(_resourceClass, method, null);
         ClientInvokerInterceptorFactory.applyDefaultInterceptors(this, _providerFactory, _resourceClass, _method);
-        // Proxy settings
+        // Authentication settings
         HttpClient httpclient = ((ApacheHttpClient4Executor)_executor).getHttpClient();
-        if (proxy != null) {
-            HttpHost proxyHost = null;
-            if (proxy.getPort() != null) {
-                proxyHost = new HttpHost(proxy.getHost(), Integer.valueOf(proxy.getPort()).intValue());
-            } else {
-                proxyHost = new HttpHost(proxy.getHost(), -1);
-            }
-            if (proxy.getUser() != null) {
-                AuthScope authScope = new AuthScope(proxy.getHost(), Integer.valueOf(proxy.getPort()).intValue(), AuthScope.ANY_REALM);
-                Credentials credentials = new UsernamePasswordCredentials(proxy.getUser(), proxy.getPassword());
+        if (model.hasAuthentication()) {
+            // Set authentication
+            AuthScope authScope = null;
+            Credentials credentials = null;
+            if (model.isBasicAuth()) {
+                authScope = createAuthScope(model.getBasicAuthConfig().getHost(), model.getBasicAuthConfig().getPort(), model.getBasicAuthConfig().getRealm());
+                credentials = new UsernamePasswordCredentials(model.getBasicAuthConfig().getUser(), model.getBasicAuthConfig().getPassword());
+                // Create AuthCache instance
                 AuthCache authCache = new BasicAuthCache();
-                authCache.put(proxyHost, new BasicScheme(ChallengeState.PROXY));
-                ((DefaultHttpClient)httpclient).getCredentialsProvider().setCredentials(authScope, credentials);
+                authCache.put(new HttpHost(authScope.getHost(), authScope.getPort()), new BasicScheme(ChallengeState.TARGET));
                 BasicHttpContext context = new BasicHttpContext();
                 context.setAttribute(ClientContext.AUTH_CACHE, authCache);
                 ((ApacheHttpClient4Executor)_executor).setHttpContext(context);
+            } else {
+                authScope = createAuthScope(model.getNtlmAuthConfig().getHost(), model.getNtlmAuthConfig().getPort(), model.getNtlmAuthConfig().getRealm());
+                credentials = new NTCredentials(model.getNtlmAuthConfig().getUser(),
+                                    model.getNtlmAuthConfig().getPassword(),
+                                    "",
+                                    model.getNtlmAuthConfig().getDomain());
             }
-            httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+            ((DefaultHttpClient)httpclient).getCredentialsProvider().setCredentials(authScope, credentials);
+        } else {
+            ProxyModel proxy = model.getProxyConfig();
+            if (proxy != null) {
+                HttpHost proxyHost = null;
+                if (proxy.getPort() != null) {
+                    proxyHost = new HttpHost(proxy.getHost(), Integer.valueOf(proxy.getPort()).intValue());
+                } else {
+                    proxyHost = new HttpHost(proxy.getHost(), -1);
+                }
+                if (proxy.getUser() != null) {
+                    AuthScope authScope = new AuthScope(proxy.getHost(), Integer.valueOf(proxy.getPort()).intValue(), AuthScope.ANY_REALM);
+                    Credentials credentials = new UsernamePasswordCredentials(proxy.getUser(), proxy.getPassword());
+                    AuthCache authCache = new BasicAuthCache();
+                    authCache.put(proxyHost, new BasicScheme(ChallengeState.PROXY));
+                    ((DefaultHttpClient)httpclient).getCredentialsProvider().setCredentials(authScope, credentials);
+                    BasicHttpContext context = new BasicHttpContext();
+                    context.setAttribute(ClientContext.AUTH_CACHE, authCache);
+                    ((ApacheHttpClient4Executor)_executor).setHttpContext(context);
+                }
+                httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+            }
         }
+    }
+
+    private AuthScope createAuthScope(String host, String portStr, String realm) throws RuntimeException {
+        if (realm == null) {
+            realm = AuthScope.ANY_REALM;
+        }
+        int port = -1;
+        if (portStr != null) {
+            port = Integer.valueOf(portStr).intValue();
+        }
+        return new AuthScope(host, port, realm);
     }
 
     private static String createSubResourcePath(String base, Method method) {

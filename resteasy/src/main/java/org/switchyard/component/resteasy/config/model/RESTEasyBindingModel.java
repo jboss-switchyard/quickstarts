@@ -125,6 +125,44 @@ public interface RESTEasyBindingModel extends BindingModel {
     public RESTEasyBindingModel setProxyConfig(ProxyModel proxyConfig);
 
     /**
+     * Gets the basic config.
+     * @return the basic config
+     */
+    public BasicAuthModel getBasicAuthConfig();
+
+    /**
+     * Sets the basic config.
+     * @param config the basic config
+     * @return this RESTEasyBindingModel
+     */
+    public RESTEasyBindingModel setBasicAuthConfig(BasicAuthModel config);
+
+    /**
+     * Gets the ntlm config.
+     * @return the ntlm config
+     */
+    public NtlmAuthModel getNtlmAuthConfig();
+
+    /**
+     * Sets the ntlm config.
+     * @param config the ntlm config
+     * @return this RESTEasyBindingModel
+     */
+    public RESTEasyBindingModel setNtlmAuthConfig(NtlmAuthModel config);
+
+    /**
+     * Check if Basic authentication is set.
+     * @return true if Basic, false otherwise
+     */
+    public Boolean isBasicAuth();
+
+    /**
+     * Check if authentication is set.
+     * @return true if set, false otherwise
+     */
+    public Boolean hasAuthentication();
+
+    /**
      * Gets the global configuration.
      * 
      * @return the environment/global config
