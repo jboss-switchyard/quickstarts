@@ -361,8 +361,6 @@
                 <configuration>
                     <environmentVariables>
                         <SWITCHYARD_VERSION>${project.version}</SWITCHYARD_VERSION>
-                        <HORNETQ_VERSION>${version.hornetq}</HORNETQ_VERSION>
-                        <NETTY_VERSION>${version.netty}</NETTY_VERSION>
                     </environmentVariables>
                     <includes>
                         <include>**/*Test*.java</include>
