@@ -25,12 +25,13 @@ import org.milyn.container.plugin.SourceFactory;
 import org.milyn.javabean.binding.model.Bean;
 import org.milyn.javabean.binding.model.ModelSet;
 import org.milyn.javabean.binding.xml.XMLBinding;
+import org.switchyard.SwitchYardException;
 import org.switchyard.config.model.Scannable;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.BaseTransformer;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
+
 import java.io.IOException;
 
 /**

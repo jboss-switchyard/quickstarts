@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
-import org.switchyard.HandlerChain;
 import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
 import org.switchyard.ServiceReference;

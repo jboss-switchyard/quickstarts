@@ -19,6 +19,10 @@
 
 package org.switchyard.internal.transform;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
@@ -26,15 +30,11 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.internal.DefaultMessage;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class BaseTransformerRegistryTest {
     
@@ -126,7 +126,7 @@ public class BaseTransformerRegistryTest {
     }
 
     private QName getType(Class<?> type) {
-        return JavaService.toMessageType(type);
+        return JavaTypes.toMessageType(type);
     }
 
     public class A {}

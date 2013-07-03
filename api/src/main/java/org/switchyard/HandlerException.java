@@ -22,10 +22,7 @@ package org.switchyard;
 import org.switchyard.annotations.DefaultType;
 
 /**
- * Represents a processing error when handling an exchange.  A
- * {@code HandlerException} stops processing within a HandlerChain and
- * is automagically converted into a fault by the chain when throw by an
- * {@code ExchangeHandler}.
+ * Represents a runtime processing error when handling an exchange.
  */
 @DefaultType(HandlerException.MESSAGE_TYPE)
 public class HandlerException extends Exception {

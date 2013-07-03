@@ -28,8 +28,8 @@ import javax.xml.namespace.QName;
 import org.switchyard.Context;
 import org.switchyard.Message;
 import org.switchyard.Scope;
-import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.SwitchYardException;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
@@ -109,8 +109,8 @@ public class DefaultMessage implements Message {
             throw new SwitchYardException("Cannot convert from '" + _content.getClass().getName() + "' to '" + type.getName() + "'.  No TransformRegistry available.");
         }
 
-        QName fromType = JavaService.toMessageType(_content.getClass());
-        QName toType = JavaService.toMessageType(type);
+        QName fromType = JavaTypes.toMessageType(_content.getClass());
+        QName toType = JavaTypes.toMessageType(type);
         Transformer transformer = _transformerRegistry.getTransformer(fromType, toType);
         if (transformer == null) {
             throw new SwitchYardException("Cannot convert from '" + _content.getClass().getName() + "' to '" + type.getName() + "'.  No registered Transformer available for transforming from '" + fromType + "' to '" + toType + "'.  A Transformer must be registered.");

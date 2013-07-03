@@ -24,7 +24,6 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.domain.DomainModel;
-import org.switchyard.config.model.domain.HandlersModel;
 import org.switchyard.config.model.domain.SecuritiesModel;
 import org.switchyard.config.model.property.PropertiesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
@@ -37,7 +36,6 @@ import org.switchyard.config.model.validate.ValidatesModel;
 public class V1DomainModel extends BaseNamedModel implements DomainModel {
     
     private PropertiesModel _properties;
-    private HandlersModel _handlers;
     private SecuritiesModel _securities;
     
     /**
@@ -45,7 +43,7 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
      */
     public V1DomainModel() {
         super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, DomainModel.DOMAIN));
-        setModelChildrenOrder(TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, PropertiesModel.PROPERTIES, HandlersModel.HANDLERS, SecuritiesModel.SECURITIES);
+        setModelChildrenOrder(TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, PropertiesModel.PROPERTIES, SecuritiesModel.SECURITIES);
     }
 
     /**
@@ -55,7 +53,7 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
      */
     public V1DomainModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, PropertiesModel.PROPERTIES, HandlersModel.HANDLERS, SecuritiesModel.SECURITIES);
+        setModelChildrenOrder(TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, PropertiesModel.PROPERTIES, SecuritiesModel.SECURITIES);
     }
     
     @Override
@@ -79,21 +77,6 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
         if (switchyard != null) {
             switchyard.setDomainPropertyResolver();
         }
-        return this;
-    }
-
-    @Override
-    public synchronized HandlersModel getHandlers() {
-        if (_handlers == null) {
-            _handlers = (HandlersModel)getFirstChildModel(HandlersModel.HANDLERS);
-        }
-        return _handlers;
-    }
-
-    @Override
-    public DomainModel setHandlers(HandlersModel handlers) {
-        setChildModel(handlers);
-        _handlers = handlers;
         return this;
     }
 

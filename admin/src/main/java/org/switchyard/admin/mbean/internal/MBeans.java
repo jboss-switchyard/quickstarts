@@ -24,6 +24,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.log4j.Logger;
+import org.switchyard.SwitchYardException;
 import org.switchyard.admin.Application;
 import org.switchyard.admin.Binding;
 import org.switchyard.admin.ComponentReference;
@@ -33,7 +34,6 @@ import org.switchyard.admin.Service;
 import org.switchyard.admin.Throttling;
 import org.switchyard.admin.Transformer;
 import org.switchyard.admin.Validator;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * Utility class for JMX-related functions in admin API.

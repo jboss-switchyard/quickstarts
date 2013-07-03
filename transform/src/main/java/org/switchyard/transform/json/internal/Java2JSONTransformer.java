@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.transform.BaseTransformer;
 
 /**

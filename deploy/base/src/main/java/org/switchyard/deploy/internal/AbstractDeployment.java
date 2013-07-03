@@ -45,7 +45,8 @@ public abstract class AbstractDeployment {
     /**
      * Deployment classloader property name.
      */
-    public static final String CLASSLOADER_PROPERTY = "DeploymentClassloader";
+    public static final String CLASSLOADER_PROPERTY = 
+            "org.switchyard.deployment.DeploymentClassLoader";
 
     /**
      * Parent deployment.
@@ -133,7 +134,7 @@ public abstract class AbstractDeployment {
         }
         
         _serviceDomain = appServiceDomain;
-        _serviceDomain.getProperties().put(CLASSLOADER_PROPERTY, Classes.getTCCL());
+        _serviceDomain.setProperty(CLASSLOADER_PROPERTY, Classes.getTCCL());
         _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain.getTransformerRegistry());
         _transformerRegistryLoader.loadOOTBTransforms();
         

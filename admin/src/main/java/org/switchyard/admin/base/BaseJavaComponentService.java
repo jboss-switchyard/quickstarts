@@ -28,7 +28,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.extensions.java.JavaService;
 
 /**
  * Represents service with java contract.

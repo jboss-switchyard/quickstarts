@@ -21,9 +21,9 @@ package org.switchyard.serial.graph.node;
 import java.lang.reflect.Constructor;
 
 import org.switchyard.HandlerException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.type.reflect.FieldAccess;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.serial.graph.Graph;
 
 /**

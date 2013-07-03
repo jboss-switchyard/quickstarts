@@ -29,8 +29,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.Classes;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.XsltTransformModel;
 import org.switchyard.transform.internal.TransformerFactory;

@@ -31,12 +31,12 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.cdi.CDIUtil;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.config.model.validate.ValidateModel;
-import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.validate.BaseValidator;
 import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;
@@ -51,7 +51,7 @@ public final class ValidatorUtil {
 
     private static final Logger LOGGER = Logger.getLogger(ValidatorUtil.class);
 
-    private static final QName OBJECT_TYPE = JavaService.toMessageType(Object.class);
+    private static final QName OBJECT_TYPE = JavaTypes.toMessageType(Object.class);
 
     private ValidatorUtil() {}
 
@@ -348,7 +348,7 @@ public final class ValidatorUtil {
         if (!validatorAnno.name().trim().equals("")) {
             name = QName.valueOf(validatorAnno.name().trim());
         } else {
-            name = JavaService.toMessageType(type);
+            name = JavaTypes.toMessageType(type);
         }
 
         return new ValidatorMethod(name, publicMethod);

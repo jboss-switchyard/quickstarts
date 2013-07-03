@@ -27,7 +27,6 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
-import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
@@ -98,11 +97,8 @@ public class LocalExchangeBus implements ExchangeBus {
 
     @Override
     public synchronized Dispatcher createDispatcher(ServiceReference reference) {
-        HandlerChain userHandlers = DefaultHandlerChain.fromList(_domain.getHandlers());
         HandlerChain requestChain = _requestChain.copy();
         HandlerChain replyChain = _replyChain.copy();
-        requestChain.addFirst("domain-handlers", userHandlers);
-        replyChain.addFirst("domain-handlers", userHandlers);
         
         Dispatcher dispatcher = new LocalDispatcher(_domain, reference, requestChain, replyChain);
         _dispatchers.put(reference.getName(), dispatcher);

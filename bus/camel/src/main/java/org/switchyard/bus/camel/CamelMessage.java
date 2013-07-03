@@ -30,12 +30,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.switchyard.Context;
 import org.switchyard.Message;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.camel.HandlerDataSource;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.camel.SwitchYardMessage;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.label.BehaviorLabel;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 
@@ -88,8 +88,8 @@ public class CamelMessage extends SwitchYardMessage implements Message {
             throw new SwitchYardException("Cannot convert from '" + body.getClass().getName() + "' to '" + type.getName() + "'.  No TransformRegistry available.");
         }
 
-        QName toType = JavaService.toMessageType(type);
-        QName fromType = JavaService.toMessageType(body.getClass());
+        QName toType = JavaTypes.toMessageType(type);
+        QName fromType = JavaTypes.toMessageType(body.getClass());
         Transformer transformer = transformerRegistry.getTransformer(fromType, toType);
         if (transformer == null) {
             T camelBody = super.getBody(type, body);

@@ -21,10 +21,9 @@
  */
 package org.switchyard.bus.camel.processors;
 
-import java.util.List;
-
 import org.apache.camel.Processor;
 import org.switchyard.ExchangeHandler;
+import org.switchyard.ExchangeInterceptor;
 import org.switchyard.ServiceDomain;
 import org.switchyard.handlers.AddressingHandler;
 import org.switchyard.handlers.PolicyHandler;
@@ -38,15 +37,6 @@ import org.switchyard.handlers.ValidateHandler;
  */
 public enum Processors {
 
-    /**
-     * Processor handling custom handlers registered in domain.
-     */
-    DOMAIN_HANDLERS {
-        @Override
-        public Processor create(ServiceDomain domain) {
-            return wrap(domain.getHandlers());
-        }
-    },
     /**
      * Addressing handler.
      */
@@ -120,6 +110,24 @@ public enum Processors {
         }
     },
     /**
+     * Processor which invokes consumer interceptors.
+     */
+    CONSUMER_INTERCEPT {
+        @Override
+        public Processor create(ServiceDomain domain) {
+            return new InterceptProcessor(ExchangeInterceptor.CONSUMER, domain);
+        }
+    },
+    /**
+     * Processor which invokes provider interceptors.
+     */
+    PROVIDER_INTERCEPT {
+        @Override
+        public Processor create(ServiceDomain domain) {
+            return new InterceptProcessor(ExchangeInterceptor.PROVIDER, domain);
+        }
+    },
+    /**
      * Special case processor called as first in part of route responsible
      * for exception handling.
      */
@@ -149,15 +157,4 @@ public enum Processors {
     private static Processor wrap(ExchangeHandler handler) {
         return new HandlerProcessor(handler);
     }
-
-    /**
-     * Wraps handler collection into single camel Processor.
-     * 
-     * @param handlers Handler to wrap.
-     * @return Wrapping processor.
-     */
-    private static Processor wrap(List<ExchangeHandler> handlers) {
-        return new HandlerProcessor(handlers);
-    }
-
 }

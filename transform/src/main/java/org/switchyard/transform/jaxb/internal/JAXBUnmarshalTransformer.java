@@ -27,9 +27,9 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 
 import org.switchyard.Message;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.config.model.Scannable;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.BaseTransformer;
 
 /**

@@ -34,11 +34,6 @@
     <description>The Core API.</description>
     <url>http://switchyard.org</url>
     <dependencies>
-        <!-- internal dependencies -->
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-common</artifactId>
-        </dependency>
         <!-- external dependencies -->
         <dependency>
             <groupId>log4j</groupId>

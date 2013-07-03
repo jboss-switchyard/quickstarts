@@ -40,7 +40,7 @@ import org.switchyard.validate.ValidatorRegistry;
  * engines.
  */
 public interface ServiceDomain {
-
+    
     /**
      * Name of the ServiceDomain. This is unique within a runtime.
      * @return name name of the ServiceDomain.
@@ -142,13 +142,6 @@ public interface ServiceDomain {
     ValidatorRegistry getValidatorRegistry();
     
     /**
-     * Returns the list of domain-level handlers that execute on every 
-     * message exchange.
-     * @return list of exchange handlers
-     */
-    List<ExchangeHandler> getHandlers();
-    
-    /**
      * Add an EventObserver for the specified event type.  A single instance
      * of EventObserver can be registered to receive multiple event types.
      * @param observer the event observer to add
@@ -170,11 +163,27 @@ public interface ServiceDomain {
      * @return the ServiceSecurity
      */
     ServiceSecurity getServiceSecurity(String name);
+    
+    /**
+     * Sets the specified property on this domain.
+     * @param name property name
+     * @param value property value
+     * @return this ServiceDomain instance
+     */
+    public ServiceDomain setProperty(String name, Object value);
+    
+    /**
+     * Returns the value of the specified domain property.
+     * @param name property name
+     * @return the value associated with this property, or null if no such property exists.
+     */
+    public Object getProperty(String name);
 
     /**
-     * Shared properties/POJOs which are not part of switchyard core-api.
-     * 
-     * @return Bag with objects.
+     * Shared properties/POJOs for this service domain.  The returned map does not permit
+     * updates to domain properties. The setProperty() method should be used for 
+     * setting/updating properties
+     * @return unmodifiable map of all domain properties
      */
     Map<String, Object> getProperties();
 

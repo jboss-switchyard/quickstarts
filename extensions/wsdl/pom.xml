@@ -24,8 +24,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>switchyard-extensions-wsdl</artifactId>
     <packaging>jar</packaging>
-    <name>SwitchYard: Extensions WSDL</name>
-    <description>The SwitchYard WSDL Interface Extension.</description>
+    <name>SwitchYard: API Extensions - WSDL</name>
+    <description>The SwitchYard WSDL API Extension</description>
     <url>http://switchyard.org</url>
     <parent>
         <groupId>org.switchyard</groupId>

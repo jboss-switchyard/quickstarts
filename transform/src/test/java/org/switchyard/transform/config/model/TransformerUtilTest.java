@@ -27,7 +27,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.switchyard.annotations.Transformer;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.extensions.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.internal.TransformerTypes;
 import org.switchyard.transform.internal.TransformerUtil;
@@ -45,18 +46,18 @@ public class TransformerUtilTest {
         Assert.assertEquals(QName.valueOf("X"), transformTypes.get(0).getFrom());
         Assert.assertEquals(QName.valueOf("Y"), transformTypes.get(0).getTo());
         Assert.assertEquals(QName.valueOf("Z"), transformTypes.get(1).getFrom());
-        Assert.assertEquals(JavaService.toMessageType(A.class), transformTypes.get(1).getTo());
-        Assert.assertEquals(JavaService.toMessageType(A.class), transformTypes.get(2).getFrom());
-        Assert.assertEquals(JavaService.toMessageType(B.class), transformTypes.get(2).getTo());
-        Assert.assertEquals(JavaService.toMessageType(B.class), transformTypes.get(3).getFrom());
+        Assert.assertEquals(JavaTypes.toMessageType(A.class), transformTypes.get(1).getTo());
+        Assert.assertEquals(JavaTypes.toMessageType(A.class), transformTypes.get(2).getFrom());
+        Assert.assertEquals(JavaTypes.toMessageType(B.class), transformTypes.get(2).getTo());
+        Assert.assertEquals(JavaTypes.toMessageType(B.class), transformTypes.get(3).getFrom());
         Assert.assertEquals(QName.valueOf("Z"), transformTypes.get(3).getTo());
-        Assert.assertEquals(JavaService.toMessageType(B.class), transformTypes.get(4).getFrom());
-        Assert.assertEquals(JavaService.toMessageType(A.class), transformTypes.get(4).getTo());
+        Assert.assertEquals(JavaTypes.toMessageType(B.class), transformTypes.get(4).getFrom());
+        Assert.assertEquals(JavaTypes.toMessageType(A.class), transformTypes.get(4).getTo());
     }
 
     @Test
     public void test_transform_interface_impl() {
-        org.switchyard.transform.Transformer transformer = TransformerUtil.newTransformer(TestTransformer.class, JavaService.toMessageType(A.class), JavaService.toMessageType(B.class));
+        org.switchyard.transform.Transformer transformer = TransformerUtil.newTransformer(TestTransformer.class, JavaTypes.toMessageType(A.class), JavaTypes.toMessageType(B.class));
 
         Assert.assertTrue(transformer instanceof TestTransformer);
         Assert.assertTrue(transformer.transform(new A()) instanceof B);
@@ -64,7 +65,7 @@ public class TransformerUtilTest {
 
     @Test
     public void test_transform_anno_no_types_defined() {
-        org.switchyard.transform.Transformer transformer = TransformerUtil.newTransformer(TestTransformer.class, JavaService.toMessageType(B.class), JavaService.toMessageType(A.class));
+        org.switchyard.transform.Transformer transformer = TransformerUtil.newTransformer(TestTransformer.class, JavaTypes.toMessageType(B.class), JavaTypes.toMessageType(A.class));
 
         Assert.assertTrue(!(transformer instanceof TestTransformer));
         Assert.assertTrue(transformer.transform(new B()) instanceof A);
@@ -103,7 +104,7 @@ public class TransformerUtilTest {
     public static class TestTransformer extends BaseTransformer {
 
         public TestTransformer() {
-            super(JavaService.toMessageType(A.class), JavaService.toMessageType(B.class));
+            super(JavaTypes.toMessageType(A.class), JavaTypes.toMessageType(B.class));
         }
 
         // A to B

@@ -20,19 +20,20 @@
 package org.switchyard.transform.ootb.map;
 
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.switchyard.metadata.java.JavaService;
-import org.switchyard.transform.Transformer;
-import org.switchyard.transform.internal.TransformerUtil;
-import org.switchyard.transform.ootb.map.ordermodel.Item;
-import org.switchyard.transform.ootb.map.ordermodel.Order;
-
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.namespace.QName;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.switchyard.metadata.JavaTypes;
+import org.switchyard.transform.Transformer;
+import org.switchyard.transform.internal.TransformerUtil;
+import org.switchyard.transform.ootb.map.ordermodel.Item;
+import org.switchyard.transform.ootb.map.ordermodel.Order;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -41,8 +42,8 @@ public class FromMapToJavaTest {
 
     @Test
     public void test_factory_creation() {
-        QName from = JavaService.toMessageType(Map.class);
-        QName to = JavaService.toMessageType(Order.class);
+        QName from = JavaTypes.toMessageType(Map.class);
+        QName to = JavaTypes.toMessageType(Order.class);
 
         Transformer<?,?> transformer = TransformerUtil.newTransformer(FromMapToJava.class, from, to);
         Assert.assertTrue(transformer instanceof FromMapToJava);
@@ -53,7 +54,7 @@ public class FromMapToJavaTest {
         Map orderHash = buildOrderMap();
         FromMapToJava transformer = new FromMapToJava();
 
-        transformer.setTo(JavaService.toMessageType(Order.class));
+        transformer.setTo(JavaTypes.toMessageType(Order.class));
 
         Order order = (Order) transformer.transform(orderHash);
 

@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.metadata;
+package org.switchyard.extensions.java;
 
 import javax.xml.namespace.QName;
 
@@ -25,16 +25,16 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.ExchangePattern;
 import org.switchyard.annotations.OperationTypes;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.ServiceOperation;
 
 public class JavaServiceTest {
     
     static final QName METHOD1_INPUT = new QName(
-        "java:org.switchyard.metadata.MyStuff");           
+        "java:org.switchyard.extensions.java.MyStuff");           
     static final QName METHOD2_INPUT = new QName(
         "java:java.lang.Object");                            
     static final QName METHOD2_OUTPUT = new QName(
-        "java:org.switchyard.metadata.MyStuff");             
+        "java:org.switchyard.extensions.java.MyStuff");             
     
     @Test
     public void testJavaInterfaceAsService() throws Exception {

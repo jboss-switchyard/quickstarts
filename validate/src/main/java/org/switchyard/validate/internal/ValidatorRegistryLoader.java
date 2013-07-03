@@ -27,12 +27,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.config.model.validate.ValidatesModel;
-import org.switchyard.exception.DuplicateValidatorException;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.ValidatorRegistry;
 

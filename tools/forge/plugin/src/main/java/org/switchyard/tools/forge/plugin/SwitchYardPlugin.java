@@ -57,11 +57,11 @@ import org.switchyard.config.model.composite.v1.V1CompositeReferenceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeServiceModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.domain.DomainModel;
-import org.switchyard.config.model.domain.HandlerModel;
-import org.switchyard.config.model.domain.HandlersModel;
 import org.switchyard.config.model.domain.v1.V1DomainModel;
-import org.switchyard.config.model.domain.v1.V1HandlerModel;
-import org.switchyard.config.model.domain.v1.V1HandlersModel;
+import org.switchyard.config.model.property.PropertiesModel;
+import org.switchyard.config.model.property.PropertyModel;
+import org.switchyard.config.model.property.v1.V1PropertiesModel;
+import org.switchyard.config.model.property.v1.V1PropertyModel;
 import org.switchyard.config.model.selector.JavaOperationSelectorModel;
 import org.switchyard.config.model.selector.OperationSelectorModel;
 import org.switchyard.config.model.selector.RegexOperationSelectorModel;
@@ -118,8 +118,7 @@ public class SwitchYardPlugin implements Plugin {
     //private static final String TEST_SERVICE_TEMPLATE = "java/TestTemplate.java";
     private static final String TEST_SERVICE_TEMPLATE = "/org/switchyard/tools/forge/plugin/TestTemplate.java";
     // MessageTrace handler name and class
-    private static final String TRACE_CLASS = "org.switchyard.handlers.MessageTrace";
-    private static final String TRACE_NAME = "MessageTrace";
+    private static final String TRACE_PROPERTY = "org.switchyard.handlers.messageTrace.enabled";
 
     @Inject
     private Project _project;
@@ -345,25 +344,23 @@ public class SwitchYardPlugin implements Plugin {
                 domain = new V1DomainModel();
                 switchYard.getSwitchYardConfig().setDomain(domain);
             }
-            // need to create the handlers config if it's not already present
-            HandlersModel handlers = domain.getHandlers();
-            if (handlers == null) {
-                handlers = new V1HandlersModel();
-                domain.setHandlers(handlers);
+            // need to create the properties config if it's not already present
+            PropertiesModel properties = domain.getProperties();
+            if (properties == null) {
+                properties = new V1PropertiesModel();
+                domain.setProperties(properties);
             }
-            handlers.addHandler(new V1HandlerModel()
-                .setClassName(TRACE_CLASS)
-                .setName(TRACE_NAME));
+            PropertyModel property = properties.getProperty(TRACE_PROPERTY);
+            if (property == null) {
+                property = new V1PropertyModel();
+                property.setName(TRACE_PROPERTY);
+            }
+            property.setValue("true");
             result = "Message tracing has been enabled.";
         } else {
             // Disable the handler by removing the configuration
-            if (domain != null && domain.getHandlers() != null) {
-                for (HandlerModel handler : domain.getHandlers().getHandlers()) {
-                    if (TRACE_CLASS.equals(handler.getClass()) 
-                        && TRACE_NAME.equals(handler.getName())) {
-                        domain.getHandlers().removeHandler(TRACE_NAME);
-                    }
-                }
+            if (domain != null && domain.getProperties() != null) {
+                domain.getProperties().removeProperty(TRACE_PROPERTY);
             }
             result = "Message tracing has been disabled.";
         }

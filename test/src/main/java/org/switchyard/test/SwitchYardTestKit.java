@@ -52,6 +52,7 @@ import org.junit.Assert;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.xml.XMLHelper;
@@ -72,7 +73,7 @@ import org.switchyard.deploy.ActivatorLoader;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.handlers.MessageTraceHandler;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
@@ -180,18 +181,6 @@ public class SwitchYardTestKit {
         deploy();
     }
 
-    /**
-     * invoke the methods annotated with {@link BeforeDeploy} on test class.
-     */
-    private void beforeDeploy() throws Exception {
-        Method[] publicMethods = _testInstance.getClass().getMethods();
-        for (Method method : publicMethods) {
-            BeforeDeploy beforeAnno = method.getAnnotation(BeforeDeploy.class);
-            if (beforeAnno != null) {
-                method.invoke(_testInstance);
-            }
-        }
-    }
 
     /**
      * Cleanup.
@@ -226,78 +215,6 @@ public class SwitchYardTestKit {
      */
     public List<Activator> getActivators() {
         return _activators;
-    }
-    
-    /**
-     * Create and initialise the deployment.
-     * @throws Exception creating the deployment.
-     */
-    private final void deploy() throws Exception {
-        _deployment = createDeployment();
-        ServiceDomain domain = new ServiceDomainManager().createDomain(
-                ServiceDomainManager.ROOT_DOMAIN, _deployment.getConfig());
-
-        _activators = ActivatorLoader.createActivators(domain);
-        SwitchYardTestCaseConfig testCaseConfig = _testInstance.getClass().getAnnotation(SwitchYardTestCaseConfig.class);
-
-        if (testCaseConfig != null) {
-            // Process includes...
-            Collection<String> includes = new HashSet<String>(Arrays.asList(testCaseConfig.include()));
-            if (!includes.isEmpty()) {
-                Iterator<Activator> activatorsIt = _activators.iterator();
-                while (activatorsIt.hasNext()) {
-                    Activator activator = activatorsIt.next();
-
-                    // If the activator does not specify one of the include types, then remove it...
-                    if (!intersection(includes, activator.getActivationTypes())) {
-                        activatorsIt.remove();
-                    }
-                }
-            }
-
-            // Process excludes...
-            Collection<String> excludes = new HashSet<String>(Arrays.asList(testCaseConfig.exclude()));
-            if (!excludes.isEmpty()) {
-                Iterator<Activator> activatorsIt = _activators.iterator();
-                while (activatorsIt.hasNext()) {
-                    Activator activator = activatorsIt.next();
-
-                    // If the activator specifies one of the exclude types, then remove it...
-                    if (intersection(excludes, activator.getActivationTypes())) {
-                        activatorsIt.remove();
-                    }
-                }
-            }
-        }
-
-        _deployment.init(domain, _activators);
-        mixInBefore();
-
-        _deployment.setFailOnMissingActivator(false); // It's OK to have a "missing" activator for a test, so we don't want to fail.
-        _deployment.start();
-    }
-
-    /**
-     * Undeploy the deployment.
-     */
-    private final void undeploy() {
-        assertDeployed();
-        _deployment.stop();
-        mixInAfter();
-        _deployment.destroy();
-    }
-
-    /**
-     * Create the deployment instance.
-     * @return The deployment instance.
-     * @throws Exception creating the deployment.
-     */
-    private AbstractDeployment createDeployment() throws Exception {
-        if (_configModel != null) {
-            return new Deployment(_configModel);
-        } else {
-            return new SimpleTestDeployment();
-        }
     }
 
     /**
@@ -773,6 +690,100 @@ public class SwitchYardTestKit {
             Assert.fail("Unexpected error performing XML comparison.");
         }
     }
+    
+    /**
+     * Enables message tracing for the application under test.
+     * @param doTrace true to enable message tracing, false to disable
+     */
+    public void traceMessages(boolean doTrace) {
+        getServiceDomain().setProperty(MessageTraceHandler.TRACE_ENABLED, true);
+    }
+
+    /**
+     * invoke the methods annotated with {@link BeforeDeploy} on test class.
+     */
+    private void beforeDeploy() throws Exception {
+        Method[] publicMethods = _testInstance.getClass().getMethods();
+        for (Method method : publicMethods) {
+            BeforeDeploy beforeAnno = method.getAnnotation(BeforeDeploy.class);
+            if (beforeAnno != null) {
+                method.invoke(_testInstance);
+            }
+        }
+    }
+    
+    /**
+     * Create and initialise the deployment.
+     * @throws Exception creating the deployment.
+     */
+    private final void deploy() throws Exception {
+        _deployment = createDeployment();
+        ServiceDomain domain = new ServiceDomainManager().createDomain(
+                ServiceDomainManager.ROOT_DOMAIN, _deployment.getConfig());
+
+        _activators = ActivatorLoader.createActivators(domain);
+        SwitchYardTestCaseConfig testCaseConfig = _testInstance.getClass().getAnnotation(SwitchYardTestCaseConfig.class);
+
+        if (testCaseConfig != null) {
+            // Process includes...
+            Collection<String> includes = new HashSet<String>(Arrays.asList(testCaseConfig.include()));
+            if (!includes.isEmpty()) {
+                Iterator<Activator> activatorsIt = _activators.iterator();
+                while (activatorsIt.hasNext()) {
+                    Activator activator = activatorsIt.next();
+
+                    // If the activator does not specify one of the include types, then remove it...
+                    if (!intersection(includes, activator.getActivationTypes())) {
+                        activatorsIt.remove();
+                    }
+                }
+            }
+
+            // Process excludes...
+            Collection<String> excludes = new HashSet<String>(Arrays.asList(testCaseConfig.exclude()));
+            if (!excludes.isEmpty()) {
+                Iterator<Activator> activatorsIt = _activators.iterator();
+                while (activatorsIt.hasNext()) {
+                    Activator activator = activatorsIt.next();
+
+                    // If the activator specifies one of the exclude types, then remove it...
+                    if (intersection(excludes, activator.getActivationTypes())) {
+                        activatorsIt.remove();
+                    }
+                }
+            }
+        }
+
+        _deployment.init(domain, _activators);
+        mixInBefore();
+
+        _deployment.setFailOnMissingActivator(false); // It's OK to have a "missing" activator for a test, so we don't want to fail.
+        _deployment.start();
+    }
+
+    /**
+     * Undeploy the deployment.
+     */
+    private final void undeploy() {
+        assertDeployed();
+        _deployment.stop();
+        mixInAfter();
+        _deployment.destroy();
+    }
+
+    /**
+     * Create the deployment instance.
+     * @return The deployment instance.
+     * @throws Exception creating the deployment.
+     */
+    private AbstractDeployment createDeployment() throws Exception {
+        if (_configModel != null) {
+            return new Deployment(_configModel);
+        } else {
+            return new SimpleTestDeployment();
+        }
+    }
+
 
     private void initializeMixIns() {
         for (TestMixIn mixIn : getMixIns()) {

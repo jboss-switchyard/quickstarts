@@ -39,18 +39,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.switchyard.ErrorListener;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
+import org.switchyard.ExchangeInterceptor;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
 import org.switchyard.ServiceReference;
-import org.switchyard.bus.camel.handler.ErrorInHandler;
-import org.switchyard.bus.camel.handler.ErrorOutHandler;
-import org.switchyard.bus.camel.handler.RuntimeErrorFaultHandler;
+import org.switchyard.bus.camel.handler.ErrorInterceptor;
 import org.switchyard.bus.camel.handler.RuntimeErrorInHandler;
-import org.switchyard.bus.camel.handler.RuntimeErrorOutHandler;
+import org.switchyard.bus.camel.handler.RuntimeErrorInterceptor;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.internal.ServiceReferenceImpl;
 import org.switchyard.metadata.InOnlyService;
@@ -127,29 +127,63 @@ public class CamelExchangeBusTest {
     }
 
     /**
-     * Basic dispatcher test which verifies erroneous domain handler.
+     * Basic dispatcher test which verifies erroneous interceptor.
      */
     @Test
-    public void testInFault() {
-        _domain.getHandlers().add(new ErrorInHandler());
+    public void testBeforeProviderErrorInOut() {
+        ErrorInterceptor interceptor = new ErrorInterceptor(false, ExchangeInterceptor.PROVIDER);
+        _camelContext.getWritebleRegistry().put("interceptor", interceptor);
 
         ServiceReference ref = registerInOutService("inOut");
         Exchange exchange = sendMessage(ref, TEST_CONTENT);
 
-        assertCause("Not implemented", exchange);
+        assertNoCause("Error before on target Provider", exchange);
+        Assert.assertEquals(2, interceptor.getCount());
     }
-
+    
     /**
-     * Basic dispatcher test which verifies erroneous domain handler.
+     * Basic dispatcher test which verifies erroneous interceptor.
      */
     @Test
-    public void testOutFault() {
-        _domain.getHandlers().add(new ErrorOutHandler());
-
+    public void testAfterProviderErrorInOut() {
+        ErrorInterceptor interceptor = new ErrorInterceptor(true, ExchangeInterceptor.PROVIDER);
+        _camelContext.getWritebleRegistry().put("interceptor", interceptor);
+        
         ServiceReference ref = registerInOutService("inOut");
         Exchange exchange = sendMessage(ref, TEST_CONTENT);
 
-        assertNoCause("Domain handler outgoing error", exchange);
+        assertNoCause("Error after on target Provider", exchange);
+        Assert.assertEquals(2, interceptor.getCount());
+    }
+    
+    /**
+     * Basic dispatcher test which verifies erroneous interceptor.
+     */
+    @Test
+    public void testBeforeProviderErrorInOnly() {
+        ErrorInterceptor interceptor = new ErrorInterceptor(false, ExchangeInterceptor.PROVIDER);
+        _camelContext.getWritebleRegistry().put("interceptor", interceptor);
+
+        ServiceReference ref = registerInOnlyService("inOnly", new MockHandler());
+        Exchange exchange = sendMessage(ref, TEST_CONTENT);
+
+        assertNoCause("Error before on target Provider", exchange);
+        Assert.assertEquals(2, interceptor.getCount());
+    }
+    
+    /**
+     * Basic dispatcher test which verifies erroneous interceptor.
+     */
+    @Test
+    public void testAfterProviderErrorInOnly() {
+        ErrorInterceptor interceptor = new ErrorInterceptor(true, ExchangeInterceptor.PROVIDER);
+        _camelContext.getWritebleRegistry().put("interceptor", interceptor);
+
+        ServiceReference ref = registerInOnlyService("inOnly", new MockHandler());
+        Exchange exchange = sendMessage(ref, TEST_CONTENT);
+
+        assertNoCause("Error after on target Provider", exchange);
+        Assert.assertEquals(2, interceptor.getCount());
     }
 
     /**
@@ -157,12 +191,15 @@ public class CamelExchangeBusTest {
      */
     @Test
     public void testInRuntimeFault() {
-        _domain.getHandlers().add(new RuntimeErrorInHandler());
+        RuntimeErrorInterceptor interceptor = new RuntimeErrorInterceptor(
+                false, ExchangeInterceptor.PROVIDER);
+        _camelContext.getWritebleRegistry().put("interceptor", interceptor);
 
         ServiceReference ref = registerInOutService("inOut");
         Exchange exchange = sendMessage(ref, TEST_CONTENT);
 
-        assertCause("Runtime error", exchange);
+        assertCause("RuntimeException before on target Provider", exchange);
+        Assert.assertEquals(2, interceptor.getCount());
     }
 
     /**
@@ -170,12 +207,15 @@ public class CamelExchangeBusTest {
      */
     @Test
     public void testOutRuntimeFault() {
-        _domain.getHandlers().add(new RuntimeErrorOutHandler());
+        RuntimeErrorInterceptor interceptor = new RuntimeErrorInterceptor(
+                true, ExchangeInterceptor.PROVIDER);
+        _camelContext.getWritebleRegistry().put("interceptor", interceptor);
 
         ServiceReference ref = registerInOutService("inOut");
         Exchange exchange = sendMessage(ref, TEST_CONTENT);
 
-        assertCause("Outgoing runtime error", exchange);
+        assertCause("RuntimeException after on target Provider", exchange);
+        Assert.assertEquals(2, interceptor.getCount());
     }
 
     /**
@@ -183,11 +223,16 @@ public class CamelExchangeBusTest {
      */
     @Test
     public void testFaultFault() {
-        _domain.getHandlers().add(new RuntimeErrorFaultHandler());
+        ErrorInterceptor beforeFault = new ErrorInterceptor(false, ExchangeInterceptor.PROVIDER);
+        ErrorInterceptor afterFault = new ErrorInterceptor(true, ExchangeInterceptor.PROVIDER);
+        _camelContext.getWritebleRegistry().put("beforeFault", beforeFault);
+        _camelContext.getWritebleRegistry().put("afterFault", afterFault);
         ServiceReference ref = registerInOutService("inOut");
         Exchange exchange = sendMessage(ref, TEST_CONTENT);
 
-        assertNoCause("Standard processing exception", exchange);
+        assertNoCause("Error before on target Provider", exchange);
+        Assert.assertEquals(2, beforeFault.getCount());
+        Assert.assertEquals(2, afterFault.getCount());
     }
 
     @Test

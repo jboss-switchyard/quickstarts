@@ -36,12 +36,12 @@ import org.switchyard.Service;
 import org.switchyard.ServiceReference;
 import org.switchyard.event.EventObserver;
 import org.switchyard.event.ReferenceRegistrationEvent;
+import org.switchyard.extensions.java.JavaService;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.metadata.java.JavaService;
 
 /**
  *  Unit tests for the DomainImpl class.
@@ -94,31 +94,21 @@ public class DomainImplTest {
         Assert.assertNotNull(service.getInterface().getOperation("myOperation"));
     }
     
-    /*
     @Test
-    public void testDomainHandler() throws Exception {
-        MockDomain testDomain = new MockDomain();
-        // Add a domain-level handler
-        CountingHandler counter = new CountingHandler();
-        testDomain.getHandlerChain().addFirst("counter", counter);
-        ServiceReference inOnly = testDomain.createInOnlyService(new QName("CountIn"));
-        ServiceReference inOut = testDomain.createInOutService(
-                new QName("CountInOut"), new MockHandler().forwardInToOut());
+    public void testGetSetProperties() {
+        Assert.assertNull(_domain.getProperty("foo"));
+        _domain.setProperty("foo", "foo-value");
+        Assert.assertEquals("foo-value", _domain.getProperty("foo"));
+        Assert.assertEquals("foo-value", _domain.getProperties().get("foo"));
         
-        // Verify counter is called once for in-only exchange
-        Exchange ex1 = inOnly.createExchange();
-        ex1.send(new DefaultMessage());
-        Assert.assertEquals(1, counter.getCount());
-        
-        // clear the counter
-        counter.clear();
-        
-        // Verify counter is called twice for in-out exchange
-        Exchange ex2 = inOut.createExchange(new MockHandler());
-        ex2.send(new DefaultMessage().setContent("hello"));
-        Assert.assertEquals(2, counter.getCount());
+        // confirm that we can't set properties via getProperties()
+        try {
+            _domain.getProperties().put("bar", "bar-value");
+            Assert.fail("Should not be able to modify map returned from ServiceDomain.getProperties()");
+        } catch (Exception ex) {
+            Assert.assertEquals(UnsupportedOperationException.class, ex.getClass());
+        }
     }
-    */
     
     @Test
     public void testGetEventPublisher() {

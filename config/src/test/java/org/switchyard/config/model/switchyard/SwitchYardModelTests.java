@@ -43,7 +43,6 @@ import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.test.soap.PortModel;
 import org.switchyard.config.model.composite.test.soap.SOAPBindingModel;
 import org.switchyard.config.model.domain.DomainModel;
-import org.switchyard.config.model.domain.HandlerModel;
 import org.switchyard.config.model.domain.SecuritiesModel;
 import org.switchyard.config.model.domain.SecurityModel;
 import org.switchyard.config.model.property.PropertiesModel;
@@ -143,11 +142,6 @@ public class SwitchYardModelTests {
         Assert.assertEquals("MyWebService", props.getProperty("soapServiceName").getValue());
         Assert.assertEquals("service", props.getProperty("soapWsdlName").getValue());
         Assert.assertEquals(switchyard, domain.getSwitchYard());
-        // Verify handler configuration
-        Assert.assertEquals(1, domain.getHandlers().getHandlers().size());
-        HandlerModel handler = domain.getHandlers().getHandlers().get(0);
-        Assert.assertEquals("handler1", handler.getName());
-        Assert.assertEquals("org.switchyard.handlers.TestHandler", handler.getClassName());
         // Verify artifact configuration
         ArtifactsModel artifacts = switchyard.getArtifacts();
         Assert.assertEquals(1, artifacts.getArtifacts().size());

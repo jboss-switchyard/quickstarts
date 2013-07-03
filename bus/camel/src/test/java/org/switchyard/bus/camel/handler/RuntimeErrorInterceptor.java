@@ -21,20 +21,50 @@
  */
 package org.switchyard.bus.camel.handler;
 
-import org.switchyard.BaseHandler;
+import java.util.Arrays;
+import java.util.List;
+
 import org.switchyard.Exchange;
+import org.switchyard.ExchangeInterceptor;
 import org.switchyard.HandlerException;
 
 /**
  * Simple handler throwing exception during IN phase.
  */
-public class ErrorInHandler extends BaseHandler {
+public class RuntimeErrorInterceptor implements ExchangeInterceptor {
+    
+    private boolean waitForAfter;
+    private String target;
+    private int count;
+    
+    public RuntimeErrorInterceptor(boolean waitForAfter, String target) {
+        this.waitForAfter = waitForAfter;
+        this.target = target;
+    }
 
     @Override
-    public void handleMessage(Exchange exchange) throws HandlerException {
-        NullPointerException firstCause = new NullPointerException();
-        IllegalArgumentException secondCause = new IllegalArgumentException("Not implemented", firstCause);
-        throw new HandlerException(secondCause);
+    public void before(String target, Exchange exchange) throws HandlerException {
+        ++count;
+        if (!waitForAfter) {
+            throw new RuntimeException("RuntimeException before on target " + target);
+        }
+    }
+
+    @Override
+    public void after(String target, Exchange exchange) throws HandlerException {
+        ++count;
+        if (waitForAfter) {
+            throw new RuntimeException("RuntimeException after on target " + target);
+        }
+    }
+
+    @Override
+    public List<String> getTargets() {
+        return Arrays.asList(target);
+    }
+
+    public int getCount() {
+        return count;
     }
 
 }

@@ -19,9 +19,9 @@
   -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0">
     <domain>
-        <handlers>
-            <handler name="test-handler" class="org.switchyard.deploy.handler.DummyHandler"/>
-            <handler name="test-handler2" class="org.switchyard.deploy.handler.DummyHandler"/>
-        </handlers>
+        <properties>
+            <property name="abc" value="abc-value"/>
+            <property name="xyz" value="xyz-value"/>
+        </properties>
     </domain>
 </switchyard>

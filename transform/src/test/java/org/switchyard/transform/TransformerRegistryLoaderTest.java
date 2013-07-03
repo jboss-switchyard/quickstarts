@@ -4,9 +4,9 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.switchyard.SwitchYardException;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.transform.internal.TransformerRegistryLoader;
 

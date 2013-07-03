@@ -23,8 +23,7 @@ import java.lang.reflect.ParameterizedType;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.metadata.java.JavaService;
-
+import org.switchyard.metadata.JavaTypes;
 
 /**
  * Base validator implementation.
@@ -39,7 +38,7 @@ public abstract class BaseValidator<T> implements Validator<T> {
      * Constructor.
      */
     public BaseValidator() {
-        _name = JavaService.toMessageType(getType());
+        _name = JavaTypes.toMessageType(getType());
     }
 
     /**
@@ -103,13 +102,12 @@ public abstract class BaseValidator<T> implements Validator<T> {
     /**
      * Get the type QName for the specified Java type.
      * <p/>
-     * Utility method for {@link JavaService#toMessageType(Class)}.
      *
      * @param type The Java type.
      * @return  The QName type.
      */
     protected static QName toMessageType(Class<?> type) {
-        return JavaService.toMessageType(type);
+        return JavaTypes.toMessageType(type);
     }
 
     protected static class DefaultValidationResult implements ValidationResult {

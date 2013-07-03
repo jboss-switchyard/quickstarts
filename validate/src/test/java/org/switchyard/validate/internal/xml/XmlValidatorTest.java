@@ -25,7 +25,7 @@ import java.io.StringReader;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.internal.DefaultMessage;
 import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;

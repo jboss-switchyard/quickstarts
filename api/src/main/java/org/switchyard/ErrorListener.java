@@ -16,9 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
  * MA  02110-1301, USA.
  */
-package org.switchyard.bus.camel;
-
-import org.switchyard.Exchange;
+package org.switchyard;
 
 /**
  * Interface for elements intent to be aware about exceptions during mediation.

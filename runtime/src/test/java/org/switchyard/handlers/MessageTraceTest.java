@@ -43,7 +43,6 @@ public class MessageTraceTest {
     @Before
     public void setUp() throws Exception {
         _domain = new MockDomain();
-        _domain.getHandlers().add(new MessageTrace());
     }
     
     @Test

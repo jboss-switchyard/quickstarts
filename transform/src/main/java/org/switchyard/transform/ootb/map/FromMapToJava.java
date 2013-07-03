@@ -20,12 +20,13 @@
 package org.switchyard.transform.ootb.map;
 
 import org.apache.log4j.Logger;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.xml.QNameUtil;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
 
 import javax.xml.namespace.QName;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;

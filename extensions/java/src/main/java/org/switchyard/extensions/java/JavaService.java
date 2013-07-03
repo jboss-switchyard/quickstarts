@@ -17,7 +17,7 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.metadata.java;
+package org.switchyard.extensions.java;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -26,13 +26,13 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.annotations.DefaultType;
+import org.switchyard.SwitchYardException;
 import org.switchyard.annotations.OperationTypes;
 import org.switchyard.common.type.Classes;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.BaseService;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.metadata.ServiceOperation;
 
 /**
@@ -53,13 +53,9 @@ import org.switchyard.metadata.ServiceOperation;
 public final class JavaService extends BaseService {
     
     /**
-     *  The type returned from ServiceInterface.getType().
+     * Interface type for Java service contracts.
      */
     public static final String TYPE = "java";
-    /**
-     * Type prefix.
-     */
-    private static final String TYPE_PREFIX = TYPE + ":";
     
     // Java class used to create this ServiceInterface
     private Class<?> _serviceInterface;
@@ -117,42 +113,7 @@ public final class JavaService extends BaseService {
         return _serviceInterface;
     }
 
-    /**
-     * Equivalent to <code>toMessageType(javaType, null)</code>.
-     * <br>
-     * @see JavaService#toMessageType(Class)
-     * Checks for a {@link org.switchyard.annotations.DefaultType} on the type.  If not found,
-     * the type name is derived from the Java Class name.
-     *
-     * @param javaType The Java type.
-     * @return The payload type.
-     */
-    public static QName toMessageType(Class<?> javaType) {
-        return QName.valueOf(toMessageTypeString(javaType));
-    }
-
-    /**
-     * Convert the supplied java type to a payload type name.
-     * <p/>
-     * Checks for a {@link org.switchyard.annotations.DefaultType} on the type.  If not found,
-     * the type name is derived from the Java Class name.
-     *
-     * @param javaType The Java type.
-     * @return The payload type.
-     */
-    public static String toMessageTypeString(Class<?> javaType) {
-        DefaultType defaultType = javaType.getAnnotation(DefaultType.class);
-
-        if (defaultType != null) {
-            return defaultType.value();
-        } else {
-            if (javaType.isMemberClass()) {
-                return TYPE_PREFIX + javaType.getName();
-            } else {
-                return TYPE_PREFIX + javaType.getCanonicalName();
-            }
-        }
-    }
+    
     
     /**
      * Tries to parse the passed in {@link QName} and load the class of that
@@ -207,7 +168,7 @@ public final class JavaService extends BaseService {
                     return QName.valueOf(_methodTypeNames.in());
                 }
 
-                return toMessageType(inputType);
+                return JavaTypes.toMessageType(inputType);
             } else {
                 return null;
             }
@@ -223,7 +184,7 @@ public final class JavaService extends BaseService {
                 return QName.valueOf(_methodTypeNames.out());
             }
 
-            return toMessageType(_operationMethod.getReturnType());
+            return JavaTypes.toMessageType(_operationMethod.getReturnType());
         }
 
         /**
@@ -245,7 +206,7 @@ public final class JavaService extends BaseService {
                 return QName.valueOf(_methodTypeNames.fault());
             }
 
-            return toMessageType(exceptions[0]);
+            return JavaTypes.toMessageType(exceptions[0]);
         }
     }
 }

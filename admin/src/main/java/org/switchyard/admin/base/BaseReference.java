@@ -39,9 +39,9 @@ import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.switchyard.EsbInterfaceModel;
+import org.switchyard.extensions.java.JavaService;
 import org.switchyard.extensions.wsdl.WSDLReaderException;
 import org.switchyard.extensions.wsdl.WSDLService;
-import org.switchyard.metadata.java.JavaService;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**

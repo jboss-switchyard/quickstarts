@@ -20,26 +20,21 @@
 package org.switchyard.deploy;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.switchyard.ExchangeHandler;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.bus.camel.CamelExchangeBus;
 import org.switchyard.common.camel.SwitchYardCamelContext;
-import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.domain.DomainModel;
-import org.switchyard.config.model.domain.HandlerModel;
 import org.switchyard.config.model.domain.SecuritiesModel;
 import org.switchyard.config.model.domain.SecurityModel;
 import org.switchyard.config.model.property.PropertiesModel;
+import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.internal.DefaultServiceRegistry;
 import org.switchyard.internal.DefaultServiceSecurity;
 import org.switchyard.internal.DomainImpl;
@@ -114,8 +109,12 @@ public class ServiceDomainManager {
                 domainName, _registry, bus, transformerRegistry, validatorRegistry, _eventManager, serviceSecurities);
         camelContext.setServiceDomain(domain);
 
-        if (switchyardConfig != null) {
-            domain.getHandlers().addAll(getDomainHandlers(switchyardConfig.getDomain()));
+        // set properties on the domain
+        PropertiesModel properties = getProperties(switchyardConfig);
+        if (properties != null) {
+            for (PropertyModel property : properties.getProperties()) {
+                domain.setProperty(property.getName(), property.getValue());
+            }
         }
 
         return domain;
@@ -129,34 +128,6 @@ public class ServiceDomainManager {
         return _eventManager;
     }
     
-    /**
-     * Looks for handler definitions in the switchyard config and attempts to 
-     * create and add them to the domain's global handler chain.
-     */
-    private List<ExchangeHandler> getDomainHandlers(DomainModel domain) {
-        LinkedList<ExchangeHandler> handlers = new LinkedList<ExchangeHandler>();
-        if (domain != null && domain.getHandlers() != null) {
-            for (HandlerModel handlerConfig : domain.getHandlers().getHandlers()) {
-                Class<?> handlerClass = Classes.forName(handlerConfig.getClassName());
-                if (handlerClass == null) {
-                    throw new SwitchYardException("Handler class not found " + handlerConfig.getClassName());
-                }
-                if (!ExchangeHandler.class.isAssignableFrom(handlerClass)) {
-                    throw new SwitchYardException("Handler " + handlerConfig.getName() 
-                            + " is not an instance of " + ExchangeHandler.class.getName());
-                }
-                try {
-                    _log.debug("Adding handler " + handlerConfig.getName() + " to domain.");
-                    ExchangeHandler handler = (ExchangeHandler)handlerClass.newInstance();
-                    handlers.addLast(handler);
-                } catch (Exception ex) {
-                    throw new SwitchYardException("Failed to initialize handler class " + handlerClass.getName(), ex);
-                }
-            }
-        }
-        return handlers;
-    }
-
     private Map<String, ServiceSecurity> getServiceSecurities(SwitchYardModel switchyard) {
         Map<String, ServiceSecurity> map = new HashMap<String, ServiceSecurity>();
         if (switchyard != null) {
@@ -186,5 +157,13 @@ public class ServiceDomainManager {
             }
         }
         return map;
+    }
+    
+    private PropertiesModel getProperties(SwitchYardModel config) {
+        if (config == null || config.getDomain() == null) {
+            return null;
+        } else {
+            return config.getDomain().getProperties();
+        }
     }
 }

@@ -22,8 +22,6 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.switchyard.common.lang.Strings;
-
 
 /**
  * MockProperty.
@@ -127,8 +125,8 @@ public class MockProperty implements Property {
     }
 
     private String normalizeLabel(String label) {
-        label = Strings.trimToNull(label);
         if (label != null) {
+            label.trim();
             label = label.toLowerCase();
         }
         return label;

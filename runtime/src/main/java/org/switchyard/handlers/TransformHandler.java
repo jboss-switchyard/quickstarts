@@ -32,8 +32,8 @@ import org.switchyard.HandlerException;
 import org.switchyard.Property;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.label.BehaviorLabel;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.metadata.java.JavaService;
 import org.switchyard.transform.TransformSequence;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
@@ -175,7 +175,7 @@ public class TransformHandler extends BaseHandler {
 
         Object content = exchange.getMessage().getContent();
         if (exceptionTypeName == null && content instanceof Exception) {
-            exceptionTypeName = JavaService.toMessageType(content.getClass());
+            exceptionTypeName = JavaTypes.toMessageType(content.getClass());
         }
 
         if (exceptionTypeName != null && invokerFaultTypeName != null) {

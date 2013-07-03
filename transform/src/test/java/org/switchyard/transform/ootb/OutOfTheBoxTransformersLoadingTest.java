@@ -19,15 +19,6 @@
 
 package org.switchyard.transform.ootb;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.switchyard.internal.transform.BaseTransformerRegistry;
-import org.switchyard.metadata.java.JavaService;
-import org.switchyard.transform.internal.TransformerRegistryLoader;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-
-import javax.xml.namespace.QName;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FilterInputStream;
@@ -35,6 +26,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+
+import javax.xml.namespace.QName;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.switchyard.internal.transform.BaseTransformerRegistry;
+import org.switchyard.metadata.JavaTypes;
+import org.switchyard.transform.internal.TransformerRegistryLoader;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 /**
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
@@ -110,6 +111,6 @@ public class OutOfTheBoxTransformersLoadingTest {
     }
 
     private QName qName(Class<?> aClass) {
-        return JavaService.toMessageType(aClass);
+        return JavaTypes.toMessageType(aClass);
     }
 }

@@ -20,7 +20,9 @@
 package org.switchyard.transform;
 
 import javax.xml.namespace.QName;
+
 import junit.framework.Assert;
+
 import org.junit.Test;
 
 public class BaseTransformerTest {

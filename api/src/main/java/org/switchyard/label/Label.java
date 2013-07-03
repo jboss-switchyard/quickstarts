@@ -18,7 +18,6 @@
  */
 package org.switchyard.label;
 
-import org.switchyard.common.lang.Strings;
 
 /**
  * Labels mark context properties, in their String form.
@@ -64,7 +63,7 @@ public interface Label {
          * @return the Label enum
          */
         public static final <T extends Enum<T>> T ofName(Class<T> enumType, String name) {
-            name = Strings.trimToNull(name);
+            name = trimToNull(name);
             if (name != null) {
                 name = name.toUpperCase();
                 try {
@@ -74,6 +73,21 @@ public interface Label {
                 }
             }
             return null;
+        }
+        
+        /**
+         * Trims the specified String, and if after it is zero-length, return null.
+         * @param str the specified String
+         * @return the trim-to-null'd String
+         */
+        public static String trimToNull(String str) {
+            if (str != null) {
+                str = str.trim();
+                if (str.length() == 0) {
+                    str = null;
+                }
+            }
+            return str;
         }
 
         /**

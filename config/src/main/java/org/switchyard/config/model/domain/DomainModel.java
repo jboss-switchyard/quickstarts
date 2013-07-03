@@ -50,19 +50,6 @@ public interface DomainModel extends NamedModel {
     public DomainModel setProperties(PropertiesModel properties);
     
     /**
-     * Gets the list of handlers defined at the domain level.
-     * @return handlers for the domain
-     */
-    public HandlersModel getHandlers();
-    
-    /**
-     * Sets the child handlers model.
-     * @param handlers the child handlers model.
-     * @return this DomainModel (useful for chaining)
-     */
-    public DomainModel setHandlers(HandlersModel handlers);
-    
-    /**
      * Gets the child securities model.
      * @return the child securities model
      */

@@ -23,7 +23,7 @@ import static org.switchyard.deploy.internal.AbstractDeployment.CLASSLOADER_PROP
 
 import org.switchyard.BaseHandler;
 import org.switchyard.ServiceDomain;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * NOP implementation of ServiceHandler.
@@ -125,7 +125,9 @@ public class BaseServiceHandler extends BaseHandler implements ServiceHandler {
      * @return the class loader for the deployment using this handler.
      */
     protected ClassLoader getDeploymentClassLoader() {
-        return _domain == null ? null : (ClassLoader) _domain.getProperties().get(CLASSLOADER_PROPERTY);
+        return _domain == null 
+                ? null 
+                : (ClassLoader) _domain.getProperty(CLASSLOADER_PROPERTY);
     }
 
 }

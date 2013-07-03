@@ -34,19 +34,17 @@
     <description>SwitchYard Core</description>
     <modules>
         <module>build</module>
+        <module>api</module>
+        <module>extensions/java</module>
+        <module>extensions/wsdl</module>
         <module>common/core</module>
         <module>common/cdi</module>
         <module>common/camel</module>
         <module>config</module>
-        <module>api</module>
         <module>serial/base</module>
         <module>serial/jackson</module>
-        <!--
-        <module>serial/protostuff</module>
-        -->
         <module>security/base</module>
         <module>security/jboss</module>
-        <module>extensions/wsdl</module>
         <module>transform</module>
         <module>validate</module>
         <module>runtime</module>

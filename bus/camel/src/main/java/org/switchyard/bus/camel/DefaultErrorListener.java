@@ -19,6 +19,7 @@
 package org.switchyard.bus.camel;
 
 import org.apache.log4j.Logger;
+import org.switchyard.ErrorListener;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.common.lang.Strings;

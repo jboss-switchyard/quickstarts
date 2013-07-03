@@ -40,7 +40,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.event.EventObserver;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.InOutService;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.runtime.event.ExchangeInitiatedEvent;
 import org.switchyard.spi.Dispatcher;
@@ -376,13 +376,13 @@ public class ExchangeImplTest {
             }
         };
         InOutOperation providerContract = new InOutOperation("faultOp", 
-                JavaService.toMessageType(String.class),   // input
-                JavaService.toMessageType(String.class),   // output
-                JavaService.toMessageType(Exception.class));  // fault
+                JavaTypes.toMessageType(String.class),   // input
+                JavaTypes.toMessageType(String.class),   // output
+                JavaTypes.toMessageType(Exception.class));  // fault
         InOutOperation consumerContract = new InOutOperation("faultOp", 
-                JavaService.toMessageType(String.class),   // input
-                JavaService.toMessageType(String.class),   // output
-                JavaService.toMessageType(String.class));  // fault
+                JavaTypes.toMessageType(String.class),   // input
+                JavaTypes.toMessageType(String.class),   // output
+                JavaTypes.toMessageType(String.class));  // fault
         _domain.registerService(serviceName, new InOutService(providerContract), provider);
         _domain.getTransformerRegistry().addTransformer(new ExceptionToStringTransformer());
         ServiceReference service = _domain.registerServiceReference(serviceName, new InOutService(consumerContract));

@@ -27,7 +27,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.switchyard.annotations.Validator;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.validate.BaseValidator;
 import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.internal.ValidatorTypes;
@@ -45,13 +45,13 @@ public class ValidatorUtilTest {
         Assert.assertEquals(4, validateTypes.size());
         Assert.assertEquals(QName.valueOf("X"), validateTypes.get(0).getName());
         Assert.assertEquals(QName.valueOf("Z"), validateTypes.get(1).getName());
-        Assert.assertEquals(JavaService.toMessageType(A.class), validateTypes.get(2).getName());
-        Assert.assertEquals(JavaService.toMessageType(B.class), validateTypes.get(3).getName());
+        Assert.assertEquals(JavaTypes.toMessageType(A.class), validateTypes.get(2).getName());
+        Assert.assertEquals(JavaTypes.toMessageType(B.class), validateTypes.get(3).getName());
     }
 
     @Test
     public void test_validate_interface_impl() {
-        org.switchyard.validate.Validator validator = ValidatorUtil.newValidator(TestValidator.class, JavaService.toMessageType(A.class));
+        org.switchyard.validate.Validator validator = ValidatorUtil.newValidator(TestValidator.class, JavaTypes.toMessageType(A.class));
 
         Assert.assertTrue(validator instanceof TestValidator);
         ValidationResult result = validator.validate(new A());
@@ -61,7 +61,7 @@ public class ValidatorUtilTest {
 
     @Test
     public void test_validate_anno_no_types_defined() {
-        org.switchyard.validate.Validator validator = ValidatorUtil.newValidator(TestValidator.class, JavaService.toMessageType(B.class));
+        org.switchyard.validate.Validator validator = ValidatorUtil.newValidator(TestValidator.class, JavaTypes.toMessageType(B.class));
 
         Assert.assertTrue(!(validator instanceof TestValidator));
         ValidationResult result = validator.validate(new B());
@@ -104,7 +104,7 @@ public class ValidatorUtilTest {
     public static class TestValidator extends BaseValidator {
 
         public TestValidator() {
-            super(JavaService.toMessageType(A.class));
+            super(JavaTypes.toMessageType(A.class));
         }
 
         @Override

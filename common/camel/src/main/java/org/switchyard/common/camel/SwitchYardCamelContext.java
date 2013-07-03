@@ -102,7 +102,7 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
             setPackageScanClassResolver(packageScanClassResolver);
         }
 
-        this._domain.getProperties().put(CAMEL_CONTEXT_PROPERTY, this);
+        _domain.setProperty(CAMEL_CONTEXT_PROPERTY, this);
     }
 
     /**

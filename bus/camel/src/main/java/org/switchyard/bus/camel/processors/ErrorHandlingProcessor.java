@@ -26,11 +26,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.log4j.Logger;
+import org.switchyard.ErrorListener;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Scope;
 import org.switchyard.bus.camel.CamelExchange;
-import org.switchyard.bus.camel.ErrorListener;
 
 /**
  * Processor put at the beginning of OnExceptionDefinition which turns state of

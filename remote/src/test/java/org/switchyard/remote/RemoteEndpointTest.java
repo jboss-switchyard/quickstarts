@@ -26,7 +26,7 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.extensions.java.JavaService;
 import org.switchyard.serial.FormatType;
 import org.switchyard.serial.Serializer;
 import org.switchyard.serial.SerializerFactory;

@@ -85,9 +85,6 @@ MA  02110-1301, USA.
             <property name="soapServiceName" value="MyWebService"/>
             <property name="soapWsdlName" value="service"/>
         </properties>
-        <handlers>
-            <handler name="handler1" class="org.switchyard.handlers.TestHandler"/>
-        </handlers>
         <securities>
             <security callbackHandler="java.lang.Object" name="theSecurityName" rolesAllowed="administrator, user" runAs="leader" securityDomain="theSecurityDomain">
                 <properties>

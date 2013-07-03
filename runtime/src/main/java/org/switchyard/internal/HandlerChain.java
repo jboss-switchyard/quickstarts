@@ -17,9 +17,12 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard;
+package org.switchyard.internal;
 
 import java.util.List;
+
+import org.switchyard.Exchange;
+import org.switchyard.ExchangeHandler;
 
 /**
  * An ordered list of {@code Handler} instances that can be associated with a

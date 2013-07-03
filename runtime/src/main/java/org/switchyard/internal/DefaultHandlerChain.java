@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
-import org.switchyard.HandlerChain;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 

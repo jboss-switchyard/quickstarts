@@ -21,7 +21,7 @@ package org.switchyard.transform.smooks.internal;
 
 import org.milyn.Smooks;
 import org.milyn.javabean.binding.model.ModelSet;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.SmooksTransformModel;
 import org.switchyard.transform.config.model.SmooksTransformType;

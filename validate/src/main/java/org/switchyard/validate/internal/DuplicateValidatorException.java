@@ -17,7 +17,9 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.exception;
+package org.switchyard.validate.internal;
+
+import org.switchyard.SwitchYardException;
 
 /**
  * A DuplicateValidatorException is thrown by SwitchYard when a duplicate validator

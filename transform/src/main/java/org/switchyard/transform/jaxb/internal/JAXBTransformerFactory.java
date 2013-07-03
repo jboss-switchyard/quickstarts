@@ -19,24 +19,25 @@
 
 package org.switchyard.transform.jaxb.internal;
 
-import org.apache.log4j.Logger;
-import org.switchyard.common.type.Classes;
-import org.switchyard.common.xml.QNameUtil;
-import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.java.JavaService;
-import org.switchyard.transform.Transformer;
-import org.switchyard.transform.config.model.JAXBTransformModel;
-import org.switchyard.transform.config.model.JavaTransformType;
-import org.switchyard.transform.internal.TransformerFactory;
-
-import javax.xml.bind.annotation.XmlElementDecl;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlElementDecl;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
+
+import org.apache.log4j.Logger;
+import org.switchyard.SwitchYardException;
+import org.switchyard.common.type.Classes;
+import org.switchyard.common.xml.QNameUtil;
+import org.switchyard.metadata.JavaTypes;
+import org.switchyard.transform.Transformer;
+import org.switchyard.transform.config.model.JAXBTransformModel;
+import org.switchyard.transform.config.model.JavaTransformType;
+import org.switchyard.transform.internal.TransformerFactory;
 
 /**
  * JAXB Transformer factory.
@@ -107,7 +108,7 @@ public class JAXBTransformerFactory implements TransformerFactory<JAXBTransformM
             QName fromType = getTypeXMLQName(inType, objectFactory);
 
             if (fromType != null) {
-                QName toType = JavaService.toMessageType(inType);
+                QName toType = JavaTypes.toMessageType(inType);
                 transformers.add(new JAXBUnmarshalTransformer(fromType, toType, inType.getPackage().getName()));
             } else if (_log.isDebugEnabled()) {
                 _log.debug(createMissingFactoryMethodMessage(inType, objectFactory));
@@ -122,7 +123,7 @@ public class JAXBTransformerFactory implements TransformerFactory<JAXBTransformM
             QName toType = getTypeXMLQName(outType, objectFactory);
 
             if (toType != null) {
-                QName fromType = JavaService.toMessageType(outType);
+                QName fromType = JavaTypes.toMessageType(outType);
                 transformers.add(new JAXBMarshalTransformer(fromType, toType, outType.getPackage().getName()));
             } else if (_log.isDebugEnabled()) {
                 _log.debug(createMissingFactoryMethodMessage(outType, objectFactory));

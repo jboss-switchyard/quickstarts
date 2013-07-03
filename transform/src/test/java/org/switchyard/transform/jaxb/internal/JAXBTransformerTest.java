@@ -32,7 +32,7 @@ import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.internal.DefaultMessage;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.transform.AbstractTransformerTestCase;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.JAXBTransformModel;
@@ -46,10 +46,10 @@ public class JAXBTransformerTest extends AbstractTransformerTestCase {
     @Test
     public void test_createFromClass() throws IOException, SAXException {
         JAXBUnmarshalTransformer unmarshalTransformer = new JAXBUnmarshalTransformer(
-                new QName("purchaseOrder"), JavaService.toMessageType(POType.class), null);
+                new QName("purchaseOrder"), JavaTypes.toMessageType(POType.class), null);
         
         JAXBMarshalTransformer marshalTransformer = new JAXBMarshalTransformer(
-                JavaService.toMessageType(POType.class), new QName("purchaseOrder"), null);
+                JavaTypes.toMessageType(POType.class), new QName("purchaseOrder"), null);
 
         DefaultMessage message = new DefaultMessage();
         message.setContent(new StreamSource(new StringReader(PO_XML)));

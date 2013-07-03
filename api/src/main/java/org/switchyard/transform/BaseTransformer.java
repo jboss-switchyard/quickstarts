@@ -23,7 +23,7 @@ import java.lang.reflect.ParameterizedType;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 
 
 /**
@@ -42,8 +42,8 @@ public abstract class BaseTransformer<F, T> implements Transformer<F, T> {
      * Constructor.
      */
     public BaseTransformer() {
-        _to = JavaService.toMessageType(getType(Types.T));
-        _from = JavaService.toMessageType(getType(Types.F));
+        _to = JavaTypes.toMessageType(getType(Types.T));
+        _from = JavaTypes.toMessageType(getType(Types.F));
     }
 
     /**
@@ -96,13 +96,12 @@ public abstract class BaseTransformer<F, T> implements Transformer<F, T> {
     /**
      * Get the type QName for the specified Java type.
      * <p/>
-     * Utility method for {@link JavaService#toMessageType(Class)}.
      *
      * @param type The Java type.
      * @return  The QName type.
      */
     protected static QName toMessageType(Class<?> type) {
-        return JavaService.toMessageType(type);
+        return JavaTypes.toMessageType(type);
     }
 
     private Class<?> getType(Types type) {

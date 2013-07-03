@@ -17,20 +17,29 @@
  * MA  02110-1301, USA.
  */
 
-package org.switchyard.exception;
+package org.switchyard.transform.internal;
+
+import org.switchyard.SwitchYardException;
 
 /**
- * Exchange delivery exception.
+ * A DuplicateTransformerException is thrown by SwitchYard when a duplicate transformer
+ * is trying to be registered for a 'from' and 'to' type for which there already exists 
+ * a transformer in the transformer registry.
  *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
+ * @author Daniel Bevenius
  */
-public class DeliveryException extends SwitchYardException {
+public class DuplicateTransformerException extends SwitchYardException {
+
+    /**
+     * Serial version unique id.
+     */
+    private static final long serialVersionUID = -8937972965502786027L;
 
     /**
      * Public constructor.
      * @param message Exception message.
      */
-    public DeliveryException(String message) {
+    public DuplicateTransformerException(final String message) {
         super(message);
     }
 
@@ -39,7 +48,7 @@ public class DeliveryException extends SwitchYardException {
      * @param message Exception message.
      * @param cause Throwable cause.
      */
-    public DeliveryException(String message, Throwable cause) {
+    public DuplicateTransformerException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

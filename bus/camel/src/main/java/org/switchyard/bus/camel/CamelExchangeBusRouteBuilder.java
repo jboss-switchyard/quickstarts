@@ -20,10 +20,11 @@ package org.switchyard.bus.camel;
 
 import static org.switchyard.bus.camel.processors.Processors.ADDRESSING;
 import static org.switchyard.bus.camel.processors.Processors.CONSUMER_CALLBACK;
-import static org.switchyard.bus.camel.processors.Processors.DOMAIN_HANDLERS;
+import static org.switchyard.bus.camel.processors.Processors.CONSUMER_INTERCEPT;
 import static org.switchyard.bus.camel.processors.Processors.ERROR_HANDLING;
 import static org.switchyard.bus.camel.processors.Processors.GENERIC_POLICY;
 import static org.switchyard.bus.camel.processors.Processors.PROVIDER_CALLBACK;
+import static org.switchyard.bus.camel.processors.Processors.PROVIDER_INTERCEPT;
 import static org.switchyard.bus.camel.processors.Processors.SECURITY;
 import static org.switchyard.bus.camel.processors.Processors.TRANSACTION_HANDLER;
 import static org.switchyard.bus.camel.processors.Processors.TRANSFORMATION;
@@ -42,11 +43,12 @@ import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.spi.InterceptStrategy;
+import org.switchyard.ErrorListener;
 import org.switchyard.ExchangePattern;
+import org.switchyard.SwitchYardException;
 import org.switchyard.bus.camel.audit.AuditInterceptStrategy;
 import org.switchyard.bus.camel.audit.FaultInterceptStrategy;
 import org.switchyard.common.camel.SwitchYardCamelContext;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.metadata.qos.Throttling;
 
@@ -133,7 +135,7 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
         addThrottling(tryDefinition);
         
         tryDefinition
-            .processRef(DOMAIN_HANDLERS.name())
+            .processRef(CONSUMER_INTERCEPT.name())
             .processRef(ADDRESSING.name())
             .processRef(TRANSACTION_HANDLER.name())
             .processRef(SECURITY.name())
@@ -141,23 +143,26 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
             .processRef(VALIDATION.name())
             .processRef(TRANSFORMATION.name())
             .processRef(VALIDATION.name())
+            .processRef(PROVIDER_INTERCEPT.name())
             .processRef(PROVIDER_CALLBACK.name())
+            .processRef(PROVIDER_INTERCEPT.name())
             .processRef(TRANSACTION_HANDLER.name())
             .addOutput(createFilterDefinition());
         
         tryDefinition
             .doCatch(Exception.class)
             .processRef(ERROR_HANDLING.name())
+            .processRef(PROVIDER_INTERCEPT.name())
             .processRef(TRANSACTION_HANDLER.name())
             .addOutput(createFilterDefinition());
         
         tryDefinition.doFinally()
+            .processRef(CONSUMER_INTERCEPT.name())
             .processRef(CONSUMER_CALLBACK.name());
     }
 
     private ExpressionNode createFilterDefinition() {
         return new FilterDefinition(IN_OUT_CHECK)
-            .processRef(DOMAIN_HANDLERS.name())
             .processRef(VALIDATION.name())
             .processRef(TRANSFORMATION.name())
             .processRef(VALIDATION.name())

@@ -35,11 +35,13 @@ public class ServiceDomainManagerTest {
     @Test
     public void testHandlerRegistration() throws Exception {
         SwitchYardModel switchyard = new ModelPuller<SwitchYardModel>().pull(
-                "/switchyard-config-handler-01.xml", getClass());
+                "/switchyard-config-properties-01.xml", getClass());
         
         ServiceDomain domain = new ServiceDomainManager().createDomain(
                 new QName("test"), switchyard);
         
-        Assert.assertEquals(2, domain.getHandlers().size());
+        Assert.assertEquals("abc-value", domain.getProperty("abc"));
+        Assert.assertEquals("xyz-value", domain.getProperty("xyz"));
+        Assert.assertNull(domain.getProperty("nothing"));
     }
 }

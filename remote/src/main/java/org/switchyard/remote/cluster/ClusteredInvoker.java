@@ -20,7 +20,7 @@ package org.switchyard.remote.cluster;
 
 import java.io.IOException;
 
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.remote.RemoteEndpoint;
 import org.switchyard.remote.RemoteInvoker;
 import org.switchyard.remote.RemoteMessage;

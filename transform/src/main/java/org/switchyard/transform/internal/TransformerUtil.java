@@ -31,9 +31,9 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.xml.QNameUtil;
-import org.switchyard.exception.SwitchYardException;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.Transformer;
 
@@ -46,7 +46,7 @@ public final class TransformerUtil {
 
     private static final Logger LOGGER = Logger.getLogger(TransformerUtil.class);
 
-    private static final QName OBJECT_TYPE = JavaService.toMessageType(Object.class);
+    private static final QName OBJECT_TYPE = JavaTypes.toMessageType(Object.class);
 
     private TransformerUtil() {}
 
@@ -301,12 +301,12 @@ public final class TransformerUtil {
         if (!transformerAnno.from().trim().equals("")) {
             from = QName.valueOf(transformerAnno.from().trim());
         } else {
-            from = JavaService.toMessageType(fromType);
+            from = JavaTypes.toMessageType(fromType);
         }
         if (!transformerAnno.to().trim().equals("")) {
             to = QName.valueOf(transformerAnno.to().trim());
         } else {
-            to = JavaService.toMessageType(toType);
+            to = JavaTypes.toMessageType(toType);
         }
 
         return new TransformerMethod(from, to, publicMethod);

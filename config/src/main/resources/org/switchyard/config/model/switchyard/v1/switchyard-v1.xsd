@@ -175,7 +175,6 @@ MA  02110-1301, USA.
             <element ref="swyd:transforms" minOccurs="0" maxOccurs="1"/>
             <element ref="swyd:validates" minOccurs="0" maxOccurs="1"/>
             <element ref="swyd:properties" minOccurs="0" maxOccurs="1"/>
-            <element ref="swyd:handlers" minOccurs="0" maxOccurs="1"/>
             <element ref="swyd:securities" minOccurs="0" maxOccurs="1"/>
         </sequence>
         <attribute name="name" type="string" use="optional"/>
@@ -198,19 +197,6 @@ MA  02110-1301, USA.
     <complexType name="ResourceType">
         <attribute name="location" type="string" use="required"/>
         <attribute name="type" type="NCName" use="required"/>
-    </complexType>
-
-    <element name="handlers" type="swyd:HandlersType"/>
-    <complexType name="HandlersType">
-        <sequence>
-            <element ref="swyd:handler" minOccurs="0" maxOccurs="unbounded"/>
-        </sequence>
-    </complexType>
-
-    <element name="handler" type="swyd:HandlerType"/>
-    <complexType name="HandlerType">
-        <attribute name="name" type="string" use="optional"/>
-        <attribute name="class" type="string" use="required"/>
     </complexType>
 
     <element name="artifacts" type="swyd:ArtifactsType"/>

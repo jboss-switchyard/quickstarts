@@ -19,21 +19,21 @@
 
 package org.switchyard.internal.validate;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.validate.BaseValidator;
 import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.ValidatorRegistry;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class BaseValidatorRegistryTest {
     
@@ -109,7 +109,7 @@ public class BaseValidatorRegistryTest {
     }
 
     private QName getType(Class<?> type) {
-        return JavaService.toMessageType(type);
+        return JavaTypes.toMessageType(type);
     }
 
     public class A {}

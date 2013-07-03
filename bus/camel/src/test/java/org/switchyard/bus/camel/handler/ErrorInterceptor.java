@@ -21,21 +21,50 @@
  */
 package org.switchyard.bus.camel.handler;
 
-import org.switchyard.BaseHandler;
+import java.util.Arrays;
+import java.util.List;
+
 import org.switchyard.Exchange;
-import org.switchyard.ExchangePhase;
+import org.switchyard.ExchangeInterceptor;
 import org.switchyard.HandlerException;
 
 /**
- * Handler throwing regular exception during handling OUT phase.
+ * Simple handler throwing exception during IN phase.
  */
-public class ErrorOutHandler extends BaseHandler {
+public class ErrorInterceptor implements ExchangeInterceptor {
+    
+    private boolean waitForAfter;
+    private String target;
+    private int count;
+    
+    public ErrorInterceptor(boolean waitForAfter, String target) {
+        this.waitForAfter = waitForAfter;
+        this.target = target;
+    }
 
     @Override
-    public void handleMessage(Exchange exchange) throws HandlerException {
-        if (exchange.getPhase() == ExchangePhase.OUT) {
-            throw new HandlerException("Domain handler outgoing error");
+    public void before(String target, Exchange exchange) throws HandlerException {
+        ++count;
+        if (!waitForAfter) {
+            throw new HandlerException("Error before on target " + target);
         }
+    }
+
+    @Override
+    public void after(String target, Exchange exchange) throws HandlerException {
+        ++count;
+        if (waitForAfter) {
+            throw new HandlerException("Error after on target " + target);
+        }
+    }
+
+    @Override
+    public List<String> getTargets() {
+        return Arrays.asList(target);
+    }
+
+    public int getCount() {
+        return count;
     }
 
 }

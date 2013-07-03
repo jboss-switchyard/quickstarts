@@ -24,9 +24,9 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.switchyard.HandlerException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.serial.FormatType;
 import org.switchyard.serial.Serializer;
 import org.switchyard.serial.SerializerFactory;

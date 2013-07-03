@@ -22,8 +22,6 @@ package org.switchyard.internal;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.EventObject;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,8 +64,7 @@ public class DomainImpl implements ServiceDomain {
     private ExchangeBus _exchangeBus;
     private TransformerRegistry _transformerRegistry;
     private ValidatorRegistry _validatorRegistry;
-    private List<ExchangeHandler> _userHandlers = new LinkedList<ExchangeHandler>();
-    private Map<String, Object> _properties = Collections.synchronizedMap(new LinkedHashMap<String, Object>());
+    private Map<String, Object> _properties = new ConcurrentHashMap<String, Object>();
     private Map<String, ServiceSecurity> _serviceSecurities = new ConcurrentHashMap<String, ServiceSecurity>();
     
     /**
@@ -196,16 +193,16 @@ public class DomainImpl implements ServiceDomain {
         return _validatorRegistry;
     }
     
-     @Override
-     public List<Service> getServices() {
-         return _serviceRegistry.getServices();
-     }
+    @Override
+    public List<Service> getServices() {
+        return _serviceRegistry.getServices();
+    }
        
 
-     @Override
-     public List<Service> getServices(QName serviceName) {
-         return _serviceRegistry.getServices(serviceName);
-     }
+    @Override
+    public List<Service> getServices(QName serviceName) {
+        return _serviceRegistry.getServices(serviceName);
+    }
     
     /**
      * Convenient access to the domain's service registry.
@@ -241,13 +238,19 @@ public class DomainImpl implements ServiceDomain {
     }
 
     @Override
-    public List<ExchangeHandler> getHandlers() {
-        return _userHandlers;
+    public Map<String, Object> getProperties() {
+        return Collections.unmodifiableMap(_properties);
     }
 
     @Override
-    public Map<String, Object> getProperties() {
-        return _properties;
+    public Object getProperty(String name) {
+        return _properties.get(name);
+    }
+
+    @Override
+    public ServiceDomain setProperty(String name, Object value) {
+        _properties.put(name, value);
+        return this;
     }
 
     private void setEventPublisher(Object target) {

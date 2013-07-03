@@ -32,9 +32,9 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.log4j.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.SwitchYardException;
 import org.switchyard.bus.camel.processors.Processors;
 import org.switchyard.common.camel.SwitchYardCamelContext;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
 

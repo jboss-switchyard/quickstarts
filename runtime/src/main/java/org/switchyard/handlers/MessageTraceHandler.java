@@ -26,12 +26,17 @@ import org.switchyard.HandlerException;
 import org.switchyard.runtime.util.ExchangeFormatter;
 
 /**
- * Half-baked message tracing implementation, used primarily as an example
- * at this point.
+ * Half-baked message tracing implementation.
  */
-public class MessageTrace implements ExchangeHandler {
+public class MessageTraceHandler implements ExchangeHandler {
     
-    private static Logger _log = Logger.getLogger(MessageTrace.class);
+    /**
+     * Property name used to enable message tracing.
+     */
+    public static final String TRACE_ENABLED = 
+            "org.switchyard.handlers.messageTrace.enabled";
+    
+    private static Logger _log = Logger.getLogger(MessageTraceHandler.class);
 
     @Override
     public void handleFault(Exchange exchange) {

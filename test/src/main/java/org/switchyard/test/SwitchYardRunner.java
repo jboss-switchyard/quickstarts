@@ -74,7 +74,7 @@ public class SwitchYardRunner extends BlockJUnit4ClassRunner {
         set(_testKit.getConfigModel(), PropertyMatchResolution.ASSIGNABLE);
         set(_testKit.getServiceDomain(), PropertyMatchResolution.ASSIGNABLE);
         set(_testKit.getServiceDomain().getTransformerRegistry(), PropertyMatchResolution.ASSIGNABLE);
-        set(_testKit.getServiceDomain().getProperties().get(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY), PropertyMatchResolution.ASSIGNABLE);
+        set(_testKit.getServiceDomain().getProperty(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY), PropertyMatchResolution.ASSIGNABLE);
 
         setInvokers();
 
