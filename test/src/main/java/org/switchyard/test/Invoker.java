@@ -29,11 +29,13 @@ import javax.activation.DataSource;
 import javax.xml.namespace.QName;
 
 import org.junit.Assert;
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.common.xml.XMLHelper;
@@ -58,6 +60,7 @@ public class Invoker {
     private QName _inputType;
     private QName _expectedOutputType;
     private QName _expectedFaultType;
+    private Map<Scope, Map<String, Object>> _properties = new HashMap<Scope, Map<String, Object>>();
     private Map<String, DataSource> _attachments = new HashMap<String, DataSource>();
 
     /**
@@ -188,13 +191,75 @@ public class Invoker {
     }
 
     /**
+     * Sets a property at {@link Scope.MESSAGE}.
+     * @param name the name
+     * @param value the value
+     * @return This invoker instance.
+     */
+    public Invoker property(String name, Object value) {
+        return property(name, value, null);
+    }
+
+    /**
+     * Sets a property at the specified scope.
+     * @param name the name
+     * @param value the value
+     * @param scope the scope
+     * @return This invoker instance.
+     */
+    public Invoker property(String name, Object value, Scope scope) {
+        if (name != null) {
+            if (scope == null) {
+                scope = Scope.MESSAGE;
+            }
+            Map<String, Object> map = _properties.get(scope);
+            if (map == null) {
+                map = new HashMap<String, Object>();
+                _properties.put(scope, map);
+            }
+            if (value != null) {
+                map.put(name, value);
+            } else {
+                map.remove(name);
+            }
+        }
+        return this;
+    }
+
+    private void setProperties(Exchange exchange, Message message) {
+        Context exchangeContext = exchange.getContext();
+        Map<String, Object> exchangeProperties = _properties.get(Scope.EXCHANGE);
+        if (exchangeProperties != null) {
+            for (Map.Entry<String, Object> exchangeProperty : exchangeProperties.entrySet()) {
+                exchangeContext.setProperty(exchangeProperty.getKey(), exchangeProperty.getValue(), Scope.EXCHANGE);
+            }
+        }
+        Context messageContext = exchange.getContext(message);
+        Map<String, Object> messageProperties = _properties.get(Scope.MESSAGE);
+        if (messageProperties != null) {
+            for (Map.Entry<String, Object> messageProperty : messageProperties.entrySet()) {
+                messageContext.setProperty(messageProperty.getKey(), messageProperty.getValue(), Scope.MESSAGE);
+            }
+        }
+    }
+
+    /**
      * Adds an attachment for created Messages.
      * @param name the name of the attachment
      * @param attachment the attachment
      * @return This invoker instance.
      */
-    public Invoker addAttachment(String name, DataSource attachment) {
-        _attachments.put(name, attachment);
+    public Invoker attachment(String name, DataSource attachment) {
+        if (name == null) {
+            name = attachment.getName();
+        }
+        if (name != null) {
+            if (attachment != null) {
+                _attachments.put(name, attachment);
+            } else {
+                _attachments.remove(name);
+            }
+        }
         return this;
     }
 
@@ -202,16 +267,6 @@ public class Invoker {
         for (Map.Entry<String, DataSource> entry : _attachments.entrySet()) {
             message.addAttachment(entry.getKey(), entry.getValue());
         }
-    }
-
-    /**
-     * Removes and attachment for created Messages.
-     * @param name the name of the attachment
-     * @return This invoker instance.
-     */
-    public Invoker removeAttachment(String name) {
-        _attachments.remove(name);
-        return this;
     }
 
     /**
@@ -230,6 +285,7 @@ public class Invoker {
         Exchange exchange = createExchange(ExchangePattern.IN_ONLY, exchangeHandlerProxy._exchangeHandlerProxy);
 
         Message message = exchange.createMessage().setContent(messagePayload);
+        setProperties(exchange, message);
         addAttachments(message);
         exchange.send(message);
     }
@@ -252,6 +308,7 @@ public class Invoker {
         Exchange exchange = createExchange(ExchangePattern.IN_OUT, exchangeHandlerProxy._exchangeHandlerProxy);
 
         Message message = exchange.createMessage().setContent(messagePayload);
+        setProperties(exchange, message);
         addAttachments(message);
         exchange.send(message);
         exchangeHandlerProxy._proxyInvocationHandler.waitForResponse(_timeoutMillis);
