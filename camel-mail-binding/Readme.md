@@ -42,4 +42,4 @@ JBoss AS 7
 
 ## Further Reading
 
-1. [Camel Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Camel+Bindings)
+1. [Mail Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Mail)

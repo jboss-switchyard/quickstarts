@@ -54,4 +54,4 @@ To test TCP you will need few additional steps. Stop server if it's running.
 
 ## Further Reading
 
-1. [Camel Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Camel+Bindings)
+1. [TCP UDP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/TCP+UDP)

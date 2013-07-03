@@ -49,4 +49,4 @@ Expected Results
 
 ## Further Reading
 
-1. [HornetQ Bindings Documentation](https://docs.jboss.org/author/display/SWITCHYARD/JCA+Bindings)
+1. [HornetQ Bindings Documentation](https://docs.jboss.org/author/display/SWITCHYARD/JCA)

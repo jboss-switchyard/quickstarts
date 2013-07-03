@@ -57,3 +57,4 @@ Expected Output
 ## Further Reading
 
 1. [Transformation Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Transformation)
+2. [XSLT Transformer Documentation](https://docs.jboss.org/author/display/SWITCHYARD/XSLT+Transformer)

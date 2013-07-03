@@ -49,4 +49,4 @@ JBoss AS 7
 
 ## Further Reading
 
-1. [SOAP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SOAP+Bindings)
+1. [SOAP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SOAP)

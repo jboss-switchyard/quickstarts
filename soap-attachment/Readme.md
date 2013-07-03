@@ -46,5 +46,5 @@ Response attachment: <external-switchyard.png> with content type image/png
 
 ## Further Reading
 
-1. [SOAP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SOAP+Bindings)
+1. [SOAP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SOAP)
 2. [SOAP Messages with Attachments] http://www.w3.org/TR/SOAP-attachments

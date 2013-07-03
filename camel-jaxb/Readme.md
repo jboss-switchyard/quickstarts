@@ -50,5 +50,5 @@ Received response
 
 ## Further Reading
 
-1. [Camel Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Camel+Bindings)
+1. [Camel Service Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Camel)
 2. [Camel Data Formats](http://camel.apache.org/data-format.html)

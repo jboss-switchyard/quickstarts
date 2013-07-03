@@ -57,4 +57,4 @@ JBoss AS 7
 
 ## Further Reading
 
-1. [Bean Service Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Bean+Services)
+1. [Bean Service Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Bean)

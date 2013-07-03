@@ -116,4 +116,4 @@ Expected Output
 
 ## Further Reading
 
-1. [BPEL Service Documentation](https://docs.jboss.org/author/display/SWITCHYARD/BPEL+Services)
+1. [BPEL Service Documentation](https://docs.jboss.org/author/display/SWITCHYARD/BPEL)

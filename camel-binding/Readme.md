@@ -37,4 +37,4 @@ Hello there Captain Crunch :-)
 
 ## Further Reading
 
-1. [Camel Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Camel+Bindings)
+1. [File Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/File)

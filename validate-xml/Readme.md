@@ -77,3 +77,4 @@ response when you disable the validator in switchyard.xml.
 ## Further Reading
 
 1. [Validation Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Validation)
+2. [XML Validator Documentation](https://docs.jboss.org/author/display/SWITCHYARD/XML+Validator)

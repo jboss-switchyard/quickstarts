@@ -53,4 +53,4 @@ Expected Results
 
 ## Further Reading
 
-1. [JCA Bindings Documentation](https://docs.jboss.org/author/display/SWITCHYARD/JCA+Bindings)
+1. [JCA Bindings Documentation](https://docs.jboss.org/author/display/SWITCHYARD/JCA)
