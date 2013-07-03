@@ -59,9 +59,9 @@ public class CamelImplementationTest {
 
     @Test
     public void sendOneWayMessageThroughCamelToTestAttachment() throws Exception {
-        DataSource attachment = new TestDataSource("10", "text/plain", "Fletch-Data");
-        _getDataForItem.addAttachment(attachment.getName(), attachment);
-        final String data = _getDataForItem.sendInOut(attachment.getName()).getContent(String.class);
+        DataSource ds = new TestDataSource("10", "text/plain", "Fletch-Data");
+        _getDataForItem.attachment(ds.getName(), ds);
+        final String data = _getDataForItem.sendInOut(ds.getName()).getContent(String.class);
         assertThat(data, is(equalTo("Fletch-Data")));
     }
 

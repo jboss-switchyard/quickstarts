@@ -257,6 +257,7 @@ MA  02110-1301, USA.
         <restriction base="string">
             <enumeration value="START_PROCESS"/>
             <enumeration value="SIGNAL_EVENT"/>
+            <enumeration value="SIGNAL_EVENT_ALL"/>
             <enumeration value="ABORT_PROCESS_INSTANCE"/>
         </restriction>
     </simpleType>

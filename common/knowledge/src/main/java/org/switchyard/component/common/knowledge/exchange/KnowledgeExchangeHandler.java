@@ -27,9 +27,11 @@ import java.util.Properties;
 import javax.xml.namespace.QName;
 
 import org.kie.api.runtime.Globals;
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
+import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
@@ -254,26 +256,28 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     /**
      * Gets a primitive boolean context property.
      * @param exchange the exchange
+     * @param message the message
      * @param name the name
      * @return the property
      */
-    protected boolean isBoolean(Exchange exchange, String name) {
-        Boolean b = getBoolean(exchange, name);
+    protected boolean isBoolean(Exchange exchange, Message message, String name) {
+        Boolean b = getBoolean(exchange, message, name);
         return b != null && b.booleanValue();
     }
 
     /**
      * Gets a Boolean context property.
      * @param exchange the exchange
+     * @param message the message
      * @param name the name
      * @return the property
      */
-    protected Boolean getBoolean(Exchange exchange, String name) {
-        Object value = getObject(exchange, name);
+    protected Boolean getBoolean(Exchange exchange, Message message, String name) {
+        Object value = getObject(exchange, message, name);
         if (value instanceof Boolean) {
             return (Boolean)value;
         } else if (value instanceof String) {
-            return Boolean.valueOf((String)value);
+            return Boolean.valueOf(((String)value).trim());
         }
         return null;
     }
@@ -281,17 +285,18 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     /**
      * Gets an Integer context property.
      * @param exchange the exchange
+     * @param message the message
      * @param name the name
      * @return the property
      */
-    protected Integer getInteger(Exchange exchange, String name) {
-        Object value = getObject(exchange, name);
+    protected Integer getInteger(Exchange exchange, Message message, String name) {
+        Object value = getObject(exchange, message, name);
         if (value instanceof Integer) {
             return (Integer)value;
         } else if (value instanceof Number) {
             return Integer.valueOf(((Number)value).intValue());
         } else if (value instanceof String) {
-            return Integer.valueOf((String)value);
+            return Integer.valueOf(((String)value).trim());
         }
         return null;
     }
@@ -299,17 +304,18 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     /**
      * Gets a Long context property.
      * @param exchange the exchange
+     * @param message the message
      * @param name the name
      * @return the property
      */
-    protected Long getLong(Exchange exchange, String name) {
-        Object value = getObject(exchange, name);
+    protected Long getLong(Exchange exchange, Message message, String name) {
+        Object value = getObject(exchange, message, name);
         if (value instanceof Long) {
             return (Long)value;
         } else if (value instanceof Number) {
             return Long.valueOf(((Number)value).longValue());
         } else if (value instanceof String) {
-            return Long.valueOf((String)value);
+            return Long.valueOf(((String)value).trim());
         }
         return null;
     }
@@ -317,11 +323,12 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     /**
      * Gets a String context property.
      * @param exchange the exchange
+     * @param message the message
      * @param name the name
      * @return the property
      */
-    protected String getString(Exchange exchange, String name) {
-        Object value = getObject(exchange, name);
+    protected String getString(Exchange exchange, Message message, String name) {
+        Object value = getObject(exchange, message, name);
         if (value instanceof String) {
             return (String)value;
         } else if (value != null) {
@@ -333,12 +340,13 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     /**
      * Gets an Object context property.
      * @param exchange the exchange
+     * @param message the message
      * @param name the name
-     * @param scope the scope
      * @return the property
      */
-    protected Object getObject(Exchange exchange, String name) {
-        return exchange.getContext().getPropertyValue(name);
+    protected Object getObject(Exchange exchange, Message message, String name) {
+        Context context = message != null ? exchange.getContext(message) : exchange.getContext();
+        return context.getPropertyValue(name);
     }
 
     /**
@@ -357,8 +365,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
                 }
             }
         }
-
         return globalVariables;
     }
- 
+
 }

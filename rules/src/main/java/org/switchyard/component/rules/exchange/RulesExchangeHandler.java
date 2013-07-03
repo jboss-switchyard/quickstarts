@@ -42,12 +42,12 @@ import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
-import org.switchyard.component.common.knowledge.exchange.KnowledgeOperation;
 import org.switchyard.component.common.knowledge.exchange.KnowledgeExchangeHandler;
+import org.switchyard.component.common.knowledge.exchange.KnowledgeOperation;
 import org.switchyard.component.common.knowledge.session.KnowledgeDisposal;
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
-import org.switchyard.component.rules.RulesOperationType;
 import org.switchyard.component.rules.RulesConstants;
+import org.switchyard.component.rules.RulesOperationType;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 
 /**
@@ -122,7 +122,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                 if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
                     expressionContext.putAll(getGlobalVariables(session));
                 }
-                if (isDispose(exchange)) {
+                if (isDispose(exchange, inputMessage)) {
                     disposeStatefulSession();
                 }
                 break;
@@ -177,7 +177,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                 if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
                     expressionContext.putAll(getGlobalVariables(session));
                 }
-                if (isDispose(exchange)) {
+                if (isDispose(exchange, inputMessage)) {
                     disposeStatefulSession();
                 }
                 break;
@@ -208,8 +208,8 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
     }
     */
 
-    private boolean isDispose(Exchange exchange) {
-        return isBoolean(exchange, RulesConstants.DISPOSE_PROPERTY);
+    private boolean isDispose(Exchange exchange, Message message) {
+        return isBoolean(exchange, message, RulesConstants.DISPOSE_PROPERTY);
     }
 
     private final class FireUntilHalt implements Runnable, KnowledgeDisposal {

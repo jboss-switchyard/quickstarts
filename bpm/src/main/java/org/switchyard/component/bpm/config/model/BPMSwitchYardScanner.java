@@ -33,6 +33,7 @@ import org.switchyard.component.bpm.BPMOperationType;
 import org.switchyard.component.bpm.annotation.AbortProcessInstance;
 import org.switchyard.component.bpm.annotation.BPM;
 import org.switchyard.component.bpm.annotation.SignalEvent;
+import org.switchyard.component.bpm.annotation.SignalEventAll;
 import org.switchyard.component.bpm.annotation.StartProcess;
 import org.switchyard.component.bpm.annotation.UserGroupCallback;
 import org.switchyard.component.bpm.annotation.WorkItemHandler;
@@ -75,6 +76,7 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
 
     private static final IsAnnotationPresentFilter START_PROCESS_FILTER = new IsAnnotationPresentFilter(StartProcess.class);
     private static final IsAnnotationPresentFilter SIGNAL_EVENT_FILTER = new IsAnnotationPresentFilter(SignalEvent.class);
+    private static final IsAnnotationPresentFilter SIGNAL_EVENT_ALL_FILTER = new IsAnnotationPresentFilter(SignalEventAll.class);
     private static final IsAnnotationPresentFilter ABORT_PROCESS_INSTANCE_FILTER = new IsAnnotationPresentFilter(AbortProcessInstance.class);
 
     private final IsAnnotationPresentFilter _bpmFilter = new IsAnnotationPresentFilter(BPM.class);
@@ -159,6 +161,14 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
                 inputMappingAnnotations = signalEventAnnotation.inputs();
                 outputMappingAnnotations = signalEventAnnotation.outputs();
                 faultMappingAnnotations = signalEventAnnotation.faults();
+            } else if (SIGNAL_EVENT_ALL_FILTER.matches(method)) {
+                operationType = BPMOperationType.SIGNAL_EVENT_ALL;
+                SignalEventAll signalEventAllAnnotation = method.getAnnotation(SignalEventAll.class);
+                eventId = Strings.trimToNull(signalEventAllAnnotation.eventId());
+                globalMappingAnnotations = signalEventAllAnnotation.globals();
+                inputMappingAnnotations = signalEventAllAnnotation.inputs();
+                outputMappingAnnotations = signalEventAllAnnotation.outputs();
+                faultMappingAnnotations = signalEventAllAnnotation.faults();
             } else if (ABORT_PROCESS_INSTANCE_FILTER.matches(method)) {
                 operationType = BPMOperationType.ABORT_PROCESS_INSTANCE;
                 AbortProcessInstance abortProcessInstanceAnnotation = method.getAnnotation(AbortProcessInstance.class);
