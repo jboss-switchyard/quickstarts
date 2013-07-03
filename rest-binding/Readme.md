@@ -79,4 +79,4 @@ JBoss AS 7
 
 ## Further Reading
 
-1. [RESTEasy Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/RESTEasy+Bindings)
+1. [RESTEasy Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/RESTEasy)

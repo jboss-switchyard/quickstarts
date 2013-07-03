@@ -41,3 +41,4 @@ You should see the following in the command output:
 ## Further Reading
 
 1. [Remote Invoker Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Remote+Invoker)
+2. [SCA Bindings Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SCA)

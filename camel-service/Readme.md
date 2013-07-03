@@ -55,5 +55,5 @@ sally: Actually, any kind of dairy is OK in my book
 
 ## Further Reading
 
-1. [Camel Service Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Camel+Services)
+1. [Camel Service Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Camel)
 

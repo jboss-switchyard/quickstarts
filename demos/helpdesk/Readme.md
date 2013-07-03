@@ -69,6 +69,6 @@ INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] (h
 ## Further Reading
 
 1. [Configuration Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Configuration)
-2. [SOAP Bindings Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SOAP+Bindings)
-3. [BPM Services Documentation](https://docs.jboss.org/author/display/SWITCHYARD/BPM+Services)
-4. [Bean Services Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Bean+Services)
+2. [SOAP Bindings Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SOAP)
+3. [BPM Services Documentation](https://docs.jboss.org/author/display/SWITCHYARD/BPM)
+4. [Bean Services Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Bean)

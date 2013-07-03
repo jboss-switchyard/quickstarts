@@ -40,4 +40,4 @@ JBoss AS 7
 
 ## Further Reading
 
-1. [HTTP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/HTTP+Bindings)
+1. [HTTP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/HTTP)

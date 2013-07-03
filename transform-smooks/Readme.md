@@ -37,3 +37,4 @@ JBoss AS 7
 ## Further Reading
 
 1. [Transformation Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Transformation)
+2. [Smooks Transformer Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Smooks+Transformer)

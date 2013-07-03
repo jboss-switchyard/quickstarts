@@ -26,3 +26,4 @@ Running the quickstart
 ## Further Reading
 
 1. [Transformation Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Transformation)
+2. [JSON Transformer Documentation](https://docs.jboss.org/author/display/SWITCHYARD/JSON+Transformer)

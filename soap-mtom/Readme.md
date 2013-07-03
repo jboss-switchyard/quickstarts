@@ -44,6 +44,6 @@ BufferedImage@xxxxx: type = 5 ColorModel: #pixelBits = 24 numComponents = 3 colo
 ```
 ## Further Reading
 
-1. [SOAP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SOAP+Bindings)
+1. [SOAP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SOAP)
 2. [SOAP Message Transmission Optimization Mechanism (MTOM)] http://www.w3.org/TR/soap12-mtom/
 3. [XML-binary Optimized Packaging (XOP)] http://www.w3.org/TR/xop10/

@@ -62,5 +62,5 @@ Order Boeing with quantity 10 accepted.
 
 ## Further Reading
 
-1. [SOAP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SOAP+Bindings)
+1. [SOAP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SOAP)
 2. [WS-Addressing] http://www.w3.org/standards/techs/wsaddr#w3c_all

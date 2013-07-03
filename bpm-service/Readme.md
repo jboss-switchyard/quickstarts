@@ -78,4 +78,4 @@ Additionally, you can see how a domain property (userName) is retrieved from a s
 
 ## Further Reading
 
-1. [BPM Service Documentation](https://docs.jboss.org/author/display/SWITCHYARD/BPM+Services)
+1. [BPM Service Documentation](https://docs.jboss.org/author/display/SWITCHYARD/BPM)

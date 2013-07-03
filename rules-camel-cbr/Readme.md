@@ -47,6 +47,6 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.312 sec
 ## Further Reading
 
 1. [Configuration Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Configuration)
-2. [Rules Services Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Rules+Services)
-3. [Camel Services Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Camel+Services)
-4. [Bean Services Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Bean+Services)
+2. [Rules Services Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Rules)
+3. [Camel Services Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Camel)
+4. [Bean Services Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Bean)

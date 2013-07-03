@@ -33,5 +33,5 @@ This example demonstrates how to:
 ## Further Reading
 
 1. [SwitchYard User Documentation](https://docs.jboss.org/author/display/SWITCHYARD/)
-2. [SwitchYard CDI Bean Services](https://docs.jboss.org/author/display/SWITCHYARD/Bean+Services)
-3. [SwitchYard SOAP Bindings](https://docs.jboss.org/author/display/SWITCHYARD/SOAP+Bindings)
+2. [SwitchYard CDI Bean Services](https://docs.jboss.org/author/display/SWITCHYARD/Bean)
+3. [SwitchYard SOAP Bindings](https://docs.jboss.org/author/display/SWITCHYARD/SOAP)
