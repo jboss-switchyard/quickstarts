@@ -32,4 +32,16 @@
     <packaging>jar</packaging>
     <name>SwitchYard: Distribution Artifacts</name>
     <description>Module containing extra distribution artifacts (e.g. license, readme)</description>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
