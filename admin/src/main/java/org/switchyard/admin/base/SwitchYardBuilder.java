@@ -25,6 +25,7 @@ import org.switchyard.admin.Service;
 import org.switchyard.admin.SwitchYard;
 import org.switchyard.admin.mbean.internal.LocalManagement;
 import org.switchyard.admin.mbean.internal.MBeans;
+import org.switchyard.deploy.ComponentNames;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.event.ApplicationDeployedEvent;
 import org.switchyard.deploy.event.ApplicationUndeployedEvent;
@@ -135,7 +136,7 @@ public class SwitchYardBuilder implements EventObserver {
         // aggregating them.
         Exchange exchange = event.getExchange();
         QName serviceName = exchange.getProvider().getName();
-        QName referenceName = exchange.getConsumer().getName();
+        QName referenceName = ComponentNames.unqualify(exchange.getConsumer().getName());
         for (Service service : _switchYard.getServices()) {
             if (service.getName().equals(serviceName)) {
                 // 1 - the aggregate switchyard stats
