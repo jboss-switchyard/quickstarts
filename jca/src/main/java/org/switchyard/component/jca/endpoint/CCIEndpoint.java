@@ -26,10 +26,10 @@ import javax.resource.cci.Record;
 import javax.resource.cci.RecordFactory;
 
 import org.switchyard.Exchange;
-import org.switchyard.SynchronousInOutHandler;
+import org.switchyard.component.common.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.jca.composer.MappedRecordBindingData;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.selector.OperationSelector;
 /**
  * Concrete message endpoint class for JCA message inflow using JCA CCI MessageListener interface.

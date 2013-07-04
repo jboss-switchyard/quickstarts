@@ -28,13 +28,13 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ServiceDomain;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
 import org.switchyard.component.camel.common.transaction.TransactionHelper;
 import org.switchyard.deploy.BaseServiceHandler;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**

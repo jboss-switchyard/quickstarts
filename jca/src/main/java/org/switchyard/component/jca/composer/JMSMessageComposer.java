@@ -33,7 +33,7 @@ import javax.jms.TextMessage;
 
 import org.switchyard.Exchange;
 import org.switchyard.component.common.composer.BaseMessageComposer;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * MessageComposer implementation for JMS Message that is used by JCA component.

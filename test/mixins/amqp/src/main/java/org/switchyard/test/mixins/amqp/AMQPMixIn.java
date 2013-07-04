@@ -37,7 +37,7 @@ import org.apache.qpid.server.Broker;
 import org.apache.qpid.server.BrokerOptions;
 import org.switchyard.component.test.mixins.naming.NamingMixIn;
 import org.switchyard.deploy.internal.AbstractDeployment;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.test.MixInDependencies;
 import org.switchyard.test.mixins.AbstractTestMixIn;
 

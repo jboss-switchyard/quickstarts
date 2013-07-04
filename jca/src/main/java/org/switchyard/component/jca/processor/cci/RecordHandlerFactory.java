@@ -23,7 +23,7 @@ import javax.resource.cci.MappedRecord;
 import javax.resource.cci.Streamable;
 
 import org.switchyard.component.jca.composer.RecordBindingData;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * RecordHandler factory.

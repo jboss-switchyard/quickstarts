@@ -21,6 +21,7 @@ package org.switchyard.component.common.knowledge.util;
 import org.kie.api.runtime.Channel;
 import org.kie.api.runtime.KieRuntime;
 import org.switchyard.ServiceDomain;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.config.model.ChannelModel;
@@ -28,7 +29,6 @@ import org.switchyard.component.common.knowledge.config.model.ChannelsModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceChannel;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * Channel functions.

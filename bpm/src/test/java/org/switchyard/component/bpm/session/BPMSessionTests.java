@@ -27,7 +27,7 @@ import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
 import org.switchyard.component.common.knowledge.session.KnowledgeSessionFactory;
 import org.switchyard.config.model.ModelPuller;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * Tests BPM sessions.

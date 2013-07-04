@@ -34,7 +34,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.transform.v1.V1TransformsModel;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.config.model.JavaTransformModel;
 import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
@@ -81,8 +81,8 @@ public class CamelTypeConverterExtractor extends DefaultTypeConverter {
         for (Entry<TypeMapping, TypeConverter> entry : typeMappings.entrySet())
         {
             final TypeMapping mapping = entry.getKey();
-            final QName fromType = JavaService.toMessageType(mapping.getFromType());
-            final QName toType = JavaService.toMessageType(mapping.getToType());
+            final QName fromType = JavaTypes.toMessageType(mapping.getFromType());
+            final QName toType = JavaTypes.toMessageType(mapping.getToType());
             getToTypesFor(fromType).add(toType);
         }
         

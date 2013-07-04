@@ -21,13 +21,13 @@ package org.switchyard.component.bean.deploy;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.BeanManager;
 
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.bean.BeanServiceMetadata;
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.bean.ServiceProxyHandler;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.extensions.java.JavaService;
 import org.switchyard.metadata.ServiceInterface;
-import org.switchyard.metadata.java.JavaService;
 
 /**
  * SwitchYard CDI bean Service Descriptor.

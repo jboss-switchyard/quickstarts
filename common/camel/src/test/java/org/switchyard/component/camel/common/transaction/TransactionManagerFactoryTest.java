@@ -35,7 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.component.test.mixins.naming.NamingMixIn;
 
 /**

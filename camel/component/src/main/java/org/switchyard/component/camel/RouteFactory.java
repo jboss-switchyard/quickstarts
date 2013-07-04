@@ -34,7 +34,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.camel.model.CamelComponentImplementationModel;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * Creates RouteDefinition instances based off of a class containing @Route

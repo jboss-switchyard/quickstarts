@@ -25,7 +25,7 @@ import javax.naming.NamingException;
 
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * Simple factory which creates TransactedManager instances.

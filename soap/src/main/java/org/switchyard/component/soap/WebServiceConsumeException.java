@@ -19,7 +19,7 @@
  
 package org.switchyard.component.soap;
 
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * Wrapper for WebService consumer exceptions.

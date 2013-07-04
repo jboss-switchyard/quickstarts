@@ -32,7 +32,7 @@ import org.switchyard.component.common.selector.OperationSelectorFactory;
 import org.switchyard.component.jca.composer.JCABindingData;
 import org.switchyard.component.jca.composer.JCAComposition;
 import org.switchyard.component.jca.config.model.JCABindingModel;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.PolicyUtil;

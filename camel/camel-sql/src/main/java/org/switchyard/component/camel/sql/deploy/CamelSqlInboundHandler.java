@@ -29,7 +29,7 @@ import org.switchyard.component.camel.common.handler.InboundHandler;
 import org.switchyard.component.camel.common.handler.MessageComposerProcessor;
 import org.switchyard.component.camel.common.handler.OperationSelectorProcessor;
 import org.switchyard.component.camel.sql.model.CamelSqlBindingModel;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**

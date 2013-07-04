@@ -49,8 +49,8 @@ public abstract class BaseCamelComponent extends BaseComponent {
         List<String> activationTypes = getActivationTypes();
         String[] types = activationTypes.toArray(new String[activationTypes.size()]);
 
-        SwitchYardCamelContext camelContext = (SwitchYardCamelContext) domain.getProperties()
-            .get(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY);
+        SwitchYardCamelContext camelContext = (SwitchYardCamelContext) domain
+            .getProperty(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY);
         BaseCamelActivator activator = createActivator(camelContext, types);
         activator.setServiceDomain(domain);
         activator.setEnvironment(getConfig());

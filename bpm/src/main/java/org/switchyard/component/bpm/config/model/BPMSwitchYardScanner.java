@@ -36,8 +36,8 @@ import org.switchyard.component.bpm.annotation.SignalEvent;
 import org.switchyard.component.bpm.annotation.StartProcess;
 import org.switchyard.component.bpm.annotation.UserGroupCallback;
 import org.switchyard.component.bpm.annotation.WorkItemHandler;
-import org.switchyard.component.bpm.config.model.v1.V1BPMOperationModel;
 import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
+import org.switchyard.component.bpm.config.model.v1.V1BPMOperationModel;
 import org.switchyard.component.bpm.config.model.v1.V1UserGroupCallbackModel;
 import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlerModel;
 import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlersModel;
@@ -47,9 +47,9 @@ import org.switchyard.component.common.knowledge.annotation.Fault;
 import org.switchyard.component.common.knowledge.annotation.Global;
 import org.switchyard.component.common.knowledge.annotation.Input;
 import org.switchyard.component.common.knowledge.annotation.Output;
+import org.switchyard.component.common.knowledge.config.model.KnowledgeSwitchYardScanner;
 import org.switchyard.component.common.knowledge.config.model.OperationModel;
 import org.switchyard.component.common.knowledge.config.model.OperationsModel;
-import org.switchyard.component.common.knowledge.config.model.KnowledgeSwitchYardScanner;
 import org.switchyard.component.common.knowledge.config.model.v1.V1OperationsModel;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
@@ -63,8 +63,8 @@ import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
+import org.switchyard.extensions.java.JavaService;
 import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.metadata.java.JavaService;
 
 /**
  * BPMSwitchYardScanner.

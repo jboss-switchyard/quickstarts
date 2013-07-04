@@ -16,7 +16,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeReferenceModel;
 import org.switchyard.config.model.composite.v1.V1SCABindingModel;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.remote.RemoteEndpoint;

@@ -32,7 +32,7 @@ import javax.transaction.xa.XAResource;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.jca.EndpointProxy;
 import org.switchyard.deploy.BaseServiceHandler;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * An ExchangeHandler for JCA message inflow that create and activate an MessageEndpoint.

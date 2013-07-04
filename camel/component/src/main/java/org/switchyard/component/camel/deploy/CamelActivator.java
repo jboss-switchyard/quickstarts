@@ -48,7 +48,7 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.deploy.ComponentNames;
 import org.switchyard.deploy.ServiceHandler;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * Activates Camel bindings, references and implementations in SwitchYard. 

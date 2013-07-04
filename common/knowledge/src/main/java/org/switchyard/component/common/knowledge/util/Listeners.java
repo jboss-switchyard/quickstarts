@@ -42,11 +42,11 @@ import org.kie.api.runtime.KieSession;
 import org.kie.internal.event.KnowledgeRuntimeEventManager;
 import org.kie.internal.runtime.KnowledgeRuntime;
 import org.kie.internal.runtime.StatefulKnowledgeSession;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.config.model.ListenerModel;
 import org.switchyard.component.common.knowledge.config.model.ListenersModel;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * Listener functions.

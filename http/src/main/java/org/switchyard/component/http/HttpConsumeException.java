@@ -19,7 +19,7 @@
  
 package org.switchyard.component.http;
 
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * Wrapper for HTTP consumer exceptions.

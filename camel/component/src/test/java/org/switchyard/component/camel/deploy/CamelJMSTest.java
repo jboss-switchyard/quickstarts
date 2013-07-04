@@ -77,12 +77,12 @@ public class CamelJMSTest {
     }
 
     private void stopCamelActivator() throws Exception {
-         CamelContext context = (CamelContext) _domain.getProperties().get(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY);
+        CamelContext context = (CamelContext) _domain.getProperty(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY);
         context.suspend();
     }
 
     private void startCamelActivator() throws Exception {
-        CamelContext context = (CamelContext) _domain.getProperties().get(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY);
+        CamelContext context = (CamelContext) _domain.getProperty(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY);
         context.resume();
     }
 

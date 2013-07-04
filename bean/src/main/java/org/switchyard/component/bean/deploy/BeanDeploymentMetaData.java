@@ -31,8 +31,8 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
+import org.switchyard.SwitchYardException;
 import org.switchyard.component.bean.ClientProxyBean;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * Bean Deployment Meta Data.

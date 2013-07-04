@@ -35,14 +35,14 @@ import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.bpel.BPELFault;
 import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
+import org.switchyard.component.common.DeliveryException;
+import org.switchyard.component.common.SynchronousInOutHandler;
 import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.deploy.ComponentNames;
-import org.switchyard.exception.DeliveryException;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 

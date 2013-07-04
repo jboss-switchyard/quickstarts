@@ -31,6 +31,7 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.KieSessionConfiguration;
 import org.kie.api.runtime.StatelessKieSession;
 import org.switchyard.ServiceDomain;
+import org.switchyard.SwitchYardException;
 import org.switchyard.component.common.knowledge.config.model.ContainerModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.util.Channels;
@@ -40,7 +41,6 @@ import org.switchyard.component.common.knowledge.util.Disposals;
 import org.switchyard.component.common.knowledge.util.Environments;
 import org.switchyard.component.common.knowledge.util.Listeners;
 import org.switchyard.component.common.knowledge.util.Loggers;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * A Container-based KnowledgeSessionFactory.

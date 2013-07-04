@@ -32,9 +32,9 @@ import org.switchyard.component.common.knowledge.annotation.Fault;
 import org.switchyard.component.common.knowledge.annotation.Global;
 import org.switchyard.component.common.knowledge.annotation.Input;
 import org.switchyard.component.common.knowledge.annotation.Output;
+import org.switchyard.component.common.knowledge.config.model.KnowledgeSwitchYardScanner;
 import org.switchyard.component.common.knowledge.config.model.OperationModel;
 import org.switchyard.component.common.knowledge.config.model.OperationsModel;
-import org.switchyard.component.common.knowledge.config.model.KnowledgeSwitchYardScanner;
 import org.switchyard.component.common.knowledge.config.model.v1.V1OperationsModel;
 import org.switchyard.component.rules.RulesOperationType;
 import org.switchyard.component.rules.annotation.Execute;
@@ -42,8 +42,8 @@ import org.switchyard.component.rules.annotation.FireAllRules;
 import org.switchyard.component.rules.annotation.FireUntilHalt;
 import org.switchyard.component.rules.annotation.Insert;
 import org.switchyard.component.rules.annotation.Rules;
-import org.switchyard.component.rules.config.model.v1.V1RulesOperationModel;
 import org.switchyard.component.rules.config.model.v1.V1RulesComponentImplementationModel;
+import org.switchyard.component.rules.config.model.v1.V1RulesOperationModel;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -56,8 +56,8 @@ import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
+import org.switchyard.extensions.java.JavaService;
 import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.metadata.java.JavaService;
 
 /**
  * RulesSwitchYardScanner.

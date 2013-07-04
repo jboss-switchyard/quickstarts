@@ -34,7 +34,7 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.jca.composer.JMSBindingData;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * A concrete outbound processor class for JMS.

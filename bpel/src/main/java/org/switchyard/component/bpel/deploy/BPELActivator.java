@@ -34,7 +34,7 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.deploy.BaseActivator;
 import org.switchyard.deploy.ServiceHandler;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * Activator for the BPEL component.

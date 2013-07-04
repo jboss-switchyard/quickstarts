@@ -19,7 +19,7 @@
  
 package org.switchyard.component.resteasy;
 
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * Wrapper for RESTEasy consumer exceptions.

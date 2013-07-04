@@ -25,9 +25,9 @@ import java.util.Map;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.util.URISupport;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.CamelConstants;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * Utility class which encapsulates logic related to operations needed to register

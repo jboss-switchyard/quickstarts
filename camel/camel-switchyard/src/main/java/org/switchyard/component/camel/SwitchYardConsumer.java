@@ -39,7 +39,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.deploy.ServiceHandler;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
 
 /**

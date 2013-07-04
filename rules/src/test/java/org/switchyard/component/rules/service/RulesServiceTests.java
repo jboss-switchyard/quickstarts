@@ -37,7 +37,7 @@ import org.switchyard.component.rules.annotation.Rules;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.component.rules.config.model.RulesSwitchYardScanner;
 import org.switchyard.component.rules.exchange.RulesExchangeHandler;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.extensions.java.JavaService;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.TestDataSource;
 
@@ -67,6 +67,7 @@ public class RulesServiceTests {
         final Holder holder = new Holder();
         RulesComponentImplementationModel bci_model = (RulesComponentImplementationModel)new RulesSwitchYardScanner().scan(AccessAttachment.class).getImplementation();
         QName serviceName = new QName("AccessAttachment");
+        System.out.println("====> " + bci_model.toString());
         RulesExchangeHandler handler = new RulesExchangeHandler(bci_model, serviceDomain, serviceName);
         Service aaService = serviceDomain.registerService(serviceName, JavaService.fromClass(AccessAttachment.class), handler);
         ServiceReference aaReference = serviceDomain.registerServiceReference(aaService.getName(), aaService.getInterface(), aaService.getProviderHandler());

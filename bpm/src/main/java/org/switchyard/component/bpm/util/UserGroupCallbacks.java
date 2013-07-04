@@ -27,7 +27,7 @@ import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel
 import org.switchyard.component.bpm.config.model.UserGroupCallbackModel;
 import org.switchyard.component.bpm.runtime.BPMUserGroupCallback;
 import org.switchyard.config.model.property.PropertiesModel;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * UserGroupCallback functions.

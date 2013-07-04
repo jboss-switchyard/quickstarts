@@ -32,6 +32,7 @@ import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
@@ -40,7 +41,6 @@ import org.switchyard.component.bean.internal.message.MessageProxy;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.deploy.ComponentNames;
 import org.switchyard.deploy.ServiceHandler;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * Service/Provider proxy handler.

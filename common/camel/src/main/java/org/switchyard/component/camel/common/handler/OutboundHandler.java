@@ -34,6 +34,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
@@ -41,7 +42,6 @@ import org.switchyard.component.camel.common.model.CamelBindingModel;
 import org.switchyard.component.camel.common.transaction.TransactionHelper;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.deploy.BaseServiceHandler;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 

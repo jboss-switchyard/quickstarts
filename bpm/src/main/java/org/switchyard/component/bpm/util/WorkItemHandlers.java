@@ -48,7 +48,7 @@ import org.switchyard.component.bpm.runtime.BPMRuntimeManager;
 import org.switchyard.component.bpm.service.StandardSwitchYardServiceTaskHandler;
 import org.switchyard.component.bpm.service.SwitchYardServiceTaskHandler;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * WorkItemHandler functions.

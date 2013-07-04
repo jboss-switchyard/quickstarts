@@ -40,7 +40,7 @@ import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoke
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceRequest;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceResponse;
 import org.switchyard.deploy.ComponentNames;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * SwitchYardServiceTaskHandler.

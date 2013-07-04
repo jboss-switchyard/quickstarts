@@ -32,7 +32,7 @@ import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.ActivatorLoader;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.Deployment;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * Test for {@link CamelActivator} and verifies that an exception is thrown during

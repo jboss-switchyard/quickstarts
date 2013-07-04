@@ -29,7 +29,7 @@ import org.switchyard.component.bpel.riftsaw.RiftsawServiceLocator;
 import org.switchyard.config.Configuration;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.BaseComponent;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * An implementation of BPEL component.

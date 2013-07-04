@@ -64,7 +64,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.Feature;
 import org.switchyard.component.soap.PortName;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

@@ -41,7 +41,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.transform.internal.TransformerRegistryLoader;
 
 /**
@@ -68,7 +68,7 @@ public class CamelTypeConverterExtractorTest
     @Test
     public void extractTypeConverterTypes() throws Exception {
         final Map<QName, Set<QName>> transformTypes = _extractor.getTransformTypes();
-        final Set<QName> toTypes = transformTypes.get(JavaService.toMessageType(String.class));
+        final Set<QName> toTypes = transformTypes.get(JavaTypes.toMessageType(String.class));
         
         assertThat(toTypes, hasItems(
                 new QName("java:java.io.InputStream"),

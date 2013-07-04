@@ -24,7 +24,7 @@ import javax.jms.MessageListener;
 import org.switchyard.Exchange;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.jca.composer.JMSBindingData;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.selector.OperationSelector;
 /**
  * Concrete message endpoint class for JCA message inflow using JMS MessageListener interface.

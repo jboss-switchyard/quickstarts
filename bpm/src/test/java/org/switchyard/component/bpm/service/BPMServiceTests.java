@@ -54,9 +54,9 @@ import org.switchyard.component.common.knowledge.annotation.Input;
 import org.switchyard.component.common.knowledge.annotation.Manifest;
 import org.switchyard.component.common.knowledge.annotation.Resource;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
+import org.switchyard.extensions.java.JavaService;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
-import org.switchyard.metadata.java.JavaService;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.TestDataSource;
 

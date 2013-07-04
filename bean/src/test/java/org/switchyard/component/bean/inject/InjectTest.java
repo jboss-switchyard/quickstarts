@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
-import org.switchyard.SynchronousInOutHandler;
+import org.switchyard.component.common.SynchronousInOutHandler;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.SwitchYardRunner;

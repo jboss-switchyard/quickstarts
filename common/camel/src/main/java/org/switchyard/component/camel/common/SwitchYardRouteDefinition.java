@@ -30,9 +30,9 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.reflect.MethodAccess;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * Adds capability of appending a namespace on the end of switchyard:// "from" and "to" URIs.

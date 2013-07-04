@@ -27,7 +27,7 @@ import javax.xml.namespace.QName;
 
 import org.junit.Test;
 import org.switchyard.component.soap.util.WSDLUtil;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * Test of binding style discovery.

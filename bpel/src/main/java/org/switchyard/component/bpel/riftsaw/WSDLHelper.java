@@ -21,7 +21,7 @@ package org.switchyard.component.bpel.riftsaw;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.w3c.dom.Element;
 
 /**

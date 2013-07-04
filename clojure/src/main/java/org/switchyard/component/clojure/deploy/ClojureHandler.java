@@ -36,7 +36,7 @@ import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.component.clojure.config.model.ClojureComponentImplementationModel;
 import org.switchyard.component.clojure.config.model.ClojureScriptModel;
 import org.switchyard.deploy.BaseServiceHandler;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 import clojure.lang.Var;
 

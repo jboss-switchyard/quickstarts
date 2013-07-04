@@ -28,7 +28,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.common.composer.MessageComposer;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * A CamelResponseHandler is responsible for passing back result data from Apache Camel to

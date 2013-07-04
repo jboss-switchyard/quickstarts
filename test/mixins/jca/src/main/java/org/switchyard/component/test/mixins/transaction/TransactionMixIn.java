@@ -28,7 +28,7 @@ import javax.transaction.UserTransaction;
 
 import org.apache.log4j.Logger;
 import org.jboss.weld.bootstrap.spi.Deployment;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.test.MixInDependencies;
 import org.switchyard.test.TestMixIn;
 import org.switchyard.test.mixins.AbstractTestMixIn;

@@ -26,7 +26,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.component.camel.scanner.ServiceInterface;
 import org.switchyard.component.camel.scanner.SingleRouteService;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 public class RouteFactoryTest {
 

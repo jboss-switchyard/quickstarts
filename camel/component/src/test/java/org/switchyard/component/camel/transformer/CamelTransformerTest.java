@@ -32,7 +32,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.metadata.JavaTypes;
 
 /**
  * Unit test for {@link CamelTransformer}.
@@ -48,7 +48,7 @@ public class CamelTransformerTest {
     @Test
     public void genericFileToString() throws Exception {
         final QName genericFileType = new QName("java:org.apache.camel.component.file.GenericFile");
-        final QName stringType = JavaService.toMessageType(String.class);
+        final QName stringType = JavaTypes.toMessageType(String.class);
         
         final CamelTransformer camelTransformer = new CamelTransformer();
         camelTransformer.setFrom(genericFileType);

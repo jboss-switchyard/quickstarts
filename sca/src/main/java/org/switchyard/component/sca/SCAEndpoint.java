@@ -29,7 +29,7 @@ import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.composite.SCABindingModel;
 import org.switchyard.deploy.BaseServiceHandler;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.remote.RemoteEndpoint;
 import org.switchyard.remote.RemoteRegistry;
 

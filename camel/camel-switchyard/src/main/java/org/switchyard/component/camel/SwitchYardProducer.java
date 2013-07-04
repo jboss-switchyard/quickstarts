@@ -40,7 +40,7 @@ import org.switchyard.component.camel.common.composer.BindingDataCreatorResolver
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.common.composer.SecurityBindingData;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.PolicyUtil;

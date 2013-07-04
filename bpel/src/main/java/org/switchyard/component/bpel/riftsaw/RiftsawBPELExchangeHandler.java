@@ -45,7 +45,7 @@ import org.switchyard.component.bpel.exchange.BPELExchangeHandler;
 import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
 import org.switchyard.deploy.BaseServiceHandler;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 

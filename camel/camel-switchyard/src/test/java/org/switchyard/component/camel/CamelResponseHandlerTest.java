@@ -43,10 +43,10 @@ import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.camel.common.composer.CamelComposition;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.extensions.java.JavaService;
 import org.switchyard.internal.DefaultContext;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.metadata.java.JavaService;
 
 /**
  * Unit test for {@link CamelResponseHandler}

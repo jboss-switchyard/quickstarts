@@ -37,6 +37,7 @@ import org.kie.internal.builder.KnowledgeBuilderError;
 import org.kie.internal.builder.KnowledgeBuilderErrors;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.switchyard.ServiceDomain;
+import org.switchyard.SwitchYardException;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.util.Channels;
 import org.switchyard.component.common.knowledge.util.Configurations;
@@ -44,7 +45,6 @@ import org.switchyard.component.common.knowledge.util.Environments;
 import org.switchyard.component.common.knowledge.util.Listeners;
 import org.switchyard.component.common.knowledge.util.Loggers;
 import org.switchyard.component.common.knowledge.util.Resources;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * A Base-based KnowledgeSessionFactory.

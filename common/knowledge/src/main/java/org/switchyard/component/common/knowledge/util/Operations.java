@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.kie.api.runtime.Globals;
 import org.switchyard.Message;
 import org.switchyard.Scope;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.common.knowledge.OperationType;
 import org.switchyard.component.common.knowledge.config.model.FaultModel;
@@ -55,7 +56,6 @@ import org.switchyard.component.common.knowledge.expression.Expression;
 import org.switchyard.component.common.knowledge.expression.ExpressionFactory;
 import org.switchyard.component.common.knowledge.expression.ExpressionMapping;
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
-import org.switchyard.exception.SwitchYardException;
 
 /**
  * Operation functions.

@@ -13,6 +13,9 @@
     <logger name="org.switchyard.component.soap">
         <level value="TRACE" />
     </logger>
+    <logger name="org.switchyard.handlers.MessageTraceHandler">
+        <level value="INFO" />
+    </logger>
     <logger name="org.jboss.weld.Bootstrap">
         <level value="ERROR" />
     </logger>

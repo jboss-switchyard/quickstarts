@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.bean.ServiceProxyHandler;
 import org.switchyard.component.bean.deploy.BeanComponentActivator;
@@ -34,7 +35,6 @@ import org.switchyard.component.bean.deploy.ServiceDescriptor;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.Lifecycle;
 import org.switchyard.deploy.internal.AbstractDeployment;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.internal.TransformerTypes;

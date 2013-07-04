@@ -29,10 +29,10 @@ import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.SynchronousInOutHandler;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.component.common.SynchronousInOutHandler;
 
 /**
  * SwitchYardServiceInvoker.

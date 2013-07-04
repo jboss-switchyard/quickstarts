@@ -36,7 +36,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.component.jca.processor.cci.RecordHandler;
 import org.switchyard.component.jca.processor.cci.RecordHandlerFactory;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * A concrete outbound processor class for CCI.

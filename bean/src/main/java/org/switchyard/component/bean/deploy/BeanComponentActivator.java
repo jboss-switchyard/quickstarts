@@ -21,6 +21,7 @@ package org.switchyard.component.bean.deploy;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.component.bean.ClientProxyBean;
 import org.switchyard.component.bean.ServiceProxyHandler;
@@ -29,7 +30,6 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.deploy.BaseActivator;
 import org.switchyard.deploy.ComponentNames;
 import org.switchyard.deploy.ServiceHandler;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.metadata.ServiceInterface;
 
 /**

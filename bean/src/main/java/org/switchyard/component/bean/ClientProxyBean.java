@@ -41,9 +41,9 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangeState;
 import org.switchyard.ServiceReference;
-import org.switchyard.SynchronousInOutHandler;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
-import org.switchyard.metadata.java.JavaService;
+import org.switchyard.component.common.SynchronousInOutHandler;
+import org.switchyard.extensions.java.JavaService;
 
 /**
  * Client Proxy CDI Bean.

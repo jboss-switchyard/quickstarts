@@ -35,10 +35,10 @@ import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.SynchronousInOutHandler;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.Classes;
+import org.switchyard.component.common.SynchronousInOutHandler;
 import org.switchyard.deploy.internal.Deployment;
-import org.switchyard.exception.SwitchYardException;
 import org.switchyard.remote.RemoteMessage;
 import org.switchyard.remote.http.HttpInvoker;
 import org.switchyard.serial.FormatType;
@@ -66,7 +66,7 @@ public class SwitchYardRemotingServlet extends HttpServlet {
             // Grab the right service domain based on the service header
             ServiceDomain domain = findDomain(request);
             // Set our TCCL to the domain's deployment loader
-            ClassLoader loader = (ClassLoader) domain.getProperties().get(Deployment.CLASSLOADER_PROPERTY);
+            ClassLoader loader = (ClassLoader) domain.getProperty(Deployment.CLASSLOADER_PROPERTY);
             setTCCL = Classes.setTCCL(loader);
             
             RemoteMessage msg = _serializer.deserialize(request.getInputStream(), RemoteMessage.class);
