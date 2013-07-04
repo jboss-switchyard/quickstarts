@@ -6,7 +6,7 @@
             <orderAck>
                 <orderId>PO-19838-XYZ</orderId>
                 <accepted>true</accepted>
-                <status>Order Accepted</status>
+                <status>Order Accepted [intercepted]</status>
             </orderAck>
         </orders:submitOrderResponse>
     </SOAP-ENV:Body>

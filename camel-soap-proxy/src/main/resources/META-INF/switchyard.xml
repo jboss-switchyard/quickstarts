@@ -29,9 +29,9 @@
     </sca:composite>
     <!--
     <domain>
-        <handlers>
-            <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
-        </handlers>
+      <properties>
+        <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
+      </properties>
     </domain>
     -->
 </switchyard>
