@@ -444,6 +444,7 @@
         </fileset>
 
         <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/parser/java/api/main">
+	    <include name="java-parser-api-*"/>
             <include name="forge-parser-java-api-*"/>
         </fileset>
 
