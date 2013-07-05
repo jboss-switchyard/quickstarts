@@ -20,13 +20,13 @@
         <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.Transformers" from="{urn:switchyard-quickstart-demo:policy-security-basic:0.1.0}doWork" to="java:org.switchyard.quickstarts.demo.policy.security.basic.Work"/>
     </transforms>
     <domain>
-        <!-- Uncomment this section to trace message exchange activity
-        <handlers>
-            <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
-        </handlers>
-        -->
-        <securities>
-            <security rolesAllowed="friend"/>
-        </securities>
+      <!--
+      <properties>
+        <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
+      </properties>
+      -->
+      <securities>
+        <security rolesAllowed="friend"/>
+      </securities>
     </domain>
 </switchyard>

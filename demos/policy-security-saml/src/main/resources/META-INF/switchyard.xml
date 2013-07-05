@@ -21,10 +21,10 @@
     </transforms>
     <domain>
         <!-- Uncomment this section to trace message exchange activity
-        <handlers>
-            <handler class="org.switchyard.handlers.MessageTrace" name="MessageTrace"/>
-        </handlers>
-        -->
+          <properties>
+            <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
+          </properties>
+          -->
         <securities>
             <security callbackHandler="org.switchyard.security.jboss.callback.handler.STSTokenCallbackHandler" securityDomain="saml-validate-token"/>
         </securities>
