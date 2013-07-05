@@ -32,6 +32,7 @@
         <module name="javax.api"/>
         <module name="org.apache.log4j"/>
         <module name="org.switchyard.api"/>
+        <module name="org.switchyard.api.extensions.java"/>
         <module name="org.switchyard.api.extensions.wsdl"/>
         <module name="org.switchyard.bus.camel"/>
         <module name="org.switchyard.common"/>

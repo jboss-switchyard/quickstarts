@@ -26,6 +26,11 @@
             <filtered>true</filtered>
         </file>
         <file>
+            <source>src/main/resources/switchyard/core/api/extensions/java/module.xml</source>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/api/extensions/java/main</outputDirectory>
+            <filtered>true</filtered>
+        </file>
+        <file>
             <source>src/main/resources/switchyard/core/api/extensions/wsdl/module.xml</source>
             <outputDirectory>/modules/system/layers/soa/org/switchyard/api/extensions/wsdl/main</outputDirectory>
             <filtered>true</filtered>
@@ -158,6 +163,15 @@
                 <include>org.switchyard:switchyard-config</include>
             </includes>
             <outputDirectory>/modules/system/layers/soa/org/switchyard/config/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.switchyard:switchyard-extensions-java</include>
+            </includes>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/api/extensions/java/main</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}-${project.version}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>

@@ -35,5 +35,6 @@
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>
         <module name="org.switchyard.serial"/>
+        <module name="org.switchyard.component.common"/>
     </dependencies>
 </module>

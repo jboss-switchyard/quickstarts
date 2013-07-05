@@ -30,8 +30,10 @@
         <module name="javax.enterprise.api"/>
         <module name="org.apache.log4j"/>
         <module name="org.switchyard.api"/>
+        <module name="org.switchyard.api.extensions.java"/>
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>
+        <module name="org.switchyard.component.common"/>
     </dependencies>
 </module>

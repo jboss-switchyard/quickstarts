@@ -99,6 +99,10 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-extensions-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-extensions-wsdl</artifactId>
         </dependency>
         <dependency>

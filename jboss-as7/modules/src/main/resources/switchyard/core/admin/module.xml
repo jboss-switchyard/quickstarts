@@ -36,6 +36,7 @@
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>
         <module name="org.switchyard.runtime"/>
+        <module name="org.switchyard.api.extensions.java"/>
         <module name="org.switchyard.api.extensions.wsdl"/>
     </dependencies>
 </module>

@@ -42,7 +42,7 @@ import org.switchyard.component.soap.config.model.InterceptorModel;
 import org.switchyard.component.soap.config.model.InterceptorsModel;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.config.model.property.PropertiesModel;
-import org.switchyard.exception.SwitchYardException;
+import org.switchyard.SwitchYardException;
 
 /**
  * Interceptor functions.

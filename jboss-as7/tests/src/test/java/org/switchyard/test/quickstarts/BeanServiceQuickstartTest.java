@@ -58,7 +58,7 @@ public class BeanServiceQuickstartTest {
             String response = httpMixIn.postString("http://localhost:8080/quickstart-bean/OrderService", SOAP_REQUEST);
             XMLAssert.assertXpathEvaluatesTo("PO-19838-XYZ", "//orderAck/orderId", response);
             XMLAssert.assertXpathEvaluatesTo("true", "//orderAck/accepted", response);
-            XMLAssert.assertXpathEvaluatesTo("Order Accepted", "//orderAck/status", response);
+            XMLAssert.assertXpathEvaluatesTo("Order Accepted [intercepted]", "//orderAck/status", response);
         } finally {
             httpMixIn.uninitialize();
         }
@@ -75,7 +75,7 @@ public class BeanServiceQuickstartTest {
             String response = httpMixIn.postString("http://localhost:8080/quickstart-bean/OrderService", SOAP_REQUEST);
             XMLAssert.assertXpathEvaluatesTo("PO-19838-XYZ", "//orderAck/orderId", response);
             XMLAssert.assertXpathEvaluatesTo("true", "//orderAck/accepted", response);
-            XMLAssert.assertXpathEvaluatesTo("Order Accepted", "//orderAck/status", response);
+            XMLAssert.assertXpathEvaluatesTo("Order Accepted [intercepted]", "//orderAck/status", response);
 
             final String namespace = "urn:switchyard-quickstart:bean-service:0.1.0";
             final String application = "orders";
@@ -106,7 +106,7 @@ public class BeanServiceQuickstartTest {
             response = httpMixIn.postString("http://localhost:8080/quickstart-bean/OrderService", SOAP_REQUEST);
             XMLAssert.assertXpathEvaluatesTo("PO-19838-XYZ", "//orderAck/orderId", response);
             XMLAssert.assertXpathEvaluatesTo("true", "//orderAck/accepted", response);
-            XMLAssert.assertXpathEvaluatesTo("Order Accepted", "//orderAck/status", response);
+            XMLAssert.assertXpathEvaluatesTo("Order Accepted [intercepted]", "//orderAck/status", response);
         } finally {
             httpMixIn.uninitialize();
         }
