@@ -34,6 +34,11 @@ public interface CamelConstants {
      * Name of message header where message composer is stored.
      */
     String MESSAGE_COMPOSER_HEADER = "org.switchyard.messageComposer";
+    
+    /**
+     * Namespace of the application.
+     */
+    String APPLICATION_NAMESPACE = "org.switchyard.component.camel.namespace";
 
     /**
      * Name of Spring SPI transaction policy bean.

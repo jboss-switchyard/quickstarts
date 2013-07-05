@@ -61,7 +61,6 @@ import org.switchyard.selector.OperationSelector;
 public class SwitchYardProducer extends DefaultProducer {
 
     private final static Logger LOG = Logger.getLogger(SwitchYardProducer.class);
-    private String _namespace;
     private String _operationName;
     private final MessageComposer<CamelBindingData> _messageComposer;
 
@@ -69,22 +68,21 @@ public class SwitchYardProducer extends DefaultProducer {
      * Sole constructor.
      * 
      * @param endpoint the Camel Endpoint that this Producer belongs to.
-     * @param namespace the service namespace of the target SwitchYard service.
      * @param operationName the operation name of the target SwitchYard service.
      * @param messageComposer the MessageComposer to use
      */
-    public SwitchYardProducer(final Endpoint endpoint, final String namespace, final String operationName, final MessageComposer<CamelBindingData> messageComposer) {
+    public SwitchYardProducer(final Endpoint endpoint, final String operationName, final MessageComposer<CamelBindingData> messageComposer) {
         super(endpoint);
-        _namespace = namespace;
         _operationName = operationName;
         _messageComposer = messageComposer;
     }
 
     @Override
     public void process(final org.apache.camel.Exchange camelExchange) throws Exception {
+        final String namespace = camelExchange.getProperty(CamelConstants.APPLICATION_NAMESPACE, String.class);
         final String targetUri = camelExchange.getProperty(org.apache.camel.Exchange.TO_ENDPOINT, String.class);
         ServiceDomain domain = ((SwitchYardCamelContext) camelExchange.getContext()).getServiceDomain();
-        final ServiceReference serviceRef = lookupServiceReference(targetUri, domain, 
+        final ServiceReference serviceRef = lookupServiceReference(targetUri, namespace, domain, 
                 camelExchange.getProperty(SwitchYardConsumer.COMPONENT_NAME, QName.class));
 
         // set a flag to indicate whether this producer endpoint is used within a service route
@@ -173,8 +171,9 @@ public class SwitchYardProducer extends DefaultProducer {
         return composer == null ? _messageComposer : composer;
     }
 
-    private ServiceReference lookupServiceReference(final String targetUri, ServiceDomain domain, QName componentName) {
-        final QName serviceName = composeSwitchYardServiceName(_namespace, targetUri, componentName);
+    private ServiceReference lookupServiceReference(
+            final String targetUri, final String namespace, ServiceDomain domain, QName componentName) {
+        final QName serviceName = composeSwitchYardServiceName(namespace, targetUri, componentName);
         final ServiceReference serviceRef = domain.getServiceReference(serviceName);
         if (serviceRef == null) {
             throw new NullPointerException("No ServiceReference was found for uri [" + targetUri + "]");

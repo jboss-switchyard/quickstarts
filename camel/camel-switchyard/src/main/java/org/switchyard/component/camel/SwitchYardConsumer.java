@@ -31,6 +31,7 @@ import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.common.xml.QNameUtil;
+import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
@@ -48,6 +49,7 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
     private AtomicReference<State> _state = new AtomicReference<State>(State.NONE);
     
     private QName _componentName;
+    private String _namespace;
     
     /**
      * Used to flag an exchange as originating from a service implementation route.
@@ -80,6 +82,9 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
         // mark this as an exchange for a camel implementation service
         camelExchange.setProperty(IMPLEMENTATION_ROUTE, true);
         camelExchange.setProperty(COMPONENT_NAME, _componentName);
+        
+        // set the application namespace property in case producer endpoints are used in the route
+        camelExchange.setProperty(CamelConstants.APPLICATION_NAMESPACE, _namespace);
 
         ServiceOperation operation = switchyardExchange.getContract().getProviderOperation();
         camelExchange.setProperty(OPERATION_NAME, operation.getName());
@@ -167,6 +172,14 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
      */
     public void setComponentName(QName componentName) {
         _componentName = componentName;
+    }
+    
+    /**
+     * Set the application namespace for this camel route implementation.
+     * @param namespace namespace URI
+     */
+    public void setNamespace(String namespace) {
+        _namespace = namespace;
     }
 
     private void invokeCamelProcessor(final org.apache.camel.Exchange camelExchange) throws HandlerException {

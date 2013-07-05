@@ -49,7 +49,7 @@ public class OperationSelectorTest extends InboundHandlerTestBase {
         handler1.start();
         handler2.start();
 
-        MockEndpoint mockEndpoint = _camelContext.getEndpoint("switchyard://dummyService?namespace=urn:foo", MockEndpoint.class);
+        MockEndpoint mockEndpoint = _camelContext.getEndpoint("switchyard://dummyService", MockEndpoint.class);
         mockEndpoint.expectedBodiesReceived("FooOperationPayload", "BarOperationPayload");
         mockEndpoint.expectedMessageCount(2);
         producer.sendBody("direct://foo", "FooOperationPayload");

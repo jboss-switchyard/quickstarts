@@ -24,7 +24,6 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.SwitchYardException;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.CamelConstants;
-import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
 import org.switchyard.component.camel.common.transaction.TransactionHelper;
 import org.switchyard.deploy.BaseServiceHandler;
@@ -77,10 +76,11 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
      * @return Route definition handling given binding.
      */
     protected RouteDefinition createRouteDefinition() {
-        final SwitchYardRouteDefinition route = new SwitchYardRouteDefinition(getServiceName());
+        final RouteDefinition route = new RouteDefinition();
 
         route.routeId(getRouteId()).from(getComponentUri().toString())
             .setProperty(ExchangeCompletionEvent.GATEWAY_NAME).simple(getBindingModel().getName(), String.class)
+            .setProperty(CamelConstants.APPLICATION_NAMESPACE).constant(_serviceName.getNamespaceURI())
             .process(new MessageComposerProcessor(getBindingModel()))
             .process(new OperationSelectorProcessor(getServiceName(), getBindingModel()));
         return addTransactionPolicy(route);
@@ -110,7 +110,7 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
      * @param componentURI Component uri.
      * @return 
      */
-    protected RouteDefinition addTransactionPolicy(final SwitchYardRouteDefinition route) {
+    protected RouteDefinition addTransactionPolicy(final RouteDefinition route) {
         if (!TransactionHelper.useTransactionManager(getComponentUri(), _camelContext)) {
             // namespace will be added by SwitchYardRouteDefinition
             return route.to(getSwitchyardEndpointUri());
@@ -118,9 +118,7 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
 
         // Tell Camel the route is transacted
         route.transacted(CamelConstants.TRANSACTED_REF).to(getSwitchyardEndpointUri());
-        // as we have 'transacted' element we need to process route outputs and
-        // put namespace attribute for switchyard:// endpoint
-        SwitchYardRouteDefinition.addNamespaceParameter(route, getServiceName().getNamespaceURI());
+        
         return route;
     }
 

@@ -13,6 +13,8 @@
  */
 package org.switchyard.component.camel;
 
+import static org.switchyard.component.camel.common.CamelConstants.SWITCHYARD_COMPONENT_NAME;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,10 +22,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.switchyard.common.xml.XMLHelper;
-import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
 import org.switchyard.deploy.ComponentNames;
-
-import static org.switchyard.component.camel.common.CamelConstants.SWITCHYARD_COMPONENT_NAME;
 
 /**
  * Utility class that takes care of creating Camel component uris for 
@@ -48,7 +47,7 @@ public final class ComponentNameComposer {
     public static String composeComponentUri(final QName serviceName) {
         final StringBuilder sb = new StringBuilder();
         sb.append(SWITCHYARD_COMPONENT_NAME).append("://").append(serviceName.getLocalPart());
-        return SwitchYardRouteDefinition.addNamespaceParameter(sb.toString(), serviceName.getNamespaceURI());
+        return sb.toString();
     }
 
     /**
@@ -69,17 +68,6 @@ public final class ComponentNameComposer {
             return XMLHelper.createQName(namespace, path);
         }
         
-    }
-
-    /**
-     * Parses the passed-in URI query parameters and returns the value of
-     * the param named 'namespace'.
-     * 
-     * @param uri the URI to parse.
-     * @return String the 'namespace' param or null if it does not exist
-     */
-    public static String getNamespaceFromURI(final URI uri) {
-        return getQueryParamMap(uri).get("namespace");
     }
 
     /**

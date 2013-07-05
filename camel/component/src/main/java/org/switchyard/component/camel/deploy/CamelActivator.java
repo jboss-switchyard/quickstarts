@@ -24,6 +24,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.switchyard.ServiceReference;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.component.camel.ComponentNameComposer;
@@ -32,7 +33,6 @@ import org.switchyard.component.camel.SwitchYardConsumer;
 import org.switchyard.component.camel.SwitchYardEndpoint;
 import org.switchyard.component.camel.SwitchYardPropertiesParser;
 import org.switchyard.component.camel.common.CamelConstants;
-import org.switchyard.component.camel.common.SwitchYardRouteDefinition;
 import org.switchyard.component.camel.common.composer.CamelComposition;
 import org.switchyard.component.camel.common.deploy.BaseCamelActivator;
 import org.switchyard.component.camel.model.CamelComponentImplementationModel;
@@ -41,7 +41,6 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.deploy.ComponentNames;
 import org.switchyard.deploy.ServiceHandler;
-import org.switchyard.SwitchYardException;
 
 /**
  * Activates Camel bindings, references and implementations in SwitchYard. 
@@ -97,6 +96,7 @@ public class CamelActivator extends BaseCamelActivator {
             endpoint.setMessageComposer(CamelComposition.getMessageComposer());
             final SwitchYardConsumer consumer = endpoint.getConsumer();
             consumer.setComponentName(config.getComponent().getQName());
+            consumer.setNamespace(serviceName.getNamespaceURI());
             return consumer;
         } catch (final Exception e) {
             throw new SwitchYardException(e.getMessage(), e);
@@ -131,10 +131,9 @@ public class CamelActivator extends BaseCamelActivator {
                         throw new SwitchYardException("Only one switchyard input per implementation is allowed");
                     }
                     String host = from.getHost();
-                    String namespace = ComponentNameComposer.getNamespaceFromURI(from);
 
-                    if (!serviceName.equals(host) || !compositeNs.equals(namespace)) {
-                        throw new SwitchYardException("The implementation consumer doesn't match expected service " + serviceName + " and namespace " + namespace);
+                    if (!serviceName.equals(host)) {
+                        throw new SwitchYardException("The implementation consumer doesn't match expected service " + serviceName);
                     }
                     serviceConsumer++;
                 }
@@ -147,8 +146,7 @@ public class CamelActivator extends BaseCamelActivator {
                     final URI componentUri = URI.create(to.getUri());
                     if (componentUri.getScheme().equals(CamelConstants.SWITCHYARD_COMPONENT_NAME)) {
                         final String referenceName = componentUri.getHost();
-                        final String namespace = ComponentNameComposer.getNamespaceFromURI(componentUri);
-                        final QName refServiceName = new QName(namespace, referenceName);
+                        final QName refServiceName = new QName(compositeNs, referenceName);
                         if (!containsServiceRef(ccim.getComponent().getReferences(), referenceName)) {
                             throw new SwitchYardException("Could not find the service reference for '" + referenceName + "'" 
                             + " which is referenced in " + to);
@@ -178,9 +176,6 @@ public class CamelActivator extends BaseCamelActivator {
      */
     private List<RouteDefinition> getRouteDefinition(CamelComponentImplementationModel model) {
         List<RouteDefinition> routes = RouteFactory.getRoutes(model);
-        for (RouteDefinition route : routes) {
-            SwitchYardRouteDefinition.addNamespaceParameter(route, model.getComponent().getTargetNamespace());
-        }
         return routes;
     }
 
