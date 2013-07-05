@@ -1,20 +1,15 @@
-/* 
- * JBoss, Home of Professional Open Source 
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved. 
- * See the copyright.txt in the distribution for a 
- * full listing of individual contributors.
+/*
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
  *
- * This copyrighted material is made available to anyone wishing to use, 
- * modify, copy, or redistribute it subject to the terms and conditions 
- * of the GNU Lesser General Public License, v. 2.1. 
- * This program is distributed in the hope that it will be useful, but WITHOUT A 
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
- * You should have received a copy of the GNU Lesser General Public License, 
- * v.2.1 along with this distribution; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, 
- * MA  02110-1301, USA.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.switchyard.tools.maven.plugins.switchyard;
 
@@ -50,27 +45,19 @@ public class SetVersionMojo extends AbstractMojo {
     private static final String XML_DECLARATION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
     private static final String XML_COPYRIGHT =
-              "<!--\n"
-            + "  ~ JBoss, Home of Professional Open Source.\n"
-            + "  ~ Copyright YEAR, Red Hat, Inc., and individual contributors\n"
-            + "  ~ as indicated by the @author tags. See the copyright.txt file in the\n"
-            + "  ~ distribution for a full listing of individual contributors.\n"
-            + "  ~\n"
-            + "  ~ This is free software; you can redistribute it and/or modify it\n"
-            + "  ~ under the terms of the GNU Lesser General Public License as\n"
-            + "  ~ published by the Free Software Foundation; either version 2.1 of\n"
-            + "  ~ the License, or (at your option) any later version.\n"
-            + "  ~\n"
-            + "  ~ This software is distributed in the hope that it will be useful,\n"
-            + "  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-            + "  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU\n"
-            + "  ~ Lesser General Public License for more details.\n"
-            + "  ~\n"
-            + "  ~ You should have received a copy of the GNU Lesser General Public\n"
-            + "  ~ License along with this software; if not, write to the Free\n"
-            + "  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA\n"
-            + "  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.\n"
-            + "  -->\n";
+          "<!--\n"
+        + "- Copyright YEAR Red Hat Inc. and/or its affiliates and other contributors.\n"
+        + "-\n"
+        + "- Licensed under the Apache License, Version 2.0 (the \"License\")\n"
+        + "- you may not use this file except in compliance with the License.\n"
+        + "- You may obtain a copy of the License at\n"
+        + "- http://www.apache.org/licenses/LICENSE-2.0\n"
+        + "- Unless required by applicable law or agreed to in writing, software\n"
+        + "- distributed under the License is distributed on an \"AS IS\" BASIS,\n"
+        + "- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
+        + "- See the License for the specific language governing permissions and\n"
+        + "- limitations under the License.\n"
+        + "-->\n";
 
     @Parameter(property="project.file", required=true)
     private File _project_file;
