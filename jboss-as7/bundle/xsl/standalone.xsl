@@ -19,7 +19,8 @@
     xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:as="urn:jboss:domain:1.2"
-    exclude-result-prefixes="xs xsl xsi fn xdt as">
+    xmlns:log="urn:jboss:domain:logging:1.2"
+    exclude-result-prefixes="xs xsl xsi fn xdt as log">
 
 <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
@@ -123,6 +124,18 @@
     </xsl:copy>
 </xsl:template>
 -->
+
+<xsl:template match="log:subsystem">
+    <xsl:copy>
+        <xsl:apply-templates select="@*|node()"/>
+        <logger category="org.switchyard">
+            <level name="INFO"/>
+        </logger>
+        <logger category="org.apache.deltaspike.core.api.provider.BeanManagerProvider">
+            <level name="ERROR"/>
+        </logger>
+    </xsl:copy>
+</xsl:template>
 
 <xsl:template match="node()[name(.)='security-domains']">
     <xsl:copy>

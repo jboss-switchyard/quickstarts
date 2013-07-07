@@ -21,7 +21,8 @@
     xmlns:as="urn:jboss:domain:1.4"
     xmlns:inf="urn:jboss:domain:infinispan:1.4"
     xmlns:sy="urn:jboss:domain:switchyard:1.0"
-    exclude-result-prefixes="xs xsl xsi fn xdt as inf sy">
+    xmlns:log="urn:jboss:domain:logging:1.2"
+    exclude-result-prefixes="xs xsl xsi fn xdt as inf sy log">
 
 <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
@@ -174,6 +175,18 @@
     </xsl:copy>
 </xsl:template>
 -->
+
+<xsl:template match="log:subsystem">
+    <xsl:copy>
+        <xsl:apply-templates select="@*|node()"/>
+        <logger category="org.switchyard">
+            <level name="INFO"/>
+        </logger>
+        <logger category="org.apache.deltaspike.core.api.provider.BeanManagerProvider">
+            <level name="ERROR"/>
+        </logger>
+    </xsl:copy>
+</xsl:template>
 
 <xsl:template match="node()[name(.)='security-domains']">
     <xsl:copy>
