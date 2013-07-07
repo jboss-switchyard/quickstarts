@@ -112,6 +112,8 @@ public class ServiceDomainManager {
             }
         }
 
+        // now that all resources and properties are set, init the domain
+        domain.init();
         return domain;
     }
     

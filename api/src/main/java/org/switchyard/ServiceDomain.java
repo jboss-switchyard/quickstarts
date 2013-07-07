@@ -37,6 +37,13 @@ import org.switchyard.validate.ValidatorRegistry;
 public interface ServiceDomain {
     
     /**
+     * Initialize the service domain.  This method exists to allow additional 
+     * properties and resources to be associated with the service domain before
+     * it is started.
+     */
+    void init();
+    
+    /**
      * Name of the ServiceDomain. This is unique within a runtime.
      * @return name name of the ServiceDomain.
      */

@@ -15,11 +15,9 @@ package org.switchyard.common.camel;
 
 import static org.junit.Assert.assertTrue;
 
-import javax.xml.namespace.QName;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.internal.DomainImpl;
+import org.switchyard.MockDomain;
 
 /**
  * Test start/stop behavior in camel context extension.
@@ -31,7 +29,7 @@ public class SwitchYardCamelContextLifecycleTest {
     @Before
     public void setUp() {
         context = new SwitchYardCamelContext();
-        context.setServiceDomain(new DomainImpl(new QName("urn:test-domain:camel")));
+        context.setServiceDomain(new MockDomain());
     }
 
 	@Test

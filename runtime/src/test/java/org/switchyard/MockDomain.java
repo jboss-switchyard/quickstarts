@@ -35,6 +35,10 @@ public class MockDomain extends DomainImpl {
         super(DEFAULT_DOMAIN);
     }
     
+    public MockDomain(QName name) {
+        super(name);
+    }
+    
     public MockDomain(ServiceRegistry registry) {
         super(DEFAULT_DOMAIN,
                 registry,
@@ -43,6 +47,7 @@ public class MockDomain extends DomainImpl {
                 new BaseValidatorRegistry(),
                 new EventManager(),
                 null);
+        init();
     }
     
     public ServiceReference createInOnlyService(QName serviceName) {

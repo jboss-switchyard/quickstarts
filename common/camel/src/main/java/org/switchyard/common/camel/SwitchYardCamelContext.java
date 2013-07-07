@@ -42,6 +42,13 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
      * Context property name used to store camel context as service domain property.
      */
     public static final String CAMEL_CONTEXT_PROPERTY = "CamelContextProperty";
+    
+    /**
+     * Domain property used to configure the timeout value for ShutdownStrategy.
+     */
+    public static final String SHUTDOWN_TIMEOUT = "org.switchyard.camel.ShutdownTimeout";
+    
+    private static final int DEFAULT_TIMEOUT = 30;
 
     private final SimpleRegistry _writeableRegistry = new SimpleRegistry();
     private ServiceDomain _domain;
@@ -170,6 +177,7 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
     @Override
     public void start() throws Exception {
         if (_count.incrementAndGet() == 1) {
+            applyConfiguration();
             super.start();
         }
     }
@@ -184,6 +192,24 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
         if (_count.decrementAndGet() == 0) {
             super.stop();
         }
+    }
+    
+    // Applies domain configuration to this camel context
+    private void applyConfiguration() {
+        if (_domain == null || _domain.getProperties() == null) {
+            // no config to apply
+            return;
+        }
+        
+        // set shutdown timeout
+        Object timeoutProp = _domain.getProperty(SHUTDOWN_TIMEOUT);
+        int timeout;
+        if (timeoutProp != null) {
+            timeout = Integer.parseInt(timeoutProp.toString());
+        } else {
+            timeout = DEFAULT_TIMEOUT;
+        }
+        getShutdownStrategy().setTimeout(timeout);
     }
 
 }

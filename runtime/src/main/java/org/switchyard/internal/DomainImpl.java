@@ -63,10 +63,12 @@ public class DomainImpl implements ServiceDomain {
     private Map<String, ServiceSecurity> _serviceSecurities = new ConcurrentHashMap<String, ServiceSecurity>();
     
     /**
-     * Create a new ServiceDomain.
+     * Create a new ServiceDomain.  This is a convenience constructor which uses default
+     * resources and initializes via init() in the constructor.  Do not use this in runtime
+     * code!  This is for test/embedded use only.
      * @param name name
      */
-    public DomainImpl(QName name) {
+    protected DomainImpl(QName name) {
         this(name,
             new DefaultServiceRegistry(),
             new LocalExchangeBus(),
@@ -74,8 +76,7 @@ public class DomainImpl implements ServiceDomain {
             new BaseValidatorRegistry(),
             new EventManager(),
             null);
-        // this constructor is used for tests, normally exchange bus can listen for domain events
-        // ((LocalExchangeBus) _exchangeBus).init(this);
+        init();
     }
     
     /**
@@ -112,10 +113,6 @@ public class DomainImpl implements ServiceDomain {
 
         setEventPublisher(_transformerRegistry);
         setEventPublisher(_validatorRegistry);
-
-        _eventManager.publish(new DomainStartupEvent(this));
-        _exchangeBus.init(this);
-        _exchangeBus.start();
 
         if (_logger.isDebugEnabled()) {
             _logger.debug("Created SwitchYard ServiceDomain instance '" + name + "'.");
@@ -213,6 +210,13 @@ public class DomainImpl implements ServiceDomain {
      */
     public ExchangeBus getBus() {
         return _exchangeBus;
+    }
+    
+    @Override
+    public void init() {
+        _eventManager.publish(new DomainStartupEvent(this));
+        _exchangeBus.init(this);
+        _exchangeBus.start();
     }
     
     @Override
