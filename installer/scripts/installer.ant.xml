@@ -12,13 +12,13 @@
  - limitations under the License.
  -->
 
-<project name="SwitchYard AS7 Installer" default="install" basedir=".">
+<project name="SwitchYard EAP Installer" default="install" basedir=".">
 
     <!--  The following -D properties can be used to control install behavior:
-             o AS7_PATH = path to AS7 install - prevents input prompt
+             o EAP_PATH = path to EAP install - prevents input prompt
              o SKIP_BPEL_CONSOLE = do not install BPEL console
              o SKIP_FORGE = do not install forge
-             o SKIP_AS7 = do not install SwitchYard to AS7
+             o SKIP_EAP = do not install SwitchYard to EAP
              o SKIP_WS_UPGRADE = do not upgrade WS integration
      -->
 
@@ -116,7 +116,7 @@
     </target>
 
     <target name="request-forge-install" unless="SKIP_FORGE">
-        <input message="Would you like to install the SwitchYard Forge Module (y/n)?" addproperty="install.forge.question" validargs="y,n" defaultvalue="y" />
+        <input message="Would you like to install the SwitchYard Forge Module (y/n)?" addproperty="install.forge.question" validargs="y,n" defaultvalue="n" />
 
 	<condition property="installForge">
            <and>
@@ -128,7 +128,7 @@
 
 
     <target name="request-bpel-console-install" unless="BPELConsoleAlreadyInstalled">
-        <input message="Would you like to install the BPEL Console (y/n)?" addproperty="install.bpel.console.question" validargs="y,n" defaultvalue="y" />
+        <input message="Would you like to install the BPEL Console (y/n)?" addproperty="install.bpel.console.question" validargs="y,n" defaultvalue="n" />
 
         <condition property="installBPELConsole">
            <and>
@@ -138,7 +138,7 @@
         </condition>
     </target>
 
-    <target name="request-sy-install" unless="SKIP_AS7">
+    <target name="request-sy-install" unless="SKIP_EAP">
         <input message="Would you like to install the SwitchYard distribution to your ${container.name} installation (y/n)?" addproperty="install.sy.dist.question" validargs="y,n" defaultvalue="y" />
         <condition property="installSYDit">
            <and>
@@ -147,7 +147,7 @@
            </and>
         </condition>
 
-        <condition property="SKIP_AS7">
+        <condition property="SKIP_EAP">
 	   <and>
               <isset property="install.sy.dist.question" />
               <equals arg1="${install.sy.dist.question}" arg2="n" />
@@ -157,60 +157,59 @@
 	<condition property="skip.as7.folder.question">
           <and>
             <not>
-              <isset property="AS7_PATH"/>
+              <isset property="EAP_PATH"/>
             </not>
             <not>
-              <isset property="SKIP_AS7"/>
+              <isset property="SKIP_EAP"/>
             </not>
           </and>
         </condition>
     </target>
 
-    <target name="get-jboss-path-question" depends="request-sy-install" if="skip.as7.folder.question" unless="SKIP_AS7">
-        <input message="Please enter the path to the root folder of your JBoss ${container.name} installation (or press return if you would like the installer to download an ${container.name} distribution): " addproperty="AS7_PATH_ENTERED" />
-        <condition property="AS7_PATH_CHECK" value="${AS7_PATH_ENTERED}">
+    <target name="get-jboss-path-question" depends="request-sy-install" if="skip.as7.folder.question" unless="SKIP_EAP">
+        <input message="Please enter the path to the root folder of your JBoss ${container.name} installation (or press return if you would like the installer to download an ${container.name} distribution): " addproperty="EAP_PATH_ENTERED" />
+        <condition property="EAP_PATH_CHECK" value="${EAP_PATH_ENTERED}">
             <and>
-            <isset property="AS7_PATH_ENTERED"/>
+            <isset property="EAP_PATH_ENTERED"/>
             <not>
-              <matches string="${AS7_PATH_ENTERED}" pattern="^$"/>
+              <matches string="${EAP_PATH_ENTERED}" pattern="^$"/>
             </not>
             </and>
         </condition>
     </target>
 
-    <target name="get-jboss-path" depends="get-jboss-path-question" if="AS7_PATH_CHECK">
-        <pathconvert targetos="unix" property="AS7_PATH" setonempty="false">
+    <target name="get-jboss-path" depends="get-jboss-path-question" if="EAP_PATH_CHECK">
+        <pathconvert targetos="unix" property="EAP_PATH" setonempty="false">
             <path>
-                <pathelement location="${AS7_PATH_CHECK}"/>
+                <pathelement location="${EAP_PATH_CHECK}"/>
             </path>
         </pathconvert>
     </target>
 
-    <target name="install" description="Install SwitchYard into JBoss (optionally specified by AS7_PATH)"
+    <target name="install" description="Install SwitchYard into JBoss (optionally specified by EAP_PATH)"
         depends="download-sy-as7, get-jboss-path">
-        <!-- ************************** Change this for AS7 community version or ************************* -->
-        <property name="AS7_PATH" value="${basedir}/jboss-${server}-${as.version.major}"/>
-        <property name="QUICKSTART_PATH" value="${basedir}"/>
-        <property name="INSTALL_PATH" value="${AS7_PATH}"/>
-        <condition property="isAS7">
+        <property name="EAP_PATH" value="${basedir}/jboss-${server}-${as.version.major}"/>
+        <property name="QUICKSTART_PATH" value="${EAP_PATH}"/>
+        <property name="INSTALL_PATH" value="${EAP_PATH}"/>
+        <condition property="isEAP">
            <or>
-            <available file="${AS7_PATH}/jboss-modules.jar" />
-            <isset property="SKIP_AS7"/>
+            <available file="${EAP_PATH}/jboss-modules.jar" />
+            <isset property="SKIP_EAP"/>
            </or>
         </condition>
-        <antcall target="notAS7"/>
+        <antcall target="notEAP"/>
 
         <condition property="quickstartResourcesAlreadyInstalled">
           <or>
             <available file="quickstarts" filepath="${QUICKSTART_PATH}" />
-	    <isset property="SKIP_AS7"/>
+	    <isset property="SKIP_EAP"/>
           </or>
         </condition>
         <condition property="switchyardResourcesAlreadyInstalled">
           <or>
             <available file="switchyard" filepath="${INSTALL_PATH}/modules/org" />
             <available file="switchyard" filepath="${INSTALL_PATH}/modules/system/layers/soa" />
-            <isset property="SKIP_AS7"/>
+            <isset property="SKIP_EAP"/>
           </or>
         </condition>
         <condition property="BPELConsoleAlreadyInstalled">
@@ -227,21 +226,21 @@
         </condition>
 
         <antcall target="unzipSwitchyardResources">
-            <param name="AS7_PATH" value="${AS7_PATH}"/>
+            <param name="EAP_PATH" value="${EAP_PATH}"/>
         </antcall>
         <antcall target="unzipQuickstartResources">
-            <param name="AS7_PATH" value="${AS7_PATH}"/>
+            <param name="EAP_PATH" value="${EAP_PATH}"/>
         </antcall>
         <antcall target="install-forge">
-            <param name="AS7_PATH" value="${AS7_PATH}"/>
+            <param name="EAP_PATH" value="${EAP_PATH}"/>
         </antcall>
 		<antcall target="install-bpel-console">
-            <param name="AS7_PATH" value="${AS7_PATH}"/>
+            <param name="EAP_PATH" value="${EAP_PATH}"/>
 	    </antcall>
     </target>
 
     <target name="unzipSwitchyardResources" unless="switchyardResourcesAlreadyInstalled">
-        <!-- Install into the AS7 install.... -->
+        <!-- Install into the EAP install.... -->
         <unzip src="res/switchyard-as7-bundle.zip" dest="${INSTALL_PATH}" overwrite="true">
             <patternset>
                 <include name="standalone/**" />
@@ -249,33 +248,33 @@
             </patternset>
         </unzip>
         <xslt style="res/standalone.xsl"
-              basedir="${AS7_PATH}/standalone/configuration"
-              destdir="${AS7_PATH}/standalone/configuration"
+              basedir="${EAP_PATH}/standalone/configuration"
+              destdir="${EAP_PATH}/standalone/configuration"
               includes="standalone.xml,standalone-full.xml,standalone-full-ha.xml,standalone-ha.xml"/>
         <xslt style="res/domain.xsl"
-              basedir="${AS7_PATH}/domain/configuration"
-              destdir="${AS7_PATH}/domain/configuration"
+              basedir="${EAP_PATH}/domain/configuration"
+              destdir="${EAP_PATH}/domain/configuration"
               includes="domain.xml"/>
         <move overwrite="true" todir="${INSTALL_PATH}/domain/configuration">
-          <filelist dir="${AS7_PATH}/domain/configuration">
+          <filelist dir="${EAP_PATH}/domain/configuration">
             <file name="domain.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
-          <filelist dir="${AS7_PATH}/standalone/configuration">
+          <filelist dir="${EAP_PATH}/standalone/configuration">
             <file name="standalone.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
-          <filelist dir="${AS7_PATH}/standalone/configuration">
+          <filelist dir="${EAP_PATH}/standalone/configuration">
             <file name="standalone-full.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
-          <filelist dir="${AS7_PATH}/standalone/configuration">
+          <filelist dir="${EAP_PATH}/standalone/configuration">
             <file name="standalone-ha.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
@@ -283,7 +282,7 @@
         <!-- Allow this move to fail without error in case of 7.1.0.Beta1 -->
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration"
           failonerror="false">
-          <filelist dir="${AS7_PATH}/standalone/configuration">
+          <filelist dir="${EAP_PATH}/standalone/configuration">
             <file name="standalone-full-ha.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
@@ -291,11 +290,11 @@
 
         <!-- Apply second style sheet to add cache-container -->
         <xslt style="res/standalone-ha.xsl" force="true"
-              basedir="${AS7_PATH}/standalone/configuration"
-              destdir="${AS7_PATH}/standalone/configuration"
+              basedir="${EAP_PATH}/standalone/configuration"
+              destdir="${EAP_PATH}/standalone/configuration"
               includes="standalone-full-ha.xml,standalone-ha.xml"/>
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
-          <filelist dir="${AS7_PATH}/standalone/configuration">
+          <filelist dir="${EAP_PATH}/standalone/configuration">
             <file name="standalone-ha.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
@@ -303,7 +302,7 @@
         <!-- Allow this move to fail without error in case of 7.1.0.Beta1 -->
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration"
           failonerror="false">
-          <filelist dir="${AS7_PATH}/standalone/configuration">
+          <filelist dir="${EAP_PATH}/standalone/configuration">
             <file name="standalone-full-ha.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
@@ -322,8 +321,8 @@
         </unzip>
     </target>
 
-    <target name="notAS7" unless="isAS7">
-        <echo>The specified path '${AS7_PATH}' is not a path to a valid JBoss AS7 installation."</echo>
+    <target name="notEAP" unless="isEAP">
+        <echo>The specified path '${EAP_PATH}' is not a path to a valid JBoss EAP installation."</echo>
 
         <input message="Would you like to download an ${container.name} distribution (y/n)?"  validargs="y,n" defaultvalue="y" />
 
@@ -366,11 +365,11 @@
 
 	<target name="transform-jbossws-spi-module" unless="FinalGA">
         <xslt style="res/jbossws-spi_module.xsl"
-              basedir="${AS7_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"
-              destdir="${AS7_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"
+              basedir="${EAP_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"
+              destdir="${EAP_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"
               includes="module.xml"/>
         <move overwrite="true" todir="${INSTALL_PATH}/modules/system/layers/base/org/jboss/ws/spi/main">
-          <filelist dir="${AS7_PATH}/modules/system/layers/base/org/jboss/ws/spi/main">
+          <filelist dir="${EAP_PATH}/modules/system/layers/base/org/jboss/ws/spi/main">
             <file name="module.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
@@ -379,11 +378,11 @@
 
 	<target name="transform-jbossws-jboss720-server-integration-module" unless="FinalGA">
         <xslt style="res/jbossws-jboss720-server-integration_module.xsl"
-              basedir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/webservices/main"
-              destdir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/webservices/main"
+              basedir="${EAP_PATH}/modules/system/layers/base/org/jboss/as/webservices/main"
+              destdir="${EAP_PATH}/modules/system/layers/base/org/jboss/as/webservices/main"
               includes="module.xml"/>
         <move overwrite="true" todir="${INSTALL_PATH}/modules/system/layers/base/org/jboss/as/webservices/main">
-          <filelist dir="${AS7_PATH}/modules/system/layers/base/org/jboss/as/webservices/main">
+          <filelist dir="${EAP_PATH}/modules/system/layers/base/org/jboss/as/webservices/main">
             <file name="module.html"/>
           </filelist>
           <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>

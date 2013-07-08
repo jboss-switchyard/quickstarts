@@ -134,6 +134,9 @@
                             <descriptors>
                                 <descriptor>${basedir}/assembly.xml</descriptor>
                             </descriptors>
+                            <archiverConfig>
+                                <defaultDirectoryMode>493</defaultDirectoryMode>
+                            </archiverConfig>
                         </configuration>
                     </execution>
                 </executions>
