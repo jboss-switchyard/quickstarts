@@ -242,7 +242,7 @@
     <complexType name="MappingType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
-                <attribute name="from" type="string" use="required"/>
+                <attribute name="from" type="string" use="optional"/>
                 <attribute name="to" type="string" use="optional"/>
             </extension>
         </complexContent>
