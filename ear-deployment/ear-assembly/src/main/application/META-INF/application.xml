@@ -6,9 +6,9 @@
   <display-name>switchyard-quickstart-ear-deployment</display-name>
   <description>Example of an EAR deployment containing multiple SY apps and resources.</description>
   <module>
-    <java>switchyard-quickstart-ear-deployment-order-consumer-1.0.0-SNAPSHOT.jar</java>
+    <java>switchyard-quickstart-ear-deployment-order-consumer-${project.version}.jar</java>
   </module>
   <module>
-    <java>switchyard-quickstart-ear-deployment-order-service-1.0.0-SNAPSHOT.jar</java>
+    <java>switchyard-quickstart-ear-deployment-order-service-${project.version}.jar</java>
   </module>
 </application>
