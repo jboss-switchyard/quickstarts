@@ -63,7 +63,7 @@ When running with this option:
 
 When running with this option:
 
-    mvn exec:java -Dexec.args="confidentiality signencrypt"
+    mvn exec:java -Dexec.args="confidentiality signencrypt" -Djavax.net.ssl.trustStore=[path to tomcat.jks created in step 2]
 
 , you will be hitting the https (SSL) URL while providing authentication information, and see this in your log:
 

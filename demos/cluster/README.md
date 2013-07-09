@@ -16,7 +16,7 @@ You will need three SY instances and four terminal windows to run the clustering
 
 This can be done by simply making copies of the standalone directory for each instance, e.g.
 ```
-    cd switchyard-as7-{version}
+    cd ${EAP_HOME}
     cp -R standalone node1
     cp -R standalone node2
     cp -R standalone node3

@@ -59,7 +59,7 @@ When running with no options:
 
 When running with this option:
 
-    mvn exec:java -Dexec.args="confidentiality clientAuthentication"
+    mvn exec:java -Dexec.args="confidentiality clientAuthentication" -Djavax.net.ssl.trustStore=[path to tomcat.jks created in step 2]
 
 , you will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
 
