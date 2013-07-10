@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
  - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
  - 
@@ -11,173 +12,27 @@
  - See the License for the specific language governing permissions and
  - limitations under the License.
  -->
-
 <project name="SwitchYard EAP Installer" default="install" basedir=".">
-
     <!--  The following -D properties can be used to control install behavior:
              o EAP_PATH = path to EAP install - prevents input prompt
-             o SKIP_BPEL_CONSOLE = do not install BPEL console
-             o SKIP_FORGE = do not install forge
-             o SKIP_EAP = do not install SwitchYard to EAP
-             o SKIP_WS_UPGRADE = do not upgrade WS integration
      -->
-
+     
     <property file="installer.properties"/>
-
-    <target name="download-sy-as7-check">
- 	<condition property="sy.as7.not.available">
-          <not>
-            <available file="res/switchyard-as7-bundle.zip"/>
-          </not>
-        </condition>
-    </target>
-
-    <target name="download-as7-check">
-        <condition property="as7.not.available">
-          <and>
-            <not>
-              <available file="res/jboss-${server}-${as.version}.zip"/>
-            </not>
-          </and>
-        </condition>
-    </target>
-
-    <target name="download-sy-tools-check">
-        <condition property="sy.tools.not.available">
-          <and>
-            <or>
-              <isset property="installForge"/>
-              <isset property="installBPELConsole"/>
-            </or>
-            <not>
-              <available file="res/switchyard-tools.zip"/>
-            </not>
-          </and>
-        </condition>
-    </target>
-
-    <target name="download-sy-tools" depends="download-sy-tools-check" if="sy.tools.not.available">
-        <echo>Downloading SwitchYard Tools Bundle ...</echo>
-        <get src="${switchyard.tools.url}" dest="res/switchyard-tools.zip"/>
-    </target>
-
-    <target name="extract-sy-tools-forge" depends="download-sy-tools" if="installForge">
-        <unzip src="res/switchyard-tools.zip" dest="res/" overwrite="true">
-            <mapper type="flatten"/>
-        </unzip>
-    </target>
-
-    <target name="extract-sy-tools-bpel-console" depends="download-sy-tools" if="installBPELConsole">
-        <unzip src="res/switchyard-tools.zip" dest="res/" overwrite="true">
-            <mapper type="flatten"/>
-        </unzip>
-    </target>
-
-    <target name="download-as7-zip" depends="download-as7-check" if="as7.not.available">
-        <echo>Downloading ${container.name} ...</echo>
-        <get src="${as7.dist.url}" dest="res/jboss-${server}-${as.version}.zip"/>
-    </target>
-
-    <target name="download-as7" depends="download-as7-zip">
-	<property name="unzipped.dir" value="jboss-${server}-${as.version}"/>
-	<echo>Installing ${container.name} ...</echo>
-        <unzip src="res/jboss-${server}-${as.version}.zip" dest="${basedir}" overwrite="true"/>
-    	<chmod dir="${basedir}/${unzipped.dir}/bin" perm="ugo+rx" includes="**/*.sh"/>
-    </target>
-
-    <target name="download-sy-as7" depends="download-sy-as7-check" if="sy.as7.not.available">
-        <echo>Downloading SwitchYard ${container.name} Bundle ..."</echo>
-        <get src="${as7.bundle.url}" dest="res/switchyard-as7-bundle.zip"/>
-    </target>
-
-    <target name="download-sy-forge-module-check">
-        <condition property="sy.forge.module.not.available">
-            <not>
-              <available file="res/switchyard-forge-plugins.zip"/>
-           </not>
-        </condition>
-    </target>
-
-    <target name="download-sy-forge-module" depends="download-sy-forge-module-check, extract-sy-tools-forge" if="sy.forge.module.not.available">
-    </target>
-
-    <target name="download-bpel-console-check">
-        <condition property="bpel.console.not.available">
-           <and>
-             <not>
-               <available file="res/switchyard-bpel-console-server.war"/>
-             </not>
-             <isset property="installBPELConsole"/>
-           </and>
-        </condition>
-    </target>
-
-    <target name="download-bpel-console" depends="download-bpel-console-check, extract-sy-tools-bpel-console" if="bpel.console.not.available">
-    </target>
-
-    <target name="request-forge-install" unless="SKIP_FORGE">
-        <input message="Would you like to install the SwitchYard Forge Module (y/n)?" addproperty="install.forge.question" validargs="y,n" defaultvalue="n" />
-
-	<condition property="installForge">
-           <and>
-              <isset property="install.forge.question" />
-              <equals arg1="${install.forge.question}" arg2="y" />
-           </and>
-        </condition>
-    </target>
-
-
-    <target name="request-bpel-console-install" unless="BPELConsoleAlreadyInstalled">
-        <input message="Would you like to install the BPEL Console (y/n)?" addproperty="install.bpel.console.question" validargs="y,n" defaultvalue="n" />
-
-        <condition property="installBPELConsole">
-           <and>
-              <isset property="install.bpel.console.question" />
-              <equals arg1="${install.bpel.console.question}" arg2="y" />
-           </and>
-        </condition>
-    </target>
-
-    <target name="request-sy-install" unless="SKIP_EAP">
-        <input message="Would you like to install the SwitchYard distribution to your ${container.name} installation (y/n)?" addproperty="install.sy.dist.question" validargs="y,n" defaultvalue="y" />
-        <condition property="installSYDit">
-           <and>
-              <isset property="install.sy.dist.question" />
-              <equals arg1="${install.sy.dist.question}" arg2="y" />
-           </and>
-        </condition>
-
-        <condition property="SKIP_EAP">
-	   <and>
-              <isset property="install.sy.dist.question" />
-              <equals arg1="${install.sy.dist.question}" arg2="n" />
-           </and>
-        </condition>
-
-	<condition property="skip.as7.folder.question">
-          <and>
-            <not>
-              <isset property="EAP_PATH"/>
-            </not>
-            <not>
-              <isset property="SKIP_EAP"/>
-            </not>
-          </and>
-        </condition>
-    </target>
-
-    <target name="get-jboss-path-question" depends="request-sy-install" if="skip.as7.folder.question" unless="SKIP_EAP">
-        <input message="Please enter the path to the root folder of your JBoss ${container.name} installation (or press return if you would like the installer to download an ${container.name} distribution): " addproperty="EAP_PATH_ENTERED" />
+    
+    <target name="get-jboss-path-question" unless="EAP_PATH">
+        <input message="Enter the path to the root of your JBoss EAP installation: " 
+            addproperty="EAP_PATH_ENTERED"/>
+            
         <condition property="EAP_PATH_CHECK" value="${EAP_PATH_ENTERED}">
             <and>
-            <isset property="EAP_PATH_ENTERED"/>
-            <not>
-              <matches string="${EAP_PATH_ENTERED}" pattern="^$"/>
-            </not>
+                <isset property="EAP_PATH_ENTERED"/>
+                <not>
+                    <matches string="${EAP_PATH_ENTERED}" pattern="^$"/>
+                </not>
             </and>
         </condition>
     </target>
-
+    
     <target name="get-jboss-path" depends="get-jboss-path-question" if="EAP_PATH_CHECK">
         <pathconvert targetos="unix" property="EAP_PATH" setonempty="false">
             <path>
@@ -185,176 +40,258 @@
             </path>
         </pathconvert>
     </target>
-
-    <target name="install" description="Install SwitchYard into JBoss (optionally specified by EAP_PATH)"
-        depends="download-sy-as7, get-jboss-path">
+    
+    <target name="install" 
+        description="Install SwitchYard into JBoss (optionally specified by EAP_PATH)" 
+        depends="get-jboss-path">
+        
         <property name="EAP_PATH" value="${basedir}/jboss-${server}-${as.version.major}"/>
         <property name="QUICKSTART_PATH" value="${EAP_PATH}"/>
         <property name="INSTALL_PATH" value="${EAP_PATH}"/>
+        
         <condition property="isEAP">
-           <or>
-            <available file="${EAP_PATH}/jboss-modules.jar" />
-            <isset property="SKIP_EAP"/>
-           </or>
+           <available file="${EAP_PATH}/jboss-modules.jar"/>
         </condition>
-        <antcall target="notEAP"/>
-
+        
+        <fail message="The specified path '${EAP_PATH}' is not a path to a valid JBoss EAP installation."
+              unless="isEAP"/>
+        
         <condition property="quickstartResourcesAlreadyInstalled">
-          <or>
-            <available file="quickstarts" filepath="${QUICKSTART_PATH}" />
-	    <isset property="SKIP_EAP"/>
-          </or>
+            <available file="quickstarts" filepath="${QUICKSTART_PATH}"/>
         </condition>
+        
         <condition property="switchyardResourcesAlreadyInstalled">
-          <or>
-            <available file="switchyard" filepath="${INSTALL_PATH}/modules/org" />
-            <available file="switchyard" filepath="${INSTALL_PATH}/modules/system/layers/soa" />
-            <isset property="SKIP_EAP"/>
-          </or>
+            <or>
+                <available file="switchyard" filepath="${INSTALL_PATH}/modules/org"/>
+                <available file="switchyard" filepath="${INSTALL_PATH}/modules/system/layers/soa"/>
+            </or>
         </condition>
-        <condition property="BPELConsoleAlreadyInstalled">
-          <or>
-            <available file="switchyard-bpel-console.war" filepath="${INSTALL_PATH}/standalone/deployments" />
-            <isset property="SKIP_BPEL_CONSOLE"/>
-          </or>
-        </condition>
+        
         <condition property="FinalGA">
-          <or>
-            <available file="jbossws-spi-2.1.2.Final-redhat-1.jar" filepath="${INSTALL_PATH}/modules/system/layers/base/org/jboss/ws/spi/main" />
-            <isset property="SKIP_WS_UPGRADE"/>
-          </or>
+            <or>
+                <available file="jbossws-spi-2.1.2.Final-redhat-1.jar" filepath="${INSTALL_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"/>
+                <isset property="SKIP_WS_UPGRADE"/>
+            </or>
         </condition>
-
+        
         <antcall target="unzipSwitchyardResources">
             <param name="EAP_PATH" value="${EAP_PATH}"/>
         </antcall>
+        
         <antcall target="unzipQuickstartResources">
             <param name="EAP_PATH" value="${EAP_PATH}"/>
         </antcall>
-        <antcall target="install-forge">
-            <param name="EAP_PATH" value="${EAP_PATH}"/>
-        </antcall>
-		<antcall target="install-bpel-console">
-            <param name="EAP_PATH" value="${EAP_PATH}"/>
-	    </antcall>
     </target>
-
+    
     <target name="unzipSwitchyardResources" unless="switchyardResourcesAlreadyInstalled">
         <!-- Install into the EAP install.... -->
         <unzip src="res/switchyard-as7-bundle.zip" dest="${INSTALL_PATH}" overwrite="true">
             <patternset>
-                <include name="standalone/**" />
-                <include name="modules/**" />
+                <include name="standalone/**"/>
+                <include name="modules/**"/>
             </patternset>
         </unzip>
-        <xslt style="res/standalone.xsl"
-              basedir="${EAP_PATH}/standalone/configuration"
-              destdir="${EAP_PATH}/standalone/configuration"
-              includes="standalone.xml,standalone-full.xml,standalone-full-ha.xml,standalone-ha.xml"/>
-        <xslt style="res/domain.xsl"
-              basedir="${EAP_PATH}/domain/configuration"
-              destdir="${EAP_PATH}/domain/configuration"
-              includes="domain.xml"/>
+        <xslt style="res/standalone.xsl" 
+            basedir="${EAP_PATH}/standalone/configuration" 
+            destdir="${EAP_PATH}/standalone/configuration"
+            includes="standalone.xml,standalone-full.xml,standalone-full-ha.xml,standalone-ha.xml"/>
+        <xslt style="res/domain.xsl" 
+            basedir="${EAP_PATH}/domain/configuration" 
+            destdir="${EAP_PATH}/domain/configuration" 
+            includes="domain.xml"/>
         <move overwrite="true" todir="${INSTALL_PATH}/domain/configuration">
-          <filelist dir="${EAP_PATH}/domain/configuration">
-            <file name="domain.html"/>
-          </filelist>
-          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+            <filelist dir="${EAP_PATH}/domain/configuration">
+                <file name="domain.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
-          <filelist dir="${EAP_PATH}/standalone/configuration">
-            <file name="standalone.html"/>
-          </filelist>
-          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+            <filelist dir="${EAP_PATH}/standalone/configuration">
+                <file name="standalone.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
-          <filelist dir="${EAP_PATH}/standalone/configuration">
-            <file name="standalone-full.html"/>
-          </filelist>
-          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+            <filelist dir="${EAP_PATH}/standalone/configuration">
+                <file name="standalone-full.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
-          <filelist dir="${EAP_PATH}/standalone/configuration">
-            <file name="standalone-ha.html"/>
-          </filelist>
-          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+            <filelist dir="${EAP_PATH}/standalone/configuration">
+                <file name="standalone-ha.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
         <!-- Allow this move to fail without error in case of 7.1.0.Beta1 -->
-        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration"
-          failonerror="false">
-          <filelist dir="${EAP_PATH}/standalone/configuration">
-            <file name="standalone-full-ha.html"/>
-          </filelist>
-          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration" failonerror="false">
+            <filelist dir="${EAP_PATH}/standalone/configuration">
+                <file name="standalone-full-ha.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
-
         <!-- Apply second style sheet to add cache-container -->
-        <xslt style="res/standalone-ha.xsl" force="true"
-              basedir="${EAP_PATH}/standalone/configuration"
-              destdir="${EAP_PATH}/standalone/configuration"
-              includes="standalone-full-ha.xml,standalone-ha.xml"/>
+        <xslt style="res/standalone-ha.xsl" force="true" basedir="${EAP_PATH}/standalone/configuration" destdir="${EAP_PATH}/standalone/configuration" includes="standalone-full-ha.xml,standalone-ha.xml"/>
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
-          <filelist dir="${EAP_PATH}/standalone/configuration">
-            <file name="standalone-ha.html"/>
-          </filelist>
-          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+            <filelist dir="${EAP_PATH}/standalone/configuration">
+                <file name="standalone-ha.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
         <!-- Allow this move to fail without error in case of 7.1.0.Beta1 -->
-        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration"
-          failonerror="false">
-          <filelist dir="${EAP_PATH}/standalone/configuration">
-            <file name="standalone-full-ha.html"/>
-          </filelist>
-          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration" failonerror="false">
+            <filelist dir="${EAP_PATH}/standalone/configuration">
+                <file name="standalone-full-ha.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
-
-        <antcall target="transform-jbossws-spi-module" />
-        <antcall target="transform-jbossws-jboss720-server-integration-module" />
+        <antcall target="transform-jbossws-spi-module"/>
+        <antcall target="transform-jbossws-jboss720-server-integration-module"/>
     </target>
-
     <target name="unzipQuickstartResources" unless="quickstartResourcesAlreadyInstalled">
         <!-- Install SwitchYard stuff into this directory.... -->
         <unzip src="res/switchyard-as7-bundle.zip" dest="${QUICKSTART_PATH}" overwrite="true">
             <patternset>
-                <include name="quickstarts/**" />
+                <include name="quickstarts/**"/>
             </patternset>
         </unzip>
     </target>
-
-    <target name="notEAP" unless="isEAP">
-        <echo>The specified path '${EAP_PATH}' is not a path to a valid JBoss EAP installation."</echo>
-
-        <input message="Would you like to download an ${container.name} distribution (y/n)?"  validargs="y,n" defaultvalue="y" />
-
-        <antcall target="download-as7"/>
+    
+    <target name="transform-jbossws-spi-module" unless="FinalGA">
+        <xslt style="res/jbossws-spi_module.xsl" basedir="${EAP_PATH}/modules/system/layers/base/org/jboss/ws/spi/main" destdir="${EAP_PATH}/modules/system/layers/base/org/jboss/ws/spi/main" includes="module.xml"/>
+        <move overwrite="true" todir="${INSTALL_PATH}/modules/system/layers/base/org/jboss/ws/spi/main">
+            <filelist dir="${EAP_PATH}/modules/system/layers/base/org/jboss/ws/spi/main">
+                <file name="module.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
     </target>
-
-    <target name="check-forge-home">
-    	<property environment="env"/>
-        <condition property="forge.home.set">
-	       <isset property="env.FORGE_HOME"/>
+    
+    <target name="transform-jbossws-jboss720-server-integration-module" unless="FinalGA">
+        <xslt style="res/jbossws-jboss720-server-integration_module.xsl" basedir="${EAP_PATH}/modules/system/layers/base/org/jboss/as/webservices/main" destdir="${EAP_PATH}/modules/system/layers/base/org/jboss/as/webservices/main" includes="module.xml"/>
+        <move overwrite="true" todir="${INSTALL_PATH}/modules/system/layers/base/org/jboss/as/webservices/main">
+            <filelist dir="${EAP_PATH}/modules/system/layers/base/org/jboss/as/webservices/main">
+                <file name="module.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+    </target>
+    
+    <!-- #################################################################
+         #######                   Tools Targets                   #######
+         ################################################################# -->
+    <target name="download-sy-tools-check">
+        <condition property="sy.tools.not.available">
+            <not>
+                <available file="res/switchyard-tools.zip"/>
+            </not>
         </condition>
     </target>
-
-    <target name="request-forge-home" if="installForge" unless="forge.home.set" depends="check-forge-home">
-        <input message="Please enter the path to the root folder of your Forge installation: " addproperty="FORGE_PATH_ENTERED" />
-        <pathconvert targetos="unix" property="FORGE_PATH">
-            <path>
-                <pathelement location="${FORGE_PATH_ENTERED}"/>
-            </path>
-        </pathconvert>
+    
+    <target name="download-sy-tools" depends="download-sy-tools-check" if="sy.tools.not.available">
+        <echo>Downloading SwitchYard Tools Bundle ...</echo>
+        <get src="${switchyard.tools.url}" dest="res/switchyard-tools.zip"/>
     </target>
-
-    <target name="validate-forge-home-version" if="installForge">
-        <!-- Check that a SNAPSHOT version isn't being used -->
-    	<condition property="forge.home.check">
-           <and>
-             <available file="${FORGE_PATH}/modules/org/jboss/forge/main/forge-shell.jar"/>
-	     <available file="${FORGE_PATH}/jboss-modules.jar"/>
-           </and>
+    
+    <!-- #################################################################
+         #######                   BPEL Console                    #######
+         ################################################################# -->
+    <target name="install-bpel-console" 
+        description="Install BPEL Console to SwitchYard Runtime"
+        depends="download-bpel-console, get-jboss-path">
+        
+        <condition property="BPELConsoleAlreadyInstalled">
+            <or>
+                <available file="switchyard-bpel-console.war" filepath="${EAP_PATH}/standalone/deployments"/>
+            </or>
+        </condition>
+        
+        <copy todir="${EAP_PATH}/standalone/deployments" 
+            overwrite="true" 
+            file="res/switchyard-tools-${tools.version}/switchyard-bpel-console-server.war"/>
+        
+        <copy todir="${EAP_PATH}/standalone/deployments/switchyard-bpel-console.war">
+            <fileset dir="res/switchyard-tools-${tools.version}/switchyard-bpel-console.war"/>
+        </copy>
+        
+        <touch file="${EAP_PATH}/standalone/deployments/switchyard-bpel-console.war.dodeploy"/>
+    </target>
+    
+    <target name="download-bpel-console" 
+        depends="download-bpel-console-check, extract-sy-tools-bpel-console" 
+        if="bpel.console.not.available">
+    </target>
+    
+    <target name="download-bpel-console-check">
+        <condition property="bpel.console.not.available">
+            <and>
+                <not>
+                    <available file="res/switchyard-tools-${tools.version}/switchyard-bpel-console-server.war"/>
+                </not>
+                <isset property="installBPELConsole"/>
+            </and>
         </condition>
     </target>
-
+    
+    <target name="extract-sy-tools-bpel-console" depends="download-sy-tools">
+        <unzip src="res/switchyard-tools.zip" dest="res/" overwrite="true"/>
+    </target>
+    
+    <!-- #################################################################
+         #######                  Forge Plugins                    #######
+         ################################################################# -->
+    <target name="install-forge" 
+        description="Install SwitchYard plugins into JBoss Forge" 
+        depends="request-forge-home, set-forge-home, validate-forge-home-version, download-sy-forge-module">
+        
+        <condition property="forge.plugindir.exists">
+            <available file="config" filepath="${user.home}/.forge"/>
+        </condition>
+        <echo>Creating switchyard directory...</echo>
+        <mkdir dir="${user.home}/.forge/plugins/org/switchyard"/>
+        <echo>Unzipping switchyard forge plugin module...</echo>
+        <unzip dest="${user.home}/.forge/plugins/org/switchyard"
+               src="res/switchyard-tools-${tools.version}/switchyard-forge-plugins.zip"/>
+        <echo>Unzipped SwitchYard forge plugin.</echo>
+        <condition property="java.share.dir" value="/usr/share/java">
+            <available file="/usr/share/java"/>
+        </condition>
+        <property name="java.share.dir" value="${basedir}"/>
+        <path id="usr.share.java">
+            <fileset dir="${java.share.dir}">
+                <include name="jaxp_transform_impl.jar"/>
+                <include name="xerces-j2.jar"/>
+                <include name="xalan-j2-serializer.jar"/>
+            </fileset>
+        </path>
+        <echo>Installing forge plugin to ${user.home}/.forge ... </echo>
+        <path id="forge.installer.classpath">
+            <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/main">
+                <include name="forge-shell-*.jar"/>
+                <include name="forge-parser-java.jar"/>
+            </fileset>
+            <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/shell/api/main">
+                <include name="forge-shell-api-*"/>
+            </fileset>
+            <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/parser/xml/main">
+                <include name="forge-parser-xml-*"/>
+            </fileset>
+            <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/parser/java/api/main">
+                <include name="java-parser-api-*"/>
+                <include name="forge-parser-java-api-*"/>
+            </fileset>
+            <fileset dir="${basedir}">
+                <include name="lib/switchyard-forge-installer.jar"/>
+            </fileset>
+            <path refid="usr.share.java"/>
+        </path>
+        <java classname="org.switchyard.forge.installer.Installer">
+            <arg value="org.switchyard.switchyard-forge-plugin"/>
+            <arg value="${project.version}"/>
+            <classpath refid="forge.installer.classpath"/>
+        </java>
+    </target>
+    
     <target name="set-forge-home" if="forge.home.set" depends="check-forge-home">
         <pathconvert targetos="unix" property="FORGE_PATH">
             <path>
@@ -362,133 +299,49 @@
             </path>
         </pathconvert>
     </target>
-
-	<target name="transform-jbossws-spi-module" unless="FinalGA">
-        <xslt style="res/jbossws-spi_module.xsl"
-              basedir="${EAP_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"
-              destdir="${EAP_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"
-              includes="module.xml"/>
-        <move overwrite="true" todir="${INSTALL_PATH}/modules/system/layers/base/org/jboss/ws/spi/main">
-          <filelist dir="${EAP_PATH}/modules/system/layers/base/org/jboss/ws/spi/main">
-            <file name="module.html"/>
-          </filelist>
-          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
-        </move>
-    </target>
-
-	<target name="transform-jbossws-jboss720-server-integration-module" unless="FinalGA">
-        <xslt style="res/jbossws-jboss720-server-integration_module.xsl"
-              basedir="${EAP_PATH}/modules/system/layers/base/org/jboss/as/webservices/main"
-              destdir="${EAP_PATH}/modules/system/layers/base/org/jboss/as/webservices/main"
-              includes="module.xml"/>
-        <move overwrite="true" todir="${INSTALL_PATH}/modules/system/layers/base/org/jboss/as/webservices/main">
-          <filelist dir="${EAP_PATH}/modules/system/layers/base/org/jboss/as/webservices/main">
-            <file name="module.html"/>
-          </filelist>
-          <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
-        </move>
-    </target>
-
-    <target name="install-bpel-console" if="installBPELConsole" depends="request-bpel-console-install, download-bpel-console">
-    	<copy todir="${INSTALL_PATH}/standalone/deployments" overwrite="true" file="res/switchyard-bpel-console-server.war"/>
-      <copy todir="${INSTALL_PATH}/standalone/deployments/switchyard-bpel-console.war">
-        <fileset dir="res/switchyard-bpel-console.war" />
-      </copy>
-      <touch file="${INSTALL_PATH}/standalone/deployments/switchyard-bpel-console.war.dodeploy" />
-    </target>
-
-    <target name="install-forge" if="installForge" depends="request-forge-install, request-forge-home, set-forge-home, validate-forge-home-version, download-sy-forge-module" unless="SKIP_FORGE">
-
-        <condition property="forge.plugindir.exists">
-            <available file="config" filepath="${user.home}/.forge" />
-        </condition>
-
-        <echo>Creating switchyard directory...</echo>
-        <mkdir dir="${user.home}/.forge/plugins/org/switchyard"/>
-        <echo>Unzipping switchyard forge plugin module...</echo>
-        <unzip dest="${user.home}/.forge/plugins/org/switchyard"
-                src="res/switchyard-forge-plugins.zip"/>
-        <echo>Unzipped SwitchYard forge plugin.</echo>
-
-	<condition property="java.share.dir" value="/usr/share/java">
-	    <available file="/usr/share/java"/>
-        </condition>
-	<property name="java.share.dir" value="${basedir}"/>
-	<path id="usr.share.java">
-            <fileset dir="${java.share.dir}">
-                <include name="jaxp_transform_impl.jar"/>
-                <include name="xerces-j2.jar"/>
-                <include name="xalan-j2-serializer.jar"/>
-            </fileset>
-        </path>
-
-	<echo>Installing forge plugin to ${user.home}/.forge ... </echo>
-	<path id="forge.installer.classpath">
-		<fileset dir="${FORGE_PATH}/modules/org/jboss/forge/main">
-		    <include name="forge-shell-*.jar"/>
-            <include name="forge-parser-java.jar"/>
-		</fileset>
-
-        <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/shell/api/main">
-            <include name="forge-shell-api-*"/>
-        </fileset>
-
-        <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/parser/xml/main">
-            <include name="forge-parser-xml-*"/>
-        </fileset>
-
-        <fileset dir="${FORGE_PATH}/modules/org/jboss/forge/parser/java/api/main">
-	    <include name="java-parser-api-*"/>
-            <include name="forge-parser-java-api-*"/>
-        </fileset>
-
-		<fileset dir="${basedir}">
- 			<include name="lib/switchyard-forge-installer.jar"/>
-		</fileset>
-
-                <path refid="usr.share.java"/>
-
-	</path>
-	<java classname="org.switchyard.forge.installer.Installer">
-		<arg value="org.switchyard.switchyard-forge-plugin"/>
-		<arg value="${project.version}"/>
-		<classpath refid="forge.installer.classpath"/>
-	</java>
-    </target>
-
-    <!-- jBPM console commands not supported in 0.3
-
-    <target name="download-jbpm-console-check">
-        <condition property="jbpm.console.not.available">
-           <not>
-             <available file="${basedir}/switchyard-jbpm-gwt-console-server-${project.version}.war"/>
-           </not>
+    
+    <target name="check-forge-home">
+        <property environment="env"/>
+        <condition property="forge.home.set">
+            <isset property="env.FORGE_HOME"/>
         </condition>
     </target>
-
-    <target name="download-jbpm-console" depends="download-jbpm-console-check" if="jbpm.console.not.available">
-        <echo>Downloading JBPM Console  ..."</echo>
-        <get src="${switchyard.jbpm.console.url}" dest="${basedir}/switchyard-jbpm-gwt-console-server.war"/>
-    <get src="${jbpm.gwt.console.url}" dest="${basedir}/jbpm-gwt-console.war"/>
+    
+    <target name="request-forge-home" unless="forge.home.set" depends="check-forge-home">
+        <input message="Please enter the path to the root folder of your Forge installation: " addproperty="FORGE_PATH_ENTERED"/>
+        <pathconvert targetos="unix" property="FORGE_PATH">
+            <path>
+                <pathelement location="${FORGE_PATH_ENTERED}"/>
+            </path>
+        </pathconvert>
     </target>
-
-    <target name="request-jbpm-console-install">
-        <input message="Would you like to install the JBPM Console (y/n)?" addproperty="install.jbpm.console.question" validargs="y,n" defaultvalue="y" />
-
-        <condition property="installJBPMConsole">
-           <and>
-              <isset property="install.jbpm.console.question" />
-              <equals arg1="${install.jbpm.console.question}" arg2="y" />
-           </and>
+    
+    <target name="validate-forge-home-version">
+        <!-- Check that a SNAPSHOT version isn't being used -->
+        <condition property="forge.home.check">
+            <and>
+                <available file="${FORGE_PATH}/modules/org/jboss/forge/main/forge-shell.jar"/>
+                <available file="${FORGE_PATH}/jboss-modules.jar"/>
+            </and>
         </condition>
-        <antcall target="download-jbpm-console"/>
     </target>
-
-    <target name="install-jbpm-console" if="installJBPMConsole" depends="request-jbpm-console-install">
-    <copy todir="${INSTALL_PATH}/standalone/deployments" file="${basedir}/switchyard-jbpm-gwt-console-server.war"/>
-        <copy todir="${INSTALL_PATH}/standalone/deployments" file="${basedir}/jbpm-gwt-console.war"/>
+    
+    <target name="extract-sy-tools-forge" depends="download-sy-tools">
+        <unzip src="res/switchyard-tools.zip" dest="res/" overwrite="true">
+            <mapper type="flatten"/>
+        </unzip>
     </target>
-
-    -->
-
+    
+    <target name="download-sy-forge-module-check">
+        <condition property="sy.forge.module.not.available">
+            <not>
+                <available file="res/switchyard-tools-${tools.version}/switchyard-forge-plugins.zip"/>
+            </not>
+        </condition>
+    </target>
+    
+    <target name="download-sy-forge-module" 
+        depends="download-sy-forge-module-check, extract-sy-tools-forge" 
+        if="sy.forge.module.not.available">
+    </target>
 </project>
