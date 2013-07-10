@@ -328,7 +328,6 @@
     
     <target name="extract-sy-tools-forge" depends="download-sy-tools">
         <unzip src="res/switchyard-tools.zip" dest="res/" overwrite="true">
-            <mapper type="flatten"/>
         </unzip>
     </target>
     
