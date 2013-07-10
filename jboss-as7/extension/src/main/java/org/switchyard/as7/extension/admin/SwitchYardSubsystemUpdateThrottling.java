@@ -75,8 +75,8 @@ public final class SwitchYardSubsystemUpdateThrottling implements OperationStepH
                     if (throttlingNode != null) {
                         final ModelNode enabled = throttlingNode.get(ENABLED);
                         final ModelNode maxRequests = throttlingNode.get(MAX_REQUESTS);
-                        throttling.update(enabled == null ? null : enabled.asBoolean(), maxRequests == null ? null
-                                : maxRequests.asInt());
+                        throttling.update(enabled == null || !enabled.isDefined() ? null : enabled.asBoolean(),
+                                maxRequests == null || !maxRequests.isDefined() ? null : maxRequests.asInt());
                     }
                     context.stepCompleted();
                 } catch (Throwable e) {
