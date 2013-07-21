@@ -95,7 +95,6 @@
       <soap:address location="REPLACE_WITH_ACTUAL_URL"/>
     </port>
   </service>
-  <!-- wsdl4j does not seem to list these imported services in its definition, although it is parsed -->
   <import namespace="http://test.ws.other/" location="AnotherGoodbyeService.wsdl"/>
 </definitions>
 

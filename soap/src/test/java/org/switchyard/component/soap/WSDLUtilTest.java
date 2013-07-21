@@ -64,7 +64,7 @@ public class WSDLUtilTest {
         PortName portName = new PortName("HelloWebServicePortFrench");
         Service service = WSDLUtil.getService("MultiplePortService.wsdl", portName);
         Assert.assertNotNull(service);
-        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "GoodbyeWebService"));
+        Assert.assertEquals(service.getQName(), new QName("http://test.ws.other/", "GoodbyeWebService"));
         service = WSDLUtil.getService("MultiplePortService.wsdl", new PortName("HelloWebService:"));
         Assert.assertNotNull(service);
         Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloWebService"));
@@ -76,7 +76,7 @@ public class WSDLUtilTest {
     public void nullPortName() throws Exception {
         Service service = WSDLUtil.getService("MultiplePortService.wsdl", new PortName(null));
         Assert.assertNotNull(service);
-        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "GoodbyeWebService"));
+        Assert.assertEquals(service.getQName(), new QName("http://test.ws.other/", "GoodbyeWebService"));
         Port port = WSDLUtil.getPort(service, new PortName(null));
         Assert.assertNotNull(port);
         Assert.assertEquals(port.getName(), "GoodbyeWebServicePort");
@@ -183,6 +183,19 @@ public class WSDLUtilTest {
         Assert.assertNotNull(port);
         feature = WSDLUtil.getFeature(definition, port, true);
         Assert.assertEquals("[AddressingEnabled:false, AddressingRequired:false, MtomEnabled:true]", feature.toString());
+    }
+
+    @Test
+    public void importedWSDL() throws Exception {
+        Service service = WSDLUtil.getService("HelloWebServiceImport.wsdl", new PortName(null));
+        Assert.assertNotNull(service);
+        Port port = WSDLUtil.getPort(service, new PortName("HelloWebServicePort"));
+        Assert.assertNotNull(port);
+        service = WSDLUtil.getService("HelloWebServiceImport.wsdl", new PortName("HelloWebService:"));
+        Assert.assertNotNull(service);
+        PortName portName = new PortName("{urn:switchyard-metadata-interface}HelloWebService:");
+        service = WSDLUtil.getService("HelloWebServiceImport.wsdl", portName);
+        Assert.assertNotNull(service);
     }
 
     /*

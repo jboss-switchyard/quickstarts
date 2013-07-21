@@ -234,20 +234,32 @@ public final class WSDLUtil {
     public static Service getService(final Definition definition, final PortName portName) throws WSDLException {
         Service service = null;
         if (portName.getServiceQName().equals(new QName(""))) {
-            service = (Service) definition.getServices().values().iterator().next();
+            service = (Service) definition.getAllServices().values().iterator().next();
             portName.setServiceQName(service.getQName());
         } else {
             String namespace = portName.getNamespaceURI();
+            Boolean namespaceSet = false;
             if (namespace.equals(XMLConstants.NULL_NS_URI)) {
                 namespace = definition.getTargetNamespace();
+            } else {
+                namespaceSet = true;
             }
             QName serviceQName = new QName(namespace, portName.getServiceName());
-            Iterator<Service> services = definition.getServices().values().iterator();
-            while (services.hasNext()) {
+            Iterator<Service> services = definition.getAllServices().values().iterator();
+outer:      while (services.hasNext()) {
                 Service wsdlService = services.next();
                 if (wsdlService.getQName().equals(serviceQName)) {
                     service =  wsdlService;
                     break;
+                } else if (!namespaceSet) {
+                    Iterator<String> importedNamespaces = definition.getImports().keySet().iterator();
+                    while (importedNamespaces.hasNext()) {
+                        QName qName = new QName(importedNamespaces.next(), portName.getServiceName());
+                        if (wsdlService.getQName().equals(qName)) {
+                            service =  wsdlService;
+                            break outer;
+                        }
+                    }
                 }
             }
         }
