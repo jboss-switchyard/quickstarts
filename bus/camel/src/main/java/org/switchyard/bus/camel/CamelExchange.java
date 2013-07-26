@@ -217,7 +217,8 @@ public class CamelExchange implements SecurityExchange {
 
         // Publish exchange initiation event
         if (ExchangePhase.IN.equals(getPhase())) {
-            _exchange.setProperty(ExchangeInitiatedEvent.EXCHANGE_INITIATED_TIME, Long.toString(System.nanoTime()));
+            getContext().setProperty(ExchangeInitiatedEvent.EXCHANGE_INITIATED_TIME, Long.toString(System.nanoTime()), Scope.EXCHANGE)
+                .addLabels(BehaviorLabel.TRANSIENT.label());
             domain.getEventPublisher().publish(new ExchangeInitiatedEvent(this));
         }
 
