@@ -31,7 +31,8 @@ import org.switchyard.selector.OperationSelector;
 public class OperationSelectorProcessor implements Processor {
 
     private final QName _serviceName;
-    private final CamelBindingModel _bindingModel;
+    private final CamelBindingModel _bindingModel;    
+    private final OperationSelector<CamelBindingData> _selector;
 
     /**
      * Creates new processor.
@@ -42,19 +43,18 @@ public class OperationSelectorProcessor implements Processor {
     public OperationSelectorProcessor(QName serviceName, CamelBindingModel bindingModel) {
         this._serviceName = serviceName;
         this._bindingModel = bindingModel;
+        
+        OperationSelectorFactory<CamelBindingData> selectorFactory = OperationSelectorFactory.getOperationSelectorFactory(CamelBindingData.class);
+        _selector = selectorFactory.newOperationSelector(_bindingModel.getOperationSelector());
+        if (_selector != null) {
+            _selector.setDefaultNamespace(Strings.trimToNull(_serviceName.getNamespaceURI()));
+        }
     }
 
     @Override
     public void process(org.apache.camel.Exchange exchange) throws Exception {
-        OperationSelectorFactory<CamelBindingData> selectorFactory = OperationSelectorFactory.getOperationSelectorFactory(CamelBindingData.class);
-        OperationSelector<CamelBindingData> selector = selectorFactory.newOperationSelector(_bindingModel.getOperationSelector());
-
-        if (selector != null) {
-            selector.setDefaultNamespace(Strings.trimToNull(_serviceName.getNamespaceURI()));
-        }
-
         Message in = exchange.getIn();
-        in.setHeader(OPERATION_SELECTOR_HEADER, selector);
+        in.setHeader(OPERATION_SELECTOR_HEADER, _selector);
         exchange.setOut(in.copy());
     }
 
