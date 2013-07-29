@@ -19,6 +19,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.internal.DefaultMessage;
+import org.switchyard.metadata.JavaTypes;
 import org.switchyard.transform.ootb.AbstractTransformerTest;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -97,6 +98,27 @@ public class BasicDOMTransformerTest extends AbstractTransformerTest {
     }
     
     @Test
+    public void test_DOMSourceToDocument() throws IOException, SAXException {
+        final Document docIn = XMLUnit.buildTestDocument("<x><y/></x>");
+        testFromDOM(new DOMSource(docIn), Document.class) ;
+        testFromDOM(new DOMSource(docIn.getDocumentElement()), Document.class) ;
+    }
+
+    @Test
+    public void test_DOMSourceToElement() throws IOException, SAXException {
+        final Document docIn = XMLUnit.buildTestDocument("<x><y/></x>");
+        testFromDOM(new DOMSource(docIn), Element.class) ;
+        testFromDOM(new DOMSource(docIn.getDocumentElement()), Element.class) ;
+    }
+
+    @Test
+    public void test_DOMSourceToNode() throws IOException, SAXException {
+        final Document docIn = XMLUnit.buildTestDocument("<x><y/></x>");
+        testFromDOM(new DOMSource(docIn), Node.class, Document.class) ;
+        testFromDOM(new DOMSource(docIn.getDocumentElement()), Node.class, Element.class) ;
+    }
+
+    @Test
     public void test_String2Document() throws IOException, SAXException {
         testToDOM("<x><y/></x>", Document.class);
     }
@@ -104,6 +126,11 @@ public class BasicDOMTransformerTest extends AbstractTransformerTest {
     @Test
     public void test_String2Element() throws IOException, SAXException {
         testToDOM("<x><y/></x>", Element.class);
+    }
+
+    @Test
+    public void test_String2Node() throws IOException, SAXException {
+        testToDOM("<x><y/></x>", Node.class, Element.class);
     }
 
     @Test
@@ -169,11 +196,27 @@ public class BasicDOMTransformerTest extends AbstractTransformerTest {
     }
 
     private <T extends Node> void testToDOM(Object fromXmlContent, Class<T> toNodeType) throws IOException, SAXException {
+        testToDOM(fromXmlContent, toNodeType, toNodeType) ;
+    }
+
+    private <T extends Node, R extends Node> void testToDOM(Object fromXmlContent, Class<T> toNodeType, Class<R> nodeResultType) throws IOException, SAXException {
         DefaultMessage message = newMessage();
 
         message.setContent(fromXmlContent);
         T node = message.getContent(toNodeType);
+        Assert.assertTrue(nodeResultType.isInstance(node));
 
         XMLAssert.assertXMLEqual("<x><y/></x>", AbstractDOMTransformer.serialize(node));
+    }
+
+    private <T extends Node> void testFromDOM(DOMSource source, Class<T> toNodeType) throws IOException, SAXException {
+        testFromDOM(source, toNodeType, toNodeType);
+    }
+
+    private <T extends Node, R extends Node> void testFromDOM(DOMSource source, Class<T> toNodeType, Class<R> nodeReultType) throws IOException, SAXException {
+        final BasicDOMTransformer transformer = new BasicDOMTransformer();
+        transformer.setTo(JavaTypes.toMessageType(toNodeType));
+        final Object result = transformer.transform(source);
+        Assert.assertTrue(nodeReultType.isInstance(result));
     }
 }

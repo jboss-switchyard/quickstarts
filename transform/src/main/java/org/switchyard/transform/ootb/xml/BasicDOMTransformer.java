@@ -117,7 +117,7 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
         } else if (getTo().equals(TYPE_NODE)) {
             return document.getDocumentElement();
         } else if (getTo().equals(TYPE_DOMSOURCE)) {
-            return new DOMSource(document.getDocumentElement());
+            return new DOMSource(document);
         }
 
         return null;
@@ -126,10 +126,24 @@ public class BasicDOMTransformer extends AbstractDOMTransformer {
     private Object transformFromDOMSource(DOMSource source) {
         if (getTo().equals(TYPE_NODE)) {
             return source.getNode();
+        } else if (getTo().equals(TYPE_DOCUMENT)) {
+            final Node sourceNode = source.getNode();
+            if (sourceNode instanceof Document) {
+                return sourceNode;
+            } else if (sourceNode instanceof Element) {
+                return ((Element)sourceNode).getOwnerDocument();
+            } else {
+                return null;
+            }
         } else if (getTo().equals(TYPE_ELEMENT)) {
-            return source.getNode() instanceof Element
-                ? (Element)source.getNode()
-                : null;
+            final Node sourceNode = source.getNode();
+            if (sourceNode instanceof Element) {
+                return sourceNode;
+            } else if (sourceNode instanceof Document) {
+                return ((Document)sourceNode).getDocumentElement();
+            } else {
+                return null;
+            }
         } else if (getTo().equals(TYPE_STRING)) {
             StringWriter writer = new StringWriter();
             StreamResult result = new StreamResult(writer);
