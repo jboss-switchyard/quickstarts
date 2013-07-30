@@ -272,6 +272,9 @@ public class OutboundHandler extends BaseServiceHandler {
                 LOGGER.trace("Outbound ---> Request:[" + SOAPUtil.soapMessageToString(request) + "]" + (oneWay ? " oneWay " : ""));
             }
             SOAPMessage response = invokeService(request, oneWay, action);
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Outbound <--- Response:[" + SOAPUtil.soapMessageToString(response) + "]");
+            }
             if (response != null) {
                 // This property vanishes once message composer processes this message
                 // so caching it here
@@ -297,10 +300,6 @@ public class OutboundHandler extends BaseServiceHandler {
                 } else {
                     exchange.send(message);
                 }
-            }
-
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Outbound <--- Response:[" + SOAPUtil.soapMessageToString(response) + "]");
             }
 
         } catch (SOAPException se) {
