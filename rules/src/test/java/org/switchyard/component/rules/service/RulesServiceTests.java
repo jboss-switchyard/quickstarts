@@ -45,6 +45,7 @@ import org.switchyard.test.TestDataSource;
 public class RulesServiceTests {
 
     private static final String ACCESS_ATTACHMENT_DRL = "org/switchyard/component/rules/service/RulesServiceTests-AccessAttachment.drl";
+    private static final String DECLARE_FACTS_DRL = "org/switchyard/component/rules/service/RulesServiceTests-DeclareFacts.drl";
 
     private ServiceDomain serviceDomain;
 
@@ -60,10 +61,9 @@ public class RulesServiceTests {
     @Test
     public void testAccessAttachment() throws Exception {
         final Holder holder = new Holder();
-        RulesComponentImplementationModel bci_model = (RulesComponentImplementationModel)new RulesSwitchYardScanner().scan(AccessAttachment.class).getImplementation();
+        RulesComponentImplementationModel rci_model = (RulesComponentImplementationModel)new RulesSwitchYardScanner().scan(AccessAttachment.class).getImplementation();
         QName serviceName = new QName("AccessAttachment");
-        System.out.println("====> " + bci_model.toString());
-        RulesExchangeHandler handler = new RulesExchangeHandler(bci_model, serviceDomain, serviceName);
+        RulesExchangeHandler handler = new RulesExchangeHandler(rci_model, serviceDomain, serviceName);
         Service aaService = serviceDomain.registerService(serviceName, JavaService.fromClass(AccessAttachment.class), handler);
         ServiceReference aaReference = serviceDomain.registerServiceReference(aaService.getName(), aaService.getInterface(), aaService.getProviderHandler());
         handler.start();
@@ -75,6 +75,31 @@ public class RulesServiceTests {
         exchange.send(message);
         handler.stop();
         Assert.assertEquals("someAttachData", holder.getValue());
+    }
+
+    @Rules(manifest=@Manifest(resources=@Resource(location=DECLARE_FACTS_DRL, type="DRL")))
+    public interface DeclareFacts {
+        @Execute(inputs={
+            @Input(from="message.content")
+        })
+        public Object process(Object content);
+    }
+
+    @Test
+    public void testDeclareFacts() throws Exception {
+        final Holder holder = new Holder();
+        RulesComponentImplementationModel rci_model = (RulesComponentImplementationModel)new RulesSwitchYardScanner().scan(DeclareFacts.class).getImplementation();
+        QName serviceName = new QName("DeclareFacts");
+        RulesExchangeHandler handler = new RulesExchangeHandler(rci_model, serviceDomain, serviceName);
+        Service dfService = serviceDomain.registerService(serviceName, JavaService.fromClass(DeclareFacts.class), handler);
+        ServiceReference dfReference = serviceDomain.registerServiceReference(dfService.getName(), dfService.getInterface(), dfService.getProviderHandler());
+        handler.start();
+        Exchange exchange = dfReference.createExchange("process");
+        Message message = exchange.createMessage();
+        message.setContent(holder);
+        exchange.send(message);
+        handler.stop();
+        Assert.assertEquals("handled", holder.getValue());
     }
 
     public static final class Holder {

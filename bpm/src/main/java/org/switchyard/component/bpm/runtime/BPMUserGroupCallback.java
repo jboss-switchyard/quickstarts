@@ -13,22 +13,35 @@
  */
 package org.switchyard.component.bpm.runtime;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
-import org.jbpm.services.task.identity.JBossUserGroupCallbackImpl;
+import org.kie.internal.task.api.UserGroupCallback;
+import org.switchyard.common.io.pull.PropertiesPuller;
+import org.switchyard.common.io.pull.Puller.PathType;
 
 /**
- * A "bpm" implementation of a UserGroupCallback.
+ * An implementation of a UserGroupCallback based on org.jbpm.services.task.identity.JBossUserGroupCallbackImpl.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public class BPMUserGroupCallback extends JBossUserGroupCallbackImpl {
+public class BPMUserGroupCallback implements UserGroupCallback {
+
+    private Map<String, List<String>> _groupStore = new HashMap<String, List<String>>();
+    private Set<String> _allGroups = new HashSet<String>();
 
     /**
      * Constructs a new BPMUserGroupCallback.
      */
     public BPMUserGroupCallback() {
-        super();
+        init(System.getProperty("jbpm.user.group.mapping", System.getProperty("jboss.server.config.dir", "target/classes") + "/roles.properties"));
     }
 
     /**
@@ -36,7 +49,7 @@ public class BPMUserGroupCallback extends JBossUserGroupCallbackImpl {
      * @param location the location
      */
     public BPMUserGroupCallback(String location) {
-        super(location);
+        init(location);
     }
 
     /**
@@ -44,7 +57,60 @@ public class BPMUserGroupCallback extends JBossUserGroupCallbackImpl {
      * @param userGroups the userGroups
      */
     public BPMUserGroupCallback(Properties userGroups) {
-        super(userGroups);
+        init(userGroups);
+    }
+
+    private void init(String location) {
+        if (location.startsWith("classpath:")) {
+            location = location.replaceFirst("classpath:", "");
+        } else if (location.startsWith("file:")) {
+            location = location.replaceFirst("file:", "");
+        }
+        Properties userGroups = new PropertiesPuller().pullPath(location, PathType.values());
+        init(userGroups);
+    }
+
+    private void init(Properties userGroups) {
+        if (userGroups == null) {
+            userGroups = new Properties();
+        }
+        List<String> groups = null;
+        Iterator<Object> it = userGroups.keySet().iterator();
+        while (it.hasNext()) {
+            String userId = (String) it.next();
+            groups = Arrays.asList(userGroups.getProperty(userId, "").split(","));
+            _groupStore.put(userId, groups);
+            _allGroups.addAll(groups);
+        }
+        // always add Administrator if not already present
+        if (!_groupStore.containsKey("Administrator")) {
+            _groupStore.put("Administrator", Collections.<String> emptyList());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean existsUser(String userId) {
+        return _groupStore.containsKey(userId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean existsGroup(String groupId) {
+        return _allGroups.contains(groupId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> getGroupsForUser(String userId, List<String> groupIds, List<String> allExistingGroupIds) {
+        List<String> groups = _groupStore.get(userId);
+        return groups;
     }
 
 }

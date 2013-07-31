@@ -17,12 +17,14 @@ import java.util.Properties;
 
 import org.drools.compiler.compiler.PackageBuilderConfiguration;
 import org.drools.core.RuleBaseConfiguration;
+import org.drools.core.SessionConfiguration;
+import org.drools.core.common.ProjectClassLoader;
 import org.kie.api.KieBaseConfiguration;
 import org.kie.api.runtime.KieSessionConfiguration;
 import org.kie.internal.KnowledgeBaseFactory;
 import org.kie.internal.builder.KnowledgeBuilderConfiguration;
-import org.kie.internal.utils.ClassLoaderUtil;
-import org.kie.internal.utils.CompositeClassLoader;
+import org.kie.internal.builder.KnowledgeBuilderFactory;
+import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 
 /**
@@ -40,10 +42,12 @@ public final class Configurations {
      * @return the base configuration
      */
     public static KieBaseConfiguration getBaseConfiguration(KnowledgeComponentImplementationModel model, ClassLoader loader, Properties overrides) {
-        //return KnowledgeBaseFactory.newKnowledgeBaseConfiguration(Propertys.getProperties(model, overrides), loader);
-        CompositeClassLoader ccl = ClassLoaderUtil.getClassLoader(new ClassLoader[0], RuleBaseConfiguration.class, false);
-        ccl.addClassLoaderToEnd(loader);
-        return new RuleBaseConfiguration(Propertys.getProperties(model, overrides), ccl);
+        RuleBaseConfiguration baseConfiguration = (RuleBaseConfiguration)KnowledgeBaseFactory.newKnowledgeBaseConfiguration(Propertys.getProperties(model, overrides));
+        ClassLoader baseLoader = baseConfiguration.getClassLoader();
+        if (baseLoader instanceof ProjectClassLoader) {
+            ((ProjectClassLoader)baseLoader).setDroolsClassLoader(loader);
+        }
+        return baseConfiguration;
     }
 
     /**
@@ -54,10 +58,12 @@ public final class Configurations {
      * @return the builder configuration
      */
     public static KnowledgeBuilderConfiguration getBuilderConfiguration(KnowledgeComponentImplementationModel model, ClassLoader loader, Properties overrides) {
-        //return KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(Propertys.getProperties(model, overrides), loader);
-        CompositeClassLoader ccl = ClassLoaderUtil.getClassLoader(new ClassLoader[0], PackageBuilderConfiguration.class, false);
-        ccl.addClassLoaderToEnd(loader);
-        return new PackageBuilderConfiguration(Propertys.getProperties(model, overrides), ccl);
+        PackageBuilderConfiguration builderConfiguration = (PackageBuilderConfiguration)KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(Propertys.getProperties(model, overrides));
+        ClassLoader builderLoader = builderConfiguration.getClassLoader();
+        if (builderLoader instanceof ProjectClassLoader) {
+            ((ProjectClassLoader)builderLoader).setDroolsClassLoader(loader);
+        }
+        return builderConfiguration;
     }
 
     /**
@@ -68,7 +74,9 @@ public final class Configurations {
      * @return the session configuration
      */
     public static KieSessionConfiguration getSessionConfiguration(KnowledgeComponentImplementationModel model, ClassLoader loader, Properties overrides) {
-        return KnowledgeBaseFactory.newKnowledgeSessionConfiguration(Propertys.getProperties(model, overrides));
+        SessionConfiguration sessionConfiguration = (SessionConfiguration)KnowledgeBaseFactory.newKnowledgeSessionConfiguration(Propertys.getProperties(model, overrides));
+        new FieldAccess<ClassLoader>(SessionConfiguration.class, "classLoader").write(sessionConfiguration, loader);
+        return sessionConfiguration;
     }
 
     private Configurations() {}

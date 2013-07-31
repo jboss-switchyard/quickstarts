@@ -33,6 +33,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
 import org.switchyard.component.common.knowledge.session.KnowledgeSessionFactory;
+import org.switchyard.component.common.knowledge.util.Environments;
 import org.switchyard.component.common.knowledge.util.Operations;
 import org.switchyard.component.common.knowledge.util.Resources;
 import org.switchyard.deploy.BaseServiceHandler;
@@ -49,6 +50,7 @@ import org.switchyard.metadata.ServiceOperation;
  */
 public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImplementationModel> extends BaseServiceHandler implements ServiceHandler {
 
+    private final String _deploymentId;
     private final M _model;
     private final ServiceDomain _serviceDomain;
     private final QName _serviceName;
@@ -65,9 +67,19 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      */
     public KnowledgeExchangeHandler(M model, ServiceDomain serviceDomain, QName serviceName) {
         super(serviceDomain);
+        // TODO: revisit how deploymentId is created and used
+        _deploymentId = serviceName.toString();
         _model = model;
         _serviceDomain = serviceDomain;
         _serviceName = serviceName;
+    }
+
+    /**
+     * Gets the deployment id.
+     * @return the deployment id
+     */
+    protected String getDeploymentId() {
+        return _deploymentId;
     }
 
     /**
@@ -107,7 +119,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * @return any property overrides
      */
     protected Properties getPropertyOverrides() {
-        return null;
+        return new Properties();
     }
 
     /**
@@ -115,7 +127,9 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * @return any environment overrides
      */
     protected Map<String, Object> getEnvironmentOverrides() {
-        return null;
+        Map<String, Object> env = new HashMap<String, Object>();
+        env.put(Environments.DEPLOYMENT_ID, getDeploymentId());
+        return env;
     }
 
     /**
@@ -184,7 +198,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      */
     @Override
     protected void doStart() {
-        _loader = Classes.getClassLoader(getClass());
+        _loader = Classes.getClassLoader(getDeploymentClassLoader(), getClass().getClassLoader());
         Resources.installTypes(_loader);
         Operations.registerOperations(_model, _operations, getDefaultOperation());
         _sessionFactory = KnowledgeSessionFactory.newSessionFactory(_model, _loader, _serviceDomain, getPropertyOverrides());

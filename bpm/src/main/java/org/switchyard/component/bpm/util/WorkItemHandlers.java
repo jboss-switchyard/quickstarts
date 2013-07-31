@@ -33,6 +33,7 @@ import org.kie.internal.runtime.manager.Disposable;
 import org.kie.internal.runtime.manager.DisposeListener;
 import org.kie.internal.task.api.EventService;
 import org.switchyard.ServiceDomain;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Access;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.type.reflect.MethodAccess;
@@ -43,7 +44,6 @@ import org.switchyard.component.bpm.runtime.BPMRuntimeManager;
 import org.switchyard.component.bpm.service.StandardSwitchYardServiceTaskHandler;
 import org.switchyard.component.bpm.service.SwitchYardServiceTaskHandler;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
-import org.switchyard.SwitchYardException;
 
 /**
  * WorkItemHandler functions.
@@ -124,11 +124,11 @@ public final class WorkItemHandlers {
                 registeredNames.add(name);
             }
         }
+        // TODO: this whole block can be removed after SWITCHYARD-1584
         if (!registeredNames.contains(HUMAN_TASK) && runtimeManager != null) {
             RuntimeEngine runtimeEngine = runtimeManager.getRuntimeEngine();
             ExternalTaskEventListener listener = new ExternalTaskEventListener();
             listener.setRuntimeManager(runtimeManager);
-            listener.addClassLoader(runtimeEngine.getKieSession().getId(), loader);
             LocalHTWorkItemHandler htwih = new LocalHTWorkItemHandler();
             htwih.setRuntimeManager(runtimeManager);
             if (runtimeEngine.getTaskService() instanceof EventService) {

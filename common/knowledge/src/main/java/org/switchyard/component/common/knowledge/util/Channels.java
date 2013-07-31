@@ -13,8 +13,12 @@
  */
 package org.switchyard.component.common.knowledge.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kie.api.runtime.Channel;
-import org.kie.api.runtime.KieRuntime;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.StatelessKieSession;
 import org.switchyard.ServiceDomain;
 import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Construction;
@@ -33,13 +37,35 @@ import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoke
 public final class Channels {
 
     /**
-     * Registers channels.
+     * Registers channels on a stateless session.
      * @param model the model
      * @param loader the loader
-     * @param runtime the runtime
      * @param domain the service domain
+     * @param stateless the stateless session
      */
-    public static void registerChannels(KnowledgeComponentImplementationModel model, ClassLoader loader, KieRuntime runtime, ServiceDomain domain) {
+    public static void registerChannels(KnowledgeComponentImplementationModel model, ClassLoader loader, ServiceDomain domain, StatelessKieSession stateless) {
+        List<NameChannel> ncList = getNameChannels(model, loader, domain);
+        for (NameChannel nc : ncList) {
+            stateless.registerChannel(nc.getName(), nc.getChannel());
+        }
+    }
+
+    /**
+     * Registers channels on a stateful session.
+     * @param model the model
+     * @param loader the loader
+     * @param domain the service domain
+     * @param stateful the stateful session
+     */
+    public static void registerChannels(KnowledgeComponentImplementationModel model, ClassLoader loader, ServiceDomain domain, KieSession stateful) {
+        List<NameChannel> ncList = getNameChannels(model, loader, domain);
+        for (NameChannel nc : ncList) {
+            stateful.registerChannel(nc.getName(), nc.getChannel());
+        }
+    }
+
+    private static List<NameChannel> getNameChannels(KnowledgeComponentImplementationModel model, ClassLoader loader, ServiceDomain domain) {
+        List<NameChannel> ncList = new ArrayList<NameChannel>();
         ChannelsModel channelsModel = model.getChannels();
         if (channelsModel != null) {
             String tns = model.getComponent().getTargetNamespace();
@@ -66,8 +92,24 @@ public final class Channels {
                 if (name == null) {
                     throw new SwitchYardException("Could not use null name to register channel: " + channel.getClass().getName());
                 }
-                runtime.registerChannel(name, channel);
+                ncList.add(new NameChannel(name, channel));
             }
+        }
+        return ncList;
+    }
+
+    private static final class NameChannel {
+        private final String _name;
+        private final Channel _channel;
+        private NameChannel(String name, Channel channel) {
+            _name = name;
+            _channel = channel;
+        }
+        private String getName() {
+            return _name;
+        }
+        private Channel getChannel() {
+            return _channel;
         }
     }
 

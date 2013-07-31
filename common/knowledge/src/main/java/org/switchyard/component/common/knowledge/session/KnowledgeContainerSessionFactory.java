@@ -62,6 +62,7 @@ class KnowledgeContainerSessionFactory extends KnowledgeSessionFactory {
         StatelessKieSession stateless = newStatelessKieSession();
         KnowledgeDisposal loggersDisposal = Loggers.registerLoggersForDisposal(getModel(), getLoader(), stateless);
         Listeners.registerListeners(getModel(), getLoader(), stateless);
+        Channels.registerChannels(getModel(), getLoader(), getDomain(), stateless);
         return new KnowledgeSession(stateless, loggersDisposal);
     }
 
@@ -73,8 +74,7 @@ class KnowledgeContainerSessionFactory extends KnowledgeSessionFactory {
         KieSession stateful = newKieSession(environmentOverrides);
         KnowledgeDisposal loggersDisposal = Loggers.registerLoggersForDisposal(getModel(), getLoader(), stateful);
         Listeners.registerListeners(getModel(), getLoader(), stateful);
-        // channels are only meaningful for stateful sessions
-        Channels.registerChannels(getModel(), getLoader(), stateful, getDomain());
+        Channels.registerChannels(getModel(), getLoader(), getDomain(), stateful);
         return new KnowledgeSession(stateful, false, loggersDisposal);
     }
 
@@ -86,8 +86,7 @@ class KnowledgeContainerSessionFactory extends KnowledgeSessionFactory {
         KieSession stateful = getPersistentKieSession(environmentOverrides, sessionId);
         KnowledgeDisposal loggersDisposal = Loggers.registerLoggersForDisposal(getModel(), getLoader(), stateful);
         Listeners.registerListeners(getModel(), getLoader(), stateful);
-        // channels are only meaningful for stateful sessions
-        Channels.registerChannels(getModel(), getLoader(), stateful, getDomain());
+        Channels.registerChannels(getModel(), getLoader(), getDomain(), stateful);
         return new KnowledgeSession(stateful, true, loggersDisposal);
     }
 

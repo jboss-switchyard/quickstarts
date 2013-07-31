@@ -17,12 +17,12 @@ import java.lang.reflect.Constructor;
 import java.util.Properties;
 
 import org.kie.internal.task.api.UserGroupCallback;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.UserGroupCallbackModel;
 import org.switchyard.component.bpm.runtime.BPMUserGroupCallback;
 import org.switchyard.config.model.property.PropertiesModel;
-import org.switchyard.SwitchYardException;
 
 /**
  * UserGroupCallback functions.

@@ -17,30 +17,46 @@ import org.jbpm.runtime.manager.impl.RuntimeEngineImpl;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.Context;
 import org.kie.api.runtime.manager.RuntimeEngine;
-import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.task.TaskService;
-import org.kie.internal.runtime.manager.Disposable;
+import org.kie.internal.runtime.manager.InternalRuntimeManager;
+import org.kie.internal.runtime.manager.RuntimeEnvironment;
 
 /**
- * A "bpm" implementation of a RuntimeManager.
+ * TODO: This implementation of RuntimeManager should be removed after SWITCHYARD-1584.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public final class BPMRuntimeManager implements RuntimeManager {
+public final class BPMRuntimeManager implements InternalRuntimeManager {
 
     private final RuntimeEngineImpl _runtimeEngine;
     private final String _identifier;
+    private final RuntimeEnvironment _environment;
 
     /**
-     * Constructs a new BPMRuntimeManager with the specified KieSession, TaskService and identifier.
+     * Constructs a new BPMRuntimeManager.
      * @param kieSession the KieSession
      * @param taskService the TaskService
      * @param identifier the identifier
+     * @param environment the RuntimeEnvironment
      */
-    public BPMRuntimeManager(KieSession kieSession, TaskService taskService, String identifier) {
-        _runtimeEngine = new RuntimeEngineImpl(kieSession, taskService);
-        _runtimeEngine.setManager(this);
+    public BPMRuntimeManager(KieSession kieSession, TaskService taskService, String identifier, RuntimeEnvironment environment) {
         _identifier = identifier;
+        _runtimeEngine = new RuntimeEngineImpl(kieSession, taskService) {
+            @Override
+            public void dispose() {
+                // no-op
+            }
+        };
+        _runtimeEngine.setManager(this);
+        _environment = environment;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getIdentifier() {
+        return _identifier;
     }
 
     /**
@@ -63,18 +79,8 @@ public final class BPMRuntimeManager implements RuntimeManager {
      * {@inheritDoc}
      */
     @Override
-    public String getIdentifier() {
-        return _identifier;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void disposeRuntimeEngine(RuntimeEngine runtime) {
-        if (runtime instanceof Disposable) {
-            ((Disposable)runtime).dispose();
-        }
+        // no-op
     }
 
     /**
@@ -83,6 +89,22 @@ public final class BPMRuntimeManager implements RuntimeManager {
     @Override
     public void close() {
         // no-op
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate(KieSession ksession, Context<?> context) throws IllegalStateException {
+        // no-op
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RuntimeEnvironment getEnvironment() {
+        return _environment;
     }
 
 }

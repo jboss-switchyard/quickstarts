@@ -77,6 +77,7 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
         StatelessKieSession stateless = _base.newStatelessKieSession(_sessionConfiguration);
         KnowledgeDisposal loggersDisposal = Loggers.registerLoggersForDisposal(getModel(), getLoader(), stateless);
         Listeners.registerListeners(getModel(), getLoader(), stateless);
+        Channels.registerChannels(getModel(), getLoader(), getDomain(), stateless);
         return new KnowledgeSession(stateless, loggersDisposal);
     }
 
@@ -89,8 +90,7 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
         KieSession stateful = _base.newKieSession(_sessionConfiguration, env);
         KnowledgeDisposal loggersDisposal = Loggers.registerLoggersForDisposal(getModel(), getLoader(), stateful);
         Listeners.registerListeners(getModel(), getLoader(), stateful);
-        // channels are only meaningful for stateful sessions
-        Channels.registerChannels(getModel(), getLoader(), stateful, getDomain());
+        Channels.registerChannels(getModel(), getLoader(), getDomain(), stateful);
         return new KnowledgeSession(stateful, false, loggersDisposal);
     }
 
@@ -110,34 +110,38 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
         }
         KnowledgeDisposal loggersDisposal = Loggers.registerLoggersForDisposal(getModel(), getLoader(), stateful);
         Listeners.registerListeners(getModel(), getLoader(), stateful);
-        // channels are only meaningful for stateful sessions
-        Channels.registerChannels(getModel(), getLoader(), stateful, getDomain());
+        Channels.registerChannels(getModel(), getLoader(), getDomain(), stateful);
         return new KnowledgeSession(stateful, true, loggersDisposal);
     }
 
     private KieBase newBase() {
-        KieBaseConfiguration baseConfiguration = Configurations.getBaseConfiguration(getModel(), getLoader(), getPropertyOverrides());
-        KnowledgeBase base = KnowledgeBaseFactory.newKnowledgeBase(baseConfiguration);
         KnowledgeBuilderConfiguration builderConfiguration = Configurations.getBuilderConfiguration(getModel(), getLoader(), getPropertyOverrides());
-        KnowledgeBuilder builder = KnowledgeBuilderFactory.newKnowledgeBuilder(base, builderConfiguration);
+        KnowledgeBuilder builder = KnowledgeBuilderFactory.newKnowledgeBuilder(builderConfiguration);
         Resources.addResources(getModel(), getLoader(), builder);
-        try {
-            return builder.newKnowledgeBase();
-        } catch (Throwable t) {
+        if (builder.hasErrors()) {
             // NOTE: Logging can also be enabled on org.drools.builder.impl.KnowledgeBuilderImpl
-            StringBuilder sb = new StringBuilder("Problem creating knowledge base");
-            String tm = t.getMessage();
-            if (tm != null) {
-                sb.append(": ");
-                sb.append(tm.trim());
-            }
+            StringBuilder sb = new StringBuilder("Problem building knowledge packages");
             KnowledgeBuilderErrors errors = builder.getErrors();
             for (KnowledgeBuilderError error : errors) {
                 sb.append(LINE_SEPARATOR);
                 sb.append(error.toString().trim());
             }
+            throw new SwitchYardException(sb.toString());
+        }
+        KieBaseConfiguration baseConfiguration = Configurations.getBaseConfiguration(getModel(), getLoader(), getPropertyOverrides());
+        KnowledgeBase base = KnowledgeBaseFactory.newKnowledgeBase(baseConfiguration);
+        try {
+            base.addKnowledgePackages(builder.getKnowledgePackages());
+        } catch (Throwable t) {
+            StringBuilder sb = new StringBuilder("Problem adding knowledge packages");
+            String tm = t.getMessage();
+            if (tm != null) {
+                sb.append(": ");
+                sb.append(tm.trim());
+            }
             throw new SwitchYardException(sb.toString(), t);
         }
+        return base;
     }
 
 }

@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.namespace.QName;
 
-import org.kie.api.runtime.rule.SessionEntryPoint;
+import org.kie.api.runtime.rule.EntryPoint;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
@@ -153,13 +153,13 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                                 session.getStateful().insert(fact);
                             }
                         } else {
-                            SessionEntryPoint sep = session.getStateful().getEntryPoint(key);
-                            if (sep != null) {
+                            EntryPoint entryPoint = session.getStateful().getEntryPoint(key);
+                            if (entryPoint != null) {
                                 for (Object fact : facts) {
-                                    sep.insert(fact);
+                                    entryPoint.insert(fact);
                                 }
                             } else {
-                                throw new HandlerException("Unknown entry point: " + sep + "; please check your rules source.");
+                                throw new HandlerException("Unknown entry point: " + entryPoint + "; please check your rules source.");
                             }
                         }
                     }

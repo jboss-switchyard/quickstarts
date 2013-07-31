@@ -42,6 +42,7 @@ import org.kie.internal.KieInternalServices;
 import org.kie.internal.process.CorrelationAwareProcessRuntime;
 import org.kie.internal.process.CorrelationKey;
 import org.kie.internal.process.CorrelationKeyFactory;
+import org.kie.internal.task.api.UserGroupCallback;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
@@ -53,6 +54,7 @@ import org.switchyard.component.bpm.BPMConstants;
 import org.switchyard.component.bpm.BPMOperationType;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.runtime.BPMProcessEventListener;
+import org.switchyard.component.bpm.runtime.BPMRuntimeEnvironment;
 import org.switchyard.component.bpm.runtime.BPMRuntimeManager;
 import org.switchyard.component.bpm.runtime.BPMTaskService;
 import org.switchyard.component.bpm.runtime.BPMTaskServiceRegistry;
@@ -78,6 +80,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
     private final boolean _persistent;
     private final String _processId;
     private BPMProcessEventListener _processEventListener;
+    private UserGroupCallback _userGroupCallback;
     private CorrelationKeyFactory _correlationKeyFactory;
     private EntityManagerFactory _processEntityManagerFactory;
     private EntityManagerFactory _taskEntityManagerFactory;
@@ -102,15 +105,12 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
     protected void doStart() {
         super.doStart();
         _processEventListener = new BPMProcessEventListener(getServiceDomain().getEventPublisher());
+        _userGroupCallback = UserGroupCallbacks.newUserGroupCallback(getModel(), getLoader());
         _correlationKeyFactory = KieInternalServices.Factory.get().newCorrelationKeyFactory();
         if (_persistent) {
             _processEntityManagerFactory = Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa");
             _taskEntityManagerFactory = Persistence.createEntityManagerFactory("org.jbpm.services.task");
-            _taskService = BPMTaskService.Factory.newTaskService(
-                    _taskEntityManagerFactory,
-                    new JbpmJTATransactionManager(),
-                    UserGroupCallbacks.newUserGroupCallback(getModel(), getLoader()),
-                    getLoader());
+            _taskService = BPMTaskService.Factory.newTaskService(Environments.getEnvironment(super.getEnvironmentOverrides()), _taskEntityManagerFactory, new JbpmJTATransactionManager(), _userGroupCallback, getLoader());
             BPMTaskServiceRegistry.putTaskService(getServiceDomain().getName(), getServiceName(), _taskService);
         }
     }
@@ -120,7 +120,9 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
      */
     @Override
     protected void doStop() {
+        super.doStop();
         _processEventListener = null;
+        _userGroupCallback = null;
         _correlationKeyFactory = null;
         if (_processEntityManagerFactory != null) {
             Disposals.newDisposal(_processEntityManagerFactory).dispose();
@@ -130,10 +132,8 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
             Disposals.newDisposal(_taskEntityManagerFactory).dispose();
             _taskEntityManagerFactory = null;
         }
-        
-        BPMTaskServiceRegistry.removeTaskService(getServiceDomain().getName(), getServiceName());
         _taskService = null;
-        super.doStop();
+        BPMTaskServiceRegistry.removeTaskService(getServiceDomain().getName(), getServiceName());
     }
 
     /**
@@ -141,14 +141,12 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
      */
     @Override
     protected Properties getPropertyOverrides() {
+        Properties props = super.getPropertyOverrides();
         if (_persistent) {
-            Properties props = new Properties();
             props.setProperty("drools.processInstanceManagerFactory", JPAProcessInstanceManagerFactory.class.getName());
             props.setProperty("drools.processSignalManagerFactory", JPASignalManagerFactory.class.getName());
-            return props;
-        } else {
-            return super.getPropertyOverrides();
         }
+        return props;
     }
 
     /**
@@ -156,17 +154,16 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
      */
     @Override
     protected Map<String, Object> getEnvironmentOverrides() {
+        Map<String, Object> env = super.getEnvironmentOverrides();
         if (_persistent) {
             UserTransaction ut = AS7TransactionHelper.getUserTransaction();
             TransactionManager tm = AS7TransactionHelper.getTransactionManager();
-            Map<String, Object> env = new HashMap<String, Object>();
             env.put(EnvironmentName.ENTITY_MANAGER_FACTORY, _processEntityManagerFactory);
             env.put(EnvironmentName.TRANSACTION, ut);
             env.put(EnvironmentName.TRANSACTION_MANAGER, new JtaTransactionManager(ut, null, tm));
             env.put(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER, new JpaProcessPersistenceContextManager(Environments.getEnvironment(env)));
-            return env;
         }
-        return super.getEnvironmentOverrides();
+        return env;
     }
 
     /**
@@ -302,7 +299,9 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
             session = getStatefulSession();
         }
         Listeners.registerListener(_processEventListener, session.getStateful());
-        BPMRuntimeManager runtimeManager = new BPMRuntimeManager(session.getStateful(), _taskService, _processId);
+        // TODO: the use of BPMRuntimeEnvironment/Manager should be removed after SWITCHYARD-1584
+        BPMRuntimeEnvironment runtimeEnvironment = new BPMRuntimeEnvironment(session.getStateful(), _processEntityManagerFactory, _userGroupCallback, getLoader());
+        BPMRuntimeManager runtimeManager = new BPMRuntimeManager(session.getStateful(), _taskService, getDeploymentId(), runtimeEnvironment);
         WorkItemHandlers.registerWorkItemHandlers(getModel(), getLoader(), session.getStateful(), runtimeManager, getServiceDomain());
         return session;
     }

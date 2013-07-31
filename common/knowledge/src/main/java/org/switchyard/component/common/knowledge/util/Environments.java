@@ -33,14 +33,17 @@ import org.switchyard.serial.SerializerFactory;
 public final class Environments {
 
     /**
+     * The "deploymentId" environment variable.
+     */
+    public static final String DEPLOYMENT_ID = "deploymentId";
+
+    /**
      * Gets an Environment.
      * @param overrides any overrides
      * @return the Environment
      */
     public static Environment getEnvironment(Map<String, Object> overrides) {
         Environment env = EnvironmentFactory.newEnvironment();
-        // NOTE: not necessary any more, per mproctor
-        //env.set(EnvironmentName.GLOBALS, new MapGlobalResolver());
         // set the object marshalling strategies
         List<ObjectMarshallingStrategy> new_oms = new ArrayList<ObjectMarshallingStrategy>();
         new_oms.add(new SerializerObjectMarshallingStrategy(SerializerFactory.create(FormatType.JSON, null, true)));

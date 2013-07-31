@@ -15,6 +15,7 @@ package org.switchyard.component.common.knowledge.util;
 
 import java.util.Properties;
 
+import org.kie.internal.builder.conf.ClassLoaderCacheOption;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.config.model.property.PropertiesModel;
 
@@ -34,9 +35,7 @@ public final class Propertys {
     public static Properties getProperties(KnowledgeComponentImplementationModel model, Properties overrides) {
         Properties properties = new Properties();
         // If this isn't false, then all rules' LHS object conditions will not match on redeploys!
-        // (since objects are only equal if their classloaders are also equal - and they're not on redeploys)
-        // NOTE: not necessary any more, per mproctor
-        //properties.setProperty(ClassLoaderCacheOption.PROPERTY_NAME, Boolean.FALSE.toString());
+        properties.setProperty(ClassLoaderCacheOption.PROPERTY_NAME, Boolean.FALSE.toString());
         if (overrides != null) {
             overrideProperties(properties, overrides);
         }
