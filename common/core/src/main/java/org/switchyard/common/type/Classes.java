@@ -54,13 +54,12 @@ public final class Classes {
     /**
      * Loads a class based on name.
      * @param name fully qualified classname
-     * @param loader a classloader we can also try to find the class
+     * @param loaders classloader(s) we can also try to find the class
      * @return the found class, or null if not found
      */
-    public static Class<?> forName(String name, ClassLoader loader) {
+    public static Class<?> forName(String name, ClassLoader... loaders) {
         Class<?> c = null;
-        List<ClassLoader> loaders = getClassLoaders(loader);
-        for (ClassLoader cl : loaders) {
+        for (ClassLoader cl : getClassLoaders(loaders)) {
             try {
                 c = Class.forName(name, true, cl);
                 break;
@@ -143,17 +142,17 @@ public final class Classes {
     /**
      * Finds all matching classpath resources.
      * @param path the path to the resource
-     * @param loader classloader we can also try to find the resource
+     * @param loaders classloader(s) we can also try to find the resource
      * @return URL to the resource, or null if not found
      * @throws IOException if a problem occurred
      */
-    public static List<URL> getResources(String path, ClassLoader loader) throws IOException {
+    public static List<URL> getResources(String path, ClassLoader... loaders) throws IOException {
         List<URL> urls = new ArrayList<URL>();
         if (path != null) {
             while (path.startsWith("/")) {
                 path = path.substring(1);
             }
-            for (ClassLoader cl : getClassLoaders(loader)) {
+            for (ClassLoader cl : getClassLoaders(loaders)) {
                 Enumeration<URL> e = cl.getResources(path);
                 while (e.hasMoreElements()) {
                     URL url = e.nextElement();
@@ -226,11 +225,11 @@ public final class Classes {
 
     /**
      * Provides a CompoundClassLoader using a non-duplicate List of ClassLoaders in the most appropriate search order.
-     * @param loader a user-specified ClassLoader
+     * @param loaders user-specified ClassLoader(s)
      * @return the CompoundClassLoader
      */
-    public static ClassLoader getClassLoader(ClassLoader loader) {
-        return new CompoundClassLoader(getClassLoaders(loader));
+    public static ClassLoader getClassLoader(ClassLoader... loaders) {
+        return new CompoundClassLoader(getClassLoaders(loaders));
     }
 
     /**
@@ -252,38 +251,40 @@ public final class Classes {
 
     /**
      * Provides a non-duplicate List of ClassLoaders in the most appropriate search order.
-     * @param loader a user-specified ClassLoader
+     * @param loaders user-specified ClassLoader(s)
      * @return the non-duplicate List
      */
-    public static List<ClassLoader> getClassLoaders(ClassLoader loader) {
-        // We won't ever have more than 5 ClassLoaders, so an initial
-        // capacity of 6 and a load factor of 1 means no re-hash ever.
-        Set<ClassLoader> loaders = new LinkedHashSet<ClassLoader>(6, 1f);
+    public static List<ClassLoader> getClassLoaders(ClassLoader... loaders) {
+        Set<ClassLoader> set = new LinkedHashSet<ClassLoader>();
         // 1. The current Thread context ClassLoader
         ClassLoader cl = getTCCL();
         if (cl != null) {
-            loaders.add(cl);
+            set.add(cl);
         }
-        // 2. The specified ClassLoader
-        if (loader != null) {
-            loaders.add(loader);
+        // 2. The user-specified ClassLoader(s)
+        if (loaders != null) {
+            for (ClassLoader loader : loaders) {
+                if (loader != null) {
+                    set.add(loader);
+                }
+            }
         }
         // 3. This util class' ClassLoader
         cl = Classes.class.getClassLoader();
         if (cl != null) {
-            loaders.add(cl);
+            set.add(cl);
         }
         // 4. The system ClassLoader (possibly via -Djava.system.class.loader)
         cl = ClassLoader.getSystemClassLoader();
         if (cl != null) {
-            loaders.add(cl);
+            set.add(cl);
         }
         // 5. The runtime ClassLoader (possibly different than the system ClassLoader)
         cl = Class.class.getClassLoader();
         if (cl != null) {
-            loaders.add(cl);
+            set.add(cl);
         }
-        return new ArrayList<ClassLoader>(loaders);
+        return new ArrayList<ClassLoader>(set);
     }
 
     /**
