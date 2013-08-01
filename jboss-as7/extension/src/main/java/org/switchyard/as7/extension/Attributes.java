@@ -16,6 +16,7 @@ package org.switchyard.as7.extension;
 
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
+import org.jboss.as.controller.SimpleMapAttributeDefinition;
 import org.jboss.as.controller.operations.validation.StringLengthValidator;
 import org.jboss.dmr.ModelType;
 
@@ -37,13 +38,10 @@ interface Attributes {
             .setValidator(new StringLengthValidator(1, Integer.MAX_VALUE, true, true))
             .build();
 
-    SimpleAttributeDefinition PROPERTIES = new SimpleAttributeDefinitionBuilder(CommonAttributes.PROPERTIES, ModelType.STRING)
-            .setAllowNull(true)
-            .setMinSize(1)
+    SimpleMapAttributeDefinition PROPERTIES = new SimpleMapAttributeDefinition.Builder(CommonAttributes.PROPERTIES, true)
             .setAllowExpression(true)
-            .setValidator(new StringLengthValidator(1, Integer.MAX_VALUE, true, true))
             .build();
-    
+
     SimpleAttributeDefinition SOCKET_BINDING = new SimpleAttributeDefinitionBuilder(CommonAttributes.SOCKET_BINDING, ModelType.STRING)
             .setAllowNull(true)
             .setMinSize(1)
