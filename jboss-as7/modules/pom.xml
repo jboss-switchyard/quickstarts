@@ -271,13 +271,6 @@
             <artifactId>h2</artifactId>
         </dependency>
         <!--
-        MySQL...
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        -->
-        <!--
         Riftsaw...
         -->
         <dependency>

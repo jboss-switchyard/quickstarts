@@ -142,40 +142,6 @@
     </xsl:copy>
 </xsl:template>
 
-
-<xsl:template match="node()[name(.)='datasources']">
-    <xsl:copy>
-        <datasource jndi-name="java:jboss/datasources/jbpmDS" pool-name="jbpmDS" enabled="true" use-java-context="true">
-            <connection-url>jdbc:h2:mem:jbpm;DB_CLOSE_DELAY=-1</connection-url>
-            <driver>h2</driver>
-            <security>
-                <user-name>sa</user-name>
-                <password>sa</password>
-            </security>
-            <!--
-            <connection-url>jdbc:mysql://localhost:3306/jbpm</connection-url>
-            <driver>mysql</driver>
-            <security>
-                <user-name>jbpm</user-name>
-                <password>jbpm</password>
-            </security>
-            -->
-        </datasource>
-        <xsl:apply-templates select="@*|node()"/>
-    </xsl:copy>
-</xsl:template>
-
-<!--
-<xsl:template match="node()[name(.)='drivers']">
-    <xsl:copy>
-        <driver name="mysql" module="com.mysql.jdbc">
-            <xa-datasource-class>com.mysql.jdbc.jdbc2.optional.MysqlXADataSource</xa-datasource-class>
-        </driver>
-        <xsl:apply-templates select="@*|node()"/>
-    </xsl:copy>
-</xsl:template>
--->
-
 <xsl:template match="log:subsystem">
     <xsl:copy>
         <xsl:apply-templates select="@*|node()"/>
