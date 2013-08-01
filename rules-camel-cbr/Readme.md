@@ -9,8 +9,8 @@ If you would like to watch the rules execution, add these lines in
 src/main/resources/META-INF/switchyard.xml:
 ```
 <listeners>
-    <listener class="org.kie.event.rule.DebugAgendaEventListener"/>
-    <listener class="org.kie.event.rule.DebugWorkingMemoryEventListener"/>
+    <listener class="org.kie.api.event.rule.DebugAgendaEventListener"/>
+    <listener class="org.kie.api.event.rule.DebugWorkingMemoryEventListener"/>
 </listeners>
 ```
 

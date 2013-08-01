@@ -13,7 +13,7 @@
             <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" processId="ProcessOrder">
                 <!--
                 <listeners>
-                    <listener class="org.drools.event.DebugProcessEventListener"/>
+                    <listener class="org.drools.core.event.DebugProcessEventListener"/>
                 </listeners>
                 -->
                 <manifest>
