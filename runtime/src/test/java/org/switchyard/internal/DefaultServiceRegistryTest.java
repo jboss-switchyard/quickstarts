@@ -20,6 +20,8 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.Service;
@@ -49,6 +51,23 @@ public class DefaultServiceRegistryTest
         Assert.assertTrue(registry.getServices(serviceName).size() > 0);
         registry.unregisterService(service);
         Assert.assertTrue(registry.getServices(serviceName).size() == 0);
+    }
+    
+    @Test 
+    public void testNullServiceDomainName() {
+        Logger logger = Logger.getLogger(DefaultServiceRegistry.class);
+        Level origLevel = logger.getLevel();
+        logger.setLevel(Level.DEBUG);
+        
+        Assert.assertEquals(logger.getLevel(), Level.DEBUG);
+        final QName serviceName = new QName("FooBar");
+        DefaultServiceRegistry registry = new DefaultServiceRegistry();
+        DomainImpl domain = new DomainImpl(null);
+        ServiceImpl service = new ServiceImpl(serviceName, null, domain, null);
+        registry.registerService(service);
+        Assert.assertTrue(service.getDomain().getName() == null);
+        registry.unregisterService(service);
+        logger.setLevel(origLevel);
     }
 
     @Test

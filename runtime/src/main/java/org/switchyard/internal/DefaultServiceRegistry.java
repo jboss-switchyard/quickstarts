@@ -81,8 +81,12 @@ public class DefaultServiceRegistry implements ServiceRegistry {
             serviceList.remove(service);
 
             if (_logger.isDebugEnabled()) {
+
                 QName serviceName = service.getName();
-                String domainName = service.getDomain() == null ? "" : service.getDomain().getName().toString();
+                String domainName = "";
+                if ((service.getDomain() != null) && (service.getDomain().getName() != null)) {
+                    domainName = service.getDomain().getName().toString();
+                }
                 _logger.debug("Unregistered Service '" + serviceName + "' from ServiceDomain '" + domainName + "'.");
             }
         }
