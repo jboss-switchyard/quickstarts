@@ -14,6 +14,7 @@
 
 package org.switchyard.validate.xml.internal;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -202,7 +203,13 @@ public class XmlValidator extends BaseValidator<Message> {
             XMLReader validatingParser = createValidatingParser();
             XmlValidationErrorHandler errorHandler = new XmlValidationErrorHandler(_failOnWarning);
             validatingParser.setErrorHandler(errorHandler);
-            validatingParser.parse(msg.getContent(InputSource.class));
+            String input = msg.getContent(String.class);
+            if (InputStream.class.isAssignableFrom(msg.getContent().getClass())) {
+                msg.setContent(new ByteArrayInputStream(input.getBytes()));
+            } else if (Reader.class.isAssignableFrom(msg.getContent().getClass())) {
+                msg.setContent(new StringReader(input));
+            }
+            validatingParser.parse(new InputSource(new ByteArrayInputStream(input.getBytes())));
             if (errorHandler.validationFailed()) {
                 return invalidResult(formatErrorMessage(errorHandler.getErrors()).toString());
             }

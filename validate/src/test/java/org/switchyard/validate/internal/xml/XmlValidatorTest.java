@@ -15,7 +15,6 @@
 package org.switchyard.validate.internal.xml;
 
 import java.io.IOException;
-import java.io.StringReader;
 
 import org.apache.log4j.Logger;
 import org.junit.Assert;
@@ -26,7 +25,6 @@ import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.AbstractValidatorTestCase;
 import org.switchyard.validate.xml.internal.XmlValidator;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -56,19 +54,18 @@ public class XmlValidatorTest extends AbstractValidatorTestCase {
     @Test(expected=SwitchYardException.class)
     public void test_invalid_schemafile() throws IOException, SAXException {
         Validator validator = getValidator("sw-config-invalid-schemafile.xml");
-        InputSource source = new InputSource(new StringReader("<order type='A' />"));
-        ValidationResult result = validator.validate(new DefaultMessage().setContent(source));
+        ValidationResult result = validator.validate(new DefaultMessage().setContent("<order type='A' />"));
     }
 
     @Test
     public void test_valid_xml() throws IOException, SAXException {
         Validator validator = getValidator("sw-config-xmlv-01.xml");
-        InputSource source = new InputSource(new StringReader("<person name='foo' age='50' />"));
+        String source = "<person name='foo' age='50' />";
         ValidationResult result = validator.validate(new DefaultMessage().setContent(source));
         if (!result.isValid()) {
             Assert.fail(result.getDetail());
         }
-        source = new InputSource(new StringReader("<person2 firstName='foo' lastName='bar' age='50' />"));
+        source = "<person2 firstName='foo' lastName='bar' age='50' />";
         result = validator.validate(new DefaultMessage().setContent(source));
         if (!result.isValid()) {
             Assert.fail(result.getDetail());
@@ -79,7 +76,7 @@ public class XmlValidatorTest extends AbstractValidatorTestCase {
     @Test
     public void test_invalid_xml() throws IOException, SAXException {
         Validator validator = getValidator("sw-config-xmlv-01.xml");
-        InputSource source = new InputSource(new StringReader("<person name='foo'/>"));
+        String source = "<person name='foo'/>";
         ValidationResult result = validator.validate(new DefaultMessage().setContent(source));
         Assert.assertFalse(result.isValid());
         LOGGER.info(result.getDetail());
@@ -89,7 +86,7 @@ public class XmlValidatorTest extends AbstractValidatorTestCase {
     @Test
     public void test_namespaceaware_valid_xml() throws Exception {
         Validator validator = getValidator("sw-config-xmlv-namespace.xml");
-        InputSource source = new InputSource(new StringReader("<import:person.2 xmlns:import=\"switchyard-validate-test:import:1.0\" firstName='foo' lastName='bar' name='foo bar' age='50' />"));
+        String source = "<import:person.2 xmlns:import=\"switchyard-validate-test:import:1.0\" firstName='foo' lastName='bar' name='foo bar' age='50' />";
         ValidationResult result = validator.validate(new DefaultMessage().setContent(source));
         if (!result.isValid()) {
             Assert.fail(result.getDetail());
@@ -100,18 +97,18 @@ public class XmlValidatorTest extends AbstractValidatorTestCase {
     @Test
     public void test_namespaceaware_catalog_valid_xml() throws Exception {
         Validator validator = getValidator("sw-config-xmlv-namespace-catalog.xml");
-        InputSource source = new InputSource(new StringReader("<import:person.2 xmlns:import=\"switchyard-validate-test:import:1.0\" firstName='foo' lastName='bar' name='foo bar' age='50' />"));
+        String source = "<import:person.2 xmlns:import=\"switchyard-validate-test:import:1.0\" firstName='foo' lastName='bar' name='foo bar' age='50' />";
         ValidationResult result = validator.validate(new DefaultMessage().setContent(source));
         if (!result.isValid()) {
             Assert.fail(result.getDetail());
         }
         Assert.assertNull(result.getDetail());
     }
-    
+
     @Test
     public void test_dtd_valid_xml() throws Exception {
         Validator validator = getValidator("sw-config-xmlv-dtd.xml");
-        InputSource source = new InputSource(new StringReader("<!DOCTYPE person SYSTEM \"src/test/resources/org/switchyard/validate/internal/xml/person.dtd\"> <person name='foo' age='50' />"));
+        String source = "<!DOCTYPE person SYSTEM \"src/test/resources/org/switchyard/validate/internal/xml/person.dtd\"> <person name='foo' age='50' />";
         ValidationResult result = validator.validate(new DefaultMessage().setContent(source));
         if (!result.isValid()) {
             Assert.fail(result.getDetail());
