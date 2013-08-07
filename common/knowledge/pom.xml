@@ -37,6 +37,18 @@
         </dependency>
         <!-- external dependencies -->
         <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-compiler</artifactId>
         </dependency>
@@ -46,7 +58,19 @@
         </dependency>
         <dependency>
             <groupId>org.drools</groupId>
+            <artifactId>drools-decisiontables</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
             <artifactId>drools-persistence-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-scorecards</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-templates</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jdt.core.compiler</groupId>

@@ -25,6 +25,7 @@ import org.switchyard.component.common.knowledge.annotation.Manifest;
 import org.switchyard.component.common.knowledge.annotation.Output;
 import org.switchyard.component.common.knowledge.annotation.Property;
 import org.switchyard.component.common.knowledge.annotation.Resource;
+import org.switchyard.component.common.knowledge.annotation.ResourceDetail;
 import org.switchyard.component.rules.annotation.FireUntilHalt;
 import org.switchyard.component.rules.annotation.Rules;
 
@@ -39,7 +40,9 @@ import org.switchyard.component.rules.annotation.Rules;
         //container=@Container(baseName="theBase", scan=true, scanInterval=1000, releaseId="theGroupId:theArtifactId:theVersion", sessionName="theSession"),
         resources={
             @Resource(location="foo.drl", type="DRL"),
-            @Resource(location="bar.dsl", type="DSL")
+            @Resource(location="bar.dsl", type="DSL"),
+            @Resource(location="foobar.xls", type="DTABLE",
+                detail=@ResourceDetail(inputType="XLS", worksheetName="MySheet", usingExternalTypes=true))
         }),
     properties=@Property(name="foo", value="bar")
 )

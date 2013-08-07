@@ -13,11 +13,19 @@
  */
 package org.switchyard.component.common.knowledge.util;
 
+import java.net.URL;
+
 import org.kie.api.KieServices;
 import org.kie.api.io.KieResources;
+import org.kie.internal.builder.DecisionTableConfiguration;
+import org.kie.internal.builder.DecisionTableInputType;
 import org.kie.internal.builder.KnowledgeBuilder;
+import org.kie.internal.builder.KnowledgeBuilderFactory;
+import org.kie.internal.builder.ScoreCardConfiguration;
 import org.switchyard.common.io.resource.Resource;
+import org.switchyard.common.io.resource.ResourceDetail;
 import org.switchyard.common.io.resource.ResourceType;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.config.model.ManifestModel;
 import org.switchyard.config.model.resource.ResourcesModel;
@@ -50,11 +58,39 @@ public final class Resources {
             if (resourcesModel != null) {
                 KieResources kieResources = KieServices.Factory.get().getResources();
                 for (Resource syResource : resourcesModel.getResources()) {
-                    org.kie.api.io.Resource kieResource = kieResources.newUrlResource(syResource.getLocationURL(loader));
-                    if (kieResource != null) {
-                        org.kie.api.io.ResourceType kieResourceType = convertResourceType(syResource.getType());
-                        if (kieResourceType != null) {
-                            builder.add(kieResource, kieResourceType);
+                    URL locationURL = syResource.getLocationURL(loader);
+                    if (locationURL != null) {
+                        org.kie.api.io.Resource kieResource = kieResources.newUrlResource(locationURL);
+                        if (kieResource != null) {
+                            org.kie.api.io.ResourceType kieResourceType = convertResourceType(syResource.getType());
+                            if (kieResourceType != null) {
+                                org.kie.api.io.ResourceConfiguration kieResourceConfiguration = null;
+                                ResourceDetail syResourceDetail = syResource.getDetail();
+                                if (syResourceDetail != null) {
+                                    if (org.kie.api.io.ResourceType.DTABLE.equals(kieResourceType)) {
+                                        DecisionTableConfiguration dtc = KnowledgeBuilderFactory.newDecisionTableConfiguration();
+                                        String inputType = getInputType(syResourceDetail);
+                                        if (inputType != null) {
+                                            dtc.setInputType(DecisionTableInputType.valueOf(inputType));
+                                        }
+                                        dtc.setWorksheetName(syResourceDetail.getWorksheetName());
+                                        kieResourceConfiguration = dtc;
+                                    } else if (org.kie.api.io.ResourceType.SCARD.equals(kieResourceType)) {
+                                        ScoreCardConfiguration scc = KnowledgeBuilderFactory.newScoreCardConfiguration();
+                                        String inputType = getInputType(syResourceDetail);
+                                        if (inputType != null) {
+                                            if ("XLS".equals(inputType)) {
+                                                inputType = ScoreCardConfiguration.SCORECARD_INPUT_TYPE.EXCEL.name();
+                                            }
+                                            scc.setInputType(ScoreCardConfiguration.SCORECARD_INPUT_TYPE.valueOf(inputType));
+                                        }
+                                        scc.setWorksheetName(syResourceDetail.getWorksheetName());
+                                        scc.setUsingExternalTypes(syResourceDetail.isUsingExternalTypes());
+                                        kieResourceConfiguration = scc;
+                                    }
+                                }
+                                builder.add(kieResource, kieResourceType, kieResourceConfiguration);
+                            }
                         }
                     }
                 }
@@ -62,21 +98,12 @@ public final class Resources {
         }
     }
 
-    /**
-     * Adds a resource.
-     * @param syResource the SwitchYard resource
-     * @param loader the class loader
-     * @param builder the knowledge builder
-     */
-    public static void addResource(Resource syResource, ClassLoader loader, KnowledgeBuilder builder) {
-        KieResources kieResources = KieServices.Factory.get().getResources();
-        org.kie.api.io.Resource kieResource = kieResources.newUrlResource(syResource.getLocationURL(loader));
-        if (kieResource != null) {
-            org.kie.api.io.ResourceType kieResourceType = convertResourceType(syResource.getType());
-            if (kieResourceType != null) {
-                builder.add(kieResource, kieResourceType);
-            }
+    private static String getInputType(ResourceDetail syResourceDetail) {
+        String inputType = Strings.trimToNull(syResourceDetail.getInputType());
+        if (inputType != null) {
+            inputType = inputType.toUpperCase();
         }
+        return inputType;
     }
 
     /**
@@ -89,10 +116,10 @@ public final class Resources {
             String resourceTypeName = syResourceType.getName();
             if ("BPMN".equals(resourceTypeName)) {
                 // Drools ResourceType recognizes BPMN2, not BPMN
-                resourceTypeName = "BPMN2";
-            } else if ("XLS".equals(resourceTypeName)) {
-                // Drools ResourceType recognizes DTABLE, not XLS
-                resourceTypeName = "DTABLE";
+                resourceTypeName = org.kie.api.io.ResourceType.BPMN2.getName();
+            } else if ("XLS".equals(resourceTypeName) || "CSV".equals(resourceTypeName)) {
+                // Drools ResourceType recognizes DTABLE, not XLS or CSV
+                resourceTypeName = org.kie.api.io.ResourceType.DTABLE.getName();
             }
             return org.kie.api.io.ResourceType.getResourceType(resourceTypeName);
         }

@@ -27,6 +27,7 @@ import org.switchyard.component.common.knowledge.annotation.Manifest;
 import org.switchyard.component.common.knowledge.annotation.Output;
 import org.switchyard.component.common.knowledge.annotation.Property;
 import org.switchyard.component.common.knowledge.annotation.Resource;
+import org.switchyard.component.common.knowledge.annotation.ResourceDetail;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ChannelModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ChannelsModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1ContainerModel;
@@ -54,8 +55,10 @@ import org.switchyard.config.model.property.PropertiesModel;
 import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.property.v1.V1PropertiesModel;
 import org.switchyard.config.model.property.v1.V1PropertyModel;
+import org.switchyard.config.model.resource.ResourceDetailModel;
 import org.switchyard.config.model.resource.ResourceModel;
 import org.switchyard.config.model.resource.ResourcesModel;
+import org.switchyard.config.model.resource.v1.V1ResourceDetailModel;
 import org.switchyard.config.model.resource.v1.V1ResourceModel;
 import org.switchyard.config.model.resource.v1.V1ResourcesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
@@ -395,9 +398,35 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
             if (!UNDEFINED.equals(type)) {
                 resourceModel.setType(ResourceType.valueOf(type));
             }
+            ResourceDetailModel resourceDetailModel = toResourceDetailModel(resourceAnnotation.detail(), namespace);
+            if (resourceDetailModel != null) {
+                resourceModel.setDetail(resourceDetailModel);
+            }
             resourcesModel.addResource(resourceModel);
         }
         return resourcesModel;
+    }
+
+    private ResourceDetailModel toResourceDetailModel(ResourceDetail[] resourceDetailAnnotations, String namespace) {
+        if (resourceDetailAnnotations == null || resourceDetailAnnotations.length == 0) {
+            return null;
+        }
+        ResourceDetailModel resourceDetailModel = null;
+        for (ResourceDetail resourceDetailAnnotation : resourceDetailAnnotations) {
+            resourceDetailModel = new V1ResourceDetailModel(namespace);
+            String inputType = resourceDetailAnnotation.inputType();
+            if (!UNDEFINED.equals(inputType)) {
+                resourceDetailModel.setInputType(inputType);
+            }
+            String worksheetName = resourceDetailAnnotation.worksheetName();
+            if (!UNDEFINED.equals(worksheetName)) {
+                resourceDetailModel.setWorksheetName(worksheetName);
+            }
+            boolean usingExternalTypes = resourceDetailAnnotation.usingExternalTypes();
+            resourceDetailModel.setUsingExternalTypes(usingExternalTypes);
+            break;
+        }
+        return resourceDetailModel;
     }
 
 }

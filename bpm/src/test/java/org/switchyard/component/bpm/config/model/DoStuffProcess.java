@@ -29,6 +29,7 @@ import org.switchyard.component.common.knowledge.annotation.Manifest;
 import org.switchyard.component.common.knowledge.annotation.Output;
 import org.switchyard.component.common.knowledge.annotation.Property;
 import org.switchyard.component.common.knowledge.annotation.Resource;
+import org.switchyard.component.common.knowledge.annotation.ResourceDetail;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
@@ -42,7 +43,9 @@ import org.switchyard.component.common.knowledge.annotation.Resource;
     manifest=@Manifest(
         //container=@Container(baseName="theBase", scan=true, scanInterval=1000, releaseId="theGroupId:theArtifactId:theVersion", sessionName="theSession"),
         resources={
-            @Resource(location="foobar.bpmn", type="BPMN2")
+            @Resource(location="foobar.bpmn", type="BPMN2"),
+            @Resource(location="foobar.xls", type="DTABLE",
+                detail=@ResourceDetail(inputType="XLS", worksheetName="MySheet", usingExternalTypes=true))
         }),
     properties=@Property(name="foo", value="bar"),
     userGroupCallback=@UserGroupCallback(

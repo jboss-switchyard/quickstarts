@@ -37,7 +37,6 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.ServiceReference;
 import org.switchyard.component.bpm.annotation.BPM;
 import org.switchyard.component.bpm.annotation.SignalEvent;
 import org.switchyard.component.bpm.annotation.SignalEventAll;
@@ -115,15 +114,11 @@ public class BPMServiceTests {
         BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(AccessAttachment.class).getImplementation();
         QName serviceName = new QName("AccessAttachment");
         BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain, serviceName);
-        Service aaService = serviceDomain.registerService(serviceName, JavaService.fromClass(AccessAttachment.class), handler);
-        ServiceReference aaReference = serviceDomain.registerServiceReference(aaService.getName(), aaService.getInterface(), aaService.getProviderHandler());
+        Service service = serviceDomain.registerService(serviceName, JavaService.fromClass(AccessAttachment.class), handler);
+        serviceDomain.registerServiceReference(service.getName(), service.getInterface(), service.getProviderHandler());
         handler.start();
-        Exchange exchange = aaReference.createExchange("process");
-        Message message = exchange.createMessage();
-        message.setContent(holder);
         DataSource attachment = new TestDataSource("someAttach", "text/plain", "someAttachData");
-        message.addAttachment(attachment.getName(), attachment);
-        exchange.send(message);
+        new Invoker(serviceDomain, serviceName).operation("process").attachment(attachment.getName(), attachment).sendInOnly(holder);
         handler.stop();
         Assert.assertEquals("someAttachData", holder.getValue());
     }
@@ -330,14 +325,13 @@ public class BPMServiceTests {
 
     @Test
     public void testReuseHandler() throws Exception {
-        QName serviceName = new QName("ReuseHandler");
-        ServiceReference serviceRef = serviceDomain.registerServiceReference(serviceName, new InOnlyService("process"));
         BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(ReuseHandlerProcess.class).getImplementation();
+        QName serviceName = new QName("ReuseHandler");
         BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain, serviceName);
-        serviceDomain.registerService(serviceName, new InOnlyService("process"), handler);
+        Service service = serviceDomain.registerService(serviceName, new InOnlyService("process"), handler);
+        serviceDomain.registerServiceReference(service.getName(), service.getInterface(), service.getProviderHandler());
         handler.start();
-        Exchange exchange = serviceRef.createExchange();
-        exchange.send(exchange.createMessage());
+        new Invoker(serviceDomain, serviceName).operation("process").sendInOnly(null);
         handler.stop();
         Assert.assertEquals("handler executed", ReuseHandler._holder.getValue());
         ReuseHandler._holder.setValue(null);
@@ -354,16 +348,13 @@ public class BPMServiceTests {
     @Test
     public void testRulesFired() throws Exception {
         final Holder holder = new Holder();
-        QName serviceName = new QName("RulesFired");
-        ServiceReference serviceRef = serviceDomain.registerServiceReference(serviceName, new InOnlyService("process"));
         BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(RulesFiredProcess.class).getImplementation();
+        QName serviceName = new QName("RulesFired");
         BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain, serviceName);
-        serviceDomain.registerService(serviceName, new InOnlyService("process"), handler);
+        Service service = serviceDomain.registerService(serviceName, new InOnlyService("process"), handler);
+        serviceDomain.registerServiceReference(service.getName(), service.getInterface(), service.getProviderHandler());
         handler.start();
-        Exchange exchange = serviceRef.createExchange();
-        Message message = exchange.createMessage();
-        message.setContent(holder);
-        exchange.send(message);
+        new Invoker(serviceDomain, serviceName).operation("process").sendInOnly(holder);
         handler.stop();
         Assert.assertEquals("rules fired", holder.getValue());
     }

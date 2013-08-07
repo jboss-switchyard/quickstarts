@@ -21,22 +21,22 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Resource.
+ * ResourceDetail.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 @Target(TYPE)
 @Retention(RUNTIME)
 @Documented
-public @interface Resource {
+public @interface ResourceDetail {
 
-    /** Location. */
-    public String location();
+    /** InputType. */
+    public String inputType();
 
-    /** Type. */
-    public String type();
+    /** WorksheetName. */
+    public String worksheetName() default "";
 
-    /** Detail. */
-    public ResourceDetail[] detail() default {};
+    /** UsingExternalTypes. */
+    public boolean usingExternalTypes() default false;
 
 }

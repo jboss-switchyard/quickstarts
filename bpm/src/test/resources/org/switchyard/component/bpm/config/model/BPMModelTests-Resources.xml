@@ -28,6 +28,9 @@
                 <manifest>
                     <resources>
                         <resource location="foobar.bpmn" type="BPMN2"/>
+                        <resource location="foobar.xls" type="DTABLE">
+                            <resourceDetail inputType="XLS" worksheetName="MySheet" usingExternalTypes="true"/>
+                        </resource>
                     </resources>
                 </manifest>
                 <operations>

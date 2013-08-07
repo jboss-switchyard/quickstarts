@@ -32,6 +32,7 @@ import static org.switchyard.component.common.knowledge.config.model.OutputModel
 import static org.switchyard.component.common.knowledge.config.model.OutputsModel.OUTPUTS;
 import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
 import static org.switchyard.config.model.property.PropertyModel.PROPERTY;
+import static org.switchyard.config.model.resource.ResourceDetailModel.RESOURCE_DETAIL;
 import static org.switchyard.config.model.resource.ResourceModel.RESOURCE;
 import static org.switchyard.config.model.resource.ResourcesModel.RESOURCES;
 
@@ -41,6 +42,7 @@ import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composite.v1.V1CompositeMarshaller;
 import org.switchyard.config.model.property.v1.V1PropertiesModel;
 import org.switchyard.config.model.property.v1.V1PropertyModel;
+import org.switchyard.config.model.resource.v1.V1ResourceDetailModel;
 import org.switchyard.config.model.resource.v1.V1ResourceModel;
 import org.switchyard.config.model.resource.v1.V1ResourcesModel;
 
@@ -91,6 +93,8 @@ public class V1KnowledgeMarshaller extends V1CompositeMarshaller {
             return new V1ResourcesModel(config, desc);
         } else if (RESOURCE.equals(name)) {
             return new V1ResourceModel(config, desc);
+        } else if (RESOURCE_DETAIL.equals(name)) {
+            return new V1ResourceDetailModel(config, desc);
         } else if (OPERATIONS.equals(name)) {
             return new V1OperationsModel(config, desc);
         } else if (GLOBALS.equals(name)) {
