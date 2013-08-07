@@ -22,6 +22,7 @@
         <componentDescriptor>src/main/resources/modules/system/layers/soa/com/google/protobuf/main/assembly-component.xml</componentDescriptor>
         <componentDescriptor>src/main/resources/modules/system/layers/soa/com/thoughtworks/xstream/main/assembly-component.xml</componentDescriptor>
         <componentDescriptor>src/main/resources/modules/system/layers/soa/org/antlr/antlr-runtime/main/assembly-component.xml</componentDescriptor>
+        <componentDescriptor>src/main/resources/modules/system/layers/soa/org/apache/poi/main/assembly-component.xml</componentDescriptor>
         <componentDescriptor>src/main/resources/modules/system/layers/soa/org/drools/main/assembly-component.xml</componentDescriptor>
         <componentDescriptor>src/main/resources/modules/system/layers/soa/org/eclipse/jdt/core/compiler/main/assembly-component.xml</componentDescriptor>
         <componentDescriptor>src/main/resources/modules/system/layers/soa/org/jbpm/main/assembly-component.xml</componentDescriptor>

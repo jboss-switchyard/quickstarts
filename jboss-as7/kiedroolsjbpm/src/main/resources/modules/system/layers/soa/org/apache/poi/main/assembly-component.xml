@@ -17,21 +17,18 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <files>
         <file>
-            <source>src/main/resources/modules/system/layers/soa/org/drools/main/module.xml</source>
-            <outputDirectory>/modules/system/layers/soa/org/drools/main</outputDirectory>
+            <source>src/main/resources/modules/system/layers/soa/org/apache/poi/main/module.xml</source>
+            <outputDirectory>/modules/system/layers/soa/org/apache/poi/main</outputDirectory>
             <filtered>true</filtered>
         </file>
     </files>
     <dependencySets>
         <dependencySet>
-            <outputDirectory>/modules/system/layers/soa/org/drools/main</outputDirectory>
+            <outputDirectory>/modules/system/layers/soa/org/apache/poi/main</outputDirectory>
             <includes>
-                <include>org.drools:drools-compiler</include>
-                <include>org.drools:drools-core</include>
-                <include>org.drools:drools-decisiontables</include>
-                <include>org.drools:drools-persistence-jpa</include>
-                <include>org.drools:drools-scorecards</include>
-                <include>org.drools:drools-templates</include>
+                <include>org.apache.poi:poi</include>
+                <include>org.apache.poi:poi-ooxml</include>
+                <include>org.apache.poi:poi-ooxml-schemas</include>
             </includes>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
             <useTransitiveDependencies>false</useTransitiveDependencies>

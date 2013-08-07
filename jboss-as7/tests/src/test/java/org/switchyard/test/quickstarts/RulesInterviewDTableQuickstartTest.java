@@ -16,7 +16,6 @@ package org.switchyard.test.quickstarts;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
@@ -25,23 +24,21 @@ import org.switchyard.test.ArquillianUtil;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 @RunWith(Arquillian.class)
-public class RulesInterviewContainerQuickstartTest {
+public class RulesInterviewDTableQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-rules-interview-container");
+        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-rules-interview-dtable");
     }
 
     @Test
-    @Ignore("TODO: This test works without Arquillian; needs further investigation.")
     public void testVerifyPass() throws Exception {
-        RulesInterviewQuickstartTest.doTestVerify("rules-interview-container", true);
+        RulesInterviewQuickstartTest.doTestVerify("rules-interview-dtable", true);
     }
 
     @Test
-    @Ignore("TODO: This test works without Arquillian; needs further investigation.")
     public void testVerifyFail() throws Exception {
-        RulesInterviewQuickstartTest.doTestVerify("rules-interview-container", false);
+        RulesInterviewQuickstartTest.doTestVerify("rules-interview-dtable", false);
     }
 
 }
