@@ -113,6 +113,7 @@
         <version.quartz>1.8.5</version.quartz>
         <version.qpid>0.18</version.qpid>
         <version.ognl>3.0.6</version.ognl>
+        <version.poi>3.9</version.poi>
         <version.protobuf>2.5.0</version.protobuf>
         <version.protostuff>1.0.7</version.protostuff>
         <version.redhat.eap6>6.1</version.redhat.eap6>
@@ -1183,6 +1184,11 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-quickstart-rules-interview-dtable</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
                 <artifactId>switchyard-quickstart-soap-addressing</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1731,6 +1737,21 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${version.poi}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${version.poi}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml-schemas</artifactId>
+                <version>${version.poi}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.qpid</groupId>
                 <artifactId>qpid-client</artifactId>
                 <version>${version.qpid}</version>
@@ -1812,7 +1833,22 @@
             </dependency>
             <dependency>
                 <groupId>org.drools</groupId>
+                <artifactId>drools-decisiontables</artifactId>
+                <version>${version.drools}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.drools</groupId>
                 <artifactId>drools-persistence-jpa</artifactId>
+                <version>${version.drools}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.drools</groupId>
+                <artifactId>drools-scorecards</artifactId>
+                <version>${version.drools}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.drools</groupId>
+                <artifactId>drools-templates</artifactId>
                 <version>${version.drools}</version>
             </dependency>
             <dependency>
