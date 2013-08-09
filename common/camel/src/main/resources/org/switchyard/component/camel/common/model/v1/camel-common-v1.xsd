@@ -24,6 +24,18 @@
                 <sequence>
                     <element name="contextMapper" type="switchyard:ContextMapperType"  minOccurs="0" maxOccurs="1"/>
                     <element name="messageComposer" type="switchyard:MessageComposerType" minOccurs="0" maxOccurs="1"/>
+                    <element name="additionalUriParameters" minOccurs="0" maxOccurs="1">
+                        <complexType>
+                            <sequence>
+                                <element name="parameter" minOccurs="0" maxOccurs="unbounded">
+                                    <complexType>
+                                        <attribute name="name" type="string" use="required"/>
+                                        <attribute name="value" type="string" use="required"/>
+                                    </complexType>
+                                </element>
+                            </sequence>
+                        </complexType>
+                    </element>
                 </sequence>
             </extension>
         </complexContent>

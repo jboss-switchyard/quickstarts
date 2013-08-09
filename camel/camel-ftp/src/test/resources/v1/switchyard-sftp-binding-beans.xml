@@ -19,6 +19,9 @@
     <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
         <sca:service name="camelTest" promote="SimpleCamelService">
             <ftp:binding.sftp>
+                <ftp:additionalUriParameters>
+                    <ftp:parameter name="maxMessagesPerPoll" value="${maxMessagesPerPoll}"/>
+                </ftp:additionalUriParameters>
                 <ftp:directory>test</ftp:directory>
                 <ftp:host>localhost</ftp:host>
                 <ftp:port>9022</ftp:port>
@@ -29,4 +32,9 @@
         </sca:service>
     </sca:composite>
 
+    <domain>
+        <properties>
+            <property name="maxMessagesPerPoll" value="5"/>
+        </properties>
+    </domain>
 </switchyard>

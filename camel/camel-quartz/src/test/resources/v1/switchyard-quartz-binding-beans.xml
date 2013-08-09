@@ -19,6 +19,9 @@
     <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
         <sca:service name="camelTest" promote="SimpleCamelService">
             <quartz:binding.quartz>
+                <quartz:additionalUriParameters>
+                    <quartz:parameter name="trigger.timeZone" value="GMT"/>
+                </quartz:additionalUriParameters>
                 <quartz:name>MyJob</quartz:name>
                 <quartz:cron>0 0 12 * * ?</quartz:cron>
                 <quartz:stateful>true</quartz:stateful>

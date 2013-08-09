@@ -16,8 +16,11 @@ package org.switchyard.component.camel.sftp.model.v1;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
+import java.util.Collections;
+
 import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.junit.Test;
+import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
 import org.switchyard.config.model.Validation;
 
@@ -38,7 +41,7 @@ public class V1CamelSftpBindingModelTest extends V1BaseCamelServiceBindingModelT
     private static final String PRIVATE_KEY_PASSPHRASE = "test";
 
     private static final String CAMEL_URI = "sftp://localhost:9022/test?knownHostsFile=known_hosts"
-        + "&privateKeyFile=my.key&privateKeyFilePassphrase=test";
+        + "&privateKeyFile=my.key&privateKeyFilePassphrase=test&maxMessagesPerPoll=5";
 
     public V1CamelSftpBindingModelTest() {
         super(SftpEndpoint.class, CAMEL_XML);
@@ -63,8 +66,18 @@ public class V1CamelSftpBindingModelTest extends V1BaseCamelServiceBindingModelT
 
     @Override
     protected V1CamelSftpBindingModel createTestModel() {
-        V1CamelSftpBindingModel model = (V1CamelSftpBindingModel) new V1CamelSftpBindingModel()
-            .setDirectory(DIRECTORY)
+        V1CamelSftpBindingModel model = (V1CamelSftpBindingModel) new V1CamelSftpBindingModel();
+        model.getModelConfiguration().setPropertyResolver(new PropertyResolver() {
+            @Override
+            public Object resolveProperty(String key) {
+                if ("maxMessagesPerPoll".equals(key)) {
+                    return 5;
+                }
+                return null;
+            }
+        });
+        model.setAdditionalUriParameters(createAdditionalUriParametersModel(org.switchyard.component.camel.ftp.Constants.FTP_NAMESPACE_V1, Collections.singletonMap("maxMessagesPerPoll", "${maxMessagesPerPoll}")));
+        model.setDirectory(DIRECTORY)
             .setHost(HOST)
             .setPort(PORT);
 

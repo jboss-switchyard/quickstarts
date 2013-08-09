@@ -73,4 +73,16 @@ public interface CamelBindingModel extends BindingModel {
      */
     void setEnvironment(Configuration config);
 
+    /**
+     * Additional URI parameters not declared in the configuration model.
+     * @return an instance of the additional URI parameters.
+     */
+    AdditionalUriParametersModel getAdditionalUriParameters();
+    
+    /**
+     * Specify additional URI parameters not declared in the configuration model.
+     * @param parameters the additional URI parameters
+     * @return a reference to the binding model
+     */
+    CamelBindingModel setAdditionalUriParameters(AdditionalUriParametersModel parameters);
 }

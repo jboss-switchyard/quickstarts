@@ -19,6 +19,9 @@
     <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
         <sca:service name="camelTest" promote="SimpleCamelService">
             <amqp:binding.amqp>
+                <amqp:additionalUriParameters>
+                    <amqp:parameter name="dummy" value="test"/>
+                </amqp:additionalUriParameters>
                 <amqp:topic>esb_in_topic</amqp:topic>
                 <amqp:connectionFactory>connFactory</amqp:connectionFactory>
                 <amqp:username>camel</amqp:username>

@@ -15,13 +15,18 @@ package org.switchyard.component.camel.config.test.v1;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.BeforeClass;
 import org.switchyard.common.type.Classes;
+import org.switchyard.component.camel.common.model.AdditionalUriParametersModel;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
+import org.switchyard.component.camel.common.model.v1.V1AdditionalUriParametersModel;
+import org.switchyard.component.camel.common.model.v1.V1ParameterModel;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
@@ -113,4 +118,13 @@ public abstract class V1BaseCamelModelTest<T extends CamelBindingModel> {
         return context.getEndpoint(configUri, enpointType);
     }
 
+    protected static AdditionalUriParametersModel createAdditionalUriParametersModel(String namespace,
+            Map<String, String> parameters) {
+        final AdditionalUriParametersModel retVal = new V1AdditionalUriParametersModel(namespace);
+        for (Entry<String, String> entry : parameters.entrySet()) {
+            retVal.addParameter(new V1ParameterModel(namespace).setName(entry.getKey()).setValue(entry.getValue()));
+        }
+        return retVal;
+
+    }
 }

@@ -17,10 +17,12 @@ import static junit.framework.Assert.assertEquals;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 
 import org.apache.camel.component.quartz.QuartzEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
+import org.switchyard.component.camel.quartz.Constants;
 
 /**
  * Test for {@link V1CamelQuartzBindingModel}.
@@ -60,7 +62,9 @@ public class V1CamelQuartzBindingModelTest extends V1BaseCamelServiceBindingMode
 
     @Override
     protected V1CamelQuartzBindingModel createTestModel() {
-        return (V1CamelQuartzBindingModel) new V1CamelQuartzBindingModel()
+        final V1CamelQuartzBindingModel model = new V1CamelQuartzBindingModel();
+        model.setAdditionalUriParameters(createAdditionalUriParametersModel(Constants.QUARTZ_NAMESPACE_V1, Collections.singletonMap("trigger.timeZone", "GMT")));
+        return (V1CamelQuartzBindingModel) model
             .setTimerName(NAME)
             .setCron(CRON)
             .setStateful(STATEFUL)

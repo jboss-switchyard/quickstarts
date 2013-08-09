@@ -15,7 +15,10 @@ package org.switchyard.component.camel.amqp.model.v1;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Collections;
+
 import org.apache.camel.component.jms.JmsEndpoint;
+import org.switchyard.component.camel.amqp.model.Constants;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
 
 /**
@@ -51,7 +54,7 @@ public class V1CamelAmqpBindingModelTest extends V1BaseCamelServiceBindingModelT
         "username=camel&password=isMyFriend&clientId=esb_in&durableSubscriptionName=esb_in_sub&" +
         "concurrentConsumers=5&maxConcurrentConsumers=15&disableReplyTo=true&preserveMessageQos=true&" +
         "deliveryPersistent=false&priority=9&explicitQosEnabled=true&replyTo=esb_out&replyToType=Shared&" +
-        "requestTimeout=300&selector=DEST='ESB'&timeToLive=3600&transacted=true";
+        "requestTimeout=300&selector=DEST='ESB'&timeToLive=3600&transacted=true&dummy=test";
 
     public V1CamelAmqpBindingModelTest() {
         super(JmsEndpoint.class, CAMEL_XML);
@@ -61,7 +64,9 @@ public class V1CamelAmqpBindingModelTest extends V1BaseCamelServiceBindingModelT
 
     @Override
     protected V1CamelAmqpBindingModel createTestModel() {
-        return (V1CamelAmqpBindingModel) new V1CamelAmqpBindingModel()
+        final V1CamelAmqpBindingModel model = new V1CamelAmqpBindingModel();
+        model.setAdditionalUriParameters(createAdditionalUriParametersModel(Constants.AMQP_NAMESPACE_V1, Collections.singletonMap("dummy", "test")));
+        model
                 .setTopic(TOPIC)
                 .setConnectionFactory(CONNECTION_FACTORY)
                 .setUsername(USERNAME)
@@ -81,6 +86,7 @@ public class V1CamelAmqpBindingModelTest extends V1BaseCamelServiceBindingModelT
                 .setSelector(SELECTOR)
                 .setTimeToLive(TIME_TO_LIVE)
                 .setTransacted(TRANSACTED);
+        return model;
     }
 
     @Override

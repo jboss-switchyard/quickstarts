@@ -63,13 +63,7 @@ public class V1CamelJmsBindingModel extends V1BaseCamelBindingModel
      * Create a new CamelJmsBindingModel.
      */
     public V1CamelJmsBindingModel() {
-        super(JMS, JMS_NAMESPACE_V1);
-
-        setModelChildrenOrder(QUEUE, TOPIC, CONNECTION_FACTORY, USERNAME, PASSWORD,
-            CLIENT_ID, DURABLE_SUBSCRIPTION_NAME, CONCURRENT_CONSUMERS, MAX_CONCURRENT_CONSUMERS,
-            DISABLE_REPLY_TO, PRESERVE_MESSAGE_QOS, DELIVERY_PERSISTENT, PRIORITY,
-            EXPLICIT_QOS_ENABLED, REPLY_TO, REPLY_TO_TYPE, REQUEST_TIMEOUT, SELECTOR,
-            TIME_TO_LIVE, TRANSACTED, TRANSACTION_MANAGER, ACKNOWLEDGEMENTMODE_NAME, ACKNOWLEDGEMENTMODE);
+        this(JMS, JMS_NAMESPACE_V1);
     }
 
     /**
@@ -90,6 +84,11 @@ public class V1CamelJmsBindingModel extends V1BaseCamelBindingModel
      */
     protected V1CamelJmsBindingModel(String type, String namespace) {
         super(type, namespace);
+        setModelChildrenOrder(QUEUE, TOPIC, CONNECTION_FACTORY, USERNAME, PASSWORD,
+                CLIENT_ID, DURABLE_SUBSCRIPTION_NAME, CONCURRENT_CONSUMERS, MAX_CONCURRENT_CONSUMERS,
+                DISABLE_REPLY_TO, PRESERVE_MESSAGE_QOS, DELIVERY_PERSISTENT, PRIORITY,
+                EXPLICIT_QOS_ENABLED, REPLY_TO, REPLY_TO_TYPE, REQUEST_TIMEOUT, SELECTOR,
+                TIME_TO_LIVE, TRANSACTED, TRANSACTION_MANAGER);
     }
 
     @Override

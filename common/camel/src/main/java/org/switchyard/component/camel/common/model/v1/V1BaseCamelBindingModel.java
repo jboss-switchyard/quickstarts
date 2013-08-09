@@ -18,11 +18,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.switchyard.component.camel.common.QueryString;
+import org.switchyard.component.camel.common.model.AdditionalUriParametersModel;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
+import org.switchyard.component.camel.common.model.ParameterModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.Configurations;
 import org.switchyard.config.model.Descriptor;
@@ -43,6 +47,7 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel
     public static final String CAMEL = "camel";
 
     private Configuration _environment = Configurations.newConfiguration();
+    private AdditionalUriParametersModel _additionalUriParameters;
 
     /**
      * 
@@ -84,24 +89,87 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel
         _environment = config;
     }
 
+    @Override
+    protected Model setModelChildrenOrder(String... childrenOrder) {
+        Set<String> mco = new LinkedHashSet<String>();
+        mco.add(AdditionalUriParametersModel.ADDITIONAL_URI_PARAMETERS);
+        if (childrenOrder != null) {
+            mco.addAll(Arrays.asList(childrenOrder));
+        }
+        super.setModelChildrenOrder(mco.toArray(new String[mco.size()]));
+        return this;
+    }
+
+    @Override
+    public AdditionalUriParametersModel getAdditionalUriParameters() {
+        if (_additionalUriParameters == null) {
+            Configuration config = getModelConfiguration().getFirstChild(
+                    AdditionalUriParametersModel.ADDITIONAL_URI_PARAMETERS);
+            if (config == null) {
+                return null;
+            }
+            _additionalUriParameters = new V1AdditionalUriParametersModel(config, getModelDescriptor());
+        }
+        return _additionalUriParameters;
+    }
+
+    @Override
+    public CamelBindingModel setAdditionalUriParameters(AdditionalUriParametersModel parameters) {
+        Configuration config = getModelConfiguration().getFirstChild(
+                AdditionalUriParametersModel.ADDITIONAL_URI_PARAMETERS);
+        if (config != null) {
+            // set an existing config value
+            getModelConfiguration().removeChildren(AdditionalUriParametersModel.ADDITIONAL_URI_PARAMETERS);
+            getModelConfiguration().addChild(((V1AdditionalUriParametersModel) parameters).getModelConfiguration());
+        } else {
+            setChildModel((V1AdditionalUriParametersModel) parameters);
+        }
+        _additionalUriParameters = parameters;
+        return this;
+    }
+
     protected final void traverseConfiguration(List<Configuration> parent, QueryString queryString,
         String ... excludes) {
 
         if (parent.size() != 0) {
             List<String> excludeParameters = new ArrayList<String>(Arrays.asList(excludes));
+            
+            // ignore additional URI parameters
+            excludeParameters.add(AdditionalUriParametersModel.ADDITIONAL_URI_PARAMETERS);
 
+            traverseConfigurationInternal(parent, queryString, excludeParameters);
+            
+            // add additional URI parameters
+            final AdditionalUriParametersModel additionalParametersModel = getAdditionalUriParameters();
+            if (additionalParametersModel != null) {
+                for (ParameterModel parameter : additionalParametersModel.getParameters()) {
+                    if (parameter == null || parameter.getName() == null || excludeParameters.contains(parameter.getName())) {
+                        continue;
+                    }
+                    queryString.add(parameter.getName(), UnsafeUriCharactersEncoder.encode(parameter.getValue()));
+                    excludeParameters.add(parameter.getName());
+                }
+            }
+        }
+    }
+
+    private void traverseConfigurationInternal(List<Configuration> parent, QueryString queryString,
+            List<String> excludes) {
+
+        if (parent.size() != 0) {
             Iterator<Configuration> parentIterator = parent.iterator();
             while (parentIterator.hasNext()) {
                 Configuration child = parentIterator.next();
 
-                if (child != null && child.getName() != null && excludeParameters.contains(child.getName())) {
+                if (child == null || child.getName() == null || excludes.contains(child.getName())) {
                     continue;
                 }
 
-                if (child != null && child.getChildren().size() == 0) {
+                if (child.getChildren().size() == 0) {
                     queryString.add(child.getName(), UnsafeUriCharactersEncoder.encode(child.getValue()));
+                    excludes.add(child.getName());
                 } else {
-                    traverseConfiguration(child.getChildren(), queryString, excludes);
+                    traverseConfigurationInternal(child.getChildren(), queryString, excludes);
                 }
             }
         }
