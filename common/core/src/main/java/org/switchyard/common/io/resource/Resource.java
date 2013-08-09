@@ -18,7 +18,7 @@ import java.net.URL;
 /**
  * Represents a resource.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
 public interface Resource {
 
@@ -53,5 +53,11 @@ public interface Resource {
      * @return the type of the resource
      */
     public ResourceType getType();
+
+    /**
+     * Gets the detail of the resource.
+     * @return the detail of the resource
+     */
+    public ResourceDetail getDetail();
 
 }

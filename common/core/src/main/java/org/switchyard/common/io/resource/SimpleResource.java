@@ -16,20 +16,16 @@ package org.switchyard.common.io.resource;
 /**
  * Simple Resource class.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
 public class SimpleResource extends BaseResource {
 
     private String _location;
     private ResourceType _type;
+    private ResourceDetail _detail;
 
     /**
-     * Constructs a new BaseResource.
-     */
-    public SimpleResource() {}
-
-    /**
-     * Constructs a new BaseResource with the specified resource location.
+     * Constructs a new SimpleResource with the specified resource location.
      * @param location the resource location
      */
     public SimpleResource(String location) {
@@ -37,7 +33,7 @@ public class SimpleResource extends BaseResource {
     }
 
     /**
-     * Constructs a new BaseResource with the specified resource location and type.
+     * Constructs a new SimpleResource with the specified resource location and type.
      * @param location the resource location
      * @param type the resource type
      */
@@ -47,7 +43,7 @@ public class SimpleResource extends BaseResource {
     }
 
     /**
-     * Constructs a new BaseResource with the specified resource location and type.
+     * Constructs a new SimpleResource with the specified resource location and type.
      * @param location the resource location
      * @param type the resource type
      */
@@ -68,7 +64,7 @@ public class SimpleResource extends BaseResource {
      * Sets the resource location.
      * <p><i>If not already set, the resource type will be deduced from the extension of the location, and set.</i></p>
      * @param location the resource location
-     * @return this BaseResource (useful for chaining)
+     * @return this SimpleResource (useful for chaining)
      */
     public SimpleResource setLocation(String location) {
         if (location != null && getType() == null) {
@@ -89,10 +85,28 @@ public class SimpleResource extends BaseResource {
     /**
      * Sets the resource type.
      * @param type the resource type
-     * @return this BaseResource (useful for chaining)
+     * @return this SimpleResource (useful for chaining)
      */
     public SimpleResource setType(ResourceType type) {
         _type = type;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResourceDetail getDetail() {
+        return _detail;
+    }
+
+    /**
+     * Sets the resource detail.
+     * @param detail the resource detail
+     * @return this SimpleResource (useful for chaining)
+     */
+    public SimpleResource setDetail(ResourceDetail detail) {
+        _detail = detail;
         return this;
     }
 

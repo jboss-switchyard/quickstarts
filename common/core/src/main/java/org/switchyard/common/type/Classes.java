@@ -103,12 +103,12 @@ public final class Classes {
     /**
      * Finds a classpath resource.
      * @param path the path to the resource
-     * @param loader classloader we can also try to find the resource
+     * @param loaders classloaders we can also try to find the resource
      * @return URL to the resource, or null if not found
      * @throws IOException if a problem occurred
      */
-    public static URL getResource(String path, ClassLoader loader) throws IOException {
-        List<URL> urls = getResources(path, loader);
+    public static URL getResource(String path, ClassLoader... loaders) throws IOException {
+        List<URL> urls = getResources(path, loaders);
         return urls.size() > 0 ? urls.get(0) : null;
     }
 
@@ -197,12 +197,12 @@ public final class Classes {
     /**
      * Finds a classpath resource as an InputStream.
      * @param path the path to the resource
-     * @param loader classloader we can also try to find the resource
+     * @param loaders classloaders we can also try to find the resource
      * @return InputStream of the resource, or null if not found
      * @throws IOException if a problem occurred
      */
-    public static InputStream getResourceAsStream(String path, ClassLoader loader) throws IOException {
-        URL url = getResource(path, loader);
+    public static InputStream getResourceAsStream(String path, ClassLoader... loaders) throws IOException {
+        URL url = getResource(path, loaders);
         return url != null ? url.openStream() : null;
     }
 

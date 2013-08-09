@@ -13,6 +13,7 @@
  */
 package org.switchyard.config.model.resource.v1;
 
+import static org.switchyard.config.model.resource.ResourceDetailModel.RESOURCE_DETAIL;
 import static org.switchyard.config.model.switchyard.SwitchYardModel.DEFAULT_NAMESPACE;
 
 import java.net.URL;
@@ -20,18 +21,22 @@ import java.net.URL;
 import javax.xml.namespace.QName;
 
 import org.switchyard.common.io.resource.BaseResource;
+import org.switchyard.common.io.resource.ResourceDetail;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.resource.ResourceDetailModel;
 import org.switchyard.config.model.resource.ResourceModel;
 
 /**
  * The 1st version ResourceModel.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
 public class V1ResourceModel extends BaseModel implements ResourceModel {
+
+    private ResourceDetailModel _detail;
 
     /**
      * Creates a new ResourceModel in the default namespace.
@@ -46,6 +51,7 @@ public class V1ResourceModel extends BaseModel implements ResourceModel {
      */
     public V1ResourceModel(String namespace) {
         super(new QName(namespace, RESOURCE));
+        setModelChildrenOrder(RESOURCE_DETAIL);
     }
 
     /**
@@ -55,6 +61,7 @@ public class V1ResourceModel extends BaseModel implements ResourceModel {
      */
     public V1ResourceModel(Configuration config, Descriptor desc) {
         super(config, desc);
+        setModelChildrenOrder(RESOURCE_DETAIL);
     }
 
     /**
@@ -117,6 +124,36 @@ public class V1ResourceModel extends BaseModel implements ResourceModel {
     public ResourceModel setType(ResourceType type) {
         String rt = type != null ? type.getName() : null;
         setModelAttribute("type", rt);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResourceDetail getDetail() {
+        if (_detail == null) {
+            _detail = (ResourceDetailModel)getFirstChildModel(RESOURCE_DETAIL);
+        }
+        return _detail;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResourceModel setDetail(ResourceDetail detail) {
+        ResourceDetailModel child = null;
+        if (detail instanceof ResourceDetailModel) {
+            child = (ResourceDetailModel)detail;
+        } else if (detail != null) {
+            child = new V1ResourceDetailModel(getNamespaceURI());
+            child.setInputType(detail.getInputType());
+            child.setWorksheetName(detail.getWorksheetName());
+            child.setUsingExternalTypes(detail.isUsingExternalTypes());
+        }
+        setChildModel(child);
+        _detail = child;
         return this;
     }
 

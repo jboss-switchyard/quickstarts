@@ -22,7 +22,7 @@ import org.switchyard.common.type.Classes;
 /**
  * BaseResource.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
 public abstract class BaseResource implements Resource {
 

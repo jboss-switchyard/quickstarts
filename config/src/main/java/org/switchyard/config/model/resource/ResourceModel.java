@@ -14,13 +14,14 @@
 package org.switchyard.config.model.resource;
 
 import org.switchyard.common.io.resource.Resource;
+import org.switchyard.common.io.resource.ResourceDetail;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.config.model.Model;
 
 /**
  * A configuration model for Resources.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
 public interface ResourceModel extends Resource, Model {
 
@@ -42,5 +43,12 @@ public interface ResourceModel extends Resource, Model {
      * @return this ResourceModel (useful for chaining)
      */
     public ResourceModel setType(ResourceType type);
+
+    /**
+     * Sets the detail of the Resource.
+     * @param detail the detail of Resource
+     * @return this ResourceModel (useful for chaining)
+     */
+    public ResourceModel setDetail(ResourceDetail detail);
 
 }

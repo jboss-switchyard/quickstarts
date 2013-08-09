@@ -27,8 +27,12 @@ import org.switchyard.config.model.property.PropertiesModel;
 import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.property.v1.V1PropertiesModel;
 import org.switchyard.config.model.property.v1.V1PropertyModel;
+import org.switchyard.config.model.resource.ResourceDetailModel;
 import org.switchyard.config.model.resource.ResourceModel;
+import org.switchyard.config.model.resource.ResourcesModel;
+import org.switchyard.config.model.resource.v1.V1ResourceDetailModel;
 import org.switchyard.config.model.resource.v1.V1ResourceModel;
+import org.switchyard.config.model.resource.v1.V1ResourcesModel;
 import org.switchyard.config.model.selector.JavaOperationSelectorModel;
 import org.switchyard.config.model.selector.OperationSelectorModel;
 import org.switchyard.config.model.selector.RegexOperationSelectorModel;
@@ -89,8 +93,12 @@ public class V1SwitchYardMarshaller extends BaseMarshaller {
             return new V1SecurityModel(config, desc);
         } else if (name.equals(DomainModel.DOMAIN)) {
             return new V1DomainModel(config, desc);
+        } else if (name.equals(ResourcesModel.RESOURCES)) {
+            return new V1ResourcesModel(config, desc);
         } else if (name.equals(ResourceModel.RESOURCE)) {
             return new V1ResourceModel(config, desc);
+        } else if (name.equals(ResourceDetailModel.RESOURCE_DETAIL)) {
+            return new V1ResourceDetailModel(config, desc);
         } else if (name.equals(ThrottlingModel.THROTTLING)) {
             return new V1ThrottlingModel(config, desc);
         } else if (name.equals(ESB_INTERFACE)) {
