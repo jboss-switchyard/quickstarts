@@ -103,6 +103,8 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
     @Override
     public void afterDelivery() throws ResourceException {
         if (!_beforeDeliveryInvoked) {
+            // SWITCHYARD-1640 Avoid remaining thread lock when RM invokes afterDelivery twice for the same delivery
+            releaseThreadLock();
            throw new IllegalStateException("afterDelivery without a previous beforeDelivery for message endpoint " + _delegate);
         }
 
@@ -136,6 +138,10 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
+        if (_logger.isDebugEnabled()) {
+            _logger.debug(Thread.currentThread().getName() + " is invoking " + method.getName() + " on " + this);
+        }
+        
         acquireThreadLock();
 
         // beforeDelivery, afterDelivery, or release
@@ -215,15 +221,23 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
         }
         
         if (_inUseThread != null && !_inUseThread.equals(Thread.currentThread())) {
-            throw new IllegalStateException("This message endpoint + " + _delegate + " is already in use by another thread " + _inUseThread);
+            throw new IllegalStateException(Thread.currentThread().getName() + " couldn't acquire a thread lock since " + this + " is already in use by another thread: " + _inUseThread.getName());
         }
         _deliveryThreadLock.lock();
         _inUseThread = Thread.currentThread();
+        
+        if (_logger.isDebugEnabled()) {
+            _logger.debug(Thread.currentThread().getName() + " acquired thread lock on " + this);
+        }
     }
 
     private void releaseThreadLock() {
         _inUseThread = null;
         _deliveryThreadLock.unlock();
+
+        if (_logger.isDebugEnabled()) {
+            _logger.debug(Thread.currentThread().getName() + " released thread lock on " + this);
+        }
     }
     
     private void startTransaction(Method method) throws Exception {
