@@ -267,6 +267,9 @@ public class CamelExchangeBusTest {
         assertNotNull("Exception should not be null", exception);
         assertNull("Cause should be null", exception.getCause());
         assertEquals(message, exception.getMessage());
+        // SWITCHYARD-1634
+        assertNotNull(exchange.getContext().getProperty(Exchange.MESSAGE_ID));
+        assertNotNull(exchange.getContext().getProperty(Exchange.RELATES_TO));
     }
 
     protected static void assertCause(String message, Exchange exchange) {
@@ -275,6 +278,9 @@ public class CamelExchangeBusTest {
         assertTrue(exception.isWrapper());
         assertNotNull("Cause should not be null", exception.getCause());
         assertEquals(message, exception.getCause().getMessage());
+        // SWITCHYARD-1634
+        assertNotNull(exchange.getContext().getProperty(Exchange.MESSAGE_ID));
+        assertNotNull(exchange.getContext().getProperty(Exchange.RELATES_TO));
     }
 
     private ServiceReference registerInOutService(String name) {

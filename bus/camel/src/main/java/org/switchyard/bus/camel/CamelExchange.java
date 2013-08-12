@@ -191,8 +191,11 @@ public class CamelExchange implements SecurityExchange {
         org.apache.camel.Message extract = extract(message);
 
         _exchange.setProperty(PHASE, ExchangePhase.OUT);
+        String id = getContext().getPropertyValue(MESSAGE_ID);
         _exchange.setIn(extract);
         _exchange.setProperty(FAULT, true);
+        getContext().setProperty(Exchange.RELATES_TO, id);
+        getContext().setProperty(Exchange.MESSAGE_ID, extract.getMessageId());
 
         org.switchyard.Property rollbackOnFaultProperty = getContext().getProperty(org.switchyard.Exchange.ROLLBACK_ON_FAULT);
         if (rollbackOnFaultProperty == null || rollbackOnFaultProperty.getValue() == null) {
