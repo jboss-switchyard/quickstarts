@@ -90,7 +90,7 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
      * {@inheritDoc}
      */
     @Override
-    protected final Model setModelChildrenOrder(String... childrenOrder) {
+    protected Model setModelChildrenOrder(String... childrenOrder) {
         Set<String> mco = new LinkedHashSet<String>();
         mco.add(OperationSelectorModel.OPERATION_SELECTOR + ".*");
         mco.add(ContextMapperModel.CONTEXT_MAPPER);
