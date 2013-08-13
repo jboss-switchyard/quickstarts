@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:switchyard-quickstart:rules-interview:0.1.0">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <urn:verify>
+         <applicant>
+            <age>20</age>
+            <name>Twenty</name>
+         </applicant>
+      </urn:verify>
+   </soapenv:Body>
+</soapenv:Envelope>

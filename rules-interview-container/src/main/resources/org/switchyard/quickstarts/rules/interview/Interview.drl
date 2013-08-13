@@ -14,19 +14,20 @@
 package org.switchyard.quickstarts.rules.interview
 
 global java.lang.String userName
+global java.util.Map globals
 
 rule "Is of valid age"
     when
         $a : Applicant( age > 17 )
     then
-        $a.setValid( true );
-        System.out.println("********** " + $a.getName() + " is a valid applicant, " + userName + ". **********");
+        globals.put("Result", Boolean.TRUE);
+        System.out.println("**** " + $a.getName() + " is an old enough applicant, " + userName + ". ****");
 end
 
 rule "Is not of valid age"
     when
         $a : Applicant( age < 18 )
     then
-        $a.setValid( false );
-        System.err.println("********** " + $a.getName() + " is NOT a valid applicant, " + userName + ". **********");
+        globals.put("Result", Boolean.FALSE);
+        System.err.println("**** " + $a.getName() + " is too young of an applicant, " + userName + ". ****");
 end

@@ -20,7 +20,10 @@ public class Applicant {
 
     private String name;
     private int age;
-    private boolean valid;
+
+    public Applicant() {
+        this("", 0);
+    }
 
     public Applicant(String name, int age) {
         setName(name);
@@ -41,14 +44,6 @@ public class Applicant {
 
     public void setAge(int age) {
         this.age = age;
-    }
-
-    public boolean isValid() {
-        return valid;
-    }
-
-    public void setValid(boolean valid) {
-        this.valid = valid;
     }
 
 }
