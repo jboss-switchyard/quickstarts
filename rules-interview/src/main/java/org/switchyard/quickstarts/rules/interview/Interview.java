@@ -18,6 +18,6 @@ package org.switchyard.quickstarts.rules.interview;
  */
 public interface Interview {
 
-    public void verify(Applicant applicant);
+    public boolean verify(Applicant applicant);
 
 }

@@ -13,6 +13,7 @@
  */
 package org.switchyard.quickstarts.rules.interview;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.Invoker;
@@ -31,8 +32,9 @@ public class RulesInterviewTest {
     private Invoker verify;
 
     @Test
-    public void testInterviewRules() {
-        verify.sendInOnly(new Applicant("Twenty", 20));
+    public void testRulesInterview() {
+        Assert.assertEquals(Boolean.TRUE, verify.sendInOut(new Applicant("Twenty", 20)).getContent());
+        Assert.assertEquals(Boolean.FALSE, verify.sendInOut(new Applicant("Sixteen", 16)).getContent());
     }
 
 }

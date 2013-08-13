@@ -1,0 +1,8 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header/>
+   <SOAP-ENV:Body>
+      <urn:verifyResponse xmlns:urn="urn:switchyard-quickstart:rules-interview-dtable:0.1.0">
+         <return>true</return>
+      </urn:verifyResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
