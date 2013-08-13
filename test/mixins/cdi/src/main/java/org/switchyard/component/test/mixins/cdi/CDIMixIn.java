@@ -21,8 +21,10 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.InjectionTarget;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -64,6 +66,8 @@ public class CDIMixIn extends AbstractTestMixIn {
     private Weld _weld;
     private WeldContainer _weldContainer;
     private AbstractDeployment _simpleCdiDeployment;
+    private InjectionTarget<Object> _testInjectionTarget;
+    private CreationalContext<Object> _testCreationalContext;
 
     @Override
     public void initialize() {
@@ -131,6 +135,8 @@ public class CDIMixIn extends AbstractTestMixIn {
             e.printStackTrace();
             Assert.fail("Failed to bind BeanManager into '" + BINDING_CONTEXT + "'.");
         }
+
+        injectCDIBeans();
     }
 
     @Override
@@ -141,7 +147,11 @@ public class CDIMixIn extends AbstractTestMixIn {
             @SuppressWarnings("unchecked")
             Class<? extends AbstractDeployment> simpleCdiDeploymentType = (Class<? extends AbstractDeployment>) Classes.forName("org.switchyard.component.bean.internal.SimpleCDIDeployment", getClass());
             if (simpleCdiDeploymentType == null) {
-                Assert.fail("Failed to locate the SimpleCDIDeployment class on the classpath.  Module must include the SwitchYard Bean Component as one of its depedencies.");
+                if (getTestKit() != null && getTestKit().getTestInstance().getClass().getPackage() == CDIMixIn.class.getPackage()) {
+                    return;  // not fatal for unit tests of CDIMixIn since they can't depend on the bean component as this would create a cyclic Maven dependency.
+                } else {
+                    Assert.fail("Failed to locate the SimpleCDIDeployment class on the classpath.  Module must include the SwitchYard Bean Component as one of its depedencies.");
+                }
             }
             try {
                 _simpleCdiDeployment = simpleCdiDeploymentType.newInstance();
@@ -238,6 +248,8 @@ public class CDIMixIn extends AbstractTestMixIn {
 
     @Override
     public synchronized void uninitialize() {
+        disposeCDIBeans();
+
         if (_weld != null) {
             _weld.shutdown();
             _weld = null;
@@ -254,5 +266,28 @@ public class CDIMixIn extends AbstractTestMixIn {
         CreationalContext<?> creationalContext = beanManager.createCreationalContext(null);
 
         return beanManager.getReference(bean, bean.getBeanClass(), creationalContext);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void injectCDIBeans() {
+        BeanManager beanManager = getBeanManager();
+        Object testInstance = getTestKit() != null ? getTestKit().getTestInstance() : null;
+        if (beanManager != null && testInstance != null) {
+            // delegate dependency injection and lifecycle callbacks to the CDI container
+            AnnotatedType<Object> type = beanManager.createAnnotatedType((Class<Object>) testInstance.getClass());
+            _testInjectionTarget = beanManager.createInjectionTarget(type);
+            _testCreationalContext = beanManager.createCreationalContext(null);
+            _testInjectionTarget.inject(getTestKit().getTestInstance(), _testCreationalContext);
+            _testInjectionTarget.postConstruct(getTestKit().getTestInstance());
+        }
+    }
+
+    private void disposeCDIBeans() {
+        if (_testInjectionTarget != null) {
+            Object testInstance = getTestKit().getTestInstance();
+            _testInjectionTarget.preDestroy(testInstance);
+            _testInjectionTarget.dispose(testInstance);
+            _testCreationalContext.release();
+        }
     }
 }
