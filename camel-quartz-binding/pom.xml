@@ -29,7 +29,6 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel-quartz</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
