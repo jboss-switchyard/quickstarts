@@ -39,14 +39,16 @@ public class V1CamelQuartzBindingModelTest extends V1BaseCamelServiceBindingMode
     private static final Boolean STATEFUL = true;
     private static Date START_TIME;
     private static Date END_TIME;
+    private static String TIMEZONE;
 
     private static final String CAMEL_URI = "quartz://MyJob?cron=0 0 12 * * ?&stateful=true" +
-        "&trigger.startTime=2011-01-01T12:00:00&trigger.endTime=2011-01-01T12:00:00";
+        "&trigger.startTime=2011-01-01T12:00:00&trigger.endTime=2011-01-01T12:00:00&trigger.timeZone=America/New_York";
 
     static {
         try {
             START_TIME = _dateFormat.parse("2011-01-01T12:00:00");
             END_TIME = _dateFormat.parse("2011-01-01T12:00:00");
+            TIMEZONE = "America/New_York";
         } catch (Exception e) { /* ignore */ }
     }
 
@@ -63,7 +65,8 @@ public class V1CamelQuartzBindingModelTest extends V1BaseCamelServiceBindingMode
             .setCron(CRON)
             .setStateful(STATEFUL)
             .setStartTime(START_TIME)
-            .setEndTime(END_TIME);
+            .setEndTime(END_TIME)
+            .setTimeZone(TIMEZONE);
     }
 
     @Override
@@ -73,6 +76,7 @@ public class V1CamelQuartzBindingModelTest extends V1BaseCamelServiceBindingMode
         assertEquals(STATEFUL, model.isStateful());
         assertEquals(START_TIME, model.getStartTime());
         assertEquals(END_TIME, model.getEndTime());
+        assertEquals(TIMEZONE, model.getTimeZone());
     }
 
     @Override

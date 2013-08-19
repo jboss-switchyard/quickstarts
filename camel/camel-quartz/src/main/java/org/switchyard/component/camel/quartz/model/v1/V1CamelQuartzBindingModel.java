@@ -41,6 +41,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     private static final String STATEFUL = "stateful";
     private static final String START_TIME = "trigger.startTime";
     private static final String END_TIME = "trigger.endTime";
+    private static final String TIMEZONE = "trigger.timeZone";
 
     // Used for dateTime fields
     private static DateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -51,7 +52,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     public V1CamelQuartzBindingModel() {
         super(QUARTZ, QUARTZ_NAMESPACE_V1);
 
-        setModelChildrenOrder(NAME, CRON, STATEFUL, START_TIME, END_TIME);
+        setModelChildrenOrder(NAME, CRON, STATEFUL, START_TIME, END_TIME, TIMEZONE);
     }
 
     /**
@@ -114,6 +115,16 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
         return setConfig(END_TIME, _dateFormat.format(endTime));
     }
 
+    @Override
+    public String getTimeZone() {
+        return getConfig(TIMEZONE);
+    }
+
+    @Override
+    public V1CamelQuartzBindingModel setTimeZone(String timeZone) {
+        return setConfig(TIMEZONE, timeZone);
+    }
+    
     @Override
     public URI getComponentURI() {
         Configuration modelConfiguration = getModelConfiguration();

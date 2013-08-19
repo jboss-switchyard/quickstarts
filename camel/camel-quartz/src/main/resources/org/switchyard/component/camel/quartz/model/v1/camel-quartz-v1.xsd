@@ -32,6 +32,7 @@
                     <element name="stateful" type="boolean" minOccurs="0" maxOccurs="1" />
                     <element name="trigger.startTime" type="dateTime" minOccurs="0" maxOccurs="1" />
                     <element name="trigger.endTime" type="dateTime" minOccurs="0" maxOccurs="1" />
+                    <element name="trigger.timeZone" type="string" minOccurs="0" maxOccurs="1" />
                 </sequence>
             </extension>
         </complexContent>

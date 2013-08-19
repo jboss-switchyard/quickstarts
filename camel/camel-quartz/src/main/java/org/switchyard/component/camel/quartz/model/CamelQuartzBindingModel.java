@@ -94,4 +94,16 @@ public interface CamelQuartzBindingModel extends CamelBindingModel {
      */
     CamelQuartzBindingModel setEndTime(Date endTime);
 
+    /**
+     * Returns the schedule timezone.
+     * @return timeZone corresponding to the schedule timezone.
+     */
+    String getTimeZone();
+    
+    /**
+     * Sets the schedule timezone.
+     * @param timeZone String corresponding to the schedule timezone.
+     * @return a reference to this config model
+     */
+    CamelQuartzBindingModel setTimeZone(String timeZone);
 }

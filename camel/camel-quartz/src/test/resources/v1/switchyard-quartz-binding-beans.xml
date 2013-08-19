@@ -24,6 +24,7 @@
                 <quartz:stateful>true</quartz:stateful>
                 <quartz:trigger.startTime>2011-01-01T12:00:00</quartz:trigger.startTime>
                 <quartz:trigger.endTime>2011-01-01T12:00:00</quartz:trigger.endTime>
+                <quartz:trigger.timeZone>America/New_York</quartz:trigger.timeZone>
             </quartz:binding.quartz>
         </sca:service>
     </sca:composite>
