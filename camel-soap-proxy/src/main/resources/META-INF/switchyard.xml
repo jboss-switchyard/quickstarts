@@ -1,37 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
-    <sca:composite xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-soap-proxy" targetNamespace="urn:switchyard-quickstart:camel-soap-proxy:1.0">
-        <sca:service name="PromotedProxyService" promote="ProxyService">
-            <soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
-                <soap:contextMapper/>
-                <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
-                <soap:contextPath>proxy</soap:contextPath>
-            </soap:binding.soap>
-        </sca:service>
-        <sca:reference multiplicity="0..1" name="PromotedReverseService" promote="ProxyService/ReverseService">
-            <soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
-                <soap:contextMapper/>
-                <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
-                <soap:endpointAddress>http://localhost:8080/ReverseService</soap:endpointAddress>
-            </soap:binding.soap>
-        </sca:reference>
-        <sca:component name="ProxyService">
-            <camel:implementation.camel xmlns:camel="urn:switchyard-component-camel:config:1.0">
-                <camel:xml path="META-INF/route.xml"/>
-            </camel:implementation.camel>
-            <sca:service name="ProxyService">
-                <sca:interface.wsdl interface="META-INF/ReverseService.wsdl#wsdl.porttype(ReverseService)"/>
-            </sca:service>
-            <sca:reference name="ReverseService">
-                <sca:interface.wsdl interface="META-INF/ReverseService.wsdl#wsdl.porttype(ReverseService)"/>
-            </sca:reference>
-        </sca:component>
-    </sca:composite>
-    <!--
-    <domain>
-      <properties>
-        <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
-      </properties>
-    </domain>
-    -->
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:camel="urn:switchyard-component-camel:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:soap="urn:switchyard-component-soap:config:1.0">
+  <sca:composite name="camel-soap-proxy" targetNamespace="urn:switchyard-quickstart:camel-soap-proxy:1.0">
+    <sca:service name="PromotedProxyService" promote="ProxyService/ProxyService">
+      <soap:binding.soap>
+        <soap:contextMapper/>
+        <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
+        <soap:contextPath>proxy</soap:contextPath>
+      </soap:binding.soap>
+    </sca:service>
+    <sca:reference name="ReverseService" multiplicity="0..1" promote="ProxyService/ReverseService">
+      <soap:binding.soap>
+        <soap:contextMapper/>
+        <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
+        <soap:endpointAddress>http://localhost:8080/ReverseService</soap:endpointAddress>
+      </soap:binding.soap>
+    </sca:reference>
+    <sca:component name="ProxyService">
+      <camel:implementation.camel>
+        <camel:xml path="META-INF/route.xml"/>
+      </camel:implementation.camel>
+      <sca:service name="ProxyService">
+        <sca:interface.wsdl interface="META-INF/ReverseService.wsdl#wsdl.porttype(ReverseService)"/>
+      </sca:service>
+      <sca:reference name="ReverseService">
+        <sca:interface.wsdl interface="META-INF/ReverseService.wsdl#wsdl.porttype(ReverseService)"/>
+      </sca:reference>
+    </sca:component>
+  </sca:composite>
 </switchyard>
