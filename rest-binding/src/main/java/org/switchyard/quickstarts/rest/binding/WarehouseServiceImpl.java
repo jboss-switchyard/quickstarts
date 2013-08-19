@@ -17,15 +17,13 @@ package org.switchyard.quickstarts.rest.binding;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.inject.Inject;
+//import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
-import org.switchyard.Context;
-import org.switchyard.Property;
-import org.switchyard.Scope;
+//import org.switchyard.Context;
 import org.switchyard.component.bean.Service;
-import org.switchyard.component.common.label.EndpointLabel;
-import org.switchyard.component.resteasy.composer.RESTEasyContextMapper;
+//import org.switchyard.component.common.label.EndpointLabel;
+//import org.switchyard.component.resteasy.composer.RESTEasyContextMapper;
 
 /**
  * A WarehouseService implementation.
@@ -35,8 +33,8 @@ import org.switchyard.component.resteasy.composer.RESTEasyContextMapper;
 @Service(WarehouseService.class)
 public class WarehouseServiceImpl implements WarehouseService {
 
-    @Inject
-    private Context context;
+//    @Inject
+//    private Context context;
 
     private static final Logger LOGGER = Logger.getLogger(WarehouseService.class);
     private static final String SUCCESS = "SUCCESS";

@@ -15,7 +15,6 @@
 package org.switchyard.quickstarts.rest.binding;
 
 import javax.inject.Named;
-import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.client.core.BaseClientResponse;
 import org.switchyard.annotations.Transformer;
@@ -31,7 +30,7 @@ public class Transformers {
      * @return Item instance.
      */
     @Transformer(from = "java:org.jboss.resteasy.client.core.BaseClientResponse")
-    public Item transform(BaseClientResponse from) {
+    public Item transform(BaseClientResponse<Item> from) {
         from.setReturnType(Item.class);
         return (Item)from.getEntity();
     }

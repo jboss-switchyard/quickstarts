@@ -14,9 +14,8 @@
 
 package org.switchyard.quickstarts.rest.binding;
 
-import org.jboss.resteasy.client.ProxyFactory;
+//import org.jboss.resteasy.client.ProxyFactory;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.SwitchYardRunner;
