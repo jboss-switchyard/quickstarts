@@ -14,8 +14,6 @@
 
 package org.switchyard.quickstarts.rest.binding;
 
-import java.io.IOException;
-
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
