@@ -360,5 +360,37 @@ public interface CamelJmsBindingModel extends CamelBindingModel {
      * @return a reference to this Camel binding model
      */
     CamelJmsBindingModel setTransactionManager(String transactionManager);
+    
+    /**
+     * The JMS acknowledgement mode name to use.
+     * 
+     * @return Acknowledgement Mode Name.
+     */
+    String getAcknowledgementModeName();
+
+    /**
+     * Specifies the JMS acknowledgement mode name to use with endpoint.
+     * One of SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE
+     * 
+     * @param acknowledgementModeName String describing the JMS acknowledgement mode.
+     * @return a reference to this Camel binding model
+     */
+    CamelJmsBindingModel setAcknowledgementModeName(String acknowledgementModeName);
+    
+    /**
+     * The Integer value of the JMS acknowledgement mode to use.
+     * 
+     * @return Acknowledgement Mode.
+     */
+    Integer getAcknowledgementMode();
+
+    /**
+     * Specifies Integer value of the JMS acknowledgement mode to use with endpoint.
+     * Primarily facilitates vendor specific extensions beyond the standard values
+     * 
+     * @param acknowledgementMode Integer describing the JMS acknowledgement mode.
+     * @return a reference to this Camel binding model
+     */
+    CamelJmsBindingModel setAcknowledgementMode(Integer acknowledgementMode);
 
 }

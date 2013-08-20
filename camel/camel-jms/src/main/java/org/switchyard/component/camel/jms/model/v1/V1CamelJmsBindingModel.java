@@ -56,7 +56,9 @@ public class V1CamelJmsBindingModel extends V1BaseCamelBindingModel
     private static final String TIME_TO_LIVE = "timeToLive";
     private static final String TRANSACTED = "transacted";
     private static final String TRANSACTION_MANAGER = "transactionManager";
-
+    private static final String ACKNOWLEDGEMENTMODE_NAME = "acknowledgementModeName";
+    private static final String ACKNOWLEDGEMENTMODE = "acknowledgementMode";
+    
     /**
      * Create a new CamelJmsBindingModel.
      */
@@ -67,7 +69,7 @@ public class V1CamelJmsBindingModel extends V1BaseCamelBindingModel
             CLIENT_ID, DURABLE_SUBSCRIPTION_NAME, CONCURRENT_CONSUMERS, MAX_CONCURRENT_CONSUMERS,
             DISABLE_REPLY_TO, PRESERVE_MESSAGE_QOS, DELIVERY_PERSISTENT, PRIORITY,
             EXPLICIT_QOS_ENABLED, REPLY_TO, REPLY_TO_TYPE, REQUEST_TIMEOUT, SELECTOR,
-            TIME_TO_LIVE, TRANSACTED, TRANSACTION_MANAGER);
+            TIME_TO_LIVE, TRANSACTED, TRANSACTION_MANAGER, ACKNOWLEDGEMENTMODE_NAME, ACKNOWLEDGEMENTMODE);
     }
 
     /**
@@ -298,6 +300,27 @@ public class V1CamelJmsBindingModel extends V1BaseCamelBindingModel
     @Override
     public V1CamelJmsBindingModel setTransactionManager(String transactionManager) {
         return setConfig(TRANSACTION_MANAGER, transactionManager);
+    }
+    
+    @Override
+    public String getAcknowledgementModeName() {
+        return getConfig(ACKNOWLEDGEMENTMODE_NAME);
+    }
+
+    @Override
+    public V1CamelJmsBindingModel setAcknowledgementModeName(
+            String acknowledgementModeName) {
+        return setConfig(ACKNOWLEDGEMENTMODE_NAME, acknowledgementModeName);
+    }
+
+    @Override
+    public Integer getAcknowledgementMode() {
+        return getIntegerConfig(ACKNOWLEDGEMENTMODE);
+    }
+
+    @Override
+    public V1CamelJmsBindingModel setAcknowledgementMode(Integer acknowledgementMode) {
+        return setConfig(ACKNOWLEDGEMENTMODE, acknowledgementMode);
     }
 
     @Override

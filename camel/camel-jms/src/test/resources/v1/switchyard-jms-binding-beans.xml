@@ -38,6 +38,8 @@
                 <jms:selector>DEST='ESB'</jms:selector>
                 <jms:timeToLive>3600</jms:timeToLive>
                 <jms:transacted>true</jms:transacted>
+                <jms:acknowledgementModeName>AUTO_ACKNOWLEDGE</jms:acknowledgementModeName>
+                <jms:acknowledgementMode>-1</jms:acknowledgementMode>
             </jms:binding.jms>
         </sca:service>
     </sca:composite>

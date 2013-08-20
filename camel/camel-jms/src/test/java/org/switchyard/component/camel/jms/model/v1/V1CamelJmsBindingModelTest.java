@@ -46,12 +46,14 @@ public class V1CamelJmsBindingModelTest extends V1BaseCamelServiceBindingModelTe
     private static String SELECTOR = "DEST='ESB'";
     private static Integer TIME_TO_LIVE = 3600;
     private static Boolean TRANSACTED = true;
-
+    private static String ACKNOWLEDGEMENTMODE_NAME = "AUTO_ACKNOWLEDGE";
+    private static Integer ACKNOWLEDGEMENTMODE = -1;
+    
     private static final String CAMEL_URI = "jms:topic:esb_in_topic?connectionFactory=connFactory&" +
         "username=camel&password=isMyFriend&clientId=esb_in&durableSubscriptionName=esb_in_sub&" +
         "concurrentConsumers=5&maxConcurrentConsumers=15&disableReplyTo=true&preserveMessageQos=true&" +
         "deliveryPersistent=false&priority=9&explicitQosEnabled=true&replyTo=esb_out&replyToType=Shared&" +
-        "requestTimeout=300&selector=DEST='ESB'&timeToLive=3600&transacted=true";
+        "requestTimeout=300&selector=DEST='ESB'&timeToLive=3600&transacted=true&acknowledgementModeName=AUTO_ACKNOWLEDGE&acknowledgementMode=-1";
 
     public V1CamelJmsBindingModelTest() {
         super(JmsEndpoint.class, CAMEL_XML);
@@ -80,7 +82,9 @@ public class V1CamelJmsBindingModelTest extends V1BaseCamelServiceBindingModelTe
             .setRequestTimeout(REQUEST_TIMEOUT)
             .setSelector(SELECTOR)
             .setTimeToLive(TIME_TO_LIVE)
-            .setTransacted(TRANSACTED);
+            .setTransacted(TRANSACTED)
+            .setAcknowledgementModeName(ACKNOWLEDGEMENTMODE_NAME)
+            .setAcknowledgementMode(ACKNOWLEDGEMENTMODE);
     }
 
     @Override
@@ -104,6 +108,8 @@ public class V1CamelJmsBindingModelTest extends V1BaseCamelServiceBindingModelTe
         assertEquals(SELECTOR, model.getSelector());
         assertEquals(TIME_TO_LIVE, model.getTimeToLive());
         assertEquals(TRANSACTED, model.isTransacted());
+        assertEquals(ACKNOWLEDGEMENTMODE_NAME, model.getAcknowledgementModeName());
+        assertEquals(ACKNOWLEDGEMENTMODE, model.getAcknowledgementMode());
     }
 
     @Override

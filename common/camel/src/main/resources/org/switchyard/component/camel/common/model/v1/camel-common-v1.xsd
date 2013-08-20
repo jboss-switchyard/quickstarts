@@ -148,6 +148,8 @@
             <element name="timeToLive" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
             <element name="transacted" type="boolean" minOccurs="0" maxOccurs="1"/>
             <element name="transactionManager" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="acknowledgementModeName" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="acknowledgementMode" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
         </sequence>
     </group>
 
