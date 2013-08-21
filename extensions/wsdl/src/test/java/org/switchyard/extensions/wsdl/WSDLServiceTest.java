@@ -29,26 +29,27 @@ import org.switchyard.metadata.ServiceOperation;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2011 Red Hat Inc.
  */
 public class WSDLServiceTest {
-    
+
     static final QName METHOD1_INPUT = new QName("urn:switchyard-metadata-wsdl", "helloWS");
     static final QName METHOD2_INPUT = new QName("urn:switchyard-metadata-wsdl", "sayHello");
     static final QName METHOD2_OUTPUT = new QName("urn:switchyard-metadata-wsdl", "sayHelloResponse");
+    static final QName METHOD3_INPUT = new QName("urn:switchyard-metadata-interface", "helloWS");
 
     @Test
     public void interfaceWSDLService() throws Exception {
         WSDLService wsdlService = WSDLService.fromWSDL("HelloWebService.wsdl", "HelloWebService");
-        
+
         Assert.assertEquals("{urn:switchyard-metadata-wsdl}HelloWebService", wsdlService.getPortType().toString());
-        
+
         // There should be two operations
         Assert.assertEquals(2, wsdlService.getOperations().size());
-        
+
         // method1 is InOnly
         ServiceOperation method1 = wsdlService.getOperation("helloWS");
         Assert.assertNotNull(method1);
         Assert.assertEquals(method1.getInputType(), METHOD1_INPUT);
         Assert.assertEquals(method1.getExchangePattern(), ExchangePattern.IN_ONLY);
-        
+
         //method2 is InOut
         ServiceOperation method2 = wsdlService.getOperation("sayHello");
         Assert.assertNotNull(method2);
@@ -110,5 +111,35 @@ public class WSDLServiceTest {
         } catch (WSDLReaderException e) {
             Assert.assertEquals("Service operations on a WSDL interface must have exactly one parameter.", e.getMessage());
         }
+    }
+
+    @Test
+    public void importedWSDL() throws Exception {
+        WSDLService wsdlService = WSDLService.fromWSDL("HelloWebService3.wsdl", "HelloWebService");
+
+        Assert.assertEquals("{urn:switchyard-metadata-wsdl}HelloWebService", wsdlService.getPortType().toString());
+        // There should be two operations
+        Assert.assertEquals(2, wsdlService.getOperations().size());
+
+        // method is InOnly
+        ServiceOperation method1 = wsdlService.getOperation("helloWS");
+        Assert.assertNotNull(method1);
+        Assert.assertEquals(METHOD3_INPUT, method1.getInputType());
+        Assert.assertEquals(ExchangePattern.IN_ONLY, method1.getExchangePattern());
+    }
+
+    @Test
+    public void importedWSDLMulti() throws Exception {
+        WSDLService wsdlService = WSDLService.fromWSDL("service.wsdl", "HelloWebService");
+
+        Assert.assertEquals("{urn:switchyard-metadata-wsdl}HelloWebService", wsdlService.getPortType().toString());
+        // There should be two operations
+        Assert.assertEquals(2, wsdlService.getOperations().size());
+
+        // method is InOnly
+        ServiceOperation method1 = wsdlService.getOperation("helloWS");
+        Assert.assertNotNull(method1);
+        Assert.assertEquals(METHOD3_INPUT, method1.getInputType());
+        Assert.assertEquals(ExchangePattern.IN_ONLY, method1.getExchangePattern());
     }
 }

@@ -55,12 +55,14 @@ public class WSDLReader {
     private static final String WSDLNS_URI = "http://schemas.xmlsoap.org/wsdl/";
     private static final String XMLNS_URI = "http://www.w3.org/2000/xmlns/";
     private static final String ATTR_ELEMENT = "element";
+    private static final String ATTR_LOCATION = "location";
     private static final String ATTR_MESSAGE = "message";
     private static final String ATTR_NAME = "name";
     private static final String ATTR_TARGET_NS = "targetNamespace";
     private static final String ATTR_XMLNS = "xmlns";
     private static final String ATTR_STYLE = "style";
     private static final String ATTR_TYPE = "type";
+    private static final QName IMPORT = new QName(WSDLNS_URI, "import");
     private static final QName PORT_TYPE = new QName(WSDLNS_URI, "portType");
     private static final QName OPERATION = new QName(WSDLNS_URI, "operation");
     private static final QName INPUT = new QName(WSDLNS_URI, "input");
@@ -89,7 +91,7 @@ public class WSDLReader {
 
         Element defEl = readWSDL(wsdlURI);
         Map<String, String> namespaces = parseNamespaces(defEl);
-        Element portType = getPortType(defEl, portName);
+        Element portType = getPortType(defEl, portName, namespaces);
         if (portType == null) {
             throw new WSDLReaderException("Unable to find portType with name " + portName);
         }
@@ -137,13 +139,35 @@ public class WSDLReader {
     }
 
     /**
+     * Parse a WSDL definition for imports.
+     *
+     * @param defEl the definition element.
+     * @return the imported WSDL Locations.
+     */
+    private List<String> getImports(final Element defEl) {
+        Element tempEl = XMLHelper.getFirstChildElement(defEl);
+        List<String> imports = new ArrayList<String>();
+
+        while (tempEl != null) {
+            QName qname = new QName(tempEl.getNamespaceURI(), tempEl.getLocalName());
+            if (IMPORT.equals(qname)) {
+                imports.add(tempEl.getAttribute(ATTR_LOCATION));
+            }
+            tempEl = XMLHelper.getNextSiblingElement(tempEl);
+        }
+        return imports;
+    }
+
+    /**
      * Parse a WSDL definition for a given port name.
      *
      * @param defEl the definition element.
      * @param portName the porttype name.
+     * @param namespaces the namespaces map.
      * @return the porttype element.
+     * @throws WSDLReaderException if the wsdl cannot be read or is improper
      */
-    private Element getPortType(final Element defEl, final String portName) {
+    private Element getPortType(Element defEl, final String portName, Map<String, String> namespaces) throws WSDLReaderException {
         Element tempEl = XMLHelper.getFirstChildElement(defEl);
         Element portType = null;
 
@@ -161,6 +185,18 @@ public class WSDLReader {
             }
             tempEl = XMLHelper.getNextSiblingElement(tempEl);
         }
+        if (portType == null) {
+            List<String> wsdlImports = getImports(defEl);
+            int size = wsdlImports.size();
+            for (int i = 0; i < size; i++) {
+                Element importedDefEl = readWSDL(wsdlImports.get(i));
+                namespaces.putAll(parseNamespaces(importedDefEl));
+                portType = getPortType(importedDefEl, portName, namespaces);
+                if (portType != null) {
+                    break;
+                }
+            }
+        }
         return portType;
     }
 
@@ -171,8 +207,9 @@ public class WSDLReader {
      * @param portType the porttype element.
      * @param namespaces a map of namespaceURIs
      * @return the style, can be 'document' or 'rpc'.
+     * @throws WSDLReaderException if the wsdl cannot be read or is improper
      */
-    private String getStyle(final Element defEl, final Element portType, final Map<String, String> namespaces) {
+    private String getStyle(final Element defEl, final Element portType, Map<String, String> namespaces) throws WSDLReaderException {
         Element tempEl = XMLHelper.getFirstChildElement(defEl);
         QName portTypeName = getQName(portType.getAttributeNode(ATTR_NAME).getValue(), namespaces);
         String style = DOCUMENT;
@@ -195,6 +232,18 @@ public class WSDLReader {
                 }
             }
             tempEl = XMLHelper.getNextSiblingElement(tempEl);
+        }
+        if (style == null) {
+            List<String> wsdlImports = getImports(defEl);
+            int size = wsdlImports.size();
+            for (int i = 0; i < size; i++) {
+                Element importedDefEl = readWSDL(wsdlImports.get(i));
+                namespaces.putAll(parseNamespaces(importedDefEl));
+                style = getStyle(importedDefEl, portType, namespaces);
+                if (style != null) {
+                    break;
+                }
+            }
         }
         return style;
     }
@@ -296,7 +345,7 @@ outer:  while (tempEl != null) {
      * @return a map of message parts.
      * @throws WSDLReaderException if the wsdl operation is improper
      */
-    private Map<QName, QName> getParts(final Element defEl, final Element portType, final Map<String, String> namespaces) throws WSDLReaderException {
+    private Map<QName, QName> getParts(final Element defEl, final Element portType, Map<String, String> namespaces) throws WSDLReaderException {
         NodeList messages = defEl.getElementsByTagNameNS(MESSAGE.getNamespaceURI(), MESSAGE.getLocalPart());
         int msgSize = messages.getLength();
         Map<QName, QName> parts = new HashMap<QName, QName>();
@@ -327,6 +376,18 @@ outer:  while (tempEl != null) {
                     } else {
                         throw new WSDLReaderException("Missing operation for message " + msgEl.getLocalName());
                     }
+                }
+            }
+        }
+        if (parts.isEmpty()) {
+            List<String> wsdlImports = getImports(defEl);
+            int size = wsdlImports.size();
+            for (int i = 0; i < size; i++) {
+                Element importedDefEl = readWSDL(wsdlImports.get(i));
+                namespaces.putAll(parseNamespaces(importedDefEl));
+                parts = getParts(importedDefEl, portType, namespaces);
+                if (!parts.isEmpty()) {
+                    break;
                 }
             }
         }
