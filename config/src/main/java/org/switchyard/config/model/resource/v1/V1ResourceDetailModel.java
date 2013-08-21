@@ -87,21 +87,27 @@ public class V1ResourceDetailModel extends BaseModel implements ResourceDetailMo
         return this;
     }
 
-    /**
+    /* SWITCHYARD-1662
+     * 
+     *
      * {@inheritDoc}
-     */
+     *
     @Override
     public boolean isUsingExternalTypes() {
         return Boolean.valueOf(getModelAttribute("usingExternalTypes")).booleanValue();
     }
+    */
 
-    /**
+    /* SWITCHYARD-1662
+     * 
+     *
      * {@inheritDoc}
-     */
+     *
     @Override
     public ResourceDetailModel setUsingExternalTypes(boolean usingExternalTypes) {
         setModelAttribute("usingExternalTypes", String.valueOf(usingExternalTypes));
         return this;
     }
+    */
 
 }

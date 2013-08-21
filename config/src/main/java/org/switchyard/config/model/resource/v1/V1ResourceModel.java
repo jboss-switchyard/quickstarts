@@ -150,7 +150,9 @@ public class V1ResourceModel extends BaseModel implements ResourceModel {
             child = new V1ResourceDetailModel(getNamespaceURI());
             child.setInputType(detail.getInputType());
             child.setWorksheetName(detail.getWorksheetName());
+            /* SWITCHYARD-1662
             child.setUsingExternalTypes(detail.isUsingExternalTypes());
+            */
         }
         setChildModel(child);
         _detail = child;

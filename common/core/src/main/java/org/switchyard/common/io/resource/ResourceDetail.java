@@ -32,10 +32,12 @@ public interface ResourceDetail {
      */
     public String getWorksheetName();
 
-    /**
+    /* SWITCHYARD-1662
+     * 
      * Whether to use external types.
      * @return if using external types
-     */
+     *
     public boolean isUsingExternalTypes();
+    */
 
 }

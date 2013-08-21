@@ -42,11 +42,13 @@ public interface ResourceDetailModel extends ResourceDetail, Model {
      */
     public ResourceDetailModel setWorksheetName(String worksheetName);
 
-    /**
+    /* SWITCHYARD-1662
+     * 
      * Sets whether to use external types.
      * @param usingExternalTypes if using external types
      * @return this ResourceDetailModel (useful for chaining)
-     */
+     *
     public ResourceDetailModel setUsingExternalTypes(boolean usingExternalTypes);
+    */
 
 }
