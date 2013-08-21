@@ -410,12 +410,14 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 final ModelNode response = result.get();
-                if (response.hasDefined(RESULT)) {
+                if (response.hasDefined(FAILED)) {
+                    callback.onFailure(new Exception("Could not load all service metrics."));
+                } else if (response.hasDefined(RESULT)) {
                     final List<ServiceMetrics> metrics = createServiceMetrics(response.get(RESULT));
                     callback.onSuccess(metrics);
-                    return;
+                } else {
+                    callback.onSuccess(null);
                 }
-                callback.onFailure(new Exception("Could not load all service metrics."));
             }
         });
     }
@@ -579,7 +581,9 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
             @Override
             public void onSuccess(DMRResponse result) {
                 final ModelNode response = result.get();
-                if (response.hasDefined(RESULT)) {
+                if (response.hasDefined(FAILED)) {
+                    callback.onFailure(new Exception("Could not load artifact references."));
+                } else if (response.hasDefined(RESULT)) {
                     Map<String, ArtifactReference> references = new HashMap<String, ArtifactReference>();
                     for (ModelNode node : response.get(RESULT).asList()) {
                         Application application = createApplication(node);
@@ -605,9 +609,9 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                         }
                     }
                     callback.onSuccess(new ArrayList<ArtifactReference>(references.values()));
-                    return;
+                } else {
+                    callback.onSuccess(null);
                 }
-                callback.onFailure(new Exception("Could not load artifact references."));
             }
         });
     }
