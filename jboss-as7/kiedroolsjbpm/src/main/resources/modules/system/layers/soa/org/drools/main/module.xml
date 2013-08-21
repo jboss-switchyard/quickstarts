@@ -18,7 +18,9 @@
         <resource-root path="drools-core-${version.drools}.jar"/>
         <resource-root path="drools-decisiontables-${version.drools}.jar"/>
         <resource-root path="drools-persistence-jpa-${version.drools}.jar"/>
+        <!-- SWITCHYARD-1662
         <resource-root path="drools-scorecards-${version.drools}.jar"/>
+        -->
         <resource-root path="drools-templates-${version.drools}.jar"/>
     </resources>
     <dependencies>

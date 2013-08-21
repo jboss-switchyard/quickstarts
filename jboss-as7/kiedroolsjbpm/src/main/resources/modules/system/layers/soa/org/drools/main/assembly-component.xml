@@ -30,7 +30,9 @@
                 <include>org.drools:drools-core</include>
                 <include>org.drools:drools-decisiontables</include>
                 <include>org.drools:drools-persistence-jpa</include>
+                <!-- SWITCHYARD-1662
                 <include>org.drools:drools-scorecards</include>
+                -->
                 <include>org.drools:drools-templates</include>
             </includes>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
