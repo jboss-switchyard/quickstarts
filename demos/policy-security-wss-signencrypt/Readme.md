@@ -13,27 +13,28 @@ Running the quickstart
 
         mvn clean install
 
-2. Create a keystore to support SSL:
+2. Copy the keystore file to support SSL:
 
-        cd ${AS}/standalone/configuration
-        keytool -genkey -alias tomcat -keyalg RSA -keypass changeit -keystore tomcat.jks
+        cp connector.jks ${AS}/standalone/configuration/
 
-    (password is "changeit")
-3. Add the required https connector to the web subsystem in standalone.xml to support SSL. (include contents of connector.xml)
-4. Deploy the quickstart
+3. Add the required https connector to the web subsystem in ${AS}/standalone/configuration/standalone.xml to support SSL. (include contents of connector.xml)
 
-        mvn jboss-as:deploy
-
-5. Start JBoss AS 7 in standalone mode:
+4. Start JBoss AS in standalone mode:
 
         ${AS}/bin/standalone.sh
 
-6. Execute the test
-    See "Options" section below.
+5. Deploy the quickstart
+
+        mvn jboss-as:deploy
+
+6. Execute the test. (See "Options" section below.)
+
 7. Check the server console for output from the service.
+
 8. Undeploy the application
 
         mvn jboss-as:undeploy
+
 
 Options
 =======
@@ -63,7 +64,7 @@ When running with this option:
 
 When running with this option:
 
-    mvn exec:java -Dexec.args="confidentiality signencrypt" -Djavax.net.ssl.trustStore=[path to tomcat.jks created in step 2]
+    mvn exec:java -Dexec.args="confidentiality signencrypt" -Djavax.net.ssl.trustStore=connector.jks
 
 , you will be hitting the https (SSL) URL while providing authentication information, and see this in your log:
 
