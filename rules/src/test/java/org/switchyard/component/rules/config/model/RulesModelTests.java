@@ -163,7 +163,9 @@ public class RulesModelTests {
             ResourceDetail dtableDetail = dtableResource.getDetail();
             Assert.assertEquals("XLS", dtableDetail.getInputType());
             Assert.assertEquals("MySheet", dtableDetail.getWorksheetName());
+            /* SWITCHYARD-1662
             Assert.assertEquals(true, dtableDetail.isUsingExternalTypes());
+            */
         }
         PropertyModel property = rules.getProperties().getProperties().get(0);
         Assert.assertEquals("foo", property.getName());

@@ -422,8 +422,10 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
             if (!UNDEFINED.equals(worksheetName)) {
                 resourceDetailModel.setWorksheetName(worksheetName);
             }
+            /* SWITCHYARD-1662
             boolean usingExternalTypes = resourceDetailAnnotation.usingExternalTypes();
             resourceDetailModel.setUsingExternalTypes(usingExternalTypes);
+            */
             break;
         }
         return resourceDetailModel;

@@ -30,7 +30,7 @@
                         <resource location="foo.drl" type="DRL"/>
                         <resource location="bar.dsl" type="DSL"/>
                         <resource location="foobar.xls" type="DTABLE">
-                            <resourceDetail inputType="XLS" worksheetName="MySheet" usingExternalTypes="true"/>
+                            <resourceDetail inputType="XLS" worksheetName="MySheet"/>
                         </resource>
                     </resources>
                 </manifest>

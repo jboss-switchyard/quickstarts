@@ -45,7 +45,7 @@ import org.switchyard.component.common.knowledge.annotation.ResourceDetail;
         resources={
             @Resource(location="foobar.bpmn", type="BPMN2"),
             @Resource(location="foobar.xls", type="DTABLE",
-                detail=@ResourceDetail(inputType="XLS", worksheetName="MySheet", usingExternalTypes=true))
+                detail=@ResourceDetail(inputType="XLS", worksheetName="MySheet")) // SWITCHYARD-1662, usingExternalTypes=true))
         }),
     properties=@Property(name="foo", value="bar"),
     userGroupCallback=@UserGroupCallback(

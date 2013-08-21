@@ -36,7 +36,9 @@ public @interface ResourceDetail {
     /** WorksheetName. */
     public String worksheetName() default "";
 
-    /** UsingExternalTypes. */
+    /* SWITCHYARD-1662
+    UsingExternalTypes.
     public boolean usingExternalTypes() default false;
+    */
 
 }

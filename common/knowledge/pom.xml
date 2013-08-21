@@ -64,10 +64,12 @@
             <groupId>org.drools</groupId>
             <artifactId>drools-persistence-jpa</artifactId>
         </dependency>
+        <!-- SWITCHYARD-1662
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-scorecards</artifactId>
         </dependency>
+        -->
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-templates</artifactId>

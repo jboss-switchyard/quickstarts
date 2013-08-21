@@ -167,7 +167,9 @@ public class BPMModelTests {
             ResourceDetail dtableDetail = dtableResource.getDetail();
             Assert.assertEquals("XLS", dtableDetail.getInputType());
             Assert.assertEquals("MySheet", dtableDetail.getWorksheetName());
+            /* SWITCHYARD-1662
             Assert.assertEquals(true, dtableDetail.isUsingExternalTypes());
+            */
         }
         PropertyModel bpm_property = bpm.getProperties().getProperties().get(0);
         Assert.assertEquals("foo", bpm_property.getName());

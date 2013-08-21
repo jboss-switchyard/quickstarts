@@ -21,7 +21,6 @@ import org.kie.internal.builder.DecisionTableConfiguration;
 import org.kie.internal.builder.DecisionTableInputType;
 import org.kie.internal.builder.KnowledgeBuilder;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
-import org.kie.internal.builder.ScoreCardConfiguration;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceDetail;
 import org.switchyard.common.io.resource.ResourceType;
@@ -75,7 +74,9 @@ public final class Resources {
                                         }
                                         dtc.setWorksheetName(syResourceDetail.getWorksheetName());
                                         kieResourceConfiguration = dtc;
-                                    } else if (org.kie.api.io.ResourceType.SCARD.equals(kieResourceType)) {
+                                    }
+                                    /* SWITCHYARD-1662
+                                    else if (org.kie.api.io.ResourceType.SCARD.equals(kieResourceType)) {
                                         ScoreCardConfiguration scc = KnowledgeBuilderFactory.newScoreCardConfiguration();
                                         String inputType = getInputType(syResourceDetail);
                                         if (inputType != null) {
@@ -88,6 +89,7 @@ public final class Resources {
                                         scc.setUsingExternalTypes(syResourceDetail.isUsingExternalTypes());
                                         kieResourceConfiguration = scc;
                                     }
+                                    */
                                 }
                                 builder.add(kieResource, kieResourceType, kieResourceConfiguration);
                             }

@@ -42,7 +42,7 @@ import org.switchyard.component.rules.annotation.Rules;
             @Resource(location="foo.drl", type="DRL"),
             @Resource(location="bar.dsl", type="DSL"),
             @Resource(location="foobar.xls", type="DTABLE",
-                detail=@ResourceDetail(inputType="XLS", worksheetName="MySheet", usingExternalTypes=true))
+                detail=@ResourceDetail(inputType="XLS", worksheetName="MySheet")) // SWITCHYARD-1662, usingExternalTypes=true))
         }),
     properties=@Property(name="foo", value="bar")
 )

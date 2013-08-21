@@ -166,9 +166,11 @@
     <complexType name="ResourceDetailType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
-                <attribute name="inputType" type="string" use="required"/>
+                <attribute name="inputType" type="string" use="optional"/>
                 <attribute name="worksheetName" type="string" use="optional"/>
+                <!--  SWITCHYARD-1662
                 <attribute name="usingExternalTypes" type="boolean" use="optional" default="false"/>
+                -->
             </extension>
         </complexContent>
     </complexType>
