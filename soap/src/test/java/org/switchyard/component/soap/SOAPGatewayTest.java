@@ -13,11 +13,18 @@
  */
 package org.switchyard.component.soap;
 
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.StringWriter;
+import java.net.InetSocketAddress;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -89,6 +96,9 @@ public class SOAPGatewayTest {
     @org.switchyard.test.ServiceOperation("webservice-consumer12")
     private Invoker _consumerService12;
 
+    @org.switchyard.test.ServiceOperation("webservice-consumer3")
+    private Invoker _consumerService3;
+
     private SOAPBindingModel _config;
     private static URL _serviceURL;
     private InboundHandler _soapInbound11;
@@ -96,6 +106,7 @@ public class SOAPGatewayTest {
     private OutboundHandler _soapOutbound11_1;
     private OutboundHandler _soapOutbound11_2;
     private OutboundHandler _soapOutbound12_1;
+    private OutboundHandler _soapOutbound3;
     private long _noOfThreads = DEFAULT_NO_OF_THREADS;
     
     private static ModelPuller<CompositeModel> _puller;
@@ -233,9 +244,16 @@ public class SOAPGatewayTest {
         // Hack for Test Runner. Register a service to test outbound.
         _domain.registerService(_consumerService12.getServiceName(), new HelloWebServiceInterface(), _soapOutbound12_1);
 
+        config4.setServiceName(_consumerService3.getServiceName());
+        config4.setEndpointAddress("http://localhost:8090/forever");
+        config4.setTimeout(1300);
+        _soapOutbound3 = new OutboundHandler(config4);
+        _soapOutbound3.start();
+        _domain.registerService(_consumerService3.getServiceName(), new HelloWebServiceInterface(), _soapOutbound3);
+
         XMLUnit.setIgnoreWhitespace(true);
     }
-    
+
     @After
     public void tearDown() throws Exception {
         _soapInbound11.stop();
@@ -261,6 +279,7 @@ public class SOAPGatewayTest {
             Assert.assertEquals("javax.xml.ws.WebServiceException: Unsupported endpoint address: REPLACE_WITH_ACTUAL_URL", rootCause);
         }
     }
+
     @Test
     public void invokeOneWay() throws Exception {
         Element input = SOAPUtil.parseAsDom("<!--Comment --><test:helloWS xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
@@ -268,6 +287,31 @@ public class SOAPGatewayTest {
                      + "</test:helloWS>").getDocumentElement();
 
         _consumerService11.operation("helloWS").sendInOnly(input);
+    }
+
+    @Test
+    public void soapGatewayReferenceTimeout() throws Exception {
+        Element input = SOAPUtil.parseAsDom("<test:sayHello xmlns:test=\"urn:switchyard-component-soap:test-ws:1.0\">"
+                     + "   <arg0>Hello</arg0>"
+                     + "</test:sayHello>").getDocumentElement();
+        HttpServer httpServer = HttpServer.create(new InetSocketAddress(8090), 10);
+        httpServer.setExecutor(null); // creates a default executor
+        httpServer.start();
+        HttpContext httpContext = httpServer.createContext("/forever", new HttpHandler() {
+            public void handle(HttpExchange exchange) {
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException ie) {
+                        //Ignore
+            }}});
+        try {
+            Message responseMsg = _consumerService3.operation("sayHello").sendInOut(input);
+        } catch (Exception e) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            e.printStackTrace(new PrintStream(baos));
+            Assert.assertTrue(baos.toString().contains("SocketTimeoutException: Read timed out"));
+        }
+        httpServer.stop(0);
     }
 
     @Ignore // mime headers are not parsed into the SOAPMessage with CXF
@@ -437,4 +481,3 @@ public class SOAPGatewayTest {
         }
     }
 }
-

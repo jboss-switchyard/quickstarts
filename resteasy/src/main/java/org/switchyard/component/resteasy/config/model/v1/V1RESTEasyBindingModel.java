@@ -38,6 +38,7 @@ public class V1RESTEasyBindingModel extends V1BindingModel implements RESTEasyBi
         RESTEasyName.interfaces.name(),
         RESTEasyName.contextPath.name(),
         RESTEasyName.address.name(),
+        RESTEasyName.timeout.name(),
         RESTEasyName.basic.name(),
         RESTEasyName.ntlm.name(),
         RESTEasyName.proxy.name()
@@ -49,6 +50,7 @@ public class V1RESTEasyBindingModel extends V1BindingModel implements RESTEasyBi
     private RESTEasyNameValueModel _address;
     private RESTEasyNameValueModel _interfaces;
     private RESTEasyNameValueModel _contextPath;
+    private RESTEasyNameValueModel _timeout;
     private BasicAuthModel _basicAuth;
     private NtlmAuthModel _ntlmAuth;
     private ProxyModel _proxyConfig;
@@ -146,6 +148,24 @@ public class V1RESTEasyBindingModel extends V1BindingModel implements RESTEasyBi
      */
     public RESTEasyBindingModel setContextPath(String contextPath) {
         _contextPath = setNameValue(_contextPath, RESTEasyName.contextPath, contextPath);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Integer getTimeout() {
+        if (_timeout == null) {
+            _timeout = getNameValue(RESTEasyName.timeout);
+        }
+        return _timeout != null ? Integer.valueOf(_timeout.getValue()) : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public RESTEasyBindingModel setTimeout(Integer timeout) {
+        _timeout = setNameValue(_timeout, RESTEasyName.timeout, String.valueOf(timeout));
         return this;
     }
 

@@ -40,6 +40,7 @@ public class HttpConfigModelTest {
         Assert.assertTrue(model.isModelValid());
         model = puller.pull(HTTP_BINDING2, getClass());
         Assert.assertTrue(model.isModelValid());
+        Assert.assertEquals(new Integer(5000), model.getTimeout());
     }
 
     @Test

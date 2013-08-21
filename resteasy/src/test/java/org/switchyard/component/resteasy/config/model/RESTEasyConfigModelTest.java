@@ -29,8 +29,10 @@ import org.switchyard.config.model.ModelPuller;
 public class RESTEasyConfigModelTest {
 
     private static final String REST_BINDING = "rest-binding.xml";
+    private static final String REST_BINDING_REFERENCE = "rest-binding-reference.xml";
     private static final String REST_BINDING_INVALID = "rest-binding-invalid.xml";
     private static final String REST_BINDING_AUTH = "rest-binding-auth.xml";
+    private static final String REST_BINDING_PROXY = "rest-binding-proxy.xml";
 
     @Test
     public void testReadConfigBinding() throws Exception {
@@ -42,6 +44,14 @@ public class RESTEasyConfigModelTest {
     }
 
     @Test
+    public void testReadReferenceBinding() throws Exception {
+        ModelPuller<RESTEasyBindingModel> puller = new ModelPuller<RESTEasyBindingModel>();
+        RESTEasyBindingModel model = puller.pull(REST_BINDING_REFERENCE, getClass());
+        Assert.assertTrue(model.isModelValid());
+        Assert.assertEquals(new Integer(5000), model.getTimeout());
+    }
+
+    @Test
     public void authBinding() throws Exception {
         ModelPuller<RESTEasyBindingModel> puller = new ModelPuller<RESTEasyBindingModel>();
         RESTEasyBindingModel binding = puller.pull(REST_BINDING_AUTH, getClass());
@@ -50,5 +60,18 @@ public class RESTEasyConfigModelTest {
         Assert.assertEquals("user", authConfig.getUser());
         Assert.assertEquals("password", authConfig.getPassword());
         Assert.assertEquals("domain", authConfig.getDomain());
+    }
+
+    @Test
+    public void proxyConfigBinding() throws Exception {
+        ModelPuller<RESTEasyBindingModel> puller = new ModelPuller<RESTEasyBindingModel>();
+        RESTEasyBindingModel model = puller.pull(REST_BINDING_PROXY, getClass());
+        model.assertModelValid();
+        ProxyModel proxyConfig = model.getProxyConfig();
+        Assert.assertNotNull(proxyConfig);
+        Assert.assertEquals("host", proxyConfig.getHost());
+        Assert.assertEquals("8090", proxyConfig.getPort());
+        Assert.assertEquals("Beal", proxyConfig.getUser());
+        Assert.assertEquals("conjecture", proxyConfig.getPassword());
     }
 }

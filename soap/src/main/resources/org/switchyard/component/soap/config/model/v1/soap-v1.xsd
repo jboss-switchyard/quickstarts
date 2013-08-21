@@ -87,6 +87,11 @@
                                     <documentation>The endpoint address override. Applicable only for reference bindings.</documentation>
                                 </annotation>
                             </element>
+                            <element name="timeout" type="swyd:propInteger" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                    <documentation>The request's time-out value in milliseconds.</documentation>
+                                </annotation>
+                            </element>
                             <choice>
                                 <element name="basic" type="soap:BasicAuthenticationType" minOccurs="0" maxOccurs="1"/>
                                 <element name="ntlm" type="soap:NTLMAuthenticationType" minOccurs="0" maxOccurs="1"/>
@@ -163,7 +168,7 @@
                             <documentation>Proxy Host.</documentation>
                         </annotation>
                     </element>
-                    <element name="port" type="integer" minOccurs="0" maxOccurs="1">
+                    <element name="port" type="swyd:propInteger" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>Proxy Port.</documentation>
                         </annotation>
@@ -186,9 +191,9 @@
     <complexType name="MtomType">
         <complexContent>
             <extension base="sca:CommonExtensionBase">
-                <attribute name="enabled" type="boolean" use="optional"/>
-                <attribute name="threshold" type="integer" use="optional"/>
-                <attribute name="xopExpand" type="boolean" use="optional"/>
+                <attribute name="enabled" type="swyd:propBoolean" use="optional"/>
+                <attribute name="threshold" type="swyd:propInteger" use="optional"/>
+                <attribute name="xopExpand" type="swyd:propBoolean" use="optional"/>
             </extension>
         </complexContent>
     </complexType>

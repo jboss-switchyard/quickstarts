@@ -112,6 +112,21 @@ public interface HttpBindingModel extends BindingModel {
     public HttpBindingModel setContentType(String contentType);
 
     /**
+     * Gets the request's time-out value.
+     * 
+     * @return the time-out value
+     */
+    public Integer getTimeout();
+
+    /**
+     * Sets the request's time-out value.
+     * 
+     * @param timeout the time-out value
+     * @return this HttpBindingModel
+     */
+    public HttpBindingModel setTimeout(Integer timeout);
+
+    /**
      * Sets the global configuration.
      * 
      * @param config the environment/global config
@@ -168,5 +183,4 @@ public interface HttpBindingModel extends BindingModel {
      * @return true if set, false otherwise
      */
     public Boolean hasAuthentication();
-
 }

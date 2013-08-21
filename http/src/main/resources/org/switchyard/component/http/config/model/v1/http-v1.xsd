@@ -61,6 +61,11 @@
                                     <documentation>The HTTP request's content-type header that need to be set.</documentation>
                                 </annotation>
                             </element>
+                            <element name="timeout" type="swyd:propInteger" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                    <documentation>The HTTP request's time-out value in milliseconds.</documentation>
+                                </annotation>
+                            </element>
                             <choice>
                                 <element name="basic" type="http:BasicAuthenticationType" minOccurs="0" maxOccurs="1"/>
                                 <element name="ntlm" type="http:NTLMAuthenticationType" minOccurs="0" maxOccurs="1"/>
@@ -100,7 +105,7 @@
                             <documentation>Authentication Host.</documentation>
                         </annotation>
                     </element>
-                    <element name="port" type="integer" minOccurs="0" maxOccurs="1">
+                    <element name="port" type="swyd:propInteger" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>Authentication Port.</documentation>
                         </annotation>
@@ -131,7 +136,7 @@
                             <documentation>Proxy Host.</documentation>
                         </annotation>
                     </element>
-                    <element name="port" type="integer" minOccurs="0" maxOccurs="1">
+                    <element name="port" type="swyd:propInteger" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>Proxy Port.</documentation>
                         </annotation>

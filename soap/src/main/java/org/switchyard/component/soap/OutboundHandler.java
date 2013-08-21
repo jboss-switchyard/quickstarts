@@ -154,6 +154,7 @@ public class OutboundHandler extends BaseServiceHandler {
                     _dispatcher.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, _config.getEndpointAddress());
                 }
 
+                Integer timeout = _config.getTimeout();
                 HTTPConduit conduit = (HTTPConduit)((DispatchImpl)_dispatcher).getClient().getConduit();
                 // Proxy authentication
                 if (_config.getProxyConfig() != null) {
@@ -182,11 +183,26 @@ public class OutboundHandler extends BaseServiceHandler {
                         policy.setUserName(_config.getNtlmAuthConfig().getDomain() + "\\" + _config.getNtlmAuthConfig().getUser());
                         policy.setPassword(_config.getNtlmAuthConfig().getPassword());
                         HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
-                        httpClientPolicy.setConnectionTimeout(36000);
+                        if (timeout != null) {
+                            httpClientPolicy.setConnectionTimeout(timeout);
+                        } else {
+                            httpClientPolicy.setConnectionTimeout(36000);
+                        }
                         httpClientPolicy.setAllowChunking(false);
                         conduit.setClient(httpClientPolicy);
                     }
                     conduit.setAuthorization(policy);
+                }
+                if (timeout != null) {
+                    if (conduit.getClient() != null) {
+                        conduit.getClient().setConnectionTimeout(timeout);
+                        conduit.getClient().setReceiveTimeout(timeout);
+                    } else {
+                        HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+                        httpClientPolicy.setConnectionTimeout(timeout);
+                        httpClientPolicy.setReceiveTimeout(timeout);
+                        conduit.setClient(httpClientPolicy);
+                    }
                 }
 
             } catch (MalformedURLException e) {

@@ -70,4 +70,12 @@
         </http:binding.http>
     </sca:reference>
 
+    <sca:reference name="TimeoutHttpConsumerService" promote="http-consumer" multiplicity="1..1">
+        <http:binding.http name="testGateway">
+            <http:address>http://localhost:8090/forever</http:address>
+            <http:method>GET</http:method>
+            <http:timeout>1300</http:timeout>
+        </http:binding.http>
+    </sca:reference>
+
 </sca:composite>

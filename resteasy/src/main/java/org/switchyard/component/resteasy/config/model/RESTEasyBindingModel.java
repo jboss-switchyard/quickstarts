@@ -107,6 +107,21 @@ public interface RESTEasyBindingModel extends BindingModel {
     public RESTEasyBindingModel setContextPath(String contextPath);
 
     /**
+     * Gets the request's time-out value.
+     * 
+     * @return the time-out value
+     */
+    public Integer getTimeout();
+
+    /**
+     * Sets the request's time-out value.
+     * 
+     * @param timeout the time-out value
+     * @return this RESTEasyBindingModel
+     */
+    public RESTEasyBindingModel setTimeout(Integer timeout);
+
+    /**
      * Gets the proxy config.
      * @return the proxy config
      */

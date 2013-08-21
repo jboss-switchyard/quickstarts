@@ -38,6 +38,7 @@ public class V1HttpBindingModel extends V1BindingModel implements HttpBindingMod
         HttpName.contextPath.name(),
         HttpName.method.name(),
         HttpName.contentType.name(),
+        HttpName.timeout.name(),
         HttpName.basic.name(),
         HttpName.ntlm.name(),
         HttpName.proxy.name()
@@ -51,6 +52,7 @@ public class V1HttpBindingModel extends V1BindingModel implements HttpBindingMod
     private HttpNameValueModel _address;
     private HttpNameValueModel _method;
     private HttpNameValueModel _contentType;
+    private HttpNameValueModel _timeout;
     private BasicAuthModel _basicAuth;
     private NtlmAuthModel _ntlmAuth;
     private ProxyModel _proxyConfig;
@@ -161,6 +163,24 @@ public class V1HttpBindingModel extends V1BindingModel implements HttpBindingMod
      */
     public HttpBindingModel setContentType(String contentType) {
         _contentType = setNameValue(_contentType, HttpName.contentType, contentType);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Integer getTimeout() {
+        if (_timeout == null) {
+            _timeout = getNameValue(HttpName.timeout);
+        }
+        return _timeout != null ? Integer.valueOf(_timeout.getValue()) : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public HttpBindingModel setTimeout(Integer timeout) {
+        _timeout = setNameValue(_timeout, HttpName.timeout, String.valueOf(timeout));
         return this;
     }
 

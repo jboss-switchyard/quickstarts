@@ -51,6 +51,7 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
         SOAPName.socketAddr.name(),
         SOAPName.contextPath.name(),
         SOAPName.endpointAddress.name(),
+        SOAPName.timeout.name(),
         SOAPName.basic.name(),
         SOAPName.ntlm.name(),
         SOAPName.proxy.name(),
@@ -68,6 +69,7 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
     private SocketAddr _socketAddr;
     private SOAPNameValueModel _contextPath;
     private SOAPNameValueModel _endpointAddress;
+    private SOAPNameValueModel _timeout;
     private BasicAuthModel _basicAuth;
     private NtlmAuthModel _ntlmAuth;
     private ProxyModel _proxyConfig;
@@ -269,6 +271,24 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
     @Override
     public SOAPBindingModel setEndpointAddress(String endpointAddress) {
         _endpointAddress = setNameValue(_endpointAddress, SOAPName.endpointAddress, endpointAddress);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Integer getTimeout() {
+        if (_timeout == null) {
+            _timeout = getNameValue(SOAPName.timeout);
+        }
+        return _timeout != null ? Integer.valueOf(_timeout.getValue()) : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SOAPBindingModel setTimeout(Integer timeout) {
+        _timeout = setNameValue(_timeout, SOAPName.timeout, String.valueOf(timeout));
         return this;
     }
 

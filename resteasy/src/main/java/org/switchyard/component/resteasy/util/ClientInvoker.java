@@ -45,6 +45,8 @@ import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.ClientRequest;
@@ -190,6 +192,12 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
                 }
                 httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
             }
+        }
+        Integer timeout = model.getTimeout();
+        if (timeout != null) {
+            HttpParams httpParams = httpclient.getParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, timeout);
+            HttpConnectionParams.setSoTimeout(httpParams, timeout);
         }
     }
 

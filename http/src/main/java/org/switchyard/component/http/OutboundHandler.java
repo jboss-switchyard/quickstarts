@@ -48,6 +48,8 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
@@ -91,6 +93,7 @@ public class OutboundHandler extends BaseServiceHandler {
     private AuthCache _authCache;
     private Credentials _credentials;
     private HttpHost _proxyHost;
+    private Integer _timeout;
 
     /**
      * Constructor.
@@ -157,6 +160,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 _authCache.put(_proxyHost, new BasicScheme(ChallengeState.PROXY));
             }
         }
+        _timeout = _config.getTimeout();
     }
 
     private AuthScope createAuthScope(String host, String portStr, String realm) throws HttpConsumeException {
@@ -196,6 +200,11 @@ public class OutboundHandler extends BaseServiceHandler {
         }
 
         DefaultHttpClient httpclient = new DefaultHttpClient();
+        if (_timeout != null) {
+            HttpParams httpParams = httpclient.getParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, _timeout);
+            HttpConnectionParams.setSoTimeout(httpParams, _timeout);
+        }
         try {
             if (_credentials != null) {
                 httpclient.getCredentialsProvider().setCredentials(_authScope, _credentials);

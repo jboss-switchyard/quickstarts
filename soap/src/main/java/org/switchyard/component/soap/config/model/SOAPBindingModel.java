@@ -141,6 +141,22 @@ public interface SOAPBindingModel extends BindingModel {
      * @return this SOAPBindingModel (useful for chaining)
      */
     public SOAPBindingModel setEndpointAddress(String endpointAddress);
+
+    /**
+     * Gets the request's time-out value.
+     * 
+     * @return the time-out value
+     */
+    public Integer getTimeout();
+
+    /**
+     * Sets the request's time-out value.
+     * 
+     * @param timeout the time-out value
+     * @return this SOAPBindingModel
+     */
+    public SOAPBindingModel setTimeout(Integer timeout);
+
     /**
      * Gets the basic config.
      * @return the basic config

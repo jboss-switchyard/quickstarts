@@ -14,6 +14,8 @@
 
 package org.switchyard.component.http;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
@@ -62,6 +64,9 @@ import org.switchyard.test.SwitchYardTestCaseConfig;
 @SwitchYardTestCaseConfig(mixins = HTTPMixIn.class)
 public class HttpGatewayTest {
 
+    private static final String METHOD_NAME = "sayHello";
+    private static final String INPUT = "magesh";
+    private static final String OUTPUT = "response to " + INPUT;
     private static final QName STRING_QNAME = new QName("java:java.lang.String");
     private static ModelPuller<CompositeModel> _puller;
     private ServiceDomain _domain;
@@ -79,6 +84,9 @@ public class HttpGatewayTest {
     @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}NtlmHttpConsumerService")
     private Invoker _consumerService4;
 
+    @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}TimeoutHttpConsumerService")
+    private Invoker _consumerService5;
+
     @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}OneWayHttpConsumerService")
     private Invoker _inOnlyConsumerService;
 
@@ -88,6 +96,7 @@ public class HttpGatewayTest {
     private OutboundHandler _httpOutbound2;
     private OutboundHandler _httpOutbound3;
     private OutboundHandler _httpOutbound4;
+    private OutboundHandler _httpOutbound5;
     private final MockHandler mockService = new MockHandler().forwardInToOut();
 
     @Before
@@ -137,6 +146,12 @@ public class HttpGatewayTest {
         _httpOutbound4 = new OutboundHandler(configRef4, null);
         _domain.registerService(configRef4.getServiceName(), new HelloInterface(), _httpOutbound4);
         _httpOutbound4.start();
+
+        compositeReference = composite.getReferences().get(4);
+        HttpBindingModel configRef5 = (HttpBindingModel)compositeReference.getBindings().get(0);
+        _httpOutbound5 = new OutboundHandler(configRef5, null);
+        _domain.registerService(configRef5.getServiceName(), new HelloInterface(), _httpOutbound5);
+        _httpOutbound5.start();
     }
 
     @After
@@ -146,32 +161,34 @@ public class HttpGatewayTest {
         _httpOutbound.stop();
         _httpOutbound2.stop();
         _httpOutbound3.stop();
+        _httpOutbound4.stop();
+        _httpOutbound5.stop();
     }
 
     @Test
     public void httpGatewayServiceTest() throws Exception {
-        String response = httpMixIn.sendString("http://localhost:8080/http", "magesh", HTTPMixIn.HTTP_POST);
+        String response = httpMixIn.sendString("http://localhost:8080/http", INPUT, HTTPMixIn.HTTP_POST);
         Assert.assertEquals(1, mockService.getMessages().size());
-        Assert.assertEquals("magesh", response);
+        Assert.assertEquals(INPUT, response);
     }
 
     @Test
     public void httpOneWayStatusTest() throws Exception {
-        int status = httpMixIn.sendStringAndGetStatus("http://localhost:8080/oneway", "magesh", HTTPMixIn.HTTP_POST);
+        int status = httpMixIn.sendStringAndGetStatus("http://localhost:8080/oneway", INPUT, HTTPMixIn.HTTP_POST);
         Assert.assertEquals(202, status);
     }
 
     @Test
     public void httpGatewayReferenceTest() throws Exception {
-        Message responseMsg = _consumerService.operation("sayHello").sendInOut("magesh");
-        Assert.assertEquals("magesh", responseMsg.getContent(String.class));
+        Message responseMsg = _consumerService.operation(METHOD_NAME).sendInOut(INPUT);
+        Assert.assertEquals(INPUT, responseMsg.getContent(String.class));
     }
 
     @Test
     public void httpStatus() throws Exception {
         MockHandler handler = new MockHandler();
-        Exchange ex = _consumerService.operation("sayHello").createExchange(handler);
-        Message requestMsg = ex.createMessage().setContent("magesh");
+        Exchange ex = _consumerService.operation(METHOD_NAME).createExchange(handler);
+        Message requestMsg = ex.createMessage().setContent(INPUT);
         requestMsg.getContext().setProperty("SomeRequestHeader", "BAR");
         ex.send(requestMsg);
         handler.waitForOKMessage();
@@ -181,11 +198,33 @@ public class HttpGatewayTest {
     @Test
     public void httpFault() throws Exception {
         MockHandler handler = new MockHandler();
-        Exchange ex = _consumerService2.operation("sayHello").createExchange(handler);
-        Message requestMsg = ex.createMessage().setContent("magesh");
+        Exchange ex = _consumerService2.operation(METHOD_NAME).createExchange(handler);
+        Message requestMsg = ex.createMessage().setContent(INPUT);
         ex.send(requestMsg);
         handler.waitForFaultMessage();
         Assert.assertEquals(404, ex.getContext().getProperty(HttpContextMapper.HTTP_RESPONSE_STATUS).getValue());
+    }
+
+    @Test
+    public void httpTimeout() throws Exception {
+        HttpServer httpServer = HttpServer.create(new InetSocketAddress(8090), 10);
+        httpServer.setExecutor(null); // creates a default executor
+        httpServer.start();
+        HttpContext httpContext = httpServer.createContext("/forever", new HttpHandler() {
+            public void handle(HttpExchange exchange) {
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException ie) {
+                        //Ignore
+            }}});
+        try {
+            Message responseMsg = _consumerService5.operation(METHOD_NAME).sendInOut(INPUT);
+        } catch (Exception e) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            e.printStackTrace(new PrintStream(baos));
+            Assert.assertTrue(baos.toString().contains("SocketTimeoutException: Read timed out"));
+        }
+        httpServer.stop(0);
     }
 
     @Test
@@ -195,22 +234,22 @@ public class HttpGatewayTest {
         httpServer.start();
         HttpContext context = httpServer.createContext("/basic-secured-endpoint", new StandaloneHandler());
         context.setAuthenticator(new HttpBasicAuthenticator());
-        Message responseMsg = _consumerService3.operation("sayHello").sendInOut("magesh");
-        Assert.assertEquals("response to magesh", responseMsg.getContent(String.class));
+        Message responseMsg = _consumerService3.operation(METHOD_NAME).sendInOut(INPUT);
+        Assert.assertEquals(OUTPUT, responseMsg.getContent(String.class));
         httpServer.stop(0);
     }
 
     @Ignore // Exclusively for Magesh ;)
     @Test
     public void ntlmAuthentication() throws Exception {
-        Message responseMsg = _consumerService4.operation("sayHello").sendInOut("magesh");
-        Assert.assertEquals("response to magesh", responseMsg.getContent(String.class));
+        Message responseMsg = _consumerService4.operation(METHOD_NAME).sendInOut(INPUT);
+        Assert.assertEquals(OUTPUT, responseMsg.getContent(String.class));
     }
 
     private static class HelloInterface extends BaseService {
         private static Set<ServiceOperation> _operations = new HashSet<ServiceOperation>(2);
         static {
-            _operations.add(new InOutOperation("sayHello", STRING_QNAME, STRING_QNAME));
+            _operations.add(new InOutOperation(METHOD_NAME, STRING_QNAME, STRING_QNAME));
             _operations.add(new InOnlyOperation("oneWay", STRING_QNAME));
         }
         public HelloInterface() {
@@ -224,8 +263,8 @@ public class HttpGatewayTest {
             try {
                 HttpRequestBindingData httpRequest = new HttpRequestBindingData();
                 httpRequest.setBodyFromStream(exchange.getRequestBody());
-                Assert.assertEquals("magesh", httpRequest.getBodyAsString());
-                httpRequest.setBody("response to magesh");
+                Assert.assertEquals(INPUT, httpRequest.getBodyAsString());
+                httpRequest.setBody(OUTPUT);
                 exchange.sendResponseHeaders(200, httpRequest.getBodyBytes().available());
                 httpRequest.writeBodyToStream(exchange.getResponseBody());
             } catch (Exception e) {

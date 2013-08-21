@@ -52,6 +52,7 @@ public class SOAPBindingModelTest {
         SOAPBindingModel binding = puller.pull(SOAP_BINDING_REFERENCE, getClass());
         binding.assertModelValid();
         Assert.assertEquals("http://modified.com/phantom", binding.getEndpointAddress());
+        Assert.assertEquals(new Integer(5000), binding.getTimeout());
         MtomModel mtomConfig = binding.getMtomConfig();
         Assert.assertEquals(new Boolean(true), mtomConfig.isEnabled());
         Assert.assertEquals(new Integer(1300), mtomConfig.getThreshold());

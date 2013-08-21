@@ -54,6 +54,11 @@
                                     <documentation>A URL that points to the root path of resources. This is only applicable for Reference bindings. It is optional and if not specified will default to http://127.0.0.1:8080/.</documentation>
                                 </annotation>
                             </element>
+                            <element name="timeout" type="swyd:propInteger" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                    <documentation>The request's time-out value in milliseconds.</documentation>
+                                </annotation>
+                            </element>
                             <choice>
                                 <element name="basic" type="rest:BasicAuthenticationType" minOccurs="0" maxOccurs="1"/>
                                 <element name="ntlm" type="rest:NTLMAuthenticationType" minOccurs="0" maxOccurs="1"/>
@@ -94,7 +99,7 @@
                             <documentation>Authentication Host.</documentation>
                         </annotation>
                     </element>
-                    <element name="port" type="integer" minOccurs="0" maxOccurs="1">
+                    <element name="port" type="swyd:propInteger" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>Authentication Port.</documentation>
                         </annotation>
@@ -125,9 +130,19 @@
                             <documentation>Proxy Host.</documentation>
                         </annotation>
                     </element>
-                    <element name="port" type="integer" minOccurs="0" maxOccurs="1">
+                    <element name="port" type="swyd:propInteger" minOccurs="0" maxOccurs="1">
                         <annotation>
                             <documentation>Proxy Port.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="user" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy user name.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="password" type="string" minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Proxy password.</documentation>
                         </annotation>
                     </element>
                 </sequence>

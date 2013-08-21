@@ -26,7 +26,7 @@ public interface HttpNameValueModel extends Model {
     /** Known XML element names. */
     public enum HttpName {
         /** Known XML element names. */
-        address, contextPath, method, contentType, basic, ntlm, user, password, realm, domain, host, port, proxy;
+        address, contextPath, method, contentType, basic, ntlm, user, password, realm, domain, host, port, proxy, timeout;
     }
 
     /**

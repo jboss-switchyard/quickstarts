@@ -29,4 +29,12 @@
         </rest:binding.rest>
     </sca:reference>
 
+    <sca:reference name="TimeoutConsumerService" promote="resteasy-consumer" multiplicity="1..1">
+        <rest:binding.rest name="testGateway">
+            <rest:interfaces>org.switchyard.component.resteasy.HelloResource</rest:interfaces>
+            <rest:address>http://localhost:8090/forever</rest:address>
+            <rest:timeout>1300</rest:timeout>
+        </rest:binding.rest>
+    </sca:reference>
+
 </sca:composite>

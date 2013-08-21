@@ -27,7 +27,7 @@ public interface SOAPNameValueModel extends Model {
     public enum SOAPName {
         /** Known XML element names. */
 
-        wsdl, wsdlPort, socketAddr, contextPath, endpointAddress, mtom, proxy, user, password, host, port, type, basic, ntlm, domain;
+        wsdl, wsdlPort, socketAddr, contextPath, endpointAddress, mtom, proxy, user, password, host, port, type, basic, ntlm, domain, timeout;
     }
 
     /**
