@@ -1841,11 +1841,13 @@
                 <artifactId>drools-persistence-jpa</artifactId>
                 <version>${version.drools}</version>
             </dependency>
+            <!-- SWITCHYARD-1662
             <dependency>
                 <groupId>org.drools</groupId>
                 <artifactId>drools-scorecards</artifactId>
                 <version>${version.drools}</version>
             </dependency>
+            -->
             <dependency>
                 <groupId>org.drools</groupId>
                 <artifactId>drools-templates</artifactId>
