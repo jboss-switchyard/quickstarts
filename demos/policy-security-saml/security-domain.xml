@@ -9,7 +9,7 @@
                 <security-domain name="saml-validate-token" cache-type="default">
                     <authentication>
                         <login-module code="org.picketlink.identity.federation.core.wstrust.auth.STSValidatingLoginModule" flag="required">
-                            <module-option name="configFile" value="../standalone/configuration/sts-client.properties"/>
+                            <module-option name="configFile" value="${jboss.server.config.dir}/sts-client.properties"/>
                             <module-option name="useOptionsCredentials" value="true"/>
                         </login-module>
                     </authentication>

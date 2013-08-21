@@ -11,14 +11,15 @@ Running the quickstart
 1. Build the quickstart:
 
         mvn clean install
-2. Create a keystore to support SSL:
 
-        cd ${AS}/standalone/configuration
-        keytool -genkey -alias tomcat -keyalg RSA -keypass changeit -keystore tomcat.jks
+2. Copy the keystore file to support SSL:
 
-    (password is "changeit")
-3. Add the required https connector to the web subsystem in standalone.xml to support SSL. (include contents of connector.xml)
-4. Add the required security-domain sections to the security subsystem in standalone.xml to support SSL. (include contents of security-domain.xml)
+        cp connector.jks ${AS}/standalone/configuration/
+
+3. Add the required https connector to the web subsystem in ${AS}/standalone/configuration/standalone.xml to support SSL. (include contents of connector.xml)
+
+4. Add the required security-domain sections to the security subsystem in ${AS}/standalone/configuration/standalone.xml to support JAAS. (include contents of security-domain.xml)
+
 5. Copy the users keystore file:
 
         cp users.jks ${AS}/standalone/configuration
@@ -27,7 +28,7 @@ Running the quickstart
 
         cp roles.properties ${AS}/standalone/configuration
 
-7. Start JBoss AS 7 in standalone mode:
+7. Start JBoss AS in standalone mode:
 
         ${AS}/bin/standalone.sh
 
@@ -35,12 +36,14 @@ Running the quickstart
 
         mvn jboss-as:deploy
 
-9. Execute the test
-    See "Options" section below.
+9. Execute the test. (See "Options" section below.)
+
 10. Check the server console for output from the service.
+
 11. Undeploy the application
 
         mvn jboss-as:undeploy
+
 
 Options
 =======
@@ -55,7 +58,7 @@ When running with no options:
 
 When running with this option:
 
-    mvn exec:java -Dexec.args="confidentiality clientAuthentication" -Djavax.net.ssl.trustStore=[path to tomcat.jks created in step 2]
+    mvn exec:java -Dexec.args="confidentiality clientAuthentication" -Djavax.net.ssl.trustStore=connector.jks
 
 , you will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
 
