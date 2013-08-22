@@ -21,6 +21,8 @@ import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
+import org.switchyard.console.client.Singleton;
+import org.switchyard.console.client.gin.SwitchYardGinjector;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.ArtifactReference;
 import org.switchyard.console.client.model.Reference;
@@ -60,8 +62,12 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
      */
     @ProxyCodeSplit
     @NameToken(NameTokens.APPLICATIONS_PRESENTER)
-    @TabInfo(container = RuntimePresenter.class, label = NameTokens.APPLICATIONS_TEXT, priority = 1)
     public interface MyProxy extends TabContentProxyPlace<ApplicationPresenter> {
+    }
+
+    @TabInfo(container = RuntimePresenter.class, priority = 1)
+    static String getLabel(SwitchYardGinjector ginjector) {
+        return ginjector.getMessages().label_applications();
     }
 
     /**
@@ -146,7 +152,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
      */
     public void onNavigateToService(Service service, Application application) {
         if (service == null || application == null) {
-            Console.error("Cannot reveal service details.  No service or application specified.");
+            Console.error(Singleton.MESSAGES.error_navigateToService());
             return;
         }
         _placeManager.revealRelativePlace(
@@ -164,7 +170,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
      */
     public void onNavigateToReference(Reference reference, Application application) {
         if (reference == null || application == null) {
-            Console.error("Cannot reveal reference details.  No reference or application specified.");
+            Console.error(Singleton.MESSAGES.error_navigateToReference());
             return;
         }
         _placeManager.revealRelativePlace(
@@ -193,7 +199,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }
@@ -254,7 +260,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }
@@ -273,7 +279,7 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }

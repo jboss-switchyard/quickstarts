@@ -18,6 +18,7 @@ import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.switchyard.console.client.NameTokens;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Reference;
 import org.switchyard.console.client.ui.service.GatewaysList;
 import org.switchyard.console.client.ui.widgets.ClickableTextItem;
@@ -64,7 +65,7 @@ public class ReferenceEditor {
      */
     public Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
+        layout.setStyleName("fill-layout-width"); //$NON-NLS-1$
 
         layout.add(createImplementationDetailsPanel());
         layout.add(createGatewayDetailsPanel());
@@ -80,7 +81,7 @@ public class ReferenceEditor {
 
         if (reference.getInterface() == null) {
             // XXX: workaround to ensure interface field in the form gets set.
-            reference.setInterface("");
+            reference.setInterface(""); //$NON-NLS-1$
         }
 
         _implementationDetailsForm.clearValues();
@@ -89,9 +90,9 @@ public class ReferenceEditor {
     }
 
     private Widget createImplementationDetailsPanel() {
-        TextItem nameItem = new LocalNameFormItem("name_1", "Name");
-        TextItem namespaceItem = new NamespaceFormItem("name_2", "Namespace");
-        ClickableTextItem<String> applicationItem = new ClickableTextItem<String>("application", "Application",
+        TextItem nameItem = new LocalNameFormItem("name_1", Singleton.MESSAGES.label_name()); //$NON-NLS-1$
+        TextItem namespaceItem = new NamespaceFormItem("name_2", Singleton.MESSAGES.label_namespace()); //$NON-NLS-1$
+        ClickableTextItem<String> applicationItem = new ClickableTextItem<String>("application", Singleton.MESSAGES.label_application(), //$NON-NLS-1$
                 new ValueAdapter<String>() {
                     @Override
                     public String getText(String value) {
@@ -103,11 +104,11 @@ public class ReferenceEditor {
                         return createApplicationLink(value);
                     }
                 });
-        TextItem interfaceItem = new TextItem("interface", "Interface") {
+        TextItem interfaceItem = new TextItem("interface", Singleton.MESSAGES.label_interface()) { //$NON-NLS-1$
             @Override
             public void setValue(String value) {
                 if (value == null || value.length() == 0) {
-                    value = "<inherited>";
+                    value = Singleton.MESSAGES.constant_inherited();
                 }
                 super.setValue(value);
             }
@@ -118,8 +119,8 @@ public class ReferenceEditor {
         _implementationDetailsForm.setFields(nameItem, applicationItem, namespaceItem, interfaceItem);
 
         VerticalPanel implementationDetailsLayout = new VerticalPanel();
-        implementationDetailsLayout.setStyleName("fill-layout-width");
-        implementationDetailsLayout.add(new ContentGroupLabel("Reference Details"));
+        implementationDetailsLayout.setStyleName("fill-layout-width"); //$NON-NLS-1$
+        implementationDetailsLayout.add(new ContentGroupLabel(Singleton.MESSAGES.label_referenceDetails()));
         implementationDetailsLayout.add(_implementationDetailsForm.asWidget());
 
         return implementationDetailsLayout;

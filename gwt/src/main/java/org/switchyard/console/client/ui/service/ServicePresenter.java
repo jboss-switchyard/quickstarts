@@ -20,6 +20,8 @@ import java.util.Map;
 import org.jboss.as.console.client.Console;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
+import org.switchyard.console.client.Singleton;
+import org.switchyard.console.client.gin.SwitchYardGinjector;
 import org.switchyard.console.client.model.Binding;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.SwitchYardStore;
@@ -59,8 +61,12 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
      */
     @ProxyCodeSplit
     @NameToken(NameTokens.SERVICES_PRESENTER)
-    @TabInfo(container = RuntimePresenter.class, label = NameTokens.SERVICES_TEXT, priority = 2)
     public interface MyProxy extends TabContentProxyPlace<ServicePresenter> {
+    }
+
+    @TabInfo(container = RuntimePresenter.class, priority = 2)
+    static String getLabel(SwitchYardGinjector ginjector) {
+        return ginjector.getMessages().label_services();
     }
 
     /**
@@ -118,7 +124,7 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }
@@ -133,7 +139,7 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }
@@ -156,7 +162,7 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        Console.error("Unknown error", caught.getMessage());
+                        Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
                     }
                 });
     }
@@ -233,7 +239,7 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }
@@ -252,7 +258,7 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }

@@ -14,6 +14,7 @@
 package org.switchyard.console.client.ui.config;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
 import org.switchyard.console.components.client.extension.ComponentProviders;
 import org.switchyard.console.components.client.internal.ComponentExtensionManager.ComponentProviderProxy;
@@ -44,7 +45,7 @@ public class ComponentsList extends AbstractDataTable<Component> {
      */
     @Inject
     public ComponentsList(ComponentProviders componentProviders) {
-        super("Installed Components");
+        super(Singleton.MESSAGES.label_installedComponents());
         _componentProviders = componentProviders;
     }
 
@@ -79,7 +80,7 @@ public class ComponentsList extends AbstractDataTable<Component> {
                 dataProvider.getList());
         sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
 
-        table.addColumn(nameColumn, "Name");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(nameColumn);

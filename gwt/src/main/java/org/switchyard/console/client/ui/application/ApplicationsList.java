@@ -14,6 +14,7 @@
 package org.switchyard.console.client.ui.application;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
 
@@ -35,7 +36,7 @@ public class ApplicationsList extends AbstractDataTable<Application> {
      * Create a new ApplicationsList.
      */
     public ApplicationsList() {
-        this("Applications");
+        this(Singleton.MESSAGES.label_applications());
     }
 
     /**
@@ -82,8 +83,8 @@ public class ApplicationsList extends AbstractDataTable<Application> {
         sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
         sortHandler.setComparator(namespaceColumn, createColumnCommparator(namespaceColumn));
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(namespaceColumn, "Target Namespace");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
+        table.addColumn(namespaceColumn, Singleton.MESSAGES.label_targetNamespace());
         table.addColumnSortHandler(sortHandler);
 
         table.addColumnSortHandler(sortHandler);

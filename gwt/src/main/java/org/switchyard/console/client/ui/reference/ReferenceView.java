@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Reference;
 
 import com.google.gwt.user.client.ui.Widget;
@@ -58,12 +59,12 @@ public class ReferenceView extends DisposableViewImpl implements ReferencePresen
     public Widget createWidget() {
         SimpleLayout layout = new SimpleLayout()
                 .setPlain(true)
-                .setTitle("SwitchYard References")
-                .setHeadline("References")
+                .setTitle(Singleton.MESSAGES.label_switchYardReferences())
+                .setHeadline(Singleton.MESSAGES.label_references())
                 .setDescription(
-                        "Displays a list of deployed SwitchYard references.  Select a reference to see more details.")
-                .addContent("References", _referencesList.asWidget())
-                .addContent("Reference Details", _referenceEditor.asWidget());
+                        Singleton.MESSAGES.description_switchYardReferences())
+                .addContent(Singleton.MESSAGES.label_references(), _referencesList.asWidget())
+                .addContent(Singleton.MESSAGES.label_referenceDetails(), _referenceEditor.asWidget());
 
         return layout.build();
     }

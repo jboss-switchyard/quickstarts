@@ -14,6 +14,7 @@
 package org.switchyard.console.client.ui.metrics;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.ServiceMetrics;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
 import org.switchyard.console.client.ui.common.PercentageBarCell;
@@ -48,7 +49,7 @@ public class ServiceReferenceMetricsList extends AbstractDataTable<ServiceMetric
      * Create a new ServiceReferenceMetricsList.
      */
     public ServiceReferenceMetricsList() {
-        super("Referenced Service Metrics");
+        super(Singleton.MESSAGES.label_referencedServiceMetrics());
     }
 
     @Override
@@ -109,11 +110,11 @@ public class ServiceReferenceMetricsList extends AbstractDataTable<ServiceMetric
         sortHandler.setComparator(totalTimePercentageColumn, createNumberColumnCommparator(totalTimePercentageColumn));
         sortHandler.setComparator(faultPercentageColumn, createNumberColumnCommparator(faultPercentageColumn));
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(countColumn, "Message Count");
-        table.addColumn(averageTimeColumn, "Average Time");
-        table.addColumn(totalTimePercentageColumn, "Time %");
-        table.addColumn(faultPercentageColumn, "Fault %");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
+        table.addColumn(countColumn, Singleton.MESSAGES.label_messageCount());
+        table.addColumn(averageTimeColumn, Singleton.MESSAGES.label_averageTime());
+        table.addColumn(totalTimePercentageColumn, Singleton.MESSAGES.label_timePercent());
+        table.addColumn(faultPercentageColumn, Singleton.MESSAGES.label_faultPercent());
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(averageTimeColumn);

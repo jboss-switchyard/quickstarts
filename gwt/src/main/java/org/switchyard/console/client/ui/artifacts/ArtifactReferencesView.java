@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.ArtifactReference;
 import org.switchyard.console.client.ui.application.ApplicationsList;
 import org.switchyard.console.client.ui.artifacts.ArtifactPresenter.MyView;
@@ -43,7 +44,7 @@ public class ArtifactReferencesView extends DisposableViewImpl implements MyView
     @Override
     public Widget createWidget() {
         _artifactReferencesList = new ArtifactReferencesList();
-        _applicationsList = new ApplicationsList("Applications Using Artifact");
+        _applicationsList = new ApplicationsList(Singleton.MESSAGES.label_applicationsUsingArtifacts());
 
         _artifactReferencesList.addSelectionChangeHandler(new Handler() {
             @Override
@@ -64,12 +65,12 @@ public class ArtifactReferencesView extends DisposableViewImpl implements MyView
 
         SimpleLayout layout = new SimpleLayout()
                 .setPlain(true)
-                .setTitle("SwitchYard Artifact References")
-                .setHeadline("Artifact References")
+                .setTitle(Singleton.MESSAGES.label_switchYardArtifactReferences())
+                .setHeadline(Singleton.MESSAGES.label_artifactReferences())
                 .setDescription(
-                        "Displays all artifacts referenced throughout the system, along with the applications referencing a specific artifact.")
-                .addContent("Artifact References", _artifactReferencesList.asWidget())
-                .addContent("Referencing Applications", _applicationsList.asWidget());
+                        Singleton.MESSAGES.description_artifactReferences())
+                .addContent(Singleton.MESSAGES.label_artifactReferences(), _artifactReferencesList.asWidget())
+                .addContent(Singleton.MESSAGES.label_referencingApplications(), _applicationsList.asWidget());
 
         return layout.build();
     }

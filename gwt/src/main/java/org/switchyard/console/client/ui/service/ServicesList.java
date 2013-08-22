@@ -14,6 +14,7 @@
 package org.switchyard.console.client.ui.service;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
 
@@ -44,7 +45,7 @@ public class ServicesList extends AbstractDataTable<Service> {
      * Create a new ServicesList.
      */
     public ServicesList() {
-        super("Services");
+        super(Singleton.MESSAGES.label_services());
     }
 
     @Override
@@ -70,8 +71,8 @@ public class ServicesList extends AbstractDataTable<Service> {
         sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
         sortHandler.setComparator(namespaceColumn, createColumnCommparator(namespaceColumn));
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(namespaceColumn, "Target Namespace");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
+        table.addColumn(namespaceColumn, Singleton.MESSAGES.label_targetNamespace());
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(namespaceColumn);

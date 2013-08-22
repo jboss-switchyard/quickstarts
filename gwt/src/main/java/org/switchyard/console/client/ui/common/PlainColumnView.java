@@ -12,6 +12,7 @@ import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.Sampler;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
 import org.jboss.as.console.client.shared.runtime.charts.StackedBar;
+import org.switchyard.console.client.Singleton;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -74,25 +75,25 @@ public class PlainColumnView implements Sampler {
     public Widget asWidget() {
 
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
+        layout.setStyleName("fill-layout-width"); //$NON-NLS-1$
 
-        layout.add(new HTML("<div class='metric-table-title'>" + _title + "</div>"));
+        layout.add(new HTML("<div class='metric-table-title'>" + _title + "</div>")); //$NON-NLS-1$ //$NON-NLS-2$
 
         _grid = new FlexTable();
-        _grid.getElement().setAttribute("width", _width + _unit.getType() + "");
+        _grid.getElement().setAttribute("width", _width + _unit.getType() + ""); //$NON-NLS-1$ //$NON-NLS-2$
 
         // header columns
-        _grid.setHTML(0, 0, "Metric");
-        _grid.setHTML(0, 1, "Actual");
-        _grid.setHTML(0, 2, "&nbsp;");
+        _grid.setHTML(0, 0, Singleton.MESSAGES.label_metric());
+        _grid.setHTML(0, 1, Singleton.MESSAGES.label_actual());
+        _grid.setHTML(0, 2, "&nbsp;"); //$NON-NLS-1$
 
         _grid.getCellFormatter().setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_RIGHT);
 
         // actual values
         int row = _rowOffset;
         for (Column c : _columns) {
-            _grid.setHTML(row, 0, "<div class='metric-table-label'>" + c.getLabel() + ":</div>");
-            _grid.setHTML(row, 1, "");
+            _grid.setHTML(row, 0, "<div class='metric-table-label'>" + c.getLabel() + ":</div>"); //$NON-NLS-1$ //$NON-NLS-2$
+            _grid.setHTML(row, 1, ""); //$NON-NLS-1$
 
             _stacks.add(new StackedBar());
 
@@ -101,7 +102,7 @@ public class PlainColumnView implements Sampler {
                 _grid.setWidget(row, 2, stack.asWidget());
                 stack.setRatio(0, 0);
             } else {
-                _grid.setText(row, 2, "");
+                _grid.setText(row, 2, ""); //$NON-NLS-1$
             }
 
             _grid.getCellFormatter().setHorizontalAlignment(row, 1, HasHorizontalAlignment.ALIGN_RIGHT);
@@ -110,7 +111,7 @@ public class PlainColumnView implements Sampler {
                 _grid.getRowFormatter().setVisible(row, false);
             }
             if (c.isBaseline()) {
-                _grid.getRowFormatter().addStyleName(row, "metric-table-baseline");
+                _grid.getRowFormatter().addStyleName(row, "metric-table-baseline"); //$NON-NLS-1$
             }
 
             _columnIndexes.put(c, row - _rowOffset);
@@ -118,10 +119,10 @@ public class PlainColumnView implements Sampler {
             row++;
         }
 
-        _grid.getCellFormatter().setStyleName(0, 0, "metric-table-header");
-        _grid.getCellFormatter().setStyleName(0, 1, "metric-table-header");
-        _grid.getCellFormatter().setStyleName(0, 2, "metric-table-header");
-        _grid.getCellFormatter().setWidth(0, 2, "50%");
+        _grid.getCellFormatter().setStyleName(0, 0, "metric-table-header"); //$NON-NLS-1$
+        _grid.getCellFormatter().setStyleName(0, 1, "metric-table-header"); //$NON-NLS-1$
+        _grid.getCellFormatter().setStyleName(0, 2, "metric-table-header"); //$NON-NLS-1$
+        _grid.getCellFormatter().setWidth(0, 2, "50%"); //$NON-NLS-1$
 
         if (null == _staticHelp && _address != null) {
             MetricHelpPanel helpPanel = new MetricHelpPanel(_address, this._columns);
@@ -143,8 +144,8 @@ public class PlainColumnView implements Sampler {
 
         // check if they match
         if (baselineIndex > metric.numSamples()) {
-            throw new RuntimeException("Illegal baseline index " + baselineIndex + " on number of samples "
-                    + metric.numSamples());
+            throw new RuntimeException(
+                    Singleton.MESSAGES.error_illegalBaselineIndex(baselineIndex, metric.numSamples()));
         }
 
         Long baseline = baselineIndex >= 0 ? Long.valueOf(metric.get(baselineIndex)) : -1;
@@ -154,7 +155,7 @@ public class PlainColumnView implements Sampler {
             String actualValue = metric.get(dataIndex);
 
             if (null == actualValue) {
-                throw new RuntimeException("Metric value at index " + dataIndex + " is null");
+                throw new RuntimeException(Singleton.MESSAGES.error_metricIsNullAtIndex(dataIndex));
             }
 
             _grid.setText(row, 1, actualValue);
@@ -193,13 +194,13 @@ public class PlainColumnView implements Sampler {
             int dataIndex = row - _rowOffset;
 
             // clear the 'Actual' value
-            _grid.setText(row, 1, "");
+            _grid.setText(row, 1, ""); //$NON-NLS-1$
 
             // cleanup stackbar if used
             if (c.getComparisonColumn() != null) {
                 _stacks.get(dataIndex).setRatio(0, 0);
             } else if (c.getComparisonColumn() != null) {
-                throw new RuntimeException("Comparison column specified, but no baseline set!");
+                throw new RuntimeException(Singleton.MESSAGES.error_comparisonColumnWithoutBaseline());
             }
 
             row++;

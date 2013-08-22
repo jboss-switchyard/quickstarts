@@ -30,4 +30,23 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <!-- GWT Maven Plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>i18n</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <i18nMessagesBundle>org.switchyard.console.components.client.ui.Messages</i18nMessagesBundle>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

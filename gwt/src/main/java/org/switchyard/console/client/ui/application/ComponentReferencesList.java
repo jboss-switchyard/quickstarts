@@ -14,6 +14,7 @@
 package org.switchyard.console.client.ui.application;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.ComponentReference;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
 
@@ -39,7 +40,7 @@ public class ComponentReferencesList extends AbstractDataTable<ComponentReferenc
     };
 
     ComponentReferencesList() {
-        super("References");
+        super(Singleton.MESSAGES.label_references());
     }
 
     protected void createColumns(DefaultCellTable<ComponentReference> table,
@@ -65,8 +66,8 @@ public class ComponentReferencesList extends AbstractDataTable<ComponentReferenc
         sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
         sortHandler.setComparator(interfaceColumn, createColumnCommparator(interfaceColumn));
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(interfaceColumn, "Interface");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
+        table.addColumn(interfaceColumn, Singleton.MESSAGES.label_interface());
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(nameColumn);

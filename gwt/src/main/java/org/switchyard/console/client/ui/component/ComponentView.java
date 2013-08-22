@@ -37,7 +37,7 @@ public class ComponentView extends DisposableViewImpl implements ComponentPresen
     @Override
     public Widget createWidget() {
         VerticalPanel wrapper = new VerticalPanel();
-        wrapper.setStyleName("fill-layout-width");
+        wrapper.setStyleName("fill-layout-width"); //$NON-NLS-1$
         _mainContentPanel = new SimplePanel();
         wrapper.add(_mainContentPanel);
 
@@ -54,7 +54,7 @@ public class ComponentView extends DisposableViewImpl implements ComponentPresen
         if (slot == ComponentPresenter.TYPE_MAIN_CONTENT) {
             setMainContent(content);
         } else {
-            Console.error("Unknown slot requested:" + slot);
+            Console.error("Unknown slot requested:" + slot); //$NON-NLS-1$
         }
     }
 

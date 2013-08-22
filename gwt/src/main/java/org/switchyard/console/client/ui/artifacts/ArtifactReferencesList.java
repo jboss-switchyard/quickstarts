@@ -14,6 +14,7 @@
 package org.switchyard.console.client.ui.artifacts;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.ArtifactReference;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
 
@@ -35,7 +36,7 @@ public class ArtifactReferencesList extends AbstractDataTable<ArtifactReference>
      * Create a new ArtifactReferencesList.
      */
     public ArtifactReferencesList() {
-        super("Artifact References");
+        super(Singleton.MESSAGES.label_artifactReferences());
     }
 
     @Override
@@ -74,8 +75,8 @@ public class ArtifactReferencesList extends AbstractDataTable<ArtifactReference>
         sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
         sortHandler.setComparator(urlColumn, createColumnCommparator(urlColumn));
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(urlColumn, "URL");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
+        table.addColumn(urlColumn, Singleton.MESSAGES.label_url());
         table.addColumnSortHandler(sortHandler);
 
         table.addColumnSortHandler(sortHandler);

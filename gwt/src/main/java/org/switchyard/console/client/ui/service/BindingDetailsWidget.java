@@ -42,19 +42,19 @@ public class BindingDetailsWidget {
      * @return the widget
      */
     public Widget asWidget() {
-        _bindingConfiguration = DOM.createElement("pre");
+        _bindingConfiguration = DOM.createElement("pre"); //$NON-NLS-1$
 
-        Element code = DOM.createElement("code");
+        Element code = DOM.createElement("code"); //$NON-NLS-1$
         code.appendChild(_bindingConfiguration);
 
         HTML html = new HTML();
         html.getElement().appendChild(code);
-        html.setSize("100%", "100%");
+        html.setSize("100%", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
 
         ScrollPanel panel = new ScrollPanel();
-        panel.setStyleName("fill-layout-width");
+        panel.setStyleName("fill-layout-width"); //$NON-NLS-1$
         panel.add(html);
-        panel.setSize("100%", "100%");
+        panel.setSize("100%", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
 
         return panel;
     }

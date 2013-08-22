@@ -23,6 +23,7 @@ import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.as.console.spi.RuntimeExtension;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.MessageMetrics;
 import org.switchyard.console.client.model.ServiceMetrics;
 import org.switchyard.console.client.model.SwitchYardStore;
@@ -131,7 +132,7 @@ public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, Metrics
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }
@@ -150,7 +151,7 @@ public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, Metrics
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }
@@ -216,7 +217,7 @@ public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, Metrics
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }
@@ -230,7 +231,7 @@ public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, Metrics
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }
@@ -245,7 +246,7 @@ public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, Metrics
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }

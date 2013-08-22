@@ -15,6 +15,7 @@ package org.switchyard.console.client.ui.application;
 
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.ContentHeaderLabel;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.ComponentService;
 
 import com.google.gwt.dom.client.Element;
@@ -50,7 +51,7 @@ public class ImplementationDetailsWidget {
      */
     public Widget asWidget() {
         FlowPanel content = new FlowPanel();
-        content.setStyleName("fill-layout");
+        content.setStyleName("fill-layout"); //$NON-NLS-1$
 
         _serviceNameLabel = new ContentHeaderLabel();
         content.add(_serviceNameLabel);
@@ -61,15 +62,15 @@ public class ImplementationDetailsWidget {
         _referencesList = new ComponentReferencesList();
         content.add(_referencesList.asWidget());
 
-        _implementationDetails = DOM.createElement("pre");
+        _implementationDetails = DOM.createElement("pre"); //$NON-NLS-1$
 
-        Element code = DOM.createElement("code");
+        Element code = DOM.createElement("code"); //$NON-NLS-1$
         code.appendChild(_implementationDetails);
 
         HTML html = new HTML();
         html.getElement().appendChild(code);
 
-        content.add(new ContentGroupLabel("Raw Configuration"));
+        content.add(new ContentGroupLabel(Singleton.MESSAGES.label_rawConfiguration()));
         content.add(html);
 
         ScrollPanel panel = new ScrollPanel();
@@ -85,7 +86,7 @@ public class ImplementationDetailsWidget {
      */
     public void setService(ComponentService service) {
         _serviceNameLabel.setText(service.localName());
-        _implementationTypeHeaderLabel.setText(service.getImplementation() + " implementation");
+        _implementationTypeHeaderLabel.setText(Singleton.MESSAGES.label_implementationInstance(service.getImplementation()));
         _referencesList.setData(service.getReferences());
         _implementationDetails.setInnerText(service.getImplementationConfiguration());
     }

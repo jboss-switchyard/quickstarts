@@ -20,6 +20,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.SwitchYardStore;
 import org.switchyard.console.client.model.SystemDetails;
 import org.switchyard.console.client.ui.component.ComponentPresenter.PresenterFactory;
@@ -155,7 +156,7 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                fireEvent(new LHSHighlightEvent("unused", NameTokens.SYSTEM_CONFIG_TEXT,
+                fireEvent(new LHSHighlightEvent("unused", NameTokens.SYSTEM_CONFIG_TEXT, //$NON-NLS-1$
                         NameTokens.SUBSYSTEM_TREE_CATEGORY));
             }
         });
@@ -191,7 +192,7 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }
@@ -205,7 +206,7 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }
@@ -226,7 +227,7 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }

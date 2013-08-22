@@ -14,6 +14,7 @@
 package org.switchyard.console.client.ui.metrics;
 
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.MessageMetrics;
 import org.switchyard.console.client.model.ServiceMetrics;
 
@@ -45,11 +46,11 @@ public class ReferenceDetailsWidget implements MetricsDetailsWidget {
         _referenceOperationMetricsList = new ServiceOperationMetricsList();
         _gatewayMetricsList = new GatewayMetricsList();
 
-        OneToOneLayout serviceMetricsLayout = new OneToOneLayout().setPlain(true).setHeadline("Reference Metrics")
-                .setDescription("Displays message metrics for a selected reference.")
+        OneToOneLayout serviceMetricsLayout = new OneToOneLayout().setPlain(true).setHeadline(Singleton.MESSAGES.label_referenceMetrics())
+                .setDescription(Singleton.MESSAGES.description_referenceMetrics())
                 .setMaster(null, _referenceMetricsViewer.asWidget())
-                .addDetail("Gateway Metrics", _gatewayMetricsList.asWidget())
-                .addDetail("Operation Metrics", _referenceOperationMetricsList.asWidget());
+                .addDetail(Singleton.MESSAGES.label_gatewayMetrics(), _gatewayMetricsList.asWidget())
+                .addDetail(Singleton.MESSAGES.label_operationMetrics(), _referenceOperationMetricsList.asWidget());
         return serviceMetricsLayout.build();
     }
 

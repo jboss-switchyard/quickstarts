@@ -23,6 +23,7 @@ import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.ballroom.client.widgets.forms.Form;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.ui.artifacts.ArtifactReferencesList;
 import org.switchyard.console.client.ui.common.ValidatorsList;
@@ -69,14 +70,14 @@ public class ApplicationView extends DisposableViewImpl implements ApplicationPr
         });
 
         VerticalPanel applicationDetailsPanel = new VerticalPanel();
-        applicationDetailsPanel.setStyleName("fill-layout-width");
+        applicationDetailsPanel.setStyleName("fill-layout-width"); //$NON-NLS-1$
 
         _applicationDetailsForm = new Form<Application>(Application.class);
         // XXX: '_' included in names to workaround bug in form builder
-        _applicationDetailsForm.setFields(new LocalNameFormItem("name_1", "Application Name"), new NamespaceFormItem(
-                "name_2", "Application Namespace"));
+        _applicationDetailsForm.setFields(new LocalNameFormItem("name_1", Singleton.MESSAGES.label_applicationName()), //$NON-NLS-1$
+                new NamespaceFormItem("name_2", Singleton.MESSAGES.label_applicationNamespace())); //$NON-NLS-1$
         Widget formWidget = _applicationDetailsForm.asWidget();
-        formWidget.getElement().setAttribute("style", "margin:15px");
+        formWidget.getElement().setAttribute("style", "margin:15px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         _servicesEditor = new ApplicationServicesEditor(_presenter);
         _referencesEditor = new ApplicationReferencesList(_presenter);
@@ -97,29 +98,29 @@ public class ApplicationView extends DisposableViewImpl implements ApplicationPr
         // reparent the panel containing the controls
         OneToOneLayout applicationDetailsLayout = new OneToOneLayout()
                 .setPlain(true)
-                .setHeadline("Application Details")
+                .setHeadline(Singleton.MESSAGES.label_applicationDetails())
                 .setDescription(
-                        "Displays details for a specific application.  Select an application to see its implementation details.")
-                .setMaster(null, formWidget).addDetail("Services", _servicesEditor.asWidget())
-                .addDetail("References", _referencesEditor.asWidget())
-                .addDetail("Properties", _propertiesEditor.asWidget())
-                .addDetail("Artifacts", _artifactReferencesList.asWidget())
-                .addDetail("Transformers", _transformationsEditor.asWidget())
-                .addDetail("Validators", _validatorsList.asWidget());
+                        Singleton.MESSAGES.description_applicationDetails())
+                .setMaster(null, formWidget).addDetail(Singleton.MESSAGES.label_services(), _servicesEditor.asWidget())
+                .addDetail(Singleton.MESSAGES.label_references(), _referencesEditor.asWidget())
+                .addDetail(Singleton.MESSAGES.label_properties(), _propertiesEditor.asWidget())
+                .addDetail(Singleton.MESSAGES.label_artifacts(), _artifactReferencesList.asWidget())
+                .addDetail(Singleton.MESSAGES.label_transformers(), _transformationsEditor.asWidget())
+                .addDetail(Singleton.MESSAGES.label_validators(), _validatorsList.asWidget());
         applicationDetailsLayout.build();
-        formWidget.getParent().setStyleName("fill-layout-width");
+        formWidget.getParent().setStyleName("fill-layout-width"); //$NON-NLS-1$
 
         /* disable updating "key" field. */
         _propertiesEditor.getPropertyTable().getColumn(0).setFieldUpdater(null);
 
         SimpleLayout layout = new SimpleLayout()
                 .setPlain(true)
-                .setTitle("SwitchYard Applications")
-                .setHeadline("Applications")
+                .setTitle(Singleton.MESSAGES.label_switchYardApplications())
+                .setHeadline(Singleton.MESSAGES.label_applications())
                 .setDescription(
-                        "Displays a list of deployed SwitchYard applications.  Select an application to see more details.")
-                .addContent("Applications", _applicationsList.asWidget())
-                .addContent("Application Details", formWidget.getParent());
+                        Singleton.MESSAGES.description_applications())
+                .addContent(Singleton.MESSAGES.label_applications(), _applicationsList.asWidget())
+                .addContent(Singleton.MESSAGES.label_applicationDetails(), formWidget.getParent());
         return layout.build();
     }
 

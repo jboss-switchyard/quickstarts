@@ -20,6 +20,8 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
+import org.switchyard.console.client.Singleton;
+import org.switchyard.console.client.gin.SwitchYardGinjector;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.ArtifactReference;
 import org.switchyard.console.client.model.SwitchYardStore;
@@ -56,8 +58,12 @@ public class ArtifactPresenter extends Presenter<ArtifactPresenter.MyView, Artif
      */
     @ProxyCodeSplit
     @NameToken(NameTokens.ARTIFACTS_PRESENTER)
-    @TabInfo(container = RuntimePresenter.class, label = NameTokens.ARTIFACT_REFERENCES_TEXT, priority = 4)
     public interface MyProxy extends TabContentProxyPlace<ArtifactPresenter> {
+    }
+
+    @TabInfo(container = RuntimePresenter.class, priority = 4)
+    static String getLabel(SwitchYardGinjector ginjector) {
+        return ginjector.getMessages().label_artifacts();
     }
 
     /**
@@ -115,7 +121,7 @@ public class ArtifactPresenter extends Presenter<ArtifactPresenter.MyView, Artif
      */
     public void onApplicationSelected(Application application) {
         if (application == null) {
-            Console.error("Cannot reveal application details.  No application specified.");
+            Console.error(Singleton.MESSAGES.error_navigateToApplication());
             return;
         }
         _placeManager.revealRelativePlace(
@@ -170,7 +176,7 @@ public class ArtifactPresenter extends Presenter<ArtifactPresenter.MyView, Artif
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }

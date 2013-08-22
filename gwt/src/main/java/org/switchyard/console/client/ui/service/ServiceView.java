@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Service;
 
 import com.google.gwt.user.client.ui.Widget;
@@ -61,12 +62,12 @@ public class ServiceView extends DisposableViewImpl implements ServicePresenter.
     public Widget createWidget() {
         SimpleLayout layout = new SimpleLayout()
                 .setPlain(true)
-                .setTitle("SwitchYard Services")
-                .setHeadline("Services")
+                .setTitle(Singleton.MESSAGES.label_switchYardServices())
+                .setHeadline(Singleton.MESSAGES.label_services())
                 .setDescription(
-                        "Displays a list of deployed SwitchYard services.  Select a service to see more details.")
-                .addContent("Services", _servicesList.asWidget())
-                .addContent("Service Details", _serviceEditor.asWidget());
+                        Singleton.MESSAGES.description_switchYardServices())
+                .addContent(Singleton.MESSAGES.label_services(), _servicesList.asWidget())
+                .addContent(Singleton.MESSAGES.label_serviceDetails(), _serviceEditor.asWidget());
 
         return layout.build();
     }

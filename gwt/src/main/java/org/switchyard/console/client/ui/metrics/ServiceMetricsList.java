@@ -15,6 +15,7 @@ package org.switchyard.console.client.ui.metrics;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.MessageMetrics;
 import org.switchyard.console.client.model.ServiceMetrics;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
@@ -138,7 +139,7 @@ public class ServiceMetricsList extends AbstractDataTable<ServiceMetrics> {
         Column<ServiceMetrics, String> viewDetailsColumn = new Column<ServiceMetrics, String>(new ButtonCell()) {
             @Override
             public String getValue(ServiceMetrics dummy) {
-                return "Details...";
+                return Singleton.MESSAGES.button_details();
             }
         };
         viewDetailsColumn.setFieldUpdater(new FieldUpdater<ServiceMetrics, String>() {
@@ -151,7 +152,7 @@ public class ServiceMetricsList extends AbstractDataTable<ServiceMetrics> {
         Column<ServiceMetrics, String> clearColumn = new Column<ServiceMetrics, String>(new ButtonCell()) {
             @Override
             public String getValue(ServiceMetrics dummy) {
-                return "Reset Metrics";
+                return Singleton.MESSAGES.label_resetMetrics();
             }
         };
         clearColumn.setFieldUpdater(new FieldUpdater<ServiceMetrics, String>() {
@@ -170,14 +171,14 @@ public class ServiceMetricsList extends AbstractDataTable<ServiceMetrics> {
         sortHandler.setComparator(totalTimePercentageColumn, createNumberColumnCommparator(totalTimePercentageColumn));
         sortHandler.setComparator(faultPercentageColumn, createNumberColumnCommparator(faultPercentageColumn));
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(namespaceColumn, "Target Namespace");
-        table.addColumn(countColumn, "Message Count");
-        table.addColumn(averageTimeColumn, "Average Time");
-        table.addColumn(totalTimePercentageColumn, "Time %");
-        table.addColumn(faultPercentageColumn, "Fault %");
-        table.addColumn(viewDetailsColumn, "Details");
-        table.addColumn(clearColumn, "Reset");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
+        table.addColumn(namespaceColumn, Singleton.MESSAGES.label_targetNamespace());
+        table.addColumn(countColumn, Singleton.MESSAGES.label_messageCount());
+        table.addColumn(averageTimeColumn, Singleton.MESSAGES.label_averageTime());
+        table.addColumn(totalTimePercentageColumn, Singleton.MESSAGES.label_timePercent());
+        table.addColumn(faultPercentageColumn, Singleton.MESSAGES.label_faultPercent());
+        table.addColumn(viewDetailsColumn, Singleton.MESSAGES.label_details());
+        table.addColumn(clearColumn, Singleton.MESSAGES.label_reset());
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(averageTimeColumn);
@@ -219,8 +220,8 @@ public class ServiceMetricsList extends AbstractDataTable<ServiceMetrics> {
         _detailsWindow.setGlassEnabled(true);
         _detailsWindow.setAutoHideEnabled(true);
         _detailsWindow.setAutoHideOnHistoryEventsEnabled(true);
-        _detailsWindow.setWidth("80%");
-        _detailsWindow.setHeight("80%");
+        _detailsWindow.setWidth("80%"); //$NON-NLS-1$
+        _detailsWindow.setHeight("80%"); //$NON-NLS-1$
 
         _detailsWidget = createDetailsWidget();
         _detailsWindow.setWidget(_detailsWidget.asWidget());

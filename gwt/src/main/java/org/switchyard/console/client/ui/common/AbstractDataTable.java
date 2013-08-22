@@ -48,8 +48,8 @@ public abstract class AbstractDataTable<T> {
 
     protected AbstractDataTable(String label) {
         _layout = new VerticalPanel();
-        _layout.setStyleName("fill-layout-width");
-        _layout.getElement().setAttribute("style", "padding-top:5px;");
+        _layout.setStyleName("fill-layout-width"); //$NON-NLS-1$
+        _layout.getElement().setAttribute("style", "padding-top:5px;"); //$NON-NLS-1$ //$NON-NLS-2$
 
         _table = new DefaultCellTable<T>(5);
 

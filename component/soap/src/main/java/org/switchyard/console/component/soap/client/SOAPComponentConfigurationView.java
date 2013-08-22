@@ -22,6 +22,7 @@ import org.jboss.ballroom.client.widgets.forms.RenderMetaData;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.switchyard.console.components.client.ui.BaseComponentConfigurationView;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -34,7 +35,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class SOAPComponentConfigurationView extends BaseComponentConfigurationView {
 
-    private static final String SOCKET_ADDR = "socketAddr";
+    private static final Messages MESSAGES = GWT.create(Messages.class);
+    private static final String SOCKET_ADDR = "socketAddr"; //$NON-NLS-1$
 
     private TextItem _socketAddr;
 
@@ -42,15 +44,15 @@ public class SOAPComponentConfigurationView extends BaseComponentConfigurationVi
     @Override
     protected Widget createComponentDetailsWidget() {
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
-        layout.add(new ContentGroupLabel("Configured Properties"));
+        layout.setStyleName("fill-layout-width"); //$NON-NLS-1$
+        layout.add(new ContentGroupLabel(MESSAGES.label_configuredProperties()));
 
-        String title = "Socket Address (" + SOCKET_ADDR + ")";
+        String title = MESSAGES.label_socketAddress(SOCKET_ADDR);
         _socketAddr = new TextItem(SOCKET_ADDR, title) {
             @Override
             public void setValue(String value) {
                 if (value == null || value.length() == 0) {
-                    value = "<not set>";
+                    value = MESSAGES.constant_notSet();
                 }
                 super.setValue(value);
             }
@@ -59,7 +61,7 @@ public class SOAPComponentConfigurationView extends BaseComponentConfigurationVi
         RenderMetaData metaData = new RenderMetaData();
         metaData.setNumColumns(1);
         metaData.setTitleWidth(title.length());
-        layout.add(new DefaultGroupRenderer().render(metaData, "null",
+        layout.add(new DefaultGroupRenderer().render(metaData, "null", //$NON-NLS-1$
                 Collections.<String, FormItem> singletonMap(SOCKET_ADDR, _socketAddr)));
 
         return layout;
@@ -76,7 +78,7 @@ public class SOAPComponentConfigurationView extends BaseComponentConfigurationVi
 
     @Override
     protected String getComponentName() {
-        return "SOAP";
+        return "SOAP"; //$NON-NLS-1$
     }
 
 }

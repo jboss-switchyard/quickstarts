@@ -17,6 +17,7 @@ package org.switchyard.console.client.ui.component;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.spi.SubsystemExtension;
 import org.switchyard.console.client.NameTokens;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.SwitchYardStore;
 import org.switchyard.console.client.ui.config.ConfigPresenter;
 import org.switchyard.console.components.client.model.Component;
@@ -165,7 +166,7 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
 
             @Override
             public void onFailure(Throwable caught) {
-                Console.error("Unknown error", caught.getMessage());
+                Console.error(Singleton.MESSAGES.error_unknown(), caught.getMessage());
             }
         });
     }

@@ -33,7 +33,7 @@ public final class ArtifactReferenceCategory {
      */
     public static String key(AutoBean<? extends ArtifactReference> instance) {
         ArtifactReference ar = instance.as();
-        return "" + ar.getName() + "::" + ar.getUrl();
+        return "" + ar.getName() + "::" + ar.getUrl(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

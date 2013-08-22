@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.MessageMetrics;
 import org.switchyard.console.client.model.ServiceMetrics;
 import org.switchyard.console.client.ui.metrics.MetricsPresenter.MyView;
@@ -48,8 +49,8 @@ public class MetricsView extends DisposableViewImpl implements MyView {
      */
     public MetricsView() {
         _systemMetricsViewer = new MessageMetricsViewer(false);
-        _servicesList = new ServiceMetricsList("Service Metrics");
-        _referencesList = new ServiceMetricsList("Reference Metrics") {
+        _servicesList = new ServiceMetricsList(Singleton.MESSAGES.label_serviceMetrics());
+        _referencesList = new ServiceMetricsList(Singleton.MESSAGES.label_referenceMetrics()) {
             @Override
             protected MetricsDetailsWidget createDetailsWidget() {
                 return new ReferenceDetailsWidget();
@@ -59,23 +60,23 @@ public class MetricsView extends DisposableViewImpl implements MyView {
 
     @Override
     public Widget createWidget() {
-        final Button resetButton = new Button("Reset All Metrics", new ClickHandler() {
+        final Button resetButton = new Button(Singleton.MESSAGES.label_resetAllMetrics(), new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 _presenter.resetSystemMetrics();
             }
         });
-        SimpleLayout layout = new SimpleLayout().setTitle("SwitchYard Message Metrics").setHeadline("System")
-                .setDescription("Displays message metrics for the SwitchYard subsystem.")
-                .addContent("System Message Metrics", _systemMetricsViewer.asWidget())
-                .addContent("reset", resetButton)
-                .addContent("spacer", new HTMLPanel("&nbsp;"))
-                .addContent("Service Message Metrics", _servicesList.asWidget())
-                .addContent("Reference Message Metrics", _referencesList.asWidget());
+        SimpleLayout layout = new SimpleLayout().setTitle(Singleton.MESSAGES.label_switchYardMessageMetrics()).setHeadline(Singleton.MESSAGES.label_system())
+                .setDescription(Singleton.MESSAGES.description_systemMetrics())
+                .addContent(Singleton.MESSAGES.label_systemMessageMetrics(), _systemMetricsViewer.asWidget())
+                .addContent("reset", resetButton) //$NON-NLS-1$
+                .addContent("spacer", new HTMLPanel("&nbsp;")) //$NON-NLS-1$ //$NON-NLS-2$
+                .addContent(Singleton.MESSAGES.label_serviceMessageMetrics(), _servicesList.asWidget())
+                .addContent(Singleton.MESSAGES.label_referenceMessageMetrics(), _referencesList.asWidget());
 
         final Widget result = layout.build();
         // hackery, prevent button from filling the row
-        resetButton.getElement().removeClassName("fill-layout-width");
+        resetButton.getElement().removeClassName("fill-layout-width"); //$NON-NLS-1$
         return result;
     }
 

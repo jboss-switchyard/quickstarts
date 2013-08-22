@@ -46,7 +46,7 @@ public class GWTPTab implements Tab {
     @Override
     public Widget asWidget() {
         throw new UnsupportedOperationException(
-                "GWTPTab is intended to work with GWTPTabPanel, which does not support using custom widgets in the tab bar.");
+                "GWTPTab is intended to work with GWTPTabPanel, which does not support using custom widgets in the tab bar."); //$NON-NLS-1$
     }
 
     @Override
@@ -77,7 +77,7 @@ public class GWTPTab implements Tab {
 
     @Override
     public void setText(String text) {
-        throw new UnsupportedOperationException("Cannot update label text for GWTPTab.");
+        throw new UnsupportedOperationException("Cannot update label text for GWTPTab."); //$NON-NLS-1$
     }
 
 }

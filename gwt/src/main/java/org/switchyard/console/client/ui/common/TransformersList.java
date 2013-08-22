@@ -14,6 +14,7 @@
 package org.switchyard.console.client.ui.common;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Transformer;
 
 import com.google.gwt.dom.client.Style;
@@ -35,7 +36,7 @@ public class TransformersList extends AbstractDataTable<Transformer> {
      * Create a new TransformersList.
      */
     public TransformersList() {
-        super("Transformers");
+        super(Singleton.MESSAGES.label_transformers());
     }
 
     @Override
@@ -70,16 +71,16 @@ public class TransformersList extends AbstractDataTable<Transformer> {
         sortHandler.setComparator(toColumn, createColumnCommparator(toColumn));
         sortHandler.setComparator(typeColumn, createColumnCommparator(typeColumn));
 
-        table.addColumn(fromColumn, "From");
-        table.addColumn(toColumn, "To");
-        table.addColumn(typeColumn, "Type");
+        table.addColumn(fromColumn, Singleton.MESSAGES.label_from());
+        table.addColumn(toColumn, Singleton.MESSAGES.label_to());
+        table.addColumn(typeColumn, Singleton.MESSAGES.label_type());
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(typeColumn);
         table.getColumnSortList().push(toColumn);
         table.getColumnSortList().push(fromColumn);
 
-        table.setWidth("100%", false);
+        table.setWidth("100%", false); //$NON-NLS-1$
         table.setColumnWidth(fromColumn, 45, Style.Unit.PCT);
         table.setColumnWidth(toColumn, 45, Style.Unit.PCT);
         table.setColumnWidth(typeColumn, 10, Style.Unit.PCT);
@@ -90,7 +91,7 @@ public class TransformersList extends AbstractDataTable<Transformer> {
         return new ProvidesKey<Transformer>() {
             @Override
             public Object getKey(Transformer item) {
-                return item.getType() + ":" + item.getFrom() + ":" + item.getTo();
+                return item.getType() + ":" + item.getFrom() + ":" + item.getTo(); //$NON-NLS-1$ //$NON-NLS-2$
             }
         };
     }

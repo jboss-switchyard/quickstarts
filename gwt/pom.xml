@@ -87,7 +87,16 @@
                         <goals>
                             <goal>resources</goal>
                             <goal>test</goal>
+                            <!--
+                              ~ does not generate proper interfaces for
+                              ~ non-string paramter types.  until the problem
+                              ~ is corrected, the Messages class will need to
+                              ~ be maintained manually.  update
+                              ~ Messages.properties then run gwt:i18n goal and
+                              ~ merge the newly generated file with the
+                              ~ existing file.
                             <goal>i18n</goal>
+                             -->
                         </goals>
                     </execution>
                 </executions>

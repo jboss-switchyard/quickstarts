@@ -47,7 +47,7 @@ public class ApplicationServicesEditor {
      */
     public Widget asWidget() {
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
+        layout.setStyleName("fill-layout-width"); //$NON-NLS-1$
 
         _applicationServicesList = new ApplicationServicesList(_presenter);
         _componentServicesList = new ComponentServicesList();

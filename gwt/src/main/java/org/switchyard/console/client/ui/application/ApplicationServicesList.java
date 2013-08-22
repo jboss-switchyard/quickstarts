@@ -15,6 +15,7 @@ package org.switchyard.console.client.ui.application;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.switchyard.console.client.NameTokens;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
@@ -47,7 +48,7 @@ public class ApplicationServicesList extends AbstractDataTable<Service> {
     private final ApplicationPresenter _presenter;
 
     ApplicationServicesList(ApplicationPresenter presenter) {
-        super("Services");
+        super(Singleton.MESSAGES.label_services());
         _presenter = presenter;
     }
 
@@ -80,8 +81,8 @@ public class ApplicationServicesList extends AbstractDataTable<Service> {
         sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
         sortHandler.setComparator(promotesColumn, createColumnCommparator(promotesColumn));
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(promotesColumn, "Promoted Service");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
+        table.addColumn(promotesColumn, Singleton.MESSAGES.label_promotedService());
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(nameColumn);

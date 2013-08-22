@@ -15,6 +15,7 @@ package org.switchyard.console.client.ui.application;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.ComponentService;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
@@ -48,7 +49,7 @@ public class ComponentServicesList extends AbstractDataTable<ComponentService> {
     private ImplementationDetailsWidget _implementationDetailsWidget;
 
     ComponentServicesList() {
-        super("Component Services");
+        super(Singleton.MESSAGES.label_componentServices());
     }
 
     @Override
@@ -74,7 +75,7 @@ public class ComponentServicesList extends AbstractDataTable<ComponentService> {
                 new ButtonCell()) {
             @Override
             public String getValue(ComponentService dummy) {
-                return "View Details...";
+                return Singleton.MESSAGES.button_viewDetails();
             }
         };
         implementationColumn.setFieldUpdater(new FieldUpdater<ComponentService, String>() {
@@ -91,9 +92,9 @@ public class ComponentServicesList extends AbstractDataTable<ComponentService> {
         sortHandler.setComparator(interfaceColumn, createColumnCommparator(interfaceColumn));
         sortHandler.setComparator(implementationColumn, createColumnCommparator(implementationColumn));
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(interfaceColumn, "Interface");
-        table.addColumn(implementationColumn, "Implementation");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
+        table.addColumn(interfaceColumn, Singleton.MESSAGES.label_interface());
+        table.addColumn(implementationColumn, Singleton.MESSAGES.label_implementation());
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(nameColumn);
@@ -140,7 +141,7 @@ public class ComponentServicesList extends AbstractDataTable<ComponentService> {
     }
 
     private void createImplementationsDetailsWindow() {
-        _implementationDetailsWindow = new DefaultWindow("Implementation Details");
+        _implementationDetailsWindow = new DefaultWindow(Singleton.MESSAGES.label_implementationDetails());
         _implementationDetailsWindow.setGlassEnabled(true);
         _implementationDetailsWindow.setAutoHideEnabled(true);
         _implementationDetailsWindow.setAutoHideOnHistoryEventsEnabled(true);

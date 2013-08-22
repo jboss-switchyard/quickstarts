@@ -27,6 +27,7 @@ import org.jboss.ballroom.client.widgets.forms.FormValidation;
 import org.jboss.ballroom.client.widgets.forms.NumberBoxItem;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
 import org.switchyard.console.client.NameTokens;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.Throttling;
 import org.switchyard.console.client.ui.widgets.ClickableTextItem;
@@ -80,15 +81,15 @@ public class ServiceEditor {
      */
     public Widget asWidget() {
         VerticalPanel panel = new VerticalPanel();
-        panel.add(new ContentGroupLabel("Service Details"));
-        panel.add(new ContentDescription("Displays details for the selected service."));
+        panel.add(new ContentGroupLabel(Singleton.MESSAGES.label_serviceDetails()));
+        panel.add(new ContentDescription(Singleton.MESSAGES.description_serviceDetails()));
         panel.add(createImplementationDetailsPanel());
 
         TabPanel tabs = new TabPanel();
-        tabs.setStyleName("default-tabpanel");
-        tabs.getElement().setAttribute("style", "margin-top:15px;");
-        tabs.add(createGatewayDetailsPanel(), "Gateways");
-        tabs.add(createThrottlingDetailsPanel(), "Throttling");
+        tabs.setStyleName("default-tabpanel"); //$NON-NLS-1$
+        tabs.getElement().setAttribute("style", "margin-top:15px;"); //$NON-NLS-1$ //$NON-NLS-2$
+        tabs.add(createGatewayDetailsPanel(), Singleton.MESSAGES.label_gateways());
+        tabs.add(createThrottlingDetailsPanel(), Singleton.MESSAGES.label_throttling());
         tabs.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
             @Override
             public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
@@ -119,7 +120,7 @@ public class ServiceEditor {
             if (service.getInterface() == null) {
                 // XXX: workaround to ensure interface field in the form gets
                 // set.
-                service.setInterface("");
+                service.setInterface(""); //$NON-NLS-1$
             }
             _implementationDetailsForm.edit(service);
             if (service.getThrottling() != null) {
@@ -130,9 +131,9 @@ public class ServiceEditor {
     }
 
     private Widget createImplementationDetailsPanel() {
-        TextItem nameItem = new LocalNameFormItem("name_1", "Name");
-        TextItem namespaceItem = new NamespaceFormItem("name_2", "Namespace");
-        ClickableTextItem<String> applicationItem = new ClickableTextItem<String>("application", "Application",
+        TextItem nameItem = new LocalNameFormItem("name_1", Singleton.MESSAGES.label_name()); //$NON-NLS-1$
+        TextItem namespaceItem = new NamespaceFormItem("name_2", Singleton.MESSAGES.label_namespace()); //$NON-NLS-1$
+        ClickableTextItem<String> applicationItem = new ClickableTextItem<String>("application", Singleton.MESSAGES.label_application(), //$NON-NLS-1$
                 new ValueAdapter<String>() {
                     @Override
                     public String getText(String value) {
@@ -144,17 +145,17 @@ public class ServiceEditor {
                         return createApplicationLink(value);
                     }
                 });
-        TextItem interfaceItem = new TextItem("interface", "Interface") {
+        TextItem interfaceItem = new TextItem("interface", Singleton.MESSAGES.label_interface()) { //$NON-NLS-1$
             @Override
             public void setValue(String value) {
                 if (value == null || value.length() == 0) {
-                    value = "<inherited>";
+                    value = Singleton.MESSAGES.constant_inherited();
                 }
                 super.setValue(value);
             }
         };
-        ClickableTextItem<String> implementationItem = new ClickableTextItem<String>("promotedService",
-                "Promoted Service", new ValueAdapter<String>() {
+        ClickableTextItem<String> implementationItem = new ClickableTextItem<String>("promotedService", //$NON-NLS-1$
+                Singleton.MESSAGES.label_promotedService(), new ValueAdapter<String>() {
                     @Override
                     public String getText(String value) {
                         return NameTokens.parseQName(value)[1];
@@ -172,12 +173,12 @@ public class ServiceEditor {
         _implementationDetailsForm = new Form<Service>(Service.class);
         _implementationDetailsForm.setNumColumns(2);
         _implementationDetailsForm.setFields(nameItem, applicationItem, namespaceItem);
-        _implementationDetailsForm.setFieldsInGroup("Implementation Details", implementationItem, interfaceItem);
+        _implementationDetailsForm.setFieldsInGroup(Singleton.MESSAGES.label_implementationDetails(), implementationItem, interfaceItem);
         // don't disable as the fields won't display correctly
         // _implementationDetailsForm.setEnabled(false);
 
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
+        layout.setStyleName("fill-layout-width"); //$NON-NLS-1$
         layout.add(_implementationDetailsForm.asWidget());
         return layout;
     }
@@ -197,16 +198,16 @@ public class ServiceEditor {
 
     private Widget createThrottlingDetailsPanel() {
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
+        layout.setStyleName("fill-layout-width"); //$NON-NLS-1$
 
-        CheckBoxItem enabledItem = new CheckBoxItem("enabled", "Enabled");
-        NumberBoxItem maxRequestsItem = new NumberBoxItem("maxRequests", "Maximum Requests") {
+        CheckBoxItem enabledItem = new CheckBoxItem("enabled", Singleton.MESSAGES.label_enabled()); //$NON-NLS-1$
+        NumberBoxItem maxRequestsItem = new NumberBoxItem("maxRequests", Singleton.MESSAGES.label_maximumRequests()) { //$NON-NLS-1$
             @Override
             public boolean validate(Number value) {
                 return super.validate(value) && value.intValue() > 0;
             }
         };
-        NumberBoxItem timePeriodItem = new NumberBoxItem("timePeriod", "Time Period (millis)") {
+        NumberBoxItem timePeriodItem = new NumberBoxItem("timePeriod", Singleton.MESSAGES.label_timePeriod()) { //$NON-NLS-1$
             @Override
             public boolean validate(Number value) {
                 return super.validate(value) && value.intValue() > 0;
@@ -225,7 +226,7 @@ public class ServiceEditor {
                         // ascii or empty string are ok. the later will be
                         // checked in each form item implementation.
                         String stringValue = String.valueOf(value);
-                        boolean ascii = stringValue.isEmpty() || stringValue.matches("^[\\u0020-\\u007e]+$");
+                        boolean ascii = stringValue.isEmpty() || stringValue.matches("^[\\u0020-\\u007e]+$"); //$NON-NLS-1$
                         if (!ascii) {
                             outcome.addError(item.getName());
                             item.setErroneous(true);

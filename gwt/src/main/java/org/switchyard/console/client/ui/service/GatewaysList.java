@@ -17,6 +17,7 @@ import java.util.EnumSet;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.jboss.ballroom.client.widgets.window.DefaultWindow;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Binding;
 import org.switchyard.console.client.model.State;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
@@ -46,7 +47,7 @@ public class GatewaysList extends AbstractDataTable<Binding> {
      * Create a new GatewaysList.
      */
     public GatewaysList() {
-        super("Gateways");
+        super(Singleton.MESSAGES.label_gateways());
     }
 
     /**
@@ -77,7 +78,7 @@ public class GatewaysList extends AbstractDataTable<Binding> {
         Column<Binding, String> configColumn = new Column<Binding, String>(new ButtonCell()) {
             @Override
             public String getValue(Binding dummy) {
-                return "View Configuration...";
+                return Singleton.MESSAGES.button_viewConfiguration();
             }
         };
         configColumn.setFieldUpdater(new FieldUpdater<Binding, String>() {
@@ -91,7 +92,7 @@ public class GatewaysList extends AbstractDataTable<Binding> {
         Column<Binding, String> statusColumn = new TextColumn<Binding>() {
             @Override
             public String getValue(Binding binding) {
-                return binding.getState() == null ? "Unknown" : binding.getState().toString();
+                return binding.getState() == null ? Singleton.MESSAGES.constant_unknown() : binding.getState().toString();
             }
         };
 
@@ -99,8 +100,8 @@ public class GatewaysList extends AbstractDataTable<Binding> {
             @Override
             public String getValue(Binding binding) {
                 return binding.getState() == null
-                        || EnumSet.<State> of(State.NONE, State.STOPPING).contains(binding.getState()) ? "Start"
-                        : "Stop";
+                        || EnumSet.<State> of(State.NONE, State.STOPPING).contains(binding.getState()) ? Singleton.MESSAGES.label_start()
+                        : Singleton.MESSAGES.label_stop();
             }
         };
         startStopColumn.setFieldUpdater(new FieldUpdater<Binding, String>() {
@@ -119,11 +120,11 @@ public class GatewaysList extends AbstractDataTable<Binding> {
         sortHandler.setComparator(typeColumn, createColumnCommparator(typeColumn));
         sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(typeColumn, "Type");
-        table.addColumn(statusColumn, "Status");
-        table.addColumn(startStopColumn, "Start/Stop");
-        table.addColumn(configColumn, "Configuration");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
+        table.addColumn(typeColumn, Singleton.MESSAGES.label_type());
+        table.addColumn(statusColumn, Singleton.MESSAGES.label_status());
+        table.addColumn(startStopColumn, Singleton.MESSAGES.label_startStop());
+        table.addColumn(configColumn, Singleton.MESSAGES.label_configuration());
 
         table.addColumnSortHandler(sortHandler);
 
@@ -146,7 +147,7 @@ public class GatewaysList extends AbstractDataTable<Binding> {
     }
 
     private void createBindingDetailsWindow() {
-        _bindingDetailsWindow = new DefaultWindow("Gateway Configuration");
+        _bindingDetailsWindow = new DefaultWindow(Singleton.MESSAGES.label_gatewayConfiguration());
         _bindingDetailsWindow.setGlassEnabled(true);
         _bindingDetailsWindow.setAutoHideEnabled(true);
         _bindingDetailsWindow.setAutoHideOnHistoryEventsEnabled(true);

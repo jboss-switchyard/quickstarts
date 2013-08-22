@@ -15,6 +15,7 @@
 package org.switchyard.console.client.gin;
 
 import org.jboss.as.console.spi.GinExtension;
+import org.switchyard.console.client.Messages;
 import org.switchyard.console.client.ui.application.ApplicationPresenter;
 import org.switchyard.console.client.ui.artifacts.ArtifactPresenter;
 import org.switchyard.console.client.ui.config.ConfigPresenter;
@@ -37,6 +38,11 @@ import com.google.gwt.inject.client.Ginjector;
 @GinModules(SwitchYardClientModule.class)
 @GinExtension("org.switchyard.console.SwitchYard")
 public interface SwitchYardGinjector extends Ginjector {
+
+    /**
+     * @return the localized messages.
+     */
+    Messages getMessages();
 
     /**
      * @return the ConfigPresenter configured for the module.

@@ -19,6 +19,7 @@ import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.SystemDetails;
 import org.switchyard.console.components.client.extension.ComponentProviders;
 import org.switchyard.console.components.client.model.Component;
@@ -45,9 +46,10 @@ public class ConfigView extends DisposableViewImpl implements ConfigPresenter.My
         _configEditor = new ConfigEditor(_componentProviders);
         _configEditor.setPresenter(_presenter);
 
-        SimpleLayout layout = new SimpleLayout().setTitle("SwitchYard Runtime Details")
-                .setHeadline("SwitchYard Runtime").setDescription("Displays details about the SwitchYard runtime.")
-                .addContent("Runtime Details", _configEditor.asWidget());
+        SimpleLayout layout = new SimpleLayout().setTitle(Singleton.MESSAGES.label_switchYardRuntimeDetails())
+                .setHeadline(Singleton.MESSAGES.label_switchYardRuntime())
+                .setDescription(Singleton.MESSAGES.description_switchYardRuntime())
+                .addContent(Singleton.MESSAGES.label_runtimeDetails(), _configEditor.asWidget());
         return layout.build();
     }
 
@@ -74,7 +76,7 @@ public class ConfigView extends DisposableViewImpl implements ConfigPresenter.My
         if (slot == ConfigPresenter.TYPE_COMPONENT_CONTENT) {
             _configEditor.setComponentContent(content);
         } else {
-            Console.error("Unknown slot requested: " + slot);
+            Console.error("Unknown slot requested: " + slot); //$NON-NLS-1$
         }
     }
 

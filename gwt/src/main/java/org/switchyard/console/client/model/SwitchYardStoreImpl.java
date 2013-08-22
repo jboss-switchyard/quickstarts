@@ -45,6 +45,7 @@ import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.dmr.client.ModelNode;
 import org.switchyard.console.client.BeanFactory;
 import org.switchyard.console.client.NameTokens;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.components.client.model.Component;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -61,25 +62,29 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 public class SwitchYardStoreImpl implements SwitchYardStore {
 
     // management api
-    private static final String APPLICATION_NAME = "application-name";
-    private static final String GET_VERSION = "get-version";
-    private static final String LIST_APPLICATIONS = "list-applications";
-    private static final String LIST_SERVICES = "list-services";
-    private static final String LIST_REFERENCES = "list-references";
-    private static final String MODULE = "module";
-    private static final String PROPERTY = "property";
-    private static final String READ_APPLICATION = "read-application";
-    private static final String READ_SERVICE = "read-service";
-    private static final String READ_REFERENCE = "read-reference";
-    private static final String SERVICE_NAME = "service-name";
-    private static final String SET_APPLICATION_PROPERTY = "set-application-property";
-    private static final String SHOW_METRICS = "show-metrics";
-    private static final String RESET_METRICS = "reset-metrics";
-    private static final String STOP_GATEWAY = "stop-gateway";
-    private static final String START_GATEWAY = "start-gateway";
+    private static final String APPLICATION_NAME = "application-name"; //$NON-NLS-1$
+    private static final String GET_VERSION = "get-version"; //$NON-NLS-1$
+    private static final String LIST_APPLICATIONS = "list-applications"; //$NON-NLS-1$
+    private static final String LIST_SERVICES = "list-services"; //$NON-NLS-1$
+    private static final String LIST_REFERENCES = "list-references"; //$NON-NLS-1$
+    private static final String MODULE = "module"; //$NON-NLS-1$
+    private static final String PROPERTY = "property"; //$NON-NLS-1$
+    private static final String READ_APPLICATION = "read-application"; //$NON-NLS-1$
+    private static final String READ_SERVICE = "read-service"; //$NON-NLS-1$
+    private static final String READ_REFERENCE = "read-reference"; //$NON-NLS-1$
+    private static final String SERVICE_NAME = "service-name"; //$NON-NLS-1$
+    private static final String SET_APPLICATION_PROPERTY = "set-application-property"; //$NON-NLS-1$
+    private static final String SHOW_METRICS = "show-metrics"; //$NON-NLS-1$
+    private static final String RESET_METRICS = "reset-metrics"; //$NON-NLS-1$
+    private static final String STOP_GATEWAY = "stop-gateway"; //$NON-NLS-1$
+    private static final String START_GATEWAY = "start-gateway"; //$NON-NLS-1$
     private static final String SWITCHYARD = NameTokens.SUBSYSTEM;
-    private static final String THROTTLING = "throttling";
-    private static final String UPDATE_THROTTLING = "update-throttling";
+    private static final String THROTTLING = "throttling"; //$NON-NLS-1$
+    private static final String UPDATE_THROTTLING = "update-throttling"; //$NON-NLS-1$
+    private static final String SERVICE = "service"; //$NON-NLS-1$
+    private static final String REFERENCE = "reference"; //$NON-NLS-1$
+    private static final String ALL_WILDCARD = "*"; //$NON-NLS-1$
+    private static final String PARSE_ERROR_MESSAGE = "Failed to parse data source representation"; //$NON-NLS-1$
 
     private final DispatchAsync _dispatcher;
     private final BeanFactory _factory;
@@ -161,7 +166,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                             application.setName(applicationNode.asString());
                             applications.add(application);
                         } catch (IllegalArgumentException e) {
-                            Log.error("Failed to parse data source representation", e);
+                            Log.error(PARSE_ERROR_MESSAGE, e);
                         }
                     }
 
@@ -200,7 +205,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                         return;
                     }
                 }
-                callback.onFailure(new Exception("Could not load information for application: " + applicationName));
+                callback.onFailure(new Exception(Singleton.MESSAGES.error_applicationLoad(applicationName)));
             }
         });
     }
@@ -234,7 +239,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                             component.setName(componentNode.asString());
                             components.add(component);
                         } catch (IllegalArgumentException e) {
-                            Log.error("Failed to parse data source representation", e);
+                            Log.error(PARSE_ERROR_MESSAGE, e);
                         }
                     }
 
@@ -277,7 +282,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                         return;
                     }
                 }
-                callback.onFailure(new Exception("Could not load information for component: " + componentName));
+                callback.onFailure(new Exception(Singleton.MESSAGES.error_componentLoad(componentName)));
             }
         });
     }
@@ -349,8 +354,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                         return;
                     }
                 }
-                callback.onFailure(new Exception("Could not load information for service: " + serviceName
-                        + " from application: " + applicationName));
+                callback.onFailure(new Exception(Singleton.MESSAGES.error_serviceLoad(serviceName, applicationName)));
             }
         });
     }
@@ -383,7 +387,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                         return;
                     }
                 }
-                callback.onFailure(new Exception("Could not load metrics for service: " + serviceName));
+                callback.onFailure(new Exception(Singleton.MESSAGES.error_serviceMetricsLoad(serviceName)));
             }
         });
     }
@@ -397,8 +401,8 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         operation.get(OP).set(SHOW_METRICS);
         address.add(SUBSYSTEM, SWITCHYARD);
         operation.get(OP_ADDR).set(address);
-        operation.get(SERVICE_NAME).set("*");
-        operation.get(TYPE).set("service");
+        operation.get(SERVICE_NAME).set(ALL_WILDCARD);
+        operation.get(TYPE).set(SERVICE);
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -411,7 +415,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
             public void onSuccess(DMRResponse result) {
                 final ModelNode response = result.get();
                 if (response.hasDefined(FAILED)) {
-                    callback.onFailure(new Exception("Could not load all service metrics."));
+                    callback.onFailure(new Exception(Singleton.MESSAGES.error_allServiceMetricsLoad()));
                 } else if (response.hasDefined(RESULT)) {
                     final List<ServiceMetrics> metrics = createServiceMetrics(response.get(RESULT));
                     callback.onSuccess(metrics);
@@ -431,8 +435,8 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         operation.get(OP).set(SHOW_METRICS);
         address.add(SUBSYSTEM, SWITCHYARD);
         operation.get(OP_ADDR).set(address);
-        operation.get(SERVICE_NAME).set("*");
-        operation.get(TYPE).set("reference");
+        operation.get(SERVICE_NAME).set(ALL_WILDCARD);
+        operation.get(TYPE).set(REFERENCE);
 
         _dispatcher.execute(new DMRAction(operation), new AsyncCallback<DMRResponse>() {
 
@@ -445,7 +449,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
             public void onSuccess(DMRResponse result) {
                 final ModelNode response = result.get();
                 if (response.hasDefined(FAILED)) {
-                    callback.onFailure(new Exception("Could not load all reference metrics."));
+                    callback.onFailure(new Exception(Singleton.MESSAGES.error_allReferenceMetricsLoad()));
                 } else if (response.hasDefined(RESULT)) {
                     final List<ServiceMetrics> metrics = createServiceMetrics(response.get(RESULT));
                     callback.onSuccess(metrics);
@@ -483,7 +487,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                         return;
                     }
                 }
-                callback.onFailure(new Exception("Could not load metrics for system"));
+                callback.onFailure(new Exception(Singleton.MESSAGES.error_systemMetricsLoad()));
             }
         });
     }
@@ -555,8 +559,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                         return;
                     }
                 }
-                callback.onFailure(new Exception("Could not load information for reference: " + referenceName
-                        + " from application: " + applicationName));
+                callback.onFailure(new Exception(Singleton.MESSAGES.error_referenceLoad(referenceName, applicationName)));
             }
         });
     }
@@ -582,7 +585,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
             public void onSuccess(DMRResponse result) {
                 final ModelNode response = result.get();
                 if (response.hasDefined(FAILED)) {
-                    callback.onFailure(new Exception("Could not load artifact references."));
+                    callback.onFailure(new Exception(Singleton.MESSAGES.error_artifactsLoad()));
                 } else if (response.hasDefined(RESULT)) {
                     Map<String, ArtifactReference> references = new HashMap<String, ArtifactReference>();
                     for (ModelNode node : response.get(RESULT).asList()) {
@@ -644,7 +647,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                     callback.onSuccess(null);
                     return;
                 }
-                callback.onFailure(new Exception("Failure setting property:" + prop.getKey()));
+                callback.onFailure(new Exception(Singleton.MESSAGES.error_setProperty(prop.getKey())));
             }
         });
     }
@@ -672,8 +675,8 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                     callback.onSuccess(null);
                     return;
                 }
-                callback.onFailure(new Exception("Failure resetting system metrics: "
-                        + response.getFailureDescription()));
+                callback.onFailure(new Exception(Singleton.MESSAGES.error_resetSystemMetrics(response
+                        .getFailureDescription())));
             }
         });
     }
@@ -704,8 +707,8 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                     callback.onSuccess(null);
                     return;
                 }
-                callback.onFailure(new Exception("Failure resetting metrics for " + name + ": "
-                        + response.getFailureDescription()));
+                callback.onFailure(new Exception(Singleton.MESSAGES.error_resetObjectMetrics(name,
+                        response.getFailureDescription())));
             }
         });
     }
@@ -738,8 +741,8 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                     callback.onSuccess(null);
                     return;
                 }
-                callback.onFailure(new Exception("Failure stopping gateway for " + name + ": "
-                        + response.getFailureDescription()));
+                callback.onFailure(new Exception(Singleton.MESSAGES.error_stopGateway(name,
+                        response.getFailureDescription())));
             }
         });
     }
@@ -772,8 +775,8 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                     callback.onSuccess(null);
                     return;
                 }
-                callback.onFailure(new Exception("Failure starting gateway for " + name + ": "
-                        + response.getFailureDescription()));
+                callback.onFailure(new Exception(Singleton.MESSAGES.error_startGateway(name,
+                        response.getFailureDescription())));
             }
         });
     }
@@ -805,8 +808,8 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
                     callback.onSuccess(null);
                     return;
                 }
-                callback.onFailure(new Exception("Failure updating throttling details for " + service.localName() + ": "
-                        + response.getFailureDescription()));
+                callback.onFailure(new Exception(Singleton.MESSAGES.error_updateThrottling(service.localName(),
+                        response.getFailureDescription())));
             }
         });
     }
@@ -836,7 +839,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         try {
             return AutoBeanCodex.decode(_factory, SystemDetails.class, systemDetailsNode.toJSONString(true)).as();
         } catch (Exception e) {
-            Log.error("Failed to parse data source representation", e);
+            Log.error(PARSE_ERROR_MESSAGE, e);
             return null;
         }
     }
@@ -845,7 +848,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         try {
             return AutoBeanCodex.decode(_factory, Application.class, applicationNode.toJSONString(true)).as();
         } catch (Exception e) {
-            Log.error("Failed to parse data source representation", e);
+            Log.error(PARSE_ERROR_MESSAGE, e);
             return null;
         }
     }
@@ -854,7 +857,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         try {
             return AutoBeanCodex.decode(_factory, Component.class, componentNode.toJSONString(true)).as();
         } catch (Exception e) {
-            Log.error("Failed to parse data source representation", e);
+            Log.error(PARSE_ERROR_MESSAGE, e);
             return null;
         }
     }
@@ -863,7 +866,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         try {
             return AutoBeanCodex.decode(_factory, Service.class, serviceNode.toJSONString(true)).as();
         } catch (Exception e) {
-            Log.error("Failed to parse data source representation", e);
+            Log.error(PARSE_ERROR_MESSAGE, e);
             return null;
         }
     }
@@ -872,7 +875,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         try {
             return AutoBeanCodex.decode(_factory, Service.class, serviceNode.toJSONString(true)).as();
         } catch (Exception e) {
-            Log.error("Failed to parse data source representation", e);
+            Log.error(PARSE_ERROR_MESSAGE, e);
             return null;
         }
     }
@@ -884,7 +887,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
             try {
                 metrics.add(AutoBeanCodex.decode(_factory, ServiceMetrics.class, item.toJSONString(true)).as());
             } catch (Exception e) {
-                Log.error("Failed to parse data source representation", e);
+                Log.error(PARSE_ERROR_MESSAGE, e);
             }
         }
         return metrics;
@@ -894,7 +897,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         try {
             return AutoBeanCodex.decode(_factory, MessageMetrics.class, metricsNode.toJSONString(true)).as();
         } catch (Exception e) {
-            Log.error("Failed to parse data source representation", e);
+            Log.error(PARSE_ERROR_MESSAGE, e);
             return null;
         }
     }
@@ -903,7 +906,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         try {
             return AutoBeanCodex.decode(_factory, Reference.class, referenceNode.toJSONString(true)).as();
         } catch (Exception e) {
-            Log.error("Failed to parse data source representation", e);
+            Log.error(PARSE_ERROR_MESSAGE, e);
             return null;
         }
     }
@@ -912,7 +915,7 @@ public class SwitchYardStoreImpl implements SwitchYardStore {
         try {
             return AutoBeanCodex.decode(_factory, Reference.class, referenceNode.toJSONString(true)).as();
         } catch (Exception e) {
-            Log.error("Failed to parse data source representation", e);
+            Log.error(PARSE_ERROR_MESSAGE, e);
             return null;
         }
     }

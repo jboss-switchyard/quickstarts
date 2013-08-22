@@ -14,6 +14,7 @@
 
 package org.switchyard.console.client.gin;
 
+import org.switchyard.console.client.Messages;
 import org.switchyard.console.client.model.SwitchYardStore;
 import org.switchyard.console.client.model.SwitchYardStoreImpl;
 import org.switchyard.console.client.ui.application.ApplicationPresenter;
@@ -37,6 +38,7 @@ import org.switchyard.console.components.client.extension.ComponentProviders;
 import org.switchyard.console.components.client.extension.DefaultComponentProvider;
 import org.switchyard.console.components.client.extension.DefaultComponentProviderImpl;
 
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 
@@ -74,6 +76,18 @@ public class SwitchYardClientModule extends AbstractPresenterModule {
 
         bind(ComponentProviders.class).in(Singleton.class);
         bind(DefaultComponentProvider.class).to(DefaultComponentProviderImpl.class);
+        
+        // messages
+        bind(Messages.class).toProvider(MessagesProvider.class);
     }
 
+    /**
+     * Binds the static, singleton instance of Messages.
+     */
+    public static class MessagesProvider implements Provider<Messages> {
+        @Override
+        public Messages get() {
+            return org.switchyard.console.client.Singleton.MESSAGES;
+        }
+    }
 }

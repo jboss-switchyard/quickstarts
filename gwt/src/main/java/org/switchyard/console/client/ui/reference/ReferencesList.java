@@ -14,6 +14,7 @@
 package org.switchyard.console.client.ui.reference;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Reference;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
 
@@ -42,7 +43,7 @@ public class ReferencesList extends AbstractDataTable<Reference> {
      * Create a new ReferencesList.
      */
     public ReferencesList() {
-        super("References");
+        super(Singleton.MESSAGES.label_references());
     }
 
     @Override
@@ -68,8 +69,8 @@ public class ReferencesList extends AbstractDataTable<Reference> {
         sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
         sortHandler.setComparator(namespaceColumn, createColumnCommparator(namespaceColumn));
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(namespaceColumn, "Target Namespace");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
+        table.addColumn(namespaceColumn, Singleton.MESSAGES.label_targetNamespace());
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(namespaceColumn);

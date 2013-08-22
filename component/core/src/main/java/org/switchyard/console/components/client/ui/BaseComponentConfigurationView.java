@@ -23,6 +23,7 @@ import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
 import org.switchyard.console.components.client.model.Component;
 import org.switchyard.console.components.client.ui.ComponentConfigurationPresenter.ComponentConfigurationView;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -45,6 +46,8 @@ import com.gwtplatform.mvp.client.ViewImpl;
  */
 public class BaseComponentConfigurationView extends ViewImpl implements ComponentConfigurationView {
 
+    private static final Messages MESSAGES = GWT.create(Messages.class);
+
     private Label _componentNameLabel;
     private Widget _widget;
     private ComponentConfigurationPresenter _presenter;
@@ -55,7 +58,7 @@ public class BaseComponentConfigurationView extends ViewImpl implements Componen
     public Widget asWidget() {
         if (_widget == null) {
             VerticalPanel layout = new VerticalPanel();
-            layout.setStyleName("fill-layout-width");
+            layout.setStyleName("fill-layout-width"); //$NON-NLS-1$
 
             _componentNameLabel = createComponentNameLabel();
             if (_componentNameLabel != null) {
@@ -101,14 +104,14 @@ public class BaseComponentConfigurationView extends ViewImpl implements Componen
      * @return a control for viewing the component's name.
      */
     protected Label createComponentNameLabel() {
-        return new ContentGroupLabel("");
+        return new ContentGroupLabel(""); //$NON-NLS-1$
     }
 
     /**
      * @return a control for viewing the component's activation types.
      */
     protected Label createComponentTypeLabel() {
-        return new ContentGroupLabel("");
+        return new ContentGroupLabel(""); //$NON-NLS-1$
     }
 
     /**
@@ -117,8 +120,8 @@ public class BaseComponentConfigurationView extends ViewImpl implements Componen
     @SuppressWarnings("unchecked")
     protected Widget createComponentDetailsWidget() {
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
-        layout.add(new ContentGroupLabel("Configured Properties"));
+        layout.setStyleName("fill-layout-width"); //$NON-NLS-1$
+        layout.add(new ContentGroupLabel(MESSAGES.label_configuredProperties()));
 
         DefaultCellTable<Entry<String, String>> table = new DefaultCellTable<Entry<String, String>>(5);
         TextColumn<Entry<String, String>> nameColumn = new TextColumn<Entry<String, String>>() {
@@ -136,8 +139,8 @@ public class BaseComponentConfigurationView extends ViewImpl implements Componen
             }
         };
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(valueColumn, "Value");
+        table.addColumn(nameColumn, MESSAGES.label_name());
+        table.addColumn(valueColumn, MESSAGES.label_value());
 
         layout.add(table);
 
@@ -194,7 +197,7 @@ public class BaseComponentConfigurationView extends ViewImpl implements Componen
     }
 
     private String getComponentNameLabelText() {
-        return "Name: " + getComponentName();
+        return MESSAGES.label_nameInstance(getComponentName());
     }
 
 }

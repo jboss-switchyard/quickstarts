@@ -19,6 +19,7 @@ import java.util.List;
 import org.jboss.ballroom.client.widgets.ContentGroupLabel;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.jboss.ballroom.client.widgets.forms.TextItem;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.SystemDetails;
 import org.switchyard.console.components.client.extension.ComponentProviders;
 import org.switchyard.console.components.client.model.Component;
@@ -61,9 +62,9 @@ public class ConfigEditor {
     public Widget asWidget() {
 
         VerticalPanel layout = new VerticalPanel();
-        layout.setStyleName("fill-layout-width");
+        layout.setStyleName("fill-layout-width"); //$NON-NLS-1$
 
-        TextItem versionItem = new TextItem("version", "Version");
+        TextItem versionItem = new TextItem("version", Singleton.MESSAGES.label_version()); //$NON-NLS-1$
         _systemDetailsForm = new Form<SystemDetails>(SystemDetails.class);
         _systemDetailsForm.setFields(versionItem);
 
@@ -78,12 +79,12 @@ public class ConfigEditor {
 
         _componentDetails = new SimplePanel();
 
-        layout.add(new ContentGroupLabel("Core Runtime"));
+        layout.add(new ContentGroupLabel(Singleton.MESSAGES.label_coreRuntime())); //$NON-NLS-1$
         layout.add(_systemDetailsForm.asWidget());
 
         layout.add(_componentsList.asWidget());
 
-        layout.add(new ContentGroupLabel("Component Details"));
+        layout.add(new ContentGroupLabel(Singleton.MESSAGES.label_componentDetails()));
         layout.add(_componentDetails);
 
         return layout;

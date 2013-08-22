@@ -52,7 +52,7 @@ public class GWTPTabPanel implements TabPanel {
      */
     public GWTPTabPanel(final PlaceManager placeManager) {
         _layout = new LayoutPanel();
-        _layout.addStyleName("fill-layout");
+        _layout.addStyleName("fill-layout"); //$NON-NLS-1$
 
         _tabBar = new DefaultTabLayoutPanel(40, Unit.PX);
         // _tabBar = new TabBar();
@@ -77,7 +77,7 @@ public class GWTPTabPanel implements TabPanel {
         });
 
         _content = new LayoutPanel();
-        _content.setStyleName("fill-layout");
+        _content.setStyleName("fill-layout"); //$NON-NLS-1$
 
         _layout.add(_tabBar);
         _layout.add(_content);

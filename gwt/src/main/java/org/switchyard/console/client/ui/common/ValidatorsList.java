@@ -14,6 +14,7 @@
 package org.switchyard.console.client.ui.common;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Validator;
 
 import com.google.gwt.dom.client.Style;
@@ -35,7 +36,7 @@ public class ValidatorsList extends AbstractDataTable<Validator> {
      * Create a new ValidatorsList.
      */
     public ValidatorsList() {
-        super("Validators");
+        super(Singleton.MESSAGES.label_validators());
     }
 
     @Override
@@ -61,14 +62,14 @@ public class ValidatorsList extends AbstractDataTable<Validator> {
         sortHandler.setComparator(nameColumn, createColumnCommparator(nameColumn));
         sortHandler.setComparator(typeColumn, createColumnCommparator(typeColumn));
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(typeColumn, "Type");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
+        table.addColumn(typeColumn, Singleton.MESSAGES.label_type());
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(typeColumn);
         table.getColumnSortList().push(nameColumn);
 
-        table.setWidth("100%", false);
+        table.setWidth("100%", false); //$NON-NLS-1$
         table.setColumnWidth(nameColumn, 70, Style.Unit.PCT);
         table.setColumnWidth(typeColumn, 30, Style.Unit.PCT);
     }
@@ -78,7 +79,7 @@ public class ValidatorsList extends AbstractDataTable<Validator> {
         return new ProvidesKey<Validator>() {
             @Override
             public Object getKey(Validator item) {
-                return "" + item.getName() + ":" + item.getType();
+                return "" + item.getName() + ":" + item.getType(); //$NON-NLS-1$ //$NON-NLS-2$
             }
         };
     }

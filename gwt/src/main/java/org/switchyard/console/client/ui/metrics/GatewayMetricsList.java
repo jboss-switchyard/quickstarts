@@ -14,6 +14,7 @@
 package org.switchyard.console.client.ui.metrics;
 
 import org.jboss.ballroom.client.widgets.tables.DefaultCellTable;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.GatewayMetrics;
 import org.switchyard.console.client.model.ServiceMetrics;
 import org.switchyard.console.client.ui.common.AbstractDataTable;
@@ -47,7 +48,7 @@ public class GatewayMetricsList extends AbstractDataTable<GatewayMetrics> {
      * Create a new GatewayMetricsList.
      */
     public GatewayMetricsList() {
-        super("Gateway Metrics");
+        super(Singleton.MESSAGES.label_gatewayMetrics());
     }
 
     @Override
@@ -119,12 +120,12 @@ public class GatewayMetricsList extends AbstractDataTable<GatewayMetrics> {
         sortHandler.setComparator(totalTimePercentageColumn, createNumberColumnCommparator(totalTimePercentageColumn));
         sortHandler.setComparator(faultPercentageColumn, createNumberColumnCommparator(faultPercentageColumn));
 
-        table.addColumn(nameColumn, "Name");
-        table.addColumn(typeColumn, "Type");
-        table.addColumn(countColumn, "Message Count");
-        table.addColumn(averageTimeColumn, "Average Time");
-        table.addColumn(totalTimePercentageColumn, "Time %");
-        table.addColumn(faultPercentageColumn, "Fault %");
+        table.addColumn(nameColumn, Singleton.MESSAGES.label_name());
+        table.addColumn(typeColumn, Singleton.MESSAGES.label_type());
+        table.addColumn(countColumn, Singleton.MESSAGES.label_messageCount());
+        table.addColumn(averageTimeColumn, Singleton.MESSAGES.label_averageTime());
+        table.addColumn(totalTimePercentageColumn, Singleton.MESSAGES.label_timePercent());
+        table.addColumn(faultPercentageColumn, Singleton.MESSAGES.label_faultPercent());
 
         table.addColumnSortHandler(sortHandler);
         table.getColumnSortList().push(averageTimeColumn);

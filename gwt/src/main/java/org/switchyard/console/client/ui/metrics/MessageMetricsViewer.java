@@ -17,6 +17,7 @@ import org.jboss.as.console.client.shared.runtime.Metric;
 import org.jboss.as.console.client.shared.runtime.charts.Column;
 import org.jboss.as.console.client.shared.runtime.charts.NumberColumn;
 import org.jboss.as.console.client.shared.runtime.charts.TextColumn;
+import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.MessageMetrics;
 import org.switchyard.console.client.ui.common.PlainColumnView;
 
@@ -51,37 +52,37 @@ public class MessageMetricsViewer {
      * @return the control.
      */
     public Widget asWidget() {
-        Column<?> containerTotalCountItem = new NumberColumn("ContainerTotalCount", "Total Count").setVisible(false);
-        Column<?> totalCountItem = new NumberColumn("TotalCount", "Total Count").setBaseline(true);
-        Column<?> successCountItem = new NumberColumn("SuccessCount", "Success Count")
+        Column<?> containerTotalCountItem = new NumberColumn("ContainerTotalCount", Singleton.MESSAGES.label_totalCount()).setVisible(false); //$NON-NLS-1$
+        Column<?> totalCountItem = new NumberColumn("TotalCount", Singleton.MESSAGES.label_totalCount()).setBaseline(true); //$NON-NLS-1$
+        Column<?> successCountItem = new NumberColumn("SuccessCount", Singleton.MESSAGES.label_successCount()) //$NON-NLS-1$
                 .setComparisonColumn(totalCountItem);
-        Column<?> faultCountItem = new NumberColumn("FaultCount", "Fault Count").setComparisonColumn(totalCountItem);
+        Column<?> faultCountItem = new NumberColumn("FaultCount", Singleton.MESSAGES.label_faultCount()).setComparisonColumn(totalCountItem); //$NON-NLS-1$
         if (_displaysChildMetrics) {
             totalCountItem.setComparisonColumn(containerTotalCountItem);
         }
 
         // XXX: these should really be "LongColumn"
-        Column<?> containerTotalProcessingTime = new NumberColumn("ContainerTotalProcessingTime",
-                "Total Processing Time").setVisible(false).setBaseline(true);
-        Column<?> totalProcessingTimeItem = new NumberColumn("TotalProcessingTime", "Total Processing Time");
+        Column<?> containerTotalProcessingTime = new NumberColumn("ContainerTotalProcessingTime", //$NON-NLS-1$
+                Singleton.MESSAGES.label_totalProcessingTime()).setVisible(false).setBaseline(true);
+        Column<?> totalProcessingTimeItem = new NumberColumn("TotalProcessingTime", Singleton.MESSAGES.label_totalProcessingTime()); //$NON-NLS-1$
         if (_displaysChildMetrics) {
             totalProcessingTimeItem.setComparisonColumn(containerTotalProcessingTime);
         }
 
         // XXX: using TextColumn for long and double fields
-        Column<?> averageProcessingTimeItem = new TextColumn("AverageProcessingTime", "Average Processing Time");
-        Column<?> minProcessingTimeItem = new TextColumn("MinProcessingTime", "Min. Processing Time");
-        Column<?> maxProcessingTimeItem = new TextColumn("MaxProcessingTime", "Max. Processing Time");
+        Column<?> averageProcessingTimeItem = new TextColumn("AverageProcessingTime", Singleton.MESSAGES.label_averageProcessingTime()); //$NON-NLS-1$
+        Column<?> minProcessingTimeItem = new TextColumn("MinProcessingTime", Singleton.MESSAGES.label_minProcessingTime()); //$NON-NLS-1$
+        Column<?> maxProcessingTimeItem = new TextColumn("MaxProcessingTime", Singleton.MESSAGES.label_maxProcessingTime()); //$NON-NLS-1$
 
-        _messageCounts = new PlainColumnView("Message Counts");
+        _messageCounts = new PlainColumnView(Singleton.MESSAGES.label_messageCounts());
         _messageCounts.setColumns(containerTotalCountItem, totalCountItem, successCountItem, faultCountItem);
 
-        _processingTimes = new PlainColumnView("Processing Times");
+        _processingTimes = new PlainColumnView(Singleton.MESSAGES.label_processingTimes());
         _processingTimes.setColumns(containerTotalProcessingTime, totalProcessingTimeItem, averageProcessingTimeItem,
                 minProcessingTimeItem, maxProcessingTimeItem);
 
         VerticalPanel panel = new VerticalPanel();
-        panel.setStyleName("fill-layout-width");
+        panel.setStyleName("fill-layout-width"); //$NON-NLS-1$
 
         panel.add(_messageCounts.asWidget());
         panel.add(_processingTimes.asWidget());
@@ -92,12 +93,12 @@ public class MessageMetricsViewer {
      * @param metrics the metrics to be displayed.
      */
     public void setMessageMetrics(MessageMetrics metrics) {
-        Metric countMetric = new Metric("0", "" + metrics.getTotalCount(), "" + metrics.getSuccessCount(), ""
+        Metric countMetric = new Metric("0", "" + metrics.getTotalCount(), "" + metrics.getSuccessCount(), "" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 + metrics.getFaultCount());
         _messageCounts.addSample(countMetric);
 
-        Metric timeMetric = new Metric("0", "" + metrics.getTotalProcessingTime(), ""
-                + metrics.getAverageProcessingTime(), "" + metrics.getMinProcessingTime(), ""
+        Metric timeMetric = new Metric("0", "" + metrics.getTotalProcessingTime(), "" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                + metrics.getAverageProcessingTime(), "" + metrics.getMinProcessingTime(), "" //$NON-NLS-1$ //$NON-NLS-2$
                 + metrics.getMaxProcessingTime());
         _processingTimes.addSample(timeMetric);
     }
@@ -108,12 +109,12 @@ public class MessageMetricsViewer {
      * @param totalTime the parent's total time.
      */
     public void setMessageMetrics(MessageMetrics metrics, int totalCount, long totalTime) {
-        Metric countMetric = new Metric(""+ totalCount, "" + metrics.getTotalCount(), "" + metrics.getSuccessCount(), ""
+        Metric countMetric = new Metric(""+ totalCount, "" + metrics.getTotalCount(), "" + metrics.getSuccessCount(), "" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 + metrics.getFaultCount());
         _messageCounts.addSample(countMetric);
 
-        Metric timeMetric = new Metric("" + totalTime, "" + metrics.getTotalProcessingTime(), ""
-                + metrics.getAverageProcessingTime(), "" + metrics.getMinProcessingTime(), ""
+        Metric timeMetric = new Metric("" + totalTime, "" + metrics.getTotalProcessingTime(), "" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                + metrics.getAverageProcessingTime(), "" + metrics.getMinProcessingTime(), "" //$NON-NLS-1$ //$NON-NLS-2$
                 + metrics.getMaxProcessingTime());
         _processingTimes.addSample(timeMetric);
     }
