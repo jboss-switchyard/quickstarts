@@ -22,7 +22,11 @@
     </parent>
     <artifactId>switchyard-quickstart-jca-inflow-hornetq</artifactId>
     <name>Quickstart : JCA Inflow Binding for HornetQ</name>
-    <dependencies>
+    <dependencies> 
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-bean</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-jca</artifactId>
