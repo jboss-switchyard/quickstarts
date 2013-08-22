@@ -63,6 +63,10 @@
             <artifactId>switchyard-remote</artifactId>
             <scope>test</scope>
         </dependency>
+		<dependency>
+			<groupId>org.switchyard.components</groupId>
+			<artifactId>switchyard-component-sca</artifactId>
+		</dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
