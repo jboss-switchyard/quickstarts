@@ -13,8 +13,12 @@
  */
 package org.switchyard.component.resteasy.composer;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
+import org.switchyard.ExchangeState;
+import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.component.common.composer.BaseMessageComposer;
 
@@ -55,6 +59,26 @@ public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyBinding
         Message sourceMessage = exchange.getMessage();
         Object content = sourceMessage.getContent();
         target.setOperationName(exchange.getContract().getProviderOperation().getName());
+        if (exchange.getState().equals(ExchangeState.FAULT)) {
+            if (content instanceof WebApplicationException) {
+                throw (WebApplicationException)content;
+            } else if (content instanceof HandlerException) {
+                Throwable throwable = ((HandlerException)content).getCause();
+                if (throwable != null) {
+                    if (throwable instanceof WebApplicationException) {
+                        throw (WebApplicationException)throwable;
+                    } else {
+                        throw new WebApplicationException(throwable);
+                    }
+                } else {
+                    throw new WebApplicationException((HandlerException)content);
+                }
+            } else if (content instanceof Throwable) {
+                throw new WebApplicationException((Throwable)content);
+            } else {
+                throw new WebApplicationException(new Exception(sourceMessage.getContent(String.class)));
+            }
+        }
         if (content != null) {
             target.setParameters(new Object[]{content});
         }

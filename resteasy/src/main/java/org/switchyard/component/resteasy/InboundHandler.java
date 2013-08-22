@@ -16,6 +16,8 @@ package org.switchyard.component.resteasy;
 
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
@@ -93,8 +95,9 @@ public class InboundHandler extends BaseServiceHandler {
      * @param restMessageRequest the request RESTEasyMessage
      * @param oneWay true of this is a oneway request
      * @return the response from invocation
+     * @throws WebApplicationException if any error
      */
-    public RESTEasyBindingData invoke(final RESTEasyBindingData restMessageRequest, final boolean oneWay) {
+    public RESTEasyBindingData invoke(final RESTEasyBindingData restMessageRequest, final boolean oneWay) throws WebApplicationException {
         RESTEasyBindingData output = new RESTEasyBindingData();
         SynchronousInOutHandler inOutHandler = new SynchronousInOutHandler();
         Exchange exchange = _service.createExchange(restMessageRequest.getOperationName(), inOutHandler);
@@ -108,7 +111,7 @@ public class InboundHandler extends BaseServiceHandler {
             message = _messageComposer.compose(restMessageRequest, exchange);
         } catch (Exception e) {
             LOGGER.error("Unexpected exception composing inbound Message", e);
-            return output;
+            throw new WebApplicationException(e);
         }
         if (oneWay) {
             exchange.send(message);
@@ -117,8 +120,11 @@ public class InboundHandler extends BaseServiceHandler {
             exchange = inOutHandler.waitForOut();
             try {
                 output = _messageComposer.decompose(exchange, output);
+            } catch (WebApplicationException wae) {
+                throw wae;
             } catch (Exception e) {
                 LOGGER.error("Unexpected exception composing outbound REST response", e);
+                throw new WebApplicationException(e);
             }
         }
         return output;
