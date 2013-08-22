@@ -29,13 +29,13 @@ import org.kie.api.runtime.process.WorkItem;
 import org.kie.api.runtime.process.WorkItemHandler;
 import org.kie.api.runtime.process.WorkItemManager;
 import org.switchyard.HandlerException;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceRequest;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceResponse;
 import org.switchyard.deploy.ComponentNames;
-import org.switchyard.SwitchYardException;
 
 /**
  * SwitchYardServiceTaskHandler.
@@ -95,6 +95,22 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
     }
 
     /**
+     * Gets the component name.
+     * @return the component name
+     */
+    public QName getComponentName() {
+        return _componentName;
+    }
+
+    /**
+     * Set the component name.
+     * @param componentName the component name
+     */
+    public void setComponentName(QName componentName) {
+        _componentName = componentName;
+    }
+
+    /**
      * Gets the invoker.
      * @return the invoker
      */
@@ -108,22 +124,6 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
      */
     public void setInvoker(SwitchYardServiceInvoker invoker) {
         _invoker = invoker;
-    }
-    
-    /**
-     * Set the service component name associated with this invoker.
-     * @param componentName service component name
-     */
-    public void setComponentName(QName componentName) {
-        _componentName = componentName;
-    }
-    
-    /**
-     * Get the service component name associated with this invoker.
-     * @return service component name
-     */
-    public QName getComponentName() {
-        return _componentName;
     }
 
     /**
@@ -164,10 +164,10 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
         SwitchYardServiceResponse response = getInvoker().invoke(request);
         // results (output)
         Map<String, Object> results = workItem.getResults();
+        String resultName = getResultName(parameters);
         Object fault = response.getFault();
         if (fault == null) {
             // result (success)
-            String resultName = getResultName(parameters);
             if (resultName != null) {
                 Object result = response.getContent();
                 results.put(resultName, result);
@@ -192,30 +192,43 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
                 getProcessRuntime().signalEvent(faultEventId, fault, workItem.getProcessInstanceId());
             }
             FaultAction faultAction = getFaultAction(parameters);
-            if (faultAction != null) {
-                switch (faultAction) {
-                    case ABORT: {
-                        manager.abortWorkItem(workItem.getId());
-                        break;
-                    }
-                    case COMPLETE: {
-                        manager.completeWorkItem(workItem.getId(), results);
-                        break;
-                    }
-                    case THROW: {
-                    // default: {
-                        final RuntimeException runtimeException;
-                        if (fault instanceof RuntimeException) {
-                            runtimeException = (RuntimeException)fault;
+            switch (faultAction) {
+                case ABORT: {
+                    manager.abortWorkItem(workItem.getId());
+                    break;
+                }
+                case COMPLETE: {
+                    manager.completeWorkItem(workItem.getId(), results);
+                    break;
+                }
+                case SKIP: {
+                    break;
+                }
+                case THROW: {
+                    final RuntimeException runtimeException;
+                    if (fault instanceof RuntimeException) {
+                        runtimeException = (RuntimeException)fault;
+                    } else {
+                        final Throwable cause;
+                        if (fault instanceof Throwable) {
+                            cause = (Throwable)fault;
                         } else {
-                            Throwable cause = fault instanceof Throwable ? (Throwable)fault : new SwitchYardException(emsg);
-                            WorkItemHandlerRuntimeException wihre = new WorkItemHandlerRuntimeException(cause, emsg);
-                            wihre.setStackTrace(cause.getStackTrace());
-                            wihre.setInformation(WorkItemHandlerRuntimeException.WORKITEMHANDLERTYPE, getClass().getSimpleName());
-                            runtimeException = wihre;
+                            cause = new SwitchYardException(emsg);
+                            cause.fillInStackTrace();
                         }
-                        throw runtimeException;
+                        WorkItemHandlerRuntimeException wihre = new WorkItemHandlerRuntimeException(cause, emsg);
+                        wihre.setStackTrace(cause.getStackTrace());
+                        wihre.setInformation(SERVICE_NAME, serviceName != null ? serviceName.toString() : null);
+                        wihre.setInformation(OPERATION_NAME, operationName);
+                        wihre.setInformation(PARAMETER_NAME, parameterName);
+                        wihre.setInformation(RESULT_NAME, resultName);
+                        wihre.setInformation(FAULT_NAME, faultName);
+                        wihre.setInformation(FAULT_EVENT_ID, faultEventId);
+                        wihre.setInformation(FAULT_ACTION, faultAction.name());
+                        wihre.setInformation(WorkItemHandlerRuntimeException.WORKITEMHANDLERTYPE, getClass().getSimpleName());
+                        runtimeException = wihre;
                     }
+                    throw runtimeException;
                 }
             }
         }
@@ -270,15 +283,15 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
     }
 
     private FaultAction getFaultAction(Map<String, Object> parameters) {
-        String s = getString(FAULT_ACTION, parameters, null);
-        if (s != null) {
-            try {
-                return FaultAction.valueOf(s.toUpperCase());
-            } catch (IllegalArgumentException iae) {
-                LOGGER.warn(String.format("Unknown %s: %s", FaultAction.class.getSimpleName(), iae.getMessage()));
-            }
+        FaultAction faultAction;
+        String fa = getString(FAULT_ACTION, parameters, FaultAction.DEFAULT.name());
+        try {
+            faultAction = FaultAction.valueOf(fa.toUpperCase());
+        } catch (Throwable t) {
+            LOGGER.warn(String.format("Unknown %s: %s (%s). Defaulting to %s.", FAULT_ACTION, fa, t.getMessage(), FaultAction.DEFAULT.name()));
+            faultAction = FaultAction.DEFAULT;
         }
-        return null;
+        return faultAction;
     }
 
     protected QName getQName(String parameterName, Map<String, Object> parameters, QName defaultValue) {
@@ -306,7 +319,9 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
     private static enum FaultAction {
         ABORT,
         COMPLETE,
+        SKIP,
         THROW;
+        private static final FaultAction DEFAULT = THROW;
     }
 
 }

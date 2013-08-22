@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:g="http://www.jboss.org/drools/flow/gpd" xmlns:tns="http://www.jboss.org/drools" xmlns="http://www.jboss.org/drools" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd" id="Definition" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.jboss.org/drools" typeLanguage="http://www.java.com/javaTypes">
   <bpmn2:itemDefinition id="ItemDefinition_HandlerException" structureRef="org.switchyard.HandlerException"/>
-  <bpmn2:signal id="FaultSignal" name="FaultSignal"/>
-  <bpmn2:process id="FaultEventProcess" tns:version="1" tns:packageName="org.switchyard.component.bpm" tns:adHoc="false" name="FaultEventProcess" isExecutable="true" processType="Private">
-    <bpmn2:extensionElements/>
+  <bpmn2:itemDefinition id="ItemDefinition_2" structureRef="org.jbpm.bpmn2.handler.WorkItemHandlerRuntimeException"/>
+  <bpmn2:itemDefinition id="ItemDefinition_181" itemKind="Physical" structureRef="String"/>
+  <bpmn2:error id="Error_1" errorCode="org.jbpm.bpmn2.handler.WorkItemHandlerRuntimeException" name="TestError" structureRef="ItemDefinition_2"/>
+  <bpmn2:process id="FaultBoundaryProcess" tns:version="1" tns:packageName="org.switchyard.component.bpm" tns:adHoc="false" name="FaultBoundaryProcess" isExecutable="true" processType="Private">
+    <bpmn2:extensionElements>
+      <tns:global identifier="TestOutput" type="String"/>
+    </bpmn2:extensionElements>
     <bpmn2:property id="faultEvent" itemSubjectRef="ItemDefinition_HandlerException"/>
     <bpmn2:startEvent id="_1" name="StartProcess">
       <bpmn2:outgoing>_1-_4</bpmn2:outgoing>
@@ -25,12 +29,8 @@
       <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
       <bpmn2:ioSpecification id="InputOutputSpecification_1">
         <bpmn2:dataInput id="DataInput_ServiceName" name="ServiceName"/>
-        <bpmn2:dataInput id="DataInput_1" name="FaultEventId"/>
-        <bpmn2:dataInput id="DataInput_6" name="FaultAction"/>
         <bpmn2:inputSet id="InputSet_1">
           <bpmn2:dataInputRefs>DataInput_ServiceName</bpmn2:dataInputRefs>
-          <bpmn2:dataInputRefs>DataInput_1</bpmn2:dataInputRefs>
-          <bpmn2:dataInputRefs>DataInput_6</bpmn2:dataInputRefs>
         </bpmn2:inputSet>
         <bpmn2:outputSet id="OutputSet_1"/>
       </bpmn2:ioSpecification>
@@ -41,44 +41,19 @@
           <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_2">DataInput_ServiceName</bpmn2:to>
         </bpmn2:assignment>
       </bpmn2:dataInputAssociation>
-      <bpmn2:dataInputAssociation id="DataInputAssociation_3">
-        <bpmn2:targetRef>DataInput_1</bpmn2:targetRef>
-        <bpmn2:assignment id="Assignment_3">
-          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_4">FaultSignal</bpmn2:from>
-          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_3">DataInput_1</bpmn2:to>
-        </bpmn2:assignment>
-      </bpmn2:dataInputAssociation>
-      <bpmn2:dataInputAssociation id="DataInputAssociation_7">
-        <bpmn2:targetRef>DataInput_6</bpmn2:targetRef>
-        <bpmn2:assignment id="Assignment_7">
-          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="FormalExpression_14" language="http://www.mvel.org/2.0">SKIP</bpmn2:from>
-          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="FormalExpression_13" language="http://www.mvel.org/2.0">DataInput_6</bpmn2:to>
-        </bpmn2:assignment>
-      </bpmn2:dataInputAssociation>
     </bpmn2:task>
     <bpmn2:sequenceFlow id="_1-_4" tns:priority="1" sourceRef="_1" targetRef="_4"/>
-    <bpmn2:intermediateCatchEvent id="IntermediateCatchEvent_1" name="FaultEvent">
-      <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
-      <bpmn2:dataOutput id="DataOutput_FaultEvent" itemSubjectRef="ItemDefinition_HandlerException" name="faultEvent"/>
-      <bpmn2:dataOutputAssociation id="DataOutputAssociation_2">
-        <bpmn2:sourceRef>DataOutput_FaultEvent</bpmn2:sourceRef>
-        <bpmn2:targetRef>faultEvent</bpmn2:targetRef>
-      </bpmn2:dataOutputAssociation>
-      <bpmn2:outputSet id="OutputSet_3">
-        <bpmn2:dataOutputRefs>DataOutput_FaultEvent</bpmn2:dataOutputRefs>
-      </bpmn2:outputSet>
-      <bpmn2:signalEventDefinition id="SignalEventDefinition_FaultSignal" signalRef="FaultSignal"/>
-    </bpmn2:intermediateCatchEvent>
-    <bpmn2:scriptTask id="FaultScript" name="FaultEventScript" scriptFormat="http://www.java.com/java">
-      <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
+    <bpmn2:scriptTask id="FaultScript" name="TestFailureScript" scriptFormat="http://www.java.com/java">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_12</bpmn2:outgoing>
-      <bpmn2:script>System.out.println(&quot;********** FaultEventProcess/TestFailureScript: &quot; + faultEvent + &quot; **********&quot;);</bpmn2:script>
+      <bpmn2:script>System.out.println(&quot;********** FaultBoundaryProcess/TestFailureScript *******&quot;);
+kcontext.setVariable(&quot;TestOutput&quot;, &quot;Failure&quot;);</bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_5" tns:priority="1" name="" sourceRef="IntermediateCatchEvent_1" targetRef="FaultScript"/>
-    <bpmn2:scriptTask id="ScriptTask_1" name="SuccessScript" scriptFormat="http://www.java.com/java">
+    <bpmn2:scriptTask id="ScriptTask_1" name="TestSuccessScript" scriptFormat="http://www.java.com/java">
       <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_6</bpmn2:outgoing>
-      <bpmn2:script>System.out.println(&quot;********** FaultEventProcess/TestSuccessScript **********&quot;);</bpmn2:script>
+      <bpmn2:script>System.out.println(&quot;********** FaultBoundaryProcess/TestSuccessScript **********&quot;);
+kcontext.setVariable(&quot;TestOutput&quot;, &quot;Success&quot;);</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:exclusiveGateway id="ExclusiveGateway_2" name="" gatewayDirection="Converging">
       <bpmn2:incoming>SequenceFlow_6</bpmn2:incoming>
@@ -89,8 +64,13 @@
     <bpmn2:sequenceFlow id="SequenceFlow_6" tns:priority="1" name="" sourceRef="ScriptTask_1" targetRef="ExclusiveGateway_2"/>
     <bpmn2:sequenceFlow id="SequenceFlow_12" tns:priority="1" name="" sourceRef="FaultScript" targetRef="ExclusiveGateway_2"/>
     <bpmn2:sequenceFlow id="SequenceFlow_8" tns:priority="1" name="" sourceRef="_4" targetRef="ScriptTask_1"/>
+    <bpmn2:boundaryEvent id="BoundaryEvent_1" name="" attachedToRef="_4">
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+      <bpmn2:errorEventDefinition id="ErrorEventDefinition_1" errorRef="Error_1"/>
+    </bpmn2:boundaryEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" tns:priority="1" name="" sourceRef="BoundaryEvent_1" targetRef="FaultScript"/>
   </bpmn2:process>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_1" name="FaultEventProcess">
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1" name="FaultBoundaryProcess">
     <bpmndi:BPMNPlane id="BPMNPlane_Process_1" bpmnElement="TestService">
       <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="_1">
         <dc:Bounds height="48.0" width="48.0" x="16.0" y="16.0"/>
@@ -105,16 +85,9 @@
         <di:waypoint xsi:type="dc:Point" x="64.0" y="40.0"/>
         <di:waypoint xsi:type="dc:Point" x="96.0" y="40.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BPMNShape_IntermediateCatchEvent_1" bpmnElement="IntermediateCatchEvent_1">
-        <dc:Bounds height="36.0" width="36.0" x="142.0" y="127.0"/>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_FaultScript" bpmnElement="FaultScript">
         <dc:Bounds height="50.0" width="110.0" x="260.0" y="120.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_7" bpmnElement="SequenceFlow_5" sourceElement="BPMNShape_IntermediateCatchEvent_1" targetElement="BPMNShape_FaultScript">
-        <di:waypoint xsi:type="dc:Point" x="178.0" y="145.0"/>
-        <di:waypoint xsi:type="dc:Point" x="260.0" y="145.0"/>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_ScriptTask_1" bpmnElement="ScriptTask_1">
         <dc:Bounds height="50.0" width="110.0" x="260.0" y="16.0"/>
       </bpmndi:BPMNShape>
@@ -136,6 +109,13 @@
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_9" bpmnElement="SequenceFlow_8" sourceElement="BPMNShape_Task_1" targetElement="BPMNShape_ScriptTask_1">
         <di:waypoint xsi:type="dc:Point" x="223.0" y="40.0"/>
         <di:waypoint xsi:type="dc:Point" x="260.0" y="41.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_BoundaryEvent_1" bpmnElement="BoundaryEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="191.0" y="47.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="BPMNShape_BoundaryEvent_1" targetElement="BPMNShape_FaultScript">
+        <di:waypoint xsi:type="dc:Point" x="209.0" y="83.0"/>
+        <di:waypoint xsi:type="dc:Point" x="315.0" y="120.0"/>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

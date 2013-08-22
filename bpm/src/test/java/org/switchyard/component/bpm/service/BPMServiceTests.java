@@ -70,6 +70,7 @@ public class BPMServiceTests {
     private static final String CONTROL_PROCESS_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-ControlProcess.bpmn";
     private static final String FAULT_RESULT_PROCESS_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-FaultResultProcess.bpmn";
     private static final String FAULT_EVENT_PROCESS_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-FaultEventProcess.bpmn";
+    private static final String FAULT_BOUNDARY_PROCESS_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-FaultBoundaryProcess.bpmn";
     private static final String REUSE_HANDLER_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-ReuseHandler.bpmn";
     private static final String RULES_FIRED_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-RulesFired.bpmn";
     private static final String RULES_FIRED_DRL = "org/switchyard/component/bpm/service/BPMServiceTests-RulesFired.drl";
@@ -312,6 +313,40 @@ public class BPMServiceTests {
         } else {
             Assert.assertNull(he);
         }
+        ksession.halt();
+        ksession.dispose();
+    }
+
+    @Test
+    public void testFaultBoundaryProcessSuccess() throws Exception {
+        runFaultBoundaryProcess(false);
+    }
+
+    @Test
+    public void testFaultBoundaryProcessFailure() throws Exception {
+        runFaultBoundaryProcess(true);
+    }
+
+    private void runFaultBoundaryProcess(final boolean bomb) throws Exception {
+        serviceDomain.registerService(new QName("TestService"), new InOnlyService(), new BaseHandler(){
+            public void handleMessage(Exchange exchange) throws HandlerException {
+                if (bomb) {
+                    throw new HandlerException("BOOM!");
+                }
+            }
+        });
+        serviceDomain.registerServiceReference(new QName("TestService"), new InOutService());
+        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+        kbuilder.add(ResourceFactory.newClassPathResource(FAULT_BOUNDARY_PROCESS_BPMN), ResourceType.BPMN2);
+        KieBase kbase = kbuilder.newKnowledgeBase();
+        KieSession ksession = kbase.newKieSession();
+        SwitchYardServiceTaskHandler ssth = new SwitchYardServiceTaskHandler();
+        ssth.setProcessRuntime(ksession);
+        ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain));
+        ksession.getWorkItemManager().registerWorkItemHandler(ssth.getName(), ssth);
+        WorkflowProcessInstance wpi = (WorkflowProcessInstance)ksession.startProcess("FaultBoundaryProcess");
+        String output = (String)wpi.getVariable("TestOutput");
+        Assert.assertEquals(bomb ? "Failure" : "Success", output);
         ksession.halt();
         ksession.dispose();
     }
