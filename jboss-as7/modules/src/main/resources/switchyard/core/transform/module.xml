@@ -22,7 +22,7 @@
 
     <dependencies>
         <module name="javax.api"/>
-        <module name="org.apache.log4j"/>
+        <module name="org.jboss.logging"/>
         <module name="org.apache.xerces" services="export" export="true"/>
         <module name="org.codehaus.jackson.jackson-core-asl"/>
         <module name="org.codehaus.jackson.jackson-mapper-asl"/>

@@ -22,7 +22,7 @@
 
     <dependencies>
         <module name="javax.api"/>
-        <module name="org.apache.log4j"/>
+        <module name="org.jboss.logging"/>
         <module name="org.apache.xml-resolver"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.api.extensions.java"/>
