@@ -13,7 +13,7 @@
  */
 package org.switchyard.bus.camel;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.ErrorListener;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;

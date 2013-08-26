@@ -21,7 +21,7 @@ import javax.xml.namespace.QName;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.ModelHelper;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.bus.camel.processors.Processors;

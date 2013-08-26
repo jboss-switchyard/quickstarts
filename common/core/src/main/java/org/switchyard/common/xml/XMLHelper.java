@@ -55,8 +55,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.common.lang.Strings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -891,27 +890,8 @@ public final class XMLHelper {
      * @param node the Node
      */
     public static void log(Node node) {
-        log(node, Level.INFO);
-    }
-
-    /**
-     * Logs a Node at the specified Level.
-     * @param node the Node
-     * @param level the specified Level
-     */
-    public static void log(Node node, Level level) {
-        log(node, level, LOGGER);
-    }
-
-    /**
-     * Logs a Node at the specified Level, to the specified Logger.
-     * @param node the Node
-     * @param level the specified Level
-     * @param logger the specified Logger
-     */
-    public static void log(Node node, Level level, Logger logger) {
-        if (logger.isEnabledFor(level)) {
-            logger.log(level, toString(node));
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(toString(node));
         }
     }
 

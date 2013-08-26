@@ -19,7 +19,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.BaseDeployMessages;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceSecurity;

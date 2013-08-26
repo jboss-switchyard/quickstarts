@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.metadata.InOnlyOperation;

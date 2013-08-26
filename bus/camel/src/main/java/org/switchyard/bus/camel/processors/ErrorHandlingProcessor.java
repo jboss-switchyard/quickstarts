@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.ErrorListener;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;

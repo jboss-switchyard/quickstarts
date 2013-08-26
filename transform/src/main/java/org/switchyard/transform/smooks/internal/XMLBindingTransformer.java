@@ -14,7 +14,7 @@
 
 package org.switchyard.transform.smooks.internal;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.milyn.Smooks;
 import org.milyn.container.plugin.SourceFactory;
 import org.milyn.javabean.binding.model.Bean;

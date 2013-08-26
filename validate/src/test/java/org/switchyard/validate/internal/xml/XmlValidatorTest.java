@@ -16,7 +16,7 @@ package org.switchyard.validate.internal.xml;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.SwitchYardException;

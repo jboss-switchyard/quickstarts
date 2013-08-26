@@ -14,7 +14,7 @@
 
 package org.switchyard.deployment;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.standalone.SwitchYard;
 import org.switchyard.deploy.internal.AbstractDeployment;
 

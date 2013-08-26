@@ -17,7 +17,7 @@ package org.switchyard.common.type.classpath;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.common.type.Classes;
 
 /**

@@ -23,7 +23,7 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.common.CommonCoreMessages;
 import org.switchyard.common.io.pull.PropertiesPuller;
 import org.switchyard.common.lang.Strings;

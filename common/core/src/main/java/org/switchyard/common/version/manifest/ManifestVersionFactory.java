@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.Manifest;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.common.CommonCoreLogger;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.version.BaseVersionFactory;

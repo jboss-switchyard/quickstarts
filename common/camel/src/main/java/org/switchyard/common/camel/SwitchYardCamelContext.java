@@ -27,7 +27,7 @@ import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.camel.event.CamelEventBridge;
 import org.switchyard.common.cdi.CDIUtil;

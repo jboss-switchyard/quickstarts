@@ -17,7 +17,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.milyn.Smooks;
 import org.milyn.container.plugin.SourceFactory;
 import org.milyn.payload.Export;

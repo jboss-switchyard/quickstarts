@@ -16,7 +16,7 @@ package org.switchyard.test;
 
 import java.lang.reflect.Field;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.junit.Assert;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunListener;

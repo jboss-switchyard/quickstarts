@@ -25,7 +25,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.common.cdi.CDIUtil;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.QNameUtil;

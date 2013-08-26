@@ -14,7 +14,6 @@
 package org.switchyard.common.version;
 
 import static java.lang.System.out;
-import static org.apache.log4j.Level.INFO;
 import static org.switchyard.common.version.Queries.Projects.SWITCHYARD;
 import static org.switchyard.common.version.Queries.Projects.SWITCHYARD_COMMON;
 
@@ -23,8 +22,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Set;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 /**
  * Versions.
@@ -58,20 +56,11 @@ public final class Versions {
     /**
      * Logs the SwitchYard notification returned by {@link #getSwitchYardNotification()}.
      * @param logger the Logger to log to
-     * @param level the Level to log at
-     */
-    public static void logSwitchYardNotification(Logger logger, Level level) {
-        if (logger.isEnabledFor(level)) {
-            logger.log(level, getSwitchYardNotification());
-        }
-    }
-
-    /**
-     * Logs the SwitchYard notification returned by {@link #getSwitchYardNotification()}.
-     * @param logger the Logger to log to
      */
     public static void logSwitchYardNotification(Logger logger) {
-        logSwitchYardNotification(logger, INFO);
+        if (logger.isInfoEnabled()) {
+            logger.info(getSwitchYardNotification());
+        }
     }
 
     /**
@@ -117,23 +106,15 @@ public final class Versions {
     /**
      * Logs each Version returned by {@link #getSwitchYardVersions()}.
      * @param logger the Logger to log to
-     * @param level the Level to log at
      */
-    public static void logSwitchYardVersions(Logger logger, Level level) {
-        if (logger.isEnabledFor(level)) {
+    public static void logSwitchYardVersions(Logger logger) {
+        if (logger.isInfoEnabled()) {
             for (Version version : getSwitchYardVersions()) {
-                logger.log(level, version);
+                logger.info(version);
             }
         }
     }
-    /**
-     * Logs each Version returned by {@link #getSwitchYardVersions()}.
-     * @param logger the Logger to log to
-     */
-    public static void logSwitchYardVersions(Logger logger) {
-        logSwitchYardVersions(logger, INFO);
-    }
-
+    
     /**
      * Logs each Version returned by {@link #getSwitchYardVersions()}.
      */

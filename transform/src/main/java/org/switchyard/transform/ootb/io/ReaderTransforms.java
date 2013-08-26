@@ -13,7 +13,7 @@
  */
 package org.switchyard.transform.ootb.io;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.annotations.Transformer;
 import org.xml.sax.InputSource;
 

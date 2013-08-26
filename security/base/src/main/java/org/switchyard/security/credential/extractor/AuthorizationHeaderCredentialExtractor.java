@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.common.codec.Base64;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.security.BaseSecurityLogger;

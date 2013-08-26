@@ -16,7 +16,7 @@ package org.switchyard.handlers;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;

@@ -21,7 +21,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.dom.DOMResult;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.Message;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.transform.BaseTransformer;

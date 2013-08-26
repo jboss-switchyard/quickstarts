@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;

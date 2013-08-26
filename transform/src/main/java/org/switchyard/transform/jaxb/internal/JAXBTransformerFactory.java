@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.QNameUtil;

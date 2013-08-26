@@ -14,7 +14,7 @@
 
 package org.switchyard.common.type.classpath;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.common.CommonCoreLogger;
 
 import java.io.File;

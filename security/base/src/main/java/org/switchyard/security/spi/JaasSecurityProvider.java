@@ -20,7 +20,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.reflect.Construction;

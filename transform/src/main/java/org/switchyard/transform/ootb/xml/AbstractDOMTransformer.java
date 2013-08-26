@@ -14,7 +14,7 @@
 
 package org.switchyard.transform.ootb.xml;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.transform.BaseTransformer;
 import org.switchyard.transform.TransformLogger;
 import org.switchyard.transform.TransformMessages;

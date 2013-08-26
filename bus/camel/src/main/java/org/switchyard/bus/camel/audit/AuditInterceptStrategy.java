@@ -24,7 +24,7 @@ import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.bus.camel.processors.Processors;
 
 /**

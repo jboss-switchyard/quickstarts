@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.event.EventPublisher;
 import org.switchyard.event.TransformerAddedEvent;

@@ -18,7 +18,8 @@ import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
+
 import org.switchyard.SwitchYardException;
 import org.switchyard.admin.Application;
 import org.switchyard.admin.Binding;

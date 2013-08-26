@@ -13,7 +13,7 @@
  */
 package org.switchyard.validate.xml.internal;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.config.model.XmlValidateModel;
 import org.switchyard.validate.internal.ValidatorFactory;

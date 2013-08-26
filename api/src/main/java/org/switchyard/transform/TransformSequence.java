@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.APILogger;
 import org.switchyard.APIMessages;
 import org.switchyard.Exchange;

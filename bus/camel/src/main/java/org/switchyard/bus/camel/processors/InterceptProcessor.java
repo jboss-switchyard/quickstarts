@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.ExchangeInterceptor;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
