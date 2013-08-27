@@ -23,6 +23,10 @@
     <artifactId>switchyard-quickstart-jca-outbound-hornetq</artifactId>
     <name>Quickstart : JCA Outbound Binding for HornetQ</name>
     <dependencies>
+ 		<dependency>
+			<groupId>org.switchyard.components</groupId>
+			<artifactId>switchyard-component-bean</artifactId>
+		</dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-jca</artifactId>
