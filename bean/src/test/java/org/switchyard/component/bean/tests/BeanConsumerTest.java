@@ -70,9 +70,8 @@ public class BeanConsumerTest {
             // if we got here, then our negative test failed
             Assert.fail("Invalid operation allowed!");
         } catch (InvocationFaultException ifEx) {
-            Assert.assertEquals(
-                    "Operation unknownXOp is not included in interface for service: ConsumerService", 
-                    ifEx.getFaultMessage().getContent(Exception.class).getMessage());
+            String msg = ifEx.getFaultMessage().getContent(Exception.class).getMessage();
+            Assert.assertTrue(msg.contains("SWITCHYARD014013"));
         }
     }
 
