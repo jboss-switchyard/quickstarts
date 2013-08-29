@@ -122,7 +122,8 @@ public class DeploymentTest {
         Service bindingService = deployment.getDomain().getServices(
                 new QName("urn:test:config-mock-binding:1.0", "TestReference")).get(0);
         Assert.assertNotNull(bindingService.getServiceMetadata().getRegistrant());
-        Assert.assertTrue(bindingService.getServiceMetadata().getRegistrant().getConfig() instanceof BindingModel);
+        List<BindingModel> svcBindings = bindingService.getServiceMetadata().getRegistrant().getConfig();
+        Assert.assertEquals(1, svcBindings.size());
         
         ServiceReference implReference = deployment.getDomain().getServiceReference(
                 new QName("urn:test:config-mock-binding:1.0", "TestService/TestReference"));
@@ -132,7 +133,8 @@ public class DeploymentTest {
         ServiceReference bindingReference = deployment.getDomain().getServiceReference(
                 new QName("urn:test:config-mock-binding:1.0", "TestService"));
         Assert.assertNotNull(bindingReference.getServiceMetadata().getRegistrant());
-        Assert.assertTrue(bindingReference.getServiceMetadata().getRegistrant().getConfig() instanceof BindingModel);
+        List<BindingModel> refBindings = bindingReference.getServiceMetadata().getRegistrant().getConfig();
+        Assert.assertEquals(2, refBindings.size());
     }
     
     @Test

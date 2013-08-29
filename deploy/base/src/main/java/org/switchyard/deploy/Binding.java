@@ -13,6 +13,9 @@
  */
 package org.switchyard.deploy;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.metadata.Registrant;
 
@@ -21,14 +24,24 @@ import org.switchyard.metadata.Registrant;
  */
 public class Binding implements Registrant {
     
-    private BindingModel _config;
+    private List<BindingModel> _configs = new LinkedList<BindingModel>();
+    
+    /**
+     * Create a new Binding instance.
+     * @param configs list of binding configs
+     */
+    public Binding(List<BindingModel> configs) {
+        if (configs != null) {
+            _configs.addAll(configs);
+        }
+    }
     
     /**
      * Create a new Binding instance.
      * @param config binding configuration
      */
     public Binding(BindingModel config) {
-        _config = config;
+        _configs.add(config);
     }
 
     @Override
@@ -43,8 +56,8 @@ public class Binding implements Registrant {
 
     @SuppressWarnings("unchecked")
     @Override
-    public BindingModel getConfig() {
-        return _config;
+    public List<BindingModel> getConfig() {
+        return _configs;
     }
 
 }

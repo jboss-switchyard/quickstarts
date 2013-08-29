@@ -35,7 +35,7 @@ public interface Registrant {
     /**
      * Returns a config representation based on the type of registrant.  
      * @param <T> Implementations will return ComponentImplementationModel, while 
-     * bindings will return BindingModel.
+     * bindings will return List<BindingModel>.
      * @return type-specific configuration model
      */
     <T> T getConfig();

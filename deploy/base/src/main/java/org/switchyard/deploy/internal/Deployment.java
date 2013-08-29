@@ -578,8 +578,11 @@ public class Deployment extends AbstractDeployment {
             // Create the reference for the composite service
             ServiceReference reference = getDomain().registerServiceReference(
                     service.getQName(), getCompositeServiceInterface(service));
-            ServiceMetadataBuilder.update(reference.getServiceMetadata()).throttling(
-                    getCompositeServiceThrottling(service));
+            Binding bindingMetadata = new Binding(service.getBindings());
+            ServiceMetadataBuilder.update(reference.getServiceMetadata())
+                .throttling(getCompositeServiceThrottling(service))
+                .registrant(bindingMetadata);
+            
             int bindingCount = 0;
             for (BindingModel binding : service.getBindings()) {
                 ++bindingCount;
@@ -595,11 +598,6 @@ public class Deployment extends AbstractDeployment {
                 if (activator == null) {
                     continue;
                 }
-
-                // Hack to set consumer metadata on reference
-                Binding bindingMetadata = new Binding(binding);
-                ServiceMetadataBuilder.update(reference.getServiceMetadata())
-                    .registrant(bindingMetadata);
                 
                 ServiceHandler handler = activator.activateBinding(service.getQName(), binding);
                 Activation activation = new Activation(activator, service.getQName(), binding, handler);

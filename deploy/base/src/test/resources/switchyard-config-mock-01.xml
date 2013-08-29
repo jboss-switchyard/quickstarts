@@ -19,7 +19,8 @@
             xsi:schemaLocation="urn:switchyard-component-mock:config:1.0 org/switchyard/component/mock/config/model/v1/mock-v1.xsd">
     <sca:composite name="mockBinding" targetNamespace="urn:test:config-mock-binding:1.0">
         <sca:service name="TestService" promote="TestService">
-            <mock:binding.mock/>
+            <mock:binding.mock name="binding1"/>
+            <mock:binding.mock name="binding2"/>
         </sca:service>
         <sca:reference name="TestReference" promote="TestService/TestReference">
             <mock:binding.mock/>
