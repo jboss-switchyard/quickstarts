@@ -314,18 +314,28 @@ public class Deployment extends AbstractDeployment {
     
     private ServiceInterface getCompositeReferenceInterface(CompositeReferenceModel compositeRefModel) {
         ServiceInterface serviceInterface = null;
-        
         if (hasCompositeReferenceInterface(compositeRefModel)) {
             serviceInterface = loadServiceInterface(compositeRefModel.getInterface());
-        } else if (hasComponentReferenceInterface(compositeRefModel.getComponentReference())) {
-            serviceInterface = loadServiceInterface(compositeRefModel.getComponentReference().getInterface());
+        } else {
+            List<ComponentReferenceModel> componentRefModels = compositeRefModel.getComponentReferences();
+            switch (componentRefModels.size()) {
+                case 0:
+                    break;
+                case 1:
+                    ComponentReferenceModel componentRefModel = componentRefModels.iterator().next();
+                    if (hasComponentReferenceInterface(componentRefModel)) {
+                        serviceInterface = loadServiceInterface(componentRefModel.getInterface());
+                    }
+                    break;
+                default:
+                    throw new SwitchYardException("A composite reference interface must be defined if promoting more than one component reference.");
+            }
         }
         return serviceInterface;
     }
     
     private ServiceInterface getCompositeServiceInterface(CompositeServiceModel compositeServiceModel) {
         ServiceInterface serviceInterface = null;
-        
         if (hasCompositeServiceInterface(compositeServiceModel)) {
             serviceInterface = loadServiceInterface(compositeServiceModel.getInterface());
         } else if (hasComponentServiceInterface(compositeServiceModel.getComponentService())) {
@@ -487,13 +497,14 @@ public class Deployment extends AbstractDeployment {
 
                 boolean wired = false;
                 // wire a reference if the name is different from promoted name
-                for (CompositeReferenceModel compositeReference : getConfig().getComposite().getReferences()) {
-                    ComponentReferenceModel componentReference = compositeReference.getComponentReference();
-                    if (componentReference != null && componentReference.equals(reference)) {
-                        if (!componentReference.getQName().equals(compositeReference.getQName())) {
-                            svcRef.wire(compositeReference.getQName());
-                            wired = true;
-                            break;
+                compositeReferenceLoop: for (CompositeReferenceModel compositeReference : getConfig().getComposite().getReferences()) {
+                    for (ComponentReferenceModel componentReference : compositeReference.getComponentReferences()) {
+                        if (componentReference != null && componentReference.equals(reference)) {
+                            if (!componentReference.getQName().equals(compositeReference.getQName())) {
+                                svcRef.wire(compositeReference.getQName());
+                                wired = true;
+                                break compositeReferenceLoop;
+                            }
                         }
                     }
                 }

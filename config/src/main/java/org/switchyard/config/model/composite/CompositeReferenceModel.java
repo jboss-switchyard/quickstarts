@@ -42,16 +42,10 @@ public interface CompositeReferenceModel extends NamedModel {
     public CompositeModel getComposite();
 
     /**
-     * Gets the child component model.
-     * @return the child component model
+     * Gets the child component reference models.
+     * @return the child component reference models
      */
-    public ComponentModel getComponent();
-
-    /**
-     * Gets the child component reference model.
-     * @return the child component reference model
-     */
-    public ComponentReferenceModel getComponentReference();
+    public List<ComponentReferenceModel> getComponentReferences();
 
     /**
      * Gets the promote attribute.

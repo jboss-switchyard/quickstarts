@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.jboss.logging.Logger;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.config.ConfigLogger;
 import org.switchyard.config.Configuration;
@@ -40,8 +39,6 @@ import org.switchyard.config.model.composite.InterfaceModel;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1CompositeServiceModel extends BaseNamedModel implements CompositeServiceModel {
-
-    private static final Logger LOGGER = Logger.getLogger(V1CompositeServiceModel.class);
 
     private List<BindingModel> _bindings = new ArrayList<BindingModel>();
     private InterfaceModel _interface;
@@ -81,55 +78,45 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
      * {@inheritDoc}
      */
     @Override
-    public ComponentModel getComponent() {
-        CompositeModel composite = getComposite();
-        if (composite != null) {
-            String[] promote = Strings.splitTrimToNullArray(getPromote(), "/");
-            if (promote.length > 0) {
-                String componentName = promote[0];
-                for (ComponentModel component : composite.getComponents()) {
-                    if (componentName.equals(component.getName())) {
-                        return component;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public ComponentServiceModel getComponentService() {
         CompositeModel composite = getComposite();
         if (composite != null) {
-            String[] promote = Strings.splitTrimToNullArray(getPromote(), "/");
-            int count = promote.length;
-            if (count > 0) {
-                String componentName = promote[0];
-                String componentServiceName = (count == 2) ? promote[1] : null;
-                boolean missingComponent = true;
-                for (ComponentModel component : composite.getComponents()) {
-                    if (componentName.equals(component.getName())) {
-                        missingComponent = false;
-                        List<ComponentServiceModel> services = component.getServices();
-                        if (count == 1) {
-                            if (services.size() > 0) {
-                                return services.get(0);
-                            }
-                            break;
-                        } else if (count == 2) {
-                            for (ComponentServiceModel service : services) {
-                                if (componentServiceName.equals(service.getName())) {
-                                    return service;
+            String[] promotes = Strings.splitTrimToNullArray(getPromote(), " ");
+            switch (promotes.length) {
+                case 0:
+                    break;
+                case 1:
+                    String[] names =  Strings.splitTrimToNullArray(promotes[0], "/");
+                    int namesCount = names.length;
+                    if (namesCount > 0) {
+                        String componentName = names[0];
+                        String componentServiceName = (namesCount == 2) ? names[1] : null;
+                        for (ComponentModel component : composite.getComponents()) {
+                            if (componentName.equals(component.getName())) {
+                                List<ComponentServiceModel> componentServices = component.getServices();
+                                if (namesCount == 1) {
+                                    if (componentServices.size() > 0) {
+                                        ComponentServiceModel componentService = componentServices.iterator().next();
+                                        if (componentService != null) {
+                                            return componentService;
+                                        }
+                                    }
+                                } else if (namesCount == 2) {
+                                    for (ComponentServiceModel componentService : componentServices) {
+                                        if (componentServiceName.equals(componentService.getName())) {
+                                            if (componentService != null) {
+                                                return componentService;
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                            ConfigLogger.ROOT_LOGGER.missingComponentService(componentServiceName, componentName);
                         }
+                        ConfigLogger.ROOT_LOGGER.missingComponentService((componentServiceName != null ? componentServiceName : ""), componentName);
                     }
-                }
-                ConfigLogger.ROOT_LOGGER.missingComponentService((missingComponent ? "missing " : ""), componentName);
+                    break;
+                default:
+                    throw new IllegalArgumentException("A composite service can only promote one component service.");
             }
         }
         return null;

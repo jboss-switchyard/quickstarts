@@ -77,58 +77,50 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
      * {@inheritDoc}
      */
     @Override
-    public ComponentModel getComponent() {
+    public List<ComponentReferenceModel> getComponentReferences() {
+        List<ComponentReferenceModel> list = new ArrayList<ComponentReferenceModel>();
         CompositeModel composite = getComposite();
         if (composite != null) {
-            String[] promote = Strings.splitTrimToNullArray(getPromote(), "/");
-            if (promote.length > 0) {
-                String componentName = promote[0];
-                for (ComponentModel component : composite.getComponents()) {
-                    if (componentName.equals(component.getName())) {
-                        return component;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ComponentReferenceModel getComponentReference() {
-        CompositeModel composite = getComposite();
-        if (composite != null) {
-            String[] promote = Strings.splitTrimToNullArray(getPromote(), "/");
-            int count = promote.length;
-            if (count > 0) {
-                String componentName = promote[0];
-                String componentReferenceName = (count == 2) ? promote[1] : null;
-                boolean missingComponent = true;
-                for (ComponentModel component : composite.getComponents()) {
-                    if (componentName.equals(component.getName())) {
-                        missingComponent = false;
-                        List<ComponentReferenceModel> references = component.getReferences();
-                        if (count == 1) {
-                            if (references.size() > 0) {
-                                return references.get(0);
-                            }
-                            break;
-                        } else if (count == 2) {
-                            for (ComponentReferenceModel reference : references) {
-                                if (componentReferenceName.equals(reference.getName())) {
-                                    return reference;
+            String[] promotes = Strings.splitTrimToNullArray(getPromote(), " ");
+            for (String promote : promotes) {
+                String[] names =  Strings.splitTrimToNullArray(promote, "/");
+                int namesCount = names.length;
+                if (namesCount > 0) {
+                    String componentName = names[0];
+                    String componentReferenceName = (namesCount == 2) ? names[1] : null;
+                    boolean componentMissing = true;
+                    componentLoop: for (ComponentModel component : composite.getComponents()) {
+                        if (componentName.equals(component.getName())) {
+                            List<ComponentReferenceModel> componentReferences = component.getReferences();
+                            if (namesCount == 1) {
+                                if (componentReferences.size() > 0) {
+                                    ComponentReferenceModel componentReference = componentReferences.iterator().next();
+                                    if (componentReference != null) {
+                                        list.add(componentReference);
+                                        componentMissing = false;
+                                        break componentLoop;
+                                    }
+                                }
+                            } else if (namesCount == 2) {
+                                for (ComponentReferenceModel componentReference : componentReferences) {
+                                    if (componentReferenceName.equals(componentReference.getName())) {
+                                        if (componentReference != null) {
+                                            list.add(componentReference);
+                                            componentMissing = false;
+                                            break componentLoop;
+                                        }
+                                    }
                                 }
                             }
-                            ConfigLogger.ROOT_LOGGER.missingComponentReference(componentReferenceName, componentName);
                         }
                     }
+                    if (componentMissing) {
+                        ConfigLogger.ROOT_LOGGER.missingComponentReference((componentReferenceName != null ? componentReferenceName : ""), componentName);
+                    }
                 }
-                ConfigLogger.ROOT_LOGGER.missingComponentReference((missingComponent ? "missing " : ""), componentName);
             }
         }
-        return null;
+        return list;
     }
 
     /**

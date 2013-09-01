@@ -23,6 +23,8 @@ import java.io.StringReader;
 
 import javax.xml.namespace.QName;
 
+import junit.framework.Assert;
+
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
@@ -55,6 +57,7 @@ public class CompositeModelTests {
     private static final String EXTENDED_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Extended.xml";
     private static final String EXTENSION_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Extension.xml";
     private static final String SCA_BINDING_XML = "/org/switchyard/config/model/composite/CompositeModelTests-SCABinding.xml";
+    private static final String PROMOTE_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Promote.xml";
 
     private static ModelPuller<CompositeModel> _puller;
 
@@ -139,7 +142,6 @@ public class CompositeModelTests {
         WSDLModel wsdl = binding2.getWSDL();
         assertEquals("http://exmample.org:8080/services/SomeOtherService?wsdl", wsdl.getLocation());
         ComponentModel component1 = composite.getComponents().get(0);
-        assertEquals(component1, compositeService.getComponent());
         assertEquals("SimpleService", component1.getName());
         ComponentImplementationModel implementation1 = component1.getImplementation();
         assertEquals("bean", implementation1.getType());
@@ -271,7 +273,35 @@ public class CompositeModelTests {
         // test binding.sca on composite reference
         CompositeReferenceModel compositeReference = composite.getReferences().get(0);
         BindingModel rb = compositeReference.getBindings().get(0);
-        assertTrue(sb instanceof SCABindingModel);
+        assertTrue(rb instanceof SCABindingModel);
+    }
+    
+    @Test
+    public void testPromote() throws Exception {
+        CompositeModel composite = _puller.pull(PROMOTE_XML, getClass());
+        CompositeServiceModel singlePromoteCompositeSrv = null;
+        for (CompositeServiceModel compositeSrv : composite.getServices()) {
+            if ("SinglePromoteExampleService".equals(compositeSrv.getName())) {
+                singlePromoteCompositeSrv = compositeSrv;
+            }
+        }
+        Assert.assertNotNull("null SinglePromoteExampleService", singlePromoteCompositeSrv);
+        ComponentServiceModel componentSrv = singlePromoteCompositeSrv.getComponentService();
+        Assert.assertNotNull("null FooExampleService", componentSrv);
+        Assert.assertEquals("FooExampleService", componentSrv.getName());
+        CompositeReferenceModel singlePromoteCompositeRef = null;
+        CompositeReferenceModel multiPromoteCompositeRef = null;
+        for (CompositeReferenceModel compositeRef : composite.getReferences()) {
+            if ("SinglePromoteExampleReference".equals(compositeRef.getName())) {
+                singlePromoteCompositeRef = compositeRef;
+            } else if ("MultiPromoteExampleReference".equals(compositeRef.getName())) {
+                multiPromoteCompositeRef = compositeRef;
+            }
+        }
+        Assert.assertNotNull("null SinglePromoteExampleReference", singlePromoteCompositeRef);
+        Assert.assertEquals(1, singlePromoteCompositeRef.getComponentReferences().size());
+        Assert.assertNotNull("null MultiPromoteExampleReference", multiPromoteCompositeRef);
+        Assert.assertEquals(2, multiPromoteCompositeRef.getComponentReferences().size());
     }
 
     @Test
