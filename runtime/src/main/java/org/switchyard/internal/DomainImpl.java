@@ -248,7 +248,11 @@ public class DomainImpl implements ServiceDomain {
 
     @Override
     public ServiceDomain setProperty(String name, Object value) {
-        _properties.put(name, value);
+        if (value != null) {
+            _properties.put(name, value);
+        } else {
+            _properties.remove(name);
+        }
         return this;
     }
 

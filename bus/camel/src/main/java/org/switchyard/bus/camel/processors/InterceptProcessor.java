@@ -138,11 +138,19 @@ public class InterceptProcessor implements Processor {
     }
     
     
-    private boolean traceEnabled(Exchange ex) {
+    boolean traceEnabled(Exchange ex) {
         // if message tracing is explicitly enabled/disabled on the domain, then go with that
-        String traceProp = (String)_domain.getProperty(MessageTraceHandler.TRACE_ENABLED);
+        Object traceProp = _domain.getProperty(MessageTraceHandler.TRACE_ENABLED);
         if (traceProp != null) {
-            return Boolean.valueOf(traceProp);
+            boolean enabled = false;
+            if (Boolean.class.isAssignableFrom(traceProp.getClass())) {
+                enabled = Boolean.valueOf((Boolean)traceProp);
+            } else if (String.class.isAssignableFrom(traceProp.getClass())) {
+                enabled = Boolean.valueOf((String)traceProp);
+            } else {
+                enabled = Boolean.valueOf(traceProp.toString());
+            }
+            return enabled;
         }
         
         // no setting for the domain, check the exchange
