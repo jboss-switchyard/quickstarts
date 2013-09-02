@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions targetNamespace="urn:switchyard-component-soap:test-ws:1.0" name="ImageService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:tns="urn:switchyard-component-soap:test-ws:1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+    xmlns:wsp="http://www.w3.org/ns/ws-policy"
+    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+    xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+    xmlns:wsoma="http://www.w3.org/2007/08/soap12-mtom-policy"
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+
+  <import location="ImageServiceMtomImported2.wsdl" namespace="urn:switchyard-component-soap:test-ws:1.0"/>
+
+  <service name="ImageService">
+    <port name="ImageServicePort" binding="tns:ImageServicePortBinding">
+      <soap:address location="REPLACE_WITH_ADDRESSING_URL"/>
+    </port>
+    <port name="ImageServicePort2" binding="tns:ImageServicePortBinding2">
+      <soap:address location="REPLACE_WITH_ADDRESSING_URL2"/>
+    </port>
+  </service>
+</definitions>
+

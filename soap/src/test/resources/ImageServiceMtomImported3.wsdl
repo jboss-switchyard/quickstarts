@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions targetNamespace="urn:switchyard-component-soap:test-ws:1.0" name="ImageService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:tns="urn:switchyard-component-soap:test-ws:1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+    xmlns:wsp="http://www.w3.org/ns/ws-policy"
+    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+    xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+    xmlns:wsoma="http://www.w3.org/2007/08/soap12-mtom-policy"
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+
+  <import location="ImageServiceMtomImportedMessages3.wsdl" namespace="urn:switchyard-component-soap:test-ws:1.0"/>
+
+  <portType name="ImageService">
+    <operation name="resize">
+      <input message="tns:resize"/>
+      <output message="tns:resizeResponse"/>
+    </operation>
+  </portType>
+  <portType name="ImageService2">
+    <operation name="resize">
+      <input message="tns:resize"/>
+      <output message="tns:resizeResponse"/>
+    </operation>
+  </portType>
+  <binding name="ImageServicePortBinding" type="tns:ImageService">
+    <soap:binding transport="http://www.w3.org/2003/05/soap/bindings/HTTP/" style="rpc"/>
+    <operation name="resize">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <binding name="ImageServicePortBinding2" type="tns:ImageService2">
+    <soap:binding transport="http://www.w3.org/2003/05/soap/bindings/HTTP/" style="rpc"/>
+    <operation name="resize">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+</definitions>
+

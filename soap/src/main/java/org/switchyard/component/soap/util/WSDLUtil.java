@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +28,14 @@ import java.util.Set;
 
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
+import javax.wsdl.Import;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
+import javax.wsdl.Types;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
@@ -671,9 +674,10 @@ outer:      while (services.hasNext()) {
         Feature feature = new Feature();
         Boolean addressing = false;
         Boolean mtom = false;
+        List<ExtensibilityElement> extensibilityElements = getExtensibilityElements(definition);
         if (documentStyle) {
             // Check if any element uses xmime:expectedContentTypes
-            for (ExtensibilityElement element : (List<ExtensibilityElement>)definition.getTypes().getExtensibilityElements()) {
+            for (ExtensibilityElement element : extensibilityElements) {
                 if (element instanceof Schema) {
                     mtom = setMtomEnabled((Schema)element);
                     if (mtom) {
@@ -710,7 +714,7 @@ outer:  for (ExtensibilityElement element : (List<ExtensibilityElement>)port.get
                         throw new RuntimeException("Policy reference URI missing for " + port.getBinding().getQName().getLocalPart());
                     }
                     uri = uri.substring(1);
-                    for (ExtensibilityElement defElement : (List<ExtensibilityElement>)definition.getExtensibilityElements()) {
+                    for (ExtensibilityElement defElement : extensibilityElements) {
                         if (defElement.getElementType().equals(POLICY_QNAME)) {
                             Element defDomElement = ((UnknownExtensibilityElement)defElement).getElement();
                             attrValue = XMLHelper.getAttribute(defDomElement, SECURITY_UTILITY_URI, ATTR_ID);
@@ -734,6 +738,24 @@ outer:  for (ExtensibilityElement element : (List<ExtensibilityElement>)port.get
             }
         }
         return feature;
+    }
+
+    private static List<ExtensibilityElement> getExtensibilityElements(Definition definition) {
+        List<ExtensibilityElement> elements = new ArrayList<ExtensibilityElement>();
+        Types types = definition.getTypes();
+        if (types != null) {
+            elements.addAll(definition.getExtensibilityElements());
+            elements.addAll(types.getExtensibilityElements());
+        }
+        Iterator<List<Import>> wsdlImports = definition.getImports().values().iterator();
+        while (wsdlImports.hasNext()) {
+            List<Import> imports = wsdlImports.next();
+            int size = imports.size();
+            for (int i = 0; i < size; i++) {
+                elements.addAll(getExtensibilityElements(imports.get(i).getDefinition()));
+            }
+        }
+        return elements;
     }
 
     private static Boolean setAddressingEnabled(Feature feature, Element defDomElement) {

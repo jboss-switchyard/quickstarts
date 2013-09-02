@@ -162,6 +162,7 @@ public class WSDLUtilTest {
 
     @Test
     public void soapMtom() throws Exception {
+        // Document policy ref
         Definition definition = WSDLUtil.readWSDL("ImageServiceMtom.wsdl");
         Service service = WSDLUtil.getService(definition, new PortName("ImageService:ImageServicePort"));
         Assert.assertNotNull(service);
@@ -170,11 +171,13 @@ public class WSDLUtilTest {
         Assert.assertNotNull(port);
         Feature feature = WSDLUtil.getFeature(definition, port, true);
         Assert.assertEquals("[AddressingEnabled:false, AddressingRequired:false, MtomEnabled:true]", feature.toString());
+        // Document policy ref another style
         port = WSDLUtil.getPort(service, new PortName("ImageServicePort2"));
         Assert.assertNotNull(port);
         feature = WSDLUtil.getFeature(definition, port, true);
         Assert.assertEquals("[AddressingEnabled:false, AddressingRequired:false, MtomEnabled:true]", feature.toString());
 
+        // Document element def
         definition = WSDLUtil.readWSDL("ImageServiceMtom2.wsdl");
         service = WSDLUtil.getService(definition, new PortName("ImageService:ImageServicePort"));
         Assert.assertNotNull(service);
@@ -196,6 +199,44 @@ public class WSDLUtilTest {
         PortName portName = new PortName("{urn:switchyard-metadata-interface}HelloWebService:");
         service = WSDLUtil.getService("HelloWebServiceImport.wsdl", portName);
         Assert.assertNotNull(service);
+    }
+
+    @Test
+    public void soapMtomImportTypes() throws Exception {
+        // Document policy ref
+        Definition definition = WSDLUtil.readWSDL("ImageServiceMtomImportTypes.wsdl");
+        Service service = WSDLUtil.getService(definition, new PortName("ImageService:ImageServicePort"));
+        Assert.assertNotNull(service);
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "ImageService"));
+        Port port = WSDLUtil.getPort(service, new PortName("ImageServicePort"));
+        Assert.assertNotNull(port);
+        Feature feature = WSDLUtil.getFeature(definition, port, true);
+        Assert.assertEquals("[AddressingEnabled:false, AddressingRequired:false, MtomEnabled:true]", feature.toString());
+        // Document policy ref another style
+        port = WSDLUtil.getPort(service, new PortName("ImageServicePort2"));
+        Assert.assertNotNull(port);
+        feature = WSDLUtil.getFeature(definition, port, true);
+        Assert.assertEquals("[AddressingEnabled:false, AddressingRequired:false, MtomEnabled:true]", feature.toString());
+
+        // Document element def
+        definition = WSDLUtil.readWSDL("ImageServiceMtomImportTypes2.wsdl");
+        service = WSDLUtil.getService(definition, new PortName("ImageService:ImageServicePort"));
+        Assert.assertNotNull(service);
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "ImageService"));
+        port = WSDLUtil.getPort(service, new PortName("ImageServicePort"));
+        Assert.assertNotNull(port);
+        feature = WSDLUtil.getFeature(definition, port, true);
+        Assert.assertEquals("[AddressingEnabled:false, AddressingRequired:false, MtomEnabled:true]", feature.toString());
+
+        // RPC message definition
+        definition = WSDLUtil.readWSDL("ImageServiceMtomImportTypes3.wsdl");
+        service = WSDLUtil.getService(definition, new PortName("ImageService:ImageServicePort"));
+        Assert.assertNotNull(service);
+        Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "ImageService"));
+        port = WSDLUtil.getPort(service, new PortName("ImageServicePort"));
+        Assert.assertNotNull(port);
+        feature = WSDLUtil.getFeature(definition, port, true);
+        Assert.assertEquals("[AddressingEnabled:false, AddressingRequired:false, MtomEnabled:true]", feature.toString());
     }
 
     /*
