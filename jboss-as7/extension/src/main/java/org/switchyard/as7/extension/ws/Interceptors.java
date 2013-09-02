@@ -15,6 +15,7 @@ package org.switchyard.as7.extension.ws;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,12 @@ import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
+import org.apache.cxf.ws.policy.AssertionInfo;
+import org.apache.cxf.ws.policy.AssertionInfoMap;
+import org.apache.cxf.ws.security.policy.SP12Constants;
+import org.apache.cxf.ws.security.policy.model.SignedEncryptedParts;
+import org.apache.cxf.ws.security.wss4j.PolicyBasedWSS4JInInterceptor;
+import org.apache.neethi.Assertion;
 import org.jboss.security.SecurityContextAssociation;
 import org.jboss.wsf.spi.deployment.Endpoint;
 import org.jboss.wsf.stack.cxf.configuration.BusHolder;
@@ -31,13 +38,15 @@ import org.jboss.wsf.stack.cxf.configuration.NonSpringBusHolder;
 import org.jboss.wsf.stack.cxf.deployment.EndpointImpl;
 import org.jboss.wsf.stack.cxf.security.authentication.SubjectCreatingInterceptor;
 import org.jboss.wsf.stack.cxf.security.authentication.SubjectCreatingPolicyInterceptor;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.type.reflect.FieldAccess;
+import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.config.model.InterceptorModel;
 import org.switchyard.component.soap.config.model.InterceptorsModel;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.config.model.property.PropertiesModel;
-import org.switchyard.SwitchYardException;
+import org.switchyard.security.credential.ConfidentialityCredential;
 
 /**
  * Interceptor functions.
@@ -63,10 +72,11 @@ public final class Interceptors {
             List<?> list = new FieldAccess<List<?>>(NonSpringBusHolder.class, "endpoints").read(busHolder);
             for (Object o : list) {
                 for (org.apache.cxf.endpoint.Endpoint e : ((EndpointImpl)o).getService().getEndpoints().values()) {
+                    e.getInInterceptors().add(new SwitchYardEncryptionConfidentialityInterceptor());
                     e.getInInterceptors().addAll(getConfiguredInInterceptors(bindingModel, loader));
                     e.getOutInterceptors().addAll(getConfiguredOutInterceptors(bindingModel, loader));
-                    e.getOutInterceptors().add(new ClearSecurityContextOutInterceptor());
-                    e.getOutFaultInterceptors().add(new ClearSecurityContextOutFaultInterceptor());
+                    e.getOutInterceptors().add(new SwitchYardSecurityCleanupOutInterceptor());
+                    e.getOutFaultInterceptors().add(new SwitchYardSecurityCleanupOutFaultInterceptor());
                 }
             }
         }
@@ -158,8 +168,38 @@ public final class Interceptors {
         return constructor;
     }
 
-    private static class ClearSecurityContextInterceptor extends AbstractPhaseInterceptor<Message> {
-        private ClearSecurityContextInterceptor() {
+    private static final class SwitchYardEncryptionConfidentialityInterceptor extends AbstractPhaseInterceptor<Message> {
+        private SwitchYardEncryptionConfidentialityInterceptor() {
+            super(Phase.POST_PROTOCOL);
+            getAfter().add(PolicyBasedWSS4JInInterceptor.class.getName());
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void handleMessage(Message message) throws Fault {
+            AssertionInfoMap aim = message.get(AssertionInfoMap.class);
+            if (aim != null) {
+                // http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/ws-securitypolicy-1.2-spec-os.html#_Toc161826515
+                Collection<AssertionInfo> ais = aim.getAssertionInfo(SP12Constants.ENCRYPTED_PARTS);
+                if (ais != null) {
+                    for (AssertionInfo ai : ais) {
+                        Assertion a = ai.getAssertion();
+                        if (a instanceof SignedEncryptedParts) {
+                            SignedEncryptedParts sep = (SignedEncryptedParts)a;
+                            if (!sep.isIgnorable() && !sep.isOptional()) {
+                                InboundHandler.getCredentials().add(new ConfidentialityCredential(true));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static class SwitchYardSecurityCleanupInterceptor extends AbstractPhaseInterceptor<Message> {
+        private SwitchYardSecurityCleanupInterceptor() {
             super(Phase.POST_LOGICAL_ENDING);
         }
         /**
@@ -167,6 +207,7 @@ public final class Interceptors {
          */
         @Override
         public void handleMessage(Message message) throws Fault {
+            InboundHandler.unsetCredentials();
             SecurityContextAssociation.clearSecurityContext();
         }
         /**
@@ -174,12 +215,13 @@ public final class Interceptors {
          */
         @Override
         public void handleFault(Message message) {
+            InboundHandler.unsetCredentials();
             SecurityContextAssociation.clearSecurityContext();
         }
     }
     // class simple names must be unique
-    private static final class ClearSecurityContextOutInterceptor extends ClearSecurityContextInterceptor {}
-    private static final class ClearSecurityContextOutFaultInterceptor extends ClearSecurityContextInterceptor {}
+    private static final class SwitchYardSecurityCleanupOutInterceptor extends SwitchYardSecurityCleanupInterceptor {}
+    private static final class SwitchYardSecurityCleanupOutFaultInterceptor extends SwitchYardSecurityCleanupInterceptor {}
 
     private Interceptors() {}
 
