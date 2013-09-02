@@ -16,6 +16,7 @@ package org.switchyard.component.camel;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -31,6 +32,7 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.deploy.Binding;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
@@ -108,7 +110,7 @@ public class SwitchYardComponentTest extends SwitchYardComponentTestBase {
                 new InOnlyService(),
                 mockService,
                 ServiceMetadataBuilder.create().security(_serviceDomain.getServiceSecurity(null))
-                        .requiredPolicies(policies).registrant(new Binding(null)).build());
+                        .requiredPolicies(policies).registrant(new Binding(new ArrayList<BindingModel>())).build());
         _serviceDomain.registerServiceReference(new QName(_serviceName), new InOnlyService("process"));
         _camelContext.addRoutes(new RouteBuilder() {
             @Override
