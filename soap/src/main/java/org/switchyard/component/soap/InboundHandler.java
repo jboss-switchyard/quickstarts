@@ -15,8 +15,10 @@
 package org.switchyard.component.soap;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
@@ -55,6 +57,7 @@ import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.security.SecurityContext;
+import org.switchyard.security.credential.Credential;
 import org.w3c.dom.Node;
 
 /**
@@ -83,6 +86,37 @@ public class InboundHandler extends BaseServiceHandler {
     private String _targetNamespace;
     private Feature _feature = new Feature();
     private Map<String, Operation> _operationsMap = new HashMap<String, Operation>();
+
+    private static final ThreadLocal<Set<Credential>> CREDENTIALS = new ThreadLocal<Set<Credential>>();
+
+    /**
+     * Gets the thread-local credentials set.
+     * @return the thread-local credentials set
+     */
+    public static Set<Credential> getCredentials() {
+        return getCredentials(false);
+    }
+
+    private static Set<Credential> getCredentials(boolean unset) {
+        Set<Credential> credentials = CREDENTIALS.get();
+        if (credentials == null) {
+            credentials = new LinkedHashSet<Credential>();
+            if (!unset) {
+                CREDENTIALS.set(credentials);
+            }
+        }
+        if (unset) {
+            CREDENTIALS.set(null);
+        }
+        return credentials;
+    }
+
+    /**
+     * Unsets the thread-local credentials.
+     */
+    public static void unsetCredentials() {
+        CREDENTIALS.set(null);
+    }
 
     /**
      * Constructor.
@@ -119,6 +153,7 @@ public class InboundHandler extends BaseServiceHandler {
             _feature = WSDLUtil.getFeature(definition, _wsdlPort, _documentStyle);
 
             if (_feature.isAddressingEnabled()) {
+                @SuppressWarnings("unchecked")
                 List<BindingOperation> bindingOperations = _wsdlPort.getBinding().getBindingOperations();
                 for (BindingOperation bindingOp : bindingOperations) {
                     String inputAction = WSDLUtil.getInputAction(_wsdlPort, new QName(_targetNamespace, bindingOp.getOperation().getName()), _targetNamespace, _documentStyle);
@@ -195,6 +230,9 @@ public class InboundHandler extends BaseServiceHandler {
         QName firstBodyElement = null;
         MessageContext msgContext = null;
 
+        // Collect and unset any thread-local credentials
+        Set<Credential> credentials = getCredentials(true);
+
         if (wsContext != null) {
             // Caching the message context
             msgContext = wsContext.getMessageContext();
@@ -244,7 +282,11 @@ public class InboundHandler extends BaseServiceHandler {
                     .addLabels(BehaviorLabel.TRANSIENT.label());
 
             SOAPBindingData soapBindingData = new SOAPBindingData(soapMessage, wsContext);
-            SecurityContext.get(exchange).getCredentials().addAll(soapBindingData.extractCredentials());
+
+            // add any thread-local and/or binding-extracted credentials
+            SecurityContext securityContext = SecurityContext.get(exchange);
+            securityContext.getCredentials().addAll(credentials);
+            securityContext.getCredentials().addAll(soapBindingData.extractCredentials());
 
             Message message;
             try {
