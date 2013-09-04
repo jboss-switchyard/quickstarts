@@ -353,6 +353,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.6</version>
                 <configuration>
+                    <systemPropertyVariables>
+                        <java.awt.headless>true</java.awt.headless>
+                    </systemPropertyVariables>
                     <environmentVariables>
                         <SWITCHYARD_VERSION>${project.version}</SWITCHYARD_VERSION>
                     </environmentVariables>
