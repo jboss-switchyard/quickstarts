@@ -42,15 +42,21 @@ import org.apache.http.client.AuthCache;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
+import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.core.BaseClientResponse;
 import org.jboss.resteasy.client.core.ClientInterceptorRepositoryImpl;
 import org.jboss.resteasy.client.core.ClientInvokerInterceptorFactory;
@@ -142,14 +148,33 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
         }
 
         _providerFactory = ResteasyProviderFactory.getInstance();
-        _executor = ClientRequest.getDefaultExecutor();
         _extractorFactory = new DefaultEntityExtractorFactory();
         _extractor = _extractorFactory.createExtractor(_method);
         _marshallers = ClientMarshallerFactory.createMarshallers(_resourceClass, _method, _providerFactory, null);
         _accepts = MediaTypeHelper.getProduces(_resourceClass, method, null);
         ClientInvokerInterceptorFactory.applyDefaultInterceptors(this, _providerFactory, _resourceClass, _method);
+
+        // Client executor
+        SchemeRegistry schemeRegistry = new SchemeRegistry();
+        int port = _baseUri.getPort();
+        if (_baseUri.getScheme().startsWith("https")) {
+            if (port == -1) {
+                port = 443;
+            }
+            schemeRegistry.register(new Scheme(_baseUri.getScheme(), port, SSLSocketFactory.getSocketFactory()));
+        } else {
+            if (port == -1) {
+                port = 80;
+            }
+            schemeRegistry.register(new Scheme(_baseUri.getScheme(), port, PlainSocketFactory.getSocketFactory()));
+        }
+        PoolingClientConnectionManager cm = new PoolingClientConnectionManager(schemeRegistry);
+        cm.setMaxTotal(200);
+        cm.setDefaultMaxPerRoute(20);
+        HttpClient httpClient = new DefaultHttpClient(cm);
+        _executor = new ApacheHttpClient4Executor(httpClient);
+
         // Authentication settings
-        HttpClient httpclient = ((ApacheHttpClient4Executor)_executor).getHttpClient();
         if (model.hasAuthentication()) {
             // Set authentication
             AuthScope authScope = null;
@@ -170,7 +195,7 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
                                     "",
                                     model.getNtlmAuthConfig().getDomain());
             }
-            ((DefaultHttpClient)httpclient).getCredentialsProvider().setCredentials(authScope, credentials);
+            ((DefaultHttpClient)httpClient).getCredentialsProvider().setCredentials(authScope, credentials);
         } else {
             ProxyModel proxy = model.getProxyConfig();
             if (proxy != null) {
@@ -185,17 +210,17 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
                     Credentials credentials = new UsernamePasswordCredentials(proxy.getUser(), proxy.getPassword());
                     AuthCache authCache = new BasicAuthCache();
                     authCache.put(proxyHost, new BasicScheme(ChallengeState.PROXY));
-                    ((DefaultHttpClient)httpclient).getCredentialsProvider().setCredentials(authScope, credentials);
+                    ((DefaultHttpClient)httpClient).getCredentialsProvider().setCredentials(authScope, credentials);
                     BasicHttpContext context = new BasicHttpContext();
                     context.setAttribute(ClientContext.AUTH_CACHE, authCache);
                     ((ApacheHttpClient4Executor)_executor).setHttpContext(context);
                 }
-                httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+                httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
             }
         }
         Integer timeout = model.getTimeout();
         if (timeout != null) {
-            HttpParams httpParams = httpclient.getParams();
+            HttpParams httpParams = httpClient.getParams();
             HttpConnectionParams.setConnectionTimeout(httpParams, timeout);
             HttpConnectionParams.setSoTimeout(httpParams, timeout);
         }
@@ -253,6 +278,8 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
             try {
                 request = createRequest(args, headers);
                 clientResponse = (BaseClientResponse) request.httpMethod(_httpMethod);
+            } catch (ClientResponseFailure crf) {
+                clientResponse = (BaseClientResponse) crf.getResponse();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
