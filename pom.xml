@@ -91,7 +91,7 @@
         <version.jbossas.console>1.5.4.Final</version.jbossas.console>
         <!-- Override versions for OpenShift. May use the same version as AS but -->
         <!-- maintaining this override for future flexibility -->
-        <version.jbossas.maven>7.1.1.Final</version.jbossas.maven>
+        <version.jbossas.maven>7.4.Final</version.jbossas.maven>
         <version.jbossas.openshift>7.1.0.Final</version.jbossas.openshift>
         <version.jbosseap>6.1</version.jbosseap>
         <version.jbossws.spi>2.1.2.Final</version.jbossws.spi>
