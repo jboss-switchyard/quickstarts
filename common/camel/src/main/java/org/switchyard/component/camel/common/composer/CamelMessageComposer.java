@@ -104,20 +104,4 @@ public class CamelMessageComposer extends BaseMessageComposer<CamelBindingData> 
         targetMessage.setBody(sourceMessage.getContent());
         return target;
     }
-
-    /**
-     * Returns the current message type based on the state of the exchange.
-     * @param exchange exchange to query
-     * @return the current message type based on the exchange contract
-     */
-    private QName getMessageType(Exchange exchange) {
-        QName msgType;
-        if (exchange.getPhase() == null) {
-            msgType = exchange.getContract().getConsumerOperation().getInputType();
-        } else {
-            msgType = exchange.getContract().getProviderOperation().getOutputType();
-        }
-        
-        return msgType;
-    }
 }

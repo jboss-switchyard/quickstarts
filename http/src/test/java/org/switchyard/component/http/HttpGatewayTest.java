@@ -168,6 +168,8 @@ public class HttpGatewayTest {
     @Test
     public void httpGatewayServiceTest() throws Exception {
         String response = httpMixIn.sendString("http://localhost:8080/http", INPUT, HTTPMixIn.HTTP_POST);
+        //Test CSR - Composing a Service Request
+        Assert.assertEquals(String.class, mockService.getMessages().peek().getMessage().getContent().getClass());
         Assert.assertEquals(1, mockService.getMessages().size());
         Assert.assertEquals(INPUT, response);
     }
@@ -181,7 +183,9 @@ public class HttpGatewayTest {
     @Test
     public void httpGatewayReferenceTest() throws Exception {
         Message responseMsg = _consumerService.operation(METHOD_NAME).sendInOut(INPUT);
-        Assert.assertEquals(INPUT, responseMsg.getContent(String.class));
+        //Test CRR - Composing an Reference Response
+        Assert.assertEquals(String.class, responseMsg.getContent().getClass());
+        Assert.assertEquals(INPUT, responseMsg.getContent());
     }
 
     @Test

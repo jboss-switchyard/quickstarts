@@ -19,10 +19,12 @@ import java.io.InputStream;
 import java.io.Reader;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.Property;
+import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.component.common.composer.BaseMessageComposer;
 import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.config.model.composer.MessageComposerModel;
@@ -46,7 +48,13 @@ public class HttpMessageComposer extends BaseMessageComposer<HttpBindingData> {
 
         getContextMapper().mapFrom(source, exchange.getContext(message));
 
+        QName msgType = getMessageType(exchange);
         message.setContent(source.getBody());
+        Object content;
+        if ((msgType != null) && (QNameUtil.isJavaMessageType(msgType))) {
+            // Hack - the getContent() call triggers a conversion from native content type and the result is set as the new body
+            message.setContent(message.getContent(QNameUtil.toJavaMessageType(msgType)));
+        }
 
         return message;
     }
