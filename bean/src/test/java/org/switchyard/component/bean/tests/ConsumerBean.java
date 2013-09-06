@@ -51,6 +51,13 @@ public class ConsumerBean implements ConsumerService {
             Object reply = null;
             reply = requestResponse.reply(message);
             Assert.assertEquals(message, reply);
+
+            // SWITCHYARD-1688
+            System.out.println(oneWay.toString());
+            Assert.assertTrue(oneWay.hashCode() == oneWay.hashCode());
+            Assert.assertTrue(oneWay.equals(oneWay));
+            Assert.assertFalse(oneWay.equals(requestResponse));
+
             return reply;
         } catch (ConsumerException e) {
             Assert.assertEquals(message, e);

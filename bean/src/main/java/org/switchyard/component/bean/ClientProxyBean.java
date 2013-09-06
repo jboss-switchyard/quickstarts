@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -268,6 +269,19 @@ public class ClientProxyBean implements Bean {
             if (_service == null) {
                 throw new BeanComponentException("A service reference to service '" + _serviceName + "' is not bound into "
                         + "this client proxy instance.  A reference configuration to the service may be required in the application configuration.");
+            }
+
+            // Handle basic Object methods.
+            if (method.getDeclaringClass() == Object.class) {
+                final String methodName = method.getName();
+                final int paramCount = method.getParameterTypes().length;
+                if ("toString".equals(methodName) && paramCount == 0) {
+                    return MessageFormat.format("SwitchYard proxy for {0} [{1}]", _invokerInterface.getJavaInterface(), _invokerInterface);
+                } else if ("equals".equals(methodName) && paramCount == 1) {
+                    return this.equals(args[0]);
+                } else if ("hashCode".equals(methodName) && paramCount == 0) {
+                    return this.hashCode();
+                }
             }
 
             if (method.getReturnType() != null && !Void.TYPE.isAssignableFrom(method.getReturnType())) {
