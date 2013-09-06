@@ -48,7 +48,7 @@ public class JBossWebEndpointPublisher implements EndpointPublisher {
     /**
      * {@inheritDoc}
      */
-    public Endpoint publish(String context, InboundHandler handler) throws Exception {
+    public synchronized Endpoint publish(String context, InboundHandler handler) throws Exception {
         
         Host host = ServerUtil.getDefaultHost().getHost();
         StandardContext serverContext = (StandardContext) host.findChild("/" + context);

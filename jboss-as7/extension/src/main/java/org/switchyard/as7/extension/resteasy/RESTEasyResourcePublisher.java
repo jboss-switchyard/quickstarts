@@ -51,7 +51,7 @@ public class RESTEasyResourcePublisher implements ResourcePublisher {
     /**
      * {@inheritDoc}
      */
-    public Resource publish(String context, List<Object> instances) throws Exception {
+    public synchronized Resource publish(String context, List<Object> instances) throws Exception {
         Host host = ServerUtil.getDefaultHost().getHost();
         StandardContext serverContext = (StandardContext) host.findChild("/" + context);
         if (serverContext == null) {
