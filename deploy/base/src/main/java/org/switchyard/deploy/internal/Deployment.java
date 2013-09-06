@@ -85,7 +85,7 @@ public class Deployment extends AbstractDeployment {
     private static Logger _log = Logger.getLogger(Deployment.class);
 
     private Map<String, Activator> _activators = new HashMap<String, Activator>();
-    private List<Activation> _services = new LinkedList<Activation>();
+    private List<Activation> _components = new LinkedList<Activation>();
     private List<Activation> _serviceBindings = new LinkedList<Activation>();
     private List<Activation> _referenceBindings = new LinkedList<Activation>();
     
@@ -176,7 +176,7 @@ public class Deployment extends AbstractDeployment {
         
         // Clean up our list of activations, just in case something's left
         _serviceBindings.clear();
-        _services.clear();
+        _components.clear();
         _referenceBindings.clear();
 
         getValidatorRegistryLoader().unregisterValidators();
@@ -544,7 +544,7 @@ public class Deployment extends AbstractDeployment {
                 requires.addAll(requiresImpl);
 
                 ServiceHandler handler = activator.activateService(service.getQName(), component);
-                Activation activation = new Activation(activator, service.getQName(), null, handler);
+                Activation activation = new Activation(activator, component.getQName(), null, handler);
                 ServiceInterface serviceIntf = getComponentServiceInterface(service);
                 ServiceMetadata metadata = ServiceMetadataBuilder.create()
                         .security(getDomain().getServiceSecurity(service.getSecurity()))
@@ -570,14 +570,19 @@ public class Deployment extends AbstractDeployment {
                     }
                 }
                 
-                _services.add(activation);
+                _components.add(activation);
                 handler.start();
 
             } else {
                 // we don't have a distinct call for activateReference right now,
                 // so this catches cases where an implementation has one or more
                 // references, but no services.  (this is pretty crappy)
+                _log.debug("Activating component " + component.getQName());
                 activator.activateService(null, component);
+                // while this is not a service, it will ensure that the component is deactivated
+                Activation activation = new Activation(activator, component.getQName(), null, null);
+                activation.addReferences(references);
+                _components.add(activation);
             }
         }
     }
@@ -648,19 +653,23 @@ public class Deployment extends AbstractDeployment {
     private void undeployImplementations() {
         _log.debug("Undeploying services for deployment " + getName());
         try {
-            for (Activation activation : _services) {
-                try {
-                    activation.getHandler().stop();
-                } catch (Throwable e) {
-                    BaseDeployLogger.ROOT_LOGGER.errorStoppingService(e);
-                }
-                try {
-                    activation.getActivator().deactivateService(activation.getName(), activation.getHandler());
-                } catch (Throwable e) {
-                    BaseDeployLogger.ROOT_LOGGER.errorDeactivatingService(e);
+            for (Activation activation : _components) {
+                _log.debug("Deactivating " + activation.getName());
+                final ServiceHandler handler = activation.getHandler();
+                if (handler != null) {
+                    try {
+                        handler.stop();
+                    } catch (Throwable e) {
+                        BaseDeployLogger.ROOT_LOGGER.errorStoppingService(e);
+                    }
                 }
 
                 for (Service service : activation.getServices()) {
+                    try {
+                        activation.getActivator().deactivateService(service.getName(), activation.getHandler());
+                    } catch (Throwable e) {
+                        BaseDeployLogger.ROOT_LOGGER.errorDeactivatingService(e);
+                    }
                     service.unregister();
                 }
 
@@ -673,7 +682,7 @@ public class Deployment extends AbstractDeployment {
                 }
             }
         } finally {
-            _services.clear();
+            _components.clear();
         }
     }
 

@@ -34,5 +34,11 @@
                 <mock:interface.mock/>
             </sca:reference>
         </sca:component>
+        <sca:component name="NoService">
+            <mock:implementation.mock/>
+            <sca:reference name="TestReference">
+                <mock:interface.mock/>
+            </sca:reference>
+        </sca:component>
     </sca:composite>
 </switchyard>

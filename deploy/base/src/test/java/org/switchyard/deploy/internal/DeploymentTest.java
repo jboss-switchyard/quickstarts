@@ -40,8 +40,10 @@ import org.switchyard.deploy.internal.transformers.CDTransformer;
 import org.switchyard.deploy.internal.validators.AValidator;
 import org.switchyard.deploy.internal.validators.BValidator;
 import org.switchyard.extensions.wsdl.WSDLService;
+import org.switchyard.internal.DomainImpl;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.spi.ServiceRegistry;
 import org.switchyard.transform.Transformer;
 import org.switchyard.validate.Validator;
 
@@ -135,6 +137,19 @@ public class DeploymentTest {
         Assert.assertNotNull(bindingReference.getServiceMetadata().getRegistrant());
         List<BindingModel> refBindings = bindingReference.getServiceMetadata().getRegistrant().getConfig();
         Assert.assertEquals(2, refBindings.size());
+
+        // SWITCHYARD-1686
+        ServiceReference compReference = deployment.getDomain().getServiceReference(
+                new QName("urn:test:config-mock-binding:1.0", "NoService/TestReference"));
+        Assert.assertNotNull(compReference.getServiceMetadata().getRegistrant());
+        Assert.assertTrue(compReference.getServiceMetadata().getRegistrant().getConfig() instanceof ComponentImplementationModel);
+        
+        ServiceRegistry registry = ((DomainImpl) deployment.getDomain()).getServiceRegistry();
+        deployment.stop();
+        // ensure we're cleaning up after ourselves.
+        Assert.assertEquals(0, registry.getServices().size());
+        Assert.assertEquals(0, registry.getServiceReferences().size());
+        deployment.destroy();
     }
     
     @Test
