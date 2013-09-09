@@ -132,7 +132,11 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                 sessionId = session.getId();
                 setGlobals(inputMessage, operation, session);
                 if (_fireUntilHaltThread == null) {
-                    FireUntilHalt fireUntilHalt = new FireUntilHalt(this, session, getLoader());
+                    ClassLoader fireUntilHaltLoader = Classes.getTCCL();
+                    if (fireUntilHaltLoader == null) {
+                        fireUntilHaltLoader = getLoader();
+                    }
+                    FireUntilHalt fireUntilHalt = new FireUntilHalt(this, session, fireUntilHaltLoader);
                     session.addDisposals(fireUntilHalt);
                     _fireUntilHaltThread = fireUntilHalt.startThread();
                 }
