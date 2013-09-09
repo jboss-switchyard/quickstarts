@@ -28,10 +28,9 @@ public class SwitchYardServiceChannel implements Channel {
     public static final String SERVICE = "service";
 
     private String _name;
-    private SwitchYardServiceInvoker _invoker;
     private QName _serviceName;
     private String _operationName;
-    private QName _componentName;
+    private SwitchYardServiceInvoker _invoker;
 
     /**
      * Constructs a new SwitchYardServiceChannel with the name "service".
@@ -54,38 +53,6 @@ public class SwitchYardServiceChannel implements Channel {
      */
     public void setName(String name) {
         _name = name;
-    }
-
-    /**
-     * Gets the invoker.
-     * @return the invoker
-     */
-    public SwitchYardServiceInvoker getInvoker() {
-        return _invoker;
-    }
-
-    /**
-     * Sets the invoker.
-     * @param invoker the invoker
-     */
-    public void setInvoker(SwitchYardServiceInvoker invoker) {
-        _invoker = invoker;
-    }
-    
-    /**
-     * Set the service component name associated with this invoker.
-     * @param componentName service component name
-     */
-    public void setComponentName(QName componentName) {
-        _componentName = componentName;
-    }
-    
-    /**
-     * Get the service component name associated with this invoker.
-     * @return service component name
-     */
-    public QName getComponentName() {
-        return _componentName;
     }
 
     /**
@@ -118,6 +85,22 @@ public class SwitchYardServiceChannel implements Channel {
      */
     public void setOperationName(String operationName) {
         _operationName = operationName;
+    }
+
+    /**
+     * Gets the invoker.
+     * @return the invoker
+     */
+    public SwitchYardServiceInvoker getInvoker() {
+        return _invoker;
+    }
+
+    /**
+     * Sets the invoker.
+     * @param invoker the invoker
+     */
+    public void setInvoker(SwitchYardServiceInvoker invoker) {
+        _invoker = invoker;
     }
 
     /**

@@ -31,13 +31,13 @@ public class SwitchYardServiceRequest {
     private final Map<String, Object> _context = new HashMap<String, Object>();
 
     /**
-     * Constructs a SwitchYardServiceRequest with the specified service name, service operation name, and content.
+     * Constructs a SwitchYardServiceRequest with the specified service name, operation name, and content.
      * @param serviceName the service name
-     * @param serviceOperationName the service operation name
+     * @param operationName the operation name
      * @param content the content
      */
-    public SwitchYardServiceRequest(QName serviceName, String serviceOperationName, Object content) {
-        this(serviceName, serviceOperationName, content, null);
+    public SwitchYardServiceRequest(QName serviceName, String operationName, Object content) {
+        this(serviceName, operationName, content, null);
     }
 
     /**

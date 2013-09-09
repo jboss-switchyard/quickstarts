@@ -67,9 +67,9 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
     public static final String FAULT_ACTION = FAULT + "Action";
 
     private String _name;
+    private QName _componentName;
     private SwitchYardServiceInvoker _invoker;
     private ProcessRuntime _processRuntime;
-    private QName _componentName;
 
     /**
      * Constructs a new SwitchYardServiceTaskHandler with the name "SwitchYard Service Task".
@@ -156,11 +156,11 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
         }
         // service invocation
         QName serviceName = getServiceName(parameters);
-        if (_componentName != null) {
-            serviceName = ComponentNames.qualify(_componentName, serviceName);
+        if (serviceName != null && _componentName != null) {
+            serviceName = ComponentNames.qualify(_componentName, ComponentNames.unqualify(serviceName));
         }
         String operationName = getOperationName(parameters);
-        SwitchYardServiceRequest request = new SwitchYardServiceRequest(serviceName, operationName, content, parameters);
+        SwitchYardServiceRequest request = new SwitchYardServiceRequest(serviceName, operationName, content);
         SwitchYardServiceResponse response = getInvoker().invoke(request);
         // results (output)
         Map<String, Object> results = workItem.getResults();

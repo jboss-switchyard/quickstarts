@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.xml.namespace.QName;
+
 import org.jbpm.services.task.wih.AbstractHTWorkItemHandler;
 import org.jbpm.services.task.wih.ExternalTaskEventListener;
 import org.jbpm.services.task.wih.LocalHTWorkItemHandler;
@@ -44,6 +46,7 @@ import org.switchyard.component.bpm.runtime.BPMRuntimeManager;
 import org.switchyard.component.bpm.service.StandardSwitchYardServiceTaskHandler;
 import org.switchyard.component.bpm.service.SwitchYardServiceTaskHandler;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
+import org.switchyard.config.model.composite.ComponentModel;
 
 /**
  * WorkItemHandler functions.
@@ -77,7 +80,9 @@ public final class WorkItemHandlers {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void registerWorkItemHandlers(BPMComponentImplementationModel model, ClassLoader loader, ProcessRuntime processRuntime, BPMRuntimeManager runtimeManager, ServiceDomain serviceDomain) {
-        String tns = model.getComponent().getTargetNamespace();
+        ComponentModel componentModel = model.getComponent();
+        QName componentName =  componentModel.getQName();
+        String componentTNS =  componentModel.getTargetNamespace();
         Set<String> registeredNames = new HashSet<String>();
         WorkItemHandlersModel workItemHandlersModel = model.getWorkItemHandlers();
         if (workItemHandlersModel != null) {
@@ -95,8 +100,8 @@ public final class WorkItemHandlers {
                     } else {
                         name = ssth.getName();
                     }
-                    ssth.setComponentName(model.getComponent().getQName());
-                    ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain, tns));
+                    ssth.setComponentName(componentName);
+                    ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain, componentTNS));
                     ssth.setProcessRuntime(processRuntime);
                 }
                 if (name == null && workItemHandler instanceof AbstractHTWorkItemHandler) {
@@ -116,8 +121,8 @@ public final class WorkItemHandlers {
                 if (defaultHandler instanceof SwitchYardServiceTaskHandler) {
                     SwitchYardServiceTaskHandler ssth = (SwitchYardServiceTaskHandler)defaultHandler;
                     ssth.setName(name);
-                    ssth.setComponentName(model.getComponent().getQName());
-                    ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain, tns));
+                    ssth.setComponentName(componentName);
+                    ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain, componentTNS));
                     ssth.setProcessRuntime(processRuntime);
                 }
                 processRuntime.getWorkItemManager().registerWorkItemHandler(name, defaultHandler);

@@ -18,6 +18,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.Message;
@@ -109,8 +110,9 @@ public class SwitchYardServiceInvoker {
                 exchangeIn = serviceReference.createExchange(handler);
             }
             Message messageIn = exchangeIn.createMessage();
+            Context contextIn = exchangeIn.getContext(messageIn);
             for (Map.Entry<String,Object> entry : request.getContext().entrySet()) {
-                exchangeIn.getContext(messageIn).setProperty(entry.getKey(), entry.getValue());
+                contextIn.setProperty(entry.getKey(), entry.getValue());
             }
             Object contentIn = request.getContent();
             if (contentIn != null) {

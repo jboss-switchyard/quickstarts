@@ -16,6 +16,8 @@ package org.switchyard.component.common.knowledge.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import org.kie.api.runtime.Channel;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.StatelessKieSession;
@@ -28,6 +30,8 @@ import org.switchyard.component.common.knowledge.config.model.ChannelsModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceChannel;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
+import org.switchyard.config.model.composite.ComponentModel;
+import org.switchyard.deploy.ComponentNames;
 
 /**
  * Channel functions.
@@ -68,7 +72,9 @@ public final class Channels {
         List<NameChannel> ncList = new ArrayList<NameChannel>();
         ChannelsModel channelsModel = model.getChannels();
         if (channelsModel != null) {
-            String tns = model.getComponent().getTargetNamespace();
+            ComponentModel componentModel = model.getComponent();
+            QName componentName =  componentModel.getQName();
+            String componentTNS =  componentModel.getTargetNamespace();
             for (ChannelModel channelModel : channelsModel.getChannels()) {
                 @SuppressWarnings("unchecked")
                 Class<? extends Channel> channelClass = (Class<? extends Channel>)channelModel.getClazz(loader);
@@ -84,10 +90,13 @@ public final class Channels {
                     } else {
                         name = sysc.getName();
                     }
-                    sysc.setInvoker(new SwitchYardServiceInvoker(domain, tns));
-                    sysc.setComponentName(model.getComponent().getQName());
-                    sysc.setServiceName(XMLHelper.createQName(channelModel.getReference()));
+                    QName serviceName = XMLHelper.createQName(channelModel.getReference());
+                    if (serviceName != null && componentName != null) {
+                        serviceName = ComponentNames.qualify(componentName, ComponentNames.unqualify(serviceName));
+                    }
+                    sysc.setServiceName(serviceName);
                     sysc.setOperationName(channelModel.getOperation());
+                    sysc.setInvoker(new SwitchYardServiceInvoker(domain, componentTNS));
                 }
                 if (name == null) {
                     throw new SwitchYardException("Could not use null name to register channel: " + channel.getClass().getName());
