@@ -13,6 +13,7 @@
  */
 package org.switchyard.component.common.knowledge.session;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -27,16 +28,16 @@ public class KnowledgeDisposer implements KnowledgeDisposal {
 
     private static Logger LOGGER = Logger.getLogger(KnowledgeDisposer.class);
 
-    private final Set<KnowledgeDisposal> _disposals = new LinkedHashSet<KnowledgeDisposal>();
+    private final Set<KnowledgeDisposal> _disposals = Collections.synchronizedSet(new LinkedHashSet<KnowledgeDisposal>());
 
     /**
      * Adds disposals.
      * @param disposals disposals
      */
-    public void addDisposals(KnowledgeDisposal... disposals) {
+    public synchronized void addDisposals(KnowledgeDisposal... disposals) {
         if (disposals != null) {
             for (KnowledgeDisposal disposal : disposals) {
-                if (disposal != null) {
+                if (disposal != null && disposal != this) {
                     _disposals.add(disposal);
                 }
             }
@@ -47,7 +48,7 @@ public class KnowledgeDisposer implements KnowledgeDisposal {
      * {@inheritDoc}
      */
     @Override
-    public void dispose() {
+    public synchronized void dispose() {
         for (KnowledgeDisposal disposal : _disposals) {
             try {
                 disposal.dispose();
