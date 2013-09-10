@@ -161,16 +161,16 @@ public class CamelExchange implements SecurityExchange {
             _exchange.setProperty(PHASE, ExchangePhase.IN);
             _exchange.setIn(camelMsg);
             getContext().setProperty(Exchange.MESSAGE_ID, camelMsg.getMessageId());
+            initInContentType();
         } else {
             _exchange.setProperty(PHASE, ExchangePhase.OUT);
             String id = getContext().getPropertyValue(MESSAGE_ID);
             _exchange.setIn(camelMsg);
             getContext().setProperty(Exchange.RELATES_TO, id);
             getContext().setProperty(Exchange.MESSAGE_ID, camelMsg.getMessageId());
-
+            initOutContentType();
         }
 
-        initInContentType();
         sendInternal();
     }
 
@@ -210,6 +210,15 @@ public class CamelExchange implements SecurityExchange {
 
         if (exchangeInputType != null) {
             getContext().setProperty(Exchange.CONTENT_TYPE, exchangeInputType)
+                .addLabels(BehaviorLabel.TRANSIENT.label());
+        }
+    }
+    
+    private void initOutContentType() {
+        QName exchangeOutputType = getContract().getProviderOperation().getOutputType();
+
+        if (exchangeOutputType != null) {
+            getContext().setProperty(Exchange.CONTENT_TYPE, exchangeOutputType)
                 .addLabels(BehaviorLabel.TRANSIENT.label());
         }
     }

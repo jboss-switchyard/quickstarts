@@ -31,6 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.switchyard.BaseHandler;
 import org.switchyard.ErrorListener;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
@@ -43,9 +44,11 @@ import org.switchyard.ServiceReference;
 import org.switchyard.bus.camel.handler.ErrorInterceptor;
 import org.switchyard.bus.camel.handler.RuntimeErrorInHandler;
 import org.switchyard.bus.camel.handler.RuntimeErrorInterceptor;
+import org.switchyard.bus.camel.handler.TypeInterceptor;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.internal.ServiceReferenceImpl;
 import org.switchyard.metadata.InOnlyService;
+import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.spi.Dispatcher;
 
@@ -243,6 +246,28 @@ public class CamelExchangeBusTest {
         assertTrue(fired.get());
         assertCause("Runtime error", exchange);
     }
+    
+    @Test
+    public void testContentTypes() throws Exception {
+        TypeInterceptor types = new TypeInterceptor();
+        _camelContext.getWritebleRegistry().put("types", types);
+        
+        QName inType = new QName("urn:foo", "in");
+        QName outType = new QName("urn:bar", "out");
+
+        ExchangeHandler handler = new BaseHandler() {
+            @Override
+            public void handleMessage(Exchange exchange)
+                    throws HandlerException {
+                exchange.send(exchange.getMessage().copy());
+            }
+        };
+        ServiceReference ref = registerInOutServiceWithTypes("typesTest", inType, outType, handler);
+        sendMessage(ref, TEST_CONTENT);
+
+        Assert.assertEquals(inType, types.getInType());
+        Assert.assertEquals(outType, types.getOutType());
+    }
 
     @Test @Ignore
     public void testCustomErrorHandler() throws InterruptedException {
@@ -306,6 +331,17 @@ public class CamelExchangeBusTest {
         Exchange exchange = ref.createExchange(new MockHandler());
         exchange.send(exchange.createMessage().setContent(content));
         return exchange;
+    }
+    
+    private ServiceReference registerInOutServiceWithTypes(
+            String serviceName, QName inputType, QName outputType, ExchangeHandler handler) {
+        
+        InOutService intf = new InOutService(new InOutOperation("process", inputType, outputType));
+        ServiceReferenceImpl reference = new ServiceReferenceImpl(
+                new QName(serviceName),  intf, _domain, null);
+        _domain.registerService(new QName(serviceName),  intf, handler);
+        reference.setDispatcher(_provider.createDispatcher(reference));
+        return reference;
     }
 
 }
