@@ -24,6 +24,7 @@ import org.jboss.as.controller.OperationStepHandler;
 import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceController;
 import org.switchyard.admin.Application;
+import org.switchyard.admin.ComponentService;
 import org.switchyard.admin.Reference;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.SwitchYard;
@@ -78,6 +79,13 @@ public final class SwitchYardSubsystemShowMetrics implements OperationStepHandle
                             for (Reference reference : application.getReferences()) {
                                 if ("*".equals(serviceName) || serviceQName.equals(reference.getName())) {
                                     context.getResult().add(ModelNodeCreationUtil.createReferenceMetricsNode(reference));
+                                }
+                            }
+                        }
+                        if (type == null || "*".equals(type) || "componentService".equals(type)) {
+                            for (ComponentService componentService : application.getComponentServices()) {
+                                if ("*".equals(serviceName) || serviceQName.equals(componentService.getName())) {
+                                    context.getResult().add(ModelNodeCreationUtil.createComponentServiceMetricsNode(componentService));
                                 }
                             }
                         }

@@ -777,6 +777,78 @@ final public class ModelNodeCreationUtil {
     }
 
     /**
+     * Creates a new {@link ModelNode} tree from the {@link ComponentService} for
+     * metrics. The tree has the form: <br>
+     * <code><pre>
+     *      "name" =&gt; "serviceName",
+     *      "application" =&gt; "name",
+     *      "successCount" =&gt; "successCount",
+     *      "faultCount" =&gt; "faultCount",
+     *      "totalCount" =&gt; "totalCount",
+     *      "averageTime" =&gt; "averageTime",
+     *      "minTime" =&gt; "minTime",
+     *      "maxTime" =&gt; "maxTime",
+     *      "totalTime" =&gt; "totalTime",
+     *      "operations" =&gt; [
+     *          {
+     *              "name" =&gt; "operationName",
+     *               "successCount" =&gt; "successCount",
+     *               "faultCount" =&gt; "faultCount",
+     *               "totalCount" =&gt; "totalCount",
+     *               "averageTime" =&gt; "averageTime",
+     *               "minTime" =&gt; "minTime",
+     *               "maxTime" =&gt; "maxTime",
+     *               "totalTime" =&gt; "totalTime",
+     *          },
+     *          ...
+     *      ],
+     *      "references" =&gt; [
+     *          {
+     *              "name" =&gt; "referenceName",
+     *               "successCount" =&gt; "successCount",
+     *               "faultCount" =&gt; "faultCount",
+     *               "totalCount" =&gt; "totalCount",
+     *               "averageTime" =&gt; "averageTime",
+     *               "minTime" =&gt; "minTime",
+     *               "maxTime" =&gt; "maxTime",
+     *               "totalTime" =&gt; "totalTime",
+     *          },
+     *          ...
+     *      ]
+     * </pre></code>
+     * 
+     * @param service the {@link Service} used to populate the node.
+     * @return a new {@link ModelNode}
+     */
+    public static ModelNode createComponentServiceMetricsNode(ComponentService componentService) {
+        ModelNode serviceNode = new ModelNode();
+
+        serviceNode.get(NAME).set(componentService.getName().toString());
+        serviceNode.get(APPLICATION).set(componentService.getApplication().getName().toString());
+        addMetricsToNode(serviceNode, componentService.getMessageMetrics());
+
+        ModelNode operationsNode = new ModelNode();
+        for (ServiceOperation operation : componentService.getServiceOperations()) {
+            ModelNode operationNode = new ModelNode();
+            operationNode.get(NAME).set(operation.getName());
+            addMetricsToNode(operationNode, operation.getMessageMetrics());
+            operationsNode.add(operationNode);
+        }
+        serviceNode.get(OPERATIONS).set(operationsNode);
+
+        ModelNode referencesNode = new ModelNode();
+        for (ComponentReference reference : componentService.getReferences()) {
+            ModelNode referenceNode = new ModelNode();
+            referenceNode.get(NAME).set(reference.getName().toString());
+            addMetricsToNode(referenceNode, reference.getMessageMetrics());
+            referencesNode.add(referenceNode);
+        }
+        serviceNode.get(REFERENCES).set(referencesNode);
+
+        return serviceNode;
+    }
+
+    /**
      * Creates a new node from the {@link Throttling}. The tree has the form: <br>
      * <code><pre>
      *      "throttling" =&gt; {
