@@ -22,6 +22,12 @@
         </component>
         <component name="DestinationService">
             <implementation.rules xmlns="urn:switchyard-component-rules:config:1.0">
+                <!--
+                <listeners>
+                    <listener class="org.kie.api.event.rule.DebugAgendaEventListener"/>
+                    <listener class="org.kie.api.event.rule.DebugWorkingMemoryEventListener"/>
+                </listeners>
+                -->
                 <manifest>
                     <resources>
                         <resource location="/META-INF/DestinationServiceRules.drl" type="DRL"/>
