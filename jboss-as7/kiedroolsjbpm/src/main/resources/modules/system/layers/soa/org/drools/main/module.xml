@@ -30,7 +30,7 @@
         <module name="javax.persistence.api" export="true"/>
         <module name="org.antlr.antlr-runtime"/>
         <module name="org.apache.poi"/>
-        <module name="org.eclipse.jdt.core.compiler"/>
+        <module name="org.eclipse.jdt.core.compiler" export="true"/>
         <module name="org.hibernate" export="true"/>
         <module name="org.javassist"/>
         <module name="org.jboss.vfs"/>
