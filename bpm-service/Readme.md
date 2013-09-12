@@ -8,7 +8,7 @@ using an MVEL expression, and printed out via a BPMN onEntry-script of the Inven
 
 This example is invoked through a SOAP gateway binding.
 
-If you would like to watch the process execution, uncomment these lines in
+If you would like to log the process execution, uncomment these lines in
 src/main/resources/META-INF/switchyard.xml:
 ```
 <listeners>
