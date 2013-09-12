@@ -16,27 +16,17 @@ package org.switchyard.component.common.knowledge.util;
 import java.lang.reflect.Constructor;
 import java.util.EventListener;
 
-import org.drools.core.WorkingMemoryEventManager;
-import org.drools.core.command.impl.CommandBasedStatefulKnowledgeSession;
-import org.drools.core.command.impl.KnowledgeCommandContext;
-import org.drools.core.event.AgendaEventListener;
-import org.drools.core.event.RuleBaseEventListener;
-import org.drools.core.event.WorkingMemoryEventListener;
-import org.drools.core.impl.KnowledgeBaseImpl;
-import org.drools.core.impl.StatefulKnowledgeSessionImpl;
-import org.drools.core.impl.StatelessKnowledgeSessionImpl;
-import org.drools.core.reteoo.ReteooWorkingMemoryInterface;
-import org.drools.core.runtime.process.InternalProcessRuntime;
 import org.kie.api.event.KieRuntimeEventManager;
 import org.kie.api.event.kiebase.KieBaseEventListener;
 import org.kie.api.event.process.ProcessEventListener;
+import org.kie.api.event.rule.AgendaEventListener;
 import org.kie.api.event.rule.DefaultAgendaEventListener;
 import org.kie.api.event.rule.RuleFlowGroupActivatedEvent;
+import org.kie.api.event.rule.WorkingMemoryEventListener;
 import org.kie.api.runtime.KieRuntime;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.event.KnowledgeRuntimeEventManager;
 import org.kie.internal.runtime.KnowledgeRuntime;
-import org.kie.internal.runtime.StatefulKnowledgeSession;
 import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
@@ -65,7 +55,7 @@ public final class Listeners {
      * @param runtimeEventManager the runtime event manager
      */
     public static void registerListeners(KnowledgeComponentImplementationModel model, ClassLoader loader, KieRuntimeEventManager runtimeEventManager) {
-        if (runtimeEventManager instanceof StatefulKnowledgeSession) {
+        if (runtimeEventManager instanceof KieSession) {
             runtimeEventManager.addEventListener(new DefaultAgendaEventListener() {
                 @Override
                 public void afterRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event) {
@@ -126,74 +116,17 @@ public final class Listeners {
      * @param runtimeEventManager the runtime event manager
      */
     public static void registerListener(EventListener listener, KieRuntimeEventManager runtimeEventManager) {
-        if (runtimeEventManager instanceof StatefulKnowledgeSessionImpl) {
-            StatefulKnowledgeSessionImpl sksi = (StatefulKnowledgeSessionImpl)runtimeEventManager;
-            WorkingMemoryEventManager wmem = sksi.session;
-            if (listener instanceof WorkingMemoryEventListener) {
-                wmem.addEventListener((WorkingMemoryEventListener)listener);
-            } else if (listener instanceof org.kie.api.event.rule.WorkingMemoryEventListener) {
-                runtimeEventManager.addEventListener((org.kie.api.event.rule.WorkingMemoryEventListener)listener);
-            }
-            if (listener instanceof AgendaEventListener) {
-                wmem.addEventListener((AgendaEventListener)listener);
-            } else if (listener instanceof org.kie.api.event.rule.AgendaEventListener) {
-                runtimeEventManager.addEventListener((org.kie.api.event.rule.AgendaEventListener)listener);
-            }
-            if (listener instanceof RuleBaseEventListener) {
-                wmem.addEventListener((RuleBaseEventListener)listener);
-            } else if (listener instanceof KieBaseEventListener) {
-                sksi.getKieBase().addEventListener((KieBaseEventListener)listener);
-            }
-            if (listener instanceof ProcessEventListener) {
-                InternalProcessRuntime processRuntime = sksi.session.getProcessRuntime();
-                if (processRuntime != null) {
-                    processRuntime.addEventListener((ProcessEventListener)listener);
-                }
-            }
-        } else if (runtimeEventManager instanceof StatelessKnowledgeSessionImpl) {
-            StatelessKnowledgeSessionImpl sksi = (StatelessKnowledgeSessionImpl)runtimeEventManager;
-            if (listener instanceof WorkingMemoryEventListener) {
-                sksi.workingMemoryEventSupport.addEventListener((WorkingMemoryEventListener)listener);
-            } else if (listener instanceof org.kie.api.event.rule.WorkingMemoryEventListener) {
-                runtimeEventManager.addEventListener((org.kie.api.event.rule.WorkingMemoryEventListener)listener);
-            }
-            if (listener instanceof AgendaEventListener) {
-                sksi.agendaEventSupport.addEventListener((AgendaEventListener)listener);
-            } else if (listener instanceof org.kie.api.event.rule.AgendaEventListener) {
-                runtimeEventManager.addEventListener((org.kie.api.event.rule.AgendaEventListener)listener);
-            }
-            if (listener instanceof RuleBaseEventListener) {
-                sksi.getRuleBase().addEventListener((RuleBaseEventListener)listener);
-            } else if (listener instanceof KieBaseEventListener) {
-                new KnowledgeBaseImpl(sksi.getRuleBase()).addEventListener((KieBaseEventListener)listener);
-            }
-            if (listener instanceof ProcessEventListener) {
-                sksi.processEventSupport.addEventListener((ProcessEventListener)listener);
-            }
-        } else if (runtimeEventManager instanceof CommandBasedStatefulKnowledgeSession) {
-            CommandBasedStatefulKnowledgeSession cbsks = (CommandBasedStatefulKnowledgeSession)runtimeEventManager;
-            ReteooWorkingMemoryInterface rwmi = ((StatefulKnowledgeSessionImpl)((KnowledgeCommandContext)cbsks.getCommandService().getContext()).getKieSession()).session;
-            if (listener instanceof WorkingMemoryEventListener) {
-                rwmi.addEventListener((WorkingMemoryEventListener)listener);
-            } else if (listener instanceof org.kie.api.event.rule.WorkingMemoryEventListener) {
-                runtimeEventManager.addEventListener((org.kie.api.event.rule.WorkingMemoryEventListener)listener);
-            }
-            if (listener instanceof AgendaEventListener) {
-                rwmi.addEventListener((AgendaEventListener)listener);
-            } else if (listener instanceof org.kie.api.event.rule.AgendaEventListener) {
-                runtimeEventManager.addEventListener((org.kie.api.event.rule.AgendaEventListener)listener);
-            }
-            if (listener instanceof RuleBaseEventListener) {
-                rwmi.addEventListener((RuleBaseEventListener)listener);
-            } else if (listener instanceof KieBaseEventListener) {
-                cbsks.getKieBase().addEventListener((KieBaseEventListener)listener);
-            }
-            if (listener instanceof ProcessEventListener) {
-                InternalProcessRuntime ipr = rwmi.getProcessRuntime();
-                if (ipr != null) {
-                    ipr.addEventListener((ProcessEventListener)listener);
-                }
-            }
+        if (listener instanceof KieBaseEventListener && runtimeEventManager instanceof KieRuntime) {
+            ((KieRuntime)runtimeEventManager).getKieBase().addEventListener((KieBaseEventListener)listener);
+        }
+        if (listener instanceof AgendaEventListener) {
+            runtimeEventManager.addEventListener((AgendaEventListener)listener);
+        }
+        if (listener instanceof WorkingMemoryEventListener) {
+            runtimeEventManager.addEventListener((WorkingMemoryEventListener)listener);
+        }
+        if (listener instanceof ProcessEventListener) {
+            runtimeEventManager.addEventListener((ProcessEventListener)listener);
         }
     }
 
