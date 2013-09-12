@@ -29,6 +29,7 @@ import org.switchyard.admin.Binding;
 import org.switchyard.admin.Reference;
 import org.switchyard.admin.Service;
 import org.switchyard.admin.SwitchYard;
+import org.switchyard.as7.extension.ExtensionMessages;
 import org.switchyard.as7.extension.services.SwitchYardAdminService;
 
 /**
@@ -89,12 +90,14 @@ public final class SwitchYardSubsystemStopGateway implements OperationStepHandle
                         binding.stop();
                         context.stepCompleted();
                     } catch (Throwable e) {
-                        throw new OperationFailedException(new ModelNode().set("Error starting gateway: "
+                        throw new OperationFailedException(new ModelNode().set(
+                                ExtensionMessages.MESSAGES.errorStartingGateway()
                                 + e.getMessage()));
                     }
                     return;
                 }
-                throw new OperationFailedException(new ModelNode().set("Unknown gateway."));
+                throw new OperationFailedException(new ModelNode().set(
+                        ExtensionMessages.MESSAGES.unknownGateway() ));
             }
         }, OperationContext.Stage.RUNTIME);
         context.stepCompleted();

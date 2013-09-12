@@ -32,6 +32,7 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.switchyard.as7.extension.CommonAttributes;
+import org.switchyard.as7.extension.ExtensionLogger;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.ConfigurationPuller;
 import org.switchyard.config.Configurations;
@@ -88,14 +89,14 @@ public class SwitchYardComponentService implements Service<Component> {
                 LOG.debug("Initialized component " + _component);
                 _component.addResourceDependency(_resourceAdapterRepository.getValue());
             } catch (InstantiationException ie) {
-                LOG.error("Unable to instantiate class " + className, ie);
+                ExtensionLogger.ROOT_LOGGER.unableToInstantiateClass(className, ie);
             } catch (IllegalAccessException iae) {
-                LOG.error("Unable to access constructor for " + className, iae);
+                ExtensionLogger.ROOT_LOGGER.unableToAccessConstructor(className, iae);
             }
         } catch (ClassNotFoundException cnfe) {
-            LOG.error("Unable to load class " + className, cnfe);
+            ExtensionLogger.ROOT_LOGGER.unableToLoadClass(className, cnfe);
         } catch (ModuleLoadException mle) {
-            LOG.error("Unable to load module " + _moduleId, mle);
+            ExtensionLogger.ROOT_LOGGER.unableToLoadModule(_moduleId, mle);
         }
     }
 
@@ -130,7 +131,7 @@ public class SwitchYardComponentService implements Service<Component> {
         try {
             _component.destroy();
         }  catch (Exception e) {
-            LOG.error("Unable to stop " + _component.getName(), e);
+            ExtensionLogger.ROOT_LOGGER.unableToStop(_component.getName(), e);
         }
     }
 

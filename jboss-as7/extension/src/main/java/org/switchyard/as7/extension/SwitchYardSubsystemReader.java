@@ -193,7 +193,7 @@ final class SwitchYardSubsystemReader implements XMLStreamConstants, XMLElementR
                 String name = reader.getLocalName();
                 String value = reader.getElementText();
                 if (properties.has(name)) {
-                    throw new XMLStreamException(element.getLocalName() + " already declared", reader.getLocation());
+                    throw ExtensionMessages.MESSAGES.alreadyDeclared(element.getLocalName(), reader.getLocation().toString());
                 }
 
                 ModelNode property = new ModelNode();

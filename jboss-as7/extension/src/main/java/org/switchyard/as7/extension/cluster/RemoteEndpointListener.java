@@ -36,6 +36,8 @@ import org.jboss.as.server.ServerEnvironment;
 import org.jboss.as.web.deployment.WebCtxLoader;
 import org.jboss.logging.Logger;
 import org.switchyard.ServiceDomain;
+import org.switchyard.as7.extension.ExtensionLogger;
+import org.switchyard.as7.extension.ExtensionMessages;
 import org.switchyard.as7.extension.util.ServerUtil;
 import org.switchyard.component.sca.RemoteEndpointPublisher;
 import org.switchyard.component.sca.SwitchYardRemotingServlet;
@@ -82,7 +84,7 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
             File docBase = new File(SERVER_TEMP_DIR, _contextName);
             if (!docBase.exists()) {
                 if (!docBase.mkdirs()) {
-                    throw new RuntimeException("Unable to create temp directory " + docBase.getPath());
+                    throw ExtensionMessages.MESSAGES.unableToCreateTempDirectory(docBase.getPath());
                 }
             }
             _serverContext.setDocBase(docBase.getPath());
@@ -112,7 +114,7 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
             
             _started = true;
         } else {
-            throw new RuntimeException("Context " + _contextName + " already exists!");
+            throw ExtensionMessages.MESSAGES.contextAlreadyExists(_contextName);
         }
     }
     
@@ -128,7 +130,7 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
                     _serverContext.destroy();
                     _log.info("Destroyed HTTP context " + _serverContext.getPath());
                 } catch (Exception e) {
-                    _log.error("Unable to destroy web context", e);
+                    ExtensionLogger.ROOT_LOGGER.unableToDestroyWebContext(e);
                 }
             }
         }
@@ -147,7 +149,7 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
             InetAddress address = protocol.getAddress();
             hostAddress = address.getHostAddress();
          } else {
-             _log.warn("Unable to determine host address from connector.  Using alias definition instead.");
+             ExtensionLogger.ROOT_LOGGER.unableToDetermineHostAddress();
              hostAddress = ServerUtil.getDefaultHost().getHost().findAliases()[0];
          }
         

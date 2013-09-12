@@ -38,7 +38,7 @@ import org.jboss.wsf.stack.cxf.configuration.NonSpringBusHolder;
 import org.jboss.wsf.stack.cxf.deployment.EndpointImpl;
 import org.jboss.wsf.stack.cxf.security.authentication.SubjectCreatingInterceptor;
 import org.jboss.wsf.stack.cxf.security.authentication.SubjectCreatingPolicyInterceptor;
-import org.switchyard.SwitchYardException;
+import org.switchyard.as7.extension.ExtensionMessages;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.soap.InboundHandler;
@@ -147,7 +147,7 @@ public final class Interceptors {
                 interceptor = Construction.construct(interceptorClass, parameterTypes, new Object[]{properties});
             }
         } catch (Throwable t) {
-            throw new SwitchYardException("Could not instantiate interceptor class: " + interceptorClass.getName(), t);
+            throw ExtensionMessages.MESSAGES.couldNotInstantiateInterceptor(interceptorClass.getName(), t);
         }
         return interceptor;
     }

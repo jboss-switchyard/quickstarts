@@ -20,6 +20,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.core.StandardContext;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.spi.Registry;
+import org.switchyard.as7.extension.ExtensionLogger;
 import org.switchyard.component.resteasy.resource.Resource;
 
 /**
@@ -87,7 +88,7 @@ public class RESTEasyResource implements Resource {
                         _context.destroy();
                         LOG.info("Destroyed RESTEasy context " + _context.getPath());
                     } catch (Exception e) {
-                        LOG.error("Unable to destroy web context", e);
+                        ExtensionLogger.ROOT_LOGGER.unableToDestroyWebContext(e);
                     }
                 }
             }

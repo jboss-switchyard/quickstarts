@@ -28,6 +28,7 @@ import org.apache.tomcat.InstanceManager;
 import org.jboss.as.server.ServerEnvironment;
 import org.jboss.as.web.deployment.WebCtxLoader;
 import org.jboss.logging.Logger;
+import org.switchyard.as7.extension.ExtensionMessages;
 import org.switchyard.as7.extension.util.ServerUtil;
 import org.switchyard.component.http.InboundHandler;
 import org.switchyard.component.http.HttpGatewayServlet;
@@ -58,7 +59,7 @@ public class JBossWebEndpointPublisher implements EndpointPublisher {
             File docBase = new File(SERVER_TEMP_DIR, context);
             if (!docBase.exists()) {
                 if (!docBase.mkdirs()) {
-                    throw new RuntimeException("Unable to create temp directory " + docBase.getPath());
+                    throw ExtensionMessages.MESSAGES.unableToCreateTempDirectory(docBase.getPath());
                 }
             }
             serverContext.setDocBase(docBase.getPath());
@@ -84,7 +85,7 @@ public class JBossWebEndpointPublisher implements EndpointPublisher {
             instance.setHandler(handler);
             LOG.info("Published HTTP context " + serverContext.getPath());
         } else {
-            throw new RuntimeException("Context " + context + " already exists!");
+            throw ExtensionMessages.MESSAGES.contextAlreadyExists(context);
         }
         return new JBossWebEndpoint(serverContext);
     }

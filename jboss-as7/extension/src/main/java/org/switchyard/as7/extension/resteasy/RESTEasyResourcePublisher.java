@@ -31,6 +31,7 @@ import org.jboss.as.server.ServerEnvironment;
 import org.jboss.as.web.deployment.WebCtxLoader;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.spi.Registry;
+import org.switchyard.as7.extension.ExtensionMessages;
 import org.switchyard.as7.extension.util.ServerUtil;
 import org.switchyard.component.resteasy.resource.Resource;
 import org.switchyard.component.resteasy.resource.ResourcePublisher;
@@ -60,7 +61,7 @@ public class RESTEasyResourcePublisher implements ResourcePublisher {
             File docBase = new File(SERVER_TEMP_DIR, context);
             if (!docBase.exists()) {
                 if (!docBase.mkdirs()) {
-                    throw new RuntimeException("Unable to create temp directory " + docBase.getPath());
+                    throw ExtensionMessages.MESSAGES.unableToCreateTempDirectory(docBase.getPath());
                 }
             }
             serverContext.setDocBase(docBase.getPath());
