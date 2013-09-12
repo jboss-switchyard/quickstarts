@@ -60,7 +60,7 @@
         <version.arquillian.openshift>1.0.0.CR7</version.arquillian.openshift>
         <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
         <version.activemq>5.8.0</version.activemq>
-        <version.antlr>3.3</version.antlr>
+        <version.antlr>3.5</version.antlr>
         <version.axiom>1.2.8</version.axiom>
         <version.batik>1.7</version.batik>
         <version.beanshell>2.0b5</version.beanshell>
@@ -71,7 +71,7 @@
         <version.commons.net>2.2</version.commons.net>
         <version.commons.ssl>0.3.9</version.commons.ssl>
         <version.deltaspike>${version.org.apache.deltaspike}</version.deltaspike>
-        <version.drools>6.0.0.CR1</version.drools>
+        <version.drools>6.0.0.CR3</version.drools>
         <version.ecj>3.7.2</version.ecj>
         <version.forge>1.2.2.Final</version.forge>
         <version.forge.arquillian>1.0.0.CR7</version.forge.arquillian>
@@ -86,6 +86,7 @@
         <!-- The EAP6 BOM has a version 5.2.1.FINAL, so overriding it here -->
         <version.infinispan>5.2.1.Final</version.infinispan>
         <version.ironjacamar>1.0.15.Final</version.ironjacamar>
+        <version.jackson>1.9.9</version.jackson>
         <version.jbossas>7.2.0.Alpha1-redhat-4</version.jbossas>
         <version.jbossas.console>1.5.4.Final</version.jbossas.console>
         <!-- Override versions for OpenShift. May use the same version as AS but -->
@@ -96,15 +97,15 @@
         <version.jbossws.spi>2.1.2.Final</version.jbossws.spi>
         <version.jbossws.jboss720.server.integration>4.2.0-SNAPSHOT</version.jbossws.jboss720.server.integration>
         <version.jboss.logging>3.1.2.GA</version.jboss.logging>
-       	<version.jboss.logging.processor>1.1.0.Final</version.jboss.logging.processor> 
-        <version.jbpm>6.0.0.CR1</version.jbpm>
+        <version.jboss.logging.processor>1.1.0.Final</version.jboss.logging.processor>
+        <version.jbpm>6.0.0.CR3</version.jbpm>
         <version.jettison>1.2</version.jettison>
         <version.jsch>0.1.48</version.jsch>
         <version.jta>1.1</version.jta>
         <version.junit>4.10</version.junit>
         <version.jruby>1.7.2</version.jruby>
         <version.jython>2.5.3</version.jython>
-        <version.kie>6.0.0.CR1</version.kie>
+        <version.kie>6.0.0.CR3</version.kie>
         <version.littleproxy>0.5.3</version.littleproxy>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
         <version.milyn>1.5.1</version.milyn>
@@ -127,7 +128,7 @@
         <version.rhino>1.7R2</version.rhino>
         <version.saxon>9.2.1.5</version.saxon>
         <version.shrinkwrap.descriptors>2.0.0-alpha-3</version.shrinkwrap.descriptors>
-        <version.slf4j>1.6.4</version.slf4j>
+        <version.slf4j>1.7.2</version.slf4j>
         <version.spring>3.0.7.RELEASE</version.spring>
         <version.weld>1.1.10.Final</version.weld>
         <version.xalan>2.7.1-1.jbossorg</version.xalan>
@@ -608,11 +609,11 @@
                 <groupId>org.jboss.logging</groupId>
                 <artifactId>jboss-logging</artifactId>
                 <version>${version.jboss.logging}</version>
-	    </dependency>
+            </dependency>
             <dependency>
                 <groupId>org.jboss.logging</groupId>
                 <artifactId>jboss-logging-processor</artifactId>
-	        <version>${version.jboss.logging.processor}</version>
+                <version>${version.jboss.logging.processor}</version>
             </dependency>
             <!-- Internal dependencies -->
             <dependency>
@@ -1830,6 +1831,11 @@
                 <groupId>org.clojure</groupId>
                 <artifactId>clojure</artifactId>
                 <version>${version.clojure}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>${version.jackson}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
