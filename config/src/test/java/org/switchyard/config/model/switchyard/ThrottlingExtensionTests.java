@@ -27,6 +27,7 @@ import org.switchyard.config.model.switchyard.v1.V1ThrottlingModel;
 public class ThrottlingExtensionTests {
 
     private static final String THROTTLING_XML = "/org/switchyard/config/model/switchyard/ThrottlingExtensionTests.xml";
+    private static final String THROTTLING_XML2 = "/org/switchyard/config/model/switchyard/ThrottlingExtensionTests2.xml";
     private static final Integer MAX_REQUESTS = 50;
     private static final Long TIME_PERIOD = 2000L;
 
@@ -49,6 +50,17 @@ public class ThrottlingExtensionTests {
     @Test
     public void testRead() throws Exception {
         SwitchYardModel switchyard = _puller.pull(THROTTLING_XML, getClass());
+        ExtensionsModel extensions = switchyard.getComposite().getServices().get(0).getExtensions();
+        ThrottlingModel throttling = extensions.getThrottling();
+
+        Assert.assertEquals(MAX_REQUESTS, (Integer) throttling.getMaxRequests());
+        Assert.assertEquals(TIME_PERIOD, throttling.getTimePeriod());
+    }
+
+    @Test
+    public void testPropertySubstitution() throws Exception {
+        System.setProperty("property.messages.per.poll", "50");
+        SwitchYardModel switchyard = _puller.pull(THROTTLING_XML2, getClass());
         ExtensionsModel extensions = switchyard.getComposite().getServices().get(0).getExtensions();
         ThrottlingModel throttling = extensions.getThrottling();
 
