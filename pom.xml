@@ -107,6 +107,7 @@
         <version.jython>2.5.3</version.jython>
         <version.kie>6.0.0.CR3</version.kie>
         <version.littleproxy>0.5.3</version.littleproxy>
+        <version.maven.clean.plugin>2.5</version.maven.clean.plugin>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
         <version.milyn>1.5.1</version.milyn>
         <version.mock.javamail>1.9</version.mock.javamail>
@@ -451,6 +452,11 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${version.maven.clean.plugin}</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
