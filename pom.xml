@@ -30,6 +30,11 @@
         <name>JBoss by Red Hat</name>
         <url>http://jboss.org</url>
     </organization>
+    <scm>
+        <connection>scm:git:ssh//github.com/jboss-switchyard/quickstarts.git</connection>
+        <developerConnection>scm:git:ssh://github.com/jboss-switchyard/quickstarts.git</developerConnection>
+        <url>http://github.com/jboss-switchyard/quickstarts</url>
+    </scm>
     <modules>
         <module>bean-service</module>
         <module>bpel-service</module>
