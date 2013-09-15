@@ -21,7 +21,6 @@ import org.switchyard.HandlerException;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.common.composer.MessageComposer;
-import org.switchyard.SwitchYardException;
 
 /**
  * A CamelResponseHandler is responsible for passing back result data from Apache Camel to
@@ -46,10 +45,10 @@ public class CamelResponseHandler implements ExchangeHandler {
      */
     public CamelResponseHandler(final org.apache.camel.Exchange camelExchange, final ServiceReference reference, final MessageComposer<CamelBindingData> messageComposer) {
         if (camelExchange ==  null) {
-            throw new SwitchYardException("[camelExchange] argument must not be null");
+            throw SwitchYardCamelComponentMessages.MESSAGES.camelExchangeArgumentMustNotBeNull();
         }
         if (reference == null) {
-            throw new SwitchYardException("[reference] argument must not be null");
+            throw SwitchYardCamelComponentMessages.MESSAGES.referenceArgumentMustNotBeNull();
         }
         _camelExchange = camelExchange;
         _messageComposer = messageComposer;

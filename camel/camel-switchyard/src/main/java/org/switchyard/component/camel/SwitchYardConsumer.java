@@ -116,14 +116,14 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
                 } else if (camelFault instanceof Throwable) {
                     throw new HandlerException(Throwable.class.cast(camelFault));
                 } else {
-                    throw new HandlerException("camel exchange failed without an exception: " + camelFault);
+                    throw SwitchYardCamelComponentMessages.MESSAGES.camelExchangeFailedWithoutException(camelFault.toString());
                 }
             }
         } else {
             // IN_ONLY
             if (camelExchange.isFailed()) {
                 if (camelException == null) {
-                    throw new HandlerException("camel exchange failed without an exception");
+                    throw SwitchYardCamelComponentMessages.MESSAGES.camelExchangeFailed();
                 }
                 throw new HandlerException(camelException);
             }
@@ -136,7 +136,7 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
             // already started
             return;
         } else if (getState() != State.NONE) {
-            throw new SwitchYardException("Invalid handler state.");
+            throw SwitchYardCamelComponentMessages.MESSAGES.invalidHandlerState();
         }
         setState(State.STARTING);
         try {
@@ -154,7 +154,7 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
             // already stopped
             return;
         } else if (getState() != State.STARTED) {
-            throw new SwitchYardException("Invalid handler state.");
+            throw SwitchYardCamelComponentMessages.MESSAGES.invalidHandlerState();
         }
         setState(State.STOPPING);
         try {
@@ -212,7 +212,7 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
 
     private void setState(State newState) {
         if (newState == null) {
-            throw new IllegalArgumentException("state cannot be null.");
+            throw SwitchYardCamelComponentMessages.MESSAGES.stateCannotBeNull();
         }
         _state.set(newState);
     }

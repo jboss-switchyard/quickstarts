@@ -17,7 +17,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.model.RouteDefinition;
 import org.switchyard.ServiceDomain;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.camel.common.CamelConstants;
@@ -53,7 +52,7 @@ public class CamelSqlInboundHandler extends InboundHandler<CamelSqlBindingModel>
         String period = bindingModel.getPeriod();
         if (bindingModel.isServiceBinding()) {
             if (Strings.trimToNull(period) == null) {
-                throw new SwitchYardException("Period attribute is mandatory for SQL service bindings");
+                throw SQLCamelComponentMessages.MESSAGES.periodAttributeMandatory();
             }
 
             RouteDefinition definition = new RouteDefinition();

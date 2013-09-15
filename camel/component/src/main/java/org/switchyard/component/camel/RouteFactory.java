@@ -91,7 +91,7 @@ public final class RouteFactory {
             
             // If we couldn't find a <route> or <routes> definition, throw an error
             if (routes == null) {
-                throw new SwitchYardException("No routes found in XML file " + xmlPath);
+                CamelComponentMessages.MESSAGES.noRoutesFoundInXMLFile(xmlPath);
             }
             return routes;
         } catch (JAXBException e) {
@@ -137,8 +137,8 @@ public final class RouteFactory {
      */
     public static List<RouteDefinition> createRoute(Class<?> routeClass, String namespace) {
         if (!RouteBuilder.class.isAssignableFrom(routeClass)) {
-            throw new SwitchYardException("Java DSL class " + routeClass.getName() 
-                + " must extend " + RouteBuilder.class.getName());
+            throw CamelComponentMessages.MESSAGES.javaDSLClassMustExtend(routeClass.getName(),
+                    RouteBuilder.class.getName());
         }
 
         // Create the route and tell it to create a route
@@ -148,12 +148,11 @@ public final class RouteFactory {
             builder.configure();
             List<RouteDefinition> routes = builder.getRouteCollection().getRoutes();
             if (routes.isEmpty()) {
-                throw new SwitchYardException("No routes found in Java DSL class " + routeClass.getName());
+                throw CamelComponentMessages.MESSAGES.noRoutesFoundinJavaDSLClass(routeClass.getName());
             }
             return routes;
         } catch (Exception ex) {
-            throw new SwitchYardException("Failed to initialize Java DSL class " 
-                    + routeClass.getName(), ex);
+            throw CamelComponentMessages.MESSAGES.failedToInitializeDSLClass(routeClass.getName(), ex);
         }
     }
 
