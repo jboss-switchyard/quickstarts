@@ -23,13 +23,14 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.com.sun.net.httpserver.BasicAuthenticator;
 import org.jboss.com.sun.net.httpserver.HttpContext;
 import org.jboss.com.sun.net.httpserver.HttpExchange;
 import org.jboss.com.sun.net.httpserver.HttpHandler;
 import org.jboss.com.sun.net.httpserver.HttpServer;
 import org.switchyard.component.http.ContentType;
+import org.switchyard.component.http.HttpLogger;
 import org.switchyard.component.http.InboundHandler;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
 import org.switchyard.component.http.composer.HttpRequestInfo;
@@ -70,7 +71,7 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
             _httpServer.setExecutor(null); // creates a default executor
             _httpServer.start();
         } catch (IOException ioe) {
-            LOGGER.error("Unable to launch standalone http server", ioe);
+            HttpLogger.ROOT_LOGGER.unableToLaunchStandaloneHttpServer(ioe);
         }
     }
 
@@ -108,7 +109,7 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
                     httpRequest.setHeaders(exchange.getRequestHeaders());
                     httpRequest.setRequestInfo(getRequestInfo(exchange, contentType));
                 } catch (IOException e) {
-                    LOGGER.error("Unexpected Exception while reading request", e);
+                    HttpLogger.ROOT_LOGGER.unexpectedExceptionWhileReadingRequest(e);
                 }
                 HttpResponseBindingData httpResponse = _handler.invoke(httpRequest);
                 try {
@@ -128,10 +129,10 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
                         exchange.sendResponseHeaders(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 0);
                     }
                 } catch (IOException e) {
-                    LOGGER.error("Unexpected Exception while writing response", e);
+                    HttpLogger.ROOT_LOGGER.unexpectedExceptionWhileWritingResponse(e);
                 }
             } catch (Exception e) {
-                LOGGER.error("Unexpected Exception while handling http request", e);
+                HttpLogger.ROOT_LOGGER.unexpectedExceptionWhileHandlingHttpRequest(e);
             }
         }
     }

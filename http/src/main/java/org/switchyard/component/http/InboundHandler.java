@@ -16,7 +16,7 @@ package org.switchyard.component.http;
 
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
@@ -35,7 +35,6 @@ import org.switchyard.component.http.config.model.HttpBindingModel;
 import org.switchyard.component.http.endpoint.Endpoint;
 import org.switchyard.component.http.endpoint.EndpointPublisherFactory;
 import org.switchyard.deploy.BaseServiceHandler;
-import org.switchyard.SwitchYardException;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
@@ -91,7 +90,7 @@ public class InboundHandler extends BaseServiceHandler {
             // Create and configure the HTTP message composer
             _messageComposer = HttpComposition.getMessageComposer(_config);
         } catch (Exception e) {
-            throw new HttpPublishException(e);
+            throw HttpMessages.MESSAGES.unableToPublish(e);
         }
     }
 
@@ -122,7 +121,7 @@ public class InboundHandler extends BaseServiceHandler {
                 response = (HttpResponseBindingData) _messageComposer.decompose(exchange, new HttpResponseBindingData());
             }
         } catch (Exception e) {
-            LOGGER.error(e, e);
+            HttpLogger.ROOT_LOGGER.unexpectedExceptionInvokingSwitchyardServcie(e);
         }
         return response;
     }
@@ -137,12 +136,12 @@ public class InboundHandler extends BaseServiceHandler {
 
     @Override
     public void handleFault(Exchange exchange) {
-        throw new IllegalStateException("Unexpected");
+        throw HttpMessages.MESSAGES.unexpectedFault();
     }
 
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
-        throw new IllegalStateException("Unexpected");
+        throw HttpMessages.MESSAGES.unexpectedMessage();
     }
 
     private String getOperationName(HttpRequestBindingData message) throws Exception {
@@ -154,11 +153,7 @@ public class InboundHandler extends BaseServiceHandler {
         if (operationName == null) {
             final Set<ServiceOperation> operations = _serviceRef.getInterface().getOperations();
             if (operations.size() != 1) {
-                final StringBuilder msg = new StringBuilder();
-                msg.append("No operationSelector was configured for the Http Component and the Service Interface ");
-                msg.append("contains more than one operation: ").append(operations);
-                msg.append("Please add an operationSelector element.");
-                throw new SwitchYardException(msg.toString());
+                throw HttpMessages.MESSAGES.moreThanOneOperationSelector(operations);
             }
             final ServiceOperation serviceOperation = operations.iterator().next();
             operationName = serviceOperation.getName();

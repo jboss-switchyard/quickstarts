@@ -16,7 +16,7 @@ package org.switchyard.component.http.endpoint;
 
 import java.util.ServiceLoader;
 
-import org.switchyard.component.http.HttpPublishException;
+import org.switchyard.component.http.HttpMessages;
 
 /**
  * Factory for creating Resource publisher.
@@ -43,7 +43,7 @@ public final class EndpointPublisherFactory {
         try {
             PUBLISHER = ServiceLoader.load(EndpointPublisher.class).iterator().next();
         } catch (Exception e) {
-            throw new HttpPublishException(e);
+            throw HttpMessages.MESSAGES.unableToFindPublisher(e);
         }
     }
 }

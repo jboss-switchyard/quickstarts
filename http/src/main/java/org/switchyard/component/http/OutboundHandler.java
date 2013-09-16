@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -168,7 +168,7 @@ public class OutboundHandler extends BaseServiceHandler {
         try {
             url = new URL(_baseAddress);
         } catch (MalformedURLException mue) {
-            throw new HttpConsumeException(mue);
+            throw HttpMessages.MESSAGES.invalidHttpURL(mue);
         }
         if (realm == null) {
             realm = AuthScope.ANY_REALM;
@@ -195,8 +195,7 @@ public class OutboundHandler extends BaseServiceHandler {
         exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _bindingName, Scope.EXCHANGE)
                 .addLabels(BehaviorLabel.TRANSIENT.label());
         if (getState() != State.STARTED) {
-            throw new HandlerException(String.format("Reference binding \"%s/%s\" is not started.", _referenceName,
-                    _bindingName));
+            throw HttpMessages.MESSAGES.bindingNotStarted(_referenceName, _bindingName);
         }
 
         DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -283,7 +282,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 exchange.sendFault(out);
             }
         } catch (Exception e) {
-            throw new HandlerException("Unexpected exception handling HTTP Message", e);
+            throw HttpMessages.MESSAGES.unexpectedExceptionHandlingHTTPMessage(e);
         } finally {
             // When HttpClient instance is no longer needed,
             // shut down the connection manager to ensure

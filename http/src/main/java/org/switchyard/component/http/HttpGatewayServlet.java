@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
 import org.switchyard.component.http.composer.HttpRequestInfo;
 import org.switchyard.component.http.composer.HttpResponseBindingData;
@@ -136,7 +136,7 @@ public class HttpGatewayServlet extends HttpServlet {
                 }
                 httpRequest.setRequestInfo(getRequestInfo(request));
             } catch (IOException e) {
-                LOGGER.error("Unexpected Exception while reading request", e);
+                HttpLogger.ROOT_LOGGER.unexpectedExceptionWhileReadingRequest(e);
             }
             HttpResponseBindingData httpResponse = _handler.invoke(httpRequest);
             try {
@@ -166,7 +166,7 @@ public class HttpGatewayServlet extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } catch (IOException e) {
-                LOGGER.error("Unexpected Exception while writing response", e);
+                HttpLogger.ROOT_LOGGER.unexpectedExceptionWhileWritingResponse(e);
             }
     }
 
