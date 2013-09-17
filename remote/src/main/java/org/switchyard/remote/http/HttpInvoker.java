@@ -13,6 +13,7 @@
  */
 package org.switchyard.remote.http;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -75,18 +76,25 @@ public class HttpInvoker implements RemoteInvoker {
         conn.addRequestProperty(SERVICE_HEADER, request.getService().toString());
         conn.connect();
         OutputStream os = conn.getOutputStream();
-        
+        try {
         // Write the request message
-        _serializer.serialize(request, RemoteMessage.class, os);
-        os.flush();
-        os.close();
+            _serializer.serialize(request, RemoteMessage.class, os);
+            os.flush();
+        } finally { 
+            os.close();
+        }
         
         // Check for response and process accordingly
         if (conn.getResponseCode() == 200) {
             if (_log.isDebugEnabled()) {
                 _log.debug("Processing reply for service " + request.getService());
             }
-            reply = _serializer.deserialize(conn.getInputStream(), RemoteMessage.class);
+            InputStream is = conn.getInputStream();
+            try {
+                reply = _serializer.deserialize(is, RemoteMessage.class);
+            } finally {
+                is.close();
+            }
         }
         
         return reply;
