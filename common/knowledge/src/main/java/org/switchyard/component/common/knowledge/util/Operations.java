@@ -215,7 +215,6 @@ public final class Operations {
         setOutputsOrFaults(message, operation.getFaultExpressionMappings(), contextOverrides, FAULT);
     }
 
-    @SuppressWarnings("unchecked")
     private static void setOutputsOrFaults(Message message, List<ExpressionMapping> expressionMappings, Map<String, Object> expressionContext, String defaultReturnVariable) {
         Map<String, List<ExpressionMapping>> toListMap = new HashMap<String, List<ExpressionMapping>>();
         for (ExpressionMapping expressionMapping : expressionMappings) {
@@ -230,16 +229,7 @@ public final class Operations {
             }
         }
         if (toListMap.size() == 0) {
-            Object output = null;
-            if (expressionContext != null) {
-                output = expressionContext.get(defaultReturnVariable);
-                if (output == null) {
-                    output = expressionContext.get(GLOBALS);
-                    if (output instanceof Map) {
-                        output = ((Map<String, Object>)output).get(defaultReturnVariable);
-                    }
-                }
-            }
+            Object output = getValue(expressionContext, defaultReturnVariable);
             if (output != null) {
                 message.setContent(output);
             }
@@ -254,6 +244,11 @@ public final class Operations {
                     Object from_value = run(message, from_em.getFromExpression(), expressionContext);
                     if (from_value != null) {
                         from_list.add(from_value);
+                    } else {
+                        from_value = getValue(expressionContext, from_em.getFrom());
+                        if (from_value != null) {
+                            from_list.add(from_value);
+                        }
                     }
                 }
                 final Object output;
@@ -275,6 +270,21 @@ public final class Operations {
                 run(message, output_to_expr, expressionContext);
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object getValue(Map<String, Object> expressionContext, String name) {
+        Object output = null;
+        if (expressionContext != null) {
+            output = expressionContext.get(name);
+            if (output == null) {
+                Object globals = expressionContext.get(GLOBALS);
+                if (globals instanceof Map) {
+                    output = ((Map<String, Object>)globals).get(name);
+                }
+            }
+        }
+        return output;
     }
 
     private static List<Object> getList(Message message, List<ExpressionMapping> expressionMappings) {
