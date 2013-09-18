@@ -21,6 +21,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 /**
  * A Greeter Resource.
@@ -38,6 +39,10 @@ public interface HelloResource {
     @GET
     @Path("{name}")
     String greeterInfo(@PathParam("name") String name);
+
+    @GET
+    @Path("/response")
+    Response testReponse();
 
     /**
      * A multi parameter test. A url will be of the form /greeters/name and anotherName will be in the request body.

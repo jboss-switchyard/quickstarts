@@ -19,12 +19,14 @@
 
     <sca:service name="SampleRESTEasyProviderService" promote="SomeProviderService">
         <rest:binding.rest name="testGateway">
+            <rest:contextMapper class="org.switchyard.component.resteasy.CustomMapper"/>
             <rest:interfaces>org.switchyard.component.resteasy.HelloResource</rest:interfaces>
         </rest:binding.rest>
     </sca:service>
 
     <sca:reference name="SampleRESTEasyConsumerService" promote="resteasy-consumer" multiplicity="1..1">
         <rest:binding.rest name="testGateway">
+            <rest:contextMapper class="org.switchyard.component.resteasy.AnotherCustomMapper"/>
             <rest:interfaces>org.switchyard.component.resteasy.HelloResource</rest:interfaces>
         </rest:binding.rest>
     </sca:reference>

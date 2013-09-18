@@ -54,6 +54,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
 public class RESTEasyGatewayTest {
 
     private static final QName STRING_QNAME = new QName("java:java.lang.String");
+    private static final QName RESPONSE_QNAME = new QName("javax.ws.rs.core.Response");
     private static ModelPuller<CompositeModel> _puller;
     private ServiceDomain _domain;
     private HTTPMixIn _httpMixIn = new HTTPMixIn();
@@ -126,6 +127,8 @@ public class RESTEasyGatewayTest {
         response = _httpMixIn.sendString("http://localhost:8080/greeters/magesh", "keith", HTTPMixIn.HTTP_POST);
         Assert.assertEquals(3, mockService.getMessages().size());
         Assert.assertEquals("keith", response);
+        response = _httpMixIn.sendString("http://localhost:8080/greeters/response", "", HTTPMixIn.HTTP_GET);
+        Assert.assertEquals(4, mockService.getMessages().size());
     }
 
     @Test
@@ -168,6 +171,7 @@ public class RESTEasyGatewayTest {
             _operations.add(new InOutOperation("addGreeter", STRING_QNAME, STRING_QNAME));
             _operations.add(new InOutOperation("greeterInfo", STRING_QNAME, STRING_QNAME));
             _operations.add(new InOutOperation("sayHello", STRING_QNAME, STRING_QNAME));
+            _operations.add(new InOutOperation("testResponse", STRING_QNAME, RESPONSE_QNAME));
         }
         public HelloRESTEasyInterface() {
             super(_operations);

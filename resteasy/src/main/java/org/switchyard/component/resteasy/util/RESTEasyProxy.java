@@ -80,9 +80,7 @@ public final class RESTEasyProxy implements InvocationHandler {
             requestData.setHeaders(headers.getRequestHeaders());
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Incoming Headers to SwitchYard through InboundHandler [");
-                for (Map.Entry<String, List<String>> entry : headers.getRequestHeaders().entrySet()) {
-                    LOGGER.trace(entry.getKey() + " = " + entry.getValue());
-                }
+                traceLog(LOGGER, headers.getRequestHeaders());
                 LOGGER.trace("]");
             }
         }
@@ -94,30 +92,55 @@ public final class RESTEasyProxy implements InvocationHandler {
             }
         }
         RESTEasyBindingData responseData = _serviceConsumer.invoke(requestData, method.getReturnType().equals(Void.TYPE));
-        if (method.getReturnType().equals(Response.class)) {
-            Response.ResponseBuilder builder = Response.ok();
-            if (responseData != null) {
+        Response.ResponseBuilder builder = Response.ok();
+        if (responseData != null) {
+            if (method.getReturnType().equals(Response.class)) {
+                if (responseData.getParameters().length > 0) {
+                    Object param = responseData.getParameters()[0];
+                    if (param instanceof Response) {
+                        // In future use builder = Response.ResponseBuilder.fromResponse((Response)param);
+                        Response response = (Response)param;
+                        builder.entity(response.getEntity());
+                        builder.status(response.getStatus());
+                    } else {
+                        builder.entity(param);
+                    }
+                }
+                // Data overrides status
                 if (responseData.getStatusCode() != null) {
                     builder.status(responseData.getStatusCode());
                 }
-                if (responseData.getParameters().length > 0) {
-                    builder.entity(responseData.getParameters()[0]);
-                }
                 for (Map.Entry<String, List<String>> entry : responseData.getHeaders().entrySet()) {
-                    builder.header(entry.getKey(), entry.getValue());
+                    String name = entry.getKey();
+                    List<String> values = entry.getValue();
+                    for (String value : values) {
+                        builder.header(name, value);
+                    }
                 }
                 if (LOGGER.isTraceEnabled()) {
                     LOGGER.trace("Outgoing Headers from SwitchYard through InboundHandler [");
-                    for (Map.Entry<String, List<String>> entry : responseData.getHeaders().entrySet()) {
-                        LOGGER.trace(entry.getKey() + " = " + entry.getValue());
-                    }
+                    traceLog(LOGGER, responseData.getHeaders());
                     LOGGER.trace("]");
                 }
+            } else if (responseData.getParameters().length > 0) {
+                return responseData.getParameters()[0];
             }
-            return builder.build();
-        } else if ((responseData != null) && (responseData.getParameters().length > 0)) {
-            return responseData.getParameters()[0];
         }
-        return null;
+        return builder.build();
+    }
+
+    /**
+     * Trace log header keys and values.
+     * @param logger The Logger
+     * @param headers The header map
+     */
+    public static void traceLog(final Logger logger, final Map<String, List<String>> headers) {
+        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+            String name = entry.getKey();
+            List<String> values = entry.getValue();
+            for (String value : values) {
+                logger.trace(name + " = " + value);
+            }
+        }
     }
 }

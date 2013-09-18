@@ -291,16 +291,14 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
             RESTEasyBindingData restResponse = new RESTEasyBindingData();
             if (response != null) {
                 restResponse.setParameters(new Object[]{response});
-                // Propagate outgoing headers
-                restResponse.setHeaders(clientResponse.getHeaders());
-                restResponse.setStatusCode(clientResponse.getStatus());
-                if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Incoming Headers to SwitchYard through OutboundHandler [");
-                    for (Object key : clientResponse.getHeaders().keySet()) {
-                        LOGGER.trace(key + " = " + clientResponse.getHeaders().get(key));
-                    }
-                    LOGGER.trace("]");
-                }
+            }
+            // Propagate outgoing headers
+            restResponse.setHeaders(clientResponse.getHeaders());
+            restResponse.setStatusCode(clientResponse.getStatus());
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Incoming Headers to SwitchYard through OutboundHandler [");
+                RESTEasyProxy.traceLog(LOGGER, clientResponse.getHeaders());
+                LOGGER.trace("]");
             }
             return restResponse;
         } finally {
@@ -320,13 +318,15 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
             request.header(HttpHeaders.ACCEPT, _accepts.toString());
         }
         for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
-            request.header(entry.getKey(), entry.getValue());
+            String name = entry.getKey();
+            List<String> values = entry.getValue();
+            for (String value : values) {
+                request.header(name, value);
+            }
         }
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Outgoing Headers from SwitchYard through OutboundHandler [");
-            for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
-                LOGGER.trace(entry.getKey() + " = " + entry.getValue());
-            }
+            RESTEasyProxy.traceLog(LOGGER, headers);
             LOGGER.trace("]");
         }
         this.copyClientInterceptorsTo(request);
