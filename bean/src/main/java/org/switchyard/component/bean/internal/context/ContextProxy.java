@@ -22,6 +22,8 @@ import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
 
+import org.switchyard.component.bean.BeanMessages;
+
 /**
  * SwitchYard Context proxy.
  *
@@ -151,7 +153,7 @@ public class ContextProxy implements Context {
     private static Context getContext() {
         Context context = CONTEXT.get();
         if (context == null) {
-            throw new IllegalStateException("Illegal call to get the SwitchYard Context; must be called within the execution of an ExchangeHandler chain.");
+            throw BeanMessages.MESSAGES.illegalCallToGetTheSwitchYardContextMustBeCalledWithinTheExecutionOfAnExchangeHandlerChain();
         }
         return context;
     }

@@ -21,6 +21,8 @@ import javax.enterprise.context.ApplicationScoped;
 import org.switchyard.Context;
 import org.switchyard.Message;
 
+import org.switchyard.component.bean.BeanMessages;
+
 /**
  * SwitchYard Message proxy.
  *
@@ -110,7 +112,7 @@ public class MessageProxy implements Message {
     private static Message getMessage() {
         Message message = MESSAGE.get();
         if (message == null) {
-            throw new IllegalStateException("Illegal call to get the SwitchYard Message; must be called within the execution of an ExchangeHandler chain.");
+            throw BeanMessages.MESSAGES.illegalCallToGetTheSwitchYardContextMustBeCalledWithinTheExecutionOfAnExchangeHandlerChain();
         }
         return message;
     }

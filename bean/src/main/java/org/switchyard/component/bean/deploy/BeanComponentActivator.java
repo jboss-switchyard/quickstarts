@@ -16,7 +16,6 @@ package org.switchyard.component.bean.deploy;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.component.bean.ClientProxyBean;
 import org.switchyard.component.bean.ServiceProxyHandler;
@@ -27,6 +26,7 @@ import org.switchyard.deploy.BaseActivator;
 import org.switchyard.deploy.ComponentNames;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.component.bean.BeanMessages;
 
 /**
  * The Bean Component Activator.
@@ -87,7 +87,7 @@ public class BeanComponentActivator extends BaseActivator {
             }
         }
         // bean discovery did not find a bean providing this service
-        throw new SwitchYardException("Unknown Service name '" + serviceName + "'.");
+        throw BeanMessages.MESSAGES.unknownServiceName(serviceName.toString());
     }
 
     @Override
@@ -114,7 +114,7 @@ public class BeanComponentActivator extends BaseActivator {
             }
         }
         // bean discovery did not find a bean providing this service
-        throw new SwitchYardException("Unknown Service name '" + name + "'.");
+        throw BeanMessages.MESSAGES.unknownServiceName(name);
     }
 
 }

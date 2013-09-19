@@ -93,25 +93,25 @@ public class Invocation {
 
         // TODO: Only supports 0 or 1 arg operations for now...
         if (parameterTypes.length > 1) {
-            throw new BeanComponentException("Bean service operation '" + operationName() + "' has more than 1 argument.  Bean component currently only supports single argument operations.");
+            throw BeanMessages.MESSAGES.beanServiceOperationMoreThanOne(operationName());
         }
     }
 
     private void assertTypesMatch() throws BeanComponentException {
         if (_args == null) {
             if (_method.getParameterTypes().length != 0) {
-                throw new BeanComponentException("Bean service operation '" + operationName() + "' requires a single argument.  Exchange payload specifies no payload.");
+                throw BeanMessages.MESSAGES.beanServiceOperationRequiresSingle(operationName());
             }
         } else {
             if (_args.length > 1) {
-                throw new BeanComponentException("Bean service operation '" + operationName() + "' only supports a single argument.  Exchange payload specifies " + _args.length + " args.");
+                throw BeanMessages.MESSAGES.beanServiceOperationSupportsSingle(operationName(), new String("" + _args.length));
             }
 
             if (_args[0] != null) {
                 Class<?> argType = _method.getParameterTypes()[0];
 
                 if (!argType.isInstance(_args[0])) {
-                    throw new BeanComponentException("Bean service operation '" + operationName() + "' requires a payload type of '" + argType.getName() + "'.  Actual payload type is '" + _args[0].getClass().getName() + "'.  You must define and register a Transformer.");
+                    throw BeanMessages.MESSAGES.beanServiceOperationRequiresAPayloadTypeOf(operationName(), argType.getName(), _args[0].getClass().getName());
                 }
             }
         }

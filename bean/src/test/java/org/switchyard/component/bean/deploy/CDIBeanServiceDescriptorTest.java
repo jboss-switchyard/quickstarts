@@ -33,7 +33,8 @@ public class CDIBeanServiceDescriptorTest {
         try {
             CDIBeanServiceDescriptor.getServiceInterface(YImpl.class);
         } catch (RuntimeException e) {
-            Assert.assertEquals("Invalid @Service specification @Service(java.lang.String.class).  @Service interface Class must be a Java Interface.  Cannot be a concrete implementation.", e.getMessage());
+            String message = e.getMessage();
+            Assert.assertTrue(message.contains("SWITCHYARD030421"));
         }
     }
 

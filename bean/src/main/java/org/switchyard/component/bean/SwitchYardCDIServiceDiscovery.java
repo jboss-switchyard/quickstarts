@@ -32,7 +32,7 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.ProcessBean;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaDataCDIBean;

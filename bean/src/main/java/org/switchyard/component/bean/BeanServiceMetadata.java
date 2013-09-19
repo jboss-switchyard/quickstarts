@@ -78,13 +78,13 @@ public class BeanServiceMetadata {
 
             // Operation name must resolve to exactly one bean method...
             if (candidateMethods.size() != 1) {
-                throw new BeanComponentException("Operation name '" + operationName + "' must resolve to exactly one bean method on bean type '" + _serviceClass.getName() + "'.");
+                throw BeanMessages.MESSAGES.operationNameMustResolveToExactlyOneBeanMethodOnBeanType(operationName, _serviceClass.getName());
             }
 
             Method operationMethod = candidateMethods.get(0);
             return new Invocation(operationMethod, exchange);
         } else {
-            throw new BeanComponentException("Operation name not specified on exchange.");
+            throw BeanMessages.MESSAGES.operationNameNotSpecifiedOnExchange();
         }
     }
 

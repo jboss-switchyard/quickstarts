@@ -21,13 +21,12 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
@@ -123,8 +122,7 @@ public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHa
                     if (field.getType().isAssignableFrom(property.getClass())) {
                         new FieldAccess<Object>(field).write(_serviceBean, property);
                     } else {
-                        _logger.warn("Property '" + propAnno.name() + "' has incompatible type: Bean '" + _serviceMetadata.getServiceClass().getName()
-                                + "' is expecting '" + field.getType().getName() + "', but was '" + property.getClass().getName() + "'. ignoring...");
+                        BeanLogger.ROOT_LOGGER.propertyHasIncompatibleTypeBean(propAnno.name(), _serviceMetadata.getServiceClass().getName(), field.getType().getName(), property.getClass().getName());
                     }
                 }
                 
@@ -171,8 +169,8 @@ public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHa
                     exchange.send(message);
                 }
             } catch (Exception ex) {
-                String errMsg = "Invocation of operation '" + invocation.getMethod().getName() 
-                        + "' on bean component '" + _serviceBean.getClass().getName() + "failed.";
+                String errMsg = BeanMessages.MESSAGES.invocationOfOperationFailed(invocation.getMethod().getName(),
+                        _serviceBean.getClass().getName());
                 // write error details to log
                 if (_logger.isDebugEnabled()) {
                     _logger.debug(errMsg, ex);
@@ -194,7 +192,7 @@ public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHa
                 throw new HandlerException(faultContent);
             }
         } else {
-            throw new SwitchYardException("Unexpected error.  BeanServiceMetadata should return an Invocation instance, or throw a BeanComponentException.");
+            throw BeanMessages.MESSAGES.unexpectedErrorBeanServiceMetadataShouldReturnAnInvocationInstanceOrThrowABeanComponentException();
         }
     }
 

@@ -23,11 +23,10 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
-import org.switchyard.SwitchYardException;
 import org.switchyard.component.bean.ClientProxyBean;
+import org.switchyard.component.bean.BeanMessages;
 import org.switchyard.component.bean.internal.ReferenceInvokerBean;
 
 /**
@@ -161,17 +160,17 @@ public class BeanDeploymentMetaData {
 
             Set<Bean<?>> beans = beanManager.getBeans(BeanDeploymentMetaData.class);
             if (beans.isEmpty()) {
-                throw new SwitchYardException("Failed to lookup BeanDeploymentMetaData from BeanManager.  Must be bound into BeanManager.  Perhaps SwitchYard CDI Extensions not properly installed in container.");
+                throw BeanMessages.MESSAGES.failedToLookupBeanDeploymentMetaDataFromBeanManagerMustBeBoundIntoBeanManagerPerhapsSwitchYardCDIExtensionsNotProperlyInstalledInContainer();
             }
             if (beans.size() > 1) {
-                throw new SwitchYardException("Failed to lookup BeanDeploymentMetaData from BeanManager.  Multiple beans resolved for type '" + BeanDeploymentMetaData.class.getName() + "'.");
+                throw BeanMessages.MESSAGES.failedToLookupBeanDeploymentMetaDataFromBeanManagerMultipleBeansResolvedForType(BeanDeploymentMetaData.class.getName());
             }
 
             BeanDeploymentMetaDataCDIBean bean = (BeanDeploymentMetaDataCDIBean) beans.iterator().next();
 
             return bean.getBeanMetaData();
         } catch (NamingException e) {
-            throw new SwitchYardException("Failed to lookup BeanManager.  Must be bound into java:comp as per CDI specification.", e);
+            throw BeanMessages.MESSAGES.failedToLookupBeanManagerMustBeBoundIntoJavaCompAsPerCDISpecification(e);
         }
     }
 
@@ -186,7 +185,7 @@ public class BeanDeploymentMetaData {
         if (beanManager == null) {
             beanManager = getCDIBeanManager("java:comp/env");
             if (beanManager == null) {
-                throw new NameNotFoundException("Name BeanManager is not bound in this Context");
+                throw BeanMessages.MESSAGES.nameBeanManagerIsNotBoundInThisContext();
             }
         }
 
@@ -216,13 +215,13 @@ public class BeanDeploymentMetaData {
         } catch (NamingException e) {
             return null;
         } catch (Exception e) {
-            throw new SwitchYardException("Unexpected Exception retrieving '" + jndiName + "' from JNDI namespace.", e);
+            throw BeanMessages.MESSAGES.unexpectedExceptionRetrieving(jndiName, e);
         } finally {
             if (initialContext != null) {
                 try {
                     initialContext.close();
                 } catch (NamingException e) {
-                    throw new SwitchYardException("Unexpected error closing InitialContext.", e);
+                    throw BeanMessages.MESSAGES.unexpectedErrorClosingInitialContext(e);
                 }
             }
         }

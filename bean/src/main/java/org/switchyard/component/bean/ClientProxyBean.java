@@ -267,8 +267,7 @@ public class ClientProxyBean implements Bean {
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             if (_service == null) {
-                throw new BeanComponentException("A service reference to service '" + _serviceName + "' is not bound into "
-                        + "this client proxy instance.  A reference configuration to the service may be required in the application configuration.");
+                throw BeanMessages.MESSAGES.aServiceReferenceToServiceIsNotBoundInto(_serviceName);
             }
 
             // Handle basic Object methods.
@@ -313,7 +312,7 @@ public class ClientProxyBean implements Bean {
                         }
                         throw (Throwable) exceptionObj;
                     } else {
-                        throw new BeanComponentException("Bean Component invocation failure.  Service '" + _serviceName + "', operation '" + method.getName() + "'.").setFaultExchange(exchangeOut);
+                        throw BeanMessages.MESSAGES.beanComponentInvocationFailureServiceOperation(_serviceName, method.getName()).setFaultExchange(exchangeOut);
                     }
                 }
             } else {
@@ -334,7 +333,7 @@ public class ClientProxyBean implements Bean {
         private Exchange createExchange(ServiceReference service, Method method, ExchangeHandler responseExchangeHandler) throws BeanComponentException {
             String operationName = method.getName();
             if (service.getInterface().getOperation(operationName) == null) {
-                throw new BeanComponentException("Bean Component invocation failure.  Operation '" + operationName + "' is not defined on Service '" + _serviceName + "'.");
+                throw BeanMessages.MESSAGES.beanComponentInvocationFailureOperationIsNotDefinedOnService(operationName, _serviceName);
             }
 
             return service.createExchange(operationName, responseExchangeHandler);

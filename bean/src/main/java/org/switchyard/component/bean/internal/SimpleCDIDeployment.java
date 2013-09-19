@@ -20,8 +20,8 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.bean.BeanMessages;
 import org.switchyard.component.bean.ServiceProxyHandler;
 import org.switchyard.component.bean.deploy.BeanComponentActivator;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
@@ -100,7 +100,7 @@ public class SimpleCDIDeployment extends AbstractDeployment {
         }
 
         if (beanDeploymentMetaData == null) {
-            throw new SwitchYardException("Failed to lookup BeanDeploymentMetaData from Naming Context.");
+            throw BeanMessages.MESSAGES.failedToLookupBeanDeploymentMetaDataFromNamingContext();
         }
 
         BeanComponentActivator activator = new BeanComponentActivator();
