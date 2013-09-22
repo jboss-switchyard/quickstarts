@@ -11,8 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.quickstarts.rules.camel.cbr;
+package org.jboss.quickstarts.fsw;
 
+import org.jboss.quickstarts.fsw.Box;
+import org.jboss.quickstarts.fsw.Widget;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
