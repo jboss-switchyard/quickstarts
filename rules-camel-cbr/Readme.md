@@ -1,7 +1,19 @@
-Introduction
-============
+rules-camel-cbr: demonstrates the usage of a rules service in conjunction with a camel service
+============================================
+Author: SwitchYard Team  
+Level: Beginner  
+Technologies: SwitchYard, Camel  
+Summary: Demonstrates the usage of a rules service in conjunction with a camel service, creating a Content-Based Router. 
+Target Product: SwitchYard  
+Source: <https://github.com/jboss-switchyard/quickstarts>
+
+
+What is it?
+-----------
 This quickstart demonstrates the usage of a rules service in conjunction with a camel service, creating a Content-Based Router.
+
 This quickstart also demonstrates the ability to use MVEL expressions to extract objects (the Widgets from their Boxes) and insert them as facts inside the rules engine.
+
 The drl resource is specified using annotations within the DestinationServiceRules interface, and checks the id of Widgets to determine the destination to set on their Boxes.
 Then, a Camel route looks at the destination set on the Box for each Widget, and routes it to the appropriate service (RedService, GreenService, or BlueService).
 
@@ -17,12 +29,27 @@ src/main/resources/META-INF/switchyard.xml:
 ![Rules Camel CBR Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/rules-camel-cbr/rules-camel-cbr.jpg)
 
 
-Preqrequisites 
-==============
-Maven
+System requirements
+-------------------
 
-Running the quickstart
-======================
+Before building and running this quick start you need:
+
+* Maven 3.0.3 or higher
+* JDK 1.6 or 1.7
+* JBoss AS 7
+
+
+Build and Deploy the Quickstart
+-------------------------
+
+1. Make sure you have once launched the build from `quickstarts` root by running `mvn clean install` in `quickstarts` folder to install quickstart bom in your local repository
+
+2. Change your working directory to `quickstarts/rules-camel-cbr` directory.
+* Run `mvn clean install` to build the quickstart.
+* Start JBoss AS 7 by running bin/standalone.sh --server-config=standalone-full.xml (on Linux) or bin/standalone.bat --server-config=standalone-full.xml (in Windows).
+* Run the test with the following command:
+    mvn -Dtest=RulesCamelCBRTest test
+
 
 JBoss AS 7
 ----------
