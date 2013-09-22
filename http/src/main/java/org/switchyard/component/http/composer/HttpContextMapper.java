@@ -76,9 +76,9 @@ public class HttpContextMapper extends BaseRegexContextMapper<HttpBindingData> {
     public void mapTo(Context context, HttpBindingData target) throws Exception {
         Map<String, List<String>> httpHeaders = target.getHeaders();
         for (Property property : context.getProperties()) {
-            if (property.hasLabel(EndpointLabel.HTTP.label())) {
-                String name = property.getName();
-                Object value = property.getValue();
+            String name = property.getName();
+            Object value = property.getValue();
+            if ((value != null) && (matches(name) || property.hasLabel(EndpointLabel.HTTP.label()))) {
                 if (HTTP_RESPONSE_STATUS.equalsIgnoreCase(name) && (target instanceof HttpResponseBindingData)) {
                     HttpResponseBindingData response = (HttpResponseBindingData)target;
                     if (value instanceof String) {
@@ -86,15 +86,13 @@ public class HttpContextMapper extends BaseRegexContextMapper<HttpBindingData> {
                     } else if (value instanceof Integer) {
                         response.setStatus((Integer) value);
                     }
-                } else if (matches(name)) {
-                    if (value != null) {
-                        if (value instanceof List) {
-                            httpHeaders.put(name, (List<String>)value);
-                        } else if (value instanceof String) {
-                            List<String> list = new ArrayList<String>();
-                            list.add(String.valueOf(value));
-                            httpHeaders.put(name, list);
-                        }
+                } else {
+                    if (value instanceof List) {
+                        httpHeaders.put(name, (List<String>)value);
+                    } else if (value instanceof String) {
+                        List<String> list = new ArrayList<String>();
+                        list.add(String.valueOf(value));
+                        httpHeaders.put(name, list);
                     }
                 }
             }

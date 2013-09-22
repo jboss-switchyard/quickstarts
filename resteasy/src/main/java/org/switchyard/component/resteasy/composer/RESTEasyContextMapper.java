@@ -70,20 +70,18 @@ public class RESTEasyContextMapper extends BaseRegexContextMapper<RESTEasyBindin
     public void mapTo(Context context, RESTEasyBindingData target) throws Exception {
         Map<String, List<String>> httpHeaders = target.getHeaders();
         for (Property property : context.getProperties()) {
-            if (property.hasLabel(EndpointLabel.HTTP.label())) {
-                String name = property.getName();
+            String name = property.getName();
+            Object value = property.getValue();
+            if ((value != null) && (matches(name) || property.hasLabel(EndpointLabel.HTTP.label()))) {
                 if (HTTP_RESPONSE_STATUS.equals(name)) {
                     target.setStatusCode((Integer)property.getValue());
-                } else if (matches(name)) {
-                    Object value = property.getValue();
-                    if (value != null) {
-                        if (value instanceof List) {
-                            httpHeaders.put(name, (List<String>)value);
-                        } else if (value instanceof String) {
-                            List<String> list = new ArrayList<String>();
-                            list.add(String.valueOf(value));
-                            httpHeaders.put(name, list);
-                        }
+                } else {
+                    if (value instanceof List) {
+                        httpHeaders.put(name, (List<String>)value);
+                    } else if (value instanceof String) {
+                        List<String> list = new ArrayList<String>();
+                        list.add(String.valueOf(value));
+                        httpHeaders.put(name, list);
                     }
                 }
             }

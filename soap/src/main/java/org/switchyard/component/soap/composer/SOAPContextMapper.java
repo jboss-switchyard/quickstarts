@@ -139,41 +139,39 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
             Object value = property.getValue();
             if (value != null) {
                 String name = property.getName();
-                if (property.hasLabel(EndpointLabel.HTTP.label())) {
+                QName qname = XMLHelper.createQName(name);
+                boolean qualifiedForSoapHeader = Strings.trimToNull(qname.getNamespaceURI()) != null;
+                if (qualifiedForSoapHeader && matches(qname)) {
+                    if (value instanceof Node) {
+                        Node domNode = soapHeader.getOwnerDocument().importNode((Node)value, true);
+                        soapHeader.appendChild(domNode);
+                    } else if (value instanceof Configuration) {
+                        Element configElement = new ElementPuller().pull(new StringReader(value.toString()));
+                        Node configNode = soapHeader.getOwnerDocument().importNode(configElement, true);
+                        soapHeader.appendChild(configNode);
+                    } else {
+                        String v = value.toString();
+                        if (SOAPHeadersType.XML.equals(_soapHeadersType)) {
+                            try {
+                                Element xmlElement = new ElementPuller().pull(new StringReader(v));
+                                Node xmlNode = soapHeader.getOwnerDocument().importNode(xmlElement, true);
+                                soapHeader.appendChild(xmlNode);
+                            } catch (Throwable t) {
+                                soapHeader.addChildElement(qname).setValue(v);
+                            }
+                        } else {
+                            soapHeader.addChildElement(qname).setValue(v);
+                        }
+                    }
+                } else if (matches(name) || property.hasLabel(EndpointLabel.HTTP.label())) {
                     if (HTTP_RESPONSE_STATUS.equalsIgnoreCase(name)) {
                         if (value instanceof String) {
                             target.setStatus(Integer.valueOf((String) value).intValue());
                         } else if (value instanceof Integer) {
                             target.setStatus((Integer) value);
                         }
-                    } else if (matches(name)) {
+                    } else {
                         mimeHeaders.addHeader(name, String.valueOf(value));
-                    }
-                } else {
-                    QName qname = XMLHelper.createQName(name);
-                    boolean qualifiedForSoapHeader = Strings.trimToNull(qname.getNamespaceURI()) != null;
-                    if (qualifiedForSoapHeader && matches(qname)) {
-                        if (value instanceof Node) {
-                            Node domNode = soapHeader.getOwnerDocument().importNode((Node)value, true);
-                            soapHeader.appendChild(domNode);
-                        } else if (value instanceof Configuration) {
-                            Element configElement = new ElementPuller().pull(new StringReader(value.toString()));
-                            Node configNode = soapHeader.getOwnerDocument().importNode(configElement, true);
-                            soapHeader.appendChild(configNode);
-                        } else {
-                            String v = value.toString();
-                            if (SOAPHeadersType.XML.equals(_soapHeadersType)) {
-                                try {
-                                    Element xmlElement = new ElementPuller().pull(new StringReader(v));
-                                    Node xmlNode = soapHeader.getOwnerDocument().importNode(xmlElement, true);
-                                    soapHeader.appendChild(xmlNode);
-                                } catch (Throwable t) {
-                                    soapHeader.addChildElement(qname).setValue(v);
-                                }
-                            } else {
-                                soapHeader.addChildElement(qname).setValue(v);
-                            }
-                        }
                     }
                 }
             }
