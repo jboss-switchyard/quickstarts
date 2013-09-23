@@ -15,8 +15,9 @@ package org.switchyard.component.bpel.riftsaw;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.SwitchYardException;
+import org.switchyard.component.bpel.BPELMessages;
 import org.w3c.dom.Element;
 
 /**
@@ -43,7 +44,7 @@ public final class WSDLHelper {
         javax.wsdl.Definition ret=null;
         
         if (location == null) {
-            throw new SwitchYardException("WSDL location has not been specified");
+            throw BPELMessages.MESSAGES.wSDLLocationHasNotBeenSpecified();
         } else {
             try {
                 int index=location.indexOf('#');
@@ -57,7 +58,7 @@ public final class WSDLHelper {
                 ret = javax.wsdl.factory.WSDLFactory.newInstance().newWSDLReader().readWSDL(url.toString());
                 
             } catch (Exception e) {
-                throw new SwitchYardException("Failed to load WSDL '"+location+"'", e);
+                throw BPELMessages.MESSAGES.failedToLoadWSDL(location, e);
             }
         }
 
@@ -77,7 +78,7 @@ public final class WSDLHelper {
         javax.wsdl.PortType ret=null;
         
         if (location == null) {
-            throw new SwitchYardException("WSDL location has not been specified");
+            throw BPELMessages.MESSAGES.wSDLLocationHasNotBeenSpecified();
         } else {
             int index=location.indexOf(WSDL_PORTTYPE_PREFIX);
             
@@ -196,8 +197,7 @@ public final class WSDLHelper {
             javax.wsdl.Fault fault=operation.getFault(faultName);
             
             if (fault == null) {
-                throw new SwitchYardException("Unable to find fault '"+faultName+"' on "
-                        +"operation '"+operation.getName()+"'");
+                throw BPELMessages.MESSAGES.unableToFindFaultOn(faultName, operation.getName());
             }
             
             parts = fault.getMessage().getParts();
@@ -244,8 +244,7 @@ public final class WSDLHelper {
         // Find part name from content type for the operation
         if (parts != null) {
             if (parts.size() != 1) {
-                throw new SwitchYardException("Only expecting a single message part for operation '"
-                        +operation.getName()+"'");
+                throw BPELMessages.MESSAGES.onlyExpectingASingleMessagePartForOperation(operation.getName());
             }
             
             partName = (String)parts.keySet().iterator().next();
@@ -257,8 +256,7 @@ public final class WSDLHelper {
             }
             
             if (!fault) {
-                throw new SwitchYardException("Unable to find part name for "
-                            +"operation '"+operation.getName()+"'");
+                throw BPELMessages.MESSAGES.unableToFindPartNameFor(operation.getName());
             }
             
             // Assume that this represents an undeclared fault, and therefore return as an

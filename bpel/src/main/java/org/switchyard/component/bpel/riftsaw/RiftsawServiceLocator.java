@@ -20,25 +20,25 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.riftsaw.engine.Fault;
 import org.riftsaw.engine.Service;
 import org.riftsaw.engine.ServiceLocator;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeState;
-import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.bpel.BPELFault;
 import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
+import org.switchyard.component.bpel.BPELLogger;
+import org.switchyard.component.bpel.BPELMessages;
 import org.switchyard.component.common.DeliveryException;
 import org.switchyard.component.common.SynchronousInOutHandler;
 import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.deploy.ComponentNames;
-import org.switchyard.SwitchYardException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -110,14 +110,14 @@ public class RiftsawServiceLocator implements ServiceLocator {
         RegistryEntry re=_registry.get(localProcessName);
         
         if (re == null) {
-            LOG.error("No service references found for process '"+localProcessName+"'");
+            BPELLogger.ROOT_LOGGER.noServiceReferencesFoundForProcess(localProcessName.toString());
             return (null);
         }
         
         Service ret=re.getService(serviceName, portName, _serviceDomains.get(serviceName));
         
         if (ret == null) {
-            LOG.error("No service found for '"+serviceName+"' (port "+portName+")");
+            BPELLogger.ROOT_LOGGER.noServiceFoundFor(serviceName.toString(), portName);
         }
         
         return (ret);
@@ -156,7 +156,7 @@ public class RiftsawServiceLocator implements ServiceLocator {
             re.register(portType, crm.getQName(), crm.getComponent().getQName());
 
         } else {
-            throw new SwitchYardException("Could not find BPEL implementation associated with reference");
+            throw BPELMessages.MESSAGES.couldNotFindBPELImplementationAssociatedWithReference();
         }
         
     }
@@ -210,7 +210,7 @@ public class RiftsawServiceLocator implements ServiceLocator {
                 }
             }
             if (ret == null) {
-                LOG.error("No service found for '" + serviceName);
+                BPELLogger.ROOT_LOGGER.noServiceFoundFor(serviceName.toString());
             }
             return ret;
         }
@@ -268,17 +268,13 @@ public class RiftsawServiceLocator implements ServiceLocator {
             try {
                 exchange = rh.waitForOut(_waitTimeout);
             } catch (DeliveryException e) {
-                throw new HandlerException("Timed out after " + _waitTimeout
-                        + " ms waiting on synchronous response from target service '"
-                        + _serviceReference.getName() + "'.");
+                throw BPELMessages.MESSAGES.timedOutAfterMsWaitingOnSynchronousResponseFromTargetService(_waitTimeout, _serviceReference.getName().toString());
             }
             
             Message resp=exchange.getMessage();
             
             if (resp == null) {
-                throw new Exception("Response not returned from operation '"
-                           + operationName
-                           + "' on service: "+_serviceReference.getName());                
+                throw BPELMessages.MESSAGES.responseNotReturnedFromOperationOnService(operationName, _serviceReference.getName().toString());
             }
             
             // Process header values associated with the response
@@ -312,7 +308,6 @@ public class RiftsawServiceLocator implements ServiceLocator {
                 }
                 
                 Element newfault=WSDLHelper.wrapFaultMessagePart(respelem, operation, null);
-
                 throw new Fault(faultCode, newfault);
             }
             

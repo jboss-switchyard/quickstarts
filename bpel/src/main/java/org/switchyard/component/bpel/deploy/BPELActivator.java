@@ -18,9 +18,10 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.riftsaw.engine.BPELEngine;
 import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
+import org.switchyard.component.bpel.BPELMessages;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandler;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandlerFactory;
 import org.switchyard.component.bpel.riftsaw.RiftsawServiceLocator;
@@ -29,7 +30,6 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
 import org.switchyard.deploy.BaseActivator;
 import org.switchyard.deploy.ServiceHandler;
-import org.switchyard.SwitchYardException;
 
 /**
  * Activator for the BPEL component.
@@ -84,7 +84,7 @@ public class BPELActivator extends BaseActivator {
         }
         
         if (service.getInterface() == null) {
-            throw new SwitchYardException("Interface not defined for component with BPEL implementation");
+            throw BPELMessages.MESSAGES.interfaceNotDefinedForComponentWithBPELImplementation();
         }
 
         // take care of references

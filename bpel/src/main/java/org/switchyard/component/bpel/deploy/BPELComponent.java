@@ -13,7 +13,7 @@
  */
 package org.switchyard.component.bpel.deploy;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.apache.ode.bpel.evt.BpelEvent;
 import org.riftsaw.engine.BPELEngine;
 import org.riftsaw.engine.BPELEngineFactory;
@@ -22,9 +22,10 @@ import org.riftsaw.engine.internal.BPELEngineImpl;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.bpel.riftsaw.RiftsawServiceLocator;
 import org.switchyard.config.Configuration;
+import org.switchyard.component.bpel.BPELLogger;
+import org.switchyard.component.bpel.BPELMessages;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.BaseComponent;
-import org.switchyard.SwitchYardException;
 
 /**
  * An implementation of BPEL component.
@@ -57,7 +58,7 @@ public class BPELComponent extends BaseComponent {
         
         synchronized (this) {
             if (_engine == null) {
-                LOG.info("Init BPEL component");
+                BPELLogger.ROOT_LOGGER.initBPELComponent();
                 
                 ClassLoader current=Thread.currentThread().getContextClassLoader();
                 
@@ -74,7 +75,7 @@ public class BPELComponent extends BaseComponent {
                 
                         _config.load(is);
                     } catch (Exception e) {
-                        throw new SwitchYardException("Failed to load default properties: "+ e, e);
+                        throw BPELMessages.MESSAGES.failedToLoadDefaultProperties(e);
                     }
         
                     if (getConfig() != null) {
@@ -102,7 +103,7 @@ public class BPELComponent extends BaseComponent {
                     });
                     
                 } catch (Exception e) {
-                    throw new SwitchYardException("Failed to initialize the engine: "+ e, e);
+                    throw BPELMessages.MESSAGES.failedToInitializeTheEngine(e);
                 } finally {
                     Thread.currentThread().setContextClassLoader(current);
                 }
@@ -119,14 +120,14 @@ public class BPELComponent extends BaseComponent {
     public void destroy() {
         super.destroy();
 
-        LOG.info("Destroy BPEL component");
+        BPELLogger.ROOT_LOGGER.destroyBPELComponent();
         
         if (_engine != null) {
             try {
                 _engine.close();
                 _engine = null;
             } catch (Exception e) {
-                LOG.error("Failed to close BPEL engine", e);
+                BPELLogger.ROOT_LOGGER.failedToCloseBPELEngine(e);
             }
             
         }

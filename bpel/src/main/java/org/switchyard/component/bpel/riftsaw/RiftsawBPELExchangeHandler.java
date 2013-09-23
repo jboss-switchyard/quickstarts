@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 import javax.xml.soap.SOAPFault;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.riftsaw.engine.BPELEngine;
 import org.riftsaw.engine.DeploymentRef;
 import org.riftsaw.engine.Fault;
@@ -36,8 +36,10 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.ServiceDomain;
+import org.switchyard.component.bpel.BPELMessages;
 import org.switchyard.component.bpel.exchange.BPELExchangeHandler;
 import org.switchyard.component.common.label.EndpointLabel;
+import org.switchyard.component.bpel.BPELLogger;
 import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.SwitchYardException;
@@ -135,14 +137,14 @@ public class RiftsawBPELExchangeHandler extends BaseServiceHandler implements BP
                     ret = ret.substring(0, suffixIndex);
                 }
             } else {
-                LOG.error("Failed to obtain deployment name from URL: "+urlpath);
+                BPELLogger.ROOT_LOGGER.failedToObtainDeploymentNameFromURL(urlpath);
             }
         } else {
-            LOG.error("Unable to locate deployment descriptor (deploy.xml) to derive deployment name");
+            BPELLogger.ROOT_LOGGER.unableToLocateDeploymentDescriptorDeployXmlToDeriveDeploymentName();
         }
         
         if (LOG.isDebugEnabled()) {
-            LOG.info("Deployment name is: "+ret);
+            BPELLogger.ROOT_LOGGER.deploymentNameIs(ret);
         }
         
         return (ret);
@@ -183,12 +185,11 @@ public class RiftsawBPELExchangeHandler extends BaseServiceHandler implements BP
                     ret = vfile.getPhysicalFile().getParentFile();
                     
                 } catch (java.lang.NoClassDefFoundError t) {
-                    LOG.error("Unable to resolve the deployment URL", t);
+                    BPELLogger.ROOT_LOGGER.unableToResolveTheDeploymentURL(t);
                 }
                 
             } else {
-                throw new SwitchYardException(
-                        "Unknown deployment environment");
+                throw BPELMessages.MESSAGES.unknownDeploymentEnvironment();
             }
         } else {
             // Retrieve parent folder of deployment descriptor
@@ -215,9 +216,7 @@ public class RiftsawBPELExchangeHandler extends BaseServiceHandler implements BP
                 _undeployDelay = Long.parseLong(_config.getProperty("bpel.undeploy.delay"));
                 
             } catch (Exception e) {
-                LOG.error("Unable to transform property value '"
-                        +_config.getProperty("bpel.undeploy.delay")
-                        +"' into undeploy delay value", e);
+                BPELLogger.ROOT_LOGGER.unableToTransformPropertyValueIntoUndeployDelayValue(e, _config.getProperty("bpel.undeploy.delay"));
             }
         }
         
@@ -364,7 +363,7 @@ public class RiftsawBPELExchangeHandler extends BaseServiceHandler implements BP
                     try {
                         _engine.undeploy(ref);
                     } catch (Exception e) {
-                        LOG.error("Failed to undeploy '"+_serviceName+"'", e);
+                        BPELLogger.ROOT_LOGGER.failedToUndeploy(_serviceName, e);
                     }
                 }
                 
