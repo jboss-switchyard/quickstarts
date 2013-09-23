@@ -4,7 +4,7 @@ Author: SwitchYard Team
 Level: Beginner  
 Technologies: SwitchYard, Camel  
 Summary: Demonstrates the usage of a rules service in conjunction with a camel service, creating a Content-Based Router. 
-Target Product: SwitchYard  
+Target Product: FSW  
 Source: <https://github.com/jboss-switchyard/quickstarts>
 
 
