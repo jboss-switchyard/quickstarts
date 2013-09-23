@@ -19,30 +19,28 @@ package org.jboss.quickstarts.fsw;
 import java.io.Serializable;
 
 /**
- * @author David Ward &lt;<a
- *         href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red
- *         Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @SuppressWarnings("serial")
 public class Widget implements Serializable {
 
-	private final String _id;
-	private Box _box;
+    private final String _id;
+    private Box _box;
 
-	public Widget(String id) {
-		_id = id;
-	}
+    public Widget(String id) {
+        _id = id;
+    }
 
-	public String getId() {
-		return _id;
-	}
+    public String getId() {
+        return _id;
+    }
 
-	public Box getBox() {
-		return _box;
-	}
+    public Box getBox() {
+        return _box;
+    }
 
-	public void setBox(Box box) {
-		_box = box;
-	}
+    public void setBox(Box box) {
+        _box = box;
+    }
 
 }

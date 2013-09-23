@@ -20,20 +20,18 @@ import org.apache.log4j.Logger;
 import org.switchyard.component.bean.Service;
 
 /**
- * @author David Ward &lt;<a
- *         href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red
- *         Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @Service(BlueService.class)
 public class BlueServiceBean implements BlueService {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(BlueServiceBean.class);
+    private static final Logger LOGGER = Logger
+        .getLogger(BlueServiceBean.class);
 
-	@Override
-	public void handleBlue(Box box) {
-		LOGGER.info("Blue service processing boxed widget with id: "
-				+ box.getWidget().getId());
-	}
+    @Override
+    public void handleBlue(Box box) {
+        LOGGER.info("Blue service processing boxed widget with id: "
+            + box.getWidget().getId());
+    }
 
 }

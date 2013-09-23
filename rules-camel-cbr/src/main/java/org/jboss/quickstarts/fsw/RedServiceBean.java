@@ -20,19 +20,17 @@ import org.apache.log4j.Logger;
 import org.switchyard.component.bean.Service;
 
 /**
- * @author David Ward &lt;<a
- *         href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red
- *         Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @Service(RedService.class)
 public class RedServiceBean implements RedService {
 
-	private static final Logger LOGGER = Logger.getLogger(RedServiceBean.class);
+    private static final Logger LOGGER = Logger.getLogger(RedServiceBean.class);
 
-	@Override
-	public void handleRed(Box box) {
-		LOGGER.info("Red service processing boxed widget with id: "
-				+ box.getWidget().getId());
-	}
+    @Override
+    public void handleRed(Box box) {
+        LOGGER.info("Red service processing boxed widget with id: "
+            + box.getWidget().getId());
+    }
 
 }

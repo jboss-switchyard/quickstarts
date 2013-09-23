@@ -26,23 +26,17 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>switchyard-quickstart-rules-camel-cbr</artifactId>
+    <artifactId>rules-camel-cbr</artifactId>
     <name>Quickstart : Rules+Camel Content-Based Router</name>
+    <version>1.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
-        <switchyard.version>1.1.0-SNAPSHOT</switchyard.version>
          <!-- Explicitly declaring the source encoding eliminates the following
                    message: -->
         <!-- [WARNING] Using platform encoding (UTF-8 actually) to copy filtered
             resources, i.e. build is platform dependent! -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <version.compiler.plugin>2.3.1</version.compiler.plugin>
-
-        <!-- maven-compiler-plugin -->
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
     </properties>
 
     <licenses>

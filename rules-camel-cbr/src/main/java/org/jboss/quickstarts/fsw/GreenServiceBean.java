@@ -20,20 +20,18 @@ import org.apache.log4j.Logger;
 import org.switchyard.component.bean.Service;
 
 /**
- * @author David Ward &lt;<a
- *         href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red
- *         Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @Service(GreenService.class)
 public class GreenServiceBean implements GreenService {
 
-	private static final Logger LOGGER = Logger
-			.getLogger(GreenServiceBean.class);
+    private static final Logger LOGGER = Logger
+        .getLogger(GreenServiceBean.class);
 
-	@Override
-	public void handleGreen(Box box) {
-		LOGGER.info("Green service processing boxed widget with id: "
-				+ box.getWidget().getId());
-	}
+    @Override
+    public void handleGreen(Box box) {
+        LOGGER.info("Green service processing boxed widget with id: "
+            + box.getWidget().getId());
+    }
 
 }

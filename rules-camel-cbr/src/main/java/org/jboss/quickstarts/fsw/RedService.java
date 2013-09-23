@@ -17,12 +17,10 @@
 package org.jboss.quickstarts.fsw;
 
 /**
- * @author David Ward &lt;<a
- *         href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red
- *         Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public interface RedService {
 
-	public void handleRed(Box box);
+    public void handleRed(Box box);
 
 }
