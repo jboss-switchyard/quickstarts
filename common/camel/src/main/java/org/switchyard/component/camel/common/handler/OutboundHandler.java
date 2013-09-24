@@ -19,16 +19,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.xml.QNameUtil;
+import org.switchyard.component.camel.CommonCamelMessages;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
 import org.switchyard.component.camel.common.transaction.TransactionHelper;
@@ -83,13 +83,13 @@ public class OutboundHandler extends BaseServiceHandler {
     public OutboundHandler(final CamelBindingModel binding, final SwitchYardCamelContext context, MessageComposer<CamelBindingData> messageComposer, ProducerTemplate producerTemplate, ServiceDomain domain) {
         super(domain);
         if (binding == null) {
-            throw new IllegalArgumentException("binding argument must not be null");
+            throw CommonCamelMessages.MESSAGES.bindingArgumentMustNotBeNull();
         }
         if (context == null) {
-            throw new IllegalArgumentException("camelContext argument must not be null");
+            throw CommonCamelMessages.MESSAGES.camelContextArgumentMustNotBeNull();
         }
         if (binding.getComponentURI() == null) {
-            throw new IllegalArgumentException("binding uri must not be null");
+            throw CommonCamelMessages.MESSAGES.bindingUriMustNotBeNull();
         }
         _uri = binding.getComponentURI().toString();
         _bindingName = binding.getName();
@@ -110,7 +110,7 @@ public class OutboundHandler extends BaseServiceHandler {
             _producerTemplate.start();
             _logger.debug("Started producer template for " + _uri);
         } catch (Exception e) {
-            throw new SwitchYardException("Failed to start Camel producer template for " + _uri, e);
+            throw CommonCamelMessages.MESSAGES.failedToStartCamelProducerTemplateFor(_uri, e);
         }
     }
 
@@ -123,7 +123,7 @@ public class OutboundHandler extends BaseServiceHandler {
             _producerTemplate.stop();
             _logger.debug("Stopped producer template for " + _uri);
         } catch (Exception ex) {
-            throw new SwitchYardException("Failed to stop Camel producer template for " + _uri, ex);
+            throw CommonCamelMessages.MESSAGES.failedToStopCamelProducerTemplateFor(_uri.toString(), ex);
         }
     }
 
@@ -137,8 +137,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 .addLabels(BehaviorLabel.TRANSIENT.label());
 
         if (getState() != State.STARTED) {
-            throw new HandlerException(String.format("Reference binding \"%s/%s\" is not started.", _referenceName,
-                    _bindingName));
+            throw CommonCamelMessages.MESSAGES.referenceBindingIsNotStarted(_referenceName, _bindingName);
         }
         if (isInOnly(exchange)) {
             handleInOnly(exchange);
@@ -184,7 +183,7 @@ public class OutboundHandler extends BaseServiceHandler {
             } else if (camelFault instanceof Throwable) {
                 throw new HandlerException(Throwable.class.cast(camelFault));
             } else {
-                throw new HandlerException("camel exchange failed without an exception: " + camelFault);
+                throw CommonCamelMessages.MESSAGES.camelExchangeFailedWithoutAnException(camelFault.toString());
             }
         }
     }

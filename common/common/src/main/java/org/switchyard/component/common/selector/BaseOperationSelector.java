@@ -24,6 +24,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import org.switchyard.component.common.CommonCommonMessages;
 import org.switchyard.config.model.selector.OperationSelectorModel;
 import org.switchyard.config.model.selector.RegexOperationSelectorModel;
 import org.switchyard.config.model.selector.StaticOperationSelectorModel;
@@ -67,7 +68,7 @@ public abstract class BaseOperationSelector<T> implements OperationSelector<T> {
             RegexOperationSelectorModel regexModel = RegexOperationSelectorModel.class.cast(_model);
             operationQName = regexMatch(regexModel.getExpression(), extractString(content));
         } else {
-            throw new Exception("Unsupported OperationSelector configuration: " + _model);
+            throw CommonCommonMessages.MESSAGES.unsupportedOperationSelectorConfiguration(_model.toString());
         }
         
         if (_defaultNamespace != null && operationQName.getNamespaceURI().equals(XMLConstants.NULL_NS_URI)) {
@@ -111,17 +112,15 @@ public abstract class BaseOperationSelector<T> implements OperationSelector<T> {
             XPathExpression expr = xpath.compile(expression);
             result = NodeList.class.cast(expr.evaluate(content, XPathConstants.NODESET));
         } catch (Exception e) {
-            throw new Exception("Couldn't evaluate XPath expression '" + expression + "'", e);
+            throw CommonCommonMessages.MESSAGES.couldnTEvaluateXPathExpression(expression, e);
         }
 
         if (result.getLength() == 1) {
             return QName.valueOf(result.item(0).getTextContent());
         } else if (result.getLength() == 0) {
-            throw new Exception("No node has been matched with the XPath expression '"
-                    + expression + "' in the payload. It couldn't determine the operation.");
+            throw CommonCommonMessages.MESSAGES.noNodeHasBeenMatchedWithTheXPathExpression(expression);
         } else {
-            throw new Exception("Multiple nodes have been matched with the XPath expression '"
-                    + expression + "' in the payload. It couldn't determine the operation.");
+            throw CommonCommonMessages.MESSAGES.multipleNodesHaveBeenMatchedWithTheXPathExpression(expression);
         }
     }
     
@@ -129,14 +128,12 @@ public abstract class BaseOperationSelector<T> implements OperationSelector<T> {
         Pattern pattern = Pattern.compile(expression);
         Matcher matcher = pattern.matcher(content);
         if (!matcher.find()) {
-            throw new Exception("No node has been matched with the Regex expression '"
-                    + expression + "' in the payload. It couldn't determine the operation.");
+            throw CommonCommonMessages.MESSAGES.noNodeHasBeenMatchedWithTheRegexExpression(expression);
         } else {
             String operation = matcher.group();
 
             if (matcher.find()) {
-                throw new Exception("Multiple nodes have been matched with the Regex expression '"
-                        + expression + "' in the payload. It couldn't determine the operation.");
+                throw CommonCommonMessages.MESSAGES.multipleNodesHaveBeenMatchedWithTheRegexExpression(expression);
             }
             return QName.valueOf(operation);
         }

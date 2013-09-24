@@ -25,9 +25,9 @@ import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.common.knowledge.CommonKnowledgeMessages;
 import org.switchyard.component.common.SynchronousInOutHandler;
 
 /**
@@ -86,7 +86,7 @@ public class SwitchYardServiceInvoker {
         try {
             QName serviceName = request.getServiceName();
             if (serviceName == null) {
-                throw new SwitchYardException("ServiceName == null");
+                throw CommonKnowledgeMessages.MESSAGES.serviceNameNull();
             } else if (Strings.trimToNull(serviceName.getNamespaceURI()) == null) {
                 String tns = getTargetNamespace();
                 if (tns != null) {
@@ -95,11 +95,11 @@ public class SwitchYardServiceInvoker {
             }
             ServiceDomain serviceDomain = getServiceDomain();
             if (serviceDomain == null) {
-                throw new SwitchYardException("ServiceDomain == null");
+                throw CommonKnowledgeMessages.MESSAGES.serviceDomainNull();
             }
             ServiceReference serviceReference = serviceDomain.getServiceReference(serviceName);
             if (serviceReference == null) {
-                throw new SwitchYardException("ServiceReference [" + serviceName + "] == null");
+                throw CommonKnowledgeMessages.MESSAGES.serviceReferenceNull(serviceName.toString());
             }
             final Exchange exchangeIn;
             FaultHandler handler = new FaultHandler();

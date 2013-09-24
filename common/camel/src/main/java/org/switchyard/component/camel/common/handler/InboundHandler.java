@@ -18,11 +18,12 @@ import java.net.URI;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.model.RouteDefinition;
-import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ServiceDomain;
 import org.switchyard.SwitchYardException;
 import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.component.camel.CommonCamelLogger;
+import org.switchyard.component.camel.CommonCamelMessages;
 import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
 import org.switchyard.component.camel.common.transaction.TransactionHelper;
@@ -44,7 +45,6 @@ import org.switchyard.runtime.event.ExchangeCompletionEvent;
  */
 public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHandler {
 
-    private static Logger _logger = Logger.getLogger(InboundHandler.class);
     private final T _camelBindingModel;
     private final SwitchYardCamelContext _camelContext;
     private final QName _serviceName;
@@ -150,7 +150,7 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
                 _camelContext.startRoute(getRouteId());
             }
         } catch (Exception ex) {
-            throw new SwitchYardException("Failed to start route for service " + _serviceName, ex);
+            throw CommonCamelMessages.MESSAGES.failedToStartRouteForService(_serviceName.toString(), ex);
         }
     }
 
@@ -162,12 +162,12 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
         try {
             _camelContext.stopRoute(getRouteId());
         } catch (Exception ex) {
-            throw new SwitchYardException("Failed to stop route for service " + _serviceName, ex);
+            throw CommonCamelMessages.MESSAGES.failedToStopRouteForService(_serviceName.toString(), ex);
         }
         try {
             _camelContext.removeRoute(getRouteId());
         } catch (Exception ex) {
-            _logger.warn("Failed to remove route for service " + _serviceName, ex);
+            CommonCamelLogger.ROOT_LOGGER.failedToRemoveRouteForService(_serviceName.toString(), ex);
         }
     }
 

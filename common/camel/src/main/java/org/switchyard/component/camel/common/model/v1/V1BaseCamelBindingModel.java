@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.switchyard.component.camel.CommonCamelMessages;
 import org.switchyard.component.camel.common.QueryString;
 import org.switchyard.component.camel.common.model.AdditionalUriParametersModel;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
@@ -214,7 +215,7 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel
             try {
                 return format.parse(value);
             } catch (java.text.ParseException parseEx) {
-                throw new IllegalArgumentException("Failed to parse " + configName + " as a date.", parseEx);
+                throw CommonCamelMessages.MESSAGES.failedToParse(configName, parseEx);
             }
         }
     }

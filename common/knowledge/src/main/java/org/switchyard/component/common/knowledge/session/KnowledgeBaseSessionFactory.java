@@ -33,6 +33,7 @@ import org.kie.internal.builder.KnowledgeBuilderErrors;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.switchyard.ServiceDomain;
 import org.switchyard.SwitchYardException;
+import org.switchyard.component.common.knowledge.CommonKnowledgeMessages;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.util.Channels;
 import org.switchyard.component.common.knowledge.util.Configurations;
@@ -120,7 +121,8 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
         Resources.addResources(getModel(), getLoader(), builder);
         if (builder.hasErrors()) {
             // NOTE: Logging can also be enabled on org.drools.builder.impl.KnowledgeBuilderImpl
-            StringBuilder sb = new StringBuilder("Problem building knowledge packages");
+            StringBuilder sb = new StringBuilder(
+                    CommonKnowledgeMessages.MESSAGES.problemBuildingKnowledgePackages());
             KnowledgeBuilderErrors errors = builder.getErrors();
             for (KnowledgeBuilderError error : errors) {
                 sb.append(LINE_SEPARATOR);
@@ -133,7 +135,8 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
         try {
             base.addKnowledgePackages(builder.getKnowledgePackages());
         } catch (Throwable t) {
-            StringBuilder sb = new StringBuilder("Problem adding knowledge packages");
+            StringBuilder sb = new StringBuilder(
+                    CommonKnowledgeMessages.MESSAGES.problemAddingKnowledgePackages());
             String tm = t.getMessage();
             if (tm != null) {
                 sb.append(": ");

@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import org.apache.log4j.Logger;
 import org.switchyard.common.type.Classes;
+import org.switchyard.component.common.CommonCommonLogger;
 import org.switchyard.config.model.composer.ContextMapperModel;
 
 /**
@@ -29,8 +29,6 @@ import org.switchyard.config.model.composer.ContextMapperModel;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public abstract class ContextMapperFactory<D extends BindingData> {
-
-    private static final Logger LOGGER = Logger.getLogger(ContextMapperFactory.class);
 
     /**
      * Component developer should implement this message to specify the type of source/target object.
@@ -84,7 +82,7 @@ public abstract class ContextMapperFactory<D extends BindingData> {
             try {
                 contextMapper = custom.newInstance();
             } catch (Exception e) {
-                LOGGER.error("Could not instantiate ContextMapper: " + custom.getClass().getName() + " - " + e.getMessage());
+                CommonCommonLogger.ROOT_LOGGER.couldNotInstantiateContextMapper(custom.getClass().getName(), e.getMessage());
             }
         }
         if (contextMapper == null) {

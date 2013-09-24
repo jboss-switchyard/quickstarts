@@ -26,7 +26,7 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.KieSessionConfiguration;
 import org.kie.api.runtime.StatelessKieSession;
 import org.switchyard.ServiceDomain;
-import org.switchyard.SwitchYardException;
+import org.switchyard.component.common.knowledge.CommonKnowledgeMessages;
 import org.switchyard.component.common.knowledge.config.model.ContainerModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.util.Channels;
@@ -139,7 +139,7 @@ class KnowledgeContainerSessionFactory extends KnowledgeSessionFactory {
                 return session;
             }
         }
-        throw new SwitchYardException("manifest container baseName required in configuration for persistent sessions");
+        throw CommonKnowledgeMessages.MESSAGES.manifestContainerBaseNameRequiredInConfigurationForPersistentSessions();
     }
 
     private void registerScannerForDisposal() {
@@ -150,7 +150,7 @@ class KnowledgeContainerSessionFactory extends KnowledgeSessionFactory {
             }
             long si = scanInterval.longValue();
             if (si < 1) {
-                throw new IllegalArgumentException("container scanInterval must be positive");
+                throw CommonKnowledgeMessages.MESSAGES.containerScanIntervalMustBePositive();
             }
             KieScanner scanner = KieServices.Factory.get().newKieScanner(_kieContainer);
             addDisposals(Disposals.newDisposal(scanner));

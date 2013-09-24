@@ -22,9 +22,9 @@ import org.kie.api.runtime.Channel;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.StatelessKieSession;
 import org.switchyard.ServiceDomain;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.common.knowledge.CommonKnowledgeMessages;
 import org.switchyard.component.common.knowledge.config.model.ChannelModel;
 import org.switchyard.component.common.knowledge.config.model.ChannelsModel;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
@@ -99,7 +99,7 @@ public final class Channels {
                     sysc.setInvoker(new SwitchYardServiceInvoker(domain, componentTNS));
                 }
                 if (name == null) {
-                    throw new SwitchYardException("Could not use null name to register channel: " + channel.getClass().getName());
+                    throw CommonKnowledgeMessages.MESSAGES.couldNotUseNullNameToRegisterChannel(channel.getClass().getName());
                 }
                 ncList.add(new NameChannel(name, channel));
             }

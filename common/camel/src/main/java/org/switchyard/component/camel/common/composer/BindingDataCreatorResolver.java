@@ -16,6 +16,7 @@ package org.switchyard.component.camel.common.composer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.FactoryFinder;
+import org.switchyard.component.camel.CommonCamelMessages;
 
 /**
  * Resolver which allows to plug-in custom {@link BindingDataCreator} injection.
@@ -42,15 +43,14 @@ public class BindingDataCreatorResolver {
         } catch (NoFactoryAvailableException e) {
             e.getMessage(); // ignore
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid URI, no BindingDataCreator registered for scheme: " + name, e);
+            throw CommonCamelMessages.MESSAGES.invalidURINoBindingDataCreatorRegisteredForScheme(name, e);
         }
 
         if (type != null) {
             if (BindingDataCreator.class.isAssignableFrom(type)) {
                 return (BindingDataCreator<?>) context.getInjector().newInstance(type);
             } else {
-                throw new IllegalArgumentException("Resolving binding data creator for endpoint of type : " + name
-                    + " detected type conflict: Not a BindingDataCreator implementation. Found: " + type.getName());
+                throw CommonCamelMessages.MESSAGES.resolvingBindingDataCreatorForEndpointOfType(name, type.getName());
             }
         }
         return new DefaultBindingDataCreator();

@@ -20,6 +20,8 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 
+import org.switchyard.component.camel.CommonCamelMessages;
+
 /**
  * Base class for all camel models which are not related to binding.
  * 
@@ -62,7 +64,7 @@ public abstract class V1BaseCamelModel extends BaseModel {
             try {
                 return format.parse(value);
             } catch (java.text.ParseException parseEx) {
-                throw new IllegalArgumentException("Failed to parse " + configName + " as a date.", parseEx);
+                throw CommonCamelMessages.MESSAGES.failedToParse(configName, parseEx);
             }
         }
     }

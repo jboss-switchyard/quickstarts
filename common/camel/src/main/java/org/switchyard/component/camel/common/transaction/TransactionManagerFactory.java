@@ -18,7 +18,7 @@ import javax.naming.NamingException;
 
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
-import org.switchyard.SwitchYardException;
+import org.switchyard.component.camel.CommonCamelMessages;
 
 /**
  * Simple factory which creates TransactedManager instances.
@@ -76,9 +76,7 @@ public final class TransactionManagerFactory {
         } else if (isBound(JtaTransactionManager.DEFAULT_USER_TRANSACTION_NAME)) {
             transactionManager.setUserTransactionName(JtaTransactionManager.DEFAULT_USER_TRANSACTION_NAME);
         } else {
-            throw new SwitchYardException("Could not create a JtaTransactionManager as no TransactionManager was found"
-                    + " in JNDI. Tried [" + JBOSS_USER_TRANSACTION + ", " 
-                    + JtaTransactionManager.DEFAULT_USER_TRANSACTION_NAME + "]");
+            throw CommonCamelMessages.MESSAGES.couldNotCreateAJtaTransactionManagerAsNoTransactionManagerWasFoundJBOSSUSERTRANSACTION(JBOSS_USER_TRANSACTION, JtaTransactionManager.DEFAULT_USER_TRANSACTION_NAME);
         }
 
         // Initialize the transaction manager.
@@ -98,13 +96,13 @@ public final class TransactionManagerFactory {
         } catch (final NamingException e) {
             return null;
         } catch (final Exception e) {
-            throw new SwitchYardException("Unexpected Exception retrieving '" + name + "' from JNDI namespace.", e);
+            throw CommonCamelMessages.MESSAGES.unexpectedExceptionRetrieving(name, e);
         } finally {
             if (context != null) {
                 try {
                     context.close();
                 } catch (final Exception e) {
-                    throw new SwitchYardException("Unexpected error closing InitialContext.", e);
+                    throw CommonCamelMessages.MESSAGES.unexpectedErrorClosingInitialContext(e);
                 }
             }
         }

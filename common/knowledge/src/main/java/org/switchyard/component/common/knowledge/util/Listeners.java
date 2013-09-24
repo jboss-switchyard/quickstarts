@@ -27,8 +27,8 @@ import org.kie.api.runtime.KieRuntime;
 import org.kie.api.runtime.KieSession;
 import org.kie.internal.event.KnowledgeRuntimeEventManager;
 import org.kie.internal.runtime.KnowledgeRuntime;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Construction;
+import org.switchyard.component.common.knowledge.CommonKnowledgeMessages;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.config.model.ListenerModel;
 import org.switchyard.component.common.knowledge.config.model.ListenersModel;
@@ -69,7 +69,7 @@ public final class Listeners {
                 @SuppressWarnings("unchecked")
                 Class<? extends EventListener> listenerClass = (Class<? extends EventListener>)listenerModel.getClazz(loader);
                 if (listenerClass == null) {
-                    throw new SwitchYardException("Could not load listener class: " + listenerModel.getModelConfiguration().getAttribute("class"));
+                    throw CommonKnowledgeMessages.MESSAGES.couldNotLoadListenerClass(listenerModel.getModelConfiguration().getAttribute("class"));
                 }
                 registerListener(listenerClass, runtimeEventManager);
             }
@@ -90,7 +90,7 @@ public final class Listeners {
                 listener = Construction.construct(listenerClass, parameterTypes, new Object[]{runtimeEventManager});
             }
         } catch (Throwable t) {
-            throw new SwitchYardException("Could not instantiate listener class: " + listenerClass.getName());
+            throw CommonKnowledgeMessages.MESSAGES.couldNotInstantiateListenerClass(listenerClass.getName());
         }
     }
 

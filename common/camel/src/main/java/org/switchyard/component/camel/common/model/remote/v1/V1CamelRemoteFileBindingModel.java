@@ -16,6 +16,7 @@ package org.switchyard.component.camel.common.model.remote.v1;
 import java.net.URI;
 import java.util.List;
 
+import org.switchyard.component.camel.CommonCamelMessages;
 import org.switchyard.component.camel.common.QueryString;
 import org.switchyard.component.camel.common.model.file.v1.V1GenericFileBindingModel;
 import org.switchyard.component.camel.common.model.remote.CamelRemoteFileBindingModel;
@@ -324,7 +325,7 @@ public abstract class V1CamelRemoteFileBindingModel extends V1GenericFileBinding
         } else if (getUsername() != null && getPassword() == null) {
             username = getUsername() + "@";
         } else if (getUsername() == null && getPassword() != null) {
-            throw new IllegalArgumentException("Configuration provides password but do not specify user");
+            throw CommonCamelMessages.MESSAGES.configurationProvidesPasswordButDoNotSpecifyUser();
         }
 
         String baseUri = getEndpointProtocol() + "://" + username + getHost();

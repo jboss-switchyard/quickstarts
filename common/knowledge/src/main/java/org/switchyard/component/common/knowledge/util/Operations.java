@@ -31,8 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.kie.api.runtime.Globals;
 import org.switchyard.Message;
 import org.switchyard.Scope;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.lang.Strings;
+import org.switchyard.component.common.knowledge.CommonKnowledgeMessages;
 import org.switchyard.component.common.knowledge.OperationType;
 import org.switchyard.component.common.knowledge.config.model.FaultModel;
 import org.switchyard.component.common.knowledge.config.model.FaultsModel;
@@ -84,7 +84,7 @@ public final class Operations {
                 KnowledgeOperation operation = new KnowledgeOperation(type, eventId);
                 mapExpressions(operationModel, operation);
                 if (operations.containsKey(name)) {
-                    throw new SwitchYardException(String.format("cannot register %s operation due to duplicate name: %s", type, name));
+                    throw CommonKnowledgeMessages.MESSAGES.cannotRegisterOperation(type.toString(), name);
                 }
                 operations.put(name, operation);
             }

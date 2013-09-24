@@ -13,6 +13,7 @@
  */
 package org.switchyard.component.common.knowledge.expression;
 
+import org.switchyard.component.common.knowledge.CommonKnowledgeMessages;
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.property.SystemAndTestPropertyResolver;
 
@@ -65,7 +66,7 @@ public final class ExpressionFactory {
             case MVEL:
                 return new MVELExpression(expression, propertyResolver);
             default:
-                throw new IllegalArgumentException("Unknown expression type: " + expressionType);
+                throw CommonKnowledgeMessages.MESSAGES.unknownExpressionType(expressionType.toString());
         }
     }
 

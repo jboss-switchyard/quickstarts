@@ -17,7 +17,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
@@ -68,7 +68,7 @@ public class SynchronousInOutHandler implements ExchangeHandler {
             } catch (InterruptedException e) {
                 synchronized (this) {
                     _responseQueue = null;
-                    throw new DeliveryException("Unexpected interrupt while waiting on OUT Exchange message.", e);
+                    throw CommonCommonMessages.MESSAGES.unexpectedInterruptWhileWaitingOnOUTExchangeMessage(e);
                 }
             }
 
@@ -80,7 +80,7 @@ public class SynchronousInOutHandler implements ExchangeHandler {
                         outExchange = _responseQueue.poll();
                     } else {
                         _responseQueue = null;
-                        throw new DeliveryException("Timed out waiting on OUT Exchange message.");
+                        throw CommonCommonMessages.MESSAGES.timedOutWaitingOnOUTExchangeMessage();
                     }
                 }
             }
@@ -112,7 +112,7 @@ public class SynchronousInOutHandler implements ExchangeHandler {
             try {
                 _responseQueue.put(exchange);
             } catch (InterruptedException e) {
-                throw new IllegalStateException("Unexpected Interrupt exception.", e);
+                throw CommonCommonMessages.MESSAGES.unexpectedInterruptException(e);
             }
         }
     }

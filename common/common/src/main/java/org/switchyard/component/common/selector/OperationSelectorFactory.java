@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import org.apache.log4j.Logger;
 import org.switchyard.common.type.Classes;
+import org.switchyard.component.common.CommonCommonLogger;
 import org.switchyard.config.model.selector.OperationSelectorModel;
 import org.switchyard.config.model.selector.JavaOperationSelectorModel;
 import org.switchyard.selector.OperationSelector;
@@ -30,8 +30,6 @@ import org.switchyard.selector.OperationSelector;
  * @param <T> message type
  */
 public abstract class OperationSelectorFactory<T> {
-
-    private static final Logger LOGGER = Logger.getLogger(OperationSelectorFactory.class);
 
     /**
      * Component developer should implement this message to specify the type of source object.
@@ -80,7 +78,7 @@ public abstract class OperationSelectorFactory<T> {
                 Constructor<? extends OperationSelector<T>> constructor = custom.getConstructor(OperationSelectorModel.class);
                 operationSelector = constructor.newInstance(model);
             } catch (Exception e) {
-                LOGGER.error("Could not instantiate OperationSelector: " + custom.getClass().getName() + " - " + e.getMessage());
+                CommonCommonLogger.ROOT_LOGGER.couldNotInstantiateOperationSelector(custom.getClass().getName(), e.getMessage());
             }
         }
         return operationSelector;

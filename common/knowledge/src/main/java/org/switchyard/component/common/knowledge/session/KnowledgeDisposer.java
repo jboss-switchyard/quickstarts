@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.switchyard.component.common.knowledge.CommonKnowledgeLogger;
 
 /**
  * Knowledge disposer.
@@ -25,9 +25,7 @@ import org.apache.log4j.Logger;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public class KnowledgeDisposer implements KnowledgeDisposal {
-
-    private static Logger LOGGER = Logger.getLogger(KnowledgeDisposer.class);
-
+    
     private final Set<KnowledgeDisposal> _disposals = Collections.synchronizedSet(new LinkedHashSet<KnowledgeDisposal>());
 
     /**
@@ -53,7 +51,7 @@ public class KnowledgeDisposer implements KnowledgeDisposal {
             try {
                 disposal.dispose();
             } catch (Throwable t) {
-                LOGGER.warn(String.format("problem disposing [%s]: %s", disposal.getClass().getSimpleName(), t.getMessage()));
+                CommonKnowledgeLogger.ROOT_LOGGER.problemDisposing(disposal.getClass().getSimpleName(), t.getMessage());
             }
         }
         _disposals.clear();

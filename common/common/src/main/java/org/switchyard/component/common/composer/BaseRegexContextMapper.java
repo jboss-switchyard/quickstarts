@@ -21,6 +21,7 @@ import java.util.regex.PatternSyntaxException;
 
 import javax.xml.namespace.QName;
 
+import org.switchyard.component.common.CommonCommonMessages;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 
@@ -46,7 +47,7 @@ public class BaseRegexContextMapper<D extends BindingData> extends BaseContextMa
                 Pattern pattern = Pattern.compile(regex);
                 tmpList.add(pattern);
             } catch (PatternSyntaxException pse) {
-                throw new IllegalArgumentException("\"" + regex + "\" is not a valid regex pattern: " + pse.getMessage());
+                throw CommonCommonMessages.MESSAGES.isNotAValidRegexPattern(regex, pse.getMessage());
             }
         }
         synchronized (patternList) {
