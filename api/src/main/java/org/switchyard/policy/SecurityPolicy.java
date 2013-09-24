@@ -26,7 +26,9 @@ public enum SecurityPolicy implements Policy {
     AUTHORIZATION("authorization") {
         @Override
         public boolean supports(PolicyType type) {
-            return type == PolicyType.INTERACTION;
+            // "The SCA Security specification defines the authorization intent to specify implementation policy."
+            // NOTE: We also still support interaction policy for backwards-compatibility with SwitchYard 1.0.
+            return type == PolicyType.IMPLEMENTATION || type == PolicyType.INTERACTION;
         }
     },
 
@@ -36,6 +38,7 @@ public enum SecurityPolicy implements Policy {
     CLIENT_AUTHENTICATION("clientAuthentication") {
         @Override
         public boolean supports(PolicyType type) {
+            // "The SCA security specification defines the following intents to specify interaction policy: ..., clientAuthentication, ..."
             return type == PolicyType.INTERACTION;
         }
     },
@@ -46,6 +49,7 @@ public enum SecurityPolicy implements Policy {
     CONFIDENTIALITY("confidentiality") {
         @Override
         public boolean supports(PolicyType type) {
+            // "The SCA security specification defines the following intents to specify interaction policy: ..., confidentiality, ..."
             return type == PolicyType.INTERACTION;
         }
     };
@@ -79,7 +83,7 @@ public enum SecurityPolicy implements Policy {
     public boolean isCompatibleWith(Policy target) {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}
      */

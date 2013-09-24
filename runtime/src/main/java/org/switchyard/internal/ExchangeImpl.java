@@ -39,14 +39,12 @@ import org.switchyard.runtime.RuntimeLogger;
 import org.switchyard.runtime.RuntimeMessages;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.runtime.event.ExchangeInitiatedEvent;
-import org.switchyard.security.SecurityContext;
-import org.switchyard.security.SecurityExchange;
 import org.switchyard.spi.Dispatcher;
 
 /**
  * Implementation of Exchange.
  */
-public class ExchangeImpl implements SecurityExchange {
+public class ExchangeImpl implements Exchange {
 
     private static Logger _log = Logger.getLogger(ExchangeImpl.class);
 
@@ -57,7 +55,6 @@ public class ExchangeImpl implements SecurityExchange {
     private ExchangeHandler         _replyHandler;
     private ServiceDomain           _domain;
     private Long                    _startTime;
-    private SecurityContext         _securityContext = new SecurityContext();
     private Context                 _context;
     private CompositeContext        _compositeContext;
     private ServiceReference        _consumer;
@@ -87,11 +84,6 @@ public class ExchangeImpl implements SecurityExchange {
         _context = new DefaultContext();
         _compositeContext = new CompositeContext();
         _compositeContext.setContext(Scope.EXCHANGE, _context);
-    }
-
-    @Override
-    public SecurityContext getSecurityContext() {
-        return _securityContext;
     }
 
     @Override

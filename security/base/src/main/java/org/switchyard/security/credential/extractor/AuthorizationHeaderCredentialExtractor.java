@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jboss.logging.Logger;
 import org.switchyard.common.codec.Base64;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.security.BaseSecurityLogger;
@@ -34,8 +33,6 @@ import org.switchyard.security.credential.PasswordCredential;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public class AuthorizationHeaderCredentialExtractor implements CredentialExtractor<String> {
-
-    private static final Logger LOGGER = Logger.getLogger(AuthorizationHeaderCredentialExtractor.class);
 
     private final Charset _charset;
 

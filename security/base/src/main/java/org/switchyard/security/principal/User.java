@@ -26,6 +26,7 @@ import org.switchyard.security.BaseSecurityMessages;
 public class User implements Principal, Serializable {
 
     private static final long serialVersionUID = 1931117417458834463L;
+    private static final String FORMAT = User.class.getSimpleName() + "@%s[name=%s]";
 
     private final String _name;
 
@@ -53,7 +54,7 @@ public class User implements Principal, Serializable {
      */
     @Override
     public String toString() {
-        return "User [name=" + _name + "]";
+        return String.format(FORMAT, System.identityHashCode(this), _name);
     }
 
     /**

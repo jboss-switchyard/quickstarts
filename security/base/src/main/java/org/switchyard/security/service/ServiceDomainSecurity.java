@@ -11,21 +11,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.security;
+package org.switchyard.security.service;
 
-import org.switchyard.Exchange;
+import org.switchyard.ServiceSecurity;
+import org.switchyard.security.system.SystemSecurity;
 
 /**
- * SecurityExchange.
+ * SecureServiceDomain.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public interface SecurityExchange extends Exchange {
+public interface ServiceDomainSecurity {
 
     /**
-     * Gets the security context.
-     * @return the security context
+     * Gets a ServiceSecurity by name.
+     * @param name the name
+     * @return the ServiceSecurity
      */
-    public SecurityContext getSecurityContext();
+    public ServiceSecurity getServiceSecurity(String name);
+
+    /**
+     * Gets the SystemSecurity.
+     * @return the SystemSecurity
+     */
+    public SystemSecurity getSystemSecurity();
 
 }

@@ -30,6 +30,7 @@ import org.switchyard.security.BaseSecurityMessages;
 public class Group implements java.security.acl.Group, Serializable {
 
     private static final long serialVersionUID = -909127780618924905L;
+    private static final String FORMAT = Group.class.getSimpleName() + "@%s[name=%s, members=%s]";
 
     /**
      * The "Roles" group name.
@@ -95,7 +96,7 @@ public class Group implements java.security.acl.Group, Serializable {
      */
     @Override
     public String toString() {
-        return "Group [name=" + _name + ", members=" + _members + "]";
+        return String.format(FORMAT, System.identityHashCode(this), _name, _members);
     }
 
     /**

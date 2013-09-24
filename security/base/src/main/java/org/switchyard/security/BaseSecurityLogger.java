@@ -56,4 +56,14 @@ public interface BaseSecurityLogger {
     @LogMessage(level = WARN)
     @Message(id = 14203, value = "charsetName is null; using platform-default")
     void charSetNull();
+
+    /**
+     * configurationNumberFormatException method definition.
+     * @param name name
+     * @param value value
+     * @param nfe nfe
+     */
+    @LogMessage(level = ERROR)
+    @Message(id = 14204, value = "configuration NumberFormatException: %s=[%s]")
+    void configurationNumberFormatException(String name, String value, @Cause NumberFormatException nfe);
 }

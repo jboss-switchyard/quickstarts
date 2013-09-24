@@ -22,6 +22,9 @@ import java.security.cert.Certificate;
  */
 public class CertificateCredential implements Credential {
 
+    private static final long serialVersionUID = 7827609156599212693L;
+    private static final String FORMAT = CertificateCredential.class.getSimpleName() + "@%s[certificate=%s]";
+
     private final Certificate _certificate;
 
     /**
@@ -45,7 +48,7 @@ public class CertificateCredential implements Credential {
      */
     @Override
     public String toString() {
-        return "CertificateCredential [certificate=" + _certificate + "]";
+        return String.format(FORMAT, System.identityHashCode(this), _certificate);
     }
 
     /**

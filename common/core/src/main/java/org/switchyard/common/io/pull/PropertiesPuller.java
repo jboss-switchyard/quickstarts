@@ -17,6 +17,8 @@ package org.switchyard.common.io.pull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 
@@ -42,13 +44,32 @@ public class PropertiesPuller extends Puller<Properties> {
     /**
      * Safely pulls Properties from a Reader.
      * @param reader a Reader of the resource
-     * @return the resource, or null if not found
+     * @return the resource
      * @throws IOException if a problem occurred
      */
     public Properties pull(Reader reader) throws IOException {
         Properties props = new Properties();
         if (reader != null) {
             props.load(reader);
+        }
+        return props;
+    }
+
+    /**
+     * Safely pulls Properties resource from a Map.
+     * @param map a Map of the properties
+     * @return the resource
+     */
+    public Properties pull(Map<String, String> map) {
+        Properties props = new Properties();
+        if (map != null) {
+            for (Entry<String, String> entry : map.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                if (key != null && value != null) {
+                    props.setProperty(key, value);
+                }
+            }
         }
         return props;
     }

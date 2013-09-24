@@ -20,6 +20,9 @@ package org.switchyard.security.credential;
  */
 public class NameCredential implements Credential {
 
+    private static final long serialVersionUID = 192266830898823549L;
+    private static final String FORMAT = NameCredential.class.getSimpleName() + "@%s[name=%s]";
+
     private final String _name;
 
     /**
@@ -43,7 +46,7 @@ public class NameCredential implements Credential {
      */
     @Override
     public String toString() {
-        return "NameCredentialImpl [name=" + _name + "]";
+        return String.format(FORMAT, System.identityHashCode(this), _name);
     }
 
     /**

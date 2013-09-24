@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.security.spi;
+package org.switchyard.security.provider;
 
 import java.util.Set;
 
@@ -20,17 +20,15 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
-import org.jboss.logging.Logger;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.reflect.Construction;
-import org.switchyard.security.SecurityContext;
+import org.switchyard.security.BaseSecurityLogger;
 import org.switchyard.security.callback.handler.NamePasswordCallbackHandler;
 import org.switchyard.security.callback.handler.SwitchYardCallbackHandler;
+import org.switchyard.security.context.SecurityContext;
 import org.switchyard.security.principal.Group;
 import org.switchyard.security.principal.Role;
-
-import org.switchyard.security.BaseSecurityLogger;
 
 /**
  * JaasSecurityProvider.
@@ -38,8 +36,6 @@ import org.switchyard.security.BaseSecurityLogger;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public class JaasSecurityProvider extends SecurityProvider {
-
-    private static final Logger LOGGER = Logger.getLogger(JaasSecurityProvider.class);
 
     /**
      * Constructs a new JaasSecurityProvider.

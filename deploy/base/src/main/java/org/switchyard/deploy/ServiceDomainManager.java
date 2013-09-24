@@ -19,7 +19,6 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.jboss.logging.Logger;
 import org.switchyard.BaseDeployMessages;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceSecurity;
@@ -32,11 +31,14 @@ import org.switchyard.config.model.property.PropertiesModel;
 import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.internal.DefaultServiceRegistry;
-import org.switchyard.internal.DefaultServiceSecurity;
 import org.switchyard.internal.DomainImpl;
 import org.switchyard.internal.EventManager;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.internal.validate.BaseValidatorRegistry;
+import org.switchyard.security.service.DefaultServiceDomainSecurity;
+import org.switchyard.security.service.DefaultServiceSecurity;
+import org.switchyard.security.service.ServiceDomainSecurity;
+import org.switchyard.security.system.SystemSecurity;
 import org.switchyard.spi.ServiceRegistry;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.validate.ValidatorRegistry;
@@ -61,21 +63,28 @@ public class ServiceDomainManager {
      * Root domain property.
      */
     public static final QName ROOT_DOMAIN = new QName("org.switchyard.domains.root");
-    
-    private static Logger _log = Logger.getLogger(ServiceDomainManager.class);
 
     // Share the same service registry and bus across domains to give visibility 
     // to registered services across application domains
     private ServiceRegistry _registry = new DefaultServiceRegistry();
     private EventManager _eventManager = new EventManager();
-    
+    private final SystemSecurity _systemSecurity;
+
     /**
      * Constructs a new ServiceDomainManager.
      */
     public ServiceDomainManager() {
-         
+        this(SystemSecurity.DEFAULT);
     }
-    
+
+    /**
+     * Constructs a new ServiceDomainManager with the specified SystemSecurity.
+     * @param systemSecurity the SystemSecurity
+     */
+    public ServiceDomainManager(SystemSecurity systemSecurity) {
+        _systemSecurity = systemSecurity;
+    }
+
     /**
      * Create a ServiceDomain instance.
      * <p/>
@@ -99,10 +108,10 @@ public class ServiceDomainManager {
         SwitchYardCamelContext camelContext = new SwitchYardCamelContext();
         CamelExchangeBus bus = new CamelExchangeBus(camelContext);
 
-        Map<String, ServiceSecurity> serviceSecurities = getServiceSecurities(switchyardConfig);
+        ServiceDomainSecurity serviceDomainSecurity = getServiceDomainSecurity(switchyardConfig);
 
         DomainImpl domain = new DomainImpl(
-                domainName, _registry, bus, transformerRegistry, validatorRegistry, _eventManager, serviceSecurities);
+                domainName, _registry, bus, transformerRegistry, validatorRegistry, _eventManager, serviceDomainSecurity);
         camelContext.setServiceDomain(domain);
 
         // set properties on the domain
@@ -126,8 +135,8 @@ public class ServiceDomainManager {
         return _eventManager;
     }
     
-    private Map<String, ServiceSecurity> getServiceSecurities(SwitchYardModel switchyard) {
-        Map<String, ServiceSecurity> map = new HashMap<String, ServiceSecurity>();
+    private ServiceDomainSecurity getServiceDomainSecurity(SwitchYardModel switchyard) {
+        Map<String, ServiceSecurity> serviceSecurities = new HashMap<String, ServiceSecurity>();
         if (switchyard != null) {
             DomainModel domain = switchyard.getDomain();
             if (domain != null) {
@@ -144,8 +153,8 @@ public class ServiceDomainManager {
                                 .setRunAs(security.getRunAs())
                                 .setSecurityDomain(security.getSecurityDomain());
                             String key = value.getName();
-                            if (!map.containsKey(key)) {
-                                map.put(key, value);
+                            if (!serviceSecurities.containsKey(key)) {
+                                serviceSecurities.put(key, value);
                             } else {
                                 throw BaseDeployMessages.MESSAGES.duplicateSecurityConfigurationNames(key);
                             }
@@ -154,7 +163,7 @@ public class ServiceDomainManager {
                 }
             }
         }
-        return map;
+        return new DefaultServiceDomainSecurity(serviceSecurities, _systemSecurity);
     }
     
     private PropertiesModel getProperties(SwitchYardModel config) {

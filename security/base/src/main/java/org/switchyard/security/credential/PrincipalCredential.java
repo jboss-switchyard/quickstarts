@@ -21,7 +21,10 @@ import java.security.Principal;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 public class PrincipalCredential implements Credential {
-    
+
+    private static final long serialVersionUID = 904862054504518758L;
+    private static final String FORMAT = PrincipalCredential.class.getSimpleName() + "@%s[principal=%s, trusted=%s]";
+
     private final Principal _principal;
     private final boolean _trusted;
 
@@ -64,7 +67,7 @@ public class PrincipalCredential implements Credential {
      */
     @Override
     public String toString() {
-        return "PrincipalCredential [principal=" + _principal + ", trusted=" + _trusted + "]";
+        return String.format(FORMAT, System.identityHashCode(this), _principal, _trusted);
     }
 
     /**

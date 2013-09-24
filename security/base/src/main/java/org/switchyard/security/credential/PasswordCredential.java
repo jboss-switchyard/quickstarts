@@ -22,7 +22,11 @@ import java.util.Arrays;
  */
 public class PasswordCredential implements Credential {
 
+    private static final long serialVersionUID = -680454653305310122L;
+    private static final String FORMAT = PasswordCredential.class.getSimpleName() + "@%s[password=%s]";
+
     private final char[] _password;
+    private final String _mask;
 
     /**
      * Constructs a PasswordCredential with the specified password.
@@ -30,6 +34,7 @@ public class PasswordCredential implements Credential {
      */
     public PasswordCredential(String password) {
         _password = password != null ? password.toCharArray() : null;
+        _mask = mask();
     }
 
     /**
@@ -38,6 +43,19 @@ public class PasswordCredential implements Credential {
      */
     public PasswordCredential(char[] password) {
         _password = password;
+        _mask = mask();
+    }
+
+    private String mask() {
+        StringBuilder masked = new StringBuilder();
+        if (_password != null) {
+            for (int i=0; i < _password.length; i++) {
+                masked.append('*');
+            }
+        } else {
+            masked.append("null");
+        }
+        return masked.toString();
     }
 
     /**
@@ -53,15 +71,7 @@ public class PasswordCredential implements Credential {
      */
     @Override
     public String toString() {
-        StringBuilder masked = new StringBuilder();
-        if (_password != null) {
-            for (int i=0; i < _password.length; i++) {
-                masked.append('*');
-            }
-        } else {
-            masked.append("null");
-        }
-        return "PasswordCredentialImpl [password=" + masked + "]";
+        return String.format(FORMAT, System.identityHashCode(this), _mask);
     }
 
     /**

@@ -87,13 +87,6 @@ public class ServiceImpl implements Service {
         return _domain;
     }
     
-    /*
-    @Override
-    public ServiceSecurity getSecurity() {
-        return _domain != null ? _domain.getServiceSecurity(_securityName) : null;
-    }
-    */
-    
     @Override
     public void unregister() {
         _domain.getServiceRegistry().unregisterService(this);

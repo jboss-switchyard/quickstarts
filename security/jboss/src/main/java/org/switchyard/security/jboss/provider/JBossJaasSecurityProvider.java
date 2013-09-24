@@ -11,15 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.security.jboss.spi;
+package org.switchyard.security.jboss.provider;
 
 import javax.security.auth.Subject;
 
 import org.jboss.security.SecurityContextAssociation;
 import org.switchyard.ServiceSecurity;
-import org.switchyard.security.SecurityContext;
-import org.switchyard.security.spi.JaasSecurityProvider;
+import org.switchyard.security.context.SecurityContext;
 import org.switchyard.security.jboss.JBossSecurityLogger;
+import org.switchyard.security.provider.JaasSecurityProvider;
 
 /**
  * JBossJaasSecurityProvider.

@@ -30,18 +30,13 @@ import org.switchyard.common.CommonCoreMessages;
 public final class Files {
 
     /**
-     * Default buffer size for Files operations.
-     */
-    public static final int DEFAULT_BUFFER_SIZE = 1024;
-
-    /**
      * Copies one file on top of the other.
      * @param source the source file
      * @param target the destination file
      * @throws IOException something went wanky
      */
     public static final void copy(File source, File target) throws IOException {
-        copy(source, target, DEFAULT_BUFFER_SIZE);
+        copy(source, target, Buffers.DEFAULT_SIZE);
     }
 
     /**

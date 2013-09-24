@@ -20,6 +20,9 @@ package org.switchyard.security.credential;
  */
 public class ConfidentialityCredential implements Credential {
 
+    private static final long serialVersionUID = -7520434970909546852L;
+    private static final String FORMAT = ConfidentialityCredential.class.getSimpleName() + "@%s[confidential=%s]";
+
     private final boolean _confidential;
 
     /**
@@ -43,7 +46,7 @@ public class ConfidentialityCredential implements Credential {
      */
     @Override
     public String toString() {
-        return "ConfidentialityCredential [confidential=" + _confidential + "]";
+        return String.format(FORMAT, System.identityHashCode(this), _confidential);
     }
 
     /**

@@ -30,6 +30,7 @@ import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.Policy;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.runtime.RuntimeMessages;
+import org.switchyard.security.context.SecurityContextManager;
 import org.switchyard.spi.Dispatcher;
 
 /**
@@ -46,6 +47,7 @@ public class ServiceReferenceImpl implements ServiceReference {
     private Dispatcher _dispatcher;
     private QName _targetServiceName;
     private ServiceMetadata _metadata;
+    private SecurityContextManager _securityContextManager;
     
     /**
      * Creates a new reference to a service.
@@ -81,6 +83,7 @@ public class ServiceReferenceImpl implements ServiceReference {
         _domain = domain;
         _targetServiceName = name;
         _metadata = metadata != null ? metadata : ServiceMetadataBuilder.create().build();
+        _securityContextManager = new SecurityContextManager(_domain);
     }
     
     @Override
@@ -119,6 +122,9 @@ public class ServiceReferenceImpl implements ServiceReference {
 
         Exchange ex = _dispatcher.createExchange(handler, op.getExchangePattern());
         ex.consumer(this, op);
+
+        // propagate the security context
+        _securityContextManager.propagateContext(ex);
 
         for (Policy policy : _metadata.getRequiredPolicies()) {
             PolicyUtil.require(ex, policy);
@@ -163,13 +169,6 @@ public class ServiceReferenceImpl implements ServiceReference {
     public ServiceDomain getDomain() {
         return _domain;
     }
-    
-    /*
-    @Override
-    public ServiceSecurity getSecurity() {
-        return _domain != null ? _domain.getServiceSecurity(_securityName) : null;
-    }
-    */
     
     /**
      * Specifies the exchange bus dispatcher to use for this reference.

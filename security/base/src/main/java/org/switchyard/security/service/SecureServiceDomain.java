@@ -11,13 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.security.credential;
+package org.switchyard.security.service;
 
-import java.io.Serializable;
+import org.switchyard.ServiceDomain;
 
 /**
- * Credential.
+ * SecureServiceDomain.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public interface Credential extends Serializable {}
+public interface SecureServiceDomain extends ServiceDomain {
+
+    /**
+     * Gets the ServiceDomainSecurity.
+     * @return the ServiceDomainSecurity
+     */
+    public ServiceDomainSecurity getServiceDomainSecurity();
+
+}

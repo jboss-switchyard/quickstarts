@@ -21,6 +21,7 @@ import org.switchyard.bus.camel.BusMessages;
 import org.switchyard.handlers.AddressingHandler;
 import org.switchyard.handlers.PolicyHandler;
 import org.switchyard.handlers.SecurityHandler;
+import org.switchyard.handlers.SecurityHandler.SecurityAction;
 import org.switchyard.handlers.TransactionHandler;
 import org.switchyard.handlers.TransformHandler;
 import org.switchyard.handlers.ValidateHandler;
@@ -49,12 +50,21 @@ public enum Processors {
         }
     },
     /**
-     * Security processor wrapper.
+     * Security process wrapper.
      */
-    SECURITY {
+    SECURITY_PROCESS {
         @Override
         public Processor create(ServiceDomain domain) {
-            return wrap(new SecurityHandler());
+            return wrap(new SecurityHandler(domain, SecurityAction.PROCESS));
+        }
+    },
+    /**
+     * Security cleanup wrapper.
+     */
+    SECURITY_CLEANUP {
+        @Override
+        public Processor create(ServiceDomain domain) {
+            return wrap(new SecurityHandler(domain, SecurityAction.CLEANUP));
         }
     },
     /**

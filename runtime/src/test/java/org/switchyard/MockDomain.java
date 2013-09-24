@@ -24,6 +24,7 @@ import org.switchyard.internal.validate.BaseValidatorRegistry;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.security.service.DefaultServiceDomainSecurity;
 import org.switchyard.spi.ServiceRegistry;
 
 public class MockDomain extends DomainImpl {
@@ -46,7 +47,7 @@ public class MockDomain extends DomainImpl {
                 new BaseTransformerRegistry(),
                 new BaseValidatorRegistry(),
                 new EventManager(),
-                null);
+                new DefaultServiceDomainSecurity());
         init();
     }
     

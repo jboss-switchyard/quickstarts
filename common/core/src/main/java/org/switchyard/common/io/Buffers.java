@@ -38,4 +38,20 @@ public final class Buffers {
         }
     }
 
+    /**
+     * Creates an empty byte array for buffering purposes, using the platform-default buffer size.
+     * @return the empty byte array
+     */
+    public static byte[] newDefaultBuffer() {
+        return new byte[DEFAULT_SIZE];
+    }
+
+    /**
+     * Prints defaults.
+     * @param args ignored
+     */
+    public static void main(String... args) {
+        System.out.println("DEFAULT_SIZE = " + DEFAULT_SIZE);
+    }
+
 }

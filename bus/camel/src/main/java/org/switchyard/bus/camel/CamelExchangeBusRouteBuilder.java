@@ -20,7 +20,8 @@ import static org.switchyard.bus.camel.processors.Processors.ERROR_HANDLING;
 import static org.switchyard.bus.camel.processors.Processors.GENERIC_POLICY;
 import static org.switchyard.bus.camel.processors.Processors.PROVIDER_CALLBACK;
 import static org.switchyard.bus.camel.processors.Processors.PROVIDER_INTERCEPT;
-import static org.switchyard.bus.camel.processors.Processors.SECURITY;
+import static org.switchyard.bus.camel.processors.Processors.SECURITY_CLEANUP;
+import static org.switchyard.bus.camel.processors.Processors.SECURITY_PROCESS;
 import static org.switchyard.bus.camel.processors.Processors.TRANSACTION_HANDLER;
 import static org.switchyard.bus.camel.processors.Processors.TRANSFORMATION;
 import static org.switchyard.bus.camel.processors.Processors.VALIDATION;
@@ -136,7 +137,7 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
             .processRef(CONSUMER_INTERCEPT.name())
             .processRef(ADDRESSING.name())
             .processRef(TRANSACTION_HANDLER.name())
-            .processRef(SECURITY.name())
+            .processRef(SECURITY_PROCESS.name())
             .processRef(GENERIC_POLICY.name())
             .processRef(VALIDATION.name())
             .processRef(TRANSFORMATION.name())
@@ -144,6 +145,7 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
             .processRef(PROVIDER_INTERCEPT.name())
             .processRef(PROVIDER_CALLBACK.name())
             .processRef(PROVIDER_INTERCEPT.name())
+            .processRef(SECURITY_CLEANUP.name())
             .processRef(TRANSACTION_HANDLER.name())
             .addOutput(createFilterDefinition());
         
@@ -151,6 +153,7 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
             .doCatch(Exception.class)
             .processRef(ERROR_HANDLING.name())
             .processRef(PROVIDER_INTERCEPT.name())
+            .processRef(SECURITY_CLEANUP.name())
             .processRef(TRANSACTION_HANDLER.name())
             .addOutput(createFilterDefinition());
         
@@ -163,8 +166,7 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
         return new FilterDefinition(IN_OUT_CHECK)
             .processRef(VALIDATION.name())
             .processRef(TRANSFORMATION.name())
-            .processRef(VALIDATION.name())
-            .processRef(SECURITY.name());
+            .processRef(VALIDATION.name());
     }
 
     /**

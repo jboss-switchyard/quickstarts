@@ -40,6 +40,9 @@ import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.internal.validate.BaseValidatorRegistry;
 import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
+import org.switchyard.security.service.DefaultServiceDomainSecurity;
+import org.switchyard.security.service.SecureServiceDomain;
+import org.switchyard.security.service.ServiceDomainSecurity;
 import org.switchyard.spi.Dispatcher;
 import org.switchyard.spi.ExchangeBus;
 import org.switchyard.spi.ServiceRegistry;
@@ -49,7 +52,7 @@ import org.switchyard.validate.ValidatorRegistry;
 /**
  * Implementation of ServiceDomain.
  */
-public class DomainImpl implements ServiceDomain {
+public class DomainImpl implements SecureServiceDomain {
 
     private static Logger _logger = Logger.getLogger(DomainImpl.class);
 
@@ -60,7 +63,7 @@ public class DomainImpl implements ServiceDomain {
     private TransformerRegistry _transformerRegistry;
     private ValidatorRegistry _validatorRegistry;
     private Map<String, Object> _properties = new ConcurrentHashMap<String, Object>();
-    private Map<String, ServiceSecurity> _serviceSecurities = new ConcurrentHashMap<String, ServiceSecurity>();
+    private ServiceDomainSecurity _serviceDomainSecurity;
     
     /**
      * Create a new ServiceDomain.  This is a convenience constructor which uses default
@@ -75,7 +78,7 @@ public class DomainImpl implements ServiceDomain {
             new BaseTransformerRegistry(),
             new BaseValidatorRegistry(),
             new EventManager(),
-            null);
+            new DefaultServiceDomainSecurity());
         init();
     }
     
@@ -87,7 +90,7 @@ public class DomainImpl implements ServiceDomain {
      * @param transformerRegistry transformerRegistry
      * @param validatorRegistry validatorRegistry
      * @param eventManager eventManager
-     * @param serviceSecurities serviceSecurities
+     * @param serviceDomainSecurity serviceDomainSecurity
      */
     public DomainImpl(QName name,
             ServiceRegistry serviceRegistry,
@@ -95,7 +98,7 @@ public class DomainImpl implements ServiceDomain {
             TransformerRegistry transformerRegistry,
             ValidatorRegistry validatorRegistry,
             EventManager eventManager,
-            Map<String, ServiceSecurity> serviceSecurities) {
+            ServiceDomainSecurity serviceDomainSecurity) {
 
         _name = name;
         _serviceRegistry = serviceRegistry;
@@ -103,13 +106,7 @@ public class DomainImpl implements ServiceDomain {
         _transformerRegistry = transformerRegistry;
         _validatorRegistry = validatorRegistry;
         _eventManager = eventManager;
-
-        if (serviceSecurities != null) {
-            _serviceSecurities.putAll(serviceSecurities);
-        }
-        if (!_serviceSecurities.containsKey(ServiceSecurity.DEFAULT_NAME)) {
-            _serviceSecurities.put(ServiceSecurity.DEFAULT_NAME, new DefaultServiceSecurity());
-        }
+        _serviceDomainSecurity = serviceDomainSecurity;
 
         setEventPublisher(_transformerRegistry);
         setEventPublisher(_validatorRegistry);
@@ -275,11 +272,15 @@ public class DomainImpl implements ServiceDomain {
      */
     @Override
     public ServiceSecurity getServiceSecurity(String name) {
-        ServiceSecurity serviceSecurity = name != null ? _serviceSecurities.get(name) : null;
-        if (serviceSecurity == null) {
-            serviceSecurity = _serviceSecurities.get(ServiceSecurity.DEFAULT_NAME);
-        }
-        return serviceSecurity;
+        return getServiceDomainSecurity().getServiceSecurity(name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ServiceDomainSecurity getServiceDomainSecurity() {
+        return _serviceDomainSecurity;
     }
 
     @Override

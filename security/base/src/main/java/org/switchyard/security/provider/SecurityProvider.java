@@ -11,15 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.security.spi;
+package org.switchyard.security.provider;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import org.switchyard.ServiceSecurity;
-import org.switchyard.security.SecurityContext;
-
 import org.switchyard.security.BaseSecurityLogger;
+import org.switchyard.security.context.SecurityContext;
 
 /**
  * SecurityProvider.

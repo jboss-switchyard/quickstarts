@@ -35,13 +35,11 @@ import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.runtime.event.ExchangeInitiatedEvent;
-import org.switchyard.security.SecurityContext;
-import org.switchyard.security.SecurityExchange;
 
 /**
  * Exchange implementation which wraps Camel {@link org.apache.camel.Exchange} interface.
  */
-public class CamelExchange implements SecurityExchange {
+public class CamelExchange implements Exchange {
 
     private static final String DISPATCHER       = "org.switchyard.bus.camel.dispatcher";
     private static final String CONSUMER         = "org.switchyard.bus.camel.consumer";
@@ -50,7 +48,6 @@ public class CamelExchange implements SecurityExchange {
     private static final String REPLY_HANDLER    = "org.switchyard.bus.camel.replyHandler";
     private static final String PHASE            = "org.switchyard.bus.camel.phase";
     private static final String FAULT            = "org.switchyard.bus.camel.fault";
-    private static final String SECURITY_CONTEXT = "org.switchyard.bus.camel.securityContext";
 
     /**
      * Property/header name used to store property labels bag.
@@ -253,14 +250,6 @@ public class CamelExchange implements SecurityExchange {
     @Override
     public ExchangePhase getPhase() {
         return _exchange.getProperty(PHASE, ExchangePhase.class);
-    }
-
-    @Override
-    public SecurityContext getSecurityContext() {
-        if (!_exchange.getProperties().containsKey(SECURITY_CONTEXT)) {
-            _exchange.setProperty(SECURITY_CONTEXT, new SecurityContext());
-        }
-        return _exchange.getProperty(SECURITY_CONTEXT, SecurityContext.class);
     }
 
     /**

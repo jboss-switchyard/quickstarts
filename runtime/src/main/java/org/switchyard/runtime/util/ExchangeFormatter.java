@@ -17,7 +17,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.switchyard.Exchange;
 import org.switchyard.Message;
@@ -104,16 +106,33 @@ public final class ExchangeFormatter {
     }
     
     private static void dumpContext(StringBuilder summary, Set<Property> properties) {
+        Set<Property> orderedProperties = new TreeSet<Property>(new Comparator<Property>() {
+            public int compare(Property p1, Property p2) {
+                return p1.getName().compareTo(p2.getName());
+            }
+        });
+        int maxLength = 0;
         for (Property property : properties) {
-            summary.append(indent(1) + property.getName() + " : " + property.getValue());
+            int curLength = property.getName().length();
+            if (curLength > maxLength) {
+                maxLength = curLength;
+            }
+            orderedProperties.add(property);
+        }
+        for (Property orderedProperty : orderedProperties) {
+            String name = orderedProperty.getName();
+            int difLength = maxLength - name.length();
+            String pad = difLength > 0 ? Strings.repeat(".", difLength) : "";
+            summary.append(indent(1) + name + " " + pad + ": " + orderedProperty.getValue());
         }
     }
     
     private static String indent(int column) {
-        return INDENT + Strings.repeat("\t", column);
+        return INDENT + Strings.repeat("    ", column);
     }
     
     private ExchangeFormatter() {
         // noop
     }
+
 }

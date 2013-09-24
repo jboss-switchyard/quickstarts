@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.internal;
+package org.switchyard.security.service;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -27,7 +27,7 @@ import org.switchyard.ServiceSecurity;
  */
 public class DefaultServiceSecurity implements ServiceSecurity {
 
-    private static final String FORMAT = DefaultServiceSecurity.class.getSimpleName() + "[name=%s, callbackHandler=%s, properties=%s, rolesAllowed=%s, runAs=%s, securityDomain=%s]";
+    private static final String FORMAT = DefaultServiceSecurity.class.getSimpleName() + "@%s[name=%s, callbackHandler=%s, properties=%s, rolesAllowed=%s, runAs=%s, securityDomain=%s]";
 
     private String _name;
     private Class<?> _callbackHandler;
@@ -161,7 +161,7 @@ public class DefaultServiceSecurity implements ServiceSecurity {
      */
     @Override
     public String toString() {
-        return String.format(FORMAT, getName(), _callbackHandler, _properties, _rolesAllowed, _runAs, getSecurityDomain());
+        return String.format(FORMAT, System.identityHashCode(this), getName(), _callbackHandler, _properties, _rolesAllowed, _runAs, getSecurityDomain());
     }
 
 }

@@ -13,6 +13,7 @@
  */
 package org.switchyard.security.credential;
 
+import org.switchyard.common.xml.XMLHelper;
 import org.w3c.dom.Element;
 
 /**
@@ -22,7 +23,11 @@ import org.w3c.dom.Element;
  */
 public class AssertionCredential implements Credential {
 
+    private static final long serialVersionUID = -6370905027144656543L;
+    private static final String FORMAT = AssertionCredential.class.getSimpleName() + "@%s[assertion=%s]";
+
     private final Element _assertion;
+    private final String _assertionXML;
 
     /**
      * Constructs a AssertionCredential with the specified assertion.
@@ -30,14 +35,23 @@ public class AssertionCredential implements Credential {
      */
     public AssertionCredential(Element assertion) {
         _assertion = assertion;
+        _assertionXML = _assertion != null ? XMLHelper.toString(_assertion).trim() : null;
     }
 
     /**
-     * Gets the assertion.
-     * @return the assertion
+     * Gets the assertion Element.
+     * @return the assertion Element
      */
     public Element getAssertion() {
         return _assertion;
+    }
+
+    /**
+     * Gets the assertion XML.
+     * @return the assertion XML
+     */
+    public String getAssertionXML() {
+        return _assertionXML;
     }
 
     /**
@@ -45,7 +59,7 @@ public class AssertionCredential implements Credential {
      */
     @Override
     public String toString() {
-        return "AssertionCredential [assertion=" + _assertion + "]";
+        return String.format(FORMAT, System.identityHashCode(this), _assertionXML);
     }
 
     /**
@@ -55,7 +69,7 @@ public class AssertionCredential implements Credential {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((_assertion == null) ? 0 : _assertion.hashCode());
+        result = prime * result + ((_assertionXML == null) ? 0 : _assertionXML.hashCode());
         return result;
     }
 
@@ -74,11 +88,11 @@ public class AssertionCredential implements Credential {
             return false;
         }
         AssertionCredential other = (AssertionCredential)obj;
-        if (_assertion == null) {
-            if (other._assertion != null) {
+        if (_assertionXML == null) {
+            if (other._assertionXML != null) {
                 return false;
             }
-        } else if (!_assertion.equals(other._assertion)) {
+        } else if (!_assertionXML.equals(other._assertionXML)) {
             return false;
         }
         return true;

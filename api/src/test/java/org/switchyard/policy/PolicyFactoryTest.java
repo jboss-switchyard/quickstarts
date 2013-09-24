@@ -41,6 +41,7 @@ public class PolicyFactoryTest {
         // SecurityPolicy
         p = PolicyFactory.getPolicy("authorization");
         Assert.assertEquals(SecurityPolicy.AUTHORIZATION, p);
+        Assert.assertTrue(p.supports(PolicyType.IMPLEMENTATION));
         Assert.assertTrue(p.supports(PolicyType.INTERACTION));
         p = PolicyFactory.getPolicy("clientAuthentication");
         Assert.assertEquals(SecurityPolicy.CLIENT_AUTHENTICATION, p);

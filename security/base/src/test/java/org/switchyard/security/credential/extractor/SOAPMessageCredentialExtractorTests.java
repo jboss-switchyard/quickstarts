@@ -88,23 +88,27 @@ public class SOAPMessageCredentialExtractorTests {
 
     @Test
     public void testBinarySecurityToken() throws Exception {
-        SOAPMessage source = createMessage(BINARY_SECURITY_TOKEN_XML);
-        Set<Credential> creds = new SOAPMessageCredentialExtractor().extract(source);
-        boolean foundCertificate = false;
-        for (Credential cred : creds) {
-            if (cred instanceof CertificateCredential) {
-                foundCertificate = true;
-                Certificate certificate = ((CertificateCredential)cred).getCertificate();
-                Assert.assertEquals("X.509", certificate.getType());
-            }
-        }
-        if (!foundCertificate) {
+        CertificateCredential cred = getBinarySecurityTokenCertificateCredential();
+        if (cred == null) {
             Assert.fail("certificate not found");
         }
+        Certificate certificate = ((CertificateCredential)cred).getCertificate();
+        Assert.assertEquals("X.509", certificate.getType());
     }
 
-    private SOAPMessage createMessage(String path) throws Exception {
-        InputStream is = Classes.getResourceAsStream(path, getClass());
+    public static CertificateCredential getBinarySecurityTokenCertificateCredential() throws Exception {
+        SOAPMessage source = createMessage(BINARY_SECURITY_TOKEN_XML);
+        Set<Credential> creds = new SOAPMessageCredentialExtractor().extract(source);
+        for (Credential cred : creds) {
+            if (cred instanceof CertificateCredential) {
+                return (CertificateCredential)cred;
+            }
+        }
+        return null;
+    }
+
+    private static SOAPMessage createMessage(String path) throws Exception {
+        InputStream is = Classes.getResourceAsStream(path, SOAPMessageCredentialExtractorTests.class);
         try {
             return MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL).createMessage(null, is);
         } finally {

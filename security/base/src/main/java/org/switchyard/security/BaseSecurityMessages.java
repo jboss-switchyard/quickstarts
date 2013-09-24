@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
-
 import javax.security.auth.login.LoginException;
 
 import org.jboss.logging.Messages;
@@ -24,15 +23,6 @@ public interface BaseSecurityMessages {
      * Default messages.
      */
     BaseSecurityMessages MESSAGES = Messages.getBundle(BaseSecurityMessages.class);
-
-    /**
-     * notASecurityExchange method definition.
-     * @param exchangeName exchangeName
-     * @param className className
-     * @return IllegalArgumentException
-     */
-    @Message(id = 14400, value="Exchange: %s is not an instance of %s")
-    IllegalArgumentException notASecurityExchange(String exchangeName, String className);
 
     /**
      * propertiesNotSet method definition.

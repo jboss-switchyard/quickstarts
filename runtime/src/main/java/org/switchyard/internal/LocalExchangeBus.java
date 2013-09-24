@@ -28,6 +28,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.handlers.AddressingHandler;
 import org.switchyard.handlers.PolicyHandler;
 import org.switchyard.handlers.SecurityHandler;
+import org.switchyard.handlers.SecurityHandler.SecurityAction;
 import org.switchyard.handlers.TransactionHandler;
 import org.switchyard.handlers.TransformHandler;
 import org.switchyard.handlers.ValidateHandler;
@@ -57,7 +58,6 @@ public class LocalExchangeBus implements ExchangeBus {
     public void init(ServiceDomain domain) {
         _domain = domain;
         TransactionHandler transactionHandler = new TransactionHandler();
-        SecurityHandler securityHandler = new SecurityHandler();
         TransformHandler transformHandler = new TransformHandler(domain.getTransformerRegistry());
         ValidateHandler validateHandler = new ValidateHandler(domain.getValidatorRegistry());
         
@@ -65,19 +65,19 @@ public class LocalExchangeBus implements ExchangeBus {
         _requestChain = new DefaultHandlerChain();
         _requestChain.addLast("addressing", new AddressingHandler(_domain));
         _requestChain.addLast("transaction-pre-invoke", transactionHandler);
-        _requestChain.addLast("security", securityHandler);
+        _requestChain.addLast("security-process", new SecurityHandler(_domain, SecurityAction.PROCESS));
         _requestChain.addLast("generic-policy", new PolicyHandler());
         _requestChain.addLast("validation-before-transform", validateHandler);
         _requestChain.addLast("transformation", transformHandler);
         _requestChain.addLast("validation-after-transform", validateHandler);
         _requestChain.addLast("provider", new ProviderHandler());
+        _requestChain.addLast("security-cleanup", new SecurityHandler(_domain, SecurityAction.CLEANUP));
         _requestChain.addLast("transaction-post-invoke", transactionHandler);
         
         _replyChain = new DefaultHandlerChain();
         _replyChain.addLast("validation-before-transform", validateHandler);
         _replyChain.addLast("transformation", transformHandler);
         _replyChain.addLast("validation-after-transform", validateHandler);
-        _replyChain.addLast("security", securityHandler);
         _replyChain.addLast(HandlerChain.CONSUMER_HANDLER, new BaseHandler());
     }
 
