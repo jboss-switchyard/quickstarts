@@ -13,8 +13,13 @@
  */
 package org.switchyard.component.sca;
 
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
 import javax.xml.namespace.QName;
 
+import org.jboss.logging.Logger;
+import org.jboss.jbossts.txbridge.outbound.OutboundBridge;
+import org.jboss.jbossts.txbridge.outbound.OutboundBridgeManager;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
@@ -34,17 +39,26 @@ import org.switchyard.remote.cluster.ClusteredInvoker;
 import org.switchyard.remote.cluster.LoadBalanceStrategy;
 import org.switchyard.remote.cluster.RandomStrategy;
 import org.switchyard.remote.cluster.RoundRobinStrategy;
+import org.switchyard.remote.http.HttpInvokerLabel;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
+
+import com.arjuna.mw.wst11.TransactionManagerFactory;
+import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
+
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
 /**
  * Handles outbound communication to an SCA service endpoint.
  */
 public class SCAInvoker extends BaseServiceHandler {
     
+    private static Logger _log = Logger.getLogger(SCAInvoker.class);
+    
     private final SCABindingModel _config;
     private final String _bindingName;
     private final String _referenceName;
     private ClusteredInvoker _invoker;
+    private TransactionContextSerializer _txSerializer = new TransactionContextSerializer();
     
     /**
      * Create a new SCAInvoker for invoking local endpoints.
@@ -133,9 +147,13 @@ public class SCAInvoker extends BaseServiceHandler {
             .setService(serviceName)
             .setContent(exchange.getMessage().getContent());
         exchange.getContext().mergeInto(request.getContext());
+        boolean transactionPropagated = bridgeOutgoingTransaction(request);
 
         try {
             RemoteMessage reply = _invoker.invoke(request);
+            if (transactionPropagated) {
+                bridgeIncomingTransaction();
+            }
             if (reply == null) {
                 return;
             }
@@ -170,6 +188,63 @@ public class SCAInvoker extends BaseServiceHandler {
         String targetName = _config.hasTarget() ? _config.getTarget() : service.getLocalPart();
         String targetNS = _config.hasTargetNamespace() ? _config.getTargetNamespace() : service.getNamespaceURI();
         return new QName(targetNS, targetName);
+    }
+    
+    private boolean bridgeOutgoingTransaction(RemoteMessage request) throws HandlerException {
+        Transaction currentTransaction = null;
+        try {
+            currentTransaction = com.arjuna.ats.jta.TransactionManager.transactionManager().getTransaction();
+        } catch (SystemException e) {
+            // avoiding checkstyle error
+            e.getMessage();
+        }
+        if (currentTransaction == null) {
+            return false;
+        }
+        
+        try {
+            // create/resume subordinate WS-AT transaction
+            OutboundBridge txOutboundBridge = OutboundBridgeManager.getOutboundBridge();
+            if (txOutboundBridge == null) {
+                return false;
+            }
+            txOutboundBridge.start();
+            
+            // embed WS-AT transaction context into request header 
+            final com.arjuna.mw.wst11.TransactionManager wsatManager = TransactionManagerFactory.transactionManager();
+            CoordinationContextType coordinationContext = null;
+            if (wsatManager != null) {
+                final TxContextImple txContext = (TxContextImple)wsatManager.currentTransaction();
+                if (txContext != null) {
+                    coordinationContext = txContext.context().getCoordinationContext();
+                }
+            }
+
+            if (coordinationContext != null) {
+                String txContextString = _txSerializer.serialise(coordinationContext);
+                if (_log.isDebugEnabled()) {
+                    _log.debug("Embedding transaction context into request header: " + txContextString);
+                }
+                request.getContext()
+                       .setProperty(TransactionContextSerializer.HEADER_TXCONTEXT, txContextString)
+                       .addLabels(BehaviorLabel.TRANSIENT.label(), HttpInvokerLabel.HEADER.label());
+            }
+            return true;
+        } catch (final Throwable th) {
+            throw createHandlerException(th);
+        }
+    }
+    
+    private void bridgeIncomingTransaction() throws HandlerException {
+        // disassociate subordinate WS-AT transaction
+        OutboundBridge txOutboundBridge = OutboundBridgeManager.getOutboundBridge();
+        if (txOutboundBridge != null) {
+            try {
+                txOutboundBridge.stop();
+            } catch (Exception e) {
+                throw createHandlerException(e);
+            }
+        }
     }
     
     private HandlerException createHandlerException(Message message) {

@@ -42,6 +42,14 @@
             <artifactId>servlet-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>jbosstxbridge</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts.xts</groupId>
+            <artifactId>jbossxts</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-runtime</artifactId>
             <type>test-jar</type>
