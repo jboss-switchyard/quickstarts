@@ -52,6 +52,7 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.bpm.BPMConstants;
 import org.switchyard.component.bpm.BPMOperationType;
+import org.switchyard.component.bpm.BPMMessages;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.runtime.BPMProcessEventListener;
 import org.switchyard.component.bpm.runtime.BPMRuntimeEnvironment;
@@ -225,7 +226,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                     if (BPMOperationType.SIGNAL_EVENT.equals(operationType)) {
                         processInstanceId = getProcessInstanceId(exchange, inputMessage, session);
                         if (processInstanceId == null) {
-                            throw new HandlerException("Cannot signalEvent: unknown processInstanceId or unknown/unmatched correlationKey");
+                            throw BPMMessages.MESSAGES.cannotSignalEventUnknownProcessInstanceIdOrUnknownunmatchedCorrelationKey();
                         }
                         session.getStateful().signalEvent(eventId, eventObject, processInstanceId);
                         if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
@@ -253,7 +254,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                     sessionId = session.getId();
                     processInstanceId = getProcessInstanceId(exchange, inputMessage, session);
                     if (processInstanceId == null) {
-                        throw new HandlerException("Cannot abortProcessInstance: unknown processInstanceId or unknown/unmatched correlationKey");
+                        throw BPMMessages.MESSAGES.cannotAbortProcessInstance();
                     }
                     if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
                         expressionContext.putAll(getGlobalVariables(session));
@@ -269,7 +270,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                 break;
             }
             default: {
-                throw new HandlerException("Unsupported operation type: " + operationType);
+                throw BPMMessages.MESSAGES.unsupportedOperationType(operationType);
             }
         }
         if (ExchangePattern.IN_OUT.equals(exchangePattern)) {

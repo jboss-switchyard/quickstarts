@@ -22,7 +22,6 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.jbpm.bpmn2.handler.WorkItemHandlerRuntimeException;
 import org.kie.api.runtime.process.ProcessRuntime;
 import org.kie.api.runtime.process.WorkItem;
@@ -32,6 +31,8 @@ import org.switchyard.HandlerException;
 import org.switchyard.SwitchYardException;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.bpm.BPMLogger;
+import org.switchyard.component.bpm.BPMMessages;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceRequest;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceResponse;
@@ -43,8 +44,6 @@ import org.switchyard.deploy.ComponentNames;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 public class SwitchYardServiceTaskHandler implements WorkItemHandler {
-
-    private static final Logger LOGGER = Logger.getLogger(SwitchYardServiceTaskHandler.class);
 
     /** SwitchYard Service Task. */
     public static final String SWITCHYARD_SERVICE_TASK = "SwitchYard Service Task";
@@ -178,11 +177,13 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
             fault = unwrapFault(fault);
             String emsg;
             if (fault instanceof Throwable) {
-                emsg = String.format("Fault encountered [%s(message=%s)]: %s", fault.getClass().getName(), ((Throwable)fault).getMessage(), fault);
+                emsg = String.format(BPMMessages.MESSAGES.faultEncountered() 
+                        + " [%s(message=%s)]: %s", fault.getClass().getName(), ((Throwable)fault).getMessage(), fault);
             } else {
-                emsg = String.format("Fault encountered [%s]: %s", fault.getClass().getName(), fault);
+                emsg = String.format(BPMMessages.MESSAGES.faultEncountered()
+                        + " [%s]: %s", fault.getClass().getName(), fault);
             }
-            LOGGER.error(emsg);
+            BPMLogger.ROOT_LOGGER.formattedFaultMessage(emsg);
             String faultName = getFaultName(parameters);
             if (faultName != null) {
                 results.put(faultName, fault);
@@ -288,7 +289,7 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
         try {
             faultAction = FaultAction.valueOf(fa.toUpperCase());
         } catch (Throwable t) {
-            LOGGER.warn(String.format("Unknown %s: %s (%s). Defaulting to %s.", FAULT_ACTION, fa, t.getMessage(), FaultAction.DEFAULT.name()));
+            BPMLogger.ROOT_LOGGER.unknownDefaultingTo(FAULT_ACTION, fa, t.getMessage(), FaultAction.DEFAULT.name());
             faultAction = FaultAction.DEFAULT;
         }
         return faultAction;

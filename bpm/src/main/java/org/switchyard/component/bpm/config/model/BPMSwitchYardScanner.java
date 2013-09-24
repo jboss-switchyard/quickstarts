@@ -25,6 +25,7 @@ import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
 import org.switchyard.component.bpm.BPMOperationType;
+import org.switchyard.component.bpm.BPMMessages;
 import org.switchyard.component.bpm.annotation.AbortProcessInstance;
 import org.switchyard.component.bpm.annotation.BPM;
 import org.switchyard.component.bpm.annotation.SignalEvent;
@@ -107,14 +108,14 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
     public ComponentModel scan(Class<?> bpmClass) throws IOException {
         BPM bpm = bpmClass.getAnnotation(BPM.class);
         if (bpm == null) {
-            throw new IOException(bpmClass.getName() + " is missing the @BPM annotation.");
+            throw BPMMessages.MESSAGES.bpmClassGetNameIsMissingTheBPMAnnotation(bpmClass.getName());
         }
         Class<?> bpmInterface = bpm.value();
         if (BPM.UndefinedBPMInterface.class.equals(bpmInterface)) {
             bpmInterface = bpmClass;
         }
         if (!bpmInterface.isInterface()) {
-            throw new IOException(bpmInterface.getName() +  " is a class. @BPM only allowed on interfaces.");
+            throw BPMMessages.MESSAGES.bpmInterfaceGetNameIsAClassBPMOnlyAllowedOnInterfaces(bpmInterface.getName());
         }
         String bpmName = Strings.trimToNull(bpm.name());
         if (bpmName == null) {

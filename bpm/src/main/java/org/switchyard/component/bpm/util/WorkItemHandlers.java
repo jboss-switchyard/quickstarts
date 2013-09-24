@@ -35,10 +35,10 @@ import org.kie.internal.runtime.manager.Disposable;
 import org.kie.internal.runtime.manager.DisposeListener;
 import org.kie.internal.task.api.EventService;
 import org.switchyard.ServiceDomain;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Access;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.type.reflect.MethodAccess;
+import org.switchyard.component.bpm.BPMMessages;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.WorkItemHandlerModel;
 import org.switchyard.component.bpm.config.model.WorkItemHandlersModel;
@@ -89,7 +89,7 @@ public final class WorkItemHandlers {
             for (WorkItemHandlerModel workItemHandlerModel : workItemHandlersModel.getWorkItemHandlers()) {
                 Class<? extends WorkItemHandler> workItemHandlerClass = (Class<? extends WorkItemHandler>)workItemHandlerModel.getClazz(loader);
                 if (workItemHandlerClass == null) {
-                    throw new SwitchYardException("Could not load workItemHandler class: " + workItemHandlerModel.getModelConfiguration().getAttribute("class"));
+                    throw BPMMessages.MESSAGES.couldNotLoadWorkItemHandlerClass(workItemHandlerModel.getModelConfiguration().getAttribute("class"));
                 }
                 WorkItemHandler workItemHandler = newWorkItemHandler(workItemHandlerClass, processRuntime, runtimeManager);
                 String name = workItemHandlerModel.getName();
@@ -108,7 +108,7 @@ public final class WorkItemHandlers {
                     name = HUMAN_TASK;
                 }
                 if (name == null) {
-                    throw new SwitchYardException("Could not use null name to register workItemHandler: " + workItemHandler.getClass().getName());
+                    throw BPMMessages.MESSAGES.couldNotUseNullNameToRegisterWorkItemHandler(workItemHandler.getClass().getName());
                 }
                 processRuntime.getWorkItemManager().registerWorkItemHandler(name, workItemHandler);
                 registeredNames.add(name);
@@ -173,7 +173,7 @@ public final class WorkItemHandlers {
                 workItemHandler = Construction.construct(workItemHandlerClass, parameterTypes, new Object[]{processRuntime});
             }
         } catch (Throwable t) {
-            throw new SwitchYardException("Could not instantiate workItemHandler class: " + workItemHandlerClass.getName());
+            throw BPMMessages.MESSAGES.couldNotInstantiateWorkItemHandlerClass(workItemHandlerClass.getName());
         }
         if (workItemHandler != null && runtimeManager != null) {
             Access<RuntimeManager> access = new MethodAccess<RuntimeManager>(workItemHandler.getClass(), "getRuntimeManager", "setRuntimeManager");

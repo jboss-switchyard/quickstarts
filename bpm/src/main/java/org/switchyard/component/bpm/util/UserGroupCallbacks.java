@@ -17,8 +17,8 @@ import java.lang.reflect.Constructor;
 import java.util.Properties;
 
 import org.kie.internal.task.api.UserGroupCallback;
-import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.reflect.Construction;
+import org.switchyard.component.bpm.BPMMessages;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.UserGroupCallbackModel;
 import org.switchyard.component.bpm.runtime.BPMUserGroupCallback;
@@ -81,7 +81,7 @@ public final class UserGroupCallbacks {
                 userGroupCallback = Construction.construct(userGroupCallbackClass, parameterTypes, new Object[]{properties});
             }
         } catch (Throwable t) {
-            throw new SwitchYardException("Could not instantiate userGroupCallback class: " + userGroupCallbackClass.getName());
+            throw BPMMessages.MESSAGES.couldNotInstantiateUserGroupCallbackClass(userGroupCallbackClass.getName());
         }
         return userGroupCallback;
     }
