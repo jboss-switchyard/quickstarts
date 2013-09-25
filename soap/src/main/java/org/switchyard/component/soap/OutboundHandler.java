@@ -39,7 +39,7 @@ import org.apache.cxf.jaxws.DispatchImpl;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
@@ -122,7 +122,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 }
 
                 URL wsdlUrl = WSDLUtil.getURL(_config.getWsdl());
-                LOGGER.info("Creating dispatch with WSDL " + wsdlUrl);
+                SOAPLogger.ROOT_LOGGER.creatingDispatchWithWSDL(wsdlUrl.toString());
                 // make sure we don't pollute the class loader used by the WS subsystem
                 Classes.setTCCL(getClass().getClassLoader());
 
@@ -235,11 +235,10 @@ public class OutboundHandler extends BaseServiceHandler {
 
         try {
             if (getState() != State.STARTED) {
-                throw new HandlerException(String.format("Reference binding \"%s/%s\" is not started.", _referenceName,
-                        _bindingName));
+                throw SOAPMessages.MESSAGES.referenceBindingNotStarted(_referenceName, _bindingName);
             }
             if (SOAPUtil.getFactory(_bindingId) == null) {
-                throw new SOAPException("Failed to instantiate SOAP Message Factory");
+                throw SOAPMessages.MESSAGES.failedToInstantiateSOAPMessageFactory();
             }
 
             SOAPMessage request;
@@ -303,7 +302,7 @@ public class OutboundHandler extends BaseServiceHandler {
             }
 
         } catch (SOAPException se) {
-            throw new HandlerException("Unexpected exception handling SOAP Message", se);
+            throw SOAPMessages.MESSAGES.unexpectedExceptionHandlingSOAPMessage(se);
         }
     }
 
@@ -334,12 +333,12 @@ public class OutboundHandler extends BaseServiceHandler {
         } catch (WebServiceException wsex) {
             if (wsex.getMessage().equals(NO_RESPONSE) && _feature.isAddressingEnabled()) {
                 // Ignore it
-                LOGGER.warn("Sent a message with ReplyTo to a Request_Response Webservice, so no response returned!");
+                SOAPLogger.ROOT_LOGGER.sentAMessageWithReplyToToARequestResponseWebserviceSoNoResponseReturned();
             } else {
                 throw new SOAPException(wsex);
-            }
+        }
         } catch (Exception ex) {
-            throw new SOAPException("Cannot process SOAP request", ex);
+            throw SOAPMessages.MESSAGES.cannotProcessSOAPRequest(ex);
         }
 
         return response;

@@ -36,11 +36,12 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.dom.DOMSource;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.component.common.composer.BaseMessageComposer;
+import org.switchyard.component.soap.SOAPMessages;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
 import org.w3c.dom.Element;
@@ -90,7 +91,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
 
         final SOAPBody soapBody = envelope.getBody();
         if (soapBody == null) {
-            throw new SOAPException("Missing SOAP body from request");
+            throw SOAPMessages.MESSAGES.missingSOAPBodyFromRequest();
         }
 
         try {
@@ -115,9 +116,9 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
 
             List<Element> bodyChildren = getChildElements(soapBody);
             if (bodyChildren.size() > 1) {
-                throw new SOAPException("Found multiple SOAPElements in SOAPBody");
+                throw SOAPMessages.MESSAGES.foundMultipleSOAPElementsInSOAPBody();
             } else if (bodyChildren.size() == 0 || bodyChildren.get(0) == null) {
-                throw new SOAPException("Could not find SOAPElement in SOAPBody");
+                throw SOAPMessages.MESSAGES.couldNotFindSOAPElementInSOAPBody();
             }
 
             Node bodyNode = bodyChildren.get(0);
@@ -147,7 +148,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
                 String name = null;
                 if (_mtomEnabled) {
                     if (contentId == null) {
-                        throw new SOAPException("Content-ID header missing for attachment part");
+                        throw SOAPMessages.MESSAGES.contentIDHeaderMissingForAttachmentPart();
                     }
                     name = contentId[0];
                 } else {
@@ -204,7 +205,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
         if (message != null) {
             // check to see if the payload is null or it's a full SOAP Message
             if (message.getContent() == null) {
-                throw new SOAPException("Unable to create SOAP Body due to null message content");
+                throw SOAPMessages.MESSAGES.unableToCreateSOAPBodyDueToNullMessageContent();
             }
             if (message.getContent() instanceof SOAPMessage) {
                 return new SOAPBindingData((SOAPMessage)message.getContent());
@@ -249,14 +250,14 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
                     // Throw the Exception and let JAX-WS format the fault.
                     throw exchange.getMessage().getContent(Exception.class);
                 }
-                throw new SOAPException("Unable to parse SOAP Message", e);
+                throw SOAPMessages.MESSAGES.unableToParseSOAPMessage(e);
             }
         }
         
         try {
             getContextMapper().mapTo(exchange.getContext(), target);
         } catch (Exception ex) {
-            throw new SOAPException("Failed to map context properties to SOAP message", ex);
+            throw SOAPMessages.MESSAGES.failedToMapContextPropertiesToSOAPMessage(ex);
         }
 
         return target;

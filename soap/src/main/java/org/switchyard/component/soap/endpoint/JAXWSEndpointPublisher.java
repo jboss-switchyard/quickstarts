@@ -31,7 +31,7 @@ import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.WebServicePublishException;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.util.WSDLUtil;
-
+    
 /**
  * Handles publishing of Webservice Endpoints on JAX-WS implementations.
  *

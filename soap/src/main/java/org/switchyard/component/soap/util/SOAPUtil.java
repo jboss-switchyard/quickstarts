@@ -42,7 +42,7 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.common.codec.Base64;
@@ -52,6 +52,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.switchyard.component.soap.SOAPLogger;
+import org.switchyard.component.soap.SOAPMessages;
 
 /**
  * Contains utility methods to examine/manipulate SOAP Messages.
@@ -363,7 +365,7 @@ public final class SOAPUtil {
                         }
                         contentId = URLDecoder.decode(contentId, "UTF-8");
                         if (attachmentMap.get(contentId) == null) {
-                            throw new RuntimeException("No attachment found with name '" + contentId + "'");
+                            throw SOAPMessages.MESSAGES.noAttachmentFoundWithName(contentId);
                         }
                         InputStream is = attachmentMap.get(contentId).getInputStream();
                         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -403,9 +405,11 @@ public final class SOAPUtil {
      */
     public static SOAPFault addFault(SOAPMessage soapMessage) throws SOAPException {
         if (isSOAP12(soapMessage)) {
-            return soapMessage.getSOAPBody().addFault(SOAP12_FAULT_MESSAGE_TYPE, "Send failed");
+            return soapMessage.getSOAPBody().addFault(SOAP12_FAULT_MESSAGE_TYPE, 
+                    SOAPMessages.MESSAGES.sendFailed());
         } else {
-            return soapMessage.getSOAPBody().addFault(SOAP11_FAULT_MESSAGE_TYPE, "Send failed");
+            return soapMessage.getSOAPBody().addFault(SOAP11_FAULT_MESSAGE_TYPE, 
+                    SOAPMessages.MESSAGES.sendFailed());
         }
     }
 
@@ -517,7 +521,7 @@ public final class SOAPUtil {
             try {
                 str = XMLHelper.toPretty(msg.getSOAPPart().getDocumentElement());
             } catch (Exception e) {
-                LOGGER.error("Could not parse SOAP Message", e);
+                SOAPLogger.ROOT_LOGGER.couldNotParseSOAPMessage(e);
             }
         }
         return str;
@@ -532,7 +536,7 @@ public final class SOAPUtil {
         try {
             out.println(XMLHelper.toPretty(element));
         } catch (Exception e) {
-            LOGGER.error("Could not parse SOAP Message", e);
+            SOAPLogger.ROOT_LOGGER.couldNotParseSOAPMessage(e);
         }
     }
 
@@ -554,7 +558,7 @@ public final class SOAPUtil {
         try {
             prettyPrint(XMLHelper.getDocumentFromString(msg).getDocumentElement(), out);
         } catch (Exception e) {
-            LOGGER.error("Could not parse Message String", e);
+            SOAPLogger.ROOT_LOGGER.couldNotParseMessageString(e);
         }
     }
 
@@ -598,7 +602,7 @@ public final class SOAPUtil {
         try {
             soapMessageFactory = MessageFactory.newInstance();
         } catch (final SOAPException soape) {
-            LOGGER.error("Could not instantiate SOAP 1.1 Message Factory", soape);
+            SOAPLogger.ROOT_LOGGER.couldNotInstantiateSOAP11MessageFactory(soape);
         }
         SOAP11_MESSAGE_FACTORY = soapMessageFactory;
 
@@ -606,7 +610,7 @@ public final class SOAPUtil {
         try {
             soapMessageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         } catch (final SOAPException soape) {
-            LOGGER.error("Could not instantiate SOAP 1.2 Message Factory", soape);
+            SOAPLogger.ROOT_LOGGER.couldNotInstantiateSOAP12MessageFactory(soape);
         }
         SOAP12_MESSAGE_FACTORY = soapMessageFactory;
     }

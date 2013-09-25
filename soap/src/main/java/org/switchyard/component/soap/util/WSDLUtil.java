@@ -53,13 +53,13 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.ExchangePattern;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
+import org.switchyard.component.soap.SOAPMessages;
 import org.switchyard.component.soap.Feature;
 import org.switchyard.component.soap.PortName;
-import org.switchyard.SwitchYardException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -150,8 +150,7 @@ public final class WSDLUtil {
             return reader.readWSDL(url.toString(), wsdlDoc);
         } catch (Exception e) {
             throw new WSDLException(WSDLException.OTHER_ERROR,
-                    "Unable to read WSDL at '"
-                    + wsdlLocation, e);
+                    SOAPMessages.MESSAGES.unableToReadWSDL(wsdlLocation), e);
         } finally {
             if (inputStream != null) {
                 try {
@@ -180,9 +179,9 @@ public final class WSDLUtil {
             inputSource.setSystemId(url.toString());
             return inputSource;
         } catch (Exception e) {
-            throw new WSDLException(WSDLException.OTHER_ERROR,
-                    "Unable to resolve WSDL document at '"
-                    + wsdlURI, e);
+            throw new WSDLException(WSDLException.OTHER_ERROR, 
+                    SOAPMessages.MESSAGES.unableToResolveWSDL(wsdlURI.toString()), e);
+            
         }
     }
 
@@ -267,7 +266,7 @@ outer:      while (services.hasNext()) {
             }
         }
         if (service == null) {
-            throw new WSDLException("Could not find service " + portName + " in the WSDL " + definition.getDocumentBaseURI(), null);
+            throw new WSDLException(SOAPMessages.MESSAGES.couldNotFindServiceInTheWSDL(portName.toString(), definition.getDocumentBaseURI()), null);
         }
         return service;
     }
@@ -287,7 +286,7 @@ outer:      while (services.hasNext()) {
             try {
                 port = (Port) wsdlService.getPorts().values().iterator().next();
             } catch (NoSuchElementException nsee) {
-                throw new WSDLException("Could not find a port definition within service " + wsdlService.getQName(), null);
+                throw new WSDLException(SOAPMessages.MESSAGES.couldNotFindAPortDefinitionWithinService(wsdlService.getQName().toString()), null);
             }
         } else {
             Iterator<Port> ports = wsdlService.getPorts().values().iterator();
@@ -300,7 +299,7 @@ outer:      while (services.hasNext()) {
             }
         }
         if (port == null) {
-            throw new WSDLException("Could not find port " + portName + " in the Service " + wsdlService.getQName(), null);
+            throw new WSDLException(SOAPMessages.MESSAGES.couldNotFindPortInTheService(portName.toString(), wsdlService.getQName().toString()), null);
         }
         return port;
     }
@@ -336,7 +335,7 @@ outer:      while (services.hasNext()) {
                 }
                 if (currentOperationStyle != null) {
                     if (operationStyle != null && !currentOperationStyle.equals(operationStyle)) {
-                        throw new SwitchYardException("Incompatible style of soap operation level bindings detected");
+                        throw SOAPMessages.MESSAGES.incompatibleStyleOfSoapOperationLevelBindingsDetected();
                     }
                     operationStyle = currentOperationStyle;
                 }
@@ -345,7 +344,7 @@ outer:      while (services.hasNext()) {
 
         if (operationStyle != null && portStyle != null) {
             if (!portStyle.equals(operationStyle)) {
-                throw new SwitchYardException("Detected mixing different soap binding style on port type and operation level");
+                throw SOAPMessages.MESSAGES.detectedMixingDifferentSoapBindingStyleOnPortTypeAndOperationLevel();
             }
             return portStyle;
         } else if (portStyle != null) {
@@ -637,7 +636,7 @@ outer:      while (services.hasNext()) {
         String action = null;
 
         if (operation.getFault(faultName) == null) {
-            throw new IllegalArgumentException("Fault name " + faultName + " not found on operation " + operationName.getLocalPart());
+            throw SOAPMessages.MESSAGES.faultNameNotFoundOnOperation(faultName, operationName.getLocalPart());
         }
 
         for (QName attribute : (Set<QName>)operation.getFault(faultName).getExtensionAttributes().keySet()) {
@@ -711,7 +710,7 @@ outer:  for (ExtensibilityElement element : (List<ExtensibilityElement>)port.get
                         uri = XMLHelper.getAttribute(domElement, WSDL20_URI, ATTR_URI);
                     }*/
                     if (uri == null) {
-                        throw new RuntimeException("Policy reference URI missing for " + port.getBinding().getQName().getLocalPart());
+                        throw SOAPMessages.MESSAGES.policyReferenceURIMissingFor(port.getBinding().getQName().getLocalPart());
                     }
                     uri = uri.substring(1);
                     for (ExtensibilityElement defElement : extensibilityElements) {
@@ -862,23 +861,23 @@ outer:  for (ExtensibilityElement element : (List<ExtensibilityElement>)port.get
         Map<String, BaseExchangeContract> contracts = new HashMap<String, BaseExchangeContract>();
         List<Operation> operations = port.getBinding().getPortType().getOperations();
         if ((operations == null) || operations.isEmpty()) {
-            throw new WebServicePublishException("Invalid WSDL. No operations found.");
+            throw SOAPMessages.MESSAGES.invalidWSDLNoOperationsFound();
         }
         for (Operation operation : operations) {
             String name = operation.getName();
             ServiceOperation targetServiceOperation = service.getInterface().getOperation(name);
             if (targetServiceOperation == null) {
-                throw new WebServicePublishException("WSDL Operation " + name + " not found in Service " + service.getName());
+                throw SOAPMessages.MESSAGES.wSDLOperationNotFoundInService(name, service.getName());
             }
             ExchangePattern wsdlExchangePattern = getExchangePattern(operation);
             if (targetServiceOperation.getExchangePattern() != wsdlExchangePattern) {
-                throw new WebServicePublishException("WSDL Operation " + name + " does not match Service Operation " + targetServiceOperation.getName());
+                throw SOAPMessages.MESSAGES.wSDLOperationDoesNotMatchServiceOperation(name, targetServiceOperation.getName());
             }
             BaseExchangeContract exchangeContract = new BaseExchangeContract(targetServiceOperation);
             BaseInvocationContract soapMetaData = exchangeContract.getInvokerInvocationMetaData();
             List<Part> parts = operation.getInput().getMessage().getOrderedParts(null);
             if (parts.isEmpty()) {
-                throw new WebServicePublishException("WSDL Operation " + name + " does not have any input Message parts");
+                throw SOAPMessages.MESSAGES.wSDLOperationDoesNotHaveAnyInputMessageParts(name);
             }
             // Only one Part (one child of the soap:body) allowed per WS-I Basic Profile similar to Document/Literal wrapped
             QName inputMessageQName = parts.get(0).getElementName();
@@ -888,7 +887,7 @@ outer:  for (ExtensibilityElement element : (List<ExtensibilityElement>)port.get
             if (!isOneWay(operation)) {
                 parts = operation.getOutput().getMessage().getOrderedParts(null);
                 if (parts.isEmpty()) {
-                    throw new WebServicePublishException("WSDL Operation " + name + " does not have any ouput Message parts");
+                    throw SOAPMessages.MESSAGES.wSDLOperationDoesNotHaveAnyOuputMessageParts(name);
                 }
                 // Only one Part (one child of the soap:body) allowed per WS-I Basic Profile similar to Document/Literal wrapped
                 QName outputMessageQName = parts.get(0).getElementName();

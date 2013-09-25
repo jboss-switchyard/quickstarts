@@ -57,7 +57,7 @@ public class DefaultSOAP11ExceptionTransformer<F extends Exception, T extends SO
             }
         } catch (SOAPException e1) {
             // TODO: We're in a fault on a fault type situation now... should generateFault be throwing exceptions??
-            throw new IllegalStateException("Unexpected SOAPException when generating a SOAP 1.1 Fault message.", from);
+            throw SOAPMessages.MESSAGES.unexpectedSOAPExceptionWhenGeneratingASOAP11FaultMessage(from);
         }
     }
 }

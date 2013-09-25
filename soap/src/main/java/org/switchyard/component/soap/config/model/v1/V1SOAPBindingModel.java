@@ -20,6 +20,7 @@ import static org.switchyard.component.soap.config.model.InterceptorsModel.OUT_I
 import javax.xml.namespace.QName;
 
 import org.switchyard.common.net.SocketAddr;
+import org.switchyard.component.soap.SOAPMessages;
 import org.switchyard.component.soap.PortName;
 import org.switchyard.component.soap.config.model.EndpointConfigModel;
 import org.switchyard.component.soap.config.model.InterceptorsModel;
@@ -425,7 +426,7 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
     public SOAPBindingModel setInInterceptors(InterceptorsModel inInterceptors) {
         if (inInterceptors != null) {
             if (!IN_INTERCEPTORS.equals(inInterceptors.getModelConfiguration().getName())) {
-                throw new IllegalArgumentException("not " + IN_INTERCEPTORS);
+                throw SOAPMessages.MESSAGES.not(IN_INTERCEPTORS);
             }
         }
         setChildModel(inInterceptors);
@@ -451,7 +452,7 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
     public SOAPBindingModel setOutInterceptors(InterceptorsModel outInterceptors) {
         if (outInterceptors != null) {
             if (!OUT_INTERCEPTORS.equals(outInterceptors.getModelConfiguration().getName())) {
-                throw new IllegalArgumentException("not " + OUT_INTERCEPTORS);
+                throw SOAPMessages.MESSAGES.not(OUT_INTERCEPTORS);
             }
         }
         setChildModel(outInterceptors);

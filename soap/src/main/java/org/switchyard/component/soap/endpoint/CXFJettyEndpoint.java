@@ -32,8 +32,8 @@ import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.ws.addressing.WSAddressingFeature;
 import org.apache.cxf.ws.addressing.impl.AddressingFeatureApplier;
-import org.apache.log4j.Logger;
 import org.switchyard.common.type.Classes;
+import org.switchyard.component.soap.SOAPLogger;
 import org.switchyard.component.soap.InboundHandler;
 
 /**
@@ -42,8 +42,6 @@ import org.switchyard.component.soap.InboundHandler;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
 public class CXFJettyEndpoint implements WSEndpoint {
-
-    private static final Logger LOGGER = Logger.getLogger(CXFJettyEndpoint.class);
 
     private static Bus _bus;
 
@@ -78,10 +76,12 @@ public class CXFJettyEndpoint implements WSEndpoint {
         for (WebServiceFeature feature : features) {
             cxfFeatures.add(feature);
             if ((feature instanceof AddressingFeature) && ((AddressingFeature)feature).isEnabled()) {
-                LOGGER.info("Addressing [enabled = " + ((AddressingFeature)feature).isEnabled() + ", required = " + ((AddressingFeature)feature).isRequired() + "]");
+                SOAPLogger.ROOT_LOGGER.addressingEnabledRequired(String.valueOf(((AddressingFeature)feature).isEnabled()),
+                        String.valueOf(((AddressingFeature)feature).isRequired()));
             } else if (feature instanceof MTOMFeature) {
                 props.put("mtom-enabled", ((MTOMFeature)feature).isEnabled());
-                LOGGER.info("MTOM [enabled = " + ((MTOMFeature)feature).isEnabled() + ", threshold = " + ((MTOMFeature)feature).getThreshold() + "]");
+                SOAPLogger.ROOT_LOGGER.mTOMEnabledThreshold(String.valueOf(((MTOMFeature)feature).isEnabled()), 
+                String.valueOf(((MTOMFeature)feature).getThreshold()));
             }
         }
         ((JaxWsServiceFactoryBean)_svrFactory.getServiceFactory()).setWsFeatures(cxfFeatures);
@@ -107,7 +107,7 @@ public class CXFJettyEndpoint implements WSEndpoint {
      */
     public void publish(String publishUrl) {
         _publishUrl = publishUrl;
-       LOGGER.info("Publishing WebService at " + _publishUrl);
+       SOAPLogger.ROOT_LOGGER.publishingWebServiceAt(_publishUrl);
         _svrFactory.setAddress(publishUrl);
         _server = _svrFactory.create();
         _server.start();
@@ -117,7 +117,7 @@ public class CXFJettyEndpoint implements WSEndpoint {
      * {@inheritDoc}
      */
     public void stop() {
-        LOGGER.info("Stopping WebService at " + _publishUrl);
+        SOAPLogger.ROOT_LOGGER.stoppingWebServiceAt(_publishUrl);
         _server.stop();
         _server.destroy();
     }
