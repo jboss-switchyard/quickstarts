@@ -290,12 +290,18 @@ public class TransactionHandler implements ExchangeHandler {
         if (txStatus == Status.STATUS_MARKED_ROLLBACK) {
             try {
                 _transactionManager.rollback();
+                if (_log.isDebugEnabled()) {
+                    _log.debug("Transaction rolled back as it has been marked as RollbackOnly");
+                }
             } catch (Exception e) {
                 throw RuntimeMessages.MESSAGES.failedToRollbackTransaction(e);
             }
         } else if (txStatus == Status.STATUS_ACTIVE) {
             try {
                 _transactionManager.commit();
+                if (_log.isDebugEnabled()) {
+                    _log.debug("Transaction has been committed");
+                }
             } catch (Exception e) {
                 throw RuntimeMessages.MESSAGES.failedToCommitTransaction(e);
             }

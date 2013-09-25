@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.jboss.logging.Logger;
+import org.switchyard.Property;
 import org.switchyard.remote.RemoteInvoker;
 import org.switchyard.remote.RemoteMessage;
 import org.switchyard.remote.RemoteMessages;
@@ -74,6 +75,10 @@ public class HttpInvoker implements RemoteInvoker {
         conn = (HttpURLConnection)_endpoint.openConnection();
         conn.setDoOutput(true);
         conn.addRequestProperty(SERVICE_HEADER, request.getService().toString());
+        for (Property prop : request.getContext().getProperties(HttpInvokerLabel.HEADER.label())) {
+            conn.addRequestProperty(prop.getName(), prop.getValue().toString());
+        }
+        
         conn.connect();
         OutputStream os = conn.getOutputStream();
         try {
