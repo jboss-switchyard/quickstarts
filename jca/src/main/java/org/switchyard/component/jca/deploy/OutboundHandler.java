@@ -19,6 +19,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
+import org.switchyard.component.jca.JCAMessages;
 import org.switchyard.component.jca.processor.AbstractOutboundProcessor;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.label.BehaviorLabel;
@@ -66,8 +67,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 .setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _bindingName,
                         Scope.EXCHANGE).addLabels(BehaviorLabel.TRANSIENT.label());
         if (getState() != State.STARTED) {
-            throw new HandlerException(String.format("Reference binding \"%s/%s\" is not started.", _referenceName,
-                    _bindingName));
+            throw JCAMessages.MESSAGES.referenceBindingNotStarted(_referenceName, _bindingName);
         }
 
         Message out = _processor.process(exchange);

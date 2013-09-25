@@ -29,7 +29,7 @@ import javax.resource.ResourceException;
 import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.component.jca.deploy.JCAInflowDeploymentMetaData;
 import org.switchyard.component.jca.endpoint.AbstractInflowEndpoint;
 
@@ -89,7 +89,7 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
     @Override
     public void beforeDelivery(Method method) throws NoSuchMethodException, ResourceException {
         if (_beforeDeliveryInvoked) {
-           throw new IllegalStateException("Missing afterDelivery from the previous beforeDelivery for message endpoint " + _delegate);
+           throw JCAMessages.MESSAGES.missingAfterDeliveryFromThePreviousBeforeDeliveryForMessageEndpoint(_delegate.toString());
         }
         _beforeDeliveryInvoked = true;
 
@@ -105,7 +105,7 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
         if (!_beforeDeliveryInvoked) {
             // SWITCHYARD-1640 Avoid remaining thread lock when RM invokes afterDelivery twice for the same delivery
             releaseThreadLock();
-           throw new IllegalStateException("afterDelivery without a previous beforeDelivery for message endpoint " + _delegate);
+           throw JCAMessages.MESSAGES.afterDeliveryWithoutAPreviousBeforeDeliveryForMessageEndpoint(_delegate.toString());
         }
 
         try {
@@ -127,7 +127,7 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
            try {
               finish(false);
            } catch (Throwable t) {
-              _logger.warn("Error in release ", t);
+              JCALogger.ROOT_LOGGER.errorInRelease(t);
            } finally {
                _beforeDeliveryInvoked = false;
                _waitAfterDeliveryInvoked = false;
@@ -184,7 +184,7 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
     
     private Object delivery(Object delegate, Method method, Object[] args) throws Exception {
         if (_waitAfterDeliveryInvoked) {
-            throw new IllegalStateException("Multiple message delivery between before and after delivery is not allowed for message endpoint " + delegate);
+            throw JCAMessages.MESSAGES.multipleMessageDeliveryBetweenBeforeAndAfterDeliveryIsNotAllowedForMessageEndpoint(delegate.toString());
         }
 
         if (_beforeDeliveryInvoked) {
@@ -221,7 +221,7 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
         }
         
         if (_inUseThread != null && !_inUseThread.equals(Thread.currentThread())) {
-            throw new IllegalStateException(Thread.currentThread().getName() + " couldn't acquire a thread lock since " + this + " is already in use by another thread: " + _inUseThread.getName());
+            throw JCAMessages.MESSAGES.threadCurrentThreadGetNameCouldnTAcquireAThreadLockSinceThisIsAlreadyInUseByAnotherThreadInUseThreadGetName(Thread.currentThread().getName(), this.toString(), _inUseThread.getName());
         }
         _deliveryThreadLock.lock();
         _inUseThread = Thread.currentThread();
@@ -272,13 +272,11 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
             _transactionManager.suspend();
             break;
         default:
-            throw new IllegalStateException(method
-                    + ": New transaction couldn't be started due to the status of existing transaction. Status code="
-                    + txStatus + ". See javax.transaction.Status");
+            throw JCAMessages.MESSAGES.methodNewTransactionCouldnTBeStartedDueToTheStatusOfExistingTransactionStatusCodeTxStatusSeeJavaxTransactionStatus();
         }
         
         if (hasSourceManagedTx && _useBatchCommit) {
-            throw new IllegalStateException("Batch commit mode cannot be used with source managed transaction. Please turn off the batch commit.");
+            throw JCAMessages.MESSAGES.batchCommitModeCannotBeUsedWithSourceManagedTransactionPleaseTurnOffTheBatchCommit();
         }
 
         // JCA1.6 SPEC 13.5.9
@@ -309,7 +307,7 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
                 // Suspend any bad transaction - there is bug somewhere, but we will try to tidy things up
                 currentTx = _transactionManager.getTransaction();
                 if (currentTx == null || !currentTx.equals(_startedTx)) {
-                    _logger.warn("Current transaction " + currentTx + " is not same as the " + _startedTx + " I have started. Replacing it.");
+                    JCALogger.ROOT_LOGGER.currentTransactionIsNotSameAsThe(currentTx, _startedTx.toString());
                     _transactionManager.suspend();
                     _transactionManager.resume(_startedTx);
                 } else {
@@ -355,7 +353,7 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
                 try {
                     _transactionManager.resume(currentTx);
                 } catch (Throwable t) {
-                    _logger.warn("MessageEndpoint " + _delegate + " failed to resume old transaction " + currentTx);
+                    JCALogger.ROOT_LOGGER.messageEndpointFailedToResumeOldTransaction(_delegate.toString(), currentTx.toString());
                 }
             }
         }
@@ -382,7 +380,7 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
             try {
                 return _transaction.getStatus() == Status.STATUS_ACTIVE;
             } catch (Exception e) {
-                _logger.warn("Failed to retrieve transaction status", e);
+                JCALogger.ROOT_LOGGER.failedToRetrieveTransactionStatus(e);
                 return false;
             }
         }
@@ -407,11 +405,11 @@ public class EndpointProxy implements InvocationHandler, MessageEndpoint {
                  if (_transaction.getStatus() == Status.STATUS_ACTIVE) {
                      _transactionManager.resume(_transaction);
                      _transactionManager.commit();
-                     _logger.info("Transaction has been committed by reaper thread [" + _counter + "]");
+                     JCALogger.ROOT_LOGGER.transactionHasBeenCommittedByReaperThread(_counter);
                      _counter = 0;
                  }
              } catch (Exception e) {
-                     _logger.error("Failed to commit expiring transaction", e);
+                     JCALogger.ROOT_LOGGER.failedToCommitExpiringTransaction(e);
              } finally {
                  _deliveryThreadLock.unlock();
              }

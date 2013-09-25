@@ -27,8 +27,8 @@ import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
 import org.switchyard.Exchange;
+import org.switchyard.component.jca.JCAMessages;
 import org.switchyard.component.common.composer.BaseMessageComposer;
-import org.switchyard.SwitchYardException;
 
 /**
  * MessageComposer implementation for JMS Message that is used by JCA component.
@@ -50,8 +50,7 @@ public class JMSMessageComposer extends BaseMessageComposer<JMSBindingData> {
         if (jmsMessage instanceof BytesMessage) {
             BytesMessage sourceBytes = BytesMessage.class.cast(jmsMessage);
             if (sourceBytes.getBodyLength() > Integer.MAX_VALUE) {
-                throw new SwitchYardException("The size of message content exceeds "
-                        + Integer.MAX_VALUE + " bytes, that is not supported by this MessageComposer");
+                throw JCAMessages.MESSAGES.theSizeOfMessageContentExceedsBytesThatIsNotSupportedByThisMessageComposer(new String("" + Integer.MAX_VALUE));
             }
             byte[] bytearr = new byte[(int)sourceBytes.getBodyLength()];
             sourceBytes.readBytes(bytearr);

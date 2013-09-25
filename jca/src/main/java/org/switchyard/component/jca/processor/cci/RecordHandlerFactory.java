@@ -17,8 +17,8 @@ import javax.resource.cci.IndexedRecord;
 import javax.resource.cci.MappedRecord;
 import javax.resource.cci.Streamable;
 
+import org.switchyard.component.jca.JCAMessages;
 import org.switchyard.component.jca.composer.RecordBindingData;
-import org.switchyard.SwitchYardException;
 
 /**
  * RecordHandler factory.
@@ -50,7 +50,7 @@ public final class RecordHandlerFactory {
                 Class<?> clazz = loader.loadClass(RecordHandlerFactory.class.getPackage().getName() + "." + recordType.getSimpleName() + "RecordHandler");
                 return (RecordHandler<?>)clazz.newInstance();
             } catch (Exception e) {
-                throw new SwitchYardException("record type '" + recordType.getName() + "is not supported");
+                throw JCAMessages.MESSAGES.recordTypeIsNotSupported(recordType.getName());
             }
         }
     }

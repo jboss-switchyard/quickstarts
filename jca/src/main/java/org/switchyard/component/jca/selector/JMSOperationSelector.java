@@ -24,6 +24,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.switchyard.component.common.selector.BaseOperationSelector;
+import org.switchyard.component.jca.JCAMessages;
 import org.switchyard.component.jca.composer.JMSBindingData;
 import org.switchyard.config.model.selector.OperationSelectorModel;
 import org.w3c.dom.Document;
@@ -62,8 +63,7 @@ public class JMSOperationSelector extends BaseOperationSelector<JMSBindingData> 
         } else if (content instanceof BytesMessage) {
             BytesMessage sourceBytes = BytesMessage.class.cast(content);
             if (sourceBytes.getBodyLength() > Integer.MAX_VALUE) {
-                throw new Exception("The size of message content exceeds "
-                        + Integer.MAX_VALUE + " bytes, that is not supported by this OperationSelector");
+                throw JCAMessages.MESSAGES.theSizeOfMessageContentExceedsBytesThatIsNotSupportedByThisOperationSelector(new String("" + Integer.MAX_VALUE));
             }
             byte[] bytearr = new byte[(int)sourceBytes.getBodyLength()];
             sourceBytes.readBytes(bytearr);

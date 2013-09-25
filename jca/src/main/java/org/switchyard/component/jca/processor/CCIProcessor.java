@@ -24,14 +24,15 @@ import javax.resource.cci.Connection;
 import javax.resource.cci.Interaction;
 import javax.resource.cci.RecordFactory;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.util.propertyeditor.PropertyEditors;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.component.jca.JCALogger;
+import org.switchyard.component.jca.JCAMessages;
 import org.switchyard.component.jca.processor.cci.RecordHandler;
 import org.switchyard.component.jca.processor.cci.RecordHandlerFactory;
-import org.switchyard.SwitchYardException;
 
 /**
  * A concrete outbound processor class for CCI.
@@ -59,7 +60,7 @@ public class CCIProcessor extends AbstractOutboundProcessor {
                 PropertyEditors.mapJavaBeanProperties(_connectionSpec, props);
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("Could not initialize ConnectionSpec", e);
+            throw JCAMessages.MESSAGES.couldNotInitializeConnectionSpec(e);
         }
         
         return this;
@@ -75,7 +76,7 @@ public class CCIProcessor extends AbstractOutboundProcessor {
                 PropertyEditors.mapJavaBeanProperties(_interactionSpec, props);
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("Could not initialize InteractionSpec", e);
+            throw JCAMessages.MESSAGES.couldNotInitializeInteractionSpec(e);
         }
 
         return this;
@@ -92,13 +93,13 @@ public class CCIProcessor extends AbstractOutboundProcessor {
             InitialContext ic = new InitialContext();
             _connectionFactory = (ConnectionFactory) ic.lookup(getConnectionFactoryJNDIName());
         } catch (Exception e) {
-            throw new SwitchYardException("Failed to initialize " + this.getClass().getName(), e);
+            throw JCAMessages.MESSAGES.failedToInitialize(this.getClass().getName(), e);
         }
         try {
             RecordFactory factory = _connectionFactory.getRecordFactory();
             _recordHandler.setRecordFactory(factory);
         } catch (ResourceException e) {
-            _logger.warn("Failed to get RecordFactory: " + e.getMessage());
+            JCALogger.ROOT_LOGGER.failedToGetRecordFactory(e.getMessage());
         }
     }
 
@@ -120,7 +121,7 @@ public class CCIProcessor extends AbstractOutboundProcessor {
             interaction = connection.createInteraction();
             return _recordHandler.handle(exchange, connection, interaction);
         } catch (Exception e) {
-            throw new HandlerException("Failed to process CCI outbound interaction", e);
+            throw JCAMessages.MESSAGES.failedToProcessCCIOutboundInteraction(e);
         } finally {
             try {
                 if (interaction != null) {
@@ -130,7 +131,7 @@ public class CCIProcessor extends AbstractOutboundProcessor {
                     connection.close();
                 }
             } catch (ResourceException e) {
-                _logger.warn("Failed to close Interaction/Connection: " + e.getMessage());
+                JCALogger.ROOT_LOGGER.failedToCloseInteractionConnection(e.getMessage());
                 if (_logger.isDebugEnabled()) {
                     e.printStackTrace();
                 }

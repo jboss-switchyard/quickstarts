@@ -23,6 +23,7 @@ import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
 import javax.transaction.TransactionManager;
 
+import org.switchyard.component.jca.JCAMessages;
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.BatchCommitModel;
 import org.switchyard.component.jca.config.model.JCABindingModel;
@@ -68,14 +69,14 @@ public class JCAActivator extends BaseActivator {
     @Override
     public ServiceHandler activateBinding(QName name, BindingModel config) {
         if (_raRepository == null) {
-            throw new IllegalStateException("ResourceAdapterRepository must be injected to activate JCA component.");
+            throw JCAMessages.MESSAGES.resourceAdapterRepositoryMustBeInjectedToActivateJCAComponent();
         }
 
         if (_transactionManager == null) {
             try {
                 _transactionManager = (TransactionManager)new InitialContext().lookup(JBOSS_TRANSACTION_MANAGER);
             } catch (NamingException e) {
-                throw new IllegalArgumentException("Unable to find TransactionManager in JNDI at " + JBOSS_TRANSACTION_MANAGER, e);
+                throw JCAMessages.MESSAGES.unableToFindTransactionManagerInJNDIAt(JBOSS_TRANSACTION_MANAGER, e);
             }
         }
 
@@ -106,7 +107,7 @@ public class JCAActivator extends BaseActivator {
         String raName = jcaconfig.getInboundConnection().getResourceAdapter().getName();
         String raid = ConnectorServices.getRegisteredResourceAdapterIdentifier(stripDotRarSuffix(raName));
         if (raid == null) {
-            throw new IllegalArgumentException("Unique key for ResourceAdapter '" + raName + "' couldn't be found.");
+            throw JCAMessages.MESSAGES.uniqueKeyForResourceAdapter(raName);
         }
         
         Properties raProps = jcaconfig.getInboundConnection().getResourceAdapter().getProperties();
@@ -133,8 +134,7 @@ public class JCAActivator extends BaseActivator {
                 }
             }
             if (listenerContainer == null) {
-                throw new IllegalArgumentException("listener type " + listenerType.getName()
-                        + " is not supported by ResourceAdapter " + raName);
+                throw JCAMessages.MESSAGES.listenerTypeIsNotSupportedByResourceAdapter(listenerType.getName(), raName);
             }
             
             Activation activation = listenerContainer.getActivation();
@@ -148,7 +148,7 @@ public class JCAActivator extends BaseActivator {
                 PropertyEditors.mapJavaBeanProperties(resourceAdapter, raProps);
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("Couldn't acquire the ResourceAdapter '" + raName + "'.", e);
+            throw JCAMessages.MESSAGES.couldnTAcquireTheResourceAdapter(raName, e);
         }
         
          AbstractInflowEndpoint endpoint = null;
@@ -160,7 +160,7 @@ public class JCAActivator extends BaseActivator {
                  PropertyEditors.mapJavaBeanProperties(endpoint, endpointProps);
              }
          } catch (Exception e) {
-             throw new IllegalArgumentException("Endpoint class '" + endpointClassName + "' couldn't be instantiated.", e);
+             throw JCAMessages.MESSAGES.endpointClass(endpointClassName, e);
          }
 
          boolean transacted = jcaconfig.getInboundInteraction().isTransacted();
@@ -194,14 +194,14 @@ public class JCAActivator extends BaseActivator {
         JCABindingModel jcaconfig = (JCABindingModel)config;
         boolean managed = jcaconfig.getOutboundConnection().isManaged();
         if (!managed) {
-            throw new IllegalArgumentException("Non-Managed Scenario is not supported yet");
+            throw JCAMessages.MESSAGES.nonManagedScenarioIsNotSupportedYet();
         }
         
         Properties raProps = jcaconfig.getOutboundConnection().getResourceAdapter().getProperties();
         String raName = jcaconfig.getOutboundConnection().getResourceAdapter().getName();
         String raid = ConnectorServices.getRegisteredResourceAdapterIdentifier(stripDotRarSuffix(raName));
         if (raid == null) {
-            throw new IllegalArgumentException("Unique key for ResourceAdapter '" + raName + "' couldn't be found.");
+            throw JCAMessages.MESSAGES.uniqueKeyForResourceAdapter(raName);
         }
         
         ResourceAdapter resourceAdapter = null;
@@ -211,7 +211,7 @@ public class JCAActivator extends BaseActivator {
                 PropertyEditors.mapJavaBeanProperties(resourceAdapter, raProps);
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("Couldn't acquire the ResourceAdapter '" + raName + "'.", e);
+            throw JCAMessages.MESSAGES.couldnTAcquireTheResourceAdapter(raName, e);
             
         }
 
@@ -226,7 +226,7 @@ public class JCAActivator extends BaseActivator {
                 PropertyEditors.mapJavaBeanProperties(processor, processorProps);
             }
         } catch (Exception e) {
-            throw new IllegalArgumentException("Outbound Processor class '" + processorClassName + "' couldn't be instantiated.", e);
+            throw JCAMessages.MESSAGES.outboundProcessorClass(processorClassName, e);
         }
         
         String cfJndiName = jcaconfig.getOutboundConnection().getConnection().getConnectionFactoryJNDIName();

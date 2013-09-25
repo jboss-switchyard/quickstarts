@@ -24,12 +24,13 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.naming.InitialContext;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.jca.JCALogger;
+import org.switchyard.component.jca.JCAMessages;
 import org.switchyard.component.jca.composer.JMSBindingData;
-import org.switchyard.SwitchYardException;
 
 /**
  * A concrete outbound processor class for JMS.
@@ -91,7 +92,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
         }
 
         if (_destination == null) {
-            throw new SwitchYardException("destination property must be specified in Processor properties");
+            throw JCAMessages.MESSAGES.destinationPropertyMustBeSpecifiedInProcessorProperties();
         }
         
         _composer = getMessageComposer(JMSBindingData.class);
@@ -101,7 +102,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             _connectionFactory = (ConnectionFactory) ic.lookup(getConnectionFactoryJNDIName());
             _jmsDestination = (Destination) ic.lookup(_destination);
         } catch (Exception e) {
-            throw new SwitchYardException("Failed to initialize " + this.getClass().getName(), e);
+            throw JCAMessages.MESSAGES.failedToInitialize(this.getClass().getName(), e);
         }
     }
 
@@ -149,7 +150,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             producer.send(_composer.decompose(exchange, new JMSBindingData(msg)).getMessage());
             return null;
         } catch (Exception e) {
-            throw new HandlerException("Failed to process JMS outbound interaction", e);
+            throw JCAMessages.MESSAGES.failedToProcessJMSOutboundInteraction(e);
         } finally {
             try {
                 if (session != null) {
@@ -159,7 +160,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
                     connection.close();
                 }
             } catch (JMSException e) {
-                _logger.warn("Failed to close JMS session/connection: " + e.getMessage());
+                JCALogger.ROOT_LOGGER.failedToCloseJMSSessionconnection(e.getMessage());
                 if (_logger.isDebugEnabled()) {
                     e.printStackTrace();
                 }
