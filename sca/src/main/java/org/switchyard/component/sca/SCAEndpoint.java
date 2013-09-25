@@ -17,12 +17,10 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.composite.SCABindingModel;
 import org.switchyard.deploy.BaseServiceHandler;
-import org.switchyard.SwitchYardException;
 import org.switchyard.remote.RemoteEndpoint;
 import org.switchyard.remote.RemoteRegistry;
 
@@ -30,8 +28,6 @@ import org.switchyard.remote.RemoteRegistry;
  * Represents a service endpoint binding using <binding.sca>.
  */
 public class SCAEndpoint extends BaseServiceHandler {
-    
-    private static Logger _log = Logger.getLogger(SCAEndpoint.class);
     
     private RemoteEndpointPublisher _endpointPublisher;
     private ServiceDomain _domain;
@@ -63,7 +59,7 @@ public class SCAEndpoint extends BaseServiceHandler {
         _endpointPublisher.addService(serviceName, _domain);
         List<Service> services = _domain.getServices(serviceName);
         if (services.isEmpty()) {
-            throw new SwitchYardException("Failed to resolve service in domain " + serviceName);
+            throw SCAMessages.MESSAGES.failedToResolveServiceInDomain(serviceName.toString());
         }
         
         if (_bindingModel.isClustered()) {
@@ -73,8 +69,7 @@ public class SCAEndpoint extends BaseServiceHandler {
                 _endpoint.setEndpoint(_endpointPublisher.getAddress());
                 _registry.addEndpoint(_endpoint);
             } else {
-                _log.warn("Cannot enable clustered SCA binding for " + serviceName
-                        + ".  No distributed cache is avaialble.");
+                SCALogger.ROOT_LOGGER.cannotEnableClusteredSCABindingFor(serviceName.toString());
             }
         }
     }

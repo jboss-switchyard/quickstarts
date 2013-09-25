@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangeState;
@@ -130,13 +130,12 @@ public class SwitchYardRemotingServlet extends HttpServlet {
         String service = request.getHeader(HttpInvoker.SERVICE_HEADER);
         
         if (service == null || service.trim().length() == 0) {
-            throw new SwitchYardException("Required '" + HttpInvoker.SERVICE_HEADER + "' header is missing or empty");
+            throw SCAMessages.MESSAGES.requiredHeaderIsMissingOrEmpty(HttpInvoker.SERVICE_HEADER);
         }
 
         domain = _endpointPublisher.getDomain(QName.valueOf(service));
         if (domain == null) {
-            throw new SwitchYardException("Unable to find ServiceDomain for service: " + service 
-                    + ". Verify the service name and namespace are registered in the runtime.");
+            throw SCAMessages.MESSAGES.unableToFindServiceDomainForService(service);
         }
         return domain;
     }

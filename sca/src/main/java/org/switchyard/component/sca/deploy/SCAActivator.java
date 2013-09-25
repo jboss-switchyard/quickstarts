@@ -16,12 +16,13 @@ package org.switchyard.component.sca.deploy;
 import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.infinispan.Cache;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.switchyard.component.sca.RemoteEndpointPublisher;
 import org.switchyard.component.sca.SCAEndpoint;
 import org.switchyard.component.sca.SCAInvoker;
+import org.switchyard.component.sca.SCALogger;
+import org.switchyard.component.sca.SCAMessages;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.SCABindingModel;
@@ -40,7 +41,6 @@ public class SCAActivator extends BaseActivator {
     private static final String CACHE_NAME_PROPERTY = "cache-name";
     static final String[] TYPES = new String[] {"sca"};
 
-    private static Logger _log = Logger.getLogger(SCAActivator.class);
     private RemoteRegistry _registry;
     private RemoteEndpointPublisher _endpointPublisher;
     
@@ -67,8 +67,7 @@ public class SCAActivator extends BaseActivator {
             // Configure a registry client to use the specified cache
             _registry = new InfinispanRegistry(cache);
         } catch (javax.naming.NamingException nEx) {
-            _log.info("Unable to resolve cache-container " + cacheName 
-                   +  ".  clustering for <binding.sca> will not be available for services and references.");
+            SCALogger.ROOT_LOGGER.unableToResolveCacheContainer(cacheName);
         }
     }
     
@@ -79,7 +78,7 @@ public class SCAActivator extends BaseActivator {
             // Note that stop() occurs as part of the SCAComponent lifecycle.
             _endpointPublisher.start();
         } catch (Exception ex) {
-            _log.warn("Failed to start remote endpoint listener for SCA endpoints.", ex);
+            SCALogger.ROOT_LOGGER.failedToStartRemoteEndpointListenerForSCAEndpoints(ex);
         }
         
         SCABindingModel scab = (SCABindingModel)config;
@@ -87,7 +86,7 @@ public class SCAActivator extends BaseActivator {
             return new SCAEndpoint(scab, super.getServiceDomain(), _endpointPublisher, _registry);
         } else {
             if ((scab.getTarget() == null) && (scab.getTargetNamespace() == null)) {
-                throw new IllegalArgumentException("Invalid SCA binding for reference - target service or namespace must be specified");
+                throw SCAMessages.MESSAGES.invalidSCABindingForReferenceTargetServiceOrNamespaceMustBeSpecified();
             }
             return new SCAInvoker(scab, _registry);
         }

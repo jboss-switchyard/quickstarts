@@ -171,7 +171,8 @@ public class SCAInvokerTest {
         try {
             invoker.handleMessage(ex);
         } catch (HandlerException e) {
-            Assert.assertEquals(e.getMessage(), "Service reference {urn:test}Blah not found in domain " + _domain.getName());
+            String message = e.getMessage();
+            Assert.assertTrue(message.contains("SWITCHYARD039604"));
             fail = true;
         }
         

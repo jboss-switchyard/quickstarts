@@ -78,8 +78,7 @@ public class SCAInvoker extends BaseServiceHandler {
                 .addLabels(BehaviorLabel.TRANSIENT.label());
 
         if (getState() != State.STARTED) {
-            throw new HandlerException(String.format("Reference binding \"%s/%s\" is not started.", _referenceName,
-                    _bindingName));
+            throw SCAMessages.MESSAGES.referenceBindingNotStarted(_referenceName, _bindingName);
         }
         try {
             if (_config.isClustered()) {
@@ -98,7 +97,7 @@ public class SCAInvoker extends BaseServiceHandler {
         // Get a handle for the reference and use a copy of the exchange to invoke it
         ServiceReference ref = exchange.getProvider().getDomain().getServiceReference(serviceName);
         if (ref == null) {
-            throw new HandlerException("Service reference " + serviceName + " not found in domain " + exchange.getProvider().getDomain().getName());
+            throw SCAMessages.MESSAGES.serviceReferenceNotFoundInDomain(serviceName.toString(), exchange.getProvider().getDomain().getName().toString());
         }
         SynchronousInOutHandler replyHandler = new SynchronousInOutHandler();
         Exchange ex = ref.createExchange(exchange.getContract().getProviderOperation().getName(), replyHandler);
@@ -180,7 +179,7 @@ public class SCAInvoker extends BaseServiceHandler {
     private HandlerException createHandlerException(Object content) {
         HandlerException ex;
         if (content == null) {
-            ex = new HandlerException("Runtime fault occurred without exception details!");
+            ex = SCAMessages.MESSAGES.runtimeFaultOccurredWithoutExceptionDetails();
         } else if (content instanceof HandlerException) {
             ex = (HandlerException)content;
         } else if (content instanceof Throwable) {
@@ -201,11 +200,11 @@ public class SCAInvoker extends BaseServiceHandler {
             try {
                 Class<?> strategyClass = Class.forName(strategy);
                 if (!LoadBalanceStrategy.class.isAssignableFrom(strategyClass)) {
-                    throw new SwitchYardException("Load balance class does not implement LoadBalanceStrategy: " + strategy);
+                    throw SCAMessages.MESSAGES.loadBalanceClassDoesNotImplementLoadBalanceStrategy(strategy);
                 }
                 return (LoadBalanceStrategy)strategyClass.newInstance();
             } catch (Exception ex) {
-                throw new SwitchYardException("Unable to instantiate strategy class: " + strategy, ex);
+                throw SCAMessages.MESSAGES.unableToInstantiateStrategyClass(strategy, ex);
             }
         }
     }

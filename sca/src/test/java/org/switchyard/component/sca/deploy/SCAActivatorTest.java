@@ -43,7 +43,8 @@ public class SCAActivatorTest {
             
             Assert.fail("No IllegalArgumentException has been thrown");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("Invalid SCA binding for reference - target service or namespace must be specified", e.getMessage());
+            String message = e.getMessage();
+            Assert.assertTrue(message.contains("SWITCHYARD039600"));
         }
     }
 }
