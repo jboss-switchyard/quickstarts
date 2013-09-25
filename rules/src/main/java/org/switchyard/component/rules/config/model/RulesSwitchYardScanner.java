@@ -31,6 +31,7 @@ import org.switchyard.component.common.knowledge.config.model.KnowledgeSwitchYar
 import org.switchyard.component.common.knowledge.config.model.OperationModel;
 import org.switchyard.component.common.knowledge.config.model.OperationsModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1OperationsModel;
+import org.switchyard.component.rules.RulesMessages;
 import org.switchyard.component.rules.RulesOperationType;
 import org.switchyard.component.rules.annotation.Execute;
 import org.switchyard.component.rules.annotation.FireAllRules;
@@ -103,7 +104,7 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
             rulesInterface = rulesClass;
         }
         if (!rulesInterface.isInterface()) {
-            throw new IOException(rulesInterface.getName() +  " is a class. @Rules only allowed on interfaces.");
+            throw RulesMessages.MESSAGES.rulesInterfaceGetNameIsAClassRulesOnlyAllowedOnInterfaces(rulesInterface.getName());
         }
         String rulesName = Strings.trimToNull(rules.name());
         if (rulesName == null) {

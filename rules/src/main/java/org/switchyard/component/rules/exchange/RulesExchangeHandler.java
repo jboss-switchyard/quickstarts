@@ -41,6 +41,7 @@ import org.switchyard.component.common.knowledge.exchange.KnowledgeExchangeHandl
 import org.switchyard.component.common.knowledge.exchange.KnowledgeOperation;
 import org.switchyard.component.common.knowledge.session.KnowledgeDisposal;
 import org.switchyard.component.common.knowledge.session.KnowledgeSession;
+import org.switchyard.component.rules.RulesMessages;
 import org.switchyard.component.rules.RulesConstants;
 import org.switchyard.component.rules.RulesOperationType;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
@@ -163,7 +164,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                                     entryPoint.insert(fact);
                                 }
                             } else {
-                                throw new HandlerException("Unknown entry point: " + entryPoint + "; please check your rules source.");
+                                throw RulesMessages.MESSAGES.unknownEntryPoint(entryPoint.toString());
                             }
                         }
                     }
@@ -182,7 +183,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                 break;
             }
             default: {
-                throw new HandlerException("Unsupported operation type: " + operationType);
+                throw RulesMessages.MESSAGES.unsupportedOperationType(operationType.toString());
             }
         }
         if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
