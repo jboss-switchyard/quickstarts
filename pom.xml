@@ -25,6 +25,11 @@
     <packaging>pom</packaging>
     <name>SwitchYard: Console Parent</name>
     <description>SwitchYard Management Console parent project.</description>
+    <scm>
+        <connection>scm:git:https://github.com/jboss-switchyard/console.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:jboss-switchyard/console.git</developerConnection>
+        <url>http://github.com/jboss-switchyard/console</url>
+    </scm>
     <modules>
         <module>component</module>
         <module>gwt</module>
