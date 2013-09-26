@@ -17,7 +17,7 @@
         <resource-root path="switchyard-component-rules-${project.version}.jar"/>
     </resources>
     <dependencies>
-        <module name="org.apache.log4j"/>
+        <module name="org.jboss.logging"/>
         <module name="org.drools" export="true"/>
         <module name="org.kie" export="true"/>
         <module name="org.switchyard.api"/>
