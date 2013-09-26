@@ -35,6 +35,11 @@
         <org.switchyard.test.soap.host>localhost</org.switchyard.test.soap.host>
         <org.switchyard.test.soap.port>48080</org.switchyard.test.soap.port>
     </properties>
+    <scm>
+        <connection>scm:git:https://github.com/jboss-switchyard/components.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:jboss-switchyard/components.git</developerConnection>
+        <url>http://github.com/jboss-switchyard/components</url>
+    </scm>
     <modules>
         <module>common</module>
         <module>test</module>
