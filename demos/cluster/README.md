@@ -46,13 +46,13 @@ Build the client and service applications
 Deploy Credit Service to node2 and node3.
 
     cd credit
-    mvn -Ddeploy.port=10999 jboss-as:deploy
-    mvn -Ddeploy.port=11999 jboss-as:deploy
+    mvn -Djboss-as.port=10999 jboss-as:deploy
+    mvn -Djboss-as.port=11999 jboss-as:deploy
 
 Deploy Dealer Service to node1.
 
     cd ../dealer
-    mvn -Ddeploy.port=9999 jboss-as:deploy
+    mvn -Djboss-as.port=9999 jboss-as:deploy
 
 *4. Run the test client and check output.*
 
