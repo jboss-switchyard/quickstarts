@@ -141,7 +141,7 @@
     <scm>
         <connection>scm:git:https://github.com/jboss-switchyard/parent.git</connection>
         <developerConnection>scm:git:ssh://git@github.com:jboss-switchyard/parent.git</developerConnection>
-        <url>http://github.com/switchyard/core</url>
+        <url>http://github.com/switchyard/parent</url>
     </scm>
     <repositories>
         <repository>
