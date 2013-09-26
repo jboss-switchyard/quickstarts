@@ -27,6 +27,11 @@
     <properties>
         <version.distro>1.1</version.distro>
     </properties>
+    <scm>
+        <connection>scm:git:https://github.com/jboss-switchyard/release.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:jboss-switchyard/release.git</developerConnection>
+        <url>http://github.com/jboss-switchyard/release</url>
+    </scm>
     <modules>
         <module>testutil</module>
         <module>distribution</module>
