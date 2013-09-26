@@ -24,6 +24,11 @@
     <packaging>pom</packaging>
     <name>SwitchYard: Core</name>
     <description>SwitchYard Core</description>
+    <scm>
+        <connection>scm:git:https://github.com/jboss-switchyard/core.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:jboss-switchyard/core.git</developerConnection>
+        <url>http://github.com/switchyard/core</url>
+    </scm>
     <modules>
         <module>build</module>
         <module>api</module>
