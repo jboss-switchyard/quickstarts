@@ -106,7 +106,11 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             Requires requires = serviceClass.getAnnotation(Requires.class);
             if (requires != null) {
                 for (SecurityPolicy secPolicy : requires.security()) {
-                    if (secPolicy.supports(PolicyType.INTERACTION)) {
+                    if (secPolicy == SecurityPolicy.AUTHORIZATION) {
+                        // authorization supports both interaction and implementation,
+                        // and we want to add it as implementation to be more correct.
+                        beanModel.addPolicyRequirement(secPolicy.getName());
+                    } else if (secPolicy.supports(PolicyType.INTERACTION)) {
                         serviceModel.addPolicyRequirement(secPolicy.getName());
                     } else if (secPolicy.supports(PolicyType.IMPLEMENTATION)) {
                         beanModel.addPolicyRequirement(secPolicy.getName());

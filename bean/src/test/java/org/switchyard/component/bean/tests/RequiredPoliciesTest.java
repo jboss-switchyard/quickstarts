@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.config.model.ScannerInput;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
@@ -62,8 +63,9 @@ public class RequiredPoliciesTest {
         
         for(ComponentModel component : components) {
             if(component.getName().equals("SecureService")) {
+                ComponentImplementationModel impl = component.getImplementation();
+                Assert.assertTrue(impl.hasPolicyRequirement(SecurityPolicy.AUTHORIZATION.getName()));
                 ComponentServiceModel svc = component.getServices().get(0);
-                Assert.assertTrue(svc.hasPolicyRequirement(SecurityPolicy.AUTHORIZATION.getName()));
                 Assert.assertTrue(svc.hasPolicyRequirement(SecurityPolicy.CLIENT_AUTHENTICATION.getName()));
                 Assert.assertTrue(svc.hasPolicyRequirement(SecurityPolicy.CONFIDENTIALITY.getName()));
                 ComponentReferenceModel ref = component.getReferences().get(0);

@@ -27,6 +27,7 @@ import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.SwitchYardException;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.component.camel.common.composer.BindingDataCreator;
@@ -34,13 +35,12 @@ import org.switchyard.component.camel.common.composer.BindingDataCreatorResolver
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.common.composer.SecurityBindingData;
-import org.switchyard.SwitchYardException;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
-import org.switchyard.security.SecurityContext;
+import org.switchyard.security.context.SecurityContextManager;
 import org.switchyard.selector.OperationSelector;
 
 /**
@@ -117,8 +117,9 @@ public class SwitchYardProducer extends DefaultProducer {
         CamelBindingData bindingData = bindingCreator.createBindingData(camelExchange.getIn());
         if (bindingData instanceof SecurityBindingData) {
             // returned binding is contains some security bindings, let's move them to security context
-            SecurityContext.get(switchyardExchange).getCredentials().addAll(
-                ((SecurityBindingData) bindingData).extractCredentials());
+            ServiceDomain serviceDomain = ((SwitchYardCamelContext)camelExchange.getContext()).getServiceDomain();
+            SecurityContextManager securityContextManager = new SecurityContextManager(serviceDomain);
+            securityContextManager.addCredentials(switchyardExchange, ((SecurityBindingData)bindingData).extractCredentials());
         }
         
         /*

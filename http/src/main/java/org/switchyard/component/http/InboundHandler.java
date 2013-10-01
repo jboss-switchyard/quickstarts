@@ -16,7 +16,6 @@ package org.switchyard.component.http;
 
 import java.util.Set;
 
-import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
@@ -38,7 +37,7 @@ import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
-import org.switchyard.security.SecurityContext;
+import org.switchyard.security.context.SecurityContextManager;
 import org.switchyard.selector.OperationSelector;
 
 /**
@@ -48,10 +47,9 @@ import org.switchyard.selector.OperationSelector;
  */
 public class InboundHandler extends BaseServiceHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
-
     private final HttpBindingModel _config;
     private final String _gatewayName;
+    private SecurityContextManager _securityContextManager;
     private ServiceDomain _domain;
     private ServiceReference _serviceRef;
     private MessageComposer<HttpBindingData> _messageComposer;
@@ -68,6 +66,7 @@ public class InboundHandler extends BaseServiceHandler {
         _config = config;
         _gatewayName = config.getName();
         _domain = domain;
+        _securityContextManager = new SecurityContextManager(_domain);
         _operationSelector = OperationSelectorFactory
                 .getOperationSelectorFactory(HttpBindingData.class)
                 .newOperationSelector(config.getOperationSelector());
@@ -111,7 +110,7 @@ public class InboundHandler extends BaseServiceHandler {
                     .addLabels(BehaviorLabel.TRANSIENT.label());
 
             Message message = _messageComposer.compose(input, exchange);
-            SecurityContext.get(exchange).getCredentials().addAll(input.extractCredentials());
+            _securityContextManager.addCredentials(exchange, input.extractCredentials());
             if (exchange.getContract().getConsumerOperation().getExchangePattern() == ExchangePattern.IN_ONLY) {
                 exchange.send(message);
                 response = new HttpResponseBindingData();

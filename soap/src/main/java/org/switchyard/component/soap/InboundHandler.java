@@ -56,7 +56,8 @@ import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
-import org.switchyard.security.SecurityContext;
+import org.switchyard.security.context.SecurityContext;
+import org.switchyard.security.context.SecurityContextManager;
 import org.switchyard.security.credential.Credential;
 import org.w3c.dom.Node;
 
@@ -75,6 +76,7 @@ public class InboundHandler extends BaseServiceHandler {
     private final SOAPBindingModel _config;
     private final String _gatewayName;
     private MessageComposer<SOAPBindingData> _messageComposer;
+    private SecurityContextManager _securityContextManager;
     private ServiceDomain _domain;
     private ServiceReference _service;
     private long _waitTimeout = DEFAULT_TIMEOUT; // default of 15 seconds
@@ -128,6 +130,7 @@ public class InboundHandler extends BaseServiceHandler {
         _config = config;
         _gatewayName = config.getName();
         _domain = domain;
+        _securityContextManager = new SecurityContextManager(_domain);
     }
 
     /**
@@ -288,9 +291,10 @@ public class InboundHandler extends BaseServiceHandler {
             SOAPBindingData soapBindingData = new SOAPBindingData(soapMessage, wsContext);
 
             // add any thread-local and/or binding-extracted credentials
-            SecurityContext securityContext = SecurityContext.get(exchange);
+            SecurityContext securityContext = _securityContextManager.getContext(exchange);
             securityContext.getCredentials().addAll(credentials);
             securityContext.getCredentials().addAll(soapBindingData.extractCredentials());
+            _securityContextManager.setContext(exchange, securityContext);
 
             Message message;
             try {

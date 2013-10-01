@@ -16,7 +16,6 @@ package org.switchyard.component.bean.tests;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +23,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.switchyard.common.type.Classes;
-import org.switchyard.component.bean.Service;
-import org.switchyard.component.bean.config.model.BeanComponentImplementationModel;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.config.model.ScannerInput;
-import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
