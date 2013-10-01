@@ -31,7 +31,7 @@
 <xsl:template match="node()[name(.)='resource-root'][starts-with(@path,'jboss-as-webservices-server-integration')]">
     <xsl:copy>
         <xsl:attribute name="path">
-            <xsl:text>jbossws-jboss720-server-integration-4.2.0-SNAPSHOT.jar</xsl:text>
+            <xsl:text>jbossws-jboss720-server-integration-4.2.0.Final.jar</xsl:text>
         </xsl:attribute>
     </xsl:copy>
 </xsl:template>

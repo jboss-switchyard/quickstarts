@@ -34,6 +34,7 @@
         <distro.root.dir>/</distro.root.dir>
         <installer.root.dir>/switchyard-as7-installer-${version.distro}</installer.root.dir>
         <switchyard.jboss.home>${staging.jboss.dir}</switchyard.jboss.home>
+        <zip.file.name>${distro.file}.zip</zip.file.name>
     </properties>
     <dependencies>
         <dependency>
@@ -320,17 +321,17 @@
                 <configuration>
                     <argLine>-Xms512m -Xmx512m</argLine>
                     <environmentVariables>
-                        <JBOSS_HOME>${switchyard.jboss.home}</JBOSS_HOME>
+                        <JBOSS_HOME>${jboss.home}</JBOSS_HOME>
                         <SWITCHYARD_VERSION>${project.version}</SWITCHYARD_VERSION>
                     </environmentVariables>
                     <systemProperties>
                         <property>
                             <name>jboss.home</name>
-                            <value>${switchyard.jboss.home}</value>
+                            <value>${jboss.home}</value>
                         </property>
                         <property>
                             <name>module.path</name>
-                            <value>${switchyard.jboss.home}/modules</value>
+                            <value>${jboss.home}/modules</value>
                         </property>
                         <property>
                             <name>server-config</name>
@@ -344,4 +345,59 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <property>
+                    <name>!jboss.home</name>
+                </property>
+            </activation>
+            <properties>
+                <jboss.home>${switchyard.jboss.home}</jboss.home>
+            </properties>
+        </profile>
+        <profile>
+            <id>finalGa</id>
+            <activation>
+                <property>
+                    <name>jboss.home</name>
+                </property>
+                <file><exists>${jboss.home}/modules/system/layers/base/org/jboss/ws/spi/main/jbossws-spi-2.1.2.Final-redhat-1.jar</exists></file>
+            </activation>
+            <properties>
+                <zip.file.name>${distro.file.final}.zip</zip.file.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>manual</id>
+            <activation>
+                <property>
+                    <name>jboss.home</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>prepare</id>
+                                <phase>process-test-resources</phase>
+                                <configuration>
+                                    <tasks>
+                                        <unzip src="${project.build.directory}/${zip.file.name}" dest="${jboss.home}" />
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

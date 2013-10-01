@@ -62,7 +62,7 @@
         
         <condition property="switchyardResourcesAlreadyInstalled">
             <or>
-                <available file="switchyard" filepath="${INSTALL_PATH}/modules/org"/>
+                <available file="switchyard" filepath="${INSTALL_PATH}/modules/org/switchyard"/>
                 <available file="switchyard" filepath="${INSTALL_PATH}/modules/system/layers/soa"/>
             </or>
         </condition>
@@ -89,8 +89,11 @@
             <patternset>
                 <include name="standalone/**"/>
                 <include name="modules/**"/>
+                <exclude name="modules/system/layers/base/org/jboss/as/webservices/**"/>
+                <exclude name="modules/system/layers/base/org/jboss/ws/**"/>
             </patternset>
         </unzip>
+        <antcall target="unzip-jbossws-modules"/>
         <xslt style="res/standalone.xsl" 
             basedir="${EAP_PATH}/standalone/configuration" 
             destdir="${EAP_PATH}/standalone/configuration"
@@ -153,6 +156,19 @@
         <unzip src="res/switchyard-as7-bundle.zip" dest="${QUICKSTART_PATH}" overwrite="true">
             <patternset>
                 <include name="quickstarts/**"/>
+            </patternset>
+        </unzip>
+    </target>
+    
+    <target name="unzip-jbossws-modules" unless="FinalGA">
+        <unzip src="res/switchyard-as7-bundle.zip" dest="${INSTALL_PATH}/system/layers/base/org/jboss/webservices" overwrite="true">
+            <patternset>
+                <include name="modules/system/layers/base/org/jboss/webservices/**"/>
+            </patternset>
+        </unzip>
+        <unzip src="res/switchyard-as7-bundle.zip" dest="${INSTALL_PATH}/system/layers/base/org/jboss/ws" overwrite="true">
+            <patternset>
+                <include name="modules/system/layers/base/org/jboss/ws/**"/>
             </patternset>
         </unzip>
     </target>
