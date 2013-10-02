@@ -16,7 +16,6 @@ package org.switchyard.component.resteasy.resource;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 
 /**
@@ -25,8 +24,6 @@ import org.jboss.resteasy.spi.ResteasyDeployment;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
 public class NettyResourcePublisher implements ResourcePublisher {
-    private static final Logger LOGGER = Logger.getLogger(NettyResourcePublisher.class);
-
     /** 
      * The global standalone NettyServer.
      *

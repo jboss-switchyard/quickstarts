@@ -19,8 +19,9 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import com.sun.net.httpserver.HttpServer;
+import org.switchyard.component.resteasy.RestEasyLogger;
 import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
 
 /**
@@ -57,7 +58,7 @@ public class StandaloneResourcePublisher implements ResourcePublisher {
             _httpServer.setExecutor(null); // creates a default executor
             _httpServer.start();
         } catch (IOException ioe) {
-            LOGGER.error("Unable to launch standalone http server", ioe);
+            RestEasyLogger.ROOT_LOGGER.unableToLaunchStandaloneHttpServer(ioe);
         }
     }
 

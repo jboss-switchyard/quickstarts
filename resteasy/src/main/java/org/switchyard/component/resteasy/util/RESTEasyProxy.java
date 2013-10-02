@@ -23,7 +23,7 @@ import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.switchyard.component.resteasy.InboundHandler;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;

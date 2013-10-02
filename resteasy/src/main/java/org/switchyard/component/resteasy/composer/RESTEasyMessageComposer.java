@@ -15,12 +15,12 @@ package org.switchyard.component.resteasy.composer;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.component.common.composer.BaseMessageComposer;
+import org.switchyard.component.resteasy.RestEasyLogger;
 
 /**
  * Composes/decomposes RESTEasy messages.
@@ -29,8 +29,6 @@ import org.switchyard.component.common.composer.BaseMessageComposer;
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2013 Red Hat Inc.
  */
 public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyBindingData> {
-
-    private static final Logger LOGGER = Logger.getLogger(RESTEasyMessageComposer.class);
 
     /**
      * {@inheritDoc}
@@ -46,7 +44,7 @@ public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyBinding
         message.setContent(content);
 
         if (source.getParameters().length > 1) {
-            LOGGER.warn("Default RESTEasy Message Composer doesn't handle multiple input parameters.");
+            RestEasyLogger.ROOT_LOGGER.defaultRESTEasyMessageComposerDoesnTHandleMultipleInputParameters();
         }
         return message;
     }

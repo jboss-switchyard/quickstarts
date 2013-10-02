@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
@@ -113,8 +113,7 @@ public class OutboundHandler extends BaseServiceHandler {
         exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _bindingName, Scope.EXCHANGE)
                 .addLabels(BehaviorLabel.TRANSIENT.label());
         if (getState() != State.STARTED) {
-            throw new HandlerException(String.format("Reference binding \"%s/%s\" is not started.", _referenceName,
-                    _bindingName));
+            throw RestEasyMessages.MESSAGES.referenceBindingNotStarted(_referenceName, _bindingName);
         }
 
         final String opName = exchange.getContract().getProviderOperation().getName();
@@ -123,7 +122,7 @@ public class OutboundHandler extends BaseServiceHandler {
         try {
             restRequest = _messageComposer.decompose(exchange, new RESTEasyBindingData());
         } catch (Exception e) {
-            final String m = "Unexpected exception composing outbound REST request";
+            final String m = RestEasyMessages.MESSAGES.unexpectedExceptionComposingRESTRequest();
             LOGGER.error(m, e);
             throw new HandlerException(m, e);
         }
@@ -131,7 +130,7 @@ public class OutboundHandler extends BaseServiceHandler {
         Object response = null;
         MethodInvoker methodInvoker = _methodMap.get(opName);
         if (methodInvoker == null) {
-            final String m = "Unable to map " + opName + " among resources " + _methodMap.keySet();
+            final String m = RestEasyMessages.MESSAGES.unableToMapAmongResources(opName, _methodMap.keySet().toString());
             throw new HandlerException(m);
         }
 

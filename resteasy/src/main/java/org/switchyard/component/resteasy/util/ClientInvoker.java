@@ -30,7 +30,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.ext.Providers;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -72,6 +72,7 @@ import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.util.MediaTypeHelper;
 import org.jboss.resteasy.util.IsHttpMethod;
+import org.switchyard.component.resteasy.RestEasyMessages;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 import org.switchyard.component.resteasy.config.model.ProxyModel;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
@@ -133,7 +134,7 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
         if ((httpMethods == null || httpMethods.size() == 0) && method.isAnnotationPresent(Path.class) && method.getReturnType().isInterface()) {
             _subResourcePath = createSubResourcePath(basePath, method);
         } else if (httpMethods == null || httpMethods.size() != 1) {
-            throw new RuntimeException("You must use at least one, but no more than one http method annotation on: " + method.toString());
+            throw RestEasyMessages.MESSAGES.youMustUseAtLeastOneButNoMoreThanOneHttpMethodAnnotationOn(method.toString());
         }
         _httpMethod = httpMethods.iterator().next();
         _resourceClass = resourceClass;
@@ -269,7 +270,7 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
 
         try {
             if (_uri == null) {
-                throw new RuntimeException("You have not set a base URI for the client proxy");
+                throw RestEasyMessages.MESSAGES.youHaveNotSetABaseURIForTheClientProxy();
             }
 
             ClientRequest request = null;
