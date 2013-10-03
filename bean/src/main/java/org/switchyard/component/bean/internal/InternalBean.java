@@ -45,22 +45,30 @@ public abstract class InternalBean implements Bean {
     /**
      * Proxy object.
      */
-    private final Object _proxyObject;
+    private Object _proxyObject;
 
     /**
      * Bean class.
      */
     private final Class<?> _beanClass;
+    
+    /**
+     * Used when the proxy object is created/managed by extensions of this class.
+     */
+    protected InternalBean(Class<?> beanClass, Set<Annotation> qualifiers) {
+        _qualifiers = qualifiers;
+        _beanClass = beanClass;
+    }
 
     /**
      * Protected constructor.
      */
     protected InternalBean(Object proxyObject, Class<?> beanClass) {
-        this._qualifiers = new HashSet<Annotation>();
-        this._qualifiers.add(new AnnotationLiteral<Default>() {});
-        this._qualifiers.add(new AnnotationLiteral<Any>() {});
-        this._proxyObject = proxyObject;
-        this._beanClass = beanClass;
+        _qualifiers = new HashSet<Annotation>();
+        _qualifiers.add(new AnnotationLiteral<Default>() {});
+        _qualifiers.add(new AnnotationLiteral<Any>() {});
+        _proxyObject = proxyObject;
+        _beanClass = beanClass;
     }
 
     /**
@@ -70,7 +78,7 @@ public abstract class InternalBean implements Bean {
      */
     public Set<Type> getTypes() {
         Set<Type> types = new HashSet<Type>();
-        types.add(this._beanClass);
+        types.add(_beanClass);
         types.add(Object.class);
         return types;
     }
@@ -92,6 +100,10 @@ public abstract class InternalBean implements Bean {
     public String getName() {
         return null;
     }
+    
+    protected void setProxyObject(Object proxyObject) {
+        _proxyObject = proxyObject;
+    }
 
     /**
      * Obtains the {@linkplain javax.enterprise.inject.Stereotype stereotypes}
@@ -110,7 +122,7 @@ public abstract class InternalBean implements Bean {
      * @return the bean {@linkplain Class class}
      */
     public Class<?> getBeanClass() {
-        return this._beanClass;
+        return _beanClass;
     }
 
     /**
@@ -171,7 +183,7 @@ public abstract class InternalBean implements Bean {
      * @return the contextual instance
      */
     public Object create(CreationalContext creationalContext) {
-        return this._proxyObject;
+        return _proxyObject;
     }
 
     /**

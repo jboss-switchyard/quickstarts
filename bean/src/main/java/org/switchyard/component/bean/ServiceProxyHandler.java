@@ -31,6 +31,7 @@ import org.switchyard.SwitchYardException;
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
+import org.switchyard.component.bean.internal.ReferenceInvokerBean;
 import org.switchyard.component.bean.internal.context.ContextProxy;
 import org.switchyard.component.bean.internal.message.MessageProxy;
 import org.switchyard.deploy.BaseServiceHandler;
@@ -203,6 +204,13 @@ public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHa
         for (ClientProxyBean proxyBean : _beanDeploymentMetaData.getClientProxies()) {
             if (_references.containsKey(proxyBean.getServiceName())) {
                 proxyBean.setService(_references.get(proxyBean.getServiceName()));
+            }
+        }
+        
+        // Initialise ReferenceInvokers
+        for (ReferenceInvokerBean invokerBean : _beanDeploymentMetaData.getReferenceInvokers()) {
+            if (_references.containsKey(invokerBean.getServiceName())) {
+                invokerBean.setReference(_references.get(invokerBean.getServiceName()));
             }
         }
     }

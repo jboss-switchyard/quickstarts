@@ -38,6 +38,7 @@ import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaDataCDIBean;
 import org.switchyard.component.bean.deploy.CDIBean;
 import org.switchyard.component.bean.deploy.CDIBeanServiceDescriptor;
+import org.switchyard.component.bean.internal.ReferenceInvokerBean;
 import org.switchyard.component.bean.internal.context.ContextBean;
 import org.switchyard.component.bean.internal.message.MessageBean;
 
@@ -61,6 +62,11 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
      * List of created {@link ClientProxyBean} instances.
      */
     private List<ClientProxyBean> _createdProxyBeans = new ArrayList<ClientProxyBean>();
+    
+    /**
+     * List of created ReferenceInvokerBean instances.
+     */
+    private List<ReferenceInvokerBean> _createdInvokerBeans = new ArrayList<ReferenceInvokerBean>();
 
     /**
      * {@link javax.enterprise.inject.spi.BeforeBeanDiscovery} CDI event observer.
@@ -94,7 +100,11 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
                     if (member instanceof Field) {
                         Class<?> memberType = ((Field) member).getType();
                         if (memberType.isInterface()) {
-                            addInjectableClientProxyBean((Field) member, (Reference) qualifier, injectionPoint.getQualifiers(), beanManager);
+                            if (memberType.equals(ReferenceInvoker.class)) {
+                                addInvokerBean((Reference)qualifier, injectionPoint.getQualifiers());
+                            } else {
+                                addInjectableClientProxyBean((Field) member, (Reference) qualifier, injectionPoint.getQualifiers(), beanManager);
+                            }
                         }
                     }
                 }
@@ -123,6 +133,12 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
             _logger.debug("Adding ClientProxyBean for bean Service " + proxyBean.getServiceName() + ".  Service Interface type is " + proxyBean.getServiceInterface().getName());
             afterEvent.addBean(proxyBean);
             _beanDeploymentMetaData.addClientProxy(proxyBean);
+        }
+        
+        for (ReferenceInvokerBean invokerBean : _createdInvokerBeans) {
+            _logger.debug("Adding ReferenceInvokerBean for bean Service " + invokerBean.getServiceName());
+            afterEvent.addBean(invokerBean);
+            _beanDeploymentMetaData.addReferenceInvoker(invokerBean);
         }
 
         afterEvent.addBean(new BeanDeploymentMetaDataCDIBean(_beanDeploymentMetaData));
@@ -155,6 +171,25 @@ public class SwitchYardCDIServiceDiscovery implements Extension {
 
         ClientProxyBean clientProxyBean = new ClientProxyBean(serviceName, beanClass, qualifiers, _beanDeploymentMetaData);
         _createdProxyBeans.add(clientProxyBean);
+    }
+    
+    private void addInvokerBean(Reference serviceReference, Set<Annotation> qualifiers) {
+        // Value of Reference annotation is required for ReferenceInvoker
+        if (serviceReference.value().length() == 0) {
+            _logger.debug("Unable to create reference invoker for @Reference with missing value");
+        }
+        
+        String serviceName = serviceReference.value();
+        // Check do we already have an invoker for this service reference ...
+        for (ReferenceInvokerBean invokerBean : _createdInvokerBeans) {
+            if (serviceName.equals(invokerBean.getServiceName())) {
+                // ignore... we already have a proxy ...
+                return;
+            }
+        }
+
+        ReferenceInvokerBean invokerBean = new ReferenceInvokerBean(serviceName, qualifiers);
+        _createdInvokerBeans.add(invokerBean);
     }
 
     private boolean isServiceBean(Bean<?> bean) {

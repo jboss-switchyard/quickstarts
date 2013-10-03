@@ -20,6 +20,7 @@ import org.switchyard.SwitchYardException;
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.component.bean.ClientProxyBean;
 import org.switchyard.component.bean.ServiceProxyHandler;
+import org.switchyard.component.bean.internal.ReferenceInvokerBean;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.deploy.BaseActivator;
@@ -61,6 +62,12 @@ public class BeanComponentActivator extends BaseActivator {
                     if (reference.getQName().getLocalPart().equals(proxyBean.getServiceName())) {
                         QName refName = ComponentNames.qualify(config.getQName(), reference.getQName());
                         proxyBean.setService(getServiceDomain().getServiceReference(refName));
+                    }
+                }
+                for (ReferenceInvokerBean invokerBean : _beanDeploymentMetaData.getReferenceInvokers()) {
+                    if (reference.getQName().getLocalPart().equals(invokerBean.getServiceName())) {
+                        QName refName = ComponentNames.qualify(config.getQName(), reference.getQName());
+                        invokerBean.setReference(getServiceDomain().getServiceReference(refName));
                     }
                 }
             }

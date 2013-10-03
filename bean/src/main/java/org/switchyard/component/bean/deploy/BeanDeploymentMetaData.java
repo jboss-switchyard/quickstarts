@@ -28,6 +28,7 @@ import javax.naming.NamingException;
 
 import org.switchyard.SwitchYardException;
 import org.switchyard.component.bean.ClientProxyBean;
+import org.switchyard.component.bean.internal.ReferenceInvokerBean;
 
 /**
  * Bean Deployment Meta Data.
@@ -42,6 +43,7 @@ public class BeanDeploymentMetaData {
     private ClassLoader _deploymentClassLoader;
     private List<ServiceDescriptor> _serviceDescriptors = new ArrayList<ServiceDescriptor>();
     private List<ClientProxyBean> _clientProxies = new ArrayList<ClientProxyBean>();
+    private List<ReferenceInvokerBean> _referenceInvokers = new ArrayList<ReferenceInvokerBean>();
     private List<CDIBean> _deploymentBeans = new ArrayList<CDIBean>();
 
     /**
@@ -100,6 +102,14 @@ public class BeanDeploymentMetaData {
     public void addClientProxy(ClientProxyBean proxy) {
         _clientProxies.add(proxy);
     }
+    
+    /**
+     * Add a ReferenceInvokerBean.
+     * @param invoker The invoker bean.
+     */
+    public void addReferenceInvoker(ReferenceInvokerBean invoker) {
+        _referenceInvokers.add(invoker);
+    }
 
     /**
      * Add a deployment CDI bean.
@@ -118,11 +128,19 @@ public class BeanDeploymentMetaData {
     }
 
     /**
-     * Add a list of all the {@link ClientProxyBean ClientProxyBeans}.
+     * Get a list of all the {@link ClientProxyBean ClientProxyBeans}.
      * @return The list of all the {@link ClientProxyBean ClientProxyBeans}.
      */
     public List<ClientProxyBean> getClientProxies() {
         return Collections.unmodifiableList(_clientProxies);
+    }
+    
+    /**
+     * Get a list of all the ReferenceInvokerBeans.
+     * @return The list of all the ReferenceInvokerBeans.
+     */
+    public List<ReferenceInvokerBean> getReferenceInvokers() {
+        return Collections.unmodifiableList(_referenceInvokers);
     }
 
     /**
