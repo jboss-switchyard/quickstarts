@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-release</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>switchyard-rhq-plugin</artifactId>
+    <packaging>jar</packaging>
+
+    <name>SwitchYard: RHQ Plugin</name>
+    <description>SwitchYard RHQ Plugin</description>
+
+    <dependencies>
+        <dependency>
+          <groupId>org.rhq</groupId>
+          <artifactId>rhq-enterprise-comm</artifactId>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.rhq</groupId>
+          <artifactId>rhq-jboss-as-7-plugin</artifactId>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>mc4j</groupId>
+          <artifactId>org-mc4j-ems</artifactId>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.rhq</groupId>
+          <artifactId>rhq-core-domain</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.rhq</groupId>
+          <artifactId>rhq-core-plugin-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.rhq</groupId>
+          <artifactId>rhq-core-native-system</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.rhq</groupId>
+          <artifactId>rhq-core-plugin-container</artifactId>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>javax.persistence</groupId>
+          <artifactId>persistence-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-core</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+          <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-deps</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.rhq</groupId>
+                                    <artifactId>rhq-enterprise-comm</artifactId>
+                                    <version>${version.rhq}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.rhq</groupId>
+                                    <artifactId>rhq-jmx-plugin</artifactId>
+                                    <version>${version.rhq}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>mc4j</groupId>
+                                    <artifactId>org-mc4j-ems</artifactId>
+                                    <version>${version.ems}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
