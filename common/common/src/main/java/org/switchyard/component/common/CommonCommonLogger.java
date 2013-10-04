@@ -44,6 +44,22 @@ public interface CommonCommonLogger {
     @LogMessage(level = Level.ERROR)
     @Message(id = 34402, value = "Could not instantiate OperationSelector: %s - %s")
     void couldNotInstantiateOperationSelector(String customClassName, String eMessage);
+    
+    /**
+     * replyArrivedAfterTimeout method definition.
+     * @param serviceName serviceName
+     */
+    @LogMessage(level = Level.WARN)
+    @Message(id = 34403, value = "Reply message arrived after timeout has elapsed for service: %s")
+    void replyArrivedAfterTimeout(String serviceName);
+    
+    /**
+     * faultArrivedAfterTimeout method definition.
+     * @param serviceName serviceName
+     */
+    @LogMessage(level = Level.WARN)
+    @Message(id = 34404, value = "Fault message arrived after timeout has elapsed for service: %s")
+    void faultArrivedAfterTimeout(String serviceName);
 
 }
 

@@ -94,7 +94,7 @@ public class SynchronousInOutHandler implements ExchangeHandler {
     @Override
     public synchronized void handleMessage(Exchange exchange) throws HandlerException {
         if (_responseQueue == null) {
-            LOGGER.debug("OUT Exchange arrived after timeout has elapsed.");
+            CommonCommonLogger.ROOT_LOGGER.replyArrivedAfterTimeout(exchange.getConsumer().getName().toString());
         } else {
             try {
                 _responseQueue.put(exchange);
@@ -107,7 +107,7 @@ public class SynchronousInOutHandler implements ExchangeHandler {
     @Override
     public synchronized void handleFault(Exchange exchange) {
         if (_responseQueue == null) {
-            LOGGER.debug("OUT Exchange arrived after timeout has elapsed.");
+            CommonCommonLogger.ROOT_LOGGER.faultArrivedAfterTimeout(exchange.getConsumer().getName().toString());
         } else {
             try {
                 _responseQueue.put(exchange);
