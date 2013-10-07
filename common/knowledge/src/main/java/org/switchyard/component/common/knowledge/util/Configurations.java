@@ -15,16 +15,9 @@ package org.switchyard.component.common.knowledge.util;
 
 import java.util.Properties;
 
-import org.drools.compiler.compiler.PackageBuilderConfiguration;
-import org.drools.core.RuleBaseConfiguration;
-import org.drools.core.SessionConfiguration;
-import org.drools.core.common.ProjectClassLoader;
 import org.kie.api.KieBaseConfiguration;
+import org.kie.api.KieServices;
 import org.kie.api.runtime.KieSessionConfiguration;
-import org.kie.internal.KnowledgeBaseFactory;
-import org.kie.internal.builder.KnowledgeBuilderConfiguration;
-import org.kie.internal.builder.KnowledgeBuilderFactory;
-import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 
 /**
@@ -42,21 +35,18 @@ public final class Configurations {
      * @return the base configuration
      */
     public static KieBaseConfiguration getBaseConfiguration(KnowledgeComponentImplementationModel model, ClassLoader loader, Properties overrides) {
+        KieBaseConfiguration baseConfiguration = KieServices.Factory.get().newKieBaseConfiguration(Propertys.getProperties(model, overrides), loader);
+        /* SWITCHYARD-1755
         RuleBaseConfiguration baseConfiguration = (RuleBaseConfiguration)KnowledgeBaseFactory.newKnowledgeBaseConfiguration(Propertys.getProperties(model, overrides));
         ClassLoader baseLoader = baseConfiguration.getClassLoader();
         if (baseLoader instanceof ProjectClassLoader) {
             ((ProjectClassLoader)baseLoader).setDroolsClassLoader(loader);
         }
+        */
         return baseConfiguration;
     }
 
-    /**
-     * Gets a builder configuration.
-     * @param model the model
-     * @param loader the class loader
-     * @param overrides any overrides
-     * @return the builder configuration
-     */
+    /* SWITCHYARD-1755
     public static KnowledgeBuilderConfiguration getBuilderConfiguration(KnowledgeComponentImplementationModel model, ClassLoader loader, Properties overrides) {
         PackageBuilderConfiguration builderConfiguration = (PackageBuilderConfiguration)KnowledgeBuilderFactory.newKnowledgeBuilderConfiguration(Propertys.getProperties(model, overrides));
         ClassLoader builderLoader = builderConfiguration.getClassLoader();
@@ -65,6 +55,7 @@ public final class Configurations {
         }
         return builderConfiguration;
     }
+    */
 
     /**
      * Gets a session configuration.
@@ -74,8 +65,11 @@ public final class Configurations {
      * @return the session configuration
      */
     public static KieSessionConfiguration getSessionConfiguration(KnowledgeComponentImplementationModel model, ClassLoader loader, Properties overrides) {
+        KieSessionConfiguration sessionConfiguration = KieServices.Factory.get().newKieSessionConfiguration(Propertys.getProperties(model, overrides));
+        /* SWITCHYARD-1755
         SessionConfiguration sessionConfiguration = (SessionConfiguration)KnowledgeBaseFactory.newKnowledgeSessionConfiguration(Propertys.getProperties(model, overrides));
         new FieldAccess<ClassLoader>(SessionConfiguration.class, "classLoader").write(sessionConfiguration, loader);
+        */
         return sessionConfiguration;
     }
 

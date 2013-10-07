@@ -215,6 +215,7 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
         UserGroupCallbackModel userGroupCallbackModel = null;
         for (UserGroupCallback userGroupCallbackAnnotation : userGroupCallbackAnnotations) {
             userGroupCallbackModel = new V1UserGroupCallbackModel();
+            // SWITCHYARD-1755: internal api usage still required (public APIs insufficient)
             Class<? extends org.kie.internal.task.api.UserGroupCallback> clazz = userGroupCallbackAnnotation.value();
             userGroupCallbackModel.setClazz(clazz);
             userGroupCallbackModel.setProperties(toPropertiesModel(userGroupCallbackAnnotation.properties(), DEFAULT_NAMESPACE));

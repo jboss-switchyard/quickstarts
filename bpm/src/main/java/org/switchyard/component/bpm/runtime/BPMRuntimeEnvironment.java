@@ -22,6 +22,7 @@ import org.kie.api.KieBase;
 import org.kie.api.runtime.Environment;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.KieSessionConfiguration;
+// SWITCHYARD-1755: internal api usage still required (until jbpm services usage is resolved)
 import org.kie.internal.runtime.manager.Mapper;
 import org.kie.internal.runtime.manager.RegisterableItemsFactory;
 import org.kie.internal.runtime.manager.RuntimeEnvironment;

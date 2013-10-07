@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+// SWITCHYARD-1755: core impl class usage still required (public APIs insufficient)
 import org.drools.core.impl.EnvironmentFactory;
 import org.kie.api.marshalling.ObjectMarshallingStrategy;
 import org.kie.api.runtime.Environment;

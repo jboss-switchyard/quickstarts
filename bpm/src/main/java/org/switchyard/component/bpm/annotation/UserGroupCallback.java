@@ -32,6 +32,7 @@ import org.switchyard.component.common.knowledge.annotation.Property;
 @Documented
 public @interface UserGroupCallback {
 
+    // SWITCHYARD-1755: internal api usage still required (public APIs insufficient)
     /** Impl class. */
     public Class<? extends org.kie.internal.task.api.UserGroupCallback> value();
 

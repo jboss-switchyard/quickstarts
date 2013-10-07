@@ -24,6 +24,7 @@ import org.jbpm.shared.services.api.JbpmServicesTransactionManager;
 import org.jbpm.shared.services.impl.events.JbpmServicesEventListener;
 import org.kie.api.runtime.Environment;
 import org.kie.api.task.model.Task;
+// SWITCHYARD-1755: internal api usage still required (until jbpm services usage is resolved)
 import org.kie.internal.task.api.ContentMarshallerContext;
 import org.kie.internal.task.api.EventService;
 import org.kie.internal.task.api.InternalTaskService;

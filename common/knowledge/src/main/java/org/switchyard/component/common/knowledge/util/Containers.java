@@ -38,9 +38,20 @@ public final class Containers {
             String groupId = gav.length > 0 ? gav[0] : null;
             String artifactId = gav.length > 1 ? gav[1] : null;
             String version = gav.length > 2 ? gav[2] : null;
-            return KieServices.Factory.get().newReleaseId(groupId, artifactId, version);
+            return toReleaseId(groupId, artifactId, version);
         }
         return null;
+    }
+
+    /**
+     * Creates a ReleaseId from the specified groupId, artifactId and version.
+     * @param groupId the groupId
+     * @param artifactId the artifactId
+     * @param version the version
+     * @return the ReleaseId
+     */
+    public static ReleaseId toReleaseId(String groupId, String artifactId, String version) {
+        return KieServices.Factory.get().newReleaseId(groupId, artifactId, version);
     }
 
     /**

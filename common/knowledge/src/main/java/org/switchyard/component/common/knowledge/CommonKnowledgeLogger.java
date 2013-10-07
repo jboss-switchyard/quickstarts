@@ -59,13 +59,14 @@ public interface CommonKnowledgeLogger {
     @Message(id = 34604, value = "problem disposing KieSession: %s")
     void problemDisposingKieSession(String tMessage);
 
-    /**
+    /* SWITCHYARD-1755
      * problemDisposingKnowledgeAgent method definition.
      * @param tMessage tMessage
-     */
+     *
     @LogMessage(level = Level.WARN)
     @Message(id = 34605, value = "problem disposing KnowledgeAgent: %s")
     void problemDisposingKnowledgeAgent(String tMessage);
+    */
 
 }
 

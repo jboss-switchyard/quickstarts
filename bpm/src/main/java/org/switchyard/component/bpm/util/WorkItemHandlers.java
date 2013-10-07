@@ -30,7 +30,6 @@ import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.runtime.process.ProcessRuntime;
 import org.kie.api.runtime.process.WorkItemHandler;
-import org.kie.internal.runtime.KnowledgeRuntime;
 import org.kie.internal.runtime.manager.Disposable;
 import org.kie.internal.runtime.manager.DisposeListener;
 import org.kie.internal.task.api.EventService;
@@ -58,9 +57,11 @@ public final class WorkItemHandlers {
     private static final String HUMAN_TASK = "Human Task";
 
     private static final Class<?>[][] PARAMETER_TYPES = new Class<?>[][]{
-        new Class<?>[]{ProcessRuntime.class},
-        new Class<?>[]{KieRuntime.class},
-        new Class<?>[]{KnowledgeRuntime.class},
+        new Class<?>[]{ProcessRuntime.class}, // current (kie)
+        new Class<?>[]{KieRuntime.class}, // current (kie)
+        /* SWITCHYARD-1755
+        new Class<?>[]{KnowledgeRuntime.class}, // legacy (drools)
+        */
         new Class<?>[0]
     };
 
@@ -136,6 +137,7 @@ public final class WorkItemHandlers {
             listener.setRuntimeManager(runtimeManager);
             LocalHTWorkItemHandler htwih = new LocalHTWorkItemHandler();
             htwih.setRuntimeManager(runtimeManager);
+            // NOTE: Cannot remove next two blocks for SWITCHYARD-1755 yet...
             if (runtimeEngine.getTaskService() instanceof EventService) {
                 ((EventService)runtimeEngine.getTaskService()).registerTaskLifecycleEventListener(listener);
             }

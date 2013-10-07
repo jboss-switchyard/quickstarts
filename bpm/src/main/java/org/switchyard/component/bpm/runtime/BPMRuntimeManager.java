@@ -18,6 +18,7 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.Context;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.task.TaskService;
+// SWITCHYARD-1755: internal api usage still required (until jbpm services usage is resolved)
 import org.kie.internal.runtime.manager.InternalRuntimeManager;
 import org.kie.internal.runtime.manager.RuntimeEnvironment;
 

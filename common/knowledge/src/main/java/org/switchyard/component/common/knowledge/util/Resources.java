@@ -16,10 +16,11 @@ package org.switchyard.component.common.knowledge.util;
 import java.net.URL;
 
 import org.kie.api.KieServices;
+import org.kie.api.builder.KieFileSystem;
 import org.kie.api.io.KieResources;
+// SWITCHYARD-1755: internal builder class usage still required (public APIs insufficient)
 import org.kie.internal.builder.DecisionTableConfiguration;
 import org.kie.internal.builder.DecisionTableInputType;
-import org.kie.internal.builder.KnowledgeBuilder;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.switchyard.common.io.resource.Resource;
 import org.switchyard.common.io.resource.ResourceDetail;
@@ -48,9 +49,9 @@ public final class Resources {
      * Adds resources.
      * @param model the model
      * @param loader the class loader
-     * @param builder the knowledge builder
+     * @param fileSystem the kie file system
      */
-    public static void addResources(KnowledgeComponentImplementationModel model, ClassLoader loader, KnowledgeBuilder builder) {
+    public static void addResources(KnowledgeComponentImplementationModel model, ClassLoader loader, KieFileSystem fileSystem) {
         ManifestModel manifestModel = model.getManifest();
         if (manifestModel != null) {
             ResourcesModel resourcesModel = manifestModel.getResources();
@@ -63,36 +64,37 @@ public final class Resources {
                         if (kieResource != null) {
                             org.kie.api.io.ResourceType kieResourceType = convertResourceType(syResource.getType());
                             if (kieResourceType != null) {
-                                org.kie.api.io.ResourceConfiguration kieResourceConfiguration = null;
+                                kieResource.setResourceType(kieResourceType);
                                 ResourceDetail syResourceDetail = syResource.getDetail();
                                 if (syResourceDetail != null) {
+                                    org.kie.api.io.ResourceConfiguration kieResourceConfiguration = null;
                                     if (org.kie.api.io.ResourceType.DTABLE.equals(kieResourceType)) {
+                                        String inputType = getInputType(syResourceDetail, DecisionTableInputType.XLS.toString());
                                         DecisionTableConfiguration dtc = KnowledgeBuilderFactory.newDecisionTableConfiguration();
-                                        String inputType = getInputType(syResourceDetail);
-                                        if (inputType != null) {
-                                            dtc.setInputType(DecisionTableInputType.valueOf(inputType));
-                                        }
-                                        dtc.setWorksheetName(syResourceDetail.getWorksheetName());
+                                        dtc.setInputType(DecisionTableInputType.valueOf(inputType));
+                                        dtc.setWorksheetName(getWorksheetName(syResourceDetail));
+                                        //dtc.setUsingExternalTypes(syResourceDetail.isUsingExternalTypes());
                                         kieResourceConfiguration = dtc;
                                     }
                                     /* SWITCHYARD-1662
                                     else if (org.kie.api.io.ResourceType.SCARD.equals(kieResourceType)) {
-                                        ScoreCardConfiguration scc = KnowledgeBuilderFactory.newScoreCardConfiguration();
-                                        String inputType = getInputType(syResourceDetail);
-                                        if (inputType != null) {
-                                            if ("XLS".equals(inputType)) {
-                                                inputType = ScoreCardConfiguration.SCORECARD_INPUT_TYPE.EXCEL.name();
-                                            }
-                                            scc.setInputType(ScoreCardConfiguration.SCORECARD_INPUT_TYPE.valueOf(inputType));
+                                        String inputType = getInputType(syResourceDetail, ScoreCardConfiguration.SCORECARD_INPUT_TYPE.EXCEL.name());
+                                        if ("XLS".equals(inputType)) {
+                                            inputType = ScoreCardConfiguration.SCORECARD_INPUT_TYPE.EXCEL.name();
                                         }
-                                        scc.setWorksheetName(syResourceDetail.getWorksheetName());
-                                        scc.setUsingExternalTypes(syResourceDetail.isUsingExternalTypes());
+                                        ScoreCardConfiguration scc = KnowledgeBuilderFactory.newScoreCardConfiguration();
+                                        scc.setInputType(ScoreCardConfiguration.SCORECARD_INPUT_TYPE.valueOf(inputType));
+                                        scc.setWorksheetName(getWorksheetName(syResourceDetail));
+                                        //scc.setUsingExternalTypes(syResourceDetail.isUsingExternalTypes());
                                         kieResourceConfiguration = scc;
                                     }
                                     */
+                                    if (kieResourceConfiguration != null) {
+                                        kieResource.setConfiguration(kieResourceConfiguration);
+                                    }
                                 }
-                                builder.add(kieResource, kieResourceType, kieResourceConfiguration);
                             }
+                            fileSystem.write(kieResource);
                         }
                     }
                 }
@@ -100,12 +102,22 @@ public final class Resources {
         }
     }
 
-    private static String getInputType(ResourceDetail syResourceDetail) {
+    private static String getInputType(ResourceDetail syResourceDetail, String defaultInputType) {
         String inputType = Strings.trimToNull(syResourceDetail.getInputType());
         if (inputType != null) {
             inputType = inputType.toUpperCase();
+        } else {
+            inputType = defaultInputType;
         }
         return inputType;
+    }
+
+    private static String getWorksheetName(ResourceDetail syResourceDetail) {
+        String worksheetName = syResourceDetail.getWorksheetName();
+        if (worksheetName == null) {
+            worksheetName = "";
+        }
+        return worksheetName;
     }
 
     /**

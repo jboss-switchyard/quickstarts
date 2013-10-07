@@ -20,7 +20,6 @@ import javax.persistence.EntityManagerFactory;
 import org.kie.api.builder.KieScanner;
 import org.kie.api.logger.KieRuntimeLogger;
 import org.kie.api.runtime.KieSession;
-import org.kie.internal.agent.KnowledgeAgent;
 import org.switchyard.component.common.knowledge.CommonKnowledgeLogger;
 import org.switchyard.component.common.knowledge.session.KnowledgeDisposal;
 
@@ -120,11 +119,12 @@ public final class Disposals {
         };
     }
 
-    /**
+    /* SWITCHYARD-1755
+     * 
      * Creates a new knowledge agent disposal.
      * @param knowledgeAgent the agent
      * @return the disposal
-     */
+     *
     public static KnowledgeDisposal newDisposal(final KnowledgeAgent knowledgeAgent) {
         return new KnowledgeDisposal() {
             @Override
@@ -139,6 +139,7 @@ public final class Disposals {
             }
         };
     }
+    */
 
     private Disposals() {}
 

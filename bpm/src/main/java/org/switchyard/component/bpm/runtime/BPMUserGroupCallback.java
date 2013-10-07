@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+// SWITCHYARD-1755: internal api usage still required (public APIs insufficient)
 import org.kie.internal.task.api.UserGroupCallback;
 import org.switchyard.common.io.pull.PropertiesPuller;
 import org.switchyard.common.io.pull.Puller.PathType;

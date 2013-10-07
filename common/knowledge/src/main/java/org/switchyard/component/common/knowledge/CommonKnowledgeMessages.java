@@ -100,17 +100,10 @@ public interface CommonKnowledgeMessages {
     SwitchYardException cannotRegisterOperation(String type, String name);
     
     /**
-     * problemBuildingKnowledgePackages method definition.
+     * problemBuildingKnowledge method definition.
      * @return String
      */
-    @Message(id = 34712, value = "Problem building knowledge packages")
-    String problemBuildingKnowledgePackages();
-        
-    /**
-     * problemAddingKnowledgePackages method definition.
-     * @return String
-     */
-    @Message(id = 34713, value = "Problem adding knowledge packages")
-    String problemAddingKnowledgePackages();
+    @Message(id = 34712, value = "Problem building knowledge")
+    String problemBuildingKnowledge();
 }
 

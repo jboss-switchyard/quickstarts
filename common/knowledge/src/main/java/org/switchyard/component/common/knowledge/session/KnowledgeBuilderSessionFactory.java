@@ -15,40 +15,42 @@ package org.switchyard.component.common.knowledge.session;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.kie.api.KieBase;
 import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.Message;
+import org.kie.api.builder.ReleaseId;
+import org.kie.api.builder.Results;
 import org.kie.api.persistence.jpa.KieStoreServices;
 import org.kie.api.runtime.Environment;
+import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.KieSessionConfiguration;
 import org.kie.api.runtime.StatelessKieSession;
-import org.kie.internal.KnowledgeBase;
-import org.kie.internal.KnowledgeBaseFactory;
-import org.kie.internal.builder.KnowledgeBuilder;
-import org.kie.internal.builder.KnowledgeBuilderConfiguration;
-import org.kie.internal.builder.KnowledgeBuilderError;
-import org.kie.internal.builder.KnowledgeBuilderErrors;
-import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.switchyard.ServiceDomain;
 import org.switchyard.SwitchYardException;
 import org.switchyard.component.common.knowledge.CommonKnowledgeMessages;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.util.Channels;
 import org.switchyard.component.common.knowledge.util.Configurations;
+import org.switchyard.component.common.knowledge.util.Containers;
 import org.switchyard.component.common.knowledge.util.Environments;
 import org.switchyard.component.common.knowledge.util.Listeners;
 import org.switchyard.component.common.knowledge.util.Loggers;
 import org.switchyard.component.common.knowledge.util.Resources;
 
 /**
- * A Base-based KnowledgeSessionFactory.
+ * A Builder-based KnowledgeSessionFactory.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-@SuppressWarnings("deprecation")
-class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
+class KnowledgeBuilderSessionFactory extends KnowledgeSessionFactory {
+
+    private static final AtomicInteger VERSION_COUNT = new AtomicInteger();
 
     private static final String LINE_SEPARATOR;
     static {
@@ -64,7 +66,7 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
     private final KieBase _base;
     private final KieSessionConfiguration _sessionConfiguration;
 
-    KnowledgeBaseSessionFactory(KnowledgeComponentImplementationModel model, ClassLoader loader, ServiceDomain domain, Properties propertyOverrides) {
+    KnowledgeBuilderSessionFactory(KnowledgeComponentImplementationModel model, ClassLoader loader, ServiceDomain domain, Properties propertyOverrides) {
         super(model, loader, domain, propertyOverrides);
         _base = newBase();
         _sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getLoader(), getPropertyOverrides());
@@ -116,35 +118,27 @@ class KnowledgeBaseSessionFactory extends KnowledgeSessionFactory {
     }
 
     private KieBase newBase() {
-        KnowledgeBuilderConfiguration builderConfiguration = Configurations.getBuilderConfiguration(getModel(), getLoader(), getPropertyOverrides());
-        KnowledgeBuilder builder = KnowledgeBuilderFactory.newKnowledgeBuilder(builderConfiguration);
-        Resources.addResources(getModel(), getLoader(), builder);
-        if (builder.hasErrors()) {
-            // NOTE: Logging can also be enabled on org.drools.builder.impl.KnowledgeBuilderImpl
-            StringBuilder sb = new StringBuilder(
-                    CommonKnowledgeMessages.MESSAGES.problemBuildingKnowledgePackages());
-            KnowledgeBuilderErrors errors = builder.getErrors();
-            for (KnowledgeBuilderError error : errors) {
+        KieServices kieServices = KieServices.Factory.get();
+        ReleaseId releaseId = Containers.toReleaseId("org.switchyard.tmp", "app", String.valueOf(VERSION_COUNT.incrementAndGet()));
+        KieFileSystem kieFileSystem = kieServices.newKieFileSystem().generateAndWritePomXML(releaseId);
+        Resources.addResources(getModel(), getLoader(), kieFileSystem);
+        KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem).buildAll();
+        Results results = kieBuilder.getResults();
+        if (results.hasMessages(Message.Level.ERROR)) {
+            StringBuilder sb = new StringBuilder(CommonKnowledgeMessages.MESSAGES.problemBuildingKnowledge());
+            for (Message message : results.getMessages(Message.Level.ERROR)) {
                 sb.append(LINE_SEPARATOR);
-                sb.append(error.toString().trim());
+                sb.append(message.toString().trim());
             }
             throw new SwitchYardException(sb.toString());
         }
-        KieBaseConfiguration baseConfiguration = Configurations.getBaseConfiguration(getModel(), getLoader(), getPropertyOverrides());
-        KnowledgeBase base = KnowledgeBaseFactory.newKnowledgeBase(baseConfiguration);
-        try {
-            base.addKnowledgePackages(builder.getKnowledgePackages());
-        } catch (Throwable t) {
-            StringBuilder sb = new StringBuilder(
-                    CommonKnowledgeMessages.MESSAGES.problemAddingKnowledgePackages());
-            String tm = t.getMessage();
-            if (tm != null) {
-                sb.append(": ");
-                sb.append(tm.trim());
-            }
-            throw new SwitchYardException(sb.toString(), t);
-        }
-        return base;
+        /* kieBuilder.buildAll() above already adds the kieModule (with our releaseId) to the kieRepository.
+        KieModule kieModule = kieBuilder.getKieModule();
+        kieServices.getRepository().addKieModule(kieModule);
+        */
+        KieContainer kieContainer = kieServices.newKieContainer(releaseId);
+        KieBaseConfiguration kieBaseConfiguration = Configurations.getBaseConfiguration(getModel(), getLoader(), getPropertyOverrides());
+        return kieContainer.newKieBase(kieBaseConfiguration);
     }
 
 }

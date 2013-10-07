@@ -16,6 +16,7 @@ package org.switchyard.component.bpm.util;
 import java.lang.reflect.Constructor;
 import java.util.Properties;
 
+// SWITCHYARD-1755: internal api usage still required (public APIs insufficient)
 import org.kie.internal.task.api.UserGroupCallback;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.bpm.BPMMessages;

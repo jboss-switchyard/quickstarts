@@ -114,7 +114,7 @@ public abstract class KnowledgeSessionFactory extends KnowledgeDisposer {
             if (manifestModel.getContainer() == null) {
                 ResourcesModel resourcesModel = manifestModel.getResources();
                 if (resourcesModel != null) {
-                    return new KnowledgeBaseSessionFactory(model, loader, domain, propertyOverrides);
+                    return new KnowledgeBuilderSessionFactory(model, loader, domain, propertyOverrides);
                 }
             }
         }

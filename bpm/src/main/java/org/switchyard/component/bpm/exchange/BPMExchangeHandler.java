@@ -38,6 +38,7 @@ import org.jbpm.shared.services.impl.JbpmJTATransactionManager;
 import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
 import org.kie.api.runtime.EnvironmentName;
 import org.kie.api.runtime.process.ProcessInstance;
+// SWITCHYARD-1755: internal api usage still required (public APIs insufficient)
 import org.kie.internal.KieInternalServices;
 import org.kie.internal.process.CorrelationAwareProcessRuntime;
 import org.kie.internal.process.CorrelationKey;

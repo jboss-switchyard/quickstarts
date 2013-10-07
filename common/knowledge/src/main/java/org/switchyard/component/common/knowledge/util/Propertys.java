@@ -15,6 +15,7 @@ package org.switchyard.component.common.knowledge.util;
 
 import java.util.Properties;
 
+// SWITCHYARD-1755: internal builder class usage still required (public APIs insufficient)
 import org.kie.internal.builder.conf.ClassLoaderCacheOption;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.config.model.property.PropertiesModel;
