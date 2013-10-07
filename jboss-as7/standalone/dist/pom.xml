@@ -16,7 +16,7 @@
     <parent>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-as7-standalone-parent</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>1.1.0.M4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -363,7 +363,9 @@
                 <property>
                     <name>jboss.home</name>
                 </property>
-                <file><exists>${jboss.home}/modules/system/layers/base/org/jboss/ws/spi/main/jbossws-spi-2.1.2.Final-redhat-1.jar</exists></file>
+                <file>
+                    <exists>${jboss.home}/modules/system/layers/base/org/jboss/ws/spi/main/jbossws-spi-2.1.2.Final-redhat-1.jar</exists>
+                </file>
             </activation>
             <properties>
                 <zip.file.name>${distro.file.final}.zip</zip.file.name>
@@ -387,7 +389,7 @@
                                 <phase>process-test-resources</phase>
                                 <configuration>
                                     <tasks>
-                                        <unzip src="${project.build.directory}/${zip.file.name}" dest="${jboss.home}" />
+                                        <unzip dest="${jboss.home}" src="${project.build.directory}/${zip.file.name}"/>
                                     </tasks>
                                 </configuration>
                                 <goals>
