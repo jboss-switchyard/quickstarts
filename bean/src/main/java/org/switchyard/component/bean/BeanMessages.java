@@ -235,4 +235,12 @@ public interface BeanMessages {
      */ 
     @Message(id = 30431, value = "Invocation of operation '%s' on bean component '%s' failed.")
     String invocationOfOperationFailed(String invocationMethodName, String serviceBeanClassName);
+    
+    /**
+     * illegalExchangeAccessOutsideHandlerChain method definition.
+     * @return String
+     */ 
+    @Message(id = 30432, value = "Illegal call to get the SwitchYard Exchange; must be called within the execution of an ExchangeHandler chain.")
+    IllegalStateException illegalExchangeAccessOutsideHandlerChain();
+    
 }

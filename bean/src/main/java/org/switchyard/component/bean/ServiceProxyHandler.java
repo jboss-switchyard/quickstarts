@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
+import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceReference;
@@ -32,6 +33,7 @@ import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.bean.deploy.BeanDeploymentMetaData;
 import org.switchyard.component.bean.internal.ReferenceInvokerBean;
 import org.switchyard.component.bean.internal.context.ContextProxy;
+import org.switchyard.component.bean.internal.exchange.ExchangeProxy;
 import org.switchyard.component.bean.internal.message.MessageProxy;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.deploy.ComponentNames;
@@ -156,14 +158,17 @@ public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHa
                 Object responseObject;
                 ContextProxy.setContext(exchange.getContext());
                 MessageProxy.setMessage(exchange.getMessage());
+                ExchangeProxy.setExchange(exchange);
                 try {
                     responseObject = invocation.getMethod().invoke(_serviceBean, invocation.getArgs());
                 } finally {
                     ContextProxy.setContext(null);
                     MessageProxy.setMessage(null);
+                    ExchangeProxy.setExchange(null);
                 }
                 
-                if (exchangePattern == ExchangePattern.IN_OUT) {
+                if (exchangePattern == ExchangePattern.IN_OUT 
+                        && exchange.getPhase() != ExchangePhase.OUT) {
                     Message message = exchange.createMessage();
                     message.setContent(responseObject);
                     exchange.send(message);
