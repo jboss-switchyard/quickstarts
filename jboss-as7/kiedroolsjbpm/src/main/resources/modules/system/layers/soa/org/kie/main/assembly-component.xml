@@ -27,7 +27,6 @@
             <outputDirectory>/modules/system/layers/soa/org/kie/main</outputDirectory>
             <includes>
                 <include>org.kie:kie-api</include>
-                <include>org.kie:kie-ci</include>
                 <include>org.kie:kie-internal</include>
             </includes>
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>

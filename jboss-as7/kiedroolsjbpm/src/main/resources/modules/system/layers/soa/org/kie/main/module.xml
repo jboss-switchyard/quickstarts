@@ -15,7 +15,6 @@
 <module xmlns="urn:jboss:module:1.0" name="org.kie">
     <resources>
         <resource-root path="kie-api-${version.kie}.jar"/>
-        <resource-root path="kie-ci-${version.kie}.jar"/>
         <resource-root path="kie-internal-${version.kie}.jar"/>
     </resources>
     <dependencies>
