@@ -84,6 +84,7 @@
         <module>demos/policy-security-wss-username</module>
         <module>demos/policy-transaction</module>
         <module>demos/cluster</module>
+        <module>demos/transaction-propagation</module>
     </modules>
     <!-- Conditionally include the assembly module.  It's not always present e.g. in the quickstarts distro. -->
     <profiles>
