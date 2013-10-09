@@ -1,5 +1,8 @@
-/*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+/** 
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the 
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.quickstarts.rules.camel.cbr;
+package org.jboss.quickstarts.fsw;
 
+import org.jboss.quickstarts.fsw.Box;
+import org.jboss.quickstarts.fsw.Widget;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,10 +35,9 @@ import org.switchyard.test.SwitchYardTestCaseConfig;
 public class RulesCamelCBRTest {
 
     private static final String[][] TESTS = new String[][] {
-        new String[] {"FF0000-ABC-123", "Red"},
-        new String[] {"00FF00-DEF-456", "Green"},
-        new String[] {"0000FF-GHI-789", "Blue"}
-    };
+        new String[] { "FF0000-ABC-123", "Red" },
+        new String[] { "00FF00-DEF-456", "Green" },
+        new String[] { "0000FF-GHI-789", "Blue" } };
 
     @ServiceOperation("RoutingService.processRoute")
     private Invoker router;

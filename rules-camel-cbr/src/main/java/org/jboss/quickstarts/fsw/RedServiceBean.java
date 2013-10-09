@@ -1,5 +1,8 @@
-/*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+/** 
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the 
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,34 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.quickstarts.rules.camel.cbr;
+package org.jboss.quickstarts.fsw;
 
-import java.io.Serializable;
+import org.apache.log4j.Logger;
+import org.switchyard.component.bean.Service;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@SuppressWarnings("serial")
-public class Box implements Serializable {
+@Service(RedService.class)
+public class RedServiceBean implements RedService {
 
-    private final Widget _widget;
-    private String _destination;
+    private static final Logger LOGGER = Logger.getLogger(RedServiceBean.class);
 
-    public Box(Widget widget) {
-        _widget = widget;
-        _widget.setBox(this);
-    }
-
-    public Widget getWidget() {
-        return _widget;
-    }
-
-    public String getDestination() {
-        return _destination;
-    }
-
-    public void setDestination(String destination) {
-        _destination = destination;
+    @Override
+    public void handleRed(Box box) {
+        LOGGER.info("Red service processing boxed widget with id: "
+            + box.getWidget().getId());
     }
 
 }

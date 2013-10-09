@@ -1,5 +1,8 @@
-/*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+/** 
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the 
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.quickstarts.rules.camel.cbr;
+package org.jboss.quickstarts.fsw;
 
 import java.io.Serializable;
 
@@ -19,25 +22,26 @@ import java.io.Serializable;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @SuppressWarnings("serial")
-public class Widget implements Serializable {
+public class Box implements Serializable {
 
-    private final String _id;
-    private Box _box;
+    private final Widget _widget;
+    private String _destination;
 
-    public Widget(String id) {
-        _id = id;
+    public Box(Widget widget) {
+        _widget = widget;
+        _widget.setBox(this);
     }
 
-    public String getId() {
-        return _id;
+    public Widget getWidget() {
+        return _widget;
     }
 
-    public Box getBox() {
-        return _box;
+    public String getDestination() {
+        return _destination;
     }
 
-    public void setBox(Box box) {
-        _box = box;
+    public void setDestination(String destination) {
+        _destination = destination;
     }
 
 }
