@@ -56,11 +56,7 @@ public class ExchangeDispatcherTest {
     @Before
     public void setUp() throws Exception {
         _domain = new MockDomain();
-        _camelContext = new SwitchYardCamelContext();
-        _camelContext.setServiceDomain(_domain);
-        _provider = new CamelExchangeBus(_camelContext);
-        _provider.init(_domain);
-        _camelContext.start();
+        initDomain(_domain);
     }
     
     @After
@@ -117,6 +113,40 @@ public class ExchangeDispatcherTest {
         Assert.assertTrue("Concurrent requests were not throttled!", 
                 sink.getReceivedCount() < NUM_SENDS);
     }
+    
+    @Test
+    public void throttleWithTimePeriod() throws Exception {
+        ServiceDomain domain = new MockDomain();
+        domain.setProperty(SwitchYardCamelContext.SHUTDOWN_TIMEOUT, "5");
+        initDomain(domain);
+        
+        QName name = new QName("testThrottleTimePeriod");
+        final ExchangeSink sink = new ExchangeSink();
+        final Service service = new MockService(name, new InOnlyService(), sink);
+        final ServiceReference reference = new ServiceReferenceImpl(name, new InOnlyService(), null, null);
+        // Set throttling to 1 per minute (60000 ms)
+        Throttling throttle = new Throttling().setMaxRequests(1).setTimePeriod(60 * 1000);
+        ServiceMetadataBuilder.update(reference.getServiceMetadata()).throttling(throttle);
+        
+        final ExchangeDispatcher dispatch = _provider.createDispatcher(reference);
+                
+        final int NUM_SENDS = 5;
+        for (int i = 0; i < NUM_SENDS; i++) {
+            new Thread(new Runnable() {
+                public void run() {
+                    Exchange exchange = dispatch.createExchange(sink, ExchangePattern.IN_ONLY);
+                    exchange.consumer(reference, reference.getInterface().getOperation(ServiceInterface.DEFAULT_OPERATION));
+                    exchange.provider(service, service.getInterface().getOperation(ServiceInterface.DEFAULT_OPERATION));
+                    Message message = exchange.createMessage();
+                    exchange.send(message);
+                }
+            }).start();
+        }
+        
+        Thread.sleep(4000);
+        Assert.assertEquals("Received more than one message per minute - throttling policy violated!", 
+                1, sink.getReceivedCount());
+    }
 
     @Test
     public void testDispatchInOut() throws Exception {
@@ -147,6 +177,14 @@ public class ExchangeDispatcherTest {
         Property relatesTo = lastExchange.getContext().getProperty(Exchange.RELATES_TO);
         assertNotNull("Relates to must be specified for outgoing message", relatesTo);
         assertEquals("Relates to property should point to in message id", messageId.getValue(), relatesTo.getValue());
+    }
+    
+    private void initDomain(ServiceDomain domain) throws Exception {
+        _camelContext = new SwitchYardCamelContext();
+        _camelContext.setServiceDomain(domain);
+        _provider = new CamelExchangeBus(_camelContext);
+        _provider.init(domain);
+        _camelContext.start();
     }
 
     /**

@@ -40,6 +40,7 @@ import org.apache.camel.model.TryDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.switchyard.ErrorListener;
 import org.switchyard.ExchangePattern;
+import org.switchyard.ServiceReference;
 import org.switchyard.bus.camel.audit.AuditInterceptStrategy;
 import org.switchyard.bus.camel.audit.FaultInterceptStrategy;
 import org.switchyard.common.camel.SwitchYardCamelContext;
@@ -75,15 +76,18 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
     };
 
     private String _endpoint;
+    private ServiceReference _reference;
 
     /**
      * Dedicated route builder which dynamically creates SwitchYard mediation
      * from given endpoint.
      * 
+     * @param reference ServiceReference representing the consumer
      * @param endpoint Endpoint address.
      */
-    public CamelExchangeBusRouteBuilder(String endpoint) {
-        this._endpoint = endpoint;
+    public CamelExchangeBusRouteBuilder(String endpoint, ServiceReference reference) {
+        _endpoint = endpoint;
+        _reference = reference;
     }
 
     @Override
@@ -178,8 +182,10 @@ public class CamelExchangeBusRouteBuilder extends RouteBuilder {
     }
     
     private void addThrottling(TryDefinition route) {
+        Throttling throttling = _reference.getServiceMetadata().getThrottling();
+        long timePeriodMS = throttling != null ? throttling.getTimePeriod() : Throttling.DEFAULT_TIME_PERIOD;
         route.filter(THROTTLE_CHECK)
-            .throttle(header(Throttling.MAX_REQUESTS))
+            .throttle(header(Throttling.MAX_REQUESTS)).timePeriodMillis(timePeriodMS)
             // throttle needs a child process, so we'll just remove the header
             // using an empty process definition causes some of the interceptors
             // to blow chunks, specifically audit interceptors

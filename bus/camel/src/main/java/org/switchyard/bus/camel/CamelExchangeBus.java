@@ -99,7 +99,7 @@ public class CamelExchangeBus implements ExchangeBus {
         }
 
         String endpoint = "direct:" + reference.getName();
-        RouteBuilder rb = new CamelExchangeBusRouteBuilder(endpoint);
+        RouteBuilder rb = new CamelExchangeBusRouteBuilder(endpoint, reference);
 
         try {
             // TODO - remove this logic once the test framework is able 
