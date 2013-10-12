@@ -133,6 +133,10 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
     protected T getBindingModel() {
         return _camelBindingModel;
     }
+    
+    protected SwitchYardCamelContext getSwitchYardCamelContext() {
+        return _camelContext;
+    }
 
     /**
      * Will create the Camel route and add it to the camel context.

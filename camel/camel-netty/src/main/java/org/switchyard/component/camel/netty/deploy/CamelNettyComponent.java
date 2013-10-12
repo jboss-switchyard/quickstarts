@@ -13,6 +13,8 @@
  */
 package org.switchyard.component.camel.netty.deploy;
 
+import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.component.camel.common.deploy.BaseBindingActivator;
 import org.switchyard.component.camel.common.deploy.BaseBindingComponent;
 import org.switchyard.component.camel.netty.model.v1.V1CamelNettyTcpBindingModel;
 import org.switchyard.component.camel.netty.model.v1.V1CamelNettyUdpBindingModel;
@@ -26,10 +28,12 @@ public class CamelNettyComponent extends BaseBindingComponent {
      * Creates new component.
      */
     public CamelNettyComponent() {
-        super("CamelNettyComponent",
-            V1CamelNettyTcpBindingModel.TCP,
-            V1CamelNettyUdpBindingModel.UDP
-        );
+        super("CamelNettyComponent", V1CamelNettyTcpBindingModel.TCP, V1CamelNettyUdpBindingModel.UDP);
+    }
+
+    @Override
+    protected BaseBindingActivator createActivator(SwitchYardCamelContext context, String... types) {
+        return new CamelNettyActivator(context, types);
     }
 
 }
