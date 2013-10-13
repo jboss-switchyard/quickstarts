@@ -1,0 +1,3 @@
+            <connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" secure="true">
+                <ssl name="https" password="changeit" certificate-key-file="${jboss.server.config.dir}/connector.jks"/>
+            </connector>

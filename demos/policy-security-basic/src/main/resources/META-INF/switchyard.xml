@@ -8,8 +8,8 @@
             </binding.soap>
         </service>
         <component name="WorkService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.WorkServiceBean"/>
-            <service name="WorkService" requires="confidentiality clientAuthentication authorization">
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.WorkServiceBean" requires="authorization"/>
+            <service name="WorkService" requires="confidentiality clientAuthentication">
                 <interface.java interface="org.switchyard.quickstarts.demo.policy.security.basic.WorkService"/>
             </service>
         </component>
@@ -20,13 +20,13 @@
         <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.Transformers" from="{urn:switchyard-quickstart-demo:policy-security-basic:0.1.0}doWork" to="java:org.switchyard.quickstarts.demo.policy.security.basic.Work"/>
     </transforms>
     <domain>
-      <!--
-      <properties>
-        <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
-      </properties>
-      -->
-      <securities>
-        <security rolesAllowed="friend"/>
-      </securities>
+        <!--
+        <properties>
+            <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
+        </properties>
+        -->
+        <securities>
+            <security rolesAllowed="friend"/>
+        </securities>
     </domain>
 </switchyard>

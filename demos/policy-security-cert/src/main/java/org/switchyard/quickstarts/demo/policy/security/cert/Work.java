@@ -16,7 +16,7 @@ package org.switchyard.quickstarts.demo.policy.security.cert;
 import java.io.Serializable;
 
 /**
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
 @SuppressWarnings("serial")
 public class Work implements Serializable {

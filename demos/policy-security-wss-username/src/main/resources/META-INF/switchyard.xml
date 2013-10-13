@@ -12,8 +12,8 @@
             </binding.soap>
         </service>
         <component name="WorkService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demo.policy.security.wss.username.WorkServiceBean"/>
-            <service name="WorkService" requires="confidentiality clientAuthentication authorization">
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demo.policy.security.wss.username.WorkServiceBean" requires="authorization"/>
+            <service name="WorkService" requires="confidentiality clientAuthentication">
                 <interface.java interface="org.switchyard.quickstarts.demo.policy.security.wss.username.WorkService"/>
             </service>
         </component>
@@ -24,7 +24,7 @@
         <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.wss.username.Transformers" from="{urn:switchyard-quickstart-demo:policy-security-wss-username:0.1.0}doWork" to="java:org.switchyard.quickstarts.demo.policy.security.wss.username.Work"/>
     </transforms>
     <domain>
-        <!-- Uncomment this section to trace message exchange activity
+        <!--
         <properties>
             <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
         </properties>

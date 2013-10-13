@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="policy-securty-basic-propagate">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="policy-security-basic-propagate" targetNamespace="urn:switchyard-quickstart-demo:policy-security-basic-propagate:0.1.0">
+        <service name="WorkService" promote="WorkService">
+            <interface.wsdl interface="META-INF/WorkService.wsdl#wsdl.porttype(WorkService)"/>
+            <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
+                <wsdl>META-INF/WorkService.wsdl</wsdl>
+                <contextPath>policy-security-basic-propagate</contextPath>
+            </binding.soap>
+        </service>
+        <component name="WorkService">
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.propagate.WorkServiceBean" requires="authorization"/>
+            <service name="WorkService" requires="confidentiality clientAuthentication">
+                <interface.java interface="org.switchyard.quickstarts.demo.policy.security.basic.propagate.WorkService"/>
+            </service>
+            <reference name="BackEndService">
+                <interface.java interface="org.switchyard.quickstarts.demo.policy.security.basic.propagate.BackEndService"/>
+            </reference>
+        </component>
+        <component name="BackEndService">
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.propagate.BackEndServiceBean" requires="authorization"/>
+            <service name="BackEndService" requires="confidentiality clientAuthentication">
+                <interface.java interface="org.switchyard.quickstarts.demo.policy.security.basic.propagate.BackEndService"/>
+            </service>
+        </component>
+    </composite>
+    <transforms>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.propagate.Transformers" from="java:org.switchyard.quickstarts.demo.policy.security.basic.propagate.WorkAck" to="java:org.switchyard.quickstarts.demo.policy.security.basic.propagate.Work"/>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.propagate.Transformers" from="java:org.switchyard.quickstarts.demo.policy.security.basic.propagate.WorkAck" to="{urn:switchyard-quickstart-demo:policy-security-basic-propagate:0.1.0}doWorkResponse"/>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.propagate.Transformers" from="{urn:switchyard-quickstart-demo:policy-security-basic-propagate:0.1.0}doWork" to="java:org.switchyard.quickstarts.demo.policy.security.basic.propagate.Work"/>
+    </transforms>
+    <domain>
+        <!--
+        <properties>
+            <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
+        </properties>
+        -->
+        <securities>
+            <security rolesAllowed="friend"/>
+        </securities>
+    </domain>
+</switchyard>

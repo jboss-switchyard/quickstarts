@@ -20,11 +20,11 @@
         <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.saml.Transformers" from="{urn:switchyard-quickstart-demo:policy-security-saml:0.1.0}doWork" to="java:org.switchyard.quickstarts.demo.policy.security.saml.Work"/>
     </transforms>
     <domain>
-        <!-- Uncomment this section to trace message exchange activity
-          <properties>
+        <!--
+        <properties>
             <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
-          </properties>
-          -->
+        </properties>
+        -->
         <securities>
             <security callbackHandler="org.switchyard.security.jboss.callback.handler.STSTokenCallbackHandler" securityDomain="saml-validate-token"/>
         </securities>

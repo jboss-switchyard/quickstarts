@@ -21,8 +21,8 @@
             </netty:binding.udp>
         </service>
         <component name="SecuredGreetingService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.camel.netty.binding.SecuredGreetingServiceBean"/>
-            <service name="SecuredGreetingService" requires="confidentiality authorization clientAuthentication">
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.camel.netty.binding.SecuredGreetingServiceBean" requires="authorization"/>
+            <service name="SecuredGreetingService" requires="confidentiality clientAuthentication">
                 <interface.java interface="org.switchyard.quickstarts.camel.netty.binding.GreetingService"/>
             </service>
         </component>
