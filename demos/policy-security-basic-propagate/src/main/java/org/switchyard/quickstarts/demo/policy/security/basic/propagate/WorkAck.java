@@ -11,12 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.quickstarts.demo.policy.security.saml;
+package org.switchyard.quickstarts.demo.policy.security.basic.propagate;
 
 import java.io.Serializable;
 
 /**
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 @SuppressWarnings("serial")
 public class WorkAck implements Serializable {

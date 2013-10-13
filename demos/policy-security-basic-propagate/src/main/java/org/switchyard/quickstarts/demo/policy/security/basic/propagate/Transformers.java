@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.quickstarts.demo.policy.security.basic;
+package org.switchyard.quickstarts.demo.policy.security.basic.propagate;
 
 import java.io.StringReader;
 
@@ -25,26 +25,26 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 public class Transformers {
 
-    @Transformer(from = "{urn:switchyard-quickstart-demo:policy-security-basic:0.1.0}doWork")
+    @Transformer(from = "{urn:switchyard-quickstart-demo:policy-security-basic-propagate:0.1.0}doWork")
     public Work transform(Element from) {
         Work work = new Work();
         work.setCommand(getElementValue(from, "command"));
         return work;
     }
 
-    @Transformer(to = "{urn:switchyard-quickstart-demo:policy-security-basic:0.1.0}doWorkResponse")
+    @Transformer(to = "{urn:switchyard-quickstart-demo:policy-security-basic-propagate:0.1.0}doWorkResponse")
     public Element transformToElement(WorkAck workAck) {
         StringBuilder ackXml = new StringBuilder()
-            .append("<policy-security-basic:doWorkResponse xmlns:policy-security-basic=\"urn:switchyard-quickstart-demo:policy-security-basic:0.1.0\">")
+            .append("<policy-security-basic-propagate:doWorkResponse xmlns:policy-security-basic-propagate=\"urn:switchyard-quickstart-demo:policy-security-basic-propagate:0.1.0\">")
             .append(    "<workAck>")
             .append(        "<command>" + workAck.getCommand() + "</command>")
             .append(        "<received>" + workAck.isReceived() + "</received>")
             .append(    "</workAck>")
-            .append("</policy-security-basic:doWorkResponse>");
+            .append("</policy-security-basic-propagate:doWorkResponse>");
         return toElement(ackXml.toString());
     }
 

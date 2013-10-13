@@ -8,8 +8,8 @@
             </binding.soap>
         </service>
         <component name="WorkService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demo.policy.security.cert.WorkServiceBean"/>
-            <service name="WorkService" requires="confidentiality clientAuthentication authorization">
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demo.policy.security.cert.WorkServiceBean" requires="authorization"/>
+            <service name="WorkService" requires="confidentiality clientAuthentication">
                 <interface.java interface="org.switchyard.quickstarts.demo.policy.security.cert.WorkService"/>
             </service>
         </component>
@@ -20,11 +20,11 @@
         <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.cert.Transformers" from="{urn:switchyard-quickstart-demo:policy-security-cert:0.1.0}doWork" to="java:org.switchyard.quickstarts.demo.policy.security.cert.Work"/>
     </transforms>
     <domain>
-        <!-- Uncomment this section to trace message exchange activity
-          <properties>
+        <!--
+        <properties>
             <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
-          </properties>
-          -->
+        </properties>
+        -->
         <securities>
             <security callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler" rolesAllowed="friend" securityDomain="policy-security-cert">
                 <properties>

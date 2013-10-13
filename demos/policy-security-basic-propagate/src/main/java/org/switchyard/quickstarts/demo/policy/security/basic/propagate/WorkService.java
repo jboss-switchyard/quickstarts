@@ -11,24 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.quickstarts.demo.policy.security.saml;
+package org.switchyard.quickstarts.demo.policy.security.basic.propagate;
 
-import java.io.Serializable;
+public interface WorkService {
 
-/**
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
- */
-@SuppressWarnings("serial")
-public class Work implements Serializable {
-
-    private String _command;
-
-    public String getCommand() {
-        return _command;
-    }
-
-    public void setCommand(String command) {
-        _command = command;
-    }
+    public WorkAck doWork(Work work);
 
 }
