@@ -114,7 +114,7 @@
         <version.milyn>1.5.1</version.milyn>
         <version.mock.javamail>1.9</version.mock.javamail>
         <version.mvel>2.1.6.Final</version.mvel>
-        <version.netty>3.2.6.Final</version.netty>
+        <version.netty>3.6.2.Final</version.netty>
         <!--<version.org.jboss.spec.javax.resource16>1.0.0.Final</version.org.jboss.spec.javax.resource16>-->
         <version.quartz>1.8.5</version.quartz>
         <version.qpid>0.18</version.qpid>
@@ -2052,7 +2052,7 @@
                 <version>${version.hornetq}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.netty</groupId>
+                <groupId>io.netty</groupId>
                 <artifactId>netty</artifactId>
                 <version>${version.netty}</version>
             </dependency>
