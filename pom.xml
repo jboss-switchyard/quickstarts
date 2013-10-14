@@ -394,7 +394,7 @@
                     <configLocation>checkstyle/checkstyle.xml</configLocation>
                     <consoleOutput>false</consoleOutput>
                     <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
-                    <failsOnError>false</failsOnError>
+                    <failsOnError>true</failsOnError>
                     <useFile/>
                 </configuration>
                 <dependencies>
