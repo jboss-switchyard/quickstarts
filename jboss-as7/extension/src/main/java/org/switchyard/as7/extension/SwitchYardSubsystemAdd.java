@@ -14,6 +14,7 @@
 package org.switchyard.as7.extension;
 
 import static org.switchyard.as7.extension.CommonAttributes.MODULE;
+import static org.switchyard.as7.extension.CommonAttributes.SECURITY_CONFIG;
 import static org.switchyard.as7.extension.CommonAttributes.PROPERTIES;
 import static org.switchyard.as7.extension.CommonAttributes.SOCKET_BINDING;
 
@@ -47,8 +48,10 @@ import org.switchyard.as7.extension.deployment.SwitchYardDeploymentProcessor;
 import org.switchyard.as7.extension.services.SwitchYardAdminService;
 import org.switchyard.as7.extension.services.SwitchYardInjectorService;
 import org.switchyard.as7.extension.services.SwitchYardServiceDomainManagerService;
+import org.switchyard.as7.extension.services.SwitchYardSystemSecurityService;
 import org.switchyard.as7.extension.util.ServerUtil;
 import org.switchyard.deploy.ServiceDomainManager;
+import org.switchyard.security.system.SystemSecurity;
 
 /**
  * The SwitchYard subsystem add update handler.
@@ -79,6 +82,7 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
         if (operation.hasDefined(PROPERTIES)) {
             submodel.get(PROPERTIES).set(operation.require(PROPERTIES));
         }
+        submodel.get(SECURITY_CONFIG).setEmptyObject();
         submodel.get(MODULE).setEmptyObject();
     }
 
@@ -110,11 +114,18 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
         injectorServiceBuilder.setInitialMode(Mode.ACTIVE);
         newControllers.add(injectorServiceBuilder.install());
 
-        // Add the AS7 Service for the ServiceDomainManager...
-        final SwitchYardServiceDomainManagerService serviceDomainManager = new SwitchYardServiceDomainManagerService();
+        // Add the AS7 Service for the SystemSecurity...
+        final SwitchYardSystemSecurityService systemSecurityService = new SwitchYardSystemSecurityService();
         newControllers.add(context.getServiceTarget()
-                .addService(SwitchYardServiceDomainManagerService.SERVICE_NAME, serviceDomainManager)
-                .addDependency(DependencyType.OPTIONAL, CacheService.getServiceName("cluster", null), Cache.class, serviceDomainManager.getCache())
+                .addService(SwitchYardSystemSecurityService.SERVICE_NAME, systemSecurityService)
+                .install());
+
+        // Add the AS7 Service for the ServiceDomainManager...
+        final SwitchYardServiceDomainManagerService serviceDomainManagerService = new SwitchYardServiceDomainManagerService();
+        newControllers.add(context.getServiceTarget()
+                .addService(SwitchYardServiceDomainManagerService.SERVICE_NAME, serviceDomainManagerService)
+                .addDependency(SwitchYardSystemSecurityService.SERVICE_NAME, SystemSecurity.class, serviceDomainManagerService.getSystemSecurity())
+                .addDependency(DependencyType.OPTIONAL, CacheService.getServiceName("cluster", null), Cache.class, serviceDomainManagerService.getCache())
                 .install());
 
         final SwitchYardAdminService adminService = new SwitchYardAdminService();

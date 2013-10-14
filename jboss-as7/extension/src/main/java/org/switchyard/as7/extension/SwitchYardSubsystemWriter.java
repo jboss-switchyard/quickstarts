@@ -50,6 +50,18 @@ final class SwitchYardSubsystemWriter implements XMLElementWriter<SubsystemMarsh
             writer.writeEmptyElement(Element.SOCKET_BINDING.getLocalName());
             writer.writeAttribute(Attribute.NAMES.getLocalName(), socketNames.asString());
         }
+        if (node.hasDefined(CommonAttributes.SECURITY_CONFIG)) {
+            ModelNode modules = node.get(CommonAttributes.SECURITY_CONFIG);
+            writer.writeStartElement(Element.SECURITY_CONFIGS.getLocalName());
+            for (Property property : modules.asPropertyList()) {
+                writer.writeStartElement(Element.SECURITY_CONFIG.getLocalName());
+                writer.writeAttribute(Attribute.IDENTIFIER.getLocalName(), property.getName());
+                ModelNode entry = property.getValue();
+                writeProperties(entry, writer);
+                writer.writeEndElement();
+            }
+            writer.writeEndElement();
+        }
         if (node.hasDefined(CommonAttributes.MODULE)) {
             ModelNode modules = node.get(CommonAttributes.MODULE);
             writer.writeStartElement(Element.MODULES.getLocalName());

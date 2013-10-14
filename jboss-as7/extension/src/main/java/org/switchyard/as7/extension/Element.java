@@ -33,6 +33,16 @@ public enum Element {
     SOCKET_BINDING("socket-binding"),
 
     /**
+     * security-configs element.
+     */
+    SECURITY_CONFIGS("security-configs"),
+
+    /**
+     * security-config element.
+     */
+    SECURITY_CONFIG("security-config"),
+
+    /**
      * modules element.
      */
     MODULES("modules"),

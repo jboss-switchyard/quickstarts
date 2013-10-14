@@ -22,12 +22,11 @@ import static org.jboss.as.controller.parsing.ParseUtils.requireNoContent;
 import static org.jboss.as.controller.parsing.ParseUtils.requireNoNamespaceAttribute;
 import static org.jboss.as.controller.parsing.ParseUtils.unexpectedAttribute;
 import static org.jboss.as.controller.parsing.ParseUtils.unexpectedElement;
-import static org.switchyard.as7.extension.CommonAttributes.IDENTIFIER;
+import static org.switchyard.as7.extension.CommonAttributes.EXTENSION;
 import static org.switchyard.as7.extension.CommonAttributes.IMPLCLASS;
 import static org.switchyard.as7.extension.CommonAttributes.MODULE;
-import static org.switchyard.as7.extension.CommonAttributes.MODULES;
-import static org.switchyard.as7.extension.CommonAttributes.EXTENSION;
 import static org.switchyard.as7.extension.CommonAttributes.PROPERTIES;
+import static org.switchyard.as7.extension.CommonAttributes.SECURITY_CONFIG;
 import static org.switchyard.as7.extension.CommonAttributes.SOCKET_BINDING;
 
 import java.util.Collections;
@@ -92,6 +91,9 @@ final class SwitchYardSubsystemReader implements XMLStreamConstants, XMLElementR
                         }
                         requireNoContent(reader);
                         break;
+                    case SECURITY_CONFIGS:
+                        parseSecurityConfigsElement(reader, list);
+                        break;
                     case MODULES:
                         parseModulesElement(reader, list);
                         break;
@@ -109,6 +111,65 @@ final class SwitchYardSubsystemReader implements XMLStreamConstants, XMLElementR
                 }
             }
         }
+    }
+
+    void parseSecurityConfigsElement(XMLExtendedStreamReader reader, List<ModelNode> list) throws XMLStreamException {
+
+        // Handle attributes
+        requireNoAttributes(reader);
+
+        // Handle module elements
+        while (reader.hasNext() && reader.nextTag() != END_ELEMENT) {
+            if (reader.getNamespaceURI().equals(SwitchYardExtension.NAMESPACE)) {
+                final Element element = Element.forName(reader.getLocalName());
+                if (element == Element.SECURITY_CONFIG) {
+                    parseSecurityConfigElement(reader, list);
+                } else {
+                    throw unexpectedElement(reader);
+                }
+            }
+        }
+    }
+
+    void parseSecurityConfigElement(XMLExtendedStreamReader reader, List<ModelNode> list) throws XMLStreamException {
+        String identifier = null;
+        final int count = reader.getAttributeCount();
+        for (int i = 0; i < count; i++) {
+            requireNoNamespaceAttribute(reader, i);
+            final Attribute attribute = Attribute.forName(reader.getAttributeLocalName(i));
+            switch (attribute) {
+                case IDENTIFIER:
+                    identifier = reader.getAttributeValue(i);
+                    break;
+                default:
+                    throw unexpectedAttribute(reader, i);
+            }
+        }
+        if (identifier == null) {
+            throw missingRequired(reader, Collections.singleton(Attribute.IDENTIFIER));
+        }
+
+        //Add the 'add' operation for each 'security-config' child
+        ModelNode securityConfigAdd = new ModelNode();
+        securityConfigAdd.get(OP).set(ModelDescriptionConstants.ADD);
+        PathAddress addr = PathAddress.pathAddress(PathElement.pathElement(SUBSYSTEM, SwitchYardExtension.SUBSYSTEM_NAME), PathElement.pathElement(SECURITY_CONFIG, identifier));
+        securityConfigAdd.get(OP_ADDR).set(addr.toModelNode());
+
+        while (reader.hasNext() && reader.nextTag() != END_ELEMENT) {
+            final Element element1 = Element.forName(reader.getLocalName());
+            switch (element1) {
+                case PROPERTIES: 
+                    ModelNode properties = parsePropertiesElement(identifier, reader);
+                    if (properties != null) {
+                        securityConfigAdd.get(PROPERTIES).set(properties);
+                    }
+                    break;
+                default:
+                    throw unexpectedElement(reader);
+            }
+        }
+
+        list.add(securityConfigAdd);
     }
 
     void parseModulesElement(XMLExtendedStreamReader reader, List<ModelNode> list) throws XMLStreamException {

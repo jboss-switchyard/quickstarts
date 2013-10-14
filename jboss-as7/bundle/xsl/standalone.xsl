@@ -48,6 +48,21 @@
     <xsl:copy>
         <xsl:apply-templates select="@*|node()"/>
         <subsystem xmlns="urn:jboss:domain:switchyard:1.0">
+            <!--
+            <security-configs>
+                <security-config identifier="org.switchyard.security.context.SecurityContext">
+                    <properties>
+                        <timeoutMillis>30000</timeoutMillis>
+                    </properties>
+                </security-config>
+                <security-config identifier="org.switchyard.security.crypto.PrivateCrypto">
+                    <properties>
+                        <sealAlgorithm>TripleDES</sealAlgorithm>
+                        <sealKeySize>168</sealKeySize>
+                    </properties>
+                </security-config>
+            </security-configs>
+            -->
             <modules>
                 <module identifier="org.switchyard.component.bean" implClass="org.switchyard.component.bean.deploy.BeanComponent"/>
                 <module identifier="org.switchyard.component.soap" implClass="org.switchyard.component.soap.deploy.SOAPComponent">

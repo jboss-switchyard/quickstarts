@@ -19,6 +19,7 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
 import static org.switchyard.as7.extension.CommonAttributes.EXTENSION;
 import static org.switchyard.as7.extension.CommonAttributes.MODULE;
+import static org.switchyard.as7.extension.CommonAttributes.SECURITY_CONFIG;
 
 import java.util.Locale;
 
@@ -68,6 +69,7 @@ public class SwitchYardExtension implements Extension {
     public static final String NAMESPACE = "urn:jboss:domain:switchyard:1.0";
 
     private static final PathElement SUBSYSTEM_PATH = PathElement.pathElement(SUBSYSTEM, SUBSYSTEM_NAME);
+    private static final PathElement SECURITY_CONFIG_PATH = PathElement.pathElement(SECURITY_CONFIG);
     private static final PathElement MODULE_PATH = PathElement.pathElement(MODULE);
     private static final PathElement EXTENSION_PATH = PathElement.pathElement(EXTENSION);
     private static final String RESOURCE_NAME = SwitchYardExtension.class.getPackage().getName() + ".LocalDescriptions";
@@ -94,6 +96,12 @@ public class SwitchYardExtension implements Extension {
 
         final SubsystemRegistration subsystem = context.registerSubsystem(SUBSYSTEM_NAME, 1, 0);
         subsystem.registerXMLElementWriter(SwitchYardSubsystemWriter.getInstance());
+
+        ResourceBuilder securityConfigsResource = ResourceBuilder.Factory.create(SECURITY_CONFIG_PATH, getResourceDescriptionResolver(SECURITY_CONFIG))
+                .setAddOperation(SwitchYardSecurityConfigAdd.INSTANCE)
+                .setRemoveOperation(SwitchYardSecurityConfigRemove.INSTANCE)
+                .addReadWriteAttribute(Attributes.IDENTIFIER, null, new ReloadRequiredWriteAttributeHandler(Attributes.IDENTIFIER))
+                .addReadWriteAttribute(Attributes.PROPERTIES, null, new ReloadRequiredWriteAttributeHandler(Attributes.PROPERTIES));
 
         ResourceBuilder modulesResource = ResourceBuilder.Factory.create(MODULE_PATH, getResourceDescriptionResolver(MODULE))
                 .setAddOperation(SwitchYardModuleAdd.INSTANCE)
@@ -123,6 +131,7 @@ public class SwitchYardExtension implements Extension {
                 .addOperation(Operations.STOP_GATEWAY, SwitchYardSubsystemStopGateway.INSTANCE)
                 .addOperation(Operations.START_GATEWAY, SwitchYardSubsystemStartGateway.INSTANCE)
                 .addOperation(Operations.UPDATE_THROTTLING, SwitchYardSubsystemUpdateThrottling.INSTANCE)
+                .pushChild(securityConfigsResource).pop()
                 .pushChild(modulesResource).pop()
                 .pushChild(extensionsResource).pop()
                 .build();

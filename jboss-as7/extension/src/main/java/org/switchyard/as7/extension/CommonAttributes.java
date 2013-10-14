@@ -20,6 +20,16 @@ package org.switchyard.as7.extension;
 public interface CommonAttributes {
 
     /**
+     * The security-configs attribute.
+     */
+    String SECURITY_CONFIGS = "security-configs";
+
+    /**
+     * The security-config attribute.
+     */
+    String SECURITY_CONFIG = "security-config";
+
+    /**
      * The component modules attribute.
      */
     String MODULES = "modules";

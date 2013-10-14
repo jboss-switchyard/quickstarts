@@ -22,6 +22,7 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.switchyard.deploy.ServiceDomainManager;
+import org.switchyard.security.system.SystemSecurity;
 
 /**
  * ServiceDomainManager Service for AS7 deployments.
@@ -37,21 +38,30 @@ public class SwitchYardServiceDomainManagerService implements Service<ServiceDom
 
     private ServiceDomainManager _domainManager;
 
+    private final InjectedValue<SystemSecurity> _systemSecurity = new InjectedValue<SystemSecurity>();
     private final InjectedValue<Cache> _cache = new InjectedValue<Cache>();
 
     @Override
     public void start(StartContext startContext) throws StartException {
-        _domainManager = new ServiceDomainManager();
+        _domainManager = new ServiceDomainManager(getSystemSecurity().getValue());
     }
 
     @Override
     public void stop(StopContext stopContext) {
-        //endpoint.stop();    
     }
 
     @Override
     public ServiceDomainManager getValue() throws IllegalStateException, IllegalArgumentException {
         return _domainManager;
+    }
+
+    /**
+     * SystemSecurity injection point.
+     * 
+     * @return injected SystemSecurity
+     */
+    public InjectedValue<SystemSecurity> getSystemSecurity() {
+        return _systemSecurity;
     }
 
     /**
