@@ -51,13 +51,13 @@ public class SoapAddressingClient {
             System.out.println("Usage: SoapAddressingClient <item> <quantity>");
             return;
         } else {
-            SOAPUtil.prettyPrint(sendMessage(args[0], args[1]), System.out);
+            SOAPUtil.prettyPrint(sendMessage(args[0], args[1], SWITCHYARD_WEB_SERVICE), System.out);
             System.out.println();
             System.out.println(getFileMessage());
         }
     }
 
-    public static String sendMessage(String item, String quantity) throws Exception {
+    public static String sendMessage(String item, String quantity, String switchyard_web_service) throws Exception {
         File testFile = getFile();
         if (testFile.exists()) {
             testFile.delete();
@@ -65,7 +65,7 @@ public class SoapAddressingClient {
         String command =  null;
         HTTPMixIn http = new HTTPMixIn();
         http.initialize();
-        return http.postString(SWITCHYARD_WEB_SERVICE, String.format(SOAP_TEMPLATE, item, quantity));
+        return http.postString(switchyard_web_service, String.format(SOAP_TEMPLATE, item, quantity));
     }
 
     public static String getFileMessage() throws Exception {
@@ -75,7 +75,7 @@ public class SoapAddressingClient {
         while (!testFile.exists()) {
             Thread.sleep(100);
             timeout += 100;
-            if (timeout == 5000) {
+            if (timeout == 20000) {
                 break;
             }
         }

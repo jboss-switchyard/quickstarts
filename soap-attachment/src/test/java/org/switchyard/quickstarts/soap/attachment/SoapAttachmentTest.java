@@ -19,9 +19,9 @@ import javax.xml.soap.SOAPMessage;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.common.type.Classes;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.transform.config.model.TransformSwitchYardScanner;
@@ -33,9 +33,16 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
         scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class })
 public class SoapAttachmentTest {
 
+    private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8081/soap-attachment/ImageServiceService";
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "8081");
+    }
+
     @Test
     public void testSwitchYardWebService() throws Exception {
-        SOAPMessage response = SoapAttachmentClient.sendMessage();
+        SOAPMessage response = SoapAttachmentClient.sendMessage(SWITCHYARD_WEB_SERVICE);
         Assert.assertTrue(response.getAttachments().hasNext());
     }
 }

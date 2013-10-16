@@ -13,6 +13,7 @@
       <soap:binding.soap>
         <soap:wsdl>ImageService.wsdl</soap:wsdl>
         <soap:contextPath>soap-attachment</soap:contextPath>
+        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
       </soap:binding.soap>
     </sca:service>
     <sca:reference name="EchoImageService" multiplicity="0..1" promote="InternalEchoServiceBean/EchoImageService">
@@ -20,7 +21,7 @@
       <soap:binding.soap>
         <soap:contextMapper/>
         <soap:wsdl>ImageService-External.wsdl</soap:wsdl>
-        <soap:endpointAddress>http://localhost:8080/soap-attachment-external/ImageServiceService</soap:endpointAddress>
+        <soap:endpointAddress>http://localhost:${jettyPort}/soap-attachment-external/ImageServiceService</soap:endpointAddress>
       </soap:binding.soap>
     </sca:reference>
     <sca:component name="InternalEchoServiceBean">
@@ -41,6 +42,7 @@
         <soap:contextMapper/>
         <soap:wsdl>ImageService-External.wsdl</soap:wsdl>
         <soap:contextPath>soap-attachment-external</soap:contextPath>
+        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
       </soap:binding.soap>
     </sca:service>
     <sca:component name="EchoServiceBean">
@@ -52,4 +54,9 @@
       </sca:service>
     </sca:component>
   </sca:composite>
+  <domain>
+    <properties>
+      <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+    </properties>
+  </domain>
 </switchyard>

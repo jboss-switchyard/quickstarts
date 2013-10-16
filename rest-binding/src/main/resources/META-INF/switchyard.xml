@@ -17,7 +17,7 @@
             <rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:1.0">
                 <rest:messageComposer class="org.switchyard.quickstarts.rest.binding.CustomComposer"/>
                 <rest:interfaces>org.switchyard.quickstarts.rest.binding.WarehouseResource</rest:interfaces>
-                <rest:contextPath>rest-binding</rest:contextPath>
+                <rest:address>http://localhost:${restPort}</rest:address>
             </rest:binding.rest>
         </sca:reference>
         <component name="OrderService">
@@ -36,4 +36,9 @@
             </service>
         </component>
     </composite>
+    <domain>
+        <properties>
+            <property name="restPort" value="${org.switchyard.component.resteasy.standalone.port:8080}"/>
+        </properties>
+    </domain>
 </switchyard>

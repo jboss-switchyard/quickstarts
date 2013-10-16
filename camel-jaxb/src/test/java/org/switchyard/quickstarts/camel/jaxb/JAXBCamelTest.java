@@ -17,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 
@@ -30,10 +31,15 @@ import org.switchyard.test.SwitchYardTestCaseConfig;
 @RunWith(SwitchYardRunner.class)
 public class JAXBCamelTest {
 
-    private static final String BASE_URL = "http://localhost:8080/camel-binding";
+    private static final String BASE_URL = "http://localhost:8081/camel-binding";
 
     private HTTPMixIn http;
 
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "8081");
+    }
+    
     @Test
     public void httpJAXBCamelEndpoint() throws Exception {
         GreetingRequest request = new GreetingRequest("Magesh");

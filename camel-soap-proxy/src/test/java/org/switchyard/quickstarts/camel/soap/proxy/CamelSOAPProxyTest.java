@@ -19,6 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
@@ -34,11 +35,16 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
         mixins = {HTTPMixIn.class})
 public class CamelSOAPProxyTest {
 
-    private static final String WEB_SERVICE = "http://localhost:8080/ReverseService";
-    private static final String PROXY_SERVICE = "http://localhost:8080/proxy/ReverseService";
+    private static final String WEB_SERVICE = "http://localhost:8081/ReverseService";
+    private static final String PROXY_SERVICE = "http://localhost:8081/proxy/ReverseService";
 
     private HTTPMixIn _http;
     private Endpoint _endpoint;
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "8081");
+    }
 
     @Before
     public void startWebService() throws Exception {

@@ -14,9 +14,6 @@
 
 package org.switchyard.quickstarts.soap.attachment;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 
@@ -29,7 +26,6 @@ import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
 
 import org.switchyard.common.type.Classes;
@@ -45,15 +41,14 @@ public class SoapAttachmentClient {
     private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8080/soap-attachment/ImageServiceService";
 
     public static void main(String[] args) throws Exception {
-        String command =  null;
-        SOAPMessage response = sendMessage();
+        SOAPMessage response = sendMessage(SWITCHYARD_WEB_SERVICE);
         SOAPUtil.prettyPrint(response, System.out);
         Iterator<AttachmentPart> iterator = response.getAttachments();
         AttachmentPart ap = iterator.next();
         System.out.println("Response attachment: " + ap.getContentId() + " with content type " + ap.getContentType());
     }
 
-    public static SOAPMessage sendMessage() throws Exception {
+    public static SOAPMessage sendMessage(String switchyard_web_service) throws Exception {
         SOAPConnectionFactory conFactory = SOAPConnectionFactory.newInstance();
 
         SOAPConnection connection = conFactory.createConnection();
@@ -67,6 +62,6 @@ public class SoapAttachmentClient {
         ap.setDataHandler(new DataHandler(new URLDataSource(imageUrl)));
         ap.setContentId("switchyard.png");
         msg.addAttachmentPart(ap);
-        return connection.call(msg, new URL(SWITCHYARD_WEB_SERVICE));
+        return connection.call(msg, new URL(switchyard_web_service));
     }
 }
