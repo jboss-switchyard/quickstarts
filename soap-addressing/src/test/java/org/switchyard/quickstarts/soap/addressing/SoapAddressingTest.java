@@ -14,13 +14,6 @@
 
 package org.switchyard.quickstarts.soap.addressing;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.Endpoint;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.transform.config.model.TransformSwitchYardScanner;
@@ -39,9 +33,14 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
         scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class })
 public class SoapAddressingTest {
 
-    private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8080/soap-addressing/order/OrderService";
+    private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8081/soap-addressing/order/OrderService";
 
     private HTTPMixIn _httpMixIn;
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "8081");
+    }
 
     @Test
     public void testSwitchYardWebService() throws Exception {
@@ -52,7 +51,7 @@ public class SoapAddressingTest {
 
     @Test
     public void fault() throws Exception {
-        String response = SoapAddressingClient.sendMessage("Airbus", "3");
+        String response = SoapAddressingClient.sendMessage("Airbus", "3", SWITCHYARD_WEB_SERVICE);
         org.switchyard.component.soap.util.SOAPUtil.prettyPrint(response, System.out);
         Assert.assertTrue(response.contains("<RelatesTo xmlns=\"http://www.w3.org/2005/08/addressing\">uuid:3d3fcbbb-fd43-4118-b40e-62577894f39a</RelatesTo>"));
         // Fault detail is not generated due to HandlerException?
@@ -61,7 +60,7 @@ public class SoapAddressingTest {
 
     @Test
     public void wsAddressingReplyTo() throws Exception {
-        String response = SoapAddressingClient.sendMessage("Boeing", "10");
+        String response = SoapAddressingClient.sendMessage("Boeing", "10", SWITCHYARD_WEB_SERVICE);
         Assert.assertTrue(response.contains("urn:switchyard-quickstart:soap-addressing:1.0:OrderService:orderResponse"));
         Assert.assertTrue(response.contains("uuid:3d3fcbbb-fd43-4118-b40e-62577894f39a"));
         Assert.assertTrue(response.contains("Thank you for your order. You should hear back from our WarehouseService shortly!"));
@@ -76,7 +75,7 @@ public class SoapAddressingTest {
     @Ignore
     @Test
     public void wsAddressingFaultTo() throws Exception {
-        String response = SoapAddressingClient.sendMessage("Guardian Angel", "3");
+        String response = SoapAddressingClient.sendMessage("Guardian Angel", "3", SWITCHYARD_WEB_SERVICE);
         Assert.assertTrue(response.contains("Thank you for your order. You should hear back from our WarehouseService shortly!"));
 
         String text = SoapAddressingClient.getFileMessage();

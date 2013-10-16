@@ -6,7 +6,7 @@
         <wsa:MessageID>uuid:3d3fcbbb-fd43-4118-b40e-62577894f39a</wsa:MessageID>
         <wsa:Action>urn:switchyard-quickstart:soap-addressing:1.0:OrderService:orderRequest</wsa:Action>
         <wsa:ReplyTo>
-             <wsa:Address>http://localhost:8080/soap-addressing/client/ResponseService</wsa:Address>
+             <wsa:Address>http://localhost:8081/soap-addressing/client/ResponseService</wsa:Address>
         </wsa:ReplyTo>
     </soapenv:Header>
    <soapenv:Body>

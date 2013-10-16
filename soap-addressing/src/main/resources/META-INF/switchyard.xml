@@ -13,6 +13,7 @@
         <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>
         <soap:wsdl>OrderService.wsdl</soap:wsdl>
         <soap:contextPath>soap-addressing/order</soap:contextPath>
+        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
       </soap:binding.soap>
     </sca:service>
 
@@ -22,7 +23,7 @@
         <!-- Will be set by the Addressing handler  -->
         <!--<soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>-->
         <soap:wsdl>WarehouseService.wsdl</soap:wsdl>
-        <soap:endpointAddress>http://localhost:8080/soap-addressing/warehouse/WarehouseService</soap:endpointAddress>
+        <soap:endpointAddress>http://localhost:${jettyPort}/soap-addressing/warehouse/WarehouseService</soap:endpointAddress>
       </soap:binding.soap>
     </sca:reference>
 
@@ -44,6 +45,7 @@
         <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>
         <soap:wsdl>WarehouseService.wsdl</soap:wsdl>
         <soap:contextPath>soap-addressing/warehouse</soap:contextPath>
+        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
       </soap:binding.soap>
     </sca:service>
 
@@ -54,7 +56,7 @@
         <!-- <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/> -->
         <soap:wsdl>ResponseService.wsdl</soap:wsdl>
         <!-- Will be set by To header -->
-        <!-- <soap:endpointAddress>http://localhost:8080/soap-addressing/client/ResponseService</soap:endpointAddress> -->
+        <!-- <soap:endpointAddress>http://localhost:${jettyPort}/soap-addressing/client/ResponseService</soap:endpointAddress> -->
       </soap:binding.soap>
     </sca:reference>
 
@@ -65,7 +67,7 @@
         <!-- <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/> -->
         <soap:wsdl>FaultService.wsdl</soap:wsdl>
         <!-- Will be set by To header -->
-        <!-- <soap:endpointAddress>http://localhost:8080/soap-addressing/fault/FaultService</soap:endpointAddress> -->
+        <!-- <soap:endpointAddress>http://localhost:${jettyPort}/soap-addressing/fault/FaultService</soap:endpointAddress> -->
       </soap:binding.soap>
     </sca:reference>
 
@@ -90,6 +92,7 @@
         <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>
         <soap:wsdl>ResponseService.wsdl</soap:wsdl>
         <soap:contextPath>soap-addressing/client</soap:contextPath>
+        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
       </soap:binding.soap>
     </sca:service>
 
@@ -122,6 +125,7 @@
         <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>
         <soap:wsdl>FaultService.wsdl</soap:wsdl>
         <soap:contextPath>soap-addressing/fault</soap:contextPath>
+        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
       </soap:binding.soap>
     </sca:service>
 
@@ -155,4 +159,9 @@
     <xform:transform.jaxb from="java:org.switchyard.quickstarts.soap.addressing.OrderResponse" to="{urn:switchyard-quickstart:soap-addressing:1.0}orderResponse"/>
     <xform:transform.jaxb from="{urn:switchyard-quickstart:soap-addressing:1.0}orderResponse" to="java:org.switchyard.quickstarts.soap.addressing.OrderResponse"/>
   </transforms>
+  <domain>
+    <properties>
+      <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+    </properties>
+  </domain>
 </switchyard>

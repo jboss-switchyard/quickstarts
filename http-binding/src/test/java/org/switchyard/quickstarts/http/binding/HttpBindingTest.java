@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.transform.config.model.TransformSwitchYardScanner;
@@ -36,10 +37,15 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 @RunWith(SwitchYardRunner.class)
 public class HttpBindingTest {
 
-    private static final String BASE_URL = "http://localhost:8080/http-binding";
+    private static final String BASE_URL = "http://localhost:8081/http-binding";
 
     private HTTPMixIn http;
-
+    
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "8081");
+    }
+    
     /**
      * Ignore until this is fixed http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7189193
      */

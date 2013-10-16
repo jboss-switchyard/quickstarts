@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.transform.config.model.TransformSwitchYardScanner;
@@ -33,11 +34,16 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
         scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class })
 public class SoapBindingTest {
 
-    private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8080/soap-binding-rpc/HelloWorldWSService";
+    private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8081/soap-binding-rpc/HelloWorldWSService";
 
     private static Endpoint _endpoint;
 
     private HTTPMixIn _httpMixIn;
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "8081");
+    }
 
     @Test
     public void testSwitchYardWebService() throws Exception {

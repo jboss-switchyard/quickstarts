@@ -18,6 +18,7 @@ package org.switchyard.quickstarts.rest.binding;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.test.SwitchYardTestKit;
@@ -41,6 +42,11 @@ public class RESTEasyBindingTest {
 
     private HTTPMixIn http;
 
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.resteasy.standalone.port", "8081");
+    }
+    
     /**
      * This Quickstart test exclusively uses Netty server due to buggy JDK HttpServer.
      * See https://issues.jboss.org/browse/RESTEASY-734
@@ -99,12 +105,12 @@ public class RESTEasyBindingTest {
         Assert.assertEquals(SUCCESS, response);
     }
 
-    private static String BASE_URL = "http://localhost:8080/rest-binding";
+    private static String BASE_URL = "http://localhost:8081/rest-binding";
 
     static {
         if (ResourcePublisherFactory.ignoreContext()) {
-            // Context paths are irrelevent for NettyJaxrs server
-            BASE_URL = "http://localhost:8080";
+            // Context paths are irrelevant for NettyJaxrs server
+            BASE_URL = "http://localhost:8081";
         }
     }
 
