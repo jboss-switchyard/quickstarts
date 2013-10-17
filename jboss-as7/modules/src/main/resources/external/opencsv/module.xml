@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
- - 
+ -
  - Licensed under the Apache License, Version 2.0 (the "License");
  - you may not use this file except in compliance with the License.
  - You may obtain a copy of the License at
@@ -12,22 +12,10 @@
  - See the License for the specific language governing permissions and
  - limitations under the License.
  -->
-<module xmlns="urn:jboss:module:1.0" name="org.milyn">
+<module xmlns="urn:jboss:module:1.1" name="net.sf.opencsv">
 
     <resources>
-        <resource-root path="milyn-smooks-all-${version.milyn}.jar"/>
+        <resource-root path="opencsv-${version.opencsv}.jar"/>
     </resources>
 
-    <dependencies>
-        <module name="com.thoughtworks.xstream" />
-        <module name="javax.api" />
-        <module name="org.apache.commons.lang"/>
-        <module name="org.apache.commons.logging" />
-        <module name="org.freemarker" />
-        <module name="org.jaxen" />
-        <module name="org.mvel" />
-
-        <!-- Add Support for CSV Parsing -->
-        <module name="net.sf.opencsv" />
-    </dependencies>
 </module>

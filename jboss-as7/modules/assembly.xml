@@ -96,6 +96,7 @@
       <componentDescriptor>src/main/resources/external/jruby/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/milyn/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/ognl/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/opencsv/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/python/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/quartz/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/rhino/assembly-component.xml</componentDescriptor>
