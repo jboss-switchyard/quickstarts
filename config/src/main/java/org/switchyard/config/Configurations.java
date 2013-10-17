@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.composite.SCANamespace;
 
 /**
  * Utility class with helper methods dealing with Configurations.
@@ -39,7 +40,7 @@ public final class Configurations {
     private static final QName DEFAULT_QNAME = XMLHelper.createQName(Configuration.class.getSimpleName().toLowerCase());
 
     // HACK: SWITCHYARD-145
-    private static final QName COMPOSITE_QNAME = XMLHelper.createQName(CompositeModel.DEFAULT_NAMESPACE, CompositeModel.COMPOSITE);
+    private static final QName COMPOSITE_QNAME = XMLHelper.createQName(SCANamespace.DEFAULT.uri(), CompositeModel.COMPOSITE);
 
     private static final QName SCHEMA_LOCATION_QNAME = XMLHelper.createQName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation");
 

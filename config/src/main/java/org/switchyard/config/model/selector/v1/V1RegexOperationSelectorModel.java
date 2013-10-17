@@ -19,7 +19,6 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.selector.RegexOperationSelectorModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * V1 Regex OperationSelector Model.
@@ -28,9 +27,10 @@ public class V1RegexOperationSelectorModel extends BaseModel implements RegexOpe
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1RegexOperationSelectorModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, OPERATION_SELECTOR + '.' + REGEX));
+    public V1RegexOperationSelectorModel(String namespace) {
+        super(new QName(namespace, OPERATION_SELECTOR + '.' + REGEX));
     }
 
     /**

@@ -29,6 +29,7 @@ import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.config.model.validate.ValidatesModel;
@@ -56,7 +57,7 @@ public class ValidateModelTests {
 
     @Test
     public void testCreateEmptyModel() throws Exception {
-        String namespace = ValidateModel.DEFAULT_NAMESPACE;
+        String namespace = ValidateNamespace.DEFAULT.uri();
         String name = ValidateModel.VALIDATE + '.' + JavaValidateModel.JAVA;
         Model model = new ModelPuller<Model>().pull(XMLHelper.createQName(namespace, name));
         Assert.assertTrue(model instanceof JavaValidateModel);
@@ -66,17 +67,17 @@ public class ValidateModelTests {
 
     @Test
     public void testCreate() throws Exception {
-        SwitchYardModel switchyard = new V1SwitchYardModel();
-        ValidatesModel validates = new V1ValidatesModel();
-        JavaValidateModel javaValidate = new V1JavaValidateModel();
+        SwitchYardModel switchyard = new V1SwitchYardModel(SwitchYardNamespace.V_1_0.uri());
+        ValidatesModel validates = new V1ValidatesModel(SwitchYardNamespace.V_1_0.uri());
+        JavaValidateModel javaValidate = new V1JavaValidateModel(ValidateNamespace.V_1_0.uri());
         javaValidate.setName(new QName("msgA"));
         javaValidate.setClazz("org.examples.validate.AValidate");
         validates.addValidate(javaValidate);
-        XmlValidateModel xmlValidate = new V1XmlValidateModel();
+        XmlValidateModel xmlValidate = new V1XmlValidateModel(ValidateNamespace.V_1_0.uri());
         xmlValidate.setName(new QName("msgB"));
         xmlValidate.setSchemaType(XmlSchemaType.XML_SCHEMA);
-        FileEntryModel entry = new V1FileEntryModel().setFile("/validates/xxx.xml");
-        SchemaFilesModel schemaFiles = new V1SchemaFilesModel();
+        FileEntryModel entry = new V1FileEntryModel(ValidateNamespace.V_1_0.uri()).setFile("/validates/xxx.xml");
+        SchemaFilesModel schemaFiles = new V1SchemaFilesModel(ValidateNamespace.V_1_0.uri());
         schemaFiles.addEntry(entry);
         xmlValidate.setSchemaFiles(schemaFiles);
         xmlValidate.setFailOnWarning(true);

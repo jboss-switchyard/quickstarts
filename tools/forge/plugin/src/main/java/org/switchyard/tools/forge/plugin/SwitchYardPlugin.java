@@ -69,6 +69,7 @@ import org.switchyard.config.model.selector.v1.V1XPathOperationSelectorModel;
 import org.switchyard.config.model.switchyard.ArtifactModel;
 import org.switchyard.config.model.switchyard.ArtifactsModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.config.model.switchyard.v1.V1ArtifactModel;
 import org.switchyard.config.model.switchyard.v1.V1ArtifactsModel;
 import org.switchyard.config.model.transform.TransformModel;
@@ -79,6 +80,7 @@ import org.switchyard.policy.Policy;
 import org.switchyard.policy.PolicyFactory;
 import org.switchyard.transform.config.model.JavaTransformModel;
 import org.switchyard.transform.config.model.SmooksTransformModel;
+import org.switchyard.transform.config.model.TransformNamespace;
 import org.switchyard.transform.config.model.XsltTransformModel;
 import org.switchyard.transform.config.model.v1.V1JAXBTransformModel;
 import org.switchyard.transform.config.model.v1.V1JSONTransformModel;
@@ -89,6 +91,7 @@ import org.switchyard.validate.config.model.FileEntryModel;
 import org.switchyard.validate.config.model.JavaValidateModel;
 import org.switchyard.validate.config.model.SchemaCatalogsModel;
 import org.switchyard.validate.config.model.SchemaFilesModel;
+import org.switchyard.validate.config.model.ValidateNamespace;
 import org.switchyard.validate.config.model.XmlSchemaType;
 import org.switchyard.validate.config.model.XmlValidateModel;
 import org.switchyard.validate.config.model.v1.V1FileEntryModel;
@@ -315,6 +318,17 @@ public class SwitchYardPlugin implements Plugin {
         out.println("Created unit test " + testFile);
     }
     
+    private String getSwitchYardNamespace(SwitchYardModel config) {
+        String ns = null;
+        if (config != null) {
+            ns = config.getModelRootNamespace();
+        }
+        if (ns == null) {
+            ns = SwitchYardNamespace.DEFAULT.uri();
+        }
+        return ns;
+    }
+    
     /**
      * Adds or removes the message trace handler based on message tracing preference.
      * @param enable true to enable tracing, false to disable
@@ -329,25 +343,27 @@ public class SwitchYardPlugin implements Plugin {
             final PipeOut out) {
 
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
-        DomainModel domain = switchYard.getSwitchYardConfig().getDomain();
+        SwitchYardModel switchYardConfig = switchYard.getSwitchYardConfig();
+        String switchYardNamespace = getSwitchYardNamespace(switchYardConfig);
+        DomainModel domain = switchYardConfig.getDomain();
         String result;
         
         // If enable option is not specified or enable=true, then enable the MessageTrace handler
         if (enable == null || enable) {
             // create the domain config if it doesn't exist already
             if (domain == null) {
-                domain = new V1DomainModel();
-                switchYard.getSwitchYardConfig().setDomain(domain);
+                domain = new V1DomainModel(switchYardNamespace);
+                switchYardConfig.setDomain(domain);
             }
             // need to create the properties config if it's not already present
             PropertiesModel properties = domain.getProperties();
             if (properties == null) {
-                properties = new V1PropertiesModel();
+                properties = new V1PropertiesModel(switchYardNamespace);
                 domain.setProperties(properties);
             }
             PropertyModel property = properties.getProperty(TRACE_PROPERTY);
             if (property == null) {
-                property = new V1PropertyModel();
+                property = new V1PropertyModel(switchYardNamespace);
                 property.setName(TRACE_PROPERTY);
             }
             property.setValue("true");
@@ -422,12 +438,14 @@ public class SwitchYardPlugin implements Plugin {
         }
         
         // update config
-        ArtifactsModel artifacts = switchYard.getSwitchYardConfig().getArtifacts();
+        SwitchYardModel switchYardConfig = switchYard.getSwitchYardConfig();
+        String switchYardNamespace = getSwitchYardNamespace(switchYardConfig);
+        ArtifactsModel artifacts = switchYardConfig.getArtifacts();
         if (artifacts == null) {
-            artifacts = new V1ArtifactsModel();
+            artifacts = new V1ArtifactsModel(switchYardNamespace);
             switchYard.getSwitchYardConfig().setArtifacts(artifacts);
         }
-        ArtifactModel artifact = new V1ArtifactModel();
+        ArtifactModel artifact = new V1ArtifactModel(switchYardNamespace);
         artifact.setName(name);
         artifact.setURL(urlStr);
         artifacts.addArtifact(artifact);
@@ -530,7 +548,7 @@ public class SwitchYardPlugin implements Plugin {
 
     private void addComponentReference(SwitchYardFacet switchYard, String componentName, String referenceName, String interfaceType, String interfaze, PipeOut out) {
 
-        ComponentReferenceModel reference = new V1ComponentReferenceModel();
+        ComponentReferenceModel reference = new V1ComponentReferenceModel(SwitchYardNamespace.DEFAULT.uri());
         reference.setName(referenceName);
         V1InterfaceModel referenceInterfaceModel = new V1InterfaceModel(interfaceType);
         referenceInterfaceModel.setInterface(interfaze);
@@ -585,14 +603,14 @@ public class SwitchYardPlugin implements Plugin {
 
         switch (type) {
         case Java:
-            JavaTransformModel javaTransform = new V1JavaTransformModel();
+            JavaTransformModel javaTransform = new V1JavaTransformModel(TransformNamespace.DEFAULT.uri());
             String clazz = _shell.promptCommon("Transformer class name", PromptType.JAVA_CLASS);
             javaTransform.setClazz(clazz);
             transform = javaTransform;
             break;
             
         case Smooks:
-            SmooksTransformModel smooksTransform = new V1SmooksTransformModel();
+            SmooksTransformModel smooksTransform = new V1SmooksTransformModel(TransformNamespace.DEFAULT.uri());
             String config = _shell.promptCommon("Smooks resource file location", PromptType.ANY);
             smooksTransform.setConfig(config);
             String smtype = _shell.promptChoiceTyped("Transformation type", Arrays.asList(new String[]{"SMOOKS", "XML2JAVA", "JAVA2XML"}));
@@ -601,7 +619,7 @@ public class SwitchYardPlugin implements Plugin {
             break;
             
         case XSLT:
-            XsltTransformModel xsltTransform = new V1XsltTransformModel();
+            XsltTransformModel xsltTransform = new V1XsltTransformModel(TransformNamespace.DEFAULT.uri());
             String xsltFile = _shell.promptCommon("XSLT file location", PromptType.ANY);
             xsltTransform.setXsltFile(xsltFile);
             boolean failOnWarn = _shell.promptBoolean("Fail on warning?");
@@ -610,11 +628,11 @@ public class SwitchYardPlugin implements Plugin {
             break;
             
         case JSON:
-            transform = new V1JSONTransformModel();
+            transform = new V1JSONTransformModel(TransformNamespace.DEFAULT.uri());
             break;
 
         case JAXB:
-            transform = new V1JAXBTransformModel();
+            transform = new V1JAXBTransformModel(TransformNamespace.DEFAULT.uri());
             break;
 
         default:
@@ -625,10 +643,12 @@ public class SwitchYardPlugin implements Plugin {
         transform.setTo(QName.valueOf(to));
 
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
-        if (switchYard.getSwitchYardConfig().getTransforms() == null) {
-            switchYard.getSwitchYardConfig().setTransforms(new V1TransformsModel());
+        SwitchYardModel switchYardConfig = switchYard.getSwitchYardConfig();
+        if (switchYardConfig.getTransforms() == null) {
+            String switchYardNamespace = getSwitchYardNamespace(switchYardConfig);
+            switchYardConfig.setTransforms(new V1TransformsModel(switchYardNamespace));
         }
-        switchYard.getSwitchYardConfig().getTransforms().addTransform(transform);
+        switchYardConfig.getTransforms().addTransform(transform);
         switchYard.saveConfig();
         
         //Notify user of success
@@ -657,28 +677,28 @@ public class SwitchYardPlugin implements Plugin {
         
         switch (validatorType) {
         case Java:
-            JavaValidateModel javaValidate = new V1JavaValidateModel();
+            JavaValidateModel javaValidate = new V1JavaValidateModel(ValidateNamespace.DEFAULT.uri());
             String clazz = _shell.promptCommon("Validator class name", PromptType.JAVA_CLASS);
             javaValidate.setClazz(clazz);
             validate = javaValidate;
             break;
             
         case XML:
-            XmlValidateModel xmlValidate = new V1XmlValidateModel();
+            XmlValidateModel xmlValidate = new V1XmlValidateModel(ValidateNamespace.DEFAULT.uri());
             XmlSchemaType schemaType = _shell.promptChoiceTyped("Schema type", Arrays.asList(XmlSchemaType.values()));
             xmlValidate.setSchemaType(schemaType);
 
             String schemaCatalog = _shell.promptCommon("Schema catalog file location (if needed)", PromptType.ANY);
             if (schemaCatalog != null && schemaCatalog.trim().length() > 0) {
-                FileEntryModel entry = new V1FileEntryModel().setFile(schemaCatalog);
-                SchemaCatalogsModel catalogs = new V1SchemaCatalogsModel().addEntry(entry);
+                FileEntryModel entry = new V1FileEntryModel(ValidateNamespace.DEFAULT.uri()).setFile(schemaCatalog);
+                SchemaCatalogsModel catalogs = new V1SchemaCatalogsModel(ValidateNamespace.DEFAULT.uri()).addEntry(entry);
                 xmlValidate.setSchemaCatalogs(catalogs);
             }
             
             if (XmlSchemaType.DTD != schemaType) {
                 String schemaFile = _shell.promptCommon("Schema file location", PromptType.ANY);
-                FileEntryModel entry = new V1FileEntryModel().setFile(schemaFile);
-                SchemaFilesModel files = new V1SchemaFilesModel().addEntry(entry);
+                FileEntryModel entry = new V1FileEntryModel(ValidateNamespace.DEFAULT.uri()).setFile(schemaFile);
+                SchemaFilesModel files = new V1SchemaFilesModel(ValidateNamespace.DEFAULT.uri()).addEntry(entry);
                 xmlValidate.setSchemaFiles(files);
                 boolean namespaceAware = _shell.promptBoolean("Namespace aware?");
                 xmlValidate.setNamespaceAware(namespaceAware);
@@ -696,10 +716,12 @@ public class SwitchYardPlugin implements Plugin {
         validate.setName(QName.valueOf(type));
         
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
-        if (switchYard.getSwitchYardConfig().getValidates() == null) {
-            switchYard.getSwitchYardConfig().setValidates(new V1ValidatesModel());
+        SwitchYardModel switchYardConfig = switchYard.getSwitchYardConfig();
+        if (switchYardConfig.getValidates() == null) {
+            String switchYardNamespace = getSwitchYardNamespace(switchYardConfig);
+            switchYardConfig.setValidates(new V1ValidatesModel(switchYardNamespace));
         }
-        switchYard.getSwitchYardConfig().getValidates().addValidate(validate);
+        switchYardConfig.getValidates().addValidate(validate);
         switchYard.saveConfig();
         
         //Notify user of success
@@ -800,6 +822,8 @@ public class SwitchYardPlugin implements Plugin {
             final String serviceName,
             final PipeOut out) {
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
+        SwitchYardModel switchYardConfig = switchYard.getSwitchYardConfig();
+        String switchYardNamespace = getSwitchYardNamespace(switchYardConfig);
         CompositeServiceModel service = null;
         for (CompositeServiceModel s : switchYard.getSwitchYardConfig().getComposite().getServices()) {
             if (s.getName().equals(serviceName)) {
@@ -826,28 +850,28 @@ public class SwitchYardPlugin implements Plugin {
         OperationSelectorType type = _shell.promptChoiceTyped("Type of operation selector", Arrays.asList(OperationSelectorType.values()));
         switch (type) {
         case Static:
-            StaticOperationSelectorModel staticSelector = new V1StaticOperationSelectorModel();
+            StaticOperationSelectorModel staticSelector = new V1StaticOperationSelectorModel(switchYardNamespace);
             String op = _shell.promptCommon("Operation name", PromptType.ANY);
             staticSelector.setOperationName(op);
             selector = staticSelector;
             break;
 
         case XPath:
-            XPathOperationSelectorModel xpathSelector = new V1XPathOperationSelectorModel();
+            XPathOperationSelectorModel xpathSelector = new V1XPathOperationSelectorModel(switchYardNamespace);
             String xpath = _shell.promptCommon("XPath expression", PromptType.ANY);
             xpathSelector.setExpression(xpath);
             selector = xpathSelector;
             break;
 
         case Regex:
-            RegexOperationSelectorModel regexSelector = new V1RegexOperationSelectorModel();
+            RegexOperationSelectorModel regexSelector = new V1RegexOperationSelectorModel(switchYardNamespace);
             String regex = _shell.promptCommon("Regular expression", PromptType.ANY);
             regexSelector.setExpression(regex);
             selector = regexSelector;
             break;
 
         case Java:
-            JavaOperationSelectorModel javaSelector = new V1JavaOperationSelectorModel();
+            JavaOperationSelectorModel javaSelector = new V1JavaOperationSelectorModel(switchYardNamespace);
             String clazz = _shell.promptCommon("Class name", PromptType.JAVA_CLASS);
             javaSelector.setClazz(clazz);
             selector = javaSelector;

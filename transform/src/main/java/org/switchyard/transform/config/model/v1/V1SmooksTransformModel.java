@@ -35,9 +35,10 @@ public class V1SmooksTransformModel extends V1BaseTransformModel implements Smoo
 
     /**
      * Constructs a new V1SmooksTransformModel.
+     * @param namespace namespace
      */
-    public V1SmooksTransformModel() {
-        super(new QName(TransformModel.DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + SMOOKS));
+    public V1SmooksTransformModel(String namespace) {
+        super(new QName(namespace, TransformModel.TRANSFORM + '.' + SMOOKS));
     }
 
     /**

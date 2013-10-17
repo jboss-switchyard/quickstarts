@@ -16,10 +16,7 @@ package org.switchyard.config.model.composite;
 
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.config.model.NamedModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * The "component/reference" configuration model.
@@ -35,7 +32,7 @@ public interface ComponentReferenceModel extends NamedModel {
     public static final String REFERENCE = CompositeReferenceModel.REFERENCE;
 
     /** The "security" name. */
-    public static final QName SECURITY = new QName(SwitchYardModel.DEFAULT_NAMESPACE, "security");
+    public static final String SECURITY = "security";
 
     /**
      * Gets the parent component model.

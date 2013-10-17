@@ -15,6 +15,7 @@
 package org.switchyard.transform.config.model.v1;
 
 import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.transform.TransformModel;
@@ -28,15 +29,14 @@ import org.switchyard.transform.xslt.internal.XsltTransformFactory;
  *         href="mailto:aamonten@gmail.com">aamonten@gmail.com</a>
  */
 @TransformerFactoryClass(XsltTransformFactory.class)
-public class V1XsltTransformModel extends V1BaseTransformModel implements
-        XsltTransformModel {
+public class V1XsltTransformModel extends V1BaseTransformModel implements XsltTransformModel {
 
     /**
      * Constructs a new V1XsltTransformModel.
+     * @param namespace namespace
      */
-    public V1XsltTransformModel() {
-        super(new QName(TransformModel.DEFAULT_NAMESPACE,
-                TransformModel.TRANSFORM + '.' + XSLT));
+    public V1XsltTransformModel(String namespace) {
+        super(new QName(namespace, TransformModel.TRANSFORM + '.' + XSLT));
     }
 
     /**

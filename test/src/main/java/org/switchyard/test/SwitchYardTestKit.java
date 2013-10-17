@@ -40,9 +40,9 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.jboss.logging.Logger;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.jboss.logging.Logger;
 import org.junit.Assert;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.Service;
@@ -907,10 +907,12 @@ public class SwitchYardTestKit {
             ClassLoader classLoader = _testInstance.getClass().getClassLoader();
 
             if (scanners != null && !scanners.isEmpty() && classLoader instanceof URLClassLoader) {
-                MergeScanner<V1SwitchYardModel> merge_scanner = new MergeScanner<V1SwitchYardModel>(V1SwitchYardModel.class, true, scanners);
+                String switchyardNamespace = model.getModelRootNamespace();
+                MergeScanner<V1SwitchYardModel> merge_scanner = new MergeScanner<V1SwitchYardModel>(true, scanners);
                 List<URL> scanURLs = getScanURLs((URLClassLoader)classLoader);
 
-                ScannerInput<V1SwitchYardModel> scanner_input = new ScannerInput<V1SwitchYardModel>().setName(model.getName()).setURLs(scanURLs);
+                ScannerInput<V1SwitchYardModel> scanner_input = new ScannerInput<V1SwitchYardModel>()
+                        .setSwitchyardNamespace(switchyardNamespace).setCompositeName(model.getName()).setURLs(scanURLs);
                 V1SwitchYardModel scannedModel = merge_scanner.scan(scanner_input).getModel();
 
                 returnModel = Models.merge(scannedModel, model, false);

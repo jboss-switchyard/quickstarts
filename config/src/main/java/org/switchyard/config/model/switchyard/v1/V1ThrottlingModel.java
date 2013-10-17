@@ -18,7 +18,6 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.ThrottlingModel;
 
 /**
@@ -28,9 +27,10 @@ public class V1ThrottlingModel extends BaseModel implements ThrottlingModel {
 
     /**
      * Constructs a new V1ThrottlingModel.
+     * @param namespace namespace
      */
-    public V1ThrottlingModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, ThrottlingModel.THROTTLING));
+    public V1ThrottlingModel(String namespace) {
+        super(new QName(namespace, ThrottlingModel.THROTTLING));
     }
 
     /**

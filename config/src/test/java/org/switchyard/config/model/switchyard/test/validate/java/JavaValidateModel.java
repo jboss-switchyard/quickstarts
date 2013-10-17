@@ -28,12 +28,11 @@ import org.switchyard.config.model.validate.v1.V1BaseValidateModel;
  */
 public class JavaValidateModel extends V1BaseValidateModel {
 
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-config:test-validate-java:1.0";
     public static final String JAVA = "java";
     public static final String CLASS = "class";
 
     public JavaValidateModel() {
-        super(new QName(DEFAULT_NAMESPACE, ValidateModel.VALIDATE + '.' + JAVA));
+        super(new QName("urn:switchyard-config:test-validate-java:1.0", ValidateModel.VALIDATE + '.' + JAVA));
     }
 
     public JavaValidateModel(Configuration config, Descriptor desc) {

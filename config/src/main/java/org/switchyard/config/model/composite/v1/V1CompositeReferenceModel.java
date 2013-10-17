@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.common.lang.Strings;
 import org.switchyard.config.ConfigLogger;
 import org.switchyard.config.Configuration;
@@ -31,6 +29,7 @@ import org.switchyard.config.model.composite.ComponentReferenceModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.composite.SCANamespace;
 
 /**
  * A version 1 CompositeReferenceModel.
@@ -46,7 +45,7 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
      * Constructs a new V1CompositeReferenceModel.
      */
     public V1CompositeReferenceModel() {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, CompositeReferenceModel.REFERENCE));
+        super(SCANamespace.DEFAULT.uri(), CompositeReferenceModel.REFERENCE);
         setMultiplicity(CompositeReferenceModel.DEFAULT_MULTIPLICITY);
     }
 

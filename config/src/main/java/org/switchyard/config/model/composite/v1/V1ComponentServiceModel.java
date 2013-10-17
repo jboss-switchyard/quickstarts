@@ -23,8 +23,8 @@ import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentServiceModel;
-import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.composite.SCANamespace;
 
 /**
  * A version 1 ComponentServiceModel.
@@ -34,12 +34,15 @@ import org.switchyard.config.model.composite.InterfaceModel;
 public class V1ComponentServiceModel extends BaseNamedModel implements ComponentServiceModel {
 
     private InterfaceModel _interface;
+    private String _switchyardNamespace;
 
     /**
      * Constructs a new V1ComponentServiceModel.
+     * @param switchyardNamespace switchyardNamespace
      */
-    public V1ComponentServiceModel() {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ComponentServiceModel.SERVICE));
+    public V1ComponentServiceModel(String switchyardNamespace) {
+        super(SCANamespace.DEFAULT.uri(), ComponentServiceModel.SERVICE);
+        _switchyardNamespace = switchyardNamespace;
     }
 
     /**
@@ -49,6 +52,7 @@ public class V1ComponentServiceModel extends BaseNamedModel implements Component
      */
     public V1ComponentServiceModel(Configuration config, Descriptor desc) {
         super(config, desc);
+        _switchyardNamespace = getModelRootNamespace();
     }
 
     /**
@@ -85,7 +89,7 @@ public class V1ComponentServiceModel extends BaseNamedModel implements Component
      */
     @Override
     public String getSecurity() {
-        return getModelAttribute(ComponentServiceModel.SECURITY);
+        return getModelAttribute(new QName(_switchyardNamespace, ComponentServiceModel.SECURITY));
     }
 
     /**
@@ -93,7 +97,7 @@ public class V1ComponentServiceModel extends BaseNamedModel implements Component
      */
     @Override
     public ComponentServiceModel setSecurity(String security) {
-        setModelAttribute(ComponentServiceModel.SECURITY, security);
+        setModelAttribute(new QName(_switchyardNamespace, ComponentServiceModel.SECURITY), security);
         return this;
     }
 
@@ -106,7 +110,7 @@ public class V1ComponentServiceModel extends BaseNamedModel implements Component
         requires.add(policyName);
         PolicyConfig.setRequires(this, requires);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -114,7 +118,7 @@ public class V1ComponentServiceModel extends BaseNamedModel implements Component
     public Set<String> getPolicyRequirements() {
         return PolicyConfig.getRequires(this);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -122,4 +126,5 @@ public class V1ComponentServiceModel extends BaseNamedModel implements Component
     public boolean hasPolicyRequirement(String policyName) {
         return PolicyConfig.getRequires(this).contains(policyName);
     }
+
 }

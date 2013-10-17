@@ -14,7 +14,6 @@
 package org.switchyard.config.model.domain.v1;
 
 import static org.switchyard.config.model.domain.SecurityModel.SECURITY;
-import static org.switchyard.config.model.switchyard.SwitchYardModel.DEFAULT_NAMESPACE;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,9 +37,10 @@ public class V1SecuritiesModel extends BaseModel implements SecuritiesModel {
 
     /**
      * Constructs a new V1SecuritiesModel.
+     * @param namespace namespace
      */
-    public V1SecuritiesModel() {
-        super(new QName(DEFAULT_NAMESPACE, SECURITIES));
+    public V1SecuritiesModel(String namespace) {
+        super(new QName(namespace, SECURITIES));
         setModelChildrenOrder(SECURITY);
     }
 

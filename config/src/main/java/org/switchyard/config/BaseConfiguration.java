@@ -230,6 +230,26 @@ public abstract class BaseConfiguration implements Configuration {
      * {@inheritDoc}
      */
     @Override
+    public Configuration getRoot() {
+        Configuration root = this;
+        while (root.getParent() != null) {
+            root = root.getParent();
+        }
+        return root;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getRootNamespace() {
+        return getRoot().getQName().getNamespaceURI();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Configuration orderChildren() {
         return orderChildren(true);
     }

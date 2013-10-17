@@ -45,15 +45,26 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
      */
     @Override
     public ScannerOutput<SwitchYardModel> scan(ScannerInput<SwitchYardModel> input) throws IOException {
-        SwitchYardModel switchyardModel = new V1SwitchYardModel();
+        String switchyardNamespace = input.getSwitchyardNamespace();
+        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace);
         TransformsModel transformsModel = null;
+
+        // TODO: Fix hack!
+        String transformNamespace = TransformNamespace.DEFAULT.uri();
+        if (switchyardNamespace != null) {
+            if (switchyardNamespace.endsWith(":1.0")) {
+                transformNamespace = TransformNamespace.V_1_0.uri();
+            } else if (switchyardNamespace.endsWith(":1.1")) {
+                transformNamespace = TransformNamespace.V_1_1.uri();
+            }
+        }
 
         List<Class<?>> transformerClasses = scanForTransformers(input.getURLs());
         for (Class<?> transformer : transformerClasses) {
             List<TransformerTypes> supportedTransforms = TransformerUtil.listTransformations(transformer);
 
             for (TransformerTypes supportedTransform : supportedTransforms) {
-                JavaTransformModel transformModel = new V1JavaTransformModel();
+                JavaTransformModel transformModel = new V1JavaTransformModel(transformNamespace);
 
                 String bean = CDIUtil.getNamedAnnotationValue(transformer);
                 if (bean != null) {
@@ -65,7 +76,7 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
                 transformModel.setTo(supportedTransform.getTo());
 
                 if (transformsModel == null) {
-                    transformsModel = new V1TransformsModel();
+                    transformsModel = new V1TransformsModel(switchyardNamespace);
                     switchyardModel.setTransforms(transformsModel);
                 }
                 transformsModel.addTransform(transformModel);

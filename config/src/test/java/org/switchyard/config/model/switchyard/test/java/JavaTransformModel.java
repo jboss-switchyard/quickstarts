@@ -28,12 +28,11 @@ import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
  */
 public class JavaTransformModel extends V1BaseTransformModel {
 
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-config:test-java:1.0";
     public static final String JAVA = "java";
     public static final String CLASS = "class";
 
     public JavaTransformModel() {
-        super(new QName(DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + JAVA));
+        super(new QName("urn:switchyard-config:test-java:1.0", TransformModel.TRANSFORM + '.' + JAVA));
     }
 
     public JavaTransformModel(Configuration config, Descriptor desc) {

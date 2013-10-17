@@ -28,6 +28,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -56,6 +57,12 @@ public final class Descriptor {
     /** The default location to looks for a Descriptor's Properties.  ALL properties found with this name via {@link org.switchyard.common.type.Classes#getResources(String, Class)} will be combined. */
     public static final String DEFAULT_PROPERTIES = "/org/switchyard/config/model/descriptor.properties";
 
+    /** The "section" property. */
+    public static final String SECTION = "section";
+
+    /** The "version" property. */
+    public static final String VERSION = "version";
+
     /** The "namespace" property. */
     public static final String NAMESPACE = "namespace";
 
@@ -73,9 +80,9 @@ public final class Descriptor {
 
     private Map<String,String> _all_properties_map = new TreeMap<String,String>();
     private Map<String,Map<String,String>> _prefix_config_map = new HashMap<String,Map<String,String>>();
+    private Map<String,Set<String>> _section_prefixes_map = new HashMap<String,Set<String>>();
     private Map<String,String> _namespace_prefix_map = new HashMap<String,String>();
-    private Map<String, String> _nonamespace_location_map = new HashMap<String, String>();
-
+    private Map<String,String> _nonamespace_location_map = new HashMap<String,String>();
     private Map<Set<String>,Schema> _namespaces_schema_map = new HashMap<Set<String>,Schema>();
     private Map<String,Marshaller> _namespace_marshaller_map = new HashMap<String,Marshaller>();
 
@@ -84,6 +91,22 @@ public final class Descriptor {
      */
     public Descriptor() {
         addDefaultProperties();
+    }
+
+    /**
+     * Constructs a new Descriptor based on discovered default properties using the classloader of the specified class.
+     * @param caller the class whose classloader should be used to look up the default properties
+     */
+    public Descriptor(Class<?> caller) {
+        addDefaultProperties(caller);
+    }
+
+    /**
+     * Constructs a new Descriptor based on discovered default properties using the specified classloader.
+     * @param loader the classloader to use to look up the default properties
+     */
+    public Descriptor(ClassLoader loader) {
+        addDefaultProperties(loader);
     }
 
     /**
@@ -149,7 +172,14 @@ public final class Descriptor {
                     _prefix_config_map.put(prop_prefix, config);
                 }
                 config.put(prop_suffix, prop_value);
-                if (NAMESPACE.equals(prop_suffix)) {
+                if (SECTION.equals(prop_suffix)) {
+                    Set<String> prefixes = _section_prefixes_map.get(prop_value);
+                    if (prefixes == null) {
+                        prefixes = new TreeSet<String>();
+                        _section_prefixes_map.put(prop_value, prefixes);
+                    }
+                    prefixes.add(prop_prefix);
+                } else if (NAMESPACE.equals(prop_suffix)) {
                     _namespace_prefix_map.put(prop_value, prop_prefix);
                 } else if (NO_NAMESPACE_SCHEMA.equals(prop_suffix)) {
                     _nonamespace_location_map.put(prop_value, prop_prefix);
@@ -172,13 +202,112 @@ public final class Descriptor {
                 return config.get(property);
             }
         }
-
         // try also find given namespace in prefix map
         Map<String,String> config = _prefix_config_map.get(namespace);
         if (config != null) {
             return config.get(property);
         }
         return null;
+    }
+
+    /**
+     * Gets the section property, based on the specified namespace.
+     * @param namespace the namespace
+     * @return the {@link #SECTION} property value
+     */
+    public String getSectionProperty(String namespace) {
+        return getProperty(SECTION, namespace);
+    }
+
+    /**
+     * Gets the version property, based on the specified namespace.
+     * @param namespace the namespace
+     * @return the {@link #VERSION} property value
+     */
+    public String getVersionProperty(String namespace) {
+        return getProperty(VERSION, namespace);
+    }
+
+    /**
+     * Gets the schema property, based on the specified namespace.
+     * @param namespace the namespace
+     * @return the {@link #SCHEMA} property value
+     */
+    public String getSchemaProperty(String namespace) {
+        return getProperty(SCHEMA, namespace);
+    }
+
+    /**
+     * Gets the location property, based on the specified namespace.
+     * @param namespace the namespace
+     * @return the {@link #LOCATION} property value
+     */
+    public String getLocationProperty(String namespace) {
+        return getProperty(LOCATION, namespace);
+    }
+
+    /**
+     * Gets the marshaller property, based on the specified namespace.
+     * @param namespace the namespace
+     * @return the {@link #MARSHALLER} property value
+     */
+    public String getMarshallerProperty(String namespace) {
+        return getProperty(MARSHALLER, namespace);
+    }
+
+    /**
+     * Gets the namespace for the specified section and version.
+     * @param section the section
+     * @param version the version
+     * @return the namespace
+     */
+    public String getNamespace(String section, String version) {
+        if (section != null && version != null) {
+            Set<String> prefixes = _section_prefixes_map.get(section);
+            if (prefixes != null) {
+                for (String prefix : prefixes) {
+                    Map<String,String> config = _prefix_config_map.get(prefix);
+                    if (config != null) {
+                        String version_property = config.get(VERSION);
+                        if (version.equals(version_property)) {
+                            String namespace_property = config.get(NAMESPACE);
+                            if (namespace_property != null) {
+                                return namespace_property;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the default namespace for a section, based on the highest version of that section.
+     * @param section the section
+     * @return the default namespace
+     */
+    public String getDefaultNamespace(String section) {
+        String default_namespace = null;
+        Set<String> prefixes = _section_prefixes_map.get(section);
+        if (prefixes != null) {
+            float highest_version = 0.0f;
+            for (String prefix : prefixes) {
+                Map<String,String> config = _prefix_config_map.get(prefix);
+                if (config != null) {
+                    String version_property = config.get(VERSION);
+                    float current_version = version_property != null ? Float.valueOf(version_property).floatValue() : 0.0f;
+                    if (current_version >= highest_version) {
+                        String namespace_property = config.get(NAMESPACE);
+                        if (namespace_property != null) {
+                            highest_version = current_version;
+                            default_namespace = namespace_property;
+                        }
+                    }
+                }
+            }
+        }
+        return default_namespace;
     }
 
     /**
@@ -286,21 +415,12 @@ public final class Descriptor {
     }
 
     /**
-     * Gets the location property, based on the specified namespace.
-     * @param namespace the namespace
-     * @return the {@link #LOCATION} property value
-     */
-    public String getLocation(String namespace) {
-        return getProperty(LOCATION, namespace);
-    }
-
-    /**
      * Gets the schema location, based on the specified namespace.
      * @param namespace the namespace
-     * @return the location property value, which is a combination of {@link Descriptor#getLocation(String)} and the {@link #SCHEMA} property value.
+     * @return the location property value, which is a combination of {@link Descriptor#getLocationProperty(String)} and the {@link #SCHEMA} property value.
      */
     public String getSchemaLocation(String namespace) {
-        return getSchemaLocation(namespace, getProperty(SCHEMA, namespace));
+        return getSchemaLocation(namespace, getSchemaProperty(namespace));
     }
 
     private String getSchemaLocation(String namespace, String schema) {
@@ -308,11 +428,11 @@ public final class Descriptor {
 
         if (namespace != null) {
             if (schema == null) {
-                schema = getProperty(SCHEMA, namespace);
+                schema = getSchemaProperty(namespace);
             }
             String location = _nonamespace_location_map.containsKey(schema)
-                ? getLocation(_nonamespace_location_map.get(schema))
-                : getLocation(namespace);
+                ? getLocationProperty(_nonamespace_location_map.get(schema))
+                : getLocationProperty(namespace);
             if (location != null) {
                 schemaLocation = location + "/" + schema;
                 schemaLocation = schemaLocation.replaceAll("\\\\", "/").replaceAll("//", "/");
@@ -366,13 +486,13 @@ public final class Descriptor {
         }
         Marshaller marshaller = _namespace_marshaller_map.get(namespace);
         if (marshaller == null) {
-            String typeName = getProperty(MARSHALLER, namespace);
+            String typeName = getMarshallerProperty(namespace);
             if (typeName != null) {
                 Class<?> type = Classes.forName(typeName, loader);
                 if (type == null) {
                     throw ConfigMessages.MESSAGES.cannotFindMarshaller(typeName, loader);
                 }
-                marshaller = (Marshaller) Construction.construct(type, new Class<?>[]{Descriptor.class}, new Object[]{this});
+                marshaller = (Marshaller)Construction.construct(type, new Class<?>[]{Descriptor.class}, new Object[]{this});
                 if (marshaller != null) {
                     _namespace_marshaller_map.put(namespace, marshaller);
                 }

@@ -13,8 +13,6 @@
  */
 package org.switchyard.config.model.property.v1;
 
-import static org.switchyard.config.model.switchyard.SwitchYardModel.DEFAULT_NAMESPACE;
-
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
@@ -27,13 +25,6 @@ import org.switchyard.config.model.property.PropertyModel;
  * Implementation of PropertyModel : v1.
  */
 public class V1PropertyModel extends BaseModel implements PropertyModel {
-
-    /**
-     * Creates a new PropertyModel in the default namespace.
-     */
-    public V1PropertyModel() {
-        this(DEFAULT_NAMESPACE);
-    }
 
     /**
      * Creates a new PropertyModel in the specified namespace.

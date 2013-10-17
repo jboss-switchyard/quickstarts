@@ -19,7 +19,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.composite.SCANamespace;
 
 /**
  * WSDLModel.
@@ -32,7 +32,7 @@ public class WSDLModel extends BaseModel {
     public static final String DESCRIPTION = "description";
 
     public WSDLModel() {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, WSDL));
+        super(new QName(SCANamespace.DEFAULT.uri(), WSDL));
     }
 
     public WSDLModel(Configuration config, Descriptor desc) {

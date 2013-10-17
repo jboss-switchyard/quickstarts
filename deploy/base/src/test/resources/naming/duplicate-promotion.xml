@@ -16,7 +16,7 @@
             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
             xmlns:mock="urn:switchyard-component-mock:config:1.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="urn:switchyard-component-mock:config:1.0 org/switchyard/component/mock/config/model/v1/mock-v1.xsd">
+            xsi:schemaLocation="urn:switchyard-component-mock:config:1.0 org/switchyard/component/mock/config/model/v1/mock_1_0.xsd">
 
   <sca:composite name="duplicate-promotion" targetNamespace="urn:com.example.switchyard:test:0.0.1-SNAPSHOT">
     <sca:component name="PaymentsBean">

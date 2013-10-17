@@ -40,7 +40,7 @@ public class ThrottlingExtensionTests {
 
     @Test
     public void testCreate() throws Exception {
-        ThrottlingModel throttling = new V1ThrottlingModel();
+        ThrottlingModel throttling = new V1ThrottlingModel(SwitchYardNamespace.DEFAULT.uri());
         throttling.setMaxRequests(MAX_REQUESTS).setTimePeriod(TIME_PERIOD);
 
         Assert.assertEquals(MAX_REQUESTS, (Integer) throttling.getMaxRequests());
@@ -61,6 +61,7 @@ public class ThrottlingExtensionTests {
     public void testPropertySubstitution() throws Exception {
         System.setProperty("property.messages.per.poll", "50");
         SwitchYardModel switchyard = _puller.pull(THROTTLING_XML2, getClass());
+        switchyard.assertModelValid();
         ExtensionsModel extensions = switchyard.getComposite().getServices().get(0).getExtensions();
         ThrottlingModel throttling = extensions.getThrottling();
 

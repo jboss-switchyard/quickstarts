@@ -14,7 +14,6 @@
 package org.switchyard.config.model.resource.v1;
 
 import static org.switchyard.config.model.resource.ResourceDetailModel.RESOURCE_DETAIL;
-import static org.switchyard.config.model.switchyard.SwitchYardModel.DEFAULT_NAMESPACE;
 
 import java.net.URL;
 
@@ -37,13 +36,6 @@ import org.switchyard.config.model.resource.ResourceModel;
 public class V1ResourceModel extends BaseModel implements ResourceModel {
 
     private ResourceDetailModel _detail;
-
-    /**
-     * Creates a new ResourceModel in the default namespace.
-     */
-    public V1ResourceModel() {
-        this(DEFAULT_NAMESPACE);
-    }
 
     /**
      * Creates a new ResourceModel in the specified namespace.

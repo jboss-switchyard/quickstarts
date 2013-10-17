@@ -21,7 +21,6 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composer.MessageComposerModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * A version 1 MessageComposerModel.
@@ -29,13 +28,6 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1MessageComposerModel extends BaseModel implements MessageComposerModel {
-
-    /**
-     * Constructs a new V1MessageComposerModel in the default switchyard namespace.
-     */
-    public V1MessageComposerModel() {
-        this(SwitchYardModel.DEFAULT_NAMESPACE);
-    }
 
     /**
      * Constructs a new V1MessageComposerModel in the specified namespace.

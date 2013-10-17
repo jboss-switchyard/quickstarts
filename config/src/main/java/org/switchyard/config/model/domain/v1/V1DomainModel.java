@@ -13,8 +13,6 @@
  */
 package org.switchyard.config.model.domain.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
@@ -35,9 +33,10 @@ public class V1DomainModel extends BaseNamedModel implements DomainModel {
     
     /**
      * Constructs a new V1DomainModel.
+     * @param namespace namespace
      */
-    public V1DomainModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, DomainModel.DOMAIN));
+    public V1DomainModel(String namespace) {
+        super(namespace, DomainModel.DOMAIN);
         setModelChildrenOrder(TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, PropertiesModel.PROPERTIES, SecuritiesModel.SECURITIES);
     }
 

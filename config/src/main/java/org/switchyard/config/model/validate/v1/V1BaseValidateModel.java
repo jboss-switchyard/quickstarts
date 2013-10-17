@@ -19,7 +19,6 @@ import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseTypedModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.config.model.validate.ValidatesModel;
 
@@ -30,8 +29,8 @@ import org.switchyard.config.model.validate.ValidatesModel;
  */
 public abstract class V1BaseValidateModel extends BaseTypedModel implements ValidateModel {
 
-    protected V1BaseValidateModel(String type) {
-        this(new QName(SwitchYardModel.DEFAULT_NAMESPACE, ValidateModel.VALIDATE + '.' + type));
+    protected V1BaseValidateModel(String namespace, String type) {
+        this(new QName(namespace, ValidateModel.VALIDATE + '.' + type));
     }
 
     protected V1BaseValidateModel(QName qname) {

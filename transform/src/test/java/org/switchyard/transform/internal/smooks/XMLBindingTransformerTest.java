@@ -15,7 +15,6 @@
 package org.switchyard.transform.internal.smooks;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.xml.namespace.QName;
 
@@ -23,12 +22,9 @@ import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.common.type.Classes;
-import org.switchyard.config.model.ModelPuller;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.transform.AbstractTransformerTestCase;
 import org.switchyard.transform.Transformer;
+import org.switchyard.transform.config.model.TransformNamespace;
 import org.switchyard.transform.config.model.v1.V1SmooksTransformModel;
 import org.switchyard.transform.smooks.internal.SmooksTransformFactory;
 import org.xml.sax.SAXException;
@@ -61,7 +57,7 @@ public class XMLBindingTransformerTest extends AbstractTransformerTestCase {
 
     @Test
     public void test_invalid_xml2java_config() throws IOException, SAXException {
-        V1SmooksTransformModel model = (V1SmooksTransformModel) new V1SmooksTransformModel().setTransformType("XML2JAVA").setFrom(new QName("a")).setTo(new QName("b"));
+        V1SmooksTransformModel model = (V1SmooksTransformModel)new V1SmooksTransformModel(TransformNamespace.DEFAULT.uri()).setTransformType("XML2JAVA").setFrom(new QName("a")).setTo(new QName("b"));
         model.setConfig("/org/switchyard/transform/internal/smooks/smooks-config-01.xml");
         try {
             new SmooksTransformFactory().newTransformer(model);
@@ -73,7 +69,7 @@ public class XMLBindingTransformerTest extends AbstractTransformerTestCase {
 
     @Test
     public void test_invalid_java2xml_config() throws IOException, SAXException {
-        V1SmooksTransformModel model = (V1SmooksTransformModel) new V1SmooksTransformModel().setTransformType("JAVA2XML").setFrom(new QName("a")).setTo(new QName("b"));
+        V1SmooksTransformModel model = (V1SmooksTransformModel)new V1SmooksTransformModel(TransformNamespace.DEFAULT.uri()).setTransformType("JAVA2XML").setFrom(new QName("a")).setTo(new QName("b"));
         model.setConfig("/org/switchyard/transform/internal/smooks/smooks-config-01.xml");
         try {
             new SmooksTransformFactory().newTransformer(model);

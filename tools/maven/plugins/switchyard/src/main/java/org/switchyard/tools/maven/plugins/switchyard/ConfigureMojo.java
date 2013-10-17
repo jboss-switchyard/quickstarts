@@ -43,7 +43,8 @@ import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelPullerScanner;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
-import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
+import org.switchyard.config.model.ScannerOutput;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * Maven mojo for configuring SwitchYard.
@@ -73,9 +74,6 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
 
     @Parameter(property="validate", alias="validate")
     private boolean _validate = true;
-
-    @Parameter(alias="modelClassName")
-    private String _modelClassName;
 
     @Parameter(alias="outputFile")
     private File _outputFile;
@@ -125,6 +123,7 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
         Writer writer = null;
         try {
             List<Scanner<M>> scanners = new ArrayList<Scanner<M>>();
+            addModelPullerScanners(scanners);
             for (String scannerClassName : _scannerClassNames) {
                 @SuppressWarnings("unchecked")
                 Class<Scanner<M>> scannerClass = (Class<Scanner<M>>)Classes.forName(scannerClassName, loader);
@@ -133,13 +132,8 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
                     scanners.add(scanner);
                 }
             }
-            addModelPullerScanners(scanners);
-            if (_modelClassName == null) {
-                _modelClassName = V1SwitchYardModel.class.getName();
-            }
-            @SuppressWarnings("unchecked")
-            Class<M> modelClass = (Class<M>)Classes.forName(_modelClassName, loader);
-            MergeScanner<M> merge_scanner = new MergeScanner<M>(modelClass, true, scanners);
+            //getLog().info("SwitchYard configure plugin using scanners: " + scanners);
+            MergeScanner<M> merge_scanner = new MergeScanner<M>(true, scanners);
             List<URL> scannerURLs = new ArrayList<URL>();
             if (_scanDirectories.length == 0) {
                 scannerURLs.add(_project_build_outputDirectory.toURI().toURL());
@@ -150,8 +144,8 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
                     }
                 }
             }
-            getLog().info("SwitchYard plugin scanning: " + scannerURLs);
-            ScannerInput<M> scanner_input = new ScannerInput<M>().setName(_project_artifactId).setURLs(scannerURLs);
+            getLog().info("SwitchYard configure plugin scanner URLs: " + scannerURLs);
+            ScannerInput<M> scanner_input = new ScannerInput<M>().setCompositeName(_project_artifactId).setURLs(scannerURLs);
             M model = merge_scanner.scan(scanner_input).getModel();
             if (_outputFile == null) {
                 File od = new File(_project_build_outputDirectory, SWITCHYARD_XML_DEFAULT_FOLDER);
@@ -224,14 +218,28 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
      * @param scanners the scanners list
      * @throws IOException if an error occurs.
      */
-    @SuppressWarnings("unchecked")
     private void addModelPullerScanner(final File baseDir, final String includes, final String excludes, final List<Scanner<M>> scanners) throws IOException {
         final File switchYardFile = new File(baseDir, DEFAULT_SWITCHYARD_XML_FILE_PATH).getCanonicalFile();
         for (File file : (List<File>)FileUtils.getFiles(baseDir, includes, excludes)) {
             file = file.getCanonicalFile();
             if (switchYardFile.equals(file)) {
                 // found a match, add a scanner
-                scanners.add(new ModelPullerScanner<M>(file));
+                scanners.add(new ModelPullerScanner<M>(file) {
+                    @Override
+                    public ScannerOutput<M> scan(ScannerInput<M> input) throws IOException {
+                        ScannerOutput<M> output = super.scan(input);
+                        M model = output.getModel();
+                        if (model != null) {
+                            Model root = model.getModelRoot();
+                            if (root instanceof SwitchYardModel) {
+                                if (!input.isSwitchyardNamespaceSet()) {
+                                    input.setSwitchyardNamespace(root.getModelRootNamespace());
+                                }
+                            }
+                        }
+                        return output;
+                    }
+                });
                 // one file per folder
                 return;
             }

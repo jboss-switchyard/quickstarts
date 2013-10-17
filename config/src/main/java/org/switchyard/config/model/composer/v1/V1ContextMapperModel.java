@@ -22,7 +22,6 @@ import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composer.ContextMapperModel;
 import org.switchyard.config.model.composite.BindingModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * A version 1 ContextMapperModel.
@@ -30,13 +29,6 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
 public class V1ContextMapperModel extends BaseModel implements ContextMapperModel {
-
-    /**
-     * Constructs a new V1ContextMapperModel in the default switchyard namespace.
-     */
-    public V1ContextMapperModel() {
-        this(SwitchYardModel.DEFAULT_NAMESPACE);
-    }
 
     /**
      * Constructs a new V1ContextMapperModel in the specified namespace.

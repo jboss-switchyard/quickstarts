@@ -75,6 +75,7 @@ public final class Versions {
      * @param w the Writer to print to
      */
     public static void printSwitchYardNotification(Writer w) {
+        @SuppressWarnings("resource")
         PrintWriter pw = (w instanceof PrintWriter) ? (PrintWriter)w : new PrintWriter(w);
         pw.println(getSwitchYardNotification());
         pw.flush();
@@ -127,6 +128,7 @@ public final class Versions {
      * @param w the Writer to print to
      */
     public static void printSwitchYardVersions(Writer w) {
+        @SuppressWarnings("resource")
         PrintWriter pw = (w instanceof PrintWriter) ? (PrintWriter)w : new PrintWriter(w);
         for (Version version : getSwitchYardVersions()) {
             pw.println(version);

@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
+
 /**
  * The input to a {@link Scanner}.
  *
@@ -28,7 +30,8 @@ import java.util.List;
 public class ScannerInput<M extends Model> {
 
     private List<URL> _urls;
-    private String _name;
+    private String _switchyardNamespace;
+    private String _compositeName;
 
     /**
      * Constructs a new ScannerInput.
@@ -63,20 +66,46 @@ public class ScannerInput<M extends Model> {
     }
 
     /**
-     * Gets a contextual name for the scan.
-     * @return the contextual name
+     * If the switchyard namespace is set.
+     * @return if the switchyard namespace is set
      */
-    public String getName() {
-        return _name;
+    public boolean isSwitchyardNamespaceSet() {
+        return _switchyardNamespace != null;
     }
 
     /**
-     * Sets a contextual name for the scan.
-     * @param name the contextual name
+     * Gets the switchyard namespace for the scan.
+     * @return the switchyard namespace
+     */
+    public String getSwitchyardNamespace() {
+        return isSwitchyardNamespaceSet() ? _switchyardNamespace : SwitchYardNamespace.DEFAULT.uri();
+    }
+
+    /**
+     * Sets the switchyard namespace for the scan.
+     * @param switchyardNamespace the switchyard namespace
      * @return this ScannerInput (useful for chaining)
      */
-    public ScannerInput<M> setName(String name) {
-        _name = name;
+    public ScannerInput<M> setSwitchyardNamespace(String switchyardNamespace) {
+        _switchyardNamespace = switchyardNamespace;
+        return this;
+    }
+
+    /**
+     * Gets the composite name for the scan.
+     * @return the composite name
+     */
+    public String getCompositeName() {
+        return _compositeName;
+    }
+
+    /**
+     * Sets the composite name for the scan.
+     * @param compositeName the composite name
+     * @return this ScannerInput (useful for chaining)
+     */
+    public ScannerInput<M> setCompositeName(String compositeName) {
+        _compositeName = compositeName;
         return this;
     }
 

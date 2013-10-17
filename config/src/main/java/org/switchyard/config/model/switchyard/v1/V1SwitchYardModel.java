@@ -13,8 +13,6 @@
  */
 package org.switchyard.config.model.switchyard.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.common.property.CompoundPropertyResolver;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
@@ -42,9 +40,10 @@ public class V1SwitchYardModel extends BaseNamedModel implements SwitchYardModel
 
     /**
      * Constructs a new V1SwitchYardModel.
+     * @param namespace the namespace
      */
-    public V1SwitchYardModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, SwitchYardModel.SWITCHYARD));
+    public V1SwitchYardModel(String namespace) {
+        super(namespace, SwitchYardModel.SWITCHYARD);
         setModelChildrenOrder(CompositeModel.COMPOSITE, TransformsModel.TRANSFORMS, ValidatesModel.VALIDATES, DomainModel.DOMAIN, ArtifactsModel.ARTIFACTS);
         setDomainPropertyResolver();
     }

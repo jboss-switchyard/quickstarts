@@ -27,9 +27,9 @@ import org.switchyard.config.model.Model;
 import org.switchyard.config.model.composer.ContextMapperModel;
 import org.switchyard.config.model.composer.MessageComposerModel;
 import org.switchyard.config.model.composite.BindingModel;
-import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.config.model.composite.SCANamespace;
 import org.switchyard.config.model.selector.OperationSelectorModel;
 
 /**
@@ -48,7 +48,7 @@ public class V1BindingModel extends BaseTypedModel implements BindingModel {
      * @param type the "type" of BindingModel
      */
     public V1BindingModel(String type) {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, BindingModel.BINDING + '.' + type));
+        super(new QName(SCANamespace.DEFAULT.uri(), BindingModel.BINDING + '.' + type));
     }
     
     /**

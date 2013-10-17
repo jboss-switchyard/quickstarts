@@ -24,9 +24,6 @@ import org.switchyard.config.model.Model;
  */
 public interface TransformModel extends Model {
 
-    /** The default "transform" namespace. */
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-config:transform:1.0";
-
     /** The "transform" name. */
     public static final String TRANSFORM = "transform";
 

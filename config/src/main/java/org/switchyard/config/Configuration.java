@@ -200,6 +200,21 @@ public interface Configuration {
     public Configuration getParent();
 
     /**
+     * Gets the root config, or this config if this is the root.
+     * 
+     * <i>Follows the same guarantees as {@link #getParent()}.</i>
+     * 
+     * @return the root config
+     */
+    public Configuration getRoot();
+
+    /**
+     * Gets the root namespace.
+     * @return the root namespace
+     */
+    public String getRootNamespace();
+
+    /**
      * If this config has any children configs.
      * @return true if this config has children configs
      */

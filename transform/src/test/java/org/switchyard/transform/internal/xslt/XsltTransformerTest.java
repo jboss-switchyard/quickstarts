@@ -31,6 +31,7 @@ import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.transform.AbstractTransformerTestCase;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
+import org.switchyard.transform.config.model.TransformNamespace;
 import org.switchyard.transform.config.model.v1.V1XsltTransformModel;
 import org.switchyard.transform.internal.TransformerRegistryLoader;
 import org.switchyard.transform.xslt.internal.XsltTransformer;
@@ -122,7 +123,7 @@ public class XsltTransformerTest extends AbstractTransformerTestCase {
 
     @Test
     public void test_factoryLoad() {
-        V1XsltTransformModel model = new V1XsltTransformModel();
+        V1XsltTransformModel model = new V1XsltTransformModel(TransformNamespace.DEFAULT.uri());
 
         model.setXsltFile("org/switchyard/transform/internal/xslt/topics.xslt");
         model.setFrom(new QName("A"));

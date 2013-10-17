@@ -14,7 +14,6 @@
 package org.switchyard.config.model.resource.v1;
 
 import static org.switchyard.config.model.resource.ResourceModel.RESOURCE;
-import static org.switchyard.config.model.switchyard.SwitchYardModel.DEFAULT_NAMESPACE;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,13 +33,6 @@ import org.switchyard.config.model.resource.ResourcesModel;
 public class V1ResourcesModel extends BaseModel implements ResourcesModel {
 
     private List<ResourceModel> _resources = new ArrayList<ResourceModel>();
-
-    /**
-     * Creates a new ResourcesModel in the default namespace.
-     */
-    public V1ResourcesModel() {
-        this(DEFAULT_NAMESPACE);
-    }
 
     /**
      * Creates a new ResourcesModel in the specified namespace.

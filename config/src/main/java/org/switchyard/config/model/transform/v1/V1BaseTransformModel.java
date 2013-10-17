@@ -19,7 +19,6 @@ import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseTypedModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
 
@@ -30,8 +29,8 @@ import org.switchyard.config.model.transform.TransformsModel;
  */
 public abstract class V1BaseTransformModel extends BaseTypedModel implements TransformModel {
 
-    protected V1BaseTransformModel(String type) {
-        this(new QName(SwitchYardModel.DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + type));
+    protected V1BaseTransformModel(String namespace, String type) {
+        this(new QName(namespace, TransformModel.TRANSFORM + '.' + type));
     }
 
     protected V1BaseTransformModel(QName qname) {

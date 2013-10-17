@@ -19,8 +19,8 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseTypedModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.composite.SCANamespace;
 
 /**
  * A representation of an InterfaceModel.
@@ -34,7 +34,7 @@ public class V1InterfaceModel extends BaseTypedModel implements InterfaceModel {
      * @param type interface type
      */
     public V1InterfaceModel(String type) {
-        this(type, CompositeModel.DEFAULT_NAMESPACE);
+        this(type, SCANamespace.DEFAULT.uri());
     }
 
     /**

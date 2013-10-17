@@ -61,6 +61,7 @@ import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.tools.forge.AbstractFacet;
 
@@ -368,7 +369,7 @@ public class SwitchYardFacet extends AbstractFacet {
             mvn.setPOM(pom);
             
             // Create the initial SwitchYard configuration
-            V1SwitchYardModel syConfig = new V1SwitchYardModel();
+            V1SwitchYardModel syConfig = new V1SwitchYardModel(SwitchYardNamespace.DEFAULT.uri());
             V1CompositeModel composite = new V1CompositeModel();
             composite.setName(appName);
             composite.setTargetNamespace("urn:switchyard:application:" + appName);

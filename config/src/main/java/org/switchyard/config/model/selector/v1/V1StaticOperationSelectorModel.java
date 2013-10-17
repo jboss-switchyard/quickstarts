@@ -19,7 +19,6 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.selector.StaticOperationSelectorModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * V1 Static OperationSelector Model.
@@ -28,9 +27,10 @@ public class V1StaticOperationSelectorModel extends BaseModel implements StaticO
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1StaticOperationSelectorModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, OPERATION_SELECTOR));
+    public V1StaticOperationSelectorModel(String namespace) {
+        super(new QName(namespace, OPERATION_SELECTOR));
     }
     
     /**

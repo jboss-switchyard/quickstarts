@@ -13,8 +13,6 @@
  */
 package org.switchyard.config.model.resource.v1;
 
-import static org.switchyard.config.model.switchyard.SwitchYardModel.DEFAULT_NAMESPACE;
-
 import javax.xml.namespace.QName;
 
 import org.switchyard.config.Configuration;
@@ -28,13 +26,6 @@ import org.switchyard.config.model.resource.ResourceDetailModel;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
 public class V1ResourceDetailModel extends BaseModel implements ResourceDetailModel {
-
-    /**
-     * Creates a new ResourceDetailModel in the default namespace.
-     */
-    public V1ResourceDetailModel() {
-        this(DEFAULT_NAMESPACE);
-    }
 
     /**
      * Creates a new ResourceDetailModel in the specified namespace.

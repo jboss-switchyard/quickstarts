@@ -68,7 +68,7 @@ public class CompositeModelTests {
 
     @Test
     public void testCreateEmptyModel() throws Exception {
-        String namespace = CompositeModel.DEFAULT_NAMESPACE;
+        String namespace = SCANamespace.DEFAULT.uri();
         String name = CompositeModel.COMPOSITE;
         Model model = new ModelPuller<Model>().pull(XMLHelper.createQName(namespace, name));
         assertTrue(model instanceof CompositeModel);
@@ -121,7 +121,7 @@ public class CompositeModelTests {
     @Test
     public void testReadComplete() throws Exception {
         CompositeModel composite = _puller.pull(COMPLETE_XML, getClass());
-        assertEquals(CompositeModel.DEFAULT_NAMESPACE, composite.getModelConfiguration().getQName().getNamespaceURI());
+        assertEquals(SCANamespace.DEFAULT.uri(), composite.getModelConfiguration().getQName().getNamespaceURI());
         assertEquals("m1app", composite.getName());
         CompositeServiceModel compositeService = composite.getServices().get(0);
         assertEquals("M1AppService", compositeService.getName());

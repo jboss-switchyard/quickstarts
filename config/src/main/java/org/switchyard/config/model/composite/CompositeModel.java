@@ -28,9 +28,6 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
  */
 public interface CompositeModel extends NamedModel, PropertyResolver {
 
-    /** The default SCA namespace. */
-    public static final String DEFAULT_NAMESPACE = "http://docs.oasis-open.org/ns/opencsa/sca/200912";
-
     /** The "composite" name. */
     public static final String COMPOSITE = "composite";
 

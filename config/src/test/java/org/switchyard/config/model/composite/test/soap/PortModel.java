@@ -19,7 +19,7 @@ import javax.xml.namespace.QName;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.composite.SCANamespace;
 
 /**
  * PortModel.
@@ -32,7 +32,7 @@ public class PortModel extends BaseModel {
     public static final String SECURE = "secure";
 
     public PortModel() {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, PORT));
+        super(new QName(SCANamespace.DEFAULT.uri(), PORT));
     }
 
     public PortModel(Configuration config, Descriptor desc) {

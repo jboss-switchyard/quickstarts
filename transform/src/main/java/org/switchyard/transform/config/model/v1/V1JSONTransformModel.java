@@ -34,9 +34,10 @@ public class V1JSONTransformModel extends V1BaseTransformModel implements JSONTr
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1JSONTransformModel() {
-        super(new QName(TransformModel.DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + JSON));
+    public V1JSONTransformModel(String namespace) {
+        super(new QName(namespace, TransformModel.TRANSFORM + '.' + JSON));
     }
 
     /**

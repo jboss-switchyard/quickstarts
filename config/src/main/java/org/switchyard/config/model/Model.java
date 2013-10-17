@@ -47,6 +47,18 @@ public interface Model {
     public Model getModelParent();
 
     /**
+     * Gets the root model of this model, or this model if this is the root.
+     * @return this model's root, or this model if this is the root
+     */
+    public Model getModelRoot();
+
+    /**
+     * Gets the model's root namespace.
+     * @return this model's root namespace
+     */
+    public String getModelRootNamespace();
+
+    /**
      * Gets all the child models of this model.
      * @return a list of this model's children
      */

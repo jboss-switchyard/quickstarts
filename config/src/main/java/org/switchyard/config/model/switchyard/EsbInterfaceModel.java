@@ -24,7 +24,7 @@ import org.switchyard.config.model.composite.InterfaceModel;
 public interface EsbInterfaceModel extends InterfaceModel {
 
     /**
-     * The "esb" implementation type.
+     * The "esb" interface type.
      */
     static final String ESB = "esb";
     

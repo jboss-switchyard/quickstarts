@@ -28,14 +28,13 @@ import org.switchyard.config.model.validate.v1.V1BaseValidateModel;
  */
 public class XmlValidateModel extends V1BaseValidateModel {
 
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-config:test-validate-xml:1.0";
     public static final String XML = "xml";
     public static final String SCHEMA_TYPE = "schemaType";
     public static final String SCHEMA_FILE = "schemaFile";
     public static final String FAIL_ON_WARN = "failOnWarn";
 
     public XmlValidateModel() {
-        super(new QName(DEFAULT_NAMESPACE, ValidateModel.VALIDATE + '.' + XML));
+        super(new QName("urn:switchyard-config:test-validate-xml:1.0", ValidateModel.VALIDATE + '.' + XML));
     }
 
     public XmlValidateModel(Configuration config, Descriptor desc) {

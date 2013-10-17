@@ -26,18 +26,15 @@ import java.util.List;
  */
 public class MergeScanner<M extends Model> implements Scanner<M> {
 
-    private final Class<M> _clazz;
     private final boolean _fromOverridesTo;
     private final List<Scanner<M>> _scanners;
 
     /**
      * Constructs a new MergeScanner using the specified parameters.
-     * @param clazz the type of Model that will be scanned for and merged
      * @param fromOverridesTo whether or not each successfully merged Model's values will override the next Model to merge values
      * @param scanners the Scanners to merge output from
      */
-    public MergeScanner(Class<M> clazz, boolean fromOverridesTo, Scanner<M>... scanners) {
-        _clazz = clazz;
+    public MergeScanner(boolean fromOverridesTo, Scanner<M>... scanners) {
         _fromOverridesTo = fromOverridesTo;
         List<Scanner<M>> list = new ArrayList<Scanner<M>>();
         if (scanners != null) {
@@ -52,12 +49,10 @@ public class MergeScanner<M extends Model> implements Scanner<M> {
 
     /**
      * Constructs a new MergeScanner using the specified parameters.
-     * @param clazz the type of Model that will be scanned for and merged
      * @param fromOverridesTo whether or not each successfully merged Model's values will override the next Model to merge values
      * @param scanners the Scanners to merge output from
      */
-    public MergeScanner(Class<M> clazz, boolean fromOverridesTo, List<Scanner<M>> scanners) {
-        _clazz = clazz;
+    public MergeScanner(boolean fromOverridesTo, List<Scanner<M>> scanners) {
         _fromOverridesTo = fromOverridesTo;
         _scanners = new ArrayList<Scanner<M>>();
         if (scanners != null) {
@@ -74,12 +69,7 @@ public class MergeScanner<M extends Model> implements Scanner<M> {
      */
     @Override
     public ScannerOutput<M> scan(ScannerInput<M> input) throws IOException {
-        M merged;
-        try {
-            merged = _clazz.newInstance();
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
+        M merged = null;
         for (Scanner<M> scanner : _scanners) {
             ScannerOutput<M> scannerOutput = scanner.scan(input);
             if (scannerOutput != null) {
@@ -87,7 +77,11 @@ public class MergeScanner<M extends Model> implements Scanner<M> {
                 if (scanned_list != null) {
                     for (M scanned : scanned_list) {
                         if (scanned != null) {
-                            merged = Models.merge(scanned, merged, _fromOverridesTo);
+                            if (merged == null) {
+                                merged = scanned;
+                            } else {
+                                merged = Models.merge(scanned, merged, _fromOverridesTo);
+                            }
                         }
                     }
                 }

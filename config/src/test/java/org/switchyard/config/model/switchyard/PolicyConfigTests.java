@@ -69,7 +69,7 @@ public class PolicyConfigTests {
 	@Test
 	public void buildPolicyConfig() throws Exception {
 		// Test service policy
-		ComponentServiceModel svc = new V1ComponentServiceModel();
+		ComponentServiceModel svc = new V1ComponentServiceModel(SwitchYardNamespace.DEFAULT.uri());
 		svc.addPolicyRequirement(POLICY_FOO);
 		svc.addPolicyRequirement(POLICY_BAR);
 		Set<String> svcRequires = svc.getPolicyRequirements();
@@ -77,7 +77,7 @@ public class PolicyConfigTests {
 		Assert.assertTrue(svcRequires.contains(POLICY_BAR));
 		
 		// Test reference policy
-		ComponentReferenceModel ref = new V1ComponentReferenceModel();
+		ComponentReferenceModel ref = new V1ComponentReferenceModel(SwitchYardNamespace.DEFAULT.uri());
 		ref.addPolicyRequirement(POLICY_BAR);
 		Set<String> refRequires = ref.getPolicyRequirements();
 		Assert.assertTrue(refRequires.contains(POLICY_BAR));

@@ -17,14 +17,13 @@ package org.switchyard.validate.config.model.v1;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.validate.config.model.FileEntryModel;
 import org.switchyard.validate.config.model.SchemaFilesModel;
-
-import javax.xml.namespace.QName;
 
 /**
  * A version 1 SchemaFilesModel.
@@ -35,9 +34,10 @@ public class V1SchemaFilesModel extends BaseModel implements SchemaFilesModel {
     
     /**
      * Constructs a new V1SchemaCatalogsModel.
+     * @param namespace namespace
      */
-    public V1SchemaFilesModel() {
-        super(new QName(ValidateModel.DEFAULT_NAMESPACE, SchemaFilesModel.SCHEMA_FILES));
+    public V1SchemaFilesModel(String namespace) {
+        super(new QName(namespace, SchemaFilesModel.SCHEMA_FILES));
     }
 
     /**

@@ -14,13 +14,12 @@
 
 package org.switchyard.validate.config.model.v1;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.validate.config.model.FileEntryModel;
-
-import javax.xml.namespace.QName;
 
 /**
  * A version 1 FileEntryModel.
@@ -29,9 +28,10 @@ public class V1FileEntryModel extends BaseModel implements FileEntryModel {
 
     /**
      * Constructs a new V1SchemaCatalogsModel.
+     * @param namespace namespace
      */
-    public V1FileEntryModel() {
-        super(new QName(ValidateModel.DEFAULT_NAMESPACE, FileEntryModel.ENTRY));
+    public V1FileEntryModel(String namespace) {
+        super(new QName(namespace, FileEntryModel.ENTRY));
     }
 
     /**

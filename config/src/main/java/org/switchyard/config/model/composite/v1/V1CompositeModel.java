@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.common.property.CompoundPropertyResolver;
 import org.switchyard.common.property.SystemAndTestPropertyResolver;
 import org.switchyard.config.Configuration;
@@ -31,6 +29,7 @@ import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
+import org.switchyard.config.model.composite.SCANamespace;
 import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
@@ -50,7 +49,7 @@ public class V1CompositeModel extends BaseNamedModel implements CompositeModel {
      * Constructs a new V1CompositeModel.
      */
     public V1CompositeModel() {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, CompositeModel.COMPOSITE));
+        super(SCANamespace.DEFAULT.uri(), CompositeModel.COMPOSITE);
         setModelChildrenOrder(CompositeServiceModel.SERVICE, CompositeReferenceModel.REFERENCE, ComponentModel.COMPONENT, PropertyModel.PROPERTY);
         setCompositePropertyResolver();
     }

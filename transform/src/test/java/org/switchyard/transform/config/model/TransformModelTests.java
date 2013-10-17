@@ -29,6 +29,7 @@ import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
@@ -54,7 +55,7 @@ public class TransformModelTests {
 
     @Test
     public void testCreateEmptyModel() throws Exception {
-        String namespace = TransformModel.DEFAULT_NAMESPACE;
+        String namespace = TransformNamespace.DEFAULT.uri();
         String name = TransformModel.TRANSFORM + '.' + JavaTransformModel.JAVA;
         Model model = new ModelPuller<Model>().pull(XMLHelper.createQName(namespace, name));
         Assert.assertTrue(model instanceof JavaTransformModel);
@@ -64,14 +65,14 @@ public class TransformModelTests {
 
     @Test
     public void testCreate() throws Exception {
-        SwitchYardModel switchyard = new V1SwitchYardModel();
-        TransformsModel transforms = new V1TransformsModel();
-        JavaTransformModel javaTransform = new V1JavaTransformModel();
+        SwitchYardModel switchyard = new V1SwitchYardModel(SwitchYardNamespace.V_1_0.uri());
+        TransformsModel transforms = new V1TransformsModel(SwitchYardNamespace.V_1_0.uri());
+        JavaTransformModel javaTransform = new V1JavaTransformModel(TransformNamespace.V_1_0.uri());
         javaTransform.setFrom(new QName("msgA"));
         javaTransform.setTo(new QName("msgB"));
         javaTransform.setClazz("org.examples.transform.AtoBTransform");
         transforms.addTransform(javaTransform);
-        SmooksTransformModel smooksTransform = new V1SmooksTransformModel();
+        SmooksTransformModel smooksTransform = new V1SmooksTransformModel(TransformNamespace.V_1_0.uri());
         smooksTransform.setFrom(new QName("msgC"));
         smooksTransform.setTo(new QName("msgD"));
         smooksTransform.setTransformType("XML2JAVA");

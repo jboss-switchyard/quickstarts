@@ -17,10 +17,11 @@ import static org.switchyard.config.model.implementation.bpel.ProcessConstants.P
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.composite.SCANamespace;
 import org.switchyard.config.model.composite.v1.V1ComponentImplementationModel;
+import org.switchyard.config.model.implementation.bpel.BPELComponentImplementationModel;
 
 /**
  * A "bpel" implementation of a ComponentImplementationModel.
@@ -32,7 +33,7 @@ public class V1BPELComponentImplementationModel extends V1ComponentImplementatio
      * Default constructor for application use.
      */
     public V1BPELComponentImplementationModel() {
-        super(BPEL, DEFAULT_NAMESPACE);
+        super(BPEL, SCANamespace.DEFAULT.uri());
     }
 
     /**

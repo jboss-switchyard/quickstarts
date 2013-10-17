@@ -20,7 +20,6 @@ import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.switchyard.ArtifactModel;
 import org.switchyard.config.model.switchyard.ArtifactsModel;
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * Implementation of ArtifactModel : v1.
@@ -29,9 +28,10 @@ public class V1ArtifactModel extends BaseModel implements ArtifactModel {
 
     /**
      * Constructs a new V1ArtifactModel.
+     * @param namespace namespace
      */
-    public V1ArtifactModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, ArtifactModel.ARTIFACT));
+    public V1ArtifactModel(String namespace) {
+        super(new QName(namespace, ArtifactModel.ARTIFACT));
     }
 
     /**

@@ -35,9 +35,10 @@ public class V1ArtifactsModel extends BaseModel implements ArtifactsModel {
 
     /**
      * Constructs a new V1ArtifactsModel.
+     * @param namespace namespace
      */
-    public V1ArtifactsModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, ArtifactsModel.ARTIFACTS));
+    public V1ArtifactsModel(String namespace) {
+        super(new QName(namespace, ArtifactsModel.ARTIFACTS));
         setModelChildrenOrder(ArtifactModel.ARTIFACT);
     }
 

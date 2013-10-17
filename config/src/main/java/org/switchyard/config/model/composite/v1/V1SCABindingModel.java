@@ -14,21 +14,27 @@
 
 package org.switchyard.config.model.composite.v1;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.SCABindingModel;
+import org.switchyard.config.model.composite.SCANamespace;
 
 /**
  * V1 implementation in SCABindingModel.
  */
 public class V1SCABindingModel extends V1BindingModel implements SCABindingModel {
-    
+
+    private String _switchyardNamespace;
+
     /**
      * Create a new V1SCABindingModel.
+     * @param switchyardNamespace switchyardNamespace
      */
-    public V1SCABindingModel() {
-        super(SCABindingModel.SCA, CompositeModel.DEFAULT_NAMESPACE);
+    public V1SCABindingModel(String switchyardNamespace) {
+        super(SCABindingModel.SCA, SCANamespace.DEFAULT.uri());
+        _switchyardNamespace = switchyardNamespace;
     }
     
     /**
@@ -38,16 +44,17 @@ public class V1SCABindingModel extends V1BindingModel implements SCABindingModel
      */
     public V1SCABindingModel(Configuration config, Descriptor desc) {
         super(config, desc);
+        _switchyardNamespace = getModelRootNamespace();
     }
 
     @Override
     public boolean isClustered() {
-        return Boolean.valueOf(getModelAttribute(CLUSTERED));
+        return Boolean.valueOf(getModelAttribute(new QName(_switchyardNamespace, CLUSTERED)));
     }
 
     @Override
     public SCABindingModel setClustered(boolean clustered) {
-        setModelAttribute(CLUSTERED, String.valueOf(clustered));
+        setModelAttribute(new QName(_switchyardNamespace, CLUSTERED), String.valueOf(clustered));
         return this;
     }
 
@@ -58,12 +65,12 @@ public class V1SCABindingModel extends V1BindingModel implements SCABindingModel
 
     @Override
     public String getLoadBalance() {
-        return getModelAttribute(LOAD_BALANCE);
+        return getModelAttribute(new QName(_switchyardNamespace, LOAD_BALANCE));
     }
 
     @Override
     public SCABindingModel setLoadBalance(String loadBalance) {
-        setModelAttribute(LOAD_BALANCE, loadBalance);
+        setModelAttribute(new QName(_switchyardNamespace, LOAD_BALANCE), loadBalance);
         return this;
     }
 
@@ -74,12 +81,12 @@ public class V1SCABindingModel extends V1BindingModel implements SCABindingModel
 
     @Override
     public String getTarget() {
-        return getModelAttribute(TARGET);
+        return getModelAttribute(new QName(_switchyardNamespace, TARGET));
     }
 
     @Override
     public SCABindingModel setTarget(String target) {
-        setModelAttribute(TARGET, target);
+        setModelAttribute(new QName(_switchyardNamespace, TARGET), target);
         return this;
     }
 
@@ -90,12 +97,12 @@ public class V1SCABindingModel extends V1BindingModel implements SCABindingModel
 
     @Override
     public String getTargetNamespace() {
-        return getModelAttribute(TARGET_NAMESPACE);
+        return getModelAttribute(new QName(_switchyardNamespace, TARGET_NAMESPACE));
     }
 
     @Override
     public SCABindingModel setTargetNamespace(String namespace) {
-        setModelAttribute(TARGET_NAMESPACE, namespace);
+        setModelAttribute(new QName(_switchyardNamespace, TARGET_NAMESPACE), namespace);
         return this;
     }
 

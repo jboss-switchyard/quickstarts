@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.validation.Validator;
 
+import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.ConfigurationPuller;
 import org.switchyard.config.OutputKey;
@@ -39,8 +40,8 @@ public abstract class BaseModel implements Model {
     private final Descriptor _desc;
     private Model _parent;
 
-    protected BaseModel(String name, String namespace) {
-        this(new QName(namespace, name));
+    protected BaseModel(String namespace, String name) {
+        this(XMLHelper.createQName(namespace, name));
     }
 
     protected BaseModel(QName qname) {
@@ -198,6 +199,28 @@ public abstract class BaseModel implements Model {
             }
         }
         return _parent;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final Model getModelRoot() {
+        Model root = this;
+        while (root.getModelParent() != null) {
+            root = root.getModelParent();
+        }
+        return root;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getModelRootNamespace() {
+        //return getModelRoot().getModelConfiguration().getQName().getNamespaceURI();
+        // the line below is faster than the line above, as it won't invoke readModel
+        return _config.getRootNamespace();
     }
 
     /**

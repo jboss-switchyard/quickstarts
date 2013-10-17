@@ -22,7 +22,7 @@ import org.switchyard.common.cdi.CDIUtil;
 import org.switchyard.common.type.classpath.AbstractTypeFilter;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.config.model.Scannable;
-import org.switchyard.config.model.Scanner; 
+import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
@@ -45,15 +45,26 @@ public class ValidateSwitchYardScanner implements Scanner<SwitchYardModel> {
      */
     @Override
     public ScannerOutput<SwitchYardModel> scan(ScannerInput<SwitchYardModel> input) throws IOException {
-        SwitchYardModel switchyardModel = new V1SwitchYardModel();
+        String switchyardNamespace = input.getSwitchyardNamespace();
+        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace);
         ValidatesModel validatesModel = null;
+
+        // TODO: Fix hack!
+        String validateNamespace = ValidateNamespace.DEFAULT.uri();
+        if (switchyardNamespace != null) {
+            if (switchyardNamespace.endsWith(":1.0")) {
+                validateNamespace = ValidateNamespace.V_1_0.uri();
+            } else if (switchyardNamespace.endsWith(":1.1")) {
+                validateNamespace = ValidateNamespace.V_1_1.uri();
+            }
+        }
 
         List<Class<?>> validatorClasses = scanForValidators(input.getURLs());
         for (Class<?> validator : validatorClasses) {
             List<ValidatorTypes> supportedValidators = ValidatorUtil.listValidations(validator);
 
             for (ValidatorTypes supportedValidate : supportedValidators) {
-                JavaValidateModel validateModel = new V1JavaValidateModel();
+                JavaValidateModel validateModel = new V1JavaValidateModel(validateNamespace);
 
                 String bean = CDIUtil.getNamedAnnotationValue(validator);
                 if (bean != null) {
@@ -64,7 +75,7 @@ public class ValidateSwitchYardScanner implements Scanner<SwitchYardModel> {
                 validateModel.setName(supportedValidate.getName());
 
                 if (validatesModel == null) {
-                    validatesModel = new V1ValidatesModel();
+                    validatesModel = new V1ValidatesModel(switchyardNamespace);
                     switchyardModel.setValidates(validatesModel);
                 }
                 validatesModel.addValidate(validateModel);

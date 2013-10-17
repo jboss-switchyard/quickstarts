@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.common.lang.Strings;
 import org.switchyard.config.ConfigLogger;
 import org.switchyard.config.Configuration;
@@ -32,6 +30,7 @@ import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.ExtensionsModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.composite.SCANamespace;
 
 /**
  * A version 1 CompositeServiceModel.
@@ -48,7 +47,7 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
      * Constructs a new V1CompositeServiceModel.
      */
     public V1CompositeServiceModel() {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, CompositeServiceModel.SERVICE));
+        super(SCANamespace.DEFAULT.uri(), CompositeServiceModel.SERVICE);
     }
 
     /**

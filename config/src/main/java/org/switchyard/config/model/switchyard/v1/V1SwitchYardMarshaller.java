@@ -17,6 +17,7 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.InterfaceModel;
 import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.SecuritiesModel;
 import org.switchyard.config.model.domain.SecurityModel;
@@ -43,6 +44,7 @@ import org.switchyard.config.model.selector.v1.V1StaticOperationSelectorModel;
 import org.switchyard.config.model.selector.v1.V1XPathOperationSelectorModel;
 import org.switchyard.config.model.switchyard.ArtifactModel;
 import org.switchyard.config.model.switchyard.ArtifactsModel;
+import org.switchyard.config.model.switchyard.EsbInterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.config.model.switchyard.ThrottlingModel;
 import org.switchyard.config.model.transform.TransformsModel;
@@ -57,7 +59,11 @@ import org.switchyard.config.model.validate.v1.V1ValidatesModel;
  */
 public class V1SwitchYardMarshaller extends BaseMarshaller {
 
-    private static final String ESB_INTERFACE = "interface.esb";
+    /**
+     * The complete local name "interface.esb".
+     */
+    private static final String INTERFACE_ESB = InterfaceModel.INTERFACE + "." + EsbInterfaceModel.ESB;
+
     /**
      * Constructs a new V1SwitchYardMarshaller with the specified Descriptor.
      * @param desc the Descriptor
@@ -101,7 +107,7 @@ public class V1SwitchYardMarshaller extends BaseMarshaller {
             return new V1ResourceDetailModel(config, desc);
         } else if (name.equals(ThrottlingModel.THROTTLING)) {
             return new V1ThrottlingModel(config, desc);
-        } else if (name.equals(ESB_INTERFACE)) {
+        } else if (name.equals(INTERFACE_ESB)) {
             return new V1EsbInterfaceModel(config, desc);
         } else if (name.startsWith(OperationSelectorModel.OPERATION_SELECTOR)) {
             if (name.equals(OperationSelectorModel.OPERATION_SELECTOR)) {

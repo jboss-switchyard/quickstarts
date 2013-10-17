@@ -24,11 +24,6 @@ import org.switchyard.config.model.composite.ComponentImplementationModel;
 public interface BPELComponentImplementationModel extends ComponentImplementationModel {
 
     /**
-     * The "bpel" namespace.
-     */
-    public static final String DEFAULT_NAMESPACE = "http://docs.oasis-open.org/ns/opencsa/sca/200912";
-
-    /**
      * The "bpel" implementation type.
      */
     public static final String BPEL = "bpel";

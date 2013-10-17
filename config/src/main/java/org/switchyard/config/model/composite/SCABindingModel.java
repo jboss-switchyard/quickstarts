@@ -14,9 +14,6 @@
 
 package org.switchyard.config.model.composite;
 
-import javax.xml.namespace.QName;
-
-import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
  * SCABindingModel represents the standard binding.sca binding in SCA.  SwitchYard supports a 
@@ -29,16 +26,16 @@ public interface SCABindingModel extends BindingModel {
     public static final String SCA = "sca";
     
     /** The "target" name. */
-    public static final QName TARGET = new QName(SwitchYardModel.DEFAULT_NAMESPACE, "target");
+    public static final String TARGET = "target";
     
     /** The "target" name. */
-    public static final QName TARGET_NAMESPACE = new QName(SwitchYardModel.DEFAULT_NAMESPACE, "targetNamespace");
+    public static final String TARGET_NAMESPACE = "targetNamespace";
     
     /** The "loadBalance" name. */
-    public static final QName LOAD_BALANCE = new QName(SwitchYardModel.DEFAULT_NAMESPACE, "loadBalance");
+    public static final String LOAD_BALANCE = "loadBalance";
     
     /** The "clustered" name. */
-    public static final QName CLUSTERED = new QName(SwitchYardModel.DEFAULT_NAMESPACE, "clustered");
+    public static final String CLUSTERED = "clustered";
 
     /**
      * Indicates whether clustering is enabled.  

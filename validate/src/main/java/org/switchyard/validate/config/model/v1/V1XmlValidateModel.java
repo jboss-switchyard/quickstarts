@@ -14,6 +14,8 @@
 
 package org.switchyard.validate.config.model.v1;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.validate.ValidateModel;
@@ -24,8 +26,6 @@ import org.switchyard.validate.config.model.XmlSchemaType;
 import org.switchyard.validate.config.model.XmlValidateModel;
 import org.switchyard.validate.internal.ValidatorFactoryClass;
 import org.switchyard.validate.xml.internal.XmlValidatorFactory;
-
-import javax.xml.namespace.QName;
 
 /**
  * A version 1 XmlValidateModel.
@@ -40,9 +40,10 @@ public class V1XmlValidateModel extends V1BaseValidateModel implements XmlValida
     
     /**
      * Constructs a new V1XmlValidateModel.
+     * @param namespace namespace
      */
-    public V1XmlValidateModel() {
-        super(new QName(ValidateModel.DEFAULT_NAMESPACE, ValidateModel.VALIDATE + '.' + XML));
+    public V1XmlValidateModel(String namespace) {
+        super(new QName(namespace, ValidateModel.VALIDATE + '.' + XML));
     }
 
     /**

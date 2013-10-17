@@ -30,7 +30,7 @@ public class SmooksConfigModel extends BaseModel {
     public static final String CONFIG = "config";
 
     public SmooksConfigModel() {
-        super(new QName(SmooksTransformModel.DEFAULT_NAMESPACE, CONFIG));
+        super(new QName("urn:switchyard-config:test-smooks:1.0", CONFIG));
     }
 
     public SmooksConfigModel(Configuration config, Descriptor desc) {

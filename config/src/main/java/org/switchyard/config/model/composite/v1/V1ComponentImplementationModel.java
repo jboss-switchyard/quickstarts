@@ -23,7 +23,7 @@ import org.switchyard.config.model.BaseTypedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.composite.ComponentModel;
-import org.switchyard.config.model.composite.CompositeModel;
+import org.switchyard.config.model.composite.SCANamespace;
 
 /**
  * A version 1 ComponentImplementationModel.
@@ -37,7 +37,7 @@ public class V1ComponentImplementationModel extends BaseTypedModel implements Co
      * @param type the "type" of ComponentImplementationModel
      */
     public V1ComponentImplementationModel(String type) {
-        this(type, CompositeModel.DEFAULT_NAMESPACE);
+        this(type, SCANamespace.DEFAULT.uri());
     }
 
     /**

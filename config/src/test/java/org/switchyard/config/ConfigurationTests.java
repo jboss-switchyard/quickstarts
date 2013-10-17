@@ -13,6 +13,7 @@
  */
 package org.switchyard.config;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,6 +34,8 @@ import org.switchyard.config.model.MergeScanner;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.ModelPullerScanner;
 import org.switchyard.config.model.Scanner;
+import org.switchyard.config.model.ScannerInput;
+import org.switchyard.config.model.ScannerOutput;
 
 /**
  * ConfigurationTests.
@@ -161,10 +164,17 @@ public class ConfigurationTests {
     @Test
     public void testNamespacesMerge() throws Exception {
         @SuppressWarnings("unchecked")
-        Scanner<TestModel>[] scanners = new Scanner[] {new ModelPullerScanner<Model>(NAMESPACES_XML, getClass().getClassLoader())};
-        MergeScanner<TestModel> merge_scanner = new MergeScanner<TestModel>(TestModel.class, true, scanners);
-        Model model = merge_scanner.scan(null).getModel();
-
+        Scanner<TestModel>[] scanners = new Scanner[]{
+            new Scanner<TestModel>() {
+                public ScannerOutput<TestModel> scan(ScannerInput<TestModel> input) throws IOException {
+                    return new ScannerOutput<TestModel>().setModel(new TestModel());
+                }
+            },
+            new ModelPullerScanner<TestModel>(NAMESPACES_XML, getClass().getClassLoader())
+        };
+        MergeScanner<TestModel> merge_scanner = new MergeScanner<TestModel>(true, scanners);
+        ScannerInput<TestModel> scanner_input = new ScannerInput<TestModel>();
+        Model model = merge_scanner.scan(scanner_input).getModel();
         Configuration config_one = model.getModelConfiguration();
         try {
             validateNamespacesConfig(config_one);
@@ -229,7 +239,7 @@ public class ConfigurationTests {
     public static final class TestModel extends BaseNamedModel {
 
         public TestModel() {
-            super(new QName("http://a.org/a.xsd", "one"));
+            super("http://a.org/a.xsd", "one");
         }
         
         public TestModel(Configuration config) {

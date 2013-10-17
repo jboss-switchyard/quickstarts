@@ -34,6 +34,10 @@ public abstract class BaseNamedModel extends BaseModel implements NamedModel {
         super(qname);
     }
 
+    protected BaseNamedModel(String namespace, String name) {
+        super(namespace, name);
+    }
+
     protected BaseNamedModel(Configuration config) {
         super(config);
     }

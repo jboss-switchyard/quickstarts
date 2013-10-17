@@ -37,9 +37,10 @@ public class V1ValidatesModel extends BaseModel implements ValidatesModel {
 
     /**
      * Constructs a new V1ValidatesModel.
+     * @param namespace namespace
      */
-    public V1ValidatesModel() {
-        super(new QName(SwitchYardModel.DEFAULT_NAMESPACE, ValidatesModel.VALIDATES));
+    public V1ValidatesModel(String namespace) {
+        super(new QName(namespace, ValidatesModel.VALIDATES));
         setModelChildrenOrder(ValidateModel.VALIDATE);
     }
 

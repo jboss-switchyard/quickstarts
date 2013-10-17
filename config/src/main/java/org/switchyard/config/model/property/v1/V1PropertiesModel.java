@@ -14,7 +14,6 @@
 package org.switchyard.config.model.property.v1;
 
 import static org.switchyard.config.model.property.PropertyModel.PROPERTY;
-import static org.switchyard.config.model.switchyard.SwitchYardModel.DEFAULT_NAMESPACE;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,13 +36,6 @@ import org.switchyard.config.model.property.PropertyModel;
 public class V1PropertiesModel extends BaseModel implements PropertiesModel {
 
     private List<PropertyModel> _properties = new ArrayList<PropertyModel>();
-
-    /**
-     * Creates a new PropertiesModel in the default namespace.
-     */
-    public V1PropertiesModel() {
-        this(DEFAULT_NAMESPACE);
-    }
 
     /**
      * Creates a new PropertiesModel in the specified namespace.

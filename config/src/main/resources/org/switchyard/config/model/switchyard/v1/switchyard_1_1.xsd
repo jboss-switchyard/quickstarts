@@ -13,8 +13,8 @@
  - limitations under the License.
  -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
-        targetNamespace="urn:switchyard-config:switchyard:1.0"
-        xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+        targetNamespace="urn:switchyard-config:switchyard:1.1"
+        xmlns:swyd="urn:switchyard-config:switchyard:1.1"
         xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
         elementFormDefault="qualified">
 

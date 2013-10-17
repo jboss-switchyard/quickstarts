@@ -34,9 +34,10 @@ public class V1JAXBTransformModel extends V1BaseTransformModel implements JAXBTr
 
     /**
      * Constructs a new V1JAXBTransformModel.
+     * @param namespace namespace
      */
-    public V1JAXBTransformModel() {
-        super(new QName(TransformModel.DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + JAXB));
+    public V1JAXBTransformModel(String namespace) {
+        super(new QName(namespace, TransformModel.TRANSFORM + '.' + JAXB));
     }
 
     /**

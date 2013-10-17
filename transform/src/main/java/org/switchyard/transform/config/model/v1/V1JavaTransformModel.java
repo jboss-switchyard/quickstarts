@@ -31,9 +31,10 @@ public class V1JavaTransformModel extends V1BaseTransformModel implements JavaTr
 
     /**
      * Constructs a new V1JavaTransformModel.
+     * @param namespace namespace
      */
-    public V1JavaTransformModel() {
-        super(new QName(TransformModel.DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + JAVA));
+    public V1JavaTransformModel(String namespace) {
+        super(new QName(namespace, TransformModel.TRANSFORM + '.' + JAVA));
     }
 
     /**

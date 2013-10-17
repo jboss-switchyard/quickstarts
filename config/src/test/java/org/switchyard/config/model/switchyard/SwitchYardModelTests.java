@@ -70,12 +70,11 @@ public class SwitchYardModelTests {
 
     @Test
     public void testCreateEmptyModel() throws Exception {
-        String namespace = SwitchYardModel.DEFAULT_NAMESPACE;
         String name = SwitchYardModel.SWITCHYARD;
-        Model model = new ModelPuller<Model>().pull(XMLHelper.createQName(namespace, name));
+        Model model = new ModelPuller<Model>().pull(XMLHelper.createQName(SwitchYardNamespace.V_1_1.uri(), name));
         Assert.assertTrue(model instanceof SwitchYardModel);
         Assert.assertEquals(name, model.getModelConfiguration().getName());
-        Assert.assertEquals(new QName(namespace, name), model.getModelConfiguration().getQName());
+        Assert.assertEquals(new QName(SwitchYardNamespace.V_1_1.uri(), name), model.getModelConfiguration().getQName());
     }
 
     @Test
@@ -163,8 +162,8 @@ public class SwitchYardModelTests {
 
     @Test
     public void testArtifactCreate() throws Exception {
-        ArtifactsModel artifacts = new V1ArtifactsModel();
-        ArtifactModel artifact = new V1ArtifactModel();
+        ArtifactsModel artifacts = new V1ArtifactsModel(SwitchYardNamespace.V_1_0.uri());
+        ArtifactModel artifact = new V1ArtifactModel(SwitchYardNamespace.V_1_0.uri());
         artifact.setName("foo");
         artifact.setURL("file://tmp/foo");
         artifacts.addArtifact(artifact);
@@ -172,7 +171,7 @@ public class SwitchYardModelTests {
         Assert.assertEquals("foo", artifact.getName());
         Assert.assertEquals("file://tmp/foo", artifact.getURL());
         
-        SwitchYardModel syModel = new V1SwitchYardModel();
+        SwitchYardModel syModel = new V1SwitchYardModel(SwitchYardNamespace.V_1_0.uri());
         syModel.setArtifacts(artifacts);
         Assert.assertEquals(artifacts, syModel.getArtifacts());
     }

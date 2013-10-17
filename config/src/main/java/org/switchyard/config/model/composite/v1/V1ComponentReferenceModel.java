@@ -23,8 +23,8 @@ import org.switchyard.config.model.BaseNamedModel;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.ComponentReferenceModel;
-import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.InterfaceModel;
+import org.switchyard.config.model.composite.SCANamespace;
 
 /**
  * A version 1 ComponentReferenceModel.
@@ -34,12 +34,15 @@ import org.switchyard.config.model.composite.InterfaceModel;
 public class V1ComponentReferenceModel extends BaseNamedModel implements ComponentReferenceModel {
 
     private InterfaceModel _interface;
+    private String _switchyardNamespace;
 
     /**
      * Constructs a new V1ComponentReferenceModel.
+     * @param switchyardNamespace switchyardNamespace
      */
-    public V1ComponentReferenceModel() {
-        super(new QName(CompositeModel.DEFAULT_NAMESPACE, ComponentReferenceModel.REFERENCE));
+    public V1ComponentReferenceModel(String switchyardNamespace) {
+        super(SCANamespace.DEFAULT.uri(), ComponentReferenceModel.REFERENCE);
+        _switchyardNamespace = switchyardNamespace;
     }
 
     /**
@@ -49,6 +52,7 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
      */
     public V1ComponentReferenceModel(Configuration config, Descriptor desc) {
         super(config, desc);
+        _switchyardNamespace = getModelRootNamespace();
     }
 
     /**
@@ -102,7 +106,7 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
      */
     @Override
     public String getSecurity() {
-        return getModelAttribute(ComponentReferenceModel.SECURITY);
+        return getModelAttribute(new QName(_switchyardNamespace, ComponentReferenceModel.SECURITY));
     }
 
     /**
@@ -110,7 +114,7 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
      */
     @Override
     public ComponentReferenceModel setSecurity(String security) {
-        setModelAttribute(ComponentReferenceModel.SECURITY, security);
+        setModelAttribute(new QName(_switchyardNamespace, ComponentReferenceModel.SECURITY), security);
         return this;
     }
 
@@ -123,7 +127,7 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
         requires.add(policyName);
         PolicyConfig.setRequires(this, requires);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -131,7 +135,7 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
     public Set<String> getPolicyRequirements() {
         return PolicyConfig.getRequires(this);
     }
-    
+
     /**
      * {@inheritDoc}
      */

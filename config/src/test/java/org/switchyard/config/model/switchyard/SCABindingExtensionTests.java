@@ -41,7 +41,7 @@ public class SCABindingExtensionTests {
         final String TARGET_NS = "urn:bar";
         final String STRATEGY = "RoundRobin";
         
-        SCABindingModel scab = new V1SCABindingModel();
+        SCABindingModel scab = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri());
         scab.setClustered(true)
             .setLoadBalance(STRATEGY)
             .setTarget(TARGET)

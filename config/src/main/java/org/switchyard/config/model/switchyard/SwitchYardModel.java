@@ -26,9 +26,6 @@ import org.switchyard.config.model.validate.ValidatesModel;
  */
 public interface SwitchYardModel extends NamedModel {
 
-    /** The default switchyard namespace. */
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-config:switchyard:1.0";
-
     /** The "switchyard" name. */
     public static final String SWITCHYARD = "switchyard";
 

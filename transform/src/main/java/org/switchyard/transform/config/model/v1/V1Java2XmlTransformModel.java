@@ -14,13 +14,13 @@
 
 package org.switchyard.transform.config.model.v1;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.v1.V1BaseTransformModel;
 import org.switchyard.transform.config.model.Java2XmlTransformModel;
-
-import javax.xml.namespace.QName;
 
 /**
  * A version 1 Java2XmlTransformModel.
@@ -31,9 +31,10 @@ public class V1Java2XmlTransformModel extends V1BaseTransformModel implements Ja
 
     /**
      * Constructs a new V1Java2XmlTransformModel.
+     * @param namespace namespace
      */
-    public V1Java2XmlTransformModel() {
-        super(new QName(TransformModel.DEFAULT_NAMESPACE, TransformModel.TRANSFORM + '.' + JAVA2XML));
+    public V1Java2XmlTransformModel(String namespace) {
+        super(new QName(namespace, TransformModel.TRANSFORM + '.' + JAVA2XML));
     }
 
     /**

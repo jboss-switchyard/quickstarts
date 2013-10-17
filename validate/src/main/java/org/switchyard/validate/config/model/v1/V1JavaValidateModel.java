@@ -31,9 +31,10 @@ public class V1JavaValidateModel extends V1BaseValidateModel implements JavaVali
 
     /**
      * Constructs a new V1JavaValidateModel.
+     * @param namespace namespace
      */
-    public V1JavaValidateModel() {
-        super(new QName(ValidateModel.DEFAULT_NAMESPACE, ValidateModel.VALIDATE + '.' + JAVA));
+    public V1JavaValidateModel(String namespace) {
+        super(new QName(namespace, ValidateModel.VALIDATE + '.' + JAVA));
     }
 
     /**
