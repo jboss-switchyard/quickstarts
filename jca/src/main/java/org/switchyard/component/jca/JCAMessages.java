@@ -1,6 +1,7 @@
 package org.switchyard.component.jca;
 
 import javax.naming.NamingException;
+
 import org.jboss.logging.Cause;
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Message;
@@ -231,5 +232,77 @@ public interface JCAMessages {
     @Message(id = 37236, value = "No operationSelector was configured for the JCA Component and the Service Interface contains more than one operation: "
             + "%s.   Please add an operationSelector element.")
     SwitchYardException noOperationSelectorConfigured(String operations);
+
+    /**
+     * noInboundConnectionConfigured method definition.
+     * @return IllegalArgumentException
+     */
+    @Message(id = 37237, value = "No inboundConnection was configured for the JCA Component")
+    IllegalArgumentException noInboundConnectionConfigured();
+
+    /**
+     * noResourceAdapterConfigured method definition.
+     * @return IllegalArgumentException
+     */
+    @Message(id = 37238, value = "No resourceAdapter was configured for the JCA Component")
+    IllegalArgumentException noResourceAdapterConfigured();
+
+    /**
+     * noResourceAdapterNameConfigured method definition.
+     * @return IllegalArgumentException
+     */
+    @Message(id = 37239, value = "No resourceAdapter name was configured for the JCA Component")
+    IllegalArgumentException noResourceAdapterNameConfigured();
+
+    /**
+     * noInboundInteractionConfigured method definition.
+     * @return IllegalArgumentException
+     */
+    @Message(id = 37240, value = "No inboundInteraction was configured for the JCA Component")
+    IllegalArgumentException noInboundInteractionConfigured();
+
+    /**
+     * noListenerClassFound method definition. 
+     * @param listener listener class name
+     * @param e root cause
+     * @return IllegalArgumentException
+     */
+    @Message(id = 37241, value = "Listener class '%s' could not be loaded.")
+    IllegalArgumentException noListenerClassFound(String listener, @Cause Exception e);
+
+    /**
+     * noEndpointConfigured method definition.
+     * @return IllegalArgumentException
+     */
+    @Message(id = 37242, value = "No endpoint was configured for the JCA Component")
+    IllegalArgumentException noEndpointConfigured();
+
+    /**
+     * noOutboundInteractionConfigured method definition.
+     * @return IllegalArgumentException
+     */
+    @Message(id = 37243, value = "No outboundInteraction was configured for the JCA Component")
+    IllegalArgumentException noOutboundInteractionConfigured();
+
+    /**
+     * noProcessorConfigured method definition.
+     * @return IllegalArgumentException
+     */
+    @Message(id = 37244, value = "No processor was configured for the JCA Component")
+    IllegalArgumentException noProcessorConfigured();
+
+    /**
+     * noConnectionConfigured method definition.
+     * @return IllegalArgumentException
+     */
+    @Message(id = 37245, value = "No connection was configured for the JCA Component")
+    IllegalArgumentException noConnectionConfigured();
+
+    /**
+     * noOutboundConnectionConfigured method definition.
+     * @return IllegalArgumentException
+     */
+    @Message(id = 37246, value = "No outboundConnection was configured for the JCA Component")
+    IllegalArgumentException noOutboundConnectionConfigured();
 }
 

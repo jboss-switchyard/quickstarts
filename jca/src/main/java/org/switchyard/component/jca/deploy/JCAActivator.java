@@ -25,14 +25,25 @@ import javax.transaction.TransactionManager;
 
 import org.switchyard.component.jca.JCAMessages;
 import org.switchyard.component.jca.JCAConstants;
+import org.switchyard.component.jca.config.model.ActivationSpecModel;
 import org.switchyard.component.jca.config.model.BatchCommitModel;
+import org.switchyard.component.jca.config.model.ConnectionModel;
+import org.switchyard.component.jca.config.model.ConnectionSpecModel;
+import org.switchyard.component.jca.config.model.EndpointModel;
+import org.switchyard.component.jca.config.model.InboundConnectionModel;
+import org.switchyard.component.jca.config.model.InboundInteractionModel;
+import org.switchyard.component.jca.config.model.InteractionSpecModel;
 import org.switchyard.component.jca.config.model.JCABindingModel;
+import org.switchyard.component.jca.config.model.ListenerModel;
+import org.switchyard.component.jca.config.model.OutboundConnectionModel;
+import org.switchyard.component.jca.config.model.OutboundInteractionModel;
+import org.switchyard.component.jca.config.model.ProcessorModel;
+import org.switchyard.component.jca.config.model.ResourceAdapterModel;
 import org.switchyard.component.jca.endpoint.AbstractInflowEndpoint;
 import org.switchyard.component.jca.processor.AbstractOutboundProcessor;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.deploy.BaseActivator;
 import org.switchyard.deploy.ServiceHandler;
-
 import org.jboss.jca.core.spi.rar.Activation;
 import org.jboss.jca.core.spi.rar.MessageListener;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
@@ -104,24 +115,52 @@ public class JCAActivator extends BaseActivator {
     private InboundHandler handleServiceBinding(JCABindingModel config, QName name) {
         
         JCABindingModel jcaconfig = (JCABindingModel)config;
-        String raName = jcaconfig.getInboundConnection().getResourceAdapter().getName();
+        InboundConnectionModel inboundConnectionModel = jcaconfig.getInboundConnection();
+        if (inboundConnectionModel == null) {
+            throw JCAMessages.MESSAGES.noInboundConnectionConfigured();
+        }
+        ResourceAdapterModel resourceAdapterModel = inboundConnectionModel.getResourceAdapter();
+        if (resourceAdapterModel == null) {
+            throw JCAMessages.MESSAGES.noResourceAdapterConfigured();
+        }
+        String raName = resourceAdapterModel.getName();
+        if (raName == null) {
+            throw JCAMessages.MESSAGES.noResourceAdapterNameConfigured();
+        }
         String raid = ConnectorServices.getRegisteredResourceAdapterIdentifier(stripDotRarSuffix(raName));
         if (raid == null) {
             throw JCAMessages.MESSAGES.uniqueKeyForResourceAdapter(raName);
         }
         
-        Properties raProps = jcaconfig.getInboundConnection().getResourceAdapter().getProperties();
-        Properties activationProps = jcaconfig.getInboundConnection().getActivationSpec().getProperties();
-        String listener = jcaconfig.getInboundInteraction().getListener().getClassName();
-        String endpointClassName = jcaconfig.getInboundInteraction().getEndpoint().getEndpointClassName(); 
-        Properties endpointProps = jcaconfig.getInboundInteraction().getEndpoint().getProperties();
+        Properties raProps = resourceAdapterModel.getProperties();
+        Properties activationProps = null;
+        ActivationSpecModel activationSpecModel = inboundConnectionModel.getActivationSpec();
+        if (activationSpecModel != null) {
+            activationProps = activationSpecModel.getProperties();
+        }
+        InboundInteractionModel inboundInteractionModel = jcaconfig.getInboundInteraction();
+        if (inboundInteractionModel == null) {
+            throw JCAMessages.MESSAGES.noInboundInteractionConfigured();
+        }
         
+        String listener = null;
+        ListenerModel listenerModel = inboundInteractionModel.getListener();
+        if (listenerModel != null) {
+            listener = listenerModel.getClassName();
+        }
         Class<?> listenerType = null;
         try {
             listenerType = _appClassLoader.loadClass(listener != null ? listener : JCAConstants.DEFAULT_LISTENER_CLASS);
         } catch (Exception e) {
-            throw new IllegalArgumentException(e);
+            throw JCAMessages.MESSAGES.noListenerClassFound(listener, e);
         }
+        
+        EndpointModel endpointModel = inboundInteractionModel.getEndpoint();
+        if (endpointModel == null) {
+            throw JCAMessages.MESSAGES.noEndpointConfigured();
+        }
+        String endpointClassName = endpointModel.getEndpointClassName(); 
+        Properties endpointProps = endpointModel.getProperties();
         
         ActivationSpec activationSpec = null;
         ResourceAdapter resourceAdapter = null;
@@ -139,7 +178,7 @@ public class JCAActivator extends BaseActivator {
             
             Activation activation = listenerContainer.getActivation();
             activationSpec = activation.createInstance();
-            if (!activationProps.isEmpty()) {
+            if (activationProps != null && !activationProps.isEmpty()) {
                 PropertyEditors.mapJavaBeanProperties(activationSpec, activationProps);
             }
 
@@ -163,7 +202,7 @@ public class JCAActivator extends BaseActivator {
              throw JCAMessages.MESSAGES.endpointClass(endpointClassName, e);
          }
 
-         boolean transacted = jcaconfig.getInboundInteraction().isTransacted();
+         boolean transacted = inboundInteractionModel.isTransacted();
          endpoint.setApplicationClassLoader(_appClassLoader)
                      .setServiceDomain(getServiceDomain())
                      .setServiceQName(name)
@@ -179,7 +218,7 @@ public class JCAActivator extends BaseActivator {
                                                         .setTransactionManager(_transactionManager)
                                                         .setDeliveryTransacted(transacted);
 
-        BatchCommitModel batchCommit = jcaconfig.getInboundInteraction().getBatchCommit();
+        BatchCommitModel batchCommit = inboundInteractionModel.getBatchCommit();
         if (transacted && batchCommit != null) {
             inflowMetaData.setUseBatchCommit(true);
             inflowMetaData.setBatchTimeout(batchCommit.getBatchTimeout());
@@ -192,32 +231,46 @@ public class JCAActivator extends BaseActivator {
     
     private OutboundHandler handleReferenceBinding(JCABindingModel config, QName name) {
         JCABindingModel jcaconfig = (JCABindingModel)config;
-        boolean managed = jcaconfig.getOutboundConnection().isManaged();
+        OutboundConnectionModel outboundConnectionModel = jcaconfig.getOutboundConnection();
+        if (outboundConnectionModel == null) {
+            throw JCAMessages.MESSAGES.noOutboundConnectionConfigured();
+        }
+        boolean managed = outboundConnectionModel.isManaged();
         if (!managed) {
             throw JCAMessages.MESSAGES.nonManagedScenarioIsNotSupportedYet();
         }
         
-        Properties raProps = jcaconfig.getOutboundConnection().getResourceAdapter().getProperties();
-        String raName = jcaconfig.getOutboundConnection().getResourceAdapter().getName();
-        String raid = ConnectorServices.getRegisteredResourceAdapterIdentifier(stripDotRarSuffix(raName));
-        if (raid == null) {
-            throw JCAMessages.MESSAGES.uniqueKeyForResourceAdapter(raName);
-        }
-        
-        ResourceAdapter resourceAdapter = null;
-        try {
-            resourceAdapter = _raRepository.getResourceAdapter(raid);
+        ResourceAdapterModel resourceAdapterModel = outboundConnectionModel.getResourceAdapter();
+        if (resourceAdapterModel != null) {
+            Properties raProps = resourceAdapterModel.getProperties();
             if (!raProps.isEmpty()) {
-                PropertyEditors.mapJavaBeanProperties(resourceAdapter, raProps);
+                String raName = resourceAdapterModel.getName();
+                String raid = ConnectorServices.getRegisteredResourceAdapterIdentifier(stripDotRarSuffix(raName));
+                if (raid == null) {
+                    throw JCAMessages.MESSAGES.uniqueKeyForResourceAdapter(raName);
+                }
+
+                ResourceAdapter resourceAdapter = null;
+                try {
+                    resourceAdapter = _raRepository.getResourceAdapter(raid);
+                    PropertyEditors.mapJavaBeanProperties(resourceAdapter, raProps);
+                } catch (Exception e) {
+                    throw JCAMessages.MESSAGES.couldnTAcquireTheResourceAdapter(raName, e);
+                }
             }
-        } catch (Exception e) {
-            throw JCAMessages.MESSAGES.couldnTAcquireTheResourceAdapter(raName, e);
-            
         }
 
-        Properties processorProps = jcaconfig.getOutboundInteraction().getProcessor().getProperties();
+        OutboundInteractionModel outboundInteractionModel = jcaconfig.getOutboundInteraction();
+        if (outboundInteractionModel == null) {
+            throw JCAMessages.MESSAGES.noOutboundInteractionConfigured();
+        }
+        ProcessorModel processorModel = outboundInteractionModel.getProcessor();
+        if (processorModel == null) {
+            throw JCAMessages.MESSAGES.noProcessorConfigured();
+        }
+        Properties processorProps = processorModel.getProperties();
         AbstractOutboundProcessor processor = null;
-        String processorClassName = jcaconfig.getOutboundInteraction().getProcessor().getProcessorClassName();
+        String processorClassName = processorModel.getProcessorClassName();
         Class<?> processorClass = null;
         try {
             processorClass = (Class<?>)_appClassLoader.loadClass(processorClassName);
@@ -229,21 +282,27 @@ public class JCAActivator extends BaseActivator {
             throw JCAMessages.MESSAGES.outboundProcessorClass(processorClassName, e);
         }
         
-        String cfJndiName = jcaconfig.getOutboundConnection().getConnection().getConnectionFactoryJNDIName();
-        Properties connProps = jcaconfig.getOutboundConnection().getConnection().getProperties();
+        ConnectionModel connectionModel = outboundConnectionModel.getConnection();
+        if (connectionModel == null) {
+            throw JCAMessages.MESSAGES.noConnectionConfigured();
+        }
+        String cfJndiName = connectionModel.getConnectionFactoryJNDIName();
+        Properties connProps = connectionModel.getProperties();
         processor.setApplicationClassLoader(_appClassLoader)
                     .setMCFProperties(connProps)
                     .setConnectionFactoryJNDIName(cfJndiName)
                     .setJCABindingModel(jcaconfig);
 
-        if (jcaconfig.getOutboundInteraction().getConnectionSpec() != null) {
-            String connSpecClassName = jcaconfig.getOutboundInteraction().getConnectionSpec().getConnectionSpecClassName();
-            Properties connSpecProps = jcaconfig.getOutboundInteraction().getConnectionSpec().getProperties();
+        ConnectionSpecModel connectionSpecModel = outboundInteractionModel.getConnectionSpec();
+        if (connectionSpecModel != null) {
+            String connSpecClassName = connectionSpecModel.getConnectionSpecClassName();
+            Properties connSpecProps = connectionSpecModel.getProperties();
             processor.setConnectionSpec(connSpecClassName, connSpecProps);
         }
-        if (jcaconfig.getOutboundInteraction().getInteractionSpec() != null) {
-            String interactSpecClassName = jcaconfig.getOutboundInteraction().getInteractionSpec().getInteractionSpecClassName();
-            Properties interactSpecProps = jcaconfig.getOutboundInteraction().getInteractionSpec().getProperties();
+        InteractionSpecModel interactionSpecModel = outboundInteractionModel.getInteractionSpec();
+        if (interactionSpecModel != null) {
+            String interactSpecClassName = interactionSpecModel.getInteractionSpecClassName();
+            Properties interactSpecProps = interactionSpecModel.getProperties();
             processor.setInteractionSpec(interactSpecClassName, interactSpecProps);
         }
 
