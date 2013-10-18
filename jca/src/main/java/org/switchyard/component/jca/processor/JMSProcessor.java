@@ -13,6 +13,7 @@
  */
 package org.switchyard.component.jca.processor;
 
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.jms.Connection;
@@ -27,6 +28,7 @@ import javax.naming.InitialContext;
 import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.jca.JCALogger;
 import org.switchyard.component.jca.JCAMessages;
@@ -51,6 +53,8 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     public static final String KEY_DESTINATION = "destination";
     /** key for message type property. */
     public static final String KEY_MESSAGE_TYPE  = "messageType";
+    /** key for JNDI properties file to look up the JMS destination. */
+    public static final String KEY_DESTINATION_JNDI_PROVIDER_URL = "destinationJndiPropertiesFileName";
             
     private Logger _logger = Logger.getLogger(JMSProcessor.class);
     private String _userName;
@@ -64,6 +68,8 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     private Destination _jmsDestination;
     private MessageComposer<JMSBindingData> _composer;
     private MessageType _outMessageType = MessageType.Object;
+    private String _destinationJndiPropertiesFileName;
+    private Properties _destinationJndiProperties;
     
     private enum MessageType {
         Stream, Map, Text, Object, Bytes, Plain 
@@ -98,9 +104,23 @@ public class JMSProcessor extends AbstractOutboundProcessor {
         _composer = getMessageComposer(JMSBindingData.class);
         
         try {
-            InitialContext ic = new InitialContext();
-            _connectionFactory = (ConnectionFactory) ic.lookup(getConnectionFactoryJNDIName());
-            _jmsDestination = (Destination) ic.lookup(_destination);
+            InitialContext cfic = null;
+            if (getJndiProperties() != null) {
+                cfic = new InitialContext(getJndiProperties());
+            } else {
+                cfic = new InitialContext();
+            }
+            _connectionFactory = (ConnectionFactory) cfic.lookup(getConnectionFactoryJNDIName());
+            
+            InitialContext destic = null;
+            if (getDestinationJndiProperties() != null) {
+                cfic.close();
+                destic = new InitialContext(getDestinationJndiProperties());
+            } else {
+                destic = cfic;
+            }
+            _jmsDestination = (Destination) destic.lookup(_destination);
+            destic.close();
         } catch (Exception e) {
             throw JCAMessages.MESSAGES.failedToInitialize(this.getClass().getName(), e);
         }
@@ -219,5 +239,32 @@ public class JMSProcessor extends AbstractOutboundProcessor {
      */
     public void setMessageType(String type) {
         _outMessageType = MessageType.valueOf(type);
+    }
+    
+    /**
+     * set JNDI properties file name for destination lookup.
+     * @param name filename
+     */
+    public void setDestinationJndiPropertiesFileName(String name) {
+        _destinationJndiPropertiesFileName = name;
+    }
+    
+    /**
+     * get JNDI properties for destination lookup.
+     * @return InitialContext properties for destination lookup
+     */
+    public Properties getDestinationJndiProperties() {
+        if (_destinationJndiPropertiesFileName != null && _destinationJndiProperties == null) {
+            try {
+                InputStream is = Classes.getResourceAsStream(_destinationJndiPropertiesFileName);
+                Properties props = new Properties();
+                props.load(is);
+                is.close();
+                _destinationJndiProperties = props;
+            } catch (Exception e) {
+                JCALogger.ROOT_LOGGER.failedToLoadJndiPropertiesFile(_destinationJndiPropertiesFileName, e);
+            }
+        }
+        return _destinationJndiProperties;
     }
 }

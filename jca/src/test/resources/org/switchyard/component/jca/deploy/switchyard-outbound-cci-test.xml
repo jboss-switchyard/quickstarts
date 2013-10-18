@@ -29,6 +29,7 @@
                <outboundInteraction>
                    <processor type="org.switchyard.component.jca.processor.CCIProcessor">
                        <property name="recordClassName" value="javax.resource.cci.MappedRecord"/>
+                       <property name="jndiPropertiesFileName" value="outbound-cci-jndi.properties"/>
                    </processor>
                </outboundInteraction>
             </binding.jca>

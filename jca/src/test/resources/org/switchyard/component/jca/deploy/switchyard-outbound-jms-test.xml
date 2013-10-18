@@ -48,6 +48,8 @@
                    <processor type="org.switchyard.component.jca.processor.JMSProcessor">
                        <property name="destination" value="TestQueue"/>
                        <property name="messageType" value="Text"/>
+                       <property name="jndiPropertiesFileName" value="outbound-jms-jndi.properties"/>
+                       <property name="destinationJndiPropertiesFileName" value="outbound-jms-destination-jndi.properties"/>
                    </processor>
                </outboundInteraction>
             </binding.jca>

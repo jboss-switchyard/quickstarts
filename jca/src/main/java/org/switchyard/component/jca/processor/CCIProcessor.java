@@ -90,7 +90,12 @@ public class CCIProcessor extends AbstractOutboundProcessor {
                     .setJCABindingModel(getJCABindingModel())
                     .setInteractionSpec(_interactionSpec);
 
-            InitialContext ic = new InitialContext();
+            InitialContext ic = null;
+            if (getJndiProperties() != null) {
+                ic = new InitialContext(getJndiProperties());
+            } else {
+                ic = new InitialContext();
+            }
             _connectionFactory = (ConnectionFactory) ic.lookup(getConnectionFactoryJNDIName());
         } catch (Exception e) {
             throw JCAMessages.MESSAGES.failedToInitialize(this.getClass().getName(), e);

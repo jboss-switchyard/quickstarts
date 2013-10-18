@@ -13,12 +13,15 @@
  */
 package org.switchyard.component.jca.processor;
 
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.composer.MessageComposer;
+import org.switchyard.component.jca.JCALogger;
 import org.switchyard.component.jca.composer.JCABindingData;
 import org.switchyard.component.jca.composer.JCAComposition;
 import org.switchyard.component.jca.config.model.JCABindingModel;
@@ -30,8 +33,13 @@ import org.switchyard.component.jca.config.model.JCABindingModel;
  */
 public abstract class AbstractOutboundProcessor {
     
+    /** key for JNDI properties file. */
+    public static final String KEY_JNDI_PROVIDER_URL = "jndiPropertiesFileName";
+
     private String _connectionFactoryJNDIName;
     private Properties _mcfProperties;
+    private String _jndiPropertiesFileName;
+    private Properties _jndiProperties;
     private ClassLoader _appClassLoader;
     private JCABindingModel _jcaBindingModel;
     
@@ -152,5 +160,32 @@ public abstract class AbstractOutboundProcessor {
     
     protected <D extends JCABindingData> MessageComposer<D> getMessageComposer(Class<D> clazz) {
         return JCAComposition.getMessageComposer(_jcaBindingModel, clazz);
+    }
+    
+    /**
+     * set JNDI properties file name.
+     * @param name file name
+     */
+    public void setJndiPropertiesFileName(String name) {
+            _jndiPropertiesFileName = name;
+    }
+    
+    /**
+     * get JNDI properties.
+     * @return JNDI properties
+     */
+    public Properties getJndiProperties() {
+        if (_jndiPropertiesFileName != null && _jndiProperties == null) {
+            try {
+                InputStream is = Classes.getResourceAsStream(_jndiPropertiesFileName);
+                Properties props = new Properties();
+                props.load(is);
+                is.close();
+                _jndiProperties = props;
+            } catch (Exception e) {
+                JCALogger.ROOT_LOGGER.failedToLoadJndiPropertiesFile(_jndiPropertiesFileName, e);
+            }
+        }
+        return _jndiProperties;
     }
 }

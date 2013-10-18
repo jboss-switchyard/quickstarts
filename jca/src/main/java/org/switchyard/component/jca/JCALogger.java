@@ -1,6 +1,7 @@
 package org.switchyard.component.jca;
 
 import javax.transaction.Transaction;
+
 import org.jboss.logging.Cause;
 import org.jboss.logging.Logger;
 import org.jboss.logging.Logger.Level;
@@ -93,6 +94,15 @@ public interface JCALogger {
     @LogMessage(level = Level.WARN)
     @Message(id = 36808, value = "Failed to close JMS session/connection: %s")
     void failedToCloseJMSSessionconnection(String eMessage);
+
+    /**
+     * failedToLoadJndiPropertiesFile method definition.
+     * @param name file name
+     * @param e cause
+     */
+    @LogMessage(level = Level.WARN)
+    @Message(id = 36809, value = "Failed to load JNDI properties from file: %s")
+    void failedToLoadJndiPropertiesFile(String name, @Cause Exception e);
 
 }
 
