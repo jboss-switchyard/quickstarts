@@ -22,28 +22,14 @@ public class ImageServiceService
     extends Service
 {
 
-    private final static URL IMAGESERVICESERVICE_WSDL_LOCATION;
     private final static Logger logger = Logger.getLogger(org.switchyard.quickstarts.soap.mtom.ImageServiceService.class.getName());
-
-    static {
-        URL url = null;
-        try {
-            URL baseUrl;
-            baseUrl = org.switchyard.quickstarts.soap.mtom.ImageServiceService.class.getResource(".");
-            url = new URL(baseUrl, "http://localhost:8080/soap-mtom/ImageServiceService?wsdl");
-        } catch (MalformedURLException e) {
-            logger.warning("Failed to create URL for the wsdl Location: '" + url + "', retrying as a local file");
-            logger.warning(e.getMessage());
-        }
-        IMAGESERVICESERVICE_WSDL_LOCATION = url;
-    }
 
     public ImageServiceService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
 
-    public ImageServiceService() {
-        super(IMAGESERVICESERVICE_WSDL_LOCATION, new QName("urn:switchyard-quickstart:soap-mtom:1.0", "ImageServiceService"));
+    public ImageServiceService(URL wsdlLocation) {
+        super(wsdlLocation, new QName("urn:switchyard-quickstart:soap-mtom:1.0", "ImageServiceService"));
     }
 
     /**
