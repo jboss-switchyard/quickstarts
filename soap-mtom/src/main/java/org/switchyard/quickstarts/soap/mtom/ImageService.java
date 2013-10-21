@@ -8,6 +8,7 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.ws.Holder;
 
 
 /**
@@ -28,9 +29,9 @@ public interface ImageService {
      *     returns byte[]
      */
     @WebMethod
-    //@WebResult(name = "imageResponse", partName = "jpeg")
-    public void resizeImage(
-        @WebParam(mode = WebParam.Mode.INOUT, name = "image", partName = "jpeg")
-        javax.xml.ws.Holder<Image> resizeImage);
+    @WebResult(name = "imageResponse", partName = "jpeg")
+    public byte[] resizeImage(
+        @WebParam(mode = WebParam.Mode.IN, name = "image", partName = "jpeg")
+        Holder<byte[]> image);
 
 }

@@ -34,7 +34,6 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
         scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class })
 public class SoapMtomTest {
 
-    @Ignore // Does not work under standalone but is tested in release build and works fine.
     @Test
     public void testSwitchYardWebService() throws Exception {
         Image image = SoapMtomClient.sendMessage();
