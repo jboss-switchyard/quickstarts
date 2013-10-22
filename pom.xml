@@ -72,7 +72,7 @@
         <version.commons.net>2.2</version.commons.net>
         <version.commons.ssl>0.3.9</version.commons.ssl>
         <version.deltaspike>${version.org.apache.deltaspike}</version.deltaspike>
-        <version.drools>6.0.0.CR3</version.drools>
+        <version.drools>6.0.0.CR5</version.drools>
         <version.ecj>3.7.2</version.ecj>
         <version.ems>1.3</version.ems>
         <version.forge>1.2.2.Final</version.forge>
@@ -100,14 +100,14 @@
         <version.jbossws.jboss720.server.integration>4.2.0.Final</version.jbossws.jboss720.server.integration>
         <version.jboss.logging>3.1.2.GA</version.jboss.logging>
         <version.jboss.logging.processor>1.1.0.Final</version.jboss.logging.processor>
-        <version.jbpm>6.0.0.CR3</version.jbpm>
+        <version.jbpm>6.0.0.CR5</version.jbpm>
         <version.jettison>1.2</version.jettison>
         <version.jsch>0.1.48</version.jsch>
         <version.jta>1.1</version.jta>
         <version.junit>4.10</version.junit>
         <version.jruby>1.7.2</version.jruby>
         <version.jython>2.5.3</version.jython>
-        <version.kie>6.0.0.CR3</version.kie>
+        <version.kie>6.0.0.CR5</version.kie>
         <version.littleproxy>0.5.3</version.littleproxy>
         <version.maven.clean.plugin>2.5</version.maven.clean.plugin>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
@@ -2190,21 +2190,6 @@
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-flow-builder</artifactId>
                 <version>${version.jbpm}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jbpm</groupId>
-                <artifactId>jbpm-form-services</artifactId>
-                <version>${version.jbpm}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.jboss.seam.persistence</groupId>
-                        <artifactId>seam-persistence</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.jboss.seam.transaction</groupId>
-                        <artifactId>seam-transaction</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
