@@ -18,7 +18,6 @@
         <resource-root path="jbpm-bpmn2-${version.jbpm}.jar"/>
         <resource-root path="jbpm-flow-${version.jbpm}.jar"/>
         <resource-root path="jbpm-flow-builder-${version.jbpm}.jar"/>
-        <resource-root path="jbpm-form-services-${version.jbpm}.jar"/>
         <resource-root path="jbpm-human-task-core-${version.jbpm}.jar"/>
         <resource-root path="jbpm-human-task-workitems-${version.jbpm}.jar"/>
         <resource-root path="jbpm-kie-services-${version.jbpm}.jar"/>
