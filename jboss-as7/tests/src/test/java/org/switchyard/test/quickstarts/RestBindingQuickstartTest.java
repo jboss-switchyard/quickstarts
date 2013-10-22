@@ -23,6 +23,7 @@ import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
@@ -30,6 +31,7 @@ import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 @RunWith(Arquillian.class)
+@Ignore
 public class RestBindingQuickstartTest {
 
     @Deployment(testable = false)
