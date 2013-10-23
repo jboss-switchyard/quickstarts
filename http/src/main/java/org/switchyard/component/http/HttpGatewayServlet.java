@@ -136,10 +136,11 @@ public class HttpGatewayServlet extends HttpServlet {
                 }
                 httpRequest.setRequestInfo(getRequestInfo(request));
             } catch (IOException e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 HttpLogger.ROOT_LOGGER.unexpectedExceptionWhileReadingRequest(e);
             }
-            HttpResponseBindingData httpResponse = _handler.invoke(httpRequest);
             try {
+                HttpResponseBindingData httpResponse = _handler.invoke(httpRequest);
                 if (httpResponse != null) {
                     Iterator<Map.Entry<String, List<String>>> entries = httpResponse.getHeaders().entrySet().iterator();
                     while (entries.hasNext()) {
@@ -165,7 +166,8 @@ public class HttpGatewayServlet extends HttpServlet {
                 } else {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 HttpLogger.ROOT_LOGGER.unexpectedExceptionWhileWritingResponse(e);
             }
     }

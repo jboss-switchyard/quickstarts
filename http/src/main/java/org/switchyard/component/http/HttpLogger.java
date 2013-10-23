@@ -43,7 +43,7 @@ public interface HttpLogger {
      */
     @LogMessage(level = Level.ERROR)
     @Message(id = 36002, value = "Unexpected Exception while writing response")
-    void unexpectedExceptionWhileWritingResponse(@Cause IOException e);
+    void unexpectedExceptionWhileWritingResponse(@Cause Exception e);
 
     /**
      * unexpectedExceptionWhileHandlingHttpRequest method definition.

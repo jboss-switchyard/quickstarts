@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
 import org.switchyard.Exchange;
+import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.Property;
 import org.switchyard.common.xml.QNameUtil;
@@ -78,6 +79,8 @@ public class HttpMessageComposer extends BaseMessageComposer<HttpBindingData> {
                     } else if ((content instanceof String) || (content instanceof byte[]) 
                                 || (content instanceof InputStream) || (content instanceof Reader)) {
                         status = HttpServletResponse.SC_OK;
+                    } else if (exchange.getState() == ExchangeState.FAULT) {
+                        status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
                     } else {
                         status = HttpServletResponse.SC_BAD_GATEWAY;
                     }
