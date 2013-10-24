@@ -45,6 +45,7 @@ public class RESTEasyBindingTest {
     @BeforeDeploy
     public void setProperties() {
         System.setProperty("org.switchyard.component.resteasy.standalone.port", "8081");
+        System.setProperty("org.switchyard.component.resteasy.standalone.path", "");
     }
     
     /**
