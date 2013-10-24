@@ -35,7 +35,6 @@ public class NettyResourcePublisher implements ResourcePublisher {
     static {
         ResteasyDeployment deployment = new ResteasyDeployment();
         _nettyServer = new NettyJaxrsServer();
-        _nettyServer.setPort(8080);
         _nettyServer.setRootResourcePath("");
         _nettyServer.setSecurityDomain(null);
         _nettyServer.setDeployment(deployment);
@@ -46,11 +45,11 @@ public class NettyResourcePublisher implements ResourcePublisher {
      * {@inheritDoc}
      */
     public Resource publish(String context, List<Object> instances) throws Exception {
+        _nettyServer.stop();
         // CAUTION: Note that this publisher ignores context. Use it only for test purpose.
         for (Object instance : instances) {
             _nettyServer.getDeployment().getResources().add(instance);
         }
-        _nettyServer.stop();
         _nettyServer.start();
         return new StandaloneResource();
     }

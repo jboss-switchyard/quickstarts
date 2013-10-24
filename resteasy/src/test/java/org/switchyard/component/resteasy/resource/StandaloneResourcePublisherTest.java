@@ -19,18 +19,18 @@ public class StandaloneResourcePublisherTest {
     @Before
     public void setUp() {
         // make sure that the system property is not set
-        System.clearProperty(NettyJaxrsServer.DEFAULT_PORT_PROPERTY);
+        System.clearProperty(ResourcePublisher.DEFAULT_PORT_PROPERTY);
     }
     @Test
     public void useDefaultPort() {
-        final int port = NettyJaxrsServer.getDefaultPort();
-        assertThat(port, is(equalTo(NettyJaxrsServer.DEFAULT_PORT)));
+        final int port = new NettyJaxrsServer().getPort();
+        assertThat(port, is(equalTo(ResourcePublisher.DEFAULT_PORT)));
     }
 
     @Test
     public void useConfiguredPort() {
-        System.setProperty(NettyJaxrsServer.DEFAULT_PORT_PROPERTY, Integer.toString(TEST_PORT));
-        final int port = NettyJaxrsServer.getDefaultPort();
+        System.setProperty(ResourcePublisher.DEFAULT_PORT_PROPERTY, Integer.toString(TEST_PORT));
+        final int port = new NettyJaxrsServer().getPort();
         assertThat(port, is(equalTo(TEST_PORT)));
     }
 }

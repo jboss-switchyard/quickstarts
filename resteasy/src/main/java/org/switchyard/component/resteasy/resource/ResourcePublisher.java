@@ -24,6 +24,16 @@ import java.util.List;
 public interface ResourcePublisher {
 
     /**
+     * Default port in which the standalone publisher is started.
+     */
+    public static final int DEFAULT_PORT = 8080;
+
+    /**
+     * System property to adjust the port in which the standalone publisher is started.
+     */
+    public static final String DEFAULT_PORT_PROPERTY = "org.switchyard.component.resteasy.standalone.port";
+
+    /**
      * Publish a RESTEasy resource.
      * @param context The web context root where the resource need to be published
      * @param instances The a list of JAX-RS resource instances
