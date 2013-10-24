@@ -31,7 +31,6 @@ import org.switchyard.test.SwitchYardTestKit;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 @RunWith(Arquillian.class)
-@Ignore
 public class RestBindingQuickstartTest {
 
     @Deployment(testable = false)
