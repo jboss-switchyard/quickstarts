@@ -25,6 +25,11 @@
     <name>Quickstart : Bean Service</name>
     <dependencies>
         <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
         </dependency>

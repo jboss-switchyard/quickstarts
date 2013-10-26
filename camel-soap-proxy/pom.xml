@@ -25,6 +25,10 @@
     <name>Quickstart : Camel SOAP Proxy</name>
     <dependencies>
         <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-plugin</artifactId>
             <scope>compile</scope>
