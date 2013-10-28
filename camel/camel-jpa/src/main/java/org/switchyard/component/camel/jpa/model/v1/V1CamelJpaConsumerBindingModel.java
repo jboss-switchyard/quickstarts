@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.jpa.model.v1;
 
-import static org.switchyard.component.camel.jpa.model.Constants.JPA_NAMESPACE_V1;
-
 import org.switchyard.component.camel.common.model.v1.V1CamelScheduledBatchPollConsumer;
 import org.switchyard.component.camel.jpa.model.CamelJpaConsumerBindingModel;
 import org.switchyard.config.Configuration;
@@ -52,9 +50,10 @@ public class V1CamelJpaConsumerBindingModel extends V1CamelScheduledBatchPollCon
 
     /**
      * Creates new binding model.
+     * @param namespace namespace
      */
-    public V1CamelJpaConsumerBindingModel() {
-        super(V1CamelJpaBindingModel.CONSUME, JPA_NAMESPACE_V1);
+    public V1CamelJpaConsumerBindingModel(String namespace) {
+        super(namespace, V1CamelJpaBindingModel.CONSUME);
     }
 
     @Override

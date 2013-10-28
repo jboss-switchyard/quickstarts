@@ -81,9 +81,10 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
 
     /**
      * Creates a new SOAPBindingModel.
+     * @param namespace namespace
      */
-    public V1SOAPBindingModel() {
-        super(SOAP, DEFAULT_NAMESPACE);
+    public V1SOAPBindingModel(String namespace) {
+        super(SOAP, namespace);
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
@@ -478,7 +479,7 @@ public class V1SOAPBindingModel extends V1BindingModel implements SOAPBindingMod
                 model = getNameValue(name);
             }
             if (model == null) {
-                model = new V1SOAPNameValueModel(name);
+                model = new V1SOAPNameValueModel(getNamespaceURI(), name);
                 setChildModel(model);
             }
             model.setValue(value);

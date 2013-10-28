@@ -13,11 +13,9 @@
  */
 package org.switchyard.component.soap.config.model.v1;
 
-import static org.switchyard.component.soap.config.model.SOAPBindingModel.DEFAULT_NAMESPACE;
 import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
 
 import org.switchyard.common.type.Classes;
-import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.config.model.InterceptorModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
@@ -35,9 +33,10 @@ public class V1InterceptorModel extends BaseNamedModel implements InterceptorMod
 
     /**
      * Creates a new InterceptorModel.
+     * @param namespace namespace
      */
-    public V1InterceptorModel() {
-        super(XMLHelper.createQName(DEFAULT_NAMESPACE, INTERCEPTOR));
+    public V1InterceptorModel(String namespace) {
+        super(namespace, INTERCEPTOR);
         setModelChildrenOrder(PROPERTIES);
     }
 

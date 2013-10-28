@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.ListenerModel;
 import org.switchyard.config.Configuration;
@@ -31,9 +29,10 @@ public class V1ListenerModel extends BaseModel implements ListenerModel {
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1ListenerModel() {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.LISTENER));
+    public V1ListenerModel(String namespace) {
+        super(namespace, JCAConstants.LISTENER);
     }
     
     /**

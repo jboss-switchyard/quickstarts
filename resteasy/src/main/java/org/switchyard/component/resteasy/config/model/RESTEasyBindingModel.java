@@ -32,11 +32,6 @@ public interface RESTEasyBindingModel extends BindingModel {
     public static final String RESTEASY = "rest";
 
     /**
-     * Default namespace for RESTEasy Gateway Configuration.
-     */
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-component-resteasy:config:1.0";
-
-    /**
      * Returns the RESTEasy Service name.
      * 
      * @return the serviceName

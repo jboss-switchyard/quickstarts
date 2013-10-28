@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.config.model.selector.v1.V1StaticOperationSelectorModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.selector.OperationSelector;
 
 /**
@@ -43,8 +44,8 @@ public class OperationSelectorTest extends InboundHandlerTestBase {
     @Test
     public void operationSelectorProcessor() throws Exception {
         ProducerTemplate producer = _camelContext.createProducerTemplate();
-        InboundHandler<?> handler1 = createInboundHandler("direct://foo", "foo", new V1StaticOperationSelectorModel().setOperationName("foo"));
-        InboundHandler<?> handler2 = createInboundHandler("direct://bar", "bar", new V1StaticOperationSelectorModel().setOperationName("bar"));
+        InboundHandler<?> handler1 = createInboundHandler("direct://foo", "foo", new V1StaticOperationSelectorModel(SwitchYardNamespace.DEFAULT.uri()).setOperationName("foo"));
+        InboundHandler<?> handler2 = createInboundHandler("direct://bar", "bar", new V1StaticOperationSelectorModel(SwitchYardNamespace.DEFAULT.uri()).setOperationName("bar"));
 
         handler1.start();
         handler2.start();

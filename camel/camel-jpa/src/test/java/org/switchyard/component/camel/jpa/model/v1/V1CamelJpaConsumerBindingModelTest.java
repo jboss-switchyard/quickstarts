@@ -18,6 +18,7 @@ import static junit.framework.Assert.assertEquals;
 import org.apache.camel.component.jpa.JpaEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
 import org.switchyard.component.camel.jpa.model.CamelJpaConsumerBindingModel;
+import org.switchyard.component.camel.jpa.model.CamelJpaNamespace;
 
 /**
  * Test for {@link V1CamelJpaConsumerBindingModel}.
@@ -50,11 +51,11 @@ public class V1CamelJpaConsumerBindingModelTest extends V1BaseCamelServiceBindin
 
     @Override
     protected V1CamelJpaBindingModel createTestModel() {
-        V1CamelJpaBindingModel model = new V1CamelJpaBindingModel();
+        V1CamelJpaBindingModel model = new V1CamelJpaBindingModel(CamelJpaNamespace.V_1_0.uri());
         model.setEntityClassName(V1CamelJpaBindingModelTest.ENTITY_CLASS_NAME);
         model.setPersistenceUnit(V1CamelJpaBindingModelTest.PERSISTENCE_UNIT);
 
-        CamelJpaConsumerBindingModel consumer = (CamelJpaConsumerBindingModel) new V1CamelJpaConsumerBindingModel()
+        CamelJpaConsumerBindingModel consumer = (CamelJpaConsumerBindingModel) new V1CamelJpaConsumerBindingModel(CamelJpaNamespace.V_1_0.uri())
             .setConsumeDelete(CONSUME_DELETE)
             .setConsumeLockEntity(CONSUME_LOCK_ENTITY)
             .setMaximumResults(MAXIMUM_RESULTS)

@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.jms.model.v1;
 
-import static org.switchyard.component.camel.jms.model.Constants.JMS_NAMESPACE_V1;
-
 import java.net.URI;
 import java.util.List;
 
@@ -61,9 +59,10 @@ public class V1CamelJmsBindingModel extends V1BaseCamelBindingModel
     
     /**
      * Create a new CamelJmsBindingModel.
+     * @param namespace namespace
      */
-    public V1CamelJmsBindingModel() {
-        this(JMS, JMS_NAMESPACE_V1);
+    public V1CamelJmsBindingModel(String namespace) {
+        this(JMS, namespace);
     }
 
     /**

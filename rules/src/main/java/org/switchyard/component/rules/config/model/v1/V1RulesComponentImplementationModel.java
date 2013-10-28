@@ -34,9 +34,10 @@ public class V1RulesComponentImplementationModel extends V1KnowledgeComponentImp
 
     /**
      * Default constructor for application use.
+     * @param namespace namespace
      */
-    public V1RulesComponentImplementationModel() {
-        super(RULES, DEFAULT_NAMESPACE);
+    public V1RulesComponentImplementationModel(String namespace) {
+        super(RULES, namespace);
         setModelChildrenOrder(CHANNELS, LISTENERS, LOGGERS, MANIFEST, OPERATIONS, PROPERTIES);
     }
 

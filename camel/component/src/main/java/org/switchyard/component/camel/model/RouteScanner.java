@@ -46,9 +46,10 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
 
     @Override
     public ScannerOutput<SwitchYardModel> scan(ScannerInput<SwitchYardModel> input) throws IOException {
-        SwitchYardModel switchyardModel = new V1SwitchYardModel();
+        String switchyardNamespace = input.getSwitchyardNamespace();
+        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace);
         CompositeModel compositeModel = new V1CompositeModel();
-        compositeModel.setName(input.getName());
+        compositeModel.setName(input.getCompositeName());
 
         List<Class<?>> routeClasses = scanForRoutes(input.getURLs());
 
@@ -59,13 +60,13 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
             componentModel.setName(routeClass.getSimpleName());
 
             // Component implementation definition
-            CamelComponentImplementationModel camelModel = new V1CamelImplementationModel();
+            CamelComponentImplementationModel camelModel = new V1CamelImplementationModel(CamelNamespace.DEFAULT.uri());
             camelModel.setJavaClass(routeClass.getName());
             componentModel.setImplementation(camelModel);
             compositeModel.addComponent(componentModel);
 
             // Component service definition
-            ComponentServiceModel serviceModel = new V1ComponentServiceModel();
+            ComponentServiceModel serviceModel = new V1ComponentServiceModel(switchyardNamespace);
             InterfaceModel csiModel = new V1InterfaceModel(InterfaceModel.JAVA);
             Class<?> serviceInterface = routeClass.getAnnotation(Route.class).value();
             serviceModel.setName(getServiceName(routeClass));

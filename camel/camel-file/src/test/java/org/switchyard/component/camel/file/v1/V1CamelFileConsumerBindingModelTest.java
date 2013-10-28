@@ -18,6 +18,7 @@ import static junit.framework.Assert.assertEquals;
 import org.apache.camel.component.file.FileEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
 import org.switchyard.component.camel.file.model.CamelFileConsumerBindingModel;
+import org.switchyard.component.camel.file.model.CamelFileNamespace;
 import org.switchyard.component.camel.file.model.v1.V1CamelFileBindingModel;
 import org.switchyard.component.camel.file.model.v1.V1CamelFileConsumerBindingModel;
 
@@ -62,10 +63,10 @@ public class V1CamelFileConsumerBindingModelTest extends V1BaseCamelServiceBindi
 
     @Override
     protected V1CamelFileBindingModel createTestModel() {
-        V1CamelFileBindingModel fileModel = new V1CamelFileBindingModel();
+        V1CamelFileBindingModel fileModel = new V1CamelFileBindingModel(CamelFileNamespace.V_1_0.uri());
         fileModel.setDirectory(DIRECTORY);
 
-        V1CamelFileConsumerBindingModel model = (V1CamelFileConsumerBindingModel) new V1CamelFileConsumerBindingModel()
+        V1CamelFileConsumerBindingModel model = (V1CamelFileConsumerBindingModel) new V1CamelFileConsumerBindingModel(CamelFileNamespace.V_1_0.uri())
             .setInitialDelay(INITIAL_DELAY)
             .setDelay(DELAY);
         model.setMaxMessagesPerPoll(MAX_MESSAGES_PER_POLL);

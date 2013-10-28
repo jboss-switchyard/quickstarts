@@ -13,11 +13,9 @@
  */
 package org.switchyard.component.http.config.model.v1;
 
-import static org.switchyard.component.http.config.model.HttpBindingModel.DEFAULT_NAMESPACE;
-
-import org.switchyard.component.http.config.model.ProxyModel;
 import org.switchyard.component.http.config.model.HttpNameValueModel;
 import org.switchyard.component.http.config.model.HttpNameValueModel.HttpName;
+import org.switchyard.component.http.config.model.ProxyModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
@@ -43,18 +41,20 @@ public class V1ProxyModel extends BaseModel implements ProxyModel {
 
     /**
      * Creates a new ProxyModel.
+     * @param namespace namespace
      */
-    public V1ProxyModel() {
-        super(HttpName.proxy.name(), DEFAULT_NAMESPACE);
+    public V1ProxyModel(String namespace) {
+        super(namespace, HttpName.proxy.name());
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
     /**
      * Creates a new ProxyModel.
-     * @param name the name of teh model
+     * @param namespace namespace
+     * @param name the name of the model
      */
-    public V1ProxyModel(String name) {
-        super(name, DEFAULT_NAMESPACE);
+    public V1ProxyModel(String namespace, String name) {
+        super(namespace, name);
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
@@ -150,7 +150,7 @@ public class V1ProxyModel extends BaseModel implements ProxyModel {
                 model = getNameValue(name);
             }
             if (model == null) {
-                model = new V1HttpNameValueModel(name);
+                model = new V1HttpNameValueModel(getNamespaceURI(), name);
                 setChildModel(model);
             }
             model.setValue(value);

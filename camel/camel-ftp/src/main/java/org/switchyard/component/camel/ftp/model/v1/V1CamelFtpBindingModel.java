@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.ftp.model.v1;
 
-import static org.switchyard.component.camel.ftp.Constants.FTP_NAMESPACE_V1;
-
 import org.switchyard.component.camel.common.QueryString;
 import org.switchyard.component.camel.common.model.remote.v1.V1CamelRemoteFileBindingModel;
 import org.switchyard.component.camel.ftp.model.CamelFtpBindingModel;
@@ -65,10 +63,11 @@ public class V1CamelFtpBindingModel extends V1CamelRemoteFileBindingModel implem
     }
 
     /**
-     * Default constuctor. Creates CamelFtpBindingModel.
+     * Default constructor. Creates CamelFtpBindingModel.
+     * @param namespace namespace
      */
-    public V1CamelFtpBindingModel() {
-        this(FTP, FTP_NAMESPACE_V1);
+    public V1CamelFtpBindingModel(String namespace) {
+        this(FTP, namespace);
     }
 
     /**

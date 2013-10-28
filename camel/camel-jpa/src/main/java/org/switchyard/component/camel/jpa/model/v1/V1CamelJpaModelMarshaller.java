@@ -13,17 +13,18 @@
  */
 package org.switchyard.component.camel.jpa.model.v1;
 
-import org.switchyard.component.camel.common.marshaller.BaseModelMarshaller;
-import org.switchyard.component.camel.common.marshaller.ModelCreator;
+import org.switchyard.component.camel.common.model.v1.V1BaseCamelMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-
-import static org.switchyard.component.camel.jpa.model.Constants.JPA_NAMESPACE_V1;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * Jpa model marshaller.
  */
-public class V1CamelJpaModelMarshaller extends BaseModelMarshaller {
+public class V1CamelJpaModelMarshaller extends V1BaseCamelMarshaller {
+
+    private static final String BINDING_JPA = BindingModel.BINDING + '.' + V1CamelJpaBindingModel.JPA;
 
     /**
      * Creates new marshaller.
@@ -31,14 +32,25 @@ public class V1CamelJpaModelMarshaller extends BaseModelMarshaller {
      * @param desc Descriptor
      */
     public V1CamelJpaModelMarshaller(Descriptor desc) {
-        super(desc, JPA_NAMESPACE_V1);
+        super(desc);
+    }
 
-        registerBinding(V1CamelJpaBindingModel.JPA, new ModelCreator<V1CamelJpaBindingModel>() {
-            @Override
-            public V1CamelJpaBindingModel create(Configuration config, Descriptor descriptor) {
-                return new V1CamelJpaBindingModel(config, descriptor);
-            }
-        });
+    /**
+     * Reads in the Configuration, looking for various knowledge models.
+     * If not found, it falls back to the super class (V1BaseCamelMarshaller).
+     *
+     * @param config the Configuration
+     * @return the Model
+     */
+    @Override
+    public Model read(Configuration config) {
+        String name = config.getName();
+        Descriptor desc = getDescriptor();
+        if (BINDING_JPA.equals(name)) {
+            return new V1CamelJpaBindingModel(config, desc);
+        }
+        // V1CamelJpaConsumerBindingModel and V1CamelJpaProducerBindingModel get created by V1CamelJpaBindingModel
+        return super.read(config);
     }
 
 }

@@ -81,7 +81,7 @@ public class CamelTypeConverterExtractorTest
     
     @Test
     public void generateTransformsModel() {
-        final TransformsModel v1TransformsModel = _extractor.getV1TransformsModel();
+        final TransformsModel v1TransformsModel = _extractor.getTransformsModel();
         
         assertThat(v1TransformsModel, is(not(nullValue())));
         assertThat(v1TransformsModel.getTransforms().size(), is(greaterThan(161)));
@@ -92,8 +92,8 @@ public class CamelTypeConverterExtractorTest
         FileOutputStream fileOut = null;
         try {
 	        fileOut = new FileOutputStream("target/classes/new-transforms.xml");
-	        final TransformsModel v1TransformsModel = _extractor.getV1TransformsModel(_transformerRegistry);
-	        v1TransformsModel.write(fileOut);
+	        final TransformsModel transformsModel = _extractor.getTransformsModel(_transformerRegistry);
+	        transformsModel.write(fileOut);
         } finally {
             if (fileOut != null) {
                 fileOut.close();

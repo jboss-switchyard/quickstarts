@@ -13,19 +13,20 @@
  */
 package org.switchyard.component.camel.ftp.model.v1;
 
-import static org.switchyard.component.camel.ftp.Constants.FTP_NAMESPACE_V1;
-
-import org.switchyard.component.camel.common.marshaller.BaseModelMarshaller;
-import org.switchyard.component.camel.common.marshaller.ModelCreator;
-import org.switchyard.component.camel.ftps.model.v1.V1CamelFtpsBindingModel;
-import org.switchyard.component.camel.sftp.model.v1.V1CamelSftpBindingModel;
+import org.switchyard.component.camel.common.model.v1.V1BaseCamelMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * Ftp/ftps/sftp model marshaller.
  */
-public class V1CamelFtpModelMarshaller extends BaseModelMarshaller {
+public class V1CamelFtpModelMarshaller extends V1BaseCamelMarshaller {
+
+    private static final String BINDING_FTP = BindingModel.BINDING + '.' + V1CamelFtpBindingModel.FTP;
+    private static final String BINDING_FTPS = BindingModel.BINDING + '.' + V1CamelFtpsBindingModel.FTPS;
+    private static final String BINDING_SFTP = BindingModel.BINDING + '.' + V1CamelSftpBindingModel.SFTP;
 
     /**
      * Creates new marshaller.
@@ -33,28 +34,28 @@ public class V1CamelFtpModelMarshaller extends BaseModelMarshaller {
      * @param desc Descriptor
      */
     public V1CamelFtpModelMarshaller(Descriptor desc) {
-        super(desc, FTP_NAMESPACE_V1);
-
-        registerBinding(V1CamelFtpBindingModel.FTP, new ModelCreator<V1CamelFtpBindingModel>() {
-            @Override
-            public V1CamelFtpBindingModel create(Configuration config, Descriptor descriptor) {
-                return new V1CamelFtpBindingModel(config, descriptor);
-            }
-        });
-
-        registerBinding(V1CamelFtpsBindingModel.FTPS, new ModelCreator<V1CamelFtpsBindingModel>() {
-            @Override
-            public V1CamelFtpsBindingModel create(Configuration config, Descriptor descriptor) {
-                return new V1CamelFtpsBindingModel(config, descriptor);
-            }
-        });
-
-        registerBinding(V1CamelSftpBindingModel.SFTP, new ModelCreator<V1CamelSftpBindingModel>() {
-            @Override
-            public V1CamelSftpBindingModel create(Configuration config, Descriptor descriptor) {
-                return new V1CamelSftpBindingModel(config, descriptor);
-            }
-        });
+        super(desc);
     }
 
+    /**
+     * Reads in the Configuration, looking for various knowledge models.
+     * If not found, it falls back to the super class (V1BaseCamelMarshaller).
+     *
+     * @param config the Configuration
+     * @return the Model
+     */
+    @Override
+    public Model read(Configuration config) {
+        String name = config.getName();
+        Descriptor desc = getDescriptor();
+        if (BINDING_FTP.equals(name)) {
+            return new V1CamelFtpBindingModel(config, desc);
+        } else if (BINDING_FTPS.equals(name)) {
+            return new V1CamelFtpsBindingModel(config, desc);
+        } else if (BINDING_SFTP.equals(name)) {
+            return new V1CamelSftpBindingModel(config, desc);
+        }
+        return super.read(config);
+    }
+ 
 }

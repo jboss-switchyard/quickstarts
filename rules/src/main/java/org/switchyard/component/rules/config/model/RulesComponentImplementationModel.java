@@ -23,11 +23,6 @@ import org.switchyard.component.common.knowledge.config.model.KnowledgeComponent
 public interface RulesComponentImplementationModel extends KnowledgeComponentImplementationModel {
 
     /**
-     * The "rules" namespace.
-     */
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-component-rules:config:1.0";
-
-    /**
      * The "rules" implementation type.
      */
     public static final String RULES = "rules";

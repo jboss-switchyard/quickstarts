@@ -18,7 +18,6 @@ import static org.switchyard.component.common.knowledge.config.model.GlobalsMode
 import static org.switchyard.component.common.knowledge.config.model.InputsModel.INPUTS;
 import static org.switchyard.component.common.knowledge.config.model.OutputsModel.OUTPUTS;
 
-import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.OperationType;
 import org.switchyard.component.common.knowledge.config.model.FaultsModel;
 import org.switchyard.component.common.knowledge.config.model.GlobalsModel;
@@ -46,7 +45,7 @@ public abstract class V1OperationModel extends BaseNamedModel implements Operati
      * @param namespace the namespace
      */
     public V1OperationModel(String namespace) {
-        super(XMLHelper.createQName(namespace, OPERATION));
+        super(namespace, OPERATION);
         setModelChildrenOrder(GLOBALS, INPUTS, OUTPUTS, FAULTS);
     }
 

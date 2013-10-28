@@ -23,11 +23,6 @@ import org.switchyard.component.common.knowledge.config.model.KnowledgeComponent
 public interface BPMComponentImplementationModel extends KnowledgeComponentImplementationModel {
 
     /**
-     * The "bpm" namespace.
-     */
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-component-bpm:config:1.0";
-
-    /**
      * The "bpm" implementation type.
      */
     public static final String BPM = "bpm";

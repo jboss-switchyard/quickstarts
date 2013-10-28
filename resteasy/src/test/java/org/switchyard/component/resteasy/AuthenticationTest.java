@@ -15,9 +15,6 @@ package org.switchyard.component.resteasy;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.net.UnknownHostException;
-import java.net.URL;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,13 +24,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
-import org.switchyard.common.net.SocketAddr;
-import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.resteasy.config.model.NtlmAuthModel;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
+import org.switchyard.component.resteasy.config.model.RESTEasyNamespace;
 import org.switchyard.component.resteasy.config.model.v1.V1NtlmAuthModel;
 import org.switchyard.component.resteasy.config.model.v1.V1RESTEasyBindingModel;
 import org.switchyard.config.model.ModelPuller;
@@ -42,14 +37,11 @@ import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeReferenceModel;
 import org.switchyard.metadata.BaseService;
-import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceOperation;
-import org.switchyard.test.InvocationFaultException;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
-import org.w3c.dom.Node;
 
 /**
  * Contains tests for Http authentication support on RESTEasyGateway.
@@ -95,7 +87,7 @@ public class AuthenticationTest {
         _resteasyInbound = new InboundHandler(_config, _domain);
         _resteasyInbound.start();
 
-        RESTEasyBindingModel config = new V1RESTEasyBindingModel() {
+        RESTEasyBindingModel config = new V1RESTEasyBindingModel(RESTEasyNamespace.DEFAULT.uri()) {
             @Override
             public CompositeReferenceModel getReference() {
                 return new V1CompositeReferenceModel();
@@ -111,7 +103,7 @@ public class AuthenticationTest {
         resteasyProxyOutbound1.start();
         _domain.registerService(_authConsumerService1.getServiceName(), new HelloWebServiceInterface(), resteasyProxyOutbound1);
 
-        NtlmAuthModel auth = new V1NtlmAuthModel();
+        NtlmAuthModel auth = new V1NtlmAuthModel(RESTEasyNamespace.DEFAULT.uri());
         auth.setUser("SwitchYard");
         auth.setPassword("JBoss123!");
         auth.setDomain("JBOSS");

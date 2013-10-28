@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.ConnectionSpecModel;
 import org.switchyard.config.Configuration;
@@ -30,9 +28,10 @@ public class V1ConnectionSpecModel extends V1BasePropertyContainerModel implemen
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1ConnectionSpecModel() {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.CONNECTION_SPEC));
+    public V1ConnectionSpecModel(String namespace) {
+        super(namespace, JCAConstants.CONNECTION_SPEC);
         setModelChildrenOrder(JCAConstants.PROPERTY);
     }
     

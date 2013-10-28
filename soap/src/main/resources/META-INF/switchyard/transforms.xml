@@ -14,8 +14,8 @@
  - limitations under the License.
  -->
 
-<transforms xmlns="urn:switchyard-config:switchyard:1.0"
-            xmlns:trfm="urn:switchyard-config:transform:1.0">
+<transforms xmlns="urn:switchyard-config:switchyard:1.1"
+            xmlns:trfm="urn:switchyard-config:transform:1.1">
 
     <!-- Default Exception to SOAP 1.1 Fault transformer... -->
     <trfm:transform.java from="java:java.lang.Exception"

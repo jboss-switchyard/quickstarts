@@ -44,7 +44,7 @@ public class V1AdditionalUriParametersModel extends BaseModel implements Additio
      * @param namespace Namespace name
      */
     public V1AdditionalUriParametersModel(String namespace) {
-        super(ADDITIONAL_URI_PARAMETERS, namespace);
+        super(namespace, ADDITIONAL_URI_PARAMETERS);
     }
 
     /**

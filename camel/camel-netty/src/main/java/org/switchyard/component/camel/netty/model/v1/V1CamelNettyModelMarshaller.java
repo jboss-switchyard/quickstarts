@@ -13,17 +13,19 @@
  */
 package org.switchyard.component.camel.netty.model.v1;
 
-import static org.switchyard.component.camel.netty.model.Constants.NETTY_NAMESPACE_V1;
-
-import org.switchyard.component.camel.common.marshaller.BaseModelMarshaller;
-import org.switchyard.component.camel.common.marshaller.ModelCreator;
+import org.switchyard.component.camel.common.model.v1.V1BaseCamelMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * Netty tcp & udp model marshaller.
  */
-public class V1CamelNettyModelMarshaller extends BaseModelMarshaller {
+public class V1CamelNettyModelMarshaller extends V1BaseCamelMarshaller {
+
+    private static final String BINDING_TCP = BindingModel.BINDING + '.' + V1CamelNettyTcpBindingModel.TCP;
+    private static final String BINDING_UDP = BindingModel.BINDING + '.' + V1CamelNettyUdpBindingModel.UDP;
 
     /**
      * Creates new marshaller.
@@ -31,20 +33,26 @@ public class V1CamelNettyModelMarshaller extends BaseModelMarshaller {
      * @param desc Descriptor
      */
     public V1CamelNettyModelMarshaller(Descriptor desc) {
-        super(desc, NETTY_NAMESPACE_V1);
+        super(desc);
+    }
 
-        registerBinding(V1CamelNettyTcpBindingModel.TCP, new ModelCreator<V1CamelNettyTcpBindingModel>() {
-            @Override
-            public V1CamelNettyTcpBindingModel create(Configuration config, Descriptor descriptor) {
-                return new V1CamelNettyTcpBindingModel(config, descriptor);
-            }
-        });
-        registerBinding(V1CamelNettyUdpBindingModel.UDP, new ModelCreator<V1CamelNettyUdpBindingModel>() {
-            @Override
-            public V1CamelNettyUdpBindingModel create(Configuration config, Descriptor descriptor) {
-                return new V1CamelNettyUdpBindingModel(config, descriptor);
-            }
-        });
+    /**
+     * Reads in the Configuration, looking for various knowledge models.
+     * If not found, it falls back to the super class (V1BaseCamelMarshaller).
+     *
+     * @param config the Configuration
+     * @return the Model
+     */
+    @Override
+    public Model read(Configuration config) {
+        String name = config.getName();
+        Descriptor desc = getDescriptor();
+        if (BINDING_TCP.equals(name)) {
+            return new V1CamelNettyTcpBindingModel(config, desc);
+        } else if (BINDING_UDP.equals(name)) {
+            return new V1CamelNettyUdpBindingModel(config, desc);
+        }
+        return super.read(config);
     }
 
 }

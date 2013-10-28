@@ -13,8 +13,6 @@
  */
 package org.switchyard.tools.forge.bpm;
 
-import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
-
 import java.io.File;
 
 import javax.inject.Inject;
@@ -38,6 +36,7 @@ import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.component.bpm.BPMOperationType;
+import org.switchyard.component.bpm.config.model.BPMNamespace;
 import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1BPMOperationModel;
 import org.switchyard.component.common.knowledge.config.model.OperationModel;
@@ -50,6 +49,7 @@ import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.resource.v1.V1ResourceModel;
 import org.switchyard.config.model.resource.v1.V1ResourcesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 import org.switchyard.tools.forge.plugin.TemplateResource;
 
@@ -175,7 +175,7 @@ public class BPMServicePlugin implements Plugin {
         // Create the component service model
         V1ComponentModel component = new V1ComponentModel();
         component.setName(serviceName);
-        V1ComponentServiceModel service = new V1ComponentServiceModel();
+        V1ComponentServiceModel service = new V1ComponentServiceModel(SwitchYardNamespace.DEFAULT.uri());
         service.setName(serviceName);
         InterfaceModel csi = new V1InterfaceModel(InterfaceModel.JAVA);
         csi.setInterface(interfaceName);
@@ -183,16 +183,16 @@ public class BPMServicePlugin implements Plugin {
         component.addService(service);
         
         // Create the BPM implementation model and add it to the component model
-        V1BPMComponentImplementationModel bpm = new V1BPMComponentImplementationModel();
+        V1BPMComponentImplementationModel bpm = new V1BPMComponentImplementationModel(BPMNamespace.DEFAULT.uri());
         bpm.setProcessId(processId);
         bpm.setPersistent(persistent);
-        V1OperationsModel operations = new V1OperationsModel(DEFAULT_NAMESPACE);
-        OperationModel operation = (OperationModel)new V1BPMOperationModel().setType(BPMOperationType.START_PROCESS).setName("operation");
+        V1OperationsModel operations = new V1OperationsModel(BPMNamespace.DEFAULT.uri());
+        OperationModel operation = (OperationModel)new V1BPMOperationModel(BPMNamespace.DEFAULT.uri()).setType(BPMOperationType.START_PROCESS).setName("operation");
         operations.addOperation(operation);
         bpm.setOperations(operations);
-        V1ManifestModel manifest = new V1ManifestModel(DEFAULT_NAMESPACE);
-        V1ResourcesModel resources = new V1ResourcesModel(DEFAULT_NAMESPACE);
-        resources.addResource(new V1ResourceModel(DEFAULT_NAMESPACE).setLocation(processDefinition).setType(ResourceType.valueOf("BPMN2")));
+        V1ManifestModel manifest = new V1ManifestModel(BPMNamespace.DEFAULT.uri());
+        V1ResourcesModel resources = new V1ResourcesModel(BPMNamespace.DEFAULT.uri());
+        resources.addResource(new V1ResourceModel(BPMNamespace.DEFAULT.uri()).setLocation(processDefinition).setType(ResourceType.valueOf("BPMN2")));
         manifest.setResources(resources);
         bpm.setManifest(manifest);
         component.setImplementation(bpm);

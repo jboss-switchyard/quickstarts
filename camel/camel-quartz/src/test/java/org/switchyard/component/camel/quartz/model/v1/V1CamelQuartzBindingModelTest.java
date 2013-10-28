@@ -22,7 +22,7 @@ import java.util.Date;
 
 import org.apache.camel.component.quartz.QuartzEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
-import org.switchyard.component.camel.quartz.Constants;
+import org.switchyard.component.camel.quartz.model.CamelQuartzNamespace;
 
 /**
  * Test for {@link V1CamelQuartzBindingModel}.
@@ -62,8 +62,8 @@ public class V1CamelQuartzBindingModelTest extends V1BaseCamelServiceBindingMode
 
     @Override
     protected V1CamelQuartzBindingModel createTestModel() {
-        final V1CamelQuartzBindingModel model = new V1CamelQuartzBindingModel();
-        model.setAdditionalUriParameters(createAdditionalUriParametersModel(Constants.QUARTZ_NAMESPACE_V1, Collections.singletonMap("trigger.timeZone", "GMT")));
+        final V1CamelQuartzBindingModel model = new V1CamelQuartzBindingModel(CamelQuartzNamespace.V_1_1.uri());
+        model.setAdditionalUriParameters(createAdditionalUriParametersModel(CamelQuartzNamespace.V_1_1.uri(), Collections.singletonMap("trigger.timeZone", "GMT")));
         return (V1CamelQuartzBindingModel) model
             .setTimerName(NAME)
             .setCron(CRON)

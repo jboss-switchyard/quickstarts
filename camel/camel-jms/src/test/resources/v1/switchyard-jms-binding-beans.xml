@@ -12,11 +12,11 @@
  - See the License for the specific language governing permissions and
  - limitations under the License.
  -->
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+<switchyard xmlns="urn:switchyard-config:switchyard:1.1"
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-    xmlns:jms="urn:switchyard-component-camel-jms:config:1.0">
+    xmlns:jms="urn:switchyard-component-camel-jms:config:1.1">
 
-    <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
+    <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.1">
         <sca:service name="camelTest" promote="SimpleCamelService">
             <jms:binding.jms>
                 <jms:topic>esb_in_topic</jms:topic>

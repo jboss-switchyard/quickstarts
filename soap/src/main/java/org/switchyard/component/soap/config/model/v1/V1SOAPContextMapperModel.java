@@ -16,7 +16,6 @@ package org.switchyard.component.soap.config.model.v1;
 import static org.switchyard.component.soap.composer.SOAPHeadersType.VALUE;
 
 import org.switchyard.component.soap.composer.SOAPHeadersType;
-import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.config.model.SOAPContextMapperModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -29,13 +28,6 @@ import org.switchyard.config.model.composer.v1.V1ContextMapperModel;
  */
 public class V1SOAPContextMapperModel extends V1ContextMapperModel implements SOAPContextMapperModel {
 
-    /**
-     * Constructs a new V1SOAPContextMapperModel.
-     */
-    public V1SOAPContextMapperModel() {
-        super(SOAPBindingModel.DEFAULT_NAMESPACE);
-    }
-    
     /**
      * Constructs a new V1SOAPContextMapperModel in the specified namespace.
      * @param namespace the specified namespace

@@ -29,11 +29,11 @@ public class V1CamelRemoteFileProducerBindingModel extends V1GenericFileProducer
     /**
      * Creates model bound to given namespace.
      * 
-     * @param name Name of element.
      * @param namespace Namespace to bound.
+     * @param name Name of element.
      */
-    public V1CamelRemoteFileProducerBindingModel(String name, String namespace) {
-        super(name, namespace);
+    public V1CamelRemoteFileProducerBindingModel(String namespace, String name) {
+        super(namespace, name);
     }
 
     /**

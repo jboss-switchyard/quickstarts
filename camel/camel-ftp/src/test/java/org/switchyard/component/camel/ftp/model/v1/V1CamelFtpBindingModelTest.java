@@ -19,7 +19,7 @@ import org.apache.camel.component.file.remote.FtpEndpoint;
 import org.switchyard.component.camel.common.model.remote.CamelRemoteFileBindingModel.PathSeparator;
 import org.switchyard.component.camel.common.model.remote.v1.V1CamelRemoteFileConsumerBindingModel;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
-import org.switchyard.component.camel.ftp.Constants;
+import org.switchyard.component.camel.ftp.model.CamelFtpNamespace;
 
 /**
  * Test for {@link V1CamelFtpBindingModel}.
@@ -62,7 +62,7 @@ public class V1CamelFtpBindingModelTest extends V1BaseCamelServiceBindingModelTe
 
     @Override
     protected V1CamelFtpBindingModel createTestModel() {
-        V1CamelFtpBindingModel model = (V1CamelFtpBindingModel) new V1CamelFtpBindingModel()
+        V1CamelFtpBindingModel model = (V1CamelFtpBindingModel) new V1CamelFtpBindingModel(CamelFtpNamespace.V_1_0.uri())
             .setDirectory(DIRECTORY)
             .setAutoCreate(AUTO_CREATE);
         model.setHost(HOST)
@@ -81,7 +81,7 @@ public class V1CamelFtpBindingModelTest extends V1BaseCamelServiceBindingModelTe
             .setTimeout(TIMEOUT)
             .setSoTimeout(SO_TIMEOUT)
             .setSiteCommand(SITE_COMMAND);
-        V1CamelRemoteFileConsumerBindingModel consumer = new V1CamelRemoteFileConsumerBindingModel(V1CamelFtpBindingModel.CONSUME, Constants.FTP_NAMESPACE_V1);
+        V1CamelRemoteFileConsumerBindingModel consumer = new V1CamelRemoteFileConsumerBindingModel(CamelFtpNamespace.V_1_0.uri(), V1CamelFtpBindingModel.CONSUME);
         consumer.setInitialDelay(INITIAL_DELAY);
         model.setConsumer(consumer);
         return model;

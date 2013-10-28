@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.file.model.v1;
 
-import static org.switchyard.component.camel.file.model.Constants.FILE_NAMESPACE_V1;
-
 import java.net.URI;
 import java.util.List;
 
@@ -53,9 +51,10 @@ public class V1CamelFileBindingModel extends V1GenericFileBindingModel
 
     /**
      * Create a new V1CamelFileBindingModel.
+     * @param namespace namespace
      */
-    public V1CamelFileBindingModel() {
-        super(FILE, FILE_NAMESPACE_V1);
+    public V1CamelFileBindingModel(String namespace) {
+        super(FILE, namespace);
 
         setModelChildrenOrder(CONSUME, PRODUCE);
     }

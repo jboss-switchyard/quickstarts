@@ -30,6 +30,7 @@ import org.switchyard.component.clojure.config.model.ClojureComponentImplementat
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
@@ -122,7 +123,7 @@ public class ClojureImplementationPlugin implements Plugin {
     private V1ComponentModel createComponentModel(final String serviceName) {
         final V1ComponentModel component = new V1ComponentModel();
         component.setName(serviceName + "Component");
-        final V1ComponentServiceModel service = new V1ComponentServiceModel();
+        final V1ComponentServiceModel service = new V1ComponentServiceModel(SwitchYardNamespace.DEFAULT.uri());
         service.setName(serviceName);
         component.addService(service);
         return component;

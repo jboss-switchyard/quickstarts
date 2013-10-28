@@ -17,6 +17,7 @@ import static junit.framework.Assert.assertEquals;
 
 import org.apache.camel.component.mail.MailEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelReferenceBindingModelTest;
+import org.switchyard.component.camel.mail.model.CamelMailNamespace;
 
 /**
  * Test for {@link V1CamelMailBindingModel} with {@link V1CamelMailProducerBindingModel} set.
@@ -55,7 +56,7 @@ public class V1CamelMailProducerBindingModelTest extends V1BaseCamelReferenceBin
 
     @Override
     protected V1CamelMailBindingModel createTestModel() {
-        V1CamelMailBindingModel model = new V1CamelMailBindingModel() {
+        V1CamelMailBindingModel model = new V1CamelMailBindingModel(CamelMailNamespace.V_1_0.uri()) {
             public boolean isReferenceBinding() {
                 return true;
             }
@@ -63,7 +64,7 @@ public class V1CamelMailProducerBindingModelTest extends V1BaseCamelReferenceBin
         model.setSecure(SECURE)
            .setHost(HOST);
 
-        V1CamelMailProducerBindingModel producer = new V1CamelMailProducerBindingModel()
+        V1CamelMailProducerBindingModel producer = new V1CamelMailProducerBindingModel(CamelMailNamespace.V_1_0.uri())
             .setSubject(SUBJECT)
             .setFrom(FROM)
             .setTo(TO)

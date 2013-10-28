@@ -30,9 +30,10 @@ public class V1NtlmAuthModel extends V1BasicAuthModel implements NtlmAuthModel {
 
     /**
      * Creates a new NtlmAuthModel.
+     * @param namespace namespace
      */
-    public V1NtlmAuthModel() {
-        super(RESTEasyName.ntlm.name());
+    public V1NtlmAuthModel(String namespace) {
+        super(namespace, RESTEasyName.ntlm.name());
     }
 
     /**

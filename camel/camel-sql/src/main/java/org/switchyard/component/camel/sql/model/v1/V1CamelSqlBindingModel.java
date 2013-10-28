@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.sql.model.v1;
 
-import static org.switchyard.component.camel.sql.model.Constants.SQL_NAMESPACE_V1;
-
 import java.net.URI;
 import java.util.List;
 
@@ -47,9 +45,10 @@ public class V1CamelSqlBindingModel extends V1BaseCamelBindingModel
 
     /**
      * Create a new CamelSqlBindingModel.
+     * @param namespace namespace
      */
-    public V1CamelSqlBindingModel() {
-        super(SQL, SQL_NAMESPACE_V1);
+    public V1CamelSqlBindingModel(String namespace) {
+        super(SQL, namespace);
 
         setModelChildrenOrder(QUERY, DATA_SOURCE_REF, BATCH, PLACEHOLDER);
     }

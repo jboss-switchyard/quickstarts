@@ -24,8 +24,6 @@ import org.switchyard.component.camel.mail.model.CamelMailProducerBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
-import static org.switchyard.component.camel.mail.model.Constants.MAIL_NAMESPACE_V1;
-
 /**
  * First implementation of mail binding.
  */
@@ -66,9 +64,10 @@ public class V1CamelMailBindingModel extends V1BaseCamelBindingModel
 
     /**
      * Creates new mail binding model.
+     * @param namespace namespace
      */
-    public V1CamelMailBindingModel() {
-        super(MAIL, MAIL_NAMESPACE_V1);
+    public V1CamelMailBindingModel(String namespace) {
+        super(MAIL, namespace);
 
         setModelChildrenOrder(HOST, PORT, USERNAME, PASSWORD, CONNECTION_TIMEOUT,
             CONSUME, PRODUCE);

@@ -14,7 +14,6 @@
 package org.switchyard.component.common.knowledge.config.model.v1;
 
 import org.switchyard.common.type.Classes;
-import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.config.model.ChannelModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
@@ -32,7 +31,7 @@ public class V1ChannelModel extends BaseNamedModel implements ChannelModel {
      * @param namespace the namespace
      */
     public V1ChannelModel(String namespace) {
-        super(XMLHelper.createQName(namespace, CHANNEL));
+        super(namespace, CHANNEL);
     }
 
     /**

@@ -17,6 +17,7 @@ import static junit.framework.Assert.assertEquals;
 
 import org.apache.camel.component.file.FileEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
+import org.switchyard.component.camel.file.model.CamelFileNamespace;
 import org.switchyard.component.camel.file.model.v1.V1CamelFileBindingModel;
 
 /**
@@ -52,7 +53,7 @@ public class V1CamelFileBindingModelTest extends V1BaseCamelServiceBindingModelT
 
     @Override
     protected V1CamelFileBindingModel createTestModel() {
-        return (V1CamelFileBindingModel) new V1CamelFileBindingModel()
+        return (V1CamelFileBindingModel) new V1CamelFileBindingModel(CamelFileNamespace.V_1_0.uri())
             .setDirectory(DIRECTORY)
             .setAutoCreate(AUTO_CREATE)
             .setBufferSize(BUFFER_SIZE)

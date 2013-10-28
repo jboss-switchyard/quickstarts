@@ -21,9 +21,6 @@ package org.switchyard.component.jca;
  */
 public final class JCAConstants {
 
-    /** The "jca" namespace. */
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-component-jca:config:1.0";
-    
     /** component name. */
     public static final String COMPONENT_NAME = "JCAComponent";
     

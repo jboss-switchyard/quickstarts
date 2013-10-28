@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.BatchCommitModel;
 import org.switchyard.component.jca.config.model.EndpointModel;
@@ -34,9 +32,10 @@ public class V1InboundInteractionModel extends BaseModel implements InboundInter
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1InboundInteractionModel() {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.INBOUND_INTERACTION));
+    public V1InboundInteractionModel(String namespace) {
+        super(namespace, JCAConstants.INBOUND_INTERACTION);
         setModelChildrenOrder(JCAConstants.LISTENER, JCAConstants.ENDPOINT, JCAConstants.TRANSACTED, JCAConstants.BATCH_COMMIT);
     }
     
@@ -84,7 +83,7 @@ public class V1InboundInteractionModel extends BaseModel implements InboundInter
         if (config != null) {
             config.setValue(Boolean.toString(transacted));
         } else {
-            V1NameValueModel model = new V1NameValueModel(JCAConstants.TRANSACTED);
+            V1NameValueModel model = new V1NameValueModel(getNamespaceURI(), JCAConstants.TRANSACTED);
             model.setValue(Boolean.toString(transacted));
             setChildModel(model);
         }

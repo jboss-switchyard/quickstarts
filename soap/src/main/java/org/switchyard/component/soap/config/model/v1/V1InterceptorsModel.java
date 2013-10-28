@@ -14,7 +14,6 @@
 package org.switchyard.component.soap.config.model.v1;
 
 import static org.switchyard.component.soap.config.model.InterceptorModel.INTERCEPTOR;
-import static org.switchyard.component.soap.config.model.SOAPBindingModel.DEFAULT_NAMESPACE;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,10 +38,11 @@ public class V1InterceptorsModel extends BaseModel implements InterceptorsModel 
 
     /**
      * Creates a new InterceptorsModel.
+     * @param namespace namespace
      * @param name inInterceptors or outInterceptors
      */
-    public V1InterceptorsModel(String name) {
-        super(new QName(DEFAULT_NAMESPACE, name));
+    public V1InterceptorsModel(String namespace, String name) {
+        super(new QName(namespace, name));
         setModelChildrenOrder(INTERCEPTOR);
     }
 

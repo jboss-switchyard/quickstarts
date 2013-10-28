@@ -41,9 +41,10 @@ public class V1BPMComponentImplementationModel extends V1KnowledgeComponentImple
 
     /**
      * Default constructor for application use.
+     * @param namespace namespace
      */
-    public V1BPMComponentImplementationModel() {
-        super(BPM, DEFAULT_NAMESPACE);
+    public V1BPMComponentImplementationModel(String namespace) {
+        super(BPM, namespace);
         setModelChildrenOrder(CHANNELS, LISTENERS, LOGGERS, MANIFEST, OPERATIONS, PROPERTIES, USER_GROUP_CALLBACK, WORK_ITEM_HANDLERS);
     }
 

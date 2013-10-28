@@ -11,6 +11,7 @@ import org.switchyard.component.sca.NOPEndpointPublisher;
 import org.switchyard.config.ConfigurationPuller;
 import org.switchyard.config.model.composite.SCABindingModel;
 import org.switchyard.config.model.composite.v1.V1SCABindingModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 
 public class SCAActivatorTest {
     private static final String TEST_XML = "TestConfig.xml";
@@ -29,10 +30,10 @@ public class SCAActivatorTest {
     }
     
     @Test
-    public void testBindingActivationWithNullTargetAndNamespace() throws Exception {        
+    public void testBindingActivationWithNullTargetAndNamespace() throws Exception {
         activator.setEndpointPublisher(new NOPEndpointPublisher());
         
-        SCABindingModel scab = new V1SCABindingModel();
+        SCABindingModel scab = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri());
         scab.setClustered(true)
             .setLoadBalance("RoundRobin")
             .setTarget(null)

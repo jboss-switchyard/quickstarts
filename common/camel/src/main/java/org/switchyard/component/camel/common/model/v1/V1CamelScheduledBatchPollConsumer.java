@@ -33,11 +33,11 @@ public class V1CamelScheduledBatchPollConsumer extends V1CamelScheduledPollConsu
     /**
      * Creates model bound to given namespace.
      * 
-     * @param name Name of element.
      * @param namespace Namespace to bound.
+     * @param name Name of element.
      */
-    public V1CamelScheduledBatchPollConsumer(String name, String namespace) {
-        super(name, namespace);
+    public V1CamelScheduledBatchPollConsumer(String namespace, String name) {
+        super(namespace, name);
 
         setModelChildrenOrder(MAX_MESSAGES_PER_POLL);
     }

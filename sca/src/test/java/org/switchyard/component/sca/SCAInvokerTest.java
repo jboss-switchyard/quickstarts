@@ -13,10 +13,11 @@ import org.switchyard.MockDomain;
 import org.switchyard.MockExchange;
 import org.switchyard.Service;
 import org.switchyard.ServiceReference;
+import org.switchyard.SwitchYardException;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeReferenceModel;
 import org.switchyard.config.model.composite.v1.V1SCABindingModel;
-import org.switchyard.SwitchYardException;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.remote.RemoteEndpoint;
@@ -39,7 +40,7 @@ public class SCAInvokerTest {
     
     @Test
     public void localInvocationSameName() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel() {
+        V1SCABindingModel config = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri()) {
             @Override
             public String getName() {
                 return "testBinding";
@@ -66,7 +67,7 @@ public class SCAInvokerTest {
     
     @Test
     public void localInvocationTarget() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel() {
+        V1SCABindingModel config = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri()) {
             @Override
             public String getName() {
                 return "testBinding";
@@ -100,7 +101,7 @@ public class SCAInvokerTest {
     
     @Test
     public void crossDomain() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel() {
+        V1SCABindingModel config = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri()) {
             @Override
             public String getName() {
                 return "testBinding";
@@ -141,7 +142,7 @@ public class SCAInvokerTest {
     public void localInvocationWithInvalidServiceReference() throws Exception {
         boolean fail = false;
         
-        V1SCABindingModel config = new V1SCABindingModel() {
+        V1SCABindingModel config = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri()) {
             @Override
             public String getName() {
                 return "testBinding";
@@ -181,7 +182,7 @@ public class SCAInvokerTest {
     
     @Test
     public void localInvocationTargetNamespace() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel() {
+        V1SCABindingModel config = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri()) {
             @Override
             public String getName() {
                 return "testBinding";
@@ -215,7 +216,7 @@ public class SCAInvokerTest {
     
     @Test
     public void createOOTBLoadBalancers() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel() {
+        V1SCABindingModel config = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri()) {
             @Override
             public String getName() {
                 return "testBinding";
@@ -235,7 +236,7 @@ public class SCAInvokerTest {
     
     @Test
     public void contextPropertiesCopied() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel() {
+        V1SCABindingModel config = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri()) {
             @Override
             public String getName() {
                 return "testBinding";
@@ -264,7 +265,7 @@ public class SCAInvokerTest {
     
     @Test
     public void createCustomLoadBalancers() throws Exception {
-        V1SCABindingModel config = new V1SCABindingModel() {
+        V1SCABindingModel config = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri()) {
             @Override
             public String getName() {
                 return "testBinding";

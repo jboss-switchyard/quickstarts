@@ -17,6 +17,7 @@ import static junit.framework.Assert.assertEquals;
 
 import org.apache.camel.component.netty.NettyEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
+import org.switchyard.component.camel.netty.model.CamelNettyNamespace;
 
 /**
  * Test for {@link V1CamelNettyBindingModel}.
@@ -41,7 +42,7 @@ public class V1CamelNettyUdpBindingModelTest extends V1BaseCamelServiceBindingMo
 
     @Override
     protected V1CamelNettyUdpBindingModel createTestModel() {
-        return ((V1CamelNettyUdpBindingModel) new V1CamelNettyUdpBindingModel()
+        return ((V1CamelNettyUdpBindingModel) new V1CamelNettyUdpBindingModel(CamelNettyNamespace.V_1_0.uri())
             .setHost(HOST)
             .setPort(PORT))
             .setBroadcast(BROADCAST);

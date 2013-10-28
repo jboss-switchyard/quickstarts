@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.soap.config.model.v1;
 
-import static org.switchyard.component.soap.config.model.SOAPBindingModel.DEFAULT_NAMESPACE;
-
 import org.switchyard.component.soap.config.model.ProxyModel;
 import org.switchyard.component.soap.config.model.SOAPNameValueModel;
 import org.switchyard.component.soap.config.model.SOAPNameValueModel.SOAPName;
@@ -47,18 +45,20 @@ public class V1ProxyModel extends BaseModel implements ProxyModel {
 
     /**
      * Creates a new ProxyModel.
+     * @param namespace namespace
      */
-    public V1ProxyModel() {
-        super(SOAPName.proxy.name(), DEFAULT_NAMESPACE);
+    public V1ProxyModel(String namespace) {
+        super(namespace, SOAPName.proxy.name());
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
     /**
      * Creates a new ProxyModel.
-     * @param name the name of teh model
+     * @param namespace namespace
+     * @param name the name of the model
      */
-    public V1ProxyModel(String name) {
-        super(name, DEFAULT_NAMESPACE);
+    public V1ProxyModel(String namespace, String name) {
+        super(namespace, name);
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
@@ -173,7 +173,7 @@ public class V1ProxyModel extends BaseModel implements ProxyModel {
                 model = getNameValue(name);
             }
             if (model == null) {
-                model = new V1SOAPNameValueModel(name);
+                model = new V1SOAPNameValueModel(getNamespaceURI(), name);
                 setChildModel(model);
             }
             model.setValue(value);

@@ -33,6 +33,7 @@ import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.config.model.SOAPNamespace;
 import org.switchyard.component.soap.config.model.v1.V1SOAPBindingModel;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.CompositeModel;
@@ -96,7 +97,7 @@ public class StandardDocLitTest {
         _serviceURL = new URL("http://" + host + ":" + port + "/OrderService");
 
         // A WS Consumer as Service
-        SOAPBindingModel config2 = new V1SOAPBindingModel() {
+        SOAPBindingModel config2 = new V1SOAPBindingModel(SOAPNamespace.DEFAULT.uri()) {
             @Override
             public CompositeReferenceModel getReference() {
                 return new V1CompositeReferenceModel();

@@ -1,8 +1,5 @@
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
-import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 
@@ -19,10 +16,11 @@ public class V1NameValueModel extends BaseModel {
     
     /**
      * Create a new NameValueModel with the specified name.
+     * @param namespace namespace
      * @param name config name
      */
-    public V1NameValueModel(String name) {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, name));
+    public V1NameValueModel(String namespace, String name) {
+        super(namespace, name);
     }
     
     /**

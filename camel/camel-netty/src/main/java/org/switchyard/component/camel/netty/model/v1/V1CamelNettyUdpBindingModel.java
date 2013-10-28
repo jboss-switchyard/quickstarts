@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.netty.model.v1;
 
-import static org.switchyard.component.camel.netty.model.Constants.NETTY_NAMESPACE_V1;
-
 import org.switchyard.component.camel.netty.model.CamelNettyUdpBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -35,10 +33,11 @@ public class V1CamelNettyUdpBindingModel extends V1CamelNettyBindingModel
     private static final String BROADCAST = "broadcast";
 
     /**
-     * Create a new CamelDirectBindingModel.
+     * Create a new CamelNettyUdpBindingModel.
+     * @param namespace namespace
      */
-    public V1CamelNettyUdpBindingModel() {
-        super(UDP, NETTY_NAMESPACE_V1);
+    public V1CamelNettyUdpBindingModel(String namespace) {
+        super(UDP, namespace);
 
         setModelChildrenOrder(BROADCAST);
     }

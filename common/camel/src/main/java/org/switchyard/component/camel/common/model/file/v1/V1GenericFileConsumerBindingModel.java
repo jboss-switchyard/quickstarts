@@ -139,11 +139,11 @@ public class V1GenericFileConsumerBindingModel extends V1CamelScheduledBatchPoll
     /**
      * Creates model bound to given namespace.
      * 
-     * @param name Name of element.
      * @param namespace Namespace to bound.
+     * @param name Name of element.
      */
-    public V1GenericFileConsumerBindingModel(String name, String namespace) {
-        super(name, namespace);
+    public V1GenericFileConsumerBindingModel(String namespace, String name) {
+        super(namespace, name);
 
         setModelChildrenOrder(
                 DELETE, RECURSIVE, NOOP, PRE_MOVE, MOVE, MOVE_FAILED, INCLUDE, EXCLUDE,

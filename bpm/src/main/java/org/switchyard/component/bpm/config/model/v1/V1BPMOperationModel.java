@@ -13,11 +13,9 @@
  */
 package org.switchyard.component.bpm.config.model.v1;
 
-import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
-
+import org.switchyard.component.bpm.BPMOperationType;
 import org.switchyard.component.common.knowledge.OperationType;
 import org.switchyard.component.common.knowledge.config.model.v1.V1OperationModel;
-import org.switchyard.component.bpm.BPMOperationType;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
@@ -30,9 +28,10 @@ public class V1BPMOperationModel extends V1OperationModel {
 
     /**
      * Creates a new V1BPMOperationModel.
+     * @param namespace namespace
      */
-    public V1BPMOperationModel() {
-        super(DEFAULT_NAMESPACE);
+    public V1BPMOperationModel(String namespace) {
+        super(namespace);
     }
 
     /**

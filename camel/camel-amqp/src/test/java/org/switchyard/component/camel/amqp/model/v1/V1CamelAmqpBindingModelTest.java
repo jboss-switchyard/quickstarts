@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collections;
 
 import org.apache.camel.component.jms.JmsEndpoint;
-import org.switchyard.component.camel.amqp.model.Constants;
+import org.switchyard.component.camel.amqp.model.CamelAmqpNamespace;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
 
 /**
@@ -64,8 +64,8 @@ public class V1CamelAmqpBindingModelTest extends V1BaseCamelServiceBindingModelT
 
     @Override
     protected V1CamelAmqpBindingModel createTestModel() {
-        final V1CamelAmqpBindingModel model = new V1CamelAmqpBindingModel();
-        model.setAdditionalUriParameters(createAdditionalUriParametersModel(Constants.AMQP_NAMESPACE_V1, Collections.singletonMap("dummy", "test")));
+        final V1CamelAmqpBindingModel model = new V1CamelAmqpBindingModel(CamelAmqpNamespace.V_1_1.uri());
+        model.setAdditionalUriParameters(createAdditionalUriParametersModel(CamelAmqpNamespace.V_1_1.uri(), Collections.singletonMap("dummy", "test")));
         model
                 .setTopic(TOPIC)
                 .setConnectionFactory(CONNECTION_FACTORY)

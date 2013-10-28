@@ -73,8 +73,8 @@ public class RESTEasyGatewayTest {
     public void setUp() throws Exception {
         _httpMixIn.initialize();
         _domain = new ServiceDomainManager().createDomain();
-        _consumerService = new Invoker(_domain, QName.valueOf("{urn:resteasy:test:1.0}SampleRESTEasyConsumerService"));
-        _consumerService2 = new Invoker(_domain, QName.valueOf("{urn:resteasy:test:1.0}TimeoutConsumerService"));
+        _consumerService = new Invoker(_domain, QName.valueOf("{urn:resteasy:test:1.1}SampleRESTEasyConsumerService"));
+        _consumerService2 = new Invoker(_domain, QName.valueOf("{urn:resteasy:test:1.1}TimeoutConsumerService"));
 
         _puller = new ModelPuller<CompositeModel>();
         CompositeModel composite = _puller.pull("/HelloSwitchYard.xml", getClass());

@@ -27,11 +27,6 @@ import org.switchyard.config.model.composite.ComponentImplementationModel;
 public interface CamelComponentImplementationModel extends ComponentImplementationModel {
     
     /**
-     * The names space for the camel config model.
-     */
-    String DEFAULT_NAMESPACE = "urn:switchyard-component-camel:config:1.0";
-    
-    /**
      * The 'camel' implementation type.
      */
     String CAMEL = "camel";

@@ -62,9 +62,10 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
      */
     @Override
     public ScannerOutput<SwitchYardModel> scan(ScannerInput<SwitchYardModel> input) throws IOException {
-        SwitchYardModel switchyardModel = new V1SwitchYardModel();
+        String switchyardNamespace = input.getSwitchyardNamespace();
+        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace);
         CompositeModel compositeModel = new V1CompositeModel();
-        compositeModel.setName(input.getName());
+        compositeModel.setName(input.getCompositeName());
 
         List<Class<?>> serviceClasses = scanForServiceBeans(input.getURLs());
 
@@ -77,10 +78,10 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
 
             ComponentModel componentModel = new V1ComponentModel();
-            ComponentServiceModel serviceModel = new V1ComponentServiceModel();
+            ComponentServiceModel serviceModel = new V1ComponentServiceModel(switchyardNamespace);
             String name = serviceClass.getSimpleName();
             
-            BeanComponentImplementationModel beanModel = new V1BeanComponentImplementationModel();
+            BeanComponentImplementationModel beanModel = new V1BeanComponentImplementationModel(BeanNamespace.DEFAULT.uri());
             beanModel.setClazz(serviceClass.getName());
             componentModel.setImplementation(beanModel);
 
@@ -146,7 +147,7 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             // Add any references
             for (Field field : getReferences(serviceClass)) {
                 Class<?> reference = field.getType(); 
-                ComponentReferenceModel referenceModel = new V1ComponentReferenceModel();
+                ComponentReferenceModel referenceModel = new V1ComponentReferenceModel(switchyardNamespace);
                 InterfaceModel interfaceModel = new V1InterfaceModel(InterfaceModel.JAVA);
                       
                 if (field.getAnnotation(Reference.class) != null) {

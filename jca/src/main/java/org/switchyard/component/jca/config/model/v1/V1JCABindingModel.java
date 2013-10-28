@@ -32,9 +32,10 @@ public class V1JCABindingModel extends V1BindingModel implements JCABindingModel
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1JCABindingModel() {
-        super(JCAConstants.JCA, JCAConstants.DEFAULT_NAMESPACE);
+    public V1JCABindingModel(String namespace) {
+        super(JCAConstants.JCA, namespace);
         setModelChildrenOrder(JCAConstants.OUTBOUND_CONNECTION,
                                 JCAConstants.INBOUND_CONNECTION,
                                 JCAConstants.OUTBOUND_INTERACTION,

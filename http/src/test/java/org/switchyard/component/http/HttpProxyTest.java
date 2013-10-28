@@ -15,8 +15,6 @@ package org.switchyard.component.http;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,23 +24,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.littleshoot.proxy.DefaultHttpProxyServer;
-import org.littleshoot.proxy.HttpFilter;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.ProxyAuthorizationHandler;
 import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
-import org.switchyard.component.http.config.model.ProxyModel;
 import org.switchyard.component.http.config.model.HttpBindingModel;
-import org.switchyard.component.http.config.model.v1.V1ProxyModel;
+import org.switchyard.component.http.config.model.HttpNamespace;
+import org.switchyard.component.http.config.model.ProxyModel;
 import org.switchyard.component.http.config.model.v1.V1HttpBindingModel;
+import org.switchyard.component.http.config.model.v1.V1ProxyModel;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeReferenceModel;
 import org.switchyard.metadata.BaseService;
-import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.test.Invoker;
@@ -106,7 +103,7 @@ public class HttpProxyTest {
         _httpInbound = new InboundHandler(_config, _domain);
         _httpInbound.start();
 
-        HttpBindingModel config = new V1HttpBindingModel() {
+        HttpBindingModel config = new V1HttpBindingModel(HttpNamespace.DEFAULT.uri()) {
             @Override
             public CompositeReferenceModel getReference() {
                 return new V1CompositeReferenceModel();
@@ -122,7 +119,7 @@ public class HttpProxyTest {
         httpProxyOutbound1.start();
         _domain.registerService(_proxyConsumerService1.getServiceName(), new HelloWebServiceInterface(), httpProxyOutbound1);
 
-        ProxyModel proxy = new V1ProxyModel();
+        ProxyModel proxy = new V1ProxyModel(HttpNamespace.DEFAULT.uri());
         proxy.setHost(host);
         proxy.setPort("" + PROXYPORT);
         config.setProxyConfig(proxy);

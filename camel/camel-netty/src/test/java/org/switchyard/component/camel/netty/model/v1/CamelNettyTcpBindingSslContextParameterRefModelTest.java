@@ -17,6 +17,7 @@ import static junit.framework.Assert.assertEquals;
 
 import org.apache.camel.component.netty.NettyEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
+import org.switchyard.component.camel.netty.model.CamelNettyNamespace;
 
 /**
  * Test for {@link V1CamelNettyBindingModel} checking if it works with sslContextParametersRef.
@@ -43,7 +44,7 @@ public class CamelNettyTcpBindingSslContextParameterRefModelTest extends V1BaseC
 
     @Override
     protected V1CamelNettyTcpBindingModel createTestModel() {
-        return (V1CamelNettyTcpBindingModel) new V1CamelNettyTcpBindingModel()
+        return (V1CamelNettyTcpBindingModel) new V1CamelNettyTcpBindingModel(CamelNettyNamespace.V_1_0.uri())
             .setHost(HOST)
             .setPort(PORT)
             .setSsl(SSL)

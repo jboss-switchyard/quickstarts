@@ -33,8 +33,8 @@ public abstract class V1BaseCamelModel extends BaseModel {
         super(config, desc);
     }
 
-    protected V1BaseCamelModel(String name, String namespace) {
-        super(name, namespace);
+    protected V1BaseCamelModel(String namespace, String name) {
+        super(namespace, name);
     }
 
     protected V1BaseCamelModel(Configuration config) {

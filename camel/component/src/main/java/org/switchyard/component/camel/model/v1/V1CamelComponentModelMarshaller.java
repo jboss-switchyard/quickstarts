@@ -13,17 +13,18 @@
  */
 package org.switchyard.component.camel.model.v1;
 
-import org.switchyard.component.camel.common.marshaller.BaseModelMarshaller;
-import org.switchyard.component.camel.common.marshaller.ModelCreator;
+import org.switchyard.component.camel.common.model.v1.V1BaseCamelMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-
-import static org.switchyard.component.camel.model.Constants.COMPONENT_NAMESPACE_V1;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.ComponentImplementationModel;
 
 /**
  * Camel component marshaller.
  */
-public class V1CamelComponentModelMarshaller extends BaseModelMarshaller {
+public class V1CamelComponentModelMarshaller extends V1BaseCamelMarshaller {
+
+    private static final String IMPLEMENTATION_CAMEL = ComponentImplementationModel.IMPLEMENTATION + '.' + V1CamelImplementationModel.CAMEL;
 
     /**
      * Creates new marshaller.
@@ -31,14 +32,24 @@ public class V1CamelComponentModelMarshaller extends BaseModelMarshaller {
      * @param desc Descriptor
      */
     public V1CamelComponentModelMarshaller(Descriptor desc) {
-        super(desc, COMPONENT_NAMESPACE_V1);
-        register(V1CamelImplementationModel.IMPLEMENTATION + "." + V1CamelImplementationModel.CAMEL,
-            new ModelCreator<V1CamelImplementationModel>() {
-                @Override
-                public V1CamelImplementationModel create(Configuration config, Descriptor descriptor) {
-                    return new V1CamelImplementationModel(config, descriptor);
-                }
-        });
+        super(desc);
+    }
+
+    /**
+     * Reads in the Configuration, looking for various knowledge models.
+     * If not found, it falls back to the super class (V1BaseCamelMarshaller).
+     *
+     * @param config the Configuration
+     * @return the Model
+     */
+    @Override
+    public Model read(Configuration config) {
+        String name = config.getName();
+        Descriptor desc = getDescriptor();
+        if (IMPLEMENTATION_CAMEL.equals(name)) {
+            return new V1CamelImplementationModel(config, desc);
+        }
+        return super.read(config);
     }
 
 }

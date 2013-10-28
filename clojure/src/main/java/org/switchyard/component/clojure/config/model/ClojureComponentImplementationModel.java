@@ -24,11 +24,6 @@ import org.switchyard.config.model.composite.ComponentImplementationModel;
 public interface ClojureComponentImplementationModel extends ComponentImplementationModel {
     
     /**
-     * The "clojure" namespace.
-     */
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-component-clojure:config:1.0";
-    
-    /**
      * The 'clojure' implementation type.
      */
     String CLOJURE = "clojure";

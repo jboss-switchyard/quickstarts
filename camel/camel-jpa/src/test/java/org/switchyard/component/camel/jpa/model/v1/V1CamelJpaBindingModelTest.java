@@ -17,6 +17,7 @@ import static junit.framework.Assert.assertEquals;
 
 import org.apache.camel.component.jpa.JpaEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
+import org.switchyard.component.camel.jpa.model.CamelJpaNamespace;
 
 /**
  * Test for {@link V1CamelJpaBindingModel}.
@@ -38,7 +39,7 @@ public class V1CamelJpaBindingModelTest extends V1BaseCamelServiceBindingModelTe
 
     @Override
     protected V1CamelJpaBindingModel createTestModel() {
-        return new V1CamelJpaBindingModel()
+        return new V1CamelJpaBindingModel(CamelJpaNamespace.V_1_0.uri())
             .setEntityClassName(ENTITY_CLASS_NAME)
             .setPersistenceUnit(PERSISTENCE_UNIT);
     }

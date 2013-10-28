@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.file.model.v1;
 
-import static org.switchyard.component.camel.file.model.Constants.FILE_NAMESPACE_V1;
-
 import org.switchyard.component.camel.common.model.file.v1.V1GenericFileConsumerBindingModel;
 import org.switchyard.component.camel.file.model.CamelFileConsumerBindingModel;
 import org.switchyard.config.Configuration;
@@ -30,9 +28,10 @@ public class V1CamelFileConsumerBindingModel extends V1GenericFileConsumerBindin
 
     /**
      * Create a new V1CamelFileConsumerBindingModel.
+     * @param namespace namespace
      */
-    public V1CamelFileConsumerBindingModel() {
-        super(V1CamelFileBindingModel.CONSUME, FILE_NAMESPACE_V1);
+    public V1CamelFileConsumerBindingModel(String namespace) {
+        super(namespace, V1CamelFileBindingModel.CONSUME);
     }
 
     /**

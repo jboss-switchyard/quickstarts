@@ -13,7 +13,6 @@
  */
 package org.switchyard.component.common.knowledge.config.model.v1;
 
-import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.LoggerType;
 import org.switchyard.component.common.knowledge.config.model.LoggerModel;
 import org.switchyard.config.Configuration;
@@ -32,7 +31,7 @@ public class V1LoggerModel extends BaseNamedModel implements LoggerModel {
      * @param namespace the namespace
      */
     public V1LoggerModel(String namespace) {
-        super(XMLHelper.createQName(namespace, LOGGER));
+        super(namespace, LOGGER);
     }
 
     /**

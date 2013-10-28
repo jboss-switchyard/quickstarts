@@ -1,4 +1,4 @@
-<soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
+<soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.1">
     <soap:wsdl>Foo.wsdl</soap:wsdl>
     <soap:endpointAddress>http://modified.com/phantom</soap:endpointAddress>
     <soap:timeout>5000</soap:timeout>

@@ -1,7 +1,5 @@
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.PropertyModel;
 import org.switchyard.config.Configuration;
@@ -19,11 +17,12 @@ public class V1PropertyModel extends BaseModel implements PropertyModel {
     /**
      * Constructor.
      * 
+     * @param namespace namespace
      * @param key key of property
      * @param value value of property
      */
-    public V1PropertyModel(String key, String value) {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.PROPERTY));
+    public V1PropertyModel(String namespace, String key, String value) {
+        super(namespace, JCAConstants.PROPERTY);
         setModelAttribute(JCAConstants.NAME, key);
         setModelAttribute(JCAConstants.VALUE, value);
     }

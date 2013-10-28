@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.ActivationSpecModel;
 import org.switchyard.config.Configuration;
@@ -30,9 +28,10 @@ public class V1ActivationSpecModel extends V1BasePropertyContainerModel implemen
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1ActivationSpecModel() {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.ACTIVATION_SPEC));
+    public V1ActivationSpecModel(String namespace) {
+        super(namespace, JCAConstants.ACTIVATION_SPEC);
         setModelChildrenOrder(JCAConstants.PROPERTY);
     }
     

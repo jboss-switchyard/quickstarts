@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.component.clojure.config.model.ClojureComponentImplementationModel;
+import org.switchyard.component.clojure.config.model.ClojureNamespace;
 import org.switchyard.component.clojure.config.model.v1.V1ClojureComponentImplementationModel;
 import org.switchyard.component.clojure.config.model.v1.V1ClojureScriptModel;
 
@@ -108,12 +109,12 @@ public class ClojureModelBuilder {
      * @throws ClojureBuilderException If a correct {@link ClojureComponentImplementationModel} could not be built.
      */
     public ClojureComponentImplementationModel build() throws ClojureBuilderException {
-        final V1ClojureComponentImplementationModel implModel = new V1ClojureComponentImplementationModel();
+        final V1ClojureComponentImplementationModel implModel = new V1ClojureComponentImplementationModel(ClojureNamespace.DEFAULT.uri());
         
         if (isInlineScript()) {
             try {
                 final String clojureScript = _emptyInlineScript ? "" : new StringPuller().pull(new File(_inlineScript));
-                final V1ClojureScriptModel scriptModel = new V1ClojureScriptModel();
+                final V1ClojureScriptModel scriptModel = new V1ClojureScriptModel(ClojureNamespace.DEFAULT.uri());
                 scriptModel.setScript(clojureScript);
                 implModel.setScriptModel(scriptModel);
             } catch (final IOException e) {

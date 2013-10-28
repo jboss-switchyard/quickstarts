@@ -13,17 +13,18 @@
  */
 package org.switchyard.component.camel.jms.model.v1;
 
-import org.switchyard.component.camel.common.marshaller.BaseModelMarshaller;
-import org.switchyard.component.camel.common.marshaller.ModelCreator;
+import org.switchyard.component.camel.common.model.v1.V1BaseCamelMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-
-import static org.switchyard.component.camel.jms.model.Constants.JMS_NAMESPACE_V1;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * Jms model marshaller.
  */
-public class V1CamelJmsModelMarshaller extends BaseModelMarshaller {
+public class V1CamelJmsModelMarshaller extends V1BaseCamelMarshaller {
+
+    private static final String BINDING_JMS = BindingModel.BINDING + '.' + V1CamelJmsBindingModel.JMS;
 
     /**
      * Creates new marshaller.
@@ -31,14 +32,24 @@ public class V1CamelJmsModelMarshaller extends BaseModelMarshaller {
      * @param desc Descriptor
      */
     public V1CamelJmsModelMarshaller(Descriptor desc) {
-        super(desc, JMS_NAMESPACE_V1);
+        super(desc);
+    }
 
-        registerBinding(V1CamelJmsBindingModel.JMS, new ModelCreator<V1CamelJmsBindingModel>() {
-            @Override
-            public V1CamelJmsBindingModel create(Configuration config, Descriptor descriptor) {
-                return new V1CamelJmsBindingModel(config, descriptor);
-            }
-        });
+    /**
+     * Reads in the Configuration, looking for various knowledge models.
+     * If not found, it falls back to the super class (V1BaseCamelMarshaller).
+     *
+     * @param config the Configuration
+     * @return the Model
+     */
+    @Override
+    public Model read(Configuration config) {
+        String name = config.getName();
+        Descriptor desc = getDescriptor();
+        if (BINDING_JMS.equals(name)) {
+            return new V1CamelJmsBindingModel(config, desc);
+        }
+        return super.read(config);
     }
 
 }

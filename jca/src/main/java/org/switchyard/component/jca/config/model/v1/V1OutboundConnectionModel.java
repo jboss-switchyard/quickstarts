@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.ConnectionModel;
 import org.switchyard.component.jca.config.model.OutboundConnectionModel;
@@ -33,9 +31,10 @@ public class V1OutboundConnectionModel extends BaseModel implements OutboundConn
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1OutboundConnectionModel() {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.OUTBOUND_CONNECTION));
+    public V1OutboundConnectionModel(String namespace) {
+        super(namespace, JCAConstants.OUTBOUND_CONNECTION);
         setModelChildrenOrder(JCAConstants.RESOURCE_ADAPTER, JCAConstants.CONNECTION);
     }
     

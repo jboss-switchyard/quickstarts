@@ -18,6 +18,7 @@ import static junit.framework.Assert.assertEquals;
 import org.apache.camel.component.jpa.JpaEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelReferenceBindingModelTest;
 import org.switchyard.component.camel.jpa.model.CamelJpaProducerBindingModel;
+import org.switchyard.component.camel.jpa.model.CamelJpaNamespace;
 
 /**
  * Test for {@link V1CamelJpaProducerBindingModel}.
@@ -41,11 +42,11 @@ public class V1CamelJpaProducerBindingModelTest extends V1BaseCamelReferenceBind
 
     @Override
     protected V1CamelJpaBindingModel createTestModel() {
-        V1CamelJpaBindingModel model = new V1CamelJpaBindingModel();
+        V1CamelJpaBindingModel model = new V1CamelJpaBindingModel(CamelJpaNamespace.V_1_0.uri());
         model.setEntityClassName(V1CamelJpaBindingModelTest.ENTITY_CLASS_NAME);
         model.setPersistenceUnit(V1CamelJpaBindingModelTest.PERSISTENCE_UNIT);
 
-        CamelJpaProducerBindingModel producer = new V1CamelJpaProducerBindingModel()
+        CamelJpaProducerBindingModel producer = new V1CamelJpaProducerBindingModel(CamelJpaNamespace.V_1_0.uri())
             .setFlushOnSend(FLUSH_ON_SEND)
             .setUsePersist(USE_PERSIST);
         return model.setProducer(producer);

@@ -17,8 +17,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.BasePropertyContainerModel;
 import org.switchyard.config.Configuration;
@@ -33,8 +31,8 @@ import org.switchyard.config.model.Descriptor;
  */
 public abstract class V1BasePropertyContainerModel extends BaseModel implements BasePropertyContainerModel {
 
-    protected V1BasePropertyContainerModel(QName name) {
-        super(name);
+    protected V1BasePropertyContainerModel(String namespace, String name) {
+        super(namespace, name);
     }
     
     protected V1BasePropertyContainerModel(Configuration config, Descriptor desc) {
@@ -61,7 +59,7 @@ public abstract class V1BasePropertyContainerModel extends BaseModel implements 
                 return this;
             }
         }
-        V1PropertyModel model = new V1PropertyModel(key, value);
+        V1PropertyModel model = new V1PropertyModel(getNamespaceURI(), key, value);
         setChildModel(model);
         return this;
     }
@@ -83,7 +81,7 @@ public abstract class V1BasePropertyContainerModel extends BaseModel implements 
         while (e.hasMoreElements()) {
             String key = e.nextElement().toString();
             String value = properties.getProperty(key);
-            V1PropertyModel model = new V1PropertyModel(key,value);
+            V1PropertyModel model = new V1PropertyModel(getNamespaceURI(), key, value);
             setChildModel(model);
         }
         return this;

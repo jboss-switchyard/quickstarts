@@ -12,10 +12,10 @@
  - See the License for the specific language governing permissions and
  - limitations under the License.
  -->
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="BPMModelTests" targetNamespace="urn:bpm:test:1.0">
+<switchyard xmlns="urn:switchyard-config:switchyard:1.1">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="BPMModelTests" targetNamespace="urn:bpm:test:1.1">
         <component name="DoStuffProcess">
-            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" persistent="true" processId="theProcessId">
+            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.1" persistent="true" processId="theProcessId">
                 <channels>
                     <channel class="org.switchyard.component.bpm.config.model.BPMModelTests$TestChannel" name="theName" operation="theOperation" reference="theReference"/>
                 </channels>

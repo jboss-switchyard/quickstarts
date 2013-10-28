@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.model.v1;
 
-import static org.switchyard.component.camel.model.Constants.COMPONENT_NAMESPACE_V1;
-
 import org.switchyard.component.camel.common.model.v1.NameValueModel;
 import org.switchyard.component.camel.model.CamelComponentImplementationModel;
 import org.switchyard.config.Configuration;
@@ -37,9 +35,10 @@ public class V1CamelImplementationModel extends V1ComponentImplementationModel
 
     /**
      * Create a new CamelImplementationModel.
+     * @param namespace namespace
      */
-    public V1CamelImplementationModel() {
-        super(CAMEL, COMPONENT_NAMESPACE_V1);
+    public V1CamelImplementationModel(String namespace) {
+        super(CAMEL, namespace);
     }
 
     /**

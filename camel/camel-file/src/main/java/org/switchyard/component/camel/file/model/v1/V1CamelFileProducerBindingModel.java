@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.file.model.v1;
 
-import static org.switchyard.component.camel.file.model.Constants.FILE_NAMESPACE_V1;
-
 import org.switchyard.component.camel.common.model.file.v1.V1GenericFileProducerBindingModel;
 import org.switchyard.component.camel.file.model.CamelFileProducerBindingModel;
 import org.switchyard.config.Configuration;
@@ -30,9 +28,10 @@ public class V1CamelFileProducerBindingModel extends V1GenericFileProducerBindin
 
     /**
      * Create a new V1CamelFileProducerBindingModel.
+     * @param namespace namespace
      */
-    public V1CamelFileProducerBindingModel() {
-        super(V1CamelFileBindingModel.PRODUCE, FILE_NAMESPACE_V1);
+    public V1CamelFileProducerBindingModel(String namespace) {
+        super(namespace, V1CamelFileBindingModel.PRODUCE);
     }
 
     /**

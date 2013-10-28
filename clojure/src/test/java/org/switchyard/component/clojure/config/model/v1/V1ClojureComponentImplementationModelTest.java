@@ -20,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 import org.switchyard.common.type.Classes;
+import org.switchyard.component.clojure.config.model.ClojureNamespace;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Validation;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
@@ -57,9 +58,9 @@ public class V1ClojureComponentImplementationModelTest {
     
     @Test
     public void programmaticCreationWithInlineScript() {
-        final V1ClojureComponentImplementationModel implModel = new V1ClojureComponentImplementationModel();
+        final V1ClojureComponentImplementationModel implModel = new V1ClojureComponentImplementationModel(ClojureNamespace.DEFAULT.uri());
         implModel.setInjectExchange(true);
-        final V1ClojureScriptModel scriptModel = new V1ClojureScriptModel();
+        final V1ClojureScriptModel scriptModel = new V1ClojureScriptModel(ClojureNamespace.DEFAULT.uri());
         scriptModel.setScript("bogus script");
         implModel.setScriptModel(scriptModel);
         
@@ -69,7 +70,7 @@ public class V1ClojureComponentImplementationModelTest {
     
     @Test
     public void programmaticCreationWithScriptFile() {
-        final V1ClojureComponentImplementationModel implModel = new V1ClojureComponentImplementationModel();
+        final V1ClojureComponentImplementationModel implModel = new V1ClojureComponentImplementationModel(ClojureNamespace.DEFAULT.uri());
         implModel.setScriptFile("bogusScript.clj");
         
         assertThat(implModel.getScriptFile(), is(equalTo("bogusScript.clj")));

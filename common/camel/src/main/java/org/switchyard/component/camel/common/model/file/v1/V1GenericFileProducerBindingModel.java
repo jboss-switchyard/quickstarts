@@ -59,11 +59,11 @@ public abstract class V1GenericFileProducerBindingModel extends V1BaseCamelModel
     /**
      * Create a binding model bound to given namespace.
      * 
-     * @param name Element name.
      * @param namespace Namespace to bound.
+     * @param name Element name.
      */
-    public V1GenericFileProducerBindingModel(String name, String namespace) {
-        super(name, namespace);
+    public V1GenericFileProducerBindingModel(String namespace, String name) {
+        super(namespace, name);
         setModelChildrenOrder(FILE_EXIST, TEMP_PREFIX, TEMP_FILENAME,
             KEEP_LAST_MODIFIED, EAGER_DELETE_TARGET_FILE, DONE_FILE_NAME);
     }

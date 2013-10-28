@@ -36,6 +36,9 @@ import org.switchyard.component.common.knowledge.annotation.Property;
 @Documented
 public @interface Rules {
 
+    /** Namespace. */
+    public String namespace() default "";
+
     /** Name. */
     public String name() default "";
 

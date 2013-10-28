@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.EndpointModel;
 import org.switchyard.config.Configuration;
@@ -30,9 +28,10 @@ public class V1EndpointModel extends V1BasePropertyContainerModel implements End
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1EndpointModel() {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.ENDPOINT));
+    public V1EndpointModel(String namespace) {
+        super(namespace, JCAConstants.ENDPOINT);
         setModelChildrenOrder(JCAConstants.PROPERTY);
     }
     

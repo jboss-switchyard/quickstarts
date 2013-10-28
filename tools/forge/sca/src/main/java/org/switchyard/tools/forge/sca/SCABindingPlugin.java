@@ -31,8 +31,9 @@ import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.SCABindingModel;
 import org.switchyard.config.model.composite.v1.V1SCABindingModel;
-import org.switchyard.tools.forge.plugin.SwitchYardFacet;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.tools.forge.common.CommonFacet;
+import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
  * Forge commands related to SCA bindings.
@@ -68,7 +69,7 @@ public class SCABindingPlugin implements Plugin {
             return;
         }
 
-        SCABindingModel binding = new V1SCABindingModel();
+        SCABindingModel binding = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri());
         service.addBinding(binding);
 
         switchYard.saveConfig();
@@ -97,7 +98,7 @@ public class SCABindingPlugin implements Plugin {
             return;
         }
 
-        SCABindingModel binding = new V1SCABindingModel();
+        SCABindingModel binding = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri());
         reference.addBinding(binding);
 
         switchYard.saveConfig();

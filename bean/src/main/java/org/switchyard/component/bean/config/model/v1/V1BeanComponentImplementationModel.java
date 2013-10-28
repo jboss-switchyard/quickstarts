@@ -27,9 +27,10 @@ public class V1BeanComponentImplementationModel extends V1ComponentImplementatio
 
     /**
      * Default constructor for application use.
+     * @param namespace namespace
      */
-    public V1BeanComponentImplementationModel() {
-        super(BEAN, DEFAULT_NAMESPACE);
+    public V1BeanComponentImplementationModel(String namespace) {
+        super(BEAN, namespace);
     }
 
     /**

@@ -34,11 +34,6 @@ public interface SOAPBindingModel extends BindingModel {
     public static final String SOAP = "soap";
 
     /**
-     * Default namespace for SOAP Gateway Configuration.
-     */
-    public static final String DEFAULT_NAMESPACE =  "urn:switchyard-component-soap:config:1.0";
-
-    /**
      * Gets the SOAPContextMapperModel.
      * @return the SOAPContextMapperModel
      */

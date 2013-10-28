@@ -13,18 +13,18 @@
  */
 package org.switchyard.component.camel.quartz.model.v1;
 
-import static org.switchyard.component.camel.quartz.model.CamelQuartzBindingModel.QUARTZ;
-import static org.switchyard.component.camel.quartz.Constants.QUARTZ_NAMESPACE_V1;
-
-import org.switchyard.component.camel.common.marshaller.BaseModelMarshaller;
-import org.switchyard.component.camel.common.marshaller.ModelCreator;
+import org.switchyard.component.camel.common.model.v1.V1BaseCamelMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * Camel quartz v1 model marshaler.
  */
-public class V1CamelQuartzModelMarshaller extends BaseModelMarshaller {
+public class V1CamelQuartzModelMarshaller extends V1BaseCamelMarshaller {
+
+    private static final String BINDING_QUARTZ = BindingModel.BINDING + '.' + V1CamelQuartzBindingModel.QUARTZ;
 
     /**
      * Creates new marshaller.
@@ -32,14 +32,24 @@ public class V1CamelQuartzModelMarshaller extends BaseModelMarshaller {
      * @param desc Descriptor
      */
     public V1CamelQuartzModelMarshaller(Descriptor desc) {
-        super(desc, QUARTZ_NAMESPACE_V1);
+        super(desc);
+    }
 
-        registerBinding(QUARTZ, new ModelCreator<V1CamelQuartzBindingModel>() {
-            @Override
-            public V1CamelQuartzBindingModel create(Configuration config, Descriptor descriptor) {
-                return new V1CamelQuartzBindingModel(config, descriptor);
-            }
-        });
+    /**
+     * Reads in the Configuration, looking for various knowledge models.
+     * If not found, it falls back to the super class (V1BaseCamelMarshaller).
+     *
+     * @param config the Configuration
+     * @return the Model
+     */
+    @Override
+    public Model read(Configuration config) {
+        String name = config.getName();
+        Descriptor desc = getDescriptor();
+        if (BINDING_QUARTZ.equals(name)) {
+            return new V1CamelQuartzBindingModel(config, desc);
+        }
+        return super.read(config);
     }
 
 }

@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.soap.config.model.v1;
 
-import static org.switchyard.component.soap.config.model.SOAPBindingModel.DEFAULT_NAMESPACE;
-
 import org.switchyard.component.soap.config.model.BasicAuthModel;
 import org.switchyard.component.soap.config.model.SOAPNameValueModel;
 import org.switchyard.component.soap.config.model.SOAPNameValueModel.SOAPName;
@@ -39,18 +37,20 @@ public class V1BasicAuthModel extends BaseModel implements BasicAuthModel {
 
     /**
      * Creates a new BasicAuthModel.
+     * @param namespace namespace
      */
-    public V1BasicAuthModel() {
-        super(SOAPName.basic.name(), DEFAULT_NAMESPACE);
+    public V1BasicAuthModel(String namespace) {
+        super(namespace, SOAPName.basic.name());
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
     /**
      * Creates a new BasicAuthModel.
-     * @param name the name of teh model
+     * @param namespace namespace
+     * @param name the name of the model
      */
-    public V1BasicAuthModel(String name) {
-        super(name, DEFAULT_NAMESPACE);
+    public V1BasicAuthModel(String namespace, String name) {
+        super(namespace, name);
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
@@ -110,7 +110,7 @@ public class V1BasicAuthModel extends BaseModel implements BasicAuthModel {
                 model = getNameValue(name);
             }
             if (model == null) {
-                model = new V1SOAPNameValueModel(name);
+                model = new V1SOAPNameValueModel(getNamespaceURI(), name);
                 setChildModel(model);
             }
             model.setValue(value);

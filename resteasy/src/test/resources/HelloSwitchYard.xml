@@ -13,8 +13,8 @@
  - limitations under the License.
  -->
 <sca:composite xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-           targetNamespace="urn:resteasy:test:1.0"
-           xmlns:rest="urn:switchyard-component-resteasy:config:1.0"
+           targetNamespace="urn:resteasy:test:1.1"
+           xmlns:rest="urn:switchyard-component-resteasy:config:1.1"
            name="m1app">
 
     <sca:service name="SampleRESTEasyProviderService" promote="SomeProviderService">

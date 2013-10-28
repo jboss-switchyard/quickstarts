@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.component.resteasy.InboundHandler;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
+import org.switchyard.component.resteasy.config.model.RESTEasyNamespace;
 import org.switchyard.component.resteasy.config.model.v1.V1RESTEasyBindingModel;
 import org.switchyard.component.resteasy.util.support.Item;
 
@@ -31,7 +32,7 @@ import org.switchyard.component.resteasy.util.support.Item;
 public class ClassUtilTest extends InboundHandler {
 
     public ClassUtilTest() {
-        super(new V1RESTEasyBindingModel(), null);
+        super(new V1RESTEasyBindingModel(RESTEasyNamespace.DEFAULT.uri()), null);
     }
 
     @Test

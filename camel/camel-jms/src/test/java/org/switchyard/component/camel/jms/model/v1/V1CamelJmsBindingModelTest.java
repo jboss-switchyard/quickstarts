@@ -17,6 +17,7 @@ import static junit.framework.Assert.assertEquals;
 
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
+import org.switchyard.component.camel.jms.model.CamelJmsNamespace;
 
 /**
  * Test for {@link V1CamelJmsBindingModel}.
@@ -63,7 +64,7 @@ public class V1CamelJmsBindingModelTest extends V1BaseCamelServiceBindingModelTe
 
     @Override
     protected V1CamelJmsBindingModel createTestModel() {
-        return (V1CamelJmsBindingModel) new V1CamelJmsBindingModel()
+        return (V1CamelJmsBindingModel) new V1CamelJmsBindingModel(CamelJmsNamespace.V_1_1.uri())
             .setTopic(TOPIC)
             .setConnectionFactory(CONNECTION_FACTORY)
             .setUsername(USERNAME)

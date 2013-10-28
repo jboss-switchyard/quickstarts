@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.soap.config.model.v1;
 
-import static org.switchyard.component.soap.config.model.SOAPBindingModel.DEFAULT_NAMESPACE;
-
 import org.switchyard.component.soap.config.model.MtomModel;
 import org.switchyard.component.soap.config.model.SOAPNameValueModel.SOAPName;
 import org.switchyard.config.Configuration;
@@ -36,9 +34,10 @@ public class V1MtomModel extends BaseModel implements MtomModel {
 
     /**
      * Creates a new MtomModel.
+     * @param namespace namespace
      */
-    public V1MtomModel() {
-        super(SOAPName.mtom.name(), DEFAULT_NAMESPACE);
+    public V1MtomModel(String namespace) {
+        super(namespace, SOAPName.mtom.name());
     }
 
     /**

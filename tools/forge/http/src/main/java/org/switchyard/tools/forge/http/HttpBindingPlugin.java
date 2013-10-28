@@ -30,14 +30,15 @@ import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
 import org.switchyard.component.http.config.model.BasicAuthModel;
 import org.switchyard.component.http.config.model.HttpBindingModel;
+import org.switchyard.component.http.config.model.HttpNamespace;
 import org.switchyard.component.http.config.model.NtlmAuthModel;
 import org.switchyard.component.http.config.model.v1.V1BasicAuthModel;
 import org.switchyard.component.http.config.model.v1.V1HttpBindingModel;
 import org.switchyard.component.http.config.model.v1.V1NtlmAuthModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 import org.switchyard.tools.forge.common.CommonFacet;
+import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
  * Forge commands related to HTTP bindings.
@@ -80,7 +81,7 @@ public class HttpBindingPlugin implements Plugin {
             return;
         }
 
-        HttpBindingModel binding = new V1HttpBindingModel();
+        HttpBindingModel binding = new V1HttpBindingModel(HttpNamespace.DEFAULT.uri());
         String projectName = _project.getFacet(MetadataFacet.class).getProjectName();
         if ((contextPath != null) && contextPath.length() > 0) {
             binding.setContextPath(contextPath);
@@ -150,7 +151,7 @@ public class HttpBindingPlugin implements Plugin {
             return;
         }
 
-        HttpBindingModel binding = new V1HttpBindingModel();
+        HttpBindingModel binding = new V1HttpBindingModel(HttpNamespace.DEFAULT.uri());
         if (address != null) {
             binding.setAddress(address);
         }
@@ -161,14 +162,14 @@ public class HttpBindingPlugin implements Plugin {
             binding.setContentType(contentType);
         }
         if (domain != null) {
-            NtlmAuthModel ntlm= new V1NtlmAuthModel();
+            NtlmAuthModel ntlm= new V1NtlmAuthModel(HttpNamespace.DEFAULT.uri());
             ntlm.setUser(user);
             ntlm.setPassword(password);
             ntlm.setRealm(realm);
             ntlm.setDomain(domain);
             binding.setNtlmAuthConfig(ntlm);
         } else {
-            BasicAuthModel basic= new V1BasicAuthModel();
+            BasicAuthModel basic= new V1BasicAuthModel(HttpNamespace.DEFAULT.uri());
             basic.setUser(user);
             basic.setPassword(password);
             basic.setRealm(realm);

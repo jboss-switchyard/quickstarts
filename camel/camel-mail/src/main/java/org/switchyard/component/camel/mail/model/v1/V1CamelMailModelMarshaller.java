@@ -13,17 +13,18 @@
  */
 package org.switchyard.component.camel.mail.model.v1;
 
-import static org.switchyard.component.camel.mail.model.Constants.MAIL_NAMESPACE_V1;
-
-import org.switchyard.component.camel.common.marshaller.BaseModelMarshaller;
-import org.switchyard.component.camel.common.marshaller.ModelCreator;
+import org.switchyard.component.camel.common.model.v1.V1BaseCamelMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * Mail model marshaller.
  */
-public class V1CamelMailModelMarshaller extends BaseModelMarshaller {
+public class V1CamelMailModelMarshaller extends V1BaseCamelMarshaller {
+
+    private static final String BINDING_MAIL = BindingModel.BINDING + '.' + V1CamelMailBindingModel.MAIL;
 
     /**
      * Creates new marshaller.
@@ -31,14 +32,25 @@ public class V1CamelMailModelMarshaller extends BaseModelMarshaller {
      * @param desc Descriptor
      */
     public V1CamelMailModelMarshaller(Descriptor desc) {
-        super(desc, MAIL_NAMESPACE_V1);
+        super(desc);
+    }
 
-        registerBinding(V1CamelMailBindingModel.MAIL, new ModelCreator<V1CamelMailBindingModel>() {
-            @Override
-            public V1CamelMailBindingModel create(Configuration config, Descriptor descriptor) {
-                return new V1CamelMailBindingModel(config, descriptor);
-            }
-        });
+    /**
+     * Reads in the Configuration, looking for various knowledge models.
+     * If not found, it falls back to the super class (V1BaseCamelMarshaller).
+     *
+     * @param config the Configuration
+     * @return the Model
+     */
+    @Override
+    public Model read(Configuration config) {
+        String name = config.getName();
+        Descriptor desc = getDescriptor();
+        if (BINDING_MAIL.equals(name)) {
+            return new V1CamelMailBindingModel(config, desc);
+        }
+        // V1CamelMailConsumerBindingModel and V1CamelMailProducerBindingModel get created by V1CamelMailBindingModel
+        return super.read(config);
     }
 
 }

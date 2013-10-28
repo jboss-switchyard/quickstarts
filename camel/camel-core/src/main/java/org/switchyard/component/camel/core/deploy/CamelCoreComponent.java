@@ -14,11 +14,11 @@
 package org.switchyard.component.camel.core.deploy;
 
 import org.switchyard.component.camel.common.deploy.BaseBindingComponent;
-import org.switchyard.component.camel.core.model.direct.v1.V1CamelDirectBindingModel;
-import org.switchyard.component.camel.core.model.mock.v1.V1CamelMockBindingModel;
-import org.switchyard.component.camel.core.model.seda.v1.V1CamelSedaBindingModel;
-import org.switchyard.component.camel.core.model.timer.v1.V1CamelTimerBindingModel;
-import org.switchyard.component.camel.core.model.v1.V1CamelBindingModel;
+import org.switchyard.component.camel.core.model.v1.V1CamelUriBindingModel;
+import org.switchyard.component.camel.core.model.v1.V1CamelDirectBindingModel;
+import org.switchyard.component.camel.core.model.v1.V1CamelMockBindingModel;
+import org.switchyard.component.camel.core.model.v1.V1CamelSedaBindingModel;
+import org.switchyard.component.camel.core.model.v1.V1CamelTimerBindingModel;
 
 /**
  * Camel core component. Supports camel-core bindings.
@@ -30,7 +30,7 @@ public class CamelCoreComponent extends BaseBindingComponent {
      */
     public CamelCoreComponent() {
         super("CamelCoreComponent",
-            V1CamelBindingModel.URI,
+            V1CamelUriBindingModel.URI,
             V1CamelDirectBindingModel.DIRECT,
             V1CamelSedaBindingModel.SEDA,
             V1CamelTimerBindingModel.TIMER,

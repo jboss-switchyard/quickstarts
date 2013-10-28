@@ -13,7 +13,6 @@
  */
 package org.switchyard.component.soap.config.model.v1;
 
-import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.config.model.SOAPMessageComposerModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -24,13 +23,6 @@ import org.switchyard.config.model.composer.v1.V1MessageComposerModel;
  */
 public class V1SOAPMessageComposerModel extends V1MessageComposerModel implements SOAPMessageComposerModel {
 
-    /**
-     * Constructs a new V1SOAPContextMapperModel.
-     */
-    public V1SOAPMessageComposerModel() {
-        super(SOAPBindingModel.DEFAULT_NAMESPACE);
-    }
-    
     /**
      * Constructs a new V1SOAPMessageComposerModel in the specified namespace.
      * @param namespace the specified namespace

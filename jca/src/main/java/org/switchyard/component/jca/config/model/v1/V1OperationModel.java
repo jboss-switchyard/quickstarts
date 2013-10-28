@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.InteractionSpecModel;
 import org.switchyard.component.jca.config.model.OperationModel;
@@ -32,9 +30,10 @@ public class V1OperationModel extends BaseModel implements OperationModel {
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1OperationModel() {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.OPERATION));
+    public V1OperationModel(String namespace) {
+        super(namespace, JCAConstants.OPERATION);
         setModelChildrenOrder(JCAConstants.INTERACTION_SPEC);
     }
     

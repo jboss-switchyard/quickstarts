@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.rules.config.model.v1;
 
-import static org.switchyard.component.rules.config.model.RulesComponentImplementationModel.DEFAULT_NAMESPACE;
-
 import org.switchyard.component.common.knowledge.OperationType;
 import org.switchyard.component.common.knowledge.config.model.v1.V1OperationModel;
 import org.switchyard.component.rules.RulesOperationType;
@@ -30,9 +28,10 @@ public class V1RulesOperationModel extends V1OperationModel {
 
     /**
      * Creates a new V1RulesOperationModel.
+     * @param namespace namespace
      */
-    public V1RulesOperationModel() {
-        super(DEFAULT_NAMESPACE);
+    public V1RulesOperationModel(String namespace) {
+        super(namespace);
     }
 
     /**

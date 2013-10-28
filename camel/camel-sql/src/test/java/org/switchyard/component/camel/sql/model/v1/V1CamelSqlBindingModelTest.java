@@ -17,6 +17,7 @@ import static junit.framework.Assert.assertEquals;
 
 import org.apache.camel.component.sql.SqlEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelReferenceBindingModelTest;
+import org.switchyard.component.camel.sql.model.CamelSqlNamespace;
 
 /**
  * Test for {@link V1CamelSqlBindingModel}.
@@ -41,7 +42,7 @@ public class V1CamelSqlBindingModelTest extends V1BaseCamelReferenceBindingModel
 
     @Override
     protected V1CamelSqlBindingModel createTestModel() {
-        return new V1CamelSqlBindingModel()
+        return new V1CamelSqlBindingModel(CamelSqlNamespace.V_1_0.uri())
             .setQuery(QUERY)
             .setDataSourceRef(DATA_SOURCE_REF)
             .setBatch(BATCH)

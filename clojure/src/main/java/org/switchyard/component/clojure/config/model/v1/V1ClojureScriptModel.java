@@ -1,8 +1,5 @@
 package org.switchyard.component.clojure.config.model.v1;
 
-import javax.xml.namespace.QName;
-
-import org.switchyard.component.clojure.config.model.ClojureComponentImplementationModel;
 import org.switchyard.component.clojure.config.model.ClojureScriptModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
@@ -19,10 +16,11 @@ public class V1ClojureScriptModel extends BaseNamedModel implements ClojureScrip
     private String _script;
     
     /**
-     * No-args constructor.
+     * Constructor.
+     * @param namespace namespace
      */
-    public V1ClojureScriptModel() {
-        super(new QName(ClojureComponentImplementationModel.DEFAULT_NAMESPACE, SCRIPT));
+    public V1ClojureScriptModel(String namespace) {
+        super(namespace, SCRIPT);
     }
     
     /**

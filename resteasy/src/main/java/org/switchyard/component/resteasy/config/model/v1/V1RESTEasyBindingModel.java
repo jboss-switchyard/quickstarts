@@ -57,9 +57,10 @@ public class V1RESTEasyBindingModel extends V1BindingModel implements RESTEasyBi
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1RESTEasyBindingModel() {
-        super(RESTEASY, DEFAULT_NAMESPACE);
+    public V1RESTEasyBindingModel(String namespace) {
+        super(RESTEASY, namespace);
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
@@ -271,7 +272,7 @@ public class V1RESTEasyBindingModel extends V1BindingModel implements RESTEasyBi
                 model = getNameValue(name);
             }
             if (model == null) {
-                model = new V1RESTEasyNameValueModel(name);
+                model = new V1RESTEasyNameValueModel(getNamespaceURI(), name);
                 setChildModel(model);
             }
             model.setValue(value);

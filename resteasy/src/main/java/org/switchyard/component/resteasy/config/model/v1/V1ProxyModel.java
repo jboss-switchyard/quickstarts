@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.resteasy.config.model.v1;
 
-import static org.switchyard.component.resteasy.config.model.RESTEasyBindingModel.DEFAULT_NAMESPACE;
-
 import org.switchyard.component.resteasy.config.model.ProxyModel;
 import org.switchyard.component.resteasy.config.model.RESTEasyNameValueModel;
 import org.switchyard.component.resteasy.config.model.RESTEasyNameValueModel.RESTEasyName;
@@ -43,18 +41,20 @@ public class V1ProxyModel extends BaseModel implements ProxyModel {
 
     /**
      * Creates a new ProxyModel.
+     * @param namespace namespace
      */
-    public V1ProxyModel() {
-        super(RESTEasyName.proxy.name(), DEFAULT_NAMESPACE);
+    public V1ProxyModel(String namespace) {
+        super(namespace, RESTEasyName.proxy.name());
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
     /**
      * Creates a new ProxyModel.
-     * @param name the name of teh model
+     * @param namespace namespace
+     * @param name the name of the model
      */
-    public V1ProxyModel(String name) {
-        super(name, DEFAULT_NAMESPACE);
+    public V1ProxyModel(String namespace, String name) {
+        super(namespace, name);
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
@@ -150,7 +150,7 @@ public class V1ProxyModel extends BaseModel implements ProxyModel {
                 model = getNameValue(name);
             }
             if (model == null) {
-                model = new V1RESTEasyNameValueModel(name);
+                model = new V1RESTEasyNameValueModel(getNamespaceURI(), name);
                 setChildModel(model);
             }
             model.setValue(value);

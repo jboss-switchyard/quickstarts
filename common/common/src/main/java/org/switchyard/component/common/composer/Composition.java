@@ -16,6 +16,7 @@ package org.switchyard.component.common.composer;
 import org.switchyard.config.model.composer.ContextMapperModel;
 import org.switchyard.config.model.composer.MessageComposerModel;
 import org.switchyard.config.model.composer.v1.V1ContextMapperModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 
 /**
  * Utility class for Component-specific Composition classes.
@@ -44,7 +45,7 @@ public final class Composition {
     public static final <D extends BindingData> ContextMapper<D> getContextMapper(Class<D> bindingDataType, ContextMapperModel contextMapperModel) {
         if (contextMapperModel == null) {
             // If you don't specify a ContexMapperInfo, your ContextMapper will not match anything!
-            contextMapperModel = new V1ContextMapperModel().setExcludes(".*");
+            contextMapperModel = new V1ContextMapperModel(SwitchYardNamespace.DEFAULT.uri()).setExcludes(".*");
         }
         return ContextMapperFactory.getContextMapperFactory(bindingDataType).newContextMapper(contextMapperModel);
     }

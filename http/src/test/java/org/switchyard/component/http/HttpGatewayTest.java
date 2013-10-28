@@ -72,22 +72,22 @@ public class HttpGatewayTest {
     private ServiceDomain _domain;
     private HTTPMixIn httpMixIn;
 
-    @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}SampleHttpConsumerService")
+    @org.switchyard.test.ServiceOperation("{urn:http:test:1.1}SampleHttpConsumerService")
     private Invoker _consumerService;
 
-    @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}InvalidHttpConsumerService")
+    @org.switchyard.test.ServiceOperation("{urn:http:test:1.1}InvalidHttpConsumerService")
     private Invoker _consumerService2;
 
-    @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}AuthHttpConsumerService")
+    @org.switchyard.test.ServiceOperation("{urn:http:test:1.1}AuthHttpConsumerService")
     private Invoker _consumerService3;
 
-    @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}NtlmHttpConsumerService")
+    @org.switchyard.test.ServiceOperation("{urn:http:test:1.1}NtlmHttpConsumerService")
     private Invoker _consumerService4;
 
-    @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}TimeoutHttpConsumerService")
+    @org.switchyard.test.ServiceOperation("{urn:http:test:1.1}TimeoutHttpConsumerService")
     private Invoker _consumerService5;
 
-    @org.switchyard.test.ServiceOperation("{urn:http:test:1.0}OneWayHttpConsumerService")
+    @org.switchyard.test.ServiceOperation("{urn:http:test:1.1}OneWayHttpConsumerService")
     private Invoker _inOnlyConsumerService;
 
     private InboundHandler _httpInbound;

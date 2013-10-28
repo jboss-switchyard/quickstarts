@@ -13,9 +13,9 @@
  - limitations under the License.
  -->
 <sca:composite xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-           targetNamespace="urn:http:test:1.0"
-           xmlns:http="urn:switchyard-component-http:config:1.0"
-           xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+           targetNamespace="urn:http:test:1.1"
+           xmlns:http="urn:switchyard-component-http:config:1.1"
+           xmlns:swyd="urn:switchyard-config:switchyard:1.1"
            name="m1app">
 
     <sca:service name="SampleHttpProviderService" promote="SomeProviderService">

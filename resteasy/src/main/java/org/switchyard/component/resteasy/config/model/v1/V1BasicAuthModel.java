@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.resteasy.config.model.v1;
 
-import static org.switchyard.component.resteasy.config.model.RESTEasyBindingModel.DEFAULT_NAMESPACE;
-
 import org.switchyard.component.resteasy.config.model.BasicAuthModel;
 import org.switchyard.component.resteasy.config.model.RESTEasyNameValueModel;
 import org.switchyard.component.resteasy.config.model.RESTEasyNameValueModel.RESTEasyName;
@@ -45,18 +43,20 @@ public class V1BasicAuthModel extends BaseModel implements BasicAuthModel {
 
     /**
      * Creates a new BasicAuthModel.
+     * @param namespace namespace
      */
-    public V1BasicAuthModel() {
-        super(RESTEasyName.basic.name(), DEFAULT_NAMESPACE);
+    public V1BasicAuthModel(String namespace) {
+        super(namespace, RESTEasyName.basic.name());
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
     /**
      * Creates a new BasicAuthModel.
+     * @param namespace namespace
      * @param name the name of teh model
      */
-    public V1BasicAuthModel(String name) {
-        super(name, DEFAULT_NAMESPACE);
+    public V1BasicAuthModel(String namespace, String name) {
+        super(namespace, name);
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
@@ -170,7 +170,7 @@ public class V1BasicAuthModel extends BaseModel implements BasicAuthModel {
                 model = getNameValue(name);
             }
             if (model == null) {
-                model = new V1RESTEasyNameValueModel(name);
+                model = new V1RESTEasyNameValueModel(getNamespaceURI(), name);
                 setChildModel(model);
             }
             model.setValue(value);

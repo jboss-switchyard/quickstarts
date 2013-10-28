@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="urn:switchyard-component-camel-ftp:config:1.0"
+    xmlns:tns="urn:switchyard-component-camel-ftp:config:1.0"
+    xmlns:switchyard="urn:switchyard-config:switchyard:1.0"
+    elementFormDefault="qualified">
+
+    <import namespace="urn:switchyard-config:switchyard:1.0"/>
+    <include schemaLocation="camel-common_1_0.xsd" />
+
+    <element name="binding.ftp" type="tns:CamelFtpBindingType" substitutionGroup="switchyard:binding.switchyard"/>
+    <complexType name="CamelFtpBindingType">
+        <complexContent>
+            <extension base="tns:BaseCamelBinding">
+                <sequence>
+                    <group ref="tns:GenericFileBindingType" minOccurs="1" maxOccurs="1"/>
+                    <group ref="tns:CamelRemoteBindingType" minOccurs="1" maxOccurs="1"/>
+
+                    <element name="passiveMode" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="timeout" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
+                    <element name="soTimeout" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
+                    <element name="siteCommand" type="string" minOccurs="0" maxOccurs="1"/>
+
+                    <choice minOccurs="0" maxOccurs="1">
+                        <element name="consume" type="tns:RemoteFileConsumerType"/>
+                        <element name="produce" type="tns:RemoteFileProducerType"/>
+                    </choice>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="binding.ftps" type="tns:CamelFtpsBindingType" substitutionGroup="switchyard:binding.switchyard"/>
+    <complexType name="CamelFtpsBindingType">
+        <complexContent>
+            <extension base="tns:CamelFtpBindingType">
+                <sequence>
+                    <element name="securityProtocol" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="isImplicit" type="boolean" minOccurs="0" maxOccurs="1" />
+                    <element name="execPbsz" type="switchyard:propLong" minOccurs="0" maxOccurs="1" />
+                    <element name="execProt" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="disableSecureDataChannelDefaults" type="boolean" minOccurs="0" maxOccurs="1" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="binding.sftp" type="tns:CamelSftpBindingType" substitutionGroup="switchyard:binding.switchyard"/>
+    <complexType name="CamelSftpBindingType">
+        <complexContent>
+            <extension base="tns:BaseCamelBinding">
+                <sequence>
+                    <group ref="tns:GenericFileBindingType" minOccurs="0" maxOccurs="1"/>
+                    <group ref="tns:CamelRemoteBindingType" minOccurs="0" maxOccurs="1"/>
+
+                    <element name="knownHostsFile" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="privateKeyFile" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="privateKeyFilePassphrase" type="string" minOccurs="0" maxOccurs="1" />
+
+                    <choice minOccurs="0" maxOccurs="1">
+                        <element name="consume" type="tns:RemoteFileConsumerType"/>
+                        <element name="produce" type="tns:RemoteFileProducerType"/>
+                    </choice>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="RemoteFileConsumerType">
+        <sequence>
+            <group ref="tns:GenericFileConsumerType" minOccurs="0" maxOccurs="1"/>
+            <group ref="tns:ScheduledBatchPollConsumerType" minOccurs="0" maxOccurs="1"/>
+            <group ref="tns:ScheduledPollConsumerType" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="RemoteFileProducerType">
+        <sequence>
+            <group ref="tns:GenericFileProducerType" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+</schema>

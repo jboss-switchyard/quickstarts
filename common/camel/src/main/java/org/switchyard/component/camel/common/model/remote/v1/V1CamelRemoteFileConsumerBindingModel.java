@@ -39,11 +39,11 @@ public class V1CamelRemoteFileConsumerBindingModel extends V1GenericFileConsumer
     /**
      * Creates model bound to given namespace.
      * 
-     * @param name Name of element.
      * @param namespace Namespace to bound.
+     * @param name Name of element.
      */
-    public V1CamelRemoteFileConsumerBindingModel(String name, String namespace) {
-        super(name, namespace);
+    public V1CamelRemoteFileConsumerBindingModel(String namespace, String name) {
+        super(namespace, name);
     }
 
 }

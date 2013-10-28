@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.soap.config.model.v1;
 
-import static org.switchyard.component.soap.config.model.SOAPBindingModel.DEFAULT_NAMESPACE;
-
 import org.switchyard.component.soap.config.model.EndpointConfigModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
@@ -32,9 +30,10 @@ public class V1EndpointConfigModel extends BaseModel implements EndpointConfigMo
 
     /**
      * Creates a new InterceptorModel.
+     * @param namespace namespace
      */
-    public V1EndpointConfigModel() {
-        super(ENDPOINT_CONFIG, DEFAULT_NAMESPACE);
+    public V1EndpointConfigModel(String namespace) {
+        super(namespace, ENDPOINT_CONFIG);
     }
 
     /**

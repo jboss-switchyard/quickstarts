@@ -38,6 +38,7 @@ import org.switchyard.config.model.composer.v1.V1ContextMapperModel;
 import org.switchyard.config.model.composer.v1.V1MessageComposerModel;
 import org.switchyard.config.model.selector.OperationSelectorModel;
 import org.switchyard.config.model.selector.v1.V1StaticOperationSelectorModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.extensions.java.JavaService;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.ServiceInterface;
@@ -60,7 +61,8 @@ public class SendToSwitchYardTest extends SwitchYardComponentTestBase {
         MockHandler mock = new MockHandler().forwardInToOut();
         _serviceDomain.registerService(_serviceName, _metadata, mock);
         _serviceDomain.registerServiceReference(_serviceName, _metadata);
-        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", "input", new V1MessageComposerModel().setClazz(Composer.class.getName()));
+        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", "input",
+                new V1MessageComposerModel(SwitchYardNamespace.DEFAULT.uri()).setClazz(Composer.class.getName()));
         handler.start();
 
         sendBody("direct:input", PAYLOAD);
@@ -78,7 +80,8 @@ public class SendToSwitchYardTest extends SwitchYardComponentTestBase {
         MockHandler mock = new MockHandler().forwardInToOut();
         _serviceDomain.registerService(_serviceName, _metadata, mock);
         _serviceDomain.registerServiceReference(_serviceName, _metadata);
-        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", "direct", new V1ContextMapperModel().setClazz(Mapper.class.getName()));
+        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", "direct",
+                new V1ContextMapperModel(SwitchYardNamespace.DEFAULT.uri()).setClazz(Mapper.class.getName()));
         handler.start();
 
         sendBody("direct:input", PAYLOAD);
@@ -99,7 +102,8 @@ public class SendToSwitchYardTest extends SwitchYardComponentTestBase {
         MockHandler mock = new MockHandler().forwardInToOut();
         _serviceDomain.registerService(_serviceName, _metadata, mock);
         _serviceDomain.registerServiceReference(_serviceName, _metadata);
-        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", "input", new V1StaticOperationSelectorModel().setOperationName(OPERATION_NAME));
+        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", "input",
+                new V1StaticOperationSelectorModel(SwitchYardNamespace.DEFAULT.uri()).setOperationName(OPERATION_NAME));
         handler.start();
 
         sendBody("direct:input", PAYLOAD);
@@ -118,7 +122,8 @@ public class SendToSwitchYardTest extends SwitchYardComponentTestBase {
         JavaService metadata = JavaService.fromClass(TestService.class);
         _serviceDomain.registerService(_serviceName, metadata, mock);
         _serviceDomain.registerServiceReference(_serviceName, metadata);
-        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", "input", new V1StaticOperationSelectorModel().setOperationName("missing"));
+        InboundHandler<?> handler = createInboundHandler(_serviceName, "direct:input", "input",
+                new V1StaticOperationSelectorModel(SwitchYardNamespace.DEFAULT.uri()).setOperationName("missing"));
         handler.start();
 
         sendBody("direct:input", PAYLOAD);

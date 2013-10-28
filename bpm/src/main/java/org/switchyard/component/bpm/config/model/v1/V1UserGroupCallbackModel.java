@@ -13,11 +13,9 @@
  */
 package org.switchyard.component.bpm.config.model.v1;
 
-import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
 import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
 
 import org.switchyard.common.type.Classes;
-import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.bpm.config.model.UserGroupCallbackModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
@@ -35,9 +33,10 @@ public class V1UserGroupCallbackModel extends BaseModel implements UserGroupCall
 
     /**
      * Creates a new UserGroupCallbackModel.
+     * @param namespace namespace
      */
-    public V1UserGroupCallbackModel() {
-        super(XMLHelper.createQName(DEFAULT_NAMESPACE, USER_GROUP_CALLBACK));
+    public V1UserGroupCallbackModel(String namespace) {
+        super(namespace, USER_GROUP_CALLBACK);
         setModelChildrenOrder(PROPERTIES);
     }
 

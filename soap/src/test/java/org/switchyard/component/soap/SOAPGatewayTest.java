@@ -13,19 +13,14 @@
  */
 package org.switchyard.component.soap;
 
-import com.sun.net.httpserver.HttpContext;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.StringWriter;
-import java.net.InetSocketAddress;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,6 +51,7 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.common.net.SocketAddr;
 import org.switchyard.component.soap.composer.SOAPComposition;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.config.model.SOAPNamespace;
 import org.switchyard.component.soap.config.model.v1.V1SOAPBindingModel;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.config.model.ModelPuller;
@@ -73,6 +69,11 @@ import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 
 /**
  * Contains tests for SOAPGateway.
@@ -184,7 +185,7 @@ public class SOAPGatewayTest {
         _serviceURL = new URL("http://" + host + ":" + port + "/HelloWebService");
 
         // A WS Consumer as Service
-        SOAPBindingModel config2 = new V1SOAPBindingModel() {
+        SOAPBindingModel config2 = new V1SOAPBindingModel(SOAPNamespace.DEFAULT.uri()) {
             @Override
             public CompositeReferenceModel getReference() {
                 return new V1CompositeReferenceModel();
@@ -198,7 +199,7 @@ public class SOAPGatewayTest {
         // Hack for Test Runner. Register a service to test outbound.
         _domain.registerService(_consumerService11.getServiceName(), new HelloWebServiceInterface(), _soapOutbound11_1);
 
-        SOAPBindingModel config3 = new V1SOAPBindingModel() {
+        SOAPBindingModel config3 = new V1SOAPBindingModel(SOAPNamespace.DEFAULT.uri()) {
             @Override
             public CompositeReferenceModel getReference() {
                 return new V1CompositeReferenceModel();
@@ -230,7 +231,7 @@ public class SOAPGatewayTest {
         // We cannot use HelloWebServiceXXX, because the context path suffix XXX is ignored by JAXWS
         URL serviceURL = new URL("http://" + host + ":" + port + "/HelloSOAP12Service");
 
-        SOAPBindingModel config4 = new V1SOAPBindingModel() {
+        SOAPBindingModel config4 = new V1SOAPBindingModel(SOAPNamespace.DEFAULT.uri()) {
             @Override
             public CompositeReferenceModel getReference() {
                 return new V1CompositeReferenceModel();

@@ -15,8 +15,6 @@ package org.switchyard.component.resteasy;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,14 +27,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.littleshoot.proxy.DefaultHttpProxyServer;
-import org.littleshoot.proxy.HttpFilter;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.ProxyAuthorizationHandler;
-import org.switchyard.Exchange;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.resteasy.config.model.ProxyModel;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
+import org.switchyard.component.resteasy.config.model.RESTEasyNamespace;
 import org.switchyard.component.resteasy.config.model.v1.V1ProxyModel;
 import org.switchyard.component.resteasy.config.model.v1.V1RESTEasyBindingModel;
 import org.switchyard.config.model.ModelPuller;
@@ -45,7 +42,6 @@ import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeReferenceModel;
 import org.switchyard.metadata.BaseService;
-import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.test.Invoker;
@@ -113,7 +109,7 @@ public class HttpProxyTest {
         _resteasyInbound = new InboundHandler(_config, _domain);
         _resteasyInbound.start();
 
-        RESTEasyBindingModel config = new V1RESTEasyBindingModel() {
+        RESTEasyBindingModel config = new V1RESTEasyBindingModel(RESTEasyNamespace.DEFAULT.uri()) {
             @Override
             public CompositeReferenceModel getReference() {
                 return new V1CompositeReferenceModel();
@@ -129,7 +125,7 @@ public class HttpProxyTest {
         _resteasyProxyOutbound1.start();
         _domain.registerService(_proxyConsumerService1.getServiceName(), new HelloRESTEasyInterface(), _resteasyProxyOutbound1);
 
-        ProxyModel proxy = new V1ProxyModel();
+        ProxyModel proxy = new V1ProxyModel(RESTEasyNamespace.DEFAULT.uri());
         proxy.setHost(host);
         proxy.setPort("" + PROXYPORT);
         config.setAddress("http://" + host + ":" + port);

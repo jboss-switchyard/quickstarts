@@ -35,6 +35,7 @@ import org.switchyard.component.jca.config.model.EndpointModel;
 import org.switchyard.component.jca.config.model.InboundConnectionModel;
 import org.switchyard.component.jca.config.model.InboundInteractionModel;
 import org.switchyard.component.jca.config.model.JCABindingModel;
+import org.switchyard.component.jca.config.model.JCANamespace;
 import org.switchyard.component.jca.config.model.ListenerModel;
 import org.switchyard.component.jca.config.model.OutboundConnectionModel;
 import org.switchyard.component.jca.config.model.OutboundInteractionModel;
@@ -55,8 +56,8 @@ import org.switchyard.component.jca.endpoint.JMSEndpoint;
 import org.switchyard.component.jca.processor.JMSProcessor;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 import org.switchyard.tools.forge.common.CommonFacet;
+import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
  * Forge commands related to JCA bindings.
@@ -119,13 +120,13 @@ public class JCABindingPlugin implements Plugin {
             return;
         }
 
-        JCABindingModel binding = new V1JCABindingModel();
-        InboundConnectionModel connectionModel = new V1InboundConnectionModel();
-        ResourceAdapterModel rar = new V1ResourceAdapterModel();
+        JCABindingModel binding = new V1JCABindingModel(JCANamespace.DEFAULT.uri());
+        InboundConnectionModel connectionModel = new V1InboundConnectionModel(JCANamespace.DEFAULT.uri());
+        ResourceAdapterModel rar = new V1ResourceAdapterModel(JCANamespace.DEFAULT.uri());
         rar.setName(resourceAdapter);
         connectionModel.setResourceAdapter(rar);
         if (endpoint.equals(JMSEndpoint.class.getName())) {
-            ActivationSpecModel activationSpec = new V1ActivationSpecModel();
+            ActivationSpecModel activationSpec = new V1ActivationSpecModel(JCANamespace.DEFAULT.uri());
             String destinationType = _shell.promptCommon("destinationType", PromptType.ANY, "javax.jms.Queue");
             String destination = _shell.promptCommon("destination name", PromptType.ANY, "InboundQueue");
             activationSpec.setProperty("destinationType", destinationType);
@@ -134,11 +135,11 @@ public class JCABindingPlugin implements Plugin {
         }
         binding.setInboundConnection(connectionModel);
         
-        InboundInteractionModel interactionModel = new V1InboundInteractionModel();
-        ListenerModel listenerModel = new V1ListenerModel();
+        InboundInteractionModel interactionModel = new V1InboundInteractionModel(JCANamespace.DEFAULT.uri());
+        ListenerModel listenerModel = new V1ListenerModel(JCANamespace.DEFAULT.uri());
         listenerModel.setClassName(listener);
         interactionModel.setListener(listenerModel);
-        EndpointModel endpointModel = new V1EndpointModel();
+        EndpointModel endpointModel = new V1EndpointModel(JCANamespace.DEFAULT.uri());
         endpointModel.setEndpointClassName(endpoint);
         interactionModel.setEndpoint(endpointModel);
         interactionModel.setTransacted(transacted);
@@ -190,18 +191,18 @@ public class JCABindingPlugin implements Plugin {
             return;
         }
 
-        JCABindingModel binding = new V1JCABindingModel();
-        OutboundConnectionModel connectionModel = new V1OutboundConnectionModel();
-        ResourceAdapterModel rarModel = new V1ResourceAdapterModel();
+        JCABindingModel binding = new V1JCABindingModel(JCANamespace.DEFAULT.uri());
+        OutboundConnectionModel connectionModel = new V1OutboundConnectionModel(JCANamespace.DEFAULT.uri());
+        ResourceAdapterModel rarModel = new V1ResourceAdapterModel(JCANamespace.DEFAULT.uri());
         rarModel.setName(resourceAdapter);
         connectionModel.setResourceAdapter(rarModel);
-        ConnectionModel connection = new V1ConnectionModel();
+        ConnectionModel connection = new V1ConnectionModel(JCANamespace.DEFAULT.uri());
         connection.setConnectionFactoryJNDIName(connectionFactory);
         connectionModel.setConnection(connection);
         binding.setOutboundConnection(connectionModel);
         
-        OutboundInteractionModel interactionModel = new V1OutboundInteractionModel();
-        ProcessorModel processorModel = new V1ProcessorModel();
+        OutboundInteractionModel interactionModel = new V1OutboundInteractionModel(JCANamespace.DEFAULT.uri());
+        ProcessorModel processorModel = new V1ProcessorModel(JCANamespace.DEFAULT.uri());
         processorModel.setProcessorClassName(processor);
         if (processor.equals(JMSProcessor.class.getName())) {
             String destination = _shell.promptCommon("destination name", PromptType.ANY, "OutboundQueue");

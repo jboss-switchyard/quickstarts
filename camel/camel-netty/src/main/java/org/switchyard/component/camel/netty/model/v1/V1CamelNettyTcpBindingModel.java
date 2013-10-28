@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.netty.model.v1;
 
-import static org.switchyard.component.camel.netty.model.Constants.NETTY_NAMESPACE_V1;
-
 import org.switchyard.component.camel.netty.model.CamelNettyTcpBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -38,10 +36,11 @@ public class V1CamelNettyTcpBindingModel extends V1CamelNettyBindingModel
 
 
     /**
-     * Create a new CamelDirectBindingModel.
+     * Create a new CamelNettyTcpBindingModel.
+     * @param namespace namespace
      */
-    public V1CamelNettyTcpBindingModel() {
-        super(TCP, NETTY_NAMESPACE_V1);
+    public V1CamelNettyTcpBindingModel(String namespace) {
+        super(TCP, namespace);
         setModelChildrenOrder(TEXTLINE, TCP_NO_DELAY, KEEP_ALIVE);
     }
 

@@ -19,6 +19,7 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.config.model.SOAPNamespace;
 import org.switchyard.config.model.ModelPuller;
 
 /**
@@ -46,7 +47,7 @@ public class V1SOAPMessageComposerModelTest {
 
     @Test
     public void testWriteConfig() throws Exception {
-        V1SOAPMessageComposerModel scm = new V1SOAPMessageComposerModel();
+        V1SOAPMessageComposerModel scm = new V1SOAPMessageComposerModel(SOAPNamespace.V_1_0.uri());
         scm.setUnwrapped(true);
 
         V1SOAPMessageComposerModel refModel = new ModelPuller<V1SOAPMessageComposerModel>()

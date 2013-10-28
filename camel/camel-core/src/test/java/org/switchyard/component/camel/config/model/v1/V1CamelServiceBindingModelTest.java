@@ -19,14 +19,15 @@ import java.net.URI;
 
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
-import org.switchyard.component.camel.core.model.v1.V1CamelBindingModel;
+import org.switchyard.component.camel.core.model.CamelCoreNamespace;
+import org.switchyard.component.camel.core.model.v1.V1CamelUriBindingModel;
 
 /**
- * Test for {@link V1CamelBindingModel}.
+ * Test for {@link V1CamelUriBindingModel}.
  * 
  * @author Daniel Bevenius
  */
-public class V1CamelServiceBindingModelTest extends V1BaseCamelServiceBindingModelTest<V1CamelBindingModel, DirectEndpoint> {
+public class V1CamelServiceBindingModelTest extends V1BaseCamelServiceBindingModelTest<V1CamelUriBindingModel, DirectEndpoint> {
 
     private final static String CAMEL_XML = "switchyard-camel-binding-beans.xml";
     private final static String CAMEL_URI = "direct://input";
@@ -36,13 +37,13 @@ public class V1CamelServiceBindingModelTest extends V1BaseCamelServiceBindingMod
     }
 
     @Override
-    protected V1CamelBindingModel createTestModel() {
-        return new V1CamelBindingModel()
+    protected V1CamelUriBindingModel createTestModel() {
+        return new V1CamelUriBindingModel(CamelCoreNamespace.V_1_0.uri())
             .setConfigURI(URI.create("direct://input"));
     }
 
     @Override
-    protected void createModelAssertions(V1CamelBindingModel model) {
+    protected void createModelAssertions(V1CamelUriBindingModel model) {
         assertEquals("uri", model.getType());
         assertEquals("direct", model.getConfigURI().getScheme());
     }

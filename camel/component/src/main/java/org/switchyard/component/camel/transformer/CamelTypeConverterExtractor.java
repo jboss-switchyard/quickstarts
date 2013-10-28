@@ -30,6 +30,7 @@ import org.switchyard.config.model.transform.v1.V1TransformsModel;
 import org.switchyard.metadata.JavaTypes;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.config.model.JavaTransformModel;
+import org.switchyard.transform.config.model.TransformNamespace;
 import org.switchyard.transform.config.model.v1.V1JavaTransformModel;
 
 /**
@@ -90,20 +91,20 @@ public class CamelTypeConverterExtractor extends DefaultTypeConverter {
     }
     
     /**
-     * Returns a TransformsModel which will not inlcude transformers are already registered in
+     * Returns a TransformsModel which will not include transformers are already registered in
      * the {@link TransformerRegistry} in SwitchYard.
      * 
      * @param transformerRegistry SwitchYard's {@link TransformerRegistry}.
      *
      * @return {@link TransformsModel} the populated TransformsModel
      */
-    public TransformsModel getV1TransformsModel(final TransformerRegistry transformerRegistry) {
-        final V1TransformsModel transforms = new V1TransformsModel();
+    public TransformsModel getTransformsModel(final TransformerRegistry transformerRegistry) {
+        final TransformsModel transforms = new V1TransformsModel(TransformNamespace.DEFAULT.uri());
         for (Entry<QName, Set<QName>> entry : getTransformTypes().entrySet()) {
             final QName from = entry.getKey();
             final Set<QName> toTypes = entry.getValue();
             for (QName to : toTypes) {
-                final V1JavaTransformModel transform = new V1JavaTransformModel();
+                final V1JavaTransformModel transform = new V1JavaTransformModel(TransformNamespace.DEFAULT.uri());
                 transform.setFrom(from);
                 transform.setTo(to);
                 transform.setClazz(CamelTransformer.class.getName());
@@ -129,7 +130,7 @@ public class CamelTypeConverterExtractor extends DefaultTypeConverter {
      * 
      * @return {@link TransformsModel} populated with the passed in types.
      */
-    public TransformsModel getV1TransformsModel() {
-        return getV1TransformsModel(null);
+    public TransformsModel getTransformsModel() {
+        return getTransformsModel(null);
     }
 }

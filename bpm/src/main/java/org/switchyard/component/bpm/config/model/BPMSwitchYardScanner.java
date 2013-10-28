@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.bpm.config.model;
 
-import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -24,8 +22,8 @@ import org.jbpm.services.task.wih.AbstractHTWorkItemHandler;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
-import org.switchyard.component.bpm.BPMOperationType;
 import org.switchyard.component.bpm.BPMMessages;
+import org.switchyard.component.bpm.BPMOperationType;
 import org.switchyard.component.bpm.annotation.AbortProcessInstance;
 import org.switchyard.component.bpm.annotation.BPM;
 import org.switchyard.component.bpm.annotation.SignalEvent;
@@ -59,6 +57,7 @@ import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.extensions.java.JavaService;
 import org.switchyard.metadata.ServiceOperation;
@@ -82,16 +81,17 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
      */
     @Override
     public ScannerOutput<SwitchYardModel> scan(ScannerInput<SwitchYardModel> input) throws IOException {
-        SwitchYardModel switchyardModel = new V1SwitchYardModel();
+        String switchyardNamespace = input.getSwitchyardNamespace();
+        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace);
         CompositeModel compositeModel = new V1CompositeModel();
-        compositeModel.setName(input.getName());
+        compositeModel.setName(input.getCompositeName());
         ClasspathScanner bpmScanner = new ClasspathScanner(_bpmFilter);
         for (URL url : input.getURLs()) {
             bpmScanner.scan(url);
         }
         List<Class<?>> bpmClasses = _bpmFilter.getMatchedTypes();
         for (Class<?> bpmClass : bpmClasses) {
-            compositeModel.addComponent(scan(bpmClass));
+            compositeModel.addComponent(scan(bpmClass, switchyardNamespace));
         }
         if (!compositeModel.getModelChildren().isEmpty()) {
             switchyardModel.setComposite(compositeModel);
@@ -100,12 +100,26 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
     }
 
     /**
-     * Scans a class.
+     * Scans a class using the default switchyard namespace.
      * @param bpmClass the class
      * @return the component model
      * @throws IOException oops
      */
     public ComponentModel scan(Class<?> bpmClass) throws IOException {
+        return scan(bpmClass, null);
+    }
+
+    /**
+     * Scans a class using the specified switchyard namespace.
+     * @param bpmClass the class
+     * @param switchyardNamespace the switchyard namespace
+     * @return the component model
+     * @throws IOException oops
+     */
+    public ComponentModel scan(Class<?> bpmClass, String switchyardNamespace) throws IOException {
+        if (switchyardNamespace == null) {
+            switchyardNamespace = SwitchYardNamespace.DEFAULT.uri();
+        }
         BPM bpm = bpmClass.getAnnotation(BPM.class);
         if (bpm == null) {
             throw BPMMessages.MESSAGES.bpmClassGetNameIsMissingTheBPMAnnotation(bpmClass.getName());
@@ -123,7 +137,11 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
         }
         ComponentModel componentModel = new V1ComponentModel();
         componentModel.setName(bpmName);
-        BPMComponentImplementationModel componentImplementationModel = new V1BPMComponentImplementationModel();
+        String bpmNamespace = bpm.namespace();
+        if (UNDEFINED.equals(bpmNamespace)) {
+            bpmNamespace = BPMNamespace.DEFAULT.uri();
+        }
+        BPMComponentImplementationModel componentImplementationModel = new V1BPMComponentImplementationModel(bpmNamespace);
         boolean persistent = bpm.persistent();
         if (persistent) {
             componentImplementationModel.setPersistent(persistent);
@@ -133,7 +151,7 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
             processId = bpmName;
         }
         componentImplementationModel.setProcessId(processId);
-        OperationsModel operationsModel = new V1OperationsModel(DEFAULT_NAMESPACE);
+        OperationsModel operationsModel = new V1OperationsModel(bpmNamespace);
         JavaService javaService = JavaService.fromClass(bpmInterface);
         for (Method method : bpmClass.getDeclaredMethods()) {
             BPMOperationType operationType = null;
@@ -176,14 +194,14 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
             if (operationType != null) {
                 ServiceOperation serviceOperation = javaService.getOperation(method.getName());
                 if (serviceOperation != null) {
-                    OperationModel operationModel = new V1BPMOperationModel();
+                    OperationModel operationModel = new V1BPMOperationModel(bpmNamespace);
                     operationModel.setEventId(eventId);
                     operationModel.setName(serviceOperation.getName());
                     operationModel.setType(operationType);
-                    operationModel.setGlobals(toGlobalsModel(globalMappingAnnotations, DEFAULT_NAMESPACE));
-                    operationModel.setInputs(toInputsModel(inputMappingAnnotations, DEFAULT_NAMESPACE));
-                    operationModel.setOutputs(toOutputsModel(outputMappingAnnotations, DEFAULT_NAMESPACE));
-                    operationModel.setFaults(toFaultsModel(faultMappingAnnotations, DEFAULT_NAMESPACE));
+                    operationModel.setGlobals(toGlobalsModel(globalMappingAnnotations, bpmNamespace));
+                    operationModel.setInputs(toInputsModel(inputMappingAnnotations, bpmNamespace));
+                    operationModel.setOutputs(toOutputsModel(outputMappingAnnotations, bpmNamespace));
+                    operationModel.setFaults(toFaultsModel(faultMappingAnnotations, bpmNamespace));
                     operationsModel.addOperation(operationModel);
                 }
             }
@@ -191,15 +209,15 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
         if (!operationsModel.getOperations().isEmpty()) {
             componentImplementationModel.setOperations(operationsModel);
         }
-        componentImplementationModel.setChannels(toChannelsModel(bpm.channels(), DEFAULT_NAMESPACE, componentModel));
-        componentImplementationModel.setListeners(toListenersModel(bpm.listeners(), DEFAULT_NAMESPACE));
-        componentImplementationModel.setLoggers(toLoggersModel(bpm.loggers(), DEFAULT_NAMESPACE));
-        componentImplementationModel.setManifest(toManifestModel(bpm.manifest(), DEFAULT_NAMESPACE));
-        componentImplementationModel.setProperties(toPropertiesModel(bpm.properties(), DEFAULT_NAMESPACE));
-        componentImplementationModel.setUserGroupCallback(toUserGroupCallbackModel(bpm.userGroupCallback()));
-        componentImplementationModel.setWorkItemHandlers(toWorkItemHandlersModel(bpm.workItemHandlers()));
+        componentImplementationModel.setChannels(toChannelsModel(bpm.channels(), bpmNamespace, componentModel, switchyardNamespace));
+        componentImplementationModel.setListeners(toListenersModel(bpm.listeners(), bpmNamespace));
+        componentImplementationModel.setLoggers(toLoggersModel(bpm.loggers(), bpmNamespace));
+        componentImplementationModel.setManifest(toManifestModel(bpm.manifest(), bpmNamespace));
+        componentImplementationModel.setProperties(toPropertiesModel(bpm.properties(), bpmNamespace));
+        componentImplementationModel.setUserGroupCallback(toUserGroupCallbackModel(bpm.userGroupCallback(), bpmNamespace));
+        componentImplementationModel.setWorkItemHandlers(toWorkItemHandlersModel(bpm.workItemHandlers(), bpmNamespace));
         componentModel.setImplementation(componentImplementationModel);
-        ComponentServiceModel componentServiceModel = new V1ComponentServiceModel();
+        ComponentServiceModel componentServiceModel = new V1ComponentServiceModel(switchyardNamespace);
         InterfaceModel interfaceModel = new V1InterfaceModel(InterfaceModel.JAVA);
         interfaceModel.setInterface(bpmInterface.getName());
         componentServiceModel.setInterface(interfaceModel);
@@ -208,29 +226,29 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
         return componentModel;
     }
 
-    private UserGroupCallbackModel toUserGroupCallbackModel(UserGroupCallback[] userGroupCallbackAnnotations) {
+    private UserGroupCallbackModel toUserGroupCallbackModel(UserGroupCallback[] userGroupCallbackAnnotations, String bpmNamespace) {
         if (userGroupCallbackAnnotations == null || userGroupCallbackAnnotations.length == 0) {
             return null;
         }
         UserGroupCallbackModel userGroupCallbackModel = null;
         for (UserGroupCallback userGroupCallbackAnnotation : userGroupCallbackAnnotations) {
-            userGroupCallbackModel = new V1UserGroupCallbackModel();
+            userGroupCallbackModel = new V1UserGroupCallbackModel(bpmNamespace);
             // SWITCHYARD-1755: internal api usage still required (public APIs insufficient)
             Class<? extends org.kie.internal.task.api.UserGroupCallback> clazz = userGroupCallbackAnnotation.value();
             userGroupCallbackModel.setClazz(clazz);
-            userGroupCallbackModel.setProperties(toPropertiesModel(userGroupCallbackAnnotation.properties(), DEFAULT_NAMESPACE));
+            userGroupCallbackModel.setProperties(toPropertiesModel(userGroupCallbackAnnotation.properties(), bpmNamespace));
             break;
         }
         return userGroupCallbackModel;
     }
 
-    private WorkItemHandlersModel toWorkItemHandlersModel(WorkItemHandler[] workItemHandlerAnnotations) {
+    private WorkItemHandlersModel toWorkItemHandlersModel(WorkItemHandler[] workItemHandlerAnnotations, String bpmNamespace) {
         if (workItemHandlerAnnotations == null || workItemHandlerAnnotations.length == 0) {
             return null;
         }
-        WorkItemHandlersModel workItemHandlersModel = new V1WorkItemHandlersModel();
+        WorkItemHandlersModel workItemHandlersModel = new V1WorkItemHandlersModel(bpmNamespace);
         for (WorkItemHandler workItemHandlerAnnotation : workItemHandlerAnnotations) {
-            WorkItemHandlerModel workItemHandlerModel = new V1WorkItemHandlerModel();
+            WorkItemHandlerModel workItemHandlerModel = new V1WorkItemHandlerModel(bpmNamespace);
             Class<? extends org.kie.api.runtime.process.WorkItemHandler> clazz = workItemHandlerAnnotation.value();
             workItemHandlerModel.setClazz(clazz);
             String name = workItemHandlerAnnotation.name();

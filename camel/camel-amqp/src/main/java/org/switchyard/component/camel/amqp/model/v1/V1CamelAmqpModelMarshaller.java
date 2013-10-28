@@ -13,17 +13,18 @@
  */
 package org.switchyard.component.camel.amqp.model.v1;
 
-import org.switchyard.component.camel.common.marshaller.BaseModelMarshaller;
-import org.switchyard.component.camel.common.marshaller.ModelCreator;
+import org.switchyard.component.camel.common.model.v1.V1BaseCamelMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
-
-import static org.switchyard.component.camel.amqp.model.Constants.AMQP_NAMESPACE_V1;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * AMQP model marshaller.
  */
-public class V1CamelAmqpModelMarshaller extends BaseModelMarshaller {
+public class V1CamelAmqpModelMarshaller extends V1BaseCamelMarshaller {
+
+    private static final String BINDING_AMQP = BindingModel.BINDING + '.' + V1CamelAmqpBindingModel.AMQP;
 
     /**
      * Creates new marshaller.
@@ -31,14 +32,24 @@ public class V1CamelAmqpModelMarshaller extends BaseModelMarshaller {
      * @param desc Descriptor
      */
     public V1CamelAmqpModelMarshaller(Descriptor desc) {
-        super(desc, AMQP_NAMESPACE_V1);
+        super(desc);
+    }
 
-        registerBinding(V1CamelAmqpBindingModel.AMQP, new ModelCreator<V1CamelAmqpBindingModel>() {
-            @Override
-            public V1CamelAmqpBindingModel create(Configuration config, Descriptor descriptor) {
-                return new V1CamelAmqpBindingModel(config, descriptor);
-            }
-        });
+    /**
+     * Reads in the Configuration, looking for various knowledge models.
+     * If not found, it falls back to the super class (V1BaseCamelMarshaller).
+     *
+     * @param config the Configuration
+     * @return the Model
+     */
+    @Override
+    public Model read(Configuration config) {
+        String name = config.getName();
+        Descriptor desc = getDescriptor();
+        if (BINDING_AMQP.equals(name)) {
+            return new V1CamelAmqpBindingModel(config, desc);
+        }
+        return super.read(config);
     }
 
 }

@@ -59,9 +59,10 @@ public class V1HttpBindingModel extends V1BindingModel implements HttpBindingMod
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1HttpBindingModel() {
-        super(HTTP, DEFAULT_NAMESPACE);
+    public V1HttpBindingModel(String namespace) {
+        super(HTTP, namespace);
         setModelChildrenOrder(MODEL_CHILDREN_ORDER);
     }
 
@@ -274,7 +275,7 @@ public class V1HttpBindingModel extends V1BindingModel implements HttpBindingMod
                 model = getNameValue(name);
             }
             if (model == null) {
-                model = new V1HttpNameValueModel(name);
+                model = new V1HttpNameValueModel(getNamespaceURI(), name);
                 setChildModel(model);
             }
             model.setValue(value);

@@ -14,16 +14,17 @@
 
 package org.switchyard.component.test.mixins.smooks;
 
+import javax.xml.namespace.QName;
+
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.switchyard.config.model.transform.TransformModel;
+import org.switchyard.test.mixins.AbstractTestMixIn;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.SmooksTransformType;
+import org.switchyard.transform.config.model.TransformNamespace;
 import org.switchyard.transform.config.model.v1.V1SmooksTransformModel;
-import org.switchyard.test.mixins.AbstractTestMixIn;
-
-import javax.xml.namespace.QName;
 
 /**
  * Smooks test {@link org.switchyard.test.TestMixIn mix-in}.
@@ -99,7 +100,7 @@ public class SmooksMixIn extends AbstractTestMixIn {
      * @return The Transformer instance.
      */
     public Transformer newTransformer(String smooksConfigResPath, SmooksTransformType transformerType) {
-        TransformModel transformModel = new V1SmooksTransformModel()
+        TransformModel transformModel = new V1SmooksTransformModel(TransformNamespace.DEFAULT.uri())
                                             .setConfig(smooksConfigResPath)
                                             .setTransformType(transformerType)
                                             .setFrom(new QName("from")).setTo(new QName("to"));

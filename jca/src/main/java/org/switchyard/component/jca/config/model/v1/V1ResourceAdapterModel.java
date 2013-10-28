@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.ResourceAdapterModel;
 import org.switchyard.config.Configuration;
@@ -30,9 +28,10 @@ public class V1ResourceAdapterModel extends V1BasePropertyContainerModel impleme
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1ResourceAdapterModel() {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.RESOURCE_ADAPTER));
+    public V1ResourceAdapterModel(String namespace) {
+        super(namespace, JCAConstants.RESOURCE_ADAPTER);
         setModelChildrenOrder(JCAConstants.PROPERTY);
     }
     

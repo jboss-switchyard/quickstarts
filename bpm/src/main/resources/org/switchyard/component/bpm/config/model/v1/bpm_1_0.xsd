@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+        xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+        xmlns:bpm="urn:switchyard-component-bpm:config:1.0"
+        targetNamespace="urn:switchyard-component-bpm:config:1.0"
+        elementFormDefault="qualified">
+
+    <import namespace="urn:switchyard-config:switchyard:1.0"/>
+    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
+
+    <element name="implementation.bpm" type="bpm:BPMImplementationType" substitutionGroup="sca:implementation"/>
+    <complexType name="BPMImplementationType">
+        <complexContent>
+            <extension base="sca:Implementation">
+                <sequence>
+                    <element ref="bpm:channels" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:listeners" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:loggers" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:manifest" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:operations" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:properties" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:userGroupCallback" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:workItemHandlers" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+                <attribute name="persistent" type="boolean" use="optional"/>
+                <attribute name="processId" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="channels" type="bpm:ChannelsType"/>
+    <complexType name="ChannelsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:channel" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="channel" type="bpm:ChannelType"/>
+    <complexType name="ChannelType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="class" type="string" use="required"/>
+                <attribute name="name" type="string" use="optional"/>
+                <attribute name="operation" type="string" use="optional"/>
+                <attribute name="reference" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="listeners" type="bpm:ListenersType"/>
+    <complexType name="ListenersType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:listener" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="listener" type="bpm:ListenerType"/>
+    <complexType name="ListenerType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="class" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="loggers" type="bpm:LoggersType"/>
+    <complexType name="LoggersType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:logger" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="logger" type="bpm:LoggerType"/>
+    <complexType name="LoggerType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="interval" type="swyd:propInteger" use="optional"/>
+                <attribute name="log" type="string" use="optional"/>
+                <attribute name="type" type="bpm:loggerType" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="loggerType">
+        <restriction base="string">
+            <enumeration value="CONSOLE"/>
+            <enumeration value="FILE"/>
+            <enumeration value="THREADED_FILE"/>
+        </restriction>
+    </simpleType>
+
+    <element name="manifest" type="bpm:ManifestType"/>
+        <complexType name="ManifestType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <choice>
+                        <element ref="bpm:container" minOccurs="0" maxOccurs="1"/>
+                        <element ref="bpm:resources" minOccurs="0" maxOccurs="1"/>
+                    </choice>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="container" type="bpm:ContainerType"/>
+        <complexType name="ContainerType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="baseName" type="string" use="optional"/>
+                <attribute name="releaseId" type="string" use="optional"/>
+                <attribute name="scan" type="boolean" use="optional"/>
+                <attribute name="scanInterval" type="long" use="optional"/>
+                <attribute name="sessionName" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="resources" type="bpm:ResourcesType"/>
+    <complexType name="ResourcesType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:resource" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="resource" type="bpm:ResourceType"/>
+    <complexType name="ResourceType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="location" type="string" use="required"/>
+                <attribute name="type" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="operations" type="bpm:OperationsType"/>
+    <complexType name="OperationsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:operation" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="operation" type="bpm:OperationType"/>
+    <complexType name="OperationType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:globals" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:inputs" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:outputs" minOccurs="0" maxOccurs="1"/>
+                    <element ref="bpm:faults" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+                <attribute name="eventId" type="string" use="optional"/>
+                <attribute name="name" type="string" use="optional"/>
+                <attribute name="type" type="bpm:operationType" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="globals" type="bpm:GlobalsType"/>
+    <complexType name="GlobalsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:global" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="inputs" type="bpm:InputsType"/>
+    <complexType name="InputsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:input" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="outputs" type="bpm:OutputsType"/>
+    <complexType name="OutputsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:output" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="faults" type="bpm:FaultsType"/>
+    <complexType name="FaultsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:fault" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="global" type="bpm:MappingType"/>
+    <element name="input" type="bpm:MappingType"/>
+    <element name="output" type="bpm:MappingType"/>
+    <element name="fault" type="bpm:MappingType"/>
+    <complexType name="MappingType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="from" type="string" use="optional"/>
+                <attribute name="to" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="operationType">
+        <restriction base="string">
+            <enumeration value="START_PROCESS"/>
+            <enumeration value="SIGNAL_EVENT"/>
+            <enumeration value="SIGNAL_EVENT_ALL"/>
+            <enumeration value="ABORT_PROCESS_INSTANCE"/>
+        </restriction>
+    </simpleType>
+
+    <element name="properties" type="bpm:PropertiesType"/>
+    <complexType name="PropertiesType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:property" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="property" type="bpm:PropertyType"/>
+    <complexType name="PropertyType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="name" type="string" use="required"/>
+                <attribute name="value" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="userGroupCallback" type="bpm:UserGroupCallbackType"/>
+    <complexType name="UserGroupCallbackType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:properties" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+                <attribute name="class" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="workItemHandlers" type="bpm:WorkItemHandlersType"/>
+    <complexType name="WorkItemHandlersType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element ref="bpm:workItemHandler" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="workItemHandler" type="bpm:WorkItemHandlerType"/>
+    <complexType name="WorkItemHandlerType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <attribute name="class" type="string" use="required"/>
+                <attribute name="name" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

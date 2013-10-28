@@ -32,11 +32,11 @@ public class V1ClojureComponentImplementationModel extends V1ComponentImplementa
     private ClojureScriptModel _scriptModel;
     
     /**
-     * No args constructor that uses the default namespace when constructing
-     * this model.
+     * Constructor.
+     * @param namespace namespace
      */
-    public V1ClojureComponentImplementationModel() {
-        super(CLOJURE, DEFAULT_NAMESPACE);
+    public V1ClojureComponentImplementationModel(String namespace) {
+        super(CLOJURE, namespace);
     }
 
     /**

@@ -65,8 +65,8 @@ public abstract class V1CamelNettyBindingModel extends V1BaseCamelBindingModel
         super(config, desc);
     }
 
-    protected V1CamelNettyBindingModel(String name, String namespace) {
-        super(name, namespace);
+    protected V1CamelNettyBindingModel(String namespace, String name) {
+        super(namespace, name);
 
         setModelChildrenOrder(HOST, PORT, RECEIVE_BUFFER_SIZE, SEND_BUFFER_SIZE,
                 SSL, SSL_HANDLER, PASSPHRASE, SECURITY_PROVIDER, KEY_STORE_FORMAT,

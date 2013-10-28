@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.quartz.model.v1;
 
-import static org.switchyard.component.camel.quartz.Constants.QUARTZ_NAMESPACE_V1;
-
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -47,10 +45,11 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     private static DateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     /**
-     * Create a new CamelDirectBindingModel.
+     * Create a new CamelQuartzBindingModel.
+     * @param namespace namespace
      */
-    public V1CamelQuartzBindingModel() {
-        super(QUARTZ, QUARTZ_NAMESPACE_V1);
+    public V1CamelQuartzBindingModel(String namespace) {
+        super(QUARTZ, namespace);
 
         setModelChildrenOrder(NAME, CRON, STATEFUL, START_TIME, END_TIME, TIMEZONE);
     }

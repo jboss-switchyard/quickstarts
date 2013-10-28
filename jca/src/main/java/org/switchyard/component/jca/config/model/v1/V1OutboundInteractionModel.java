@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.ConnectionSpecModel;
 import org.switchyard.component.jca.config.model.InteractionSpecModel;
@@ -35,9 +33,10 @@ public class V1OutboundInteractionModel extends BaseModel implements OutboundInt
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1OutboundInteractionModel() {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.OUTBOUND_INTERACTION));
+    public V1OutboundInteractionModel(String namespace) {
+        super(namespace, JCAConstants.OUTBOUND_INTERACTION);
         setModelChildrenOrder(JCAConstants.CONNECTION_SPEC,
                                 JCAConstants.INTERACTION_SPEC,
                                 JCAConstants.OPERATION,

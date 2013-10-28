@@ -13,10 +13,7 @@
  */
 package org.switchyard.component.bpm.config.model.v1;
 
-import static org.switchyard.component.bpm.config.model.BPMComponentImplementationModel.DEFAULT_NAMESPACE;
-
 import org.switchyard.common.type.Classes;
-import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.bpm.config.model.WorkItemHandlerModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseNamedModel;
@@ -31,9 +28,10 @@ public class V1WorkItemHandlerModel extends BaseNamedModel implements WorkItemHa
 
     /**
      * Creates a new WorkItemHandlerModel.
+     * @param namespace namespace
      */
-    public V1WorkItemHandlerModel() {
-        super(XMLHelper.createQName(DEFAULT_NAMESPACE, WORK_ITEM_HANDLER));
+    public V1WorkItemHandlerModel(String namespace) {
+        super(namespace, WORK_ITEM_HANDLER);
     }
 
     /**

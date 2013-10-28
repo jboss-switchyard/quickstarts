@@ -32,11 +32,6 @@ public interface HttpBindingModel extends BindingModel {
     public static final String HTTP = "http";
 
     /**
-     * Default namespace for HTTP Gateway Configuration.
-     */
-    public static final String DEFAULT_NAMESPACE = "urn:switchyard-component-http:config:1.0";
-
-    /**
      * Returns the HTTP Service name.
      * 
      * @return the serviceName

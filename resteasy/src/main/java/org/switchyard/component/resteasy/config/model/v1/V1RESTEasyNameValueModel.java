@@ -13,9 +13,6 @@
  */
 package org.switchyard.component.resteasy.config.model.v1;
 
-import static org.switchyard.component.resteasy.config.model.RESTEasyBindingModel.DEFAULT_NAMESPACE;
-
-import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.resteasy.config.model.RESTEasyNameValueModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
@@ -30,10 +27,11 @@ public class V1RESTEasyNameValueModel extends BaseModel implements RESTEasyNameV
 
     /**
      * Creates a new V1RESTEasyNameValueModel.
+     * @param namespace namespace
      * @param name the RESTEasyName
      */
-    public V1RESTEasyNameValueModel(RESTEasyName name) {
-        super(XMLHelper.createQName(DEFAULT_NAMESPACE, name.name()));
+    public V1RESTEasyNameValueModel(String namespace, RESTEasyName name) {
+        super(namespace, name.name());
     }
 
     /**

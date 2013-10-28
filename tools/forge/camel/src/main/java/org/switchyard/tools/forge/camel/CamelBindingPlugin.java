@@ -29,11 +29,12 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
-import org.switchyard.component.camel.core.model.v1.V1CamelBindingModel;
+import org.switchyard.component.camel.core.model.CamelCoreNamespace;
+import org.switchyard.component.camel.core.model.v1.V1CamelUriBindingModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
-import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 import org.switchyard.tools.forge.common.CommonFacet;
+import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 
 /**
  * Forge plugin for Camel binding commands.
@@ -74,7 +75,7 @@ public class CamelBindingPlugin implements Plugin {
             return;
         }
         
-        V1CamelBindingModel binding = new V1CamelBindingModel();
+        V1CamelUriBindingModel binding = new V1CamelUriBindingModel(CamelCoreNamespace.DEFAULT.uri());
         binding.setConfigURI(URI.create(configURI));
         service.addBinding(binding);
         switchYard.saveConfig();
@@ -108,7 +109,7 @@ public class CamelBindingPlugin implements Plugin {
             return;
         }
         
-        V1CamelBindingModel binding = new V1CamelBindingModel();
+        V1CamelUriBindingModel binding = new V1CamelUriBindingModel(CamelCoreNamespace.DEFAULT.uri());
         binding.setConfigURI(URI.create(configURI));
         
         reference.addBinding(binding);

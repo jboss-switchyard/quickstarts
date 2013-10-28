@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.rules.config.model;
 
-import static org.switchyard.component.rules.config.model.RulesComponentImplementationModel.DEFAULT_NAMESPACE;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -51,6 +49,7 @@ import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.extensions.java.JavaService;
 import org.switchyard.metadata.ServiceOperation;
@@ -74,16 +73,17 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
      */
     @Override
     public ScannerOutput<SwitchYardModel> scan(ScannerInput<SwitchYardModel> input) throws IOException {
-        SwitchYardModel switchyardModel = new V1SwitchYardModel();
+        String switchyardNamespace = input.getSwitchyardNamespace();
+        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace);
         CompositeModel compositeModel = new V1CompositeModel();
-        compositeModel.setName(input.getName());
+        compositeModel.setName(input.getCompositeName());
         ClasspathScanner rulesScanner = new ClasspathScanner(_rulesFilter);
         for (URL url : input.getURLs()) {
             rulesScanner.scan(url);
         }
         List<Class<?>> rulesClasses = _rulesFilter.getMatchedTypes();
         for (Class<?> rulesClass : rulesClasses) {
-            compositeModel.addComponent(scan(rulesClass));
+            compositeModel.addComponent(scan(rulesClass, switchyardNamespace));
         }
         if (!compositeModel.getModelChildren().isEmpty()) {
             switchyardModel.setComposite(compositeModel);
@@ -92,12 +92,26 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
     }
 
     /**
-     * Scans a class.
+     * Scans a class using the default switchyard namespace.
      * @param rulesClass the class
      * @return the component model
      * @throws IOException oops
      */
     public ComponentModel scan(Class<?> rulesClass) throws IOException {
+        return scan(rulesClass, null);
+    }
+
+    /**
+     * Scans a class using the specified switchyard namespace.
+     * @param rulesClass the class
+     * @param switchyardNamespace the switchyard namespace
+     * @return the component model
+     * @throws IOException oops
+     */
+    public ComponentModel scan(Class<?> rulesClass, String switchyardNamespace) throws IOException {
+        if (switchyardNamespace == null) {
+            switchyardNamespace = SwitchYardNamespace.DEFAULT.uri();
+        }
         Rules rules = rulesClass.getAnnotation(Rules.class);
         Class<?> rulesInterface = rules.value();
         if (Rules.UndefinedRulesInterface.class.equals(rulesInterface)) {
@@ -112,8 +126,12 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
         }
         ComponentModel componentModel = new V1ComponentModel();
         componentModel.setName(rulesName);
-        RulesComponentImplementationModel componentImplementationModel = new V1RulesComponentImplementationModel();
-        OperationsModel operationsModel = new V1OperationsModel(DEFAULT_NAMESPACE);
+        String rulesNamespace = rules.namespace();
+        if (UNDEFINED.equals(rulesNamespace)) {
+            rulesNamespace = RulesNamespace.DEFAULT.uri();
+        }
+        RulesComponentImplementationModel componentImplementationModel = new V1RulesComponentImplementationModel(rulesNamespace);
+        OperationsModel operationsModel = new V1OperationsModel(rulesNamespace);
         JavaService javaService = JavaService.fromClass(rulesInterface);
         for (Method method : rulesClass.getDeclaredMethods()) {
             RulesOperationType operationType = null;
@@ -155,14 +173,14 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
             if (operationType != null) {
                 ServiceOperation serviceOperation = javaService.getOperation(method.getName());
                 if (serviceOperation != null) {
-                    OperationModel operationModel = new V1RulesOperationModel();
+                    OperationModel operationModel = new V1RulesOperationModel(rulesNamespace);
                     operationModel.setEventId(eventId);
                     operationModel.setName(serviceOperation.getName());
                     operationModel.setType(operationType);
-                    operationModel.setGlobals(toGlobalsModel(globalMappingAnnotations, DEFAULT_NAMESPACE));
-                    operationModel.setInputs(toInputsModel(inputMappingAnnotations, DEFAULT_NAMESPACE));
-                    operationModel.setOutputs(toOutputsModel(outputMappingAnnotations, DEFAULT_NAMESPACE));
-                    operationModel.setFaults(toFaultsModel(faultMappingAnnotations, DEFAULT_NAMESPACE));
+                    operationModel.setGlobals(toGlobalsModel(globalMappingAnnotations, rulesNamespace));
+                    operationModel.setInputs(toInputsModel(inputMappingAnnotations, rulesNamespace));
+                    operationModel.setOutputs(toOutputsModel(outputMappingAnnotations, rulesNamespace));
+                    operationModel.setFaults(toFaultsModel(faultMappingAnnotations, rulesNamespace));
                     operationsModel.addOperation(operationModel);
                 }
             }
@@ -170,13 +188,13 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
         if (!operationsModel.getOperations().isEmpty()) {
             componentImplementationModel.setOperations(operationsModel);
         }
-        componentImplementationModel.setChannels(toChannelsModel(rules.channels(), DEFAULT_NAMESPACE, componentModel));
-        componentImplementationModel.setListeners(toListenersModel(rules.listeners(), DEFAULT_NAMESPACE));
-        componentImplementationModel.setLoggers(toLoggersModel(rules.loggers(), DEFAULT_NAMESPACE));
-        componentImplementationModel.setManifest(toManifestModel(rules.manifest(), DEFAULT_NAMESPACE));
-        componentImplementationModel.setProperties(toPropertiesModel(rules.properties(), DEFAULT_NAMESPACE));
+        componentImplementationModel.setChannels(toChannelsModel(rules.channels(), rulesNamespace, componentModel, switchyardNamespace));
+        componentImplementationModel.setListeners(toListenersModel(rules.listeners(), rulesNamespace));
+        componentImplementationModel.setLoggers(toLoggersModel(rules.loggers(), rulesNamespace));
+        componentImplementationModel.setManifest(toManifestModel(rules.manifest(), rulesNamespace));
+        componentImplementationModel.setProperties(toPropertiesModel(rules.properties(), rulesNamespace));
         componentModel.setImplementation(componentImplementationModel);
-        ComponentServiceModel componentServiceModel = new V1ComponentServiceModel();
+        ComponentServiceModel componentServiceModel = new V1ComponentServiceModel(switchyardNamespace);
         InterfaceModel interfaceModel = new V1InterfaceModel(InterfaceModel.JAVA);
         interfaceModel.setInterface(rulesInterface.getName());
         componentServiceModel.setInterface(interfaceModel);

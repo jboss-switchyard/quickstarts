@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.ActivationSpecModel;
 import org.switchyard.component.jca.config.model.InboundConnectionModel;
@@ -33,9 +31,10 @@ public class V1InboundConnectionModel extends BaseModel implements InboundConnec
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1InboundConnectionModel() {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.INBOUND_CONNECTION));
+    public V1InboundConnectionModel(String namespace) {
+        super(namespace, JCAConstants.INBOUND_CONNECTION);
         setModelChildrenOrder(JCAConstants.RESOURCE_ADAPTER, JCAConstants.ACTIVATION_SPEC);
     }
     

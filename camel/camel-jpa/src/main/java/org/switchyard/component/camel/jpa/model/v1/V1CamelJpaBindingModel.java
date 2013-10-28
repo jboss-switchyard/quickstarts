@@ -25,8 +25,6 @@ import org.switchyard.component.camel.jpa.model.CamelJpaProducerBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
-import static org.switchyard.component.camel.jpa.model.Constants.JPA_NAMESPACE_V1;
-
 /**
  * Implementation of JPA configuration binding model.
  * 
@@ -49,9 +47,10 @@ public class V1CamelJpaBindingModel extends V1BaseCamelBindingModel
 
     /**
      * Creates a binding.
+     * @param namespace namespace
      */
-    public V1CamelJpaBindingModel() {
-        super(JPA, JPA_NAMESPACE_V1);
+    public V1CamelJpaBindingModel(String namespace) {
+        super(JPA, namespace);
 
         setModelChildrenOrder(ENTITY_CLASS_NAME, PERSISTENCE_UNIT, TRANSACTION_MANAGER,
             CONSUME, PRODUCE);

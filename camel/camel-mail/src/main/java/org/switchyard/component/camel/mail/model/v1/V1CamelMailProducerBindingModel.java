@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.mail.model.v1;
 
-import static org.switchyard.component.camel.mail.model.Constants.MAIL_NAMESPACE_V1;
-
 import org.switchyard.component.camel.common.model.v1.V1BaseCamelModel;
 import org.switchyard.component.camel.mail.model.CamelMailProducerBindingModel;
 import org.switchyard.config.Configuration;
@@ -40,10 +38,10 @@ public class V1CamelMailProducerBindingModel extends V1BaseCamelModel
 
     /**
      * Creates new producer binding model.
+     * @param namespace namespace
      */
-    public V1CamelMailProducerBindingModel() {
-        super(V1CamelMailBindingModel.PRODUCE, MAIL_NAMESPACE_V1);
-
+    public V1CamelMailProducerBindingModel(String namespace) {
+        super(namespace, V1CamelMailBindingModel.PRODUCE);
         setModelChildrenOrder(SUBJECT, FROM, TO, CC, BCC, REPLY_TO);
     }
 

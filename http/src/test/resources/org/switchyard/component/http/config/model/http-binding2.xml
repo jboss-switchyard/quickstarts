@@ -1,4 +1,4 @@
-<http:binding.http xmlns:http="urn:switchyard-component-http:config:1.0">
+<http:binding.http xmlns:http="urn:switchyard-component-http:config:1.1">
     <http:address>http://localhost:8080/http-binding</http:address>
     <http:method>POST</http:method>
     <http:timeout>5000</http:timeout>

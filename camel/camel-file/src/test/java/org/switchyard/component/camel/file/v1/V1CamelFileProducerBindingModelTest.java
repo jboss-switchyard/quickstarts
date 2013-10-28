@@ -18,6 +18,7 @@ import static junit.framework.Assert.assertEquals;
 import org.apache.camel.component.file.FileEndpoint;
 import org.switchyard.component.camel.common.model.file.GenericFileProducerBindingModel;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelReferenceBindingModelTest;
+import org.switchyard.component.camel.file.model.CamelFileNamespace;
 import org.switchyard.component.camel.file.model.v1.V1CamelFileBindingModel;
 import org.switchyard.component.camel.file.model.v1.V1CamelFileProducerBindingModel;
 
@@ -58,11 +59,11 @@ public class V1CamelFileProducerBindingModelTest extends V1BaseCamelReferenceBin
 
     @Override
     protected V1CamelFileBindingModel createTestModel() {
-        V1CamelFileBindingModel fileModel = (V1CamelFileBindingModel) new V1CamelFileBindingModel()
+        V1CamelFileBindingModel fileModel = (V1CamelFileBindingModel) new V1CamelFileBindingModel(CamelFileNamespace.V_1_0.uri())
             .setDirectory(DIRECTORY)
             .setAutoCreate(AUTO_CREATE);
 
-        GenericFileProducerBindingModel producer = new V1CamelFileProducerBindingModel()
+        GenericFileProducerBindingModel producer = new V1CamelFileProducerBindingModel(CamelFileNamespace.V_1_0.uri())
             .setFileExist(FILE_EXIST)
             .setTempPrefix(TEMP_PREFIX)
             .setKeepLastModified(KEEP_LAST_MODIFIED)

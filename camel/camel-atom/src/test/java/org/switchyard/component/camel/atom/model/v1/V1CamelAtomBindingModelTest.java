@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.component.feed.FeedEndpoint;
-import org.switchyard.component.camel.atom.model.Constants;
+import org.switchyard.component.camel.atom.model.CamelAtomNamespace;
 import org.switchyard.component.camel.common.model.consumer.CamelScheduledPollConsumer;
 import org.switchyard.component.camel.common.model.v1.V1CamelScheduledPollConsumer;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
@@ -67,7 +67,7 @@ public class V1CamelAtomBindingModelTest extends V1BaseCamelServiceBindingModelT
 
     @Override
     protected V1CamelAtomBindingModel createTestModel() {
-        V1CamelAtomBindingModel abm = new V1CamelAtomBindingModel()
+        V1CamelAtomBindingModel abm = new V1CamelAtomBindingModel(CamelAtomNamespace.V_1_0.uri())
             .setFeedURI(FEED_URI)
             .setSplitEntries(SPLIT)
             .setFilter(FILTERED)
@@ -76,7 +76,7 @@ public class V1CamelAtomBindingModelTest extends V1BaseCamelServiceBindingModelT
             .setFeedHeader(FEED_HEADER)
             .setSortEntries(SORTED);
 
-        CamelScheduledPollConsumer consumer = new V1CamelScheduledPollConsumer(V1CamelAtomBindingModel.CONSUME, Constants.ATOM_NAMESPACE_V1)
+        CamelScheduledPollConsumer consumer = new V1CamelScheduledPollConsumer(CamelAtomNamespace.V_1_0.uri(), V1CamelAtomBindingModel.CONSUME)
             .setInitialDelay(20000)
             .setDelay(15000)
             .setUseFixedDelay(true);

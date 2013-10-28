@@ -27,8 +27,6 @@ import org.switchyard.component.camel.common.model.v1.V1CamelScheduledPollConsum
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
-import static org.switchyard.component.camel.atom.model.Constants.ATOM_NAMESPACE_V1;
-
 /**
  * Implementation of AtomBindingModel.
  */
@@ -58,9 +56,10 @@ public class V1CamelAtomBindingModel extends V1BaseCamelBindingModel
 
     /**
      * Create a new AtomBindingModel.
+     * @param namespace namespace
      */
-    public V1CamelAtomBindingModel() {
-        super(ATOM, ATOM_NAMESPACE_V1);
+    public V1CamelAtomBindingModel(String namespace) {
+        super(ATOM, namespace);
 
         setModelChildrenOrder(FEED_URI, SPLIT_ENTRIES, FILTER, LAST_UPDATE,
             THROTTLE_ENTRIES, FEED_HEADER, SORT_ENTRIES, CONSUME);

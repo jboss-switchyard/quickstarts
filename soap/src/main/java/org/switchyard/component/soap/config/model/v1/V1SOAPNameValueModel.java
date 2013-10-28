@@ -13,9 +13,6 @@
  */
 package org.switchyard.component.soap.config.model.v1;
 
-import static org.switchyard.component.soap.config.model.SOAPBindingModel.DEFAULT_NAMESPACE;
-
-import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.soap.config.model.SOAPNameValueModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
@@ -30,10 +27,11 @@ public class V1SOAPNameValueModel extends BaseModel implements SOAPNameValueMode
 
     /**
      * Creates a new V1SOAPNameValueModel.
+     * @param namespace namespace
      * @param name the SOAPName
      */
-    public V1SOAPNameValueModel(SOAPName name) {
-        super(XMLHelper.createQName(DEFAULT_NAMESPACE, name.name()));
+    public V1SOAPNameValueModel(String namespace, SOAPName name) {
+        super(namespace, name.name());
     }
 
     /**

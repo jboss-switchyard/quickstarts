@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.http.config.model.v1;
 
-import static org.switchyard.component.http.config.model.HttpBindingModel.DEFAULT_NAMESPACE;
-
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.http.config.model.HttpNameValueModel;
 import org.switchyard.config.Configuration;
@@ -30,10 +28,11 @@ public class V1HttpNameValueModel extends BaseModel implements HttpNameValueMode
 
     /**
      * Creates a new V1HttpNameValueModel.
+     * @param namespace namespace
      * @param name the HttpName
      */
-    public V1HttpNameValueModel(HttpName name) {
-        super(XMLHelper.createQName(DEFAULT_NAMESPACE, name.name()));
+    public V1HttpNameValueModel(String namespace, HttpName name) {
+        super(XMLHelper.createQName(namespace, name.name()));
     }
 
     /**

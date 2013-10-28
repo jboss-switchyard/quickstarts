@@ -221,7 +221,7 @@ public class RulesModelTests {
     private void doTestScan(String xml) throws Exception {
         ClassLoader loader = getClass().getClassLoader();
         Scanner<SwitchYardModel> scanner = new RulesSwitchYardScanner();
-        ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setName(getClass().getSimpleName());
+        ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setCompositeName(getClass().getSimpleName());
         List<URL> urls = new ArrayList<URL>();
         String resPath = getClass().getName().replaceAll("\\.", "/") + ".class";
         String urlPath = Classes.getResource(resPath).getPath();

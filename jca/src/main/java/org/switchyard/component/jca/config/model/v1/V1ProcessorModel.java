@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.jca.config.model.v1;
 
-import javax.xml.namespace.QName;
-
 import org.switchyard.component.jca.JCAConstants;
 import org.switchyard.component.jca.config.model.ProcessorModel;
 import org.switchyard.config.Configuration;
@@ -30,9 +28,10 @@ public class V1ProcessorModel extends V1BasePropertyContainerModel implements Pr
 
     /**
      * Constructor.
+     * @param namespace namespace
      */
-    public V1ProcessorModel() {
-        super(new QName(JCAConstants.DEFAULT_NAMESPACE, JCAConstants.PROCESSOR));
+    public V1ProcessorModel(String namespace) {
+        super(namespace, JCAConstants.PROCESSOR);
         setModelChildrenOrder(JCAConstants.PROPERTY);
     }
     

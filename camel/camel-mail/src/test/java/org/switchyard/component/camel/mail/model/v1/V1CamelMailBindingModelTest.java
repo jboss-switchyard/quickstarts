@@ -17,6 +17,7 @@ import static junit.framework.Assert.assertEquals;
 
 import org.apache.camel.component.mail.MailEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
+import org.switchyard.component.camel.mail.model.CamelMailNamespace;
 
 /**
  * Test for {@link V1CamelMailBindingModel}.
@@ -50,7 +51,7 @@ public class V1CamelMailBindingModelTest extends V1BaseCamelServiceBindingModelT
 
     @Override
     protected V1CamelMailBindingModel createTestModel() {
-        return new V1CamelMailBindingModel()
+        return new V1CamelMailBindingModel(CamelMailNamespace.V_1_0.uri())
             .setSecure(SECURE)
             .setHost(HOST)
             .setPort(PORT)

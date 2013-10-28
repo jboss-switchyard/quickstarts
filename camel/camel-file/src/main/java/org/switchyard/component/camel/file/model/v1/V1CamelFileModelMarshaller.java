@@ -13,31 +13,44 @@
  */
 package org.switchyard.component.camel.file.model.v1;
 
-import static org.switchyard.component.camel.file.model.Constants.FILE_NAMESPACE_V1;
-
-import org.switchyard.component.camel.common.marshaller.BaseModelMarshaller;
-import org.switchyard.component.camel.common.marshaller.ModelCreator;
+import org.switchyard.component.camel.common.model.v1.V1BaseCamelMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * File model marshaller.
  */
-public class V1CamelFileModelMarshaller extends BaseModelMarshaller {
+public class V1CamelFileModelMarshaller extends V1BaseCamelMarshaller {
+
+    private static final String BINDING_FILE = BindingModel.BINDING + '.' + V1CamelFileBindingModel.FILE;
 
     /**
      * Creates new marshaller.
+     * 
      * @param desc Descriptor.
      */
     public V1CamelFileModelMarshaller(Descriptor desc) {
-        super(desc, FILE_NAMESPACE_V1);
+        super(desc);
+    }
 
-        registerBinding(V1CamelFileBindingModel.FILE, new ModelCreator<V1CamelFileBindingModel>() {
-            @Override
-            public V1CamelFileBindingModel create(Configuration config, Descriptor descriptor) {
-                return new V1CamelFileBindingModel(config, descriptor);
-            }
-        });
+    /**
+     * Reads in the Configuration, looking for various knowledge models.
+     * If not found, it falls back to the super class (V1BaseCamelMarshaller).
+     *
+     * @param config the Configuration
+     * @return the Model
+     */
+    @Override
+    public Model read(Configuration config) {
+        String name = config.getName();
+        Descriptor desc = getDescriptor();
+        if (BINDING_FILE.equals(name)) {
+            return new V1CamelFileBindingModel(config, desc);
+        }
+        // V1CamelFileConsumerBindingModel and V1CamelFileProducerBindingModel get created by V1CamelFileBindingModel
+        return super.read(config);
     }
 
 }

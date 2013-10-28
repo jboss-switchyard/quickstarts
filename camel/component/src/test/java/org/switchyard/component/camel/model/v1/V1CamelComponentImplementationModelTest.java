@@ -23,15 +23,16 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.switchyard.component.camel.core.model.v1.V1CamelBindingModel;
+import org.switchyard.component.camel.core.model.v1.V1CamelUriBindingModel;
 import org.switchyard.component.camel.model.CamelComponentImplementationModel;
+import org.switchyard.component.camel.model.CamelNamespace;
 import org.switchyard.component.camel.scanner.SingleRouteService;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
 /**
- * Test for {@link V1CamelBindingModel}.
+ * Test for {@link V1CamelUriBindingModel}.
  * 
  * @author Daniel Bevenius
  */
@@ -75,7 +76,7 @@ public class V1CamelComponentImplementationModelTest {
 
     @Test
     public void addXMLPath() throws Exception {
-        V1CamelImplementationModel camelConfig = new V1CamelImplementationModel();
+        V1CamelImplementationModel camelConfig = new V1CamelImplementationModel(CamelNamespace.V_1_0.uri());
         camelConfig.setXMLPath(XML_ROUTE_PATH);
         validateModel(camelConfig);
         Assert.assertEquals(XML_ROUTE_PATH, camelConfig.getXMLPath());
@@ -89,7 +90,7 @@ public class V1CamelComponentImplementationModelTest {
     }
 
     private V1CamelImplementationModel createModel() {
-        return new V1CamelImplementationModel().setJavaClass(SingleRouteService.class.getName());
+        return new V1CamelImplementationModel(CamelNamespace.V_1_0.uri()).setJavaClass(SingleRouteService.class.getName());
     }
 
     private void validateModel(final CamelComponentImplementationModel model) {

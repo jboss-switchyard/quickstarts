@@ -18,6 +18,7 @@ import static junit.framework.Assert.assertEquals;
 import org.apache.camel.component.mail.MailEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
 import org.switchyard.component.camel.mail.model.CamelMailConsumerBindingModel;
+import org.switchyard.component.camel.mail.model.CamelMailNamespace;
 import org.switchyard.component.camel.mail.model.v1.V1CamelMailConsumerBindingModel.AccountType;
 
 /**
@@ -46,7 +47,7 @@ public class V1CamelMailConsumerBindingModelTest extends V1BaseCamelServiceBindi
 
     @Override
     protected V1CamelMailBindingModel createTestModel() {
-        V1CamelMailBindingModel model = new V1CamelMailBindingModel() {
+        V1CamelMailBindingModel model = new V1CamelMailBindingModel(CamelMailNamespace.V_1_0.uri()) {
             @Override
             public boolean isReferenceBinding() {
                 return false;
@@ -56,7 +57,7 @@ public class V1CamelMailConsumerBindingModelTest extends V1BaseCamelServiceBindi
         model.setSecure(SECURE);
         model.setHost(HOST);
 
-        CamelMailConsumerBindingModel consumer = new V1CamelMailConsumerBindingModel()
+        CamelMailConsumerBindingModel consumer = new V1CamelMailConsumerBindingModel(CamelMailNamespace.V_1_0.uri())
             .setAccountType(ACCOUNT_TYPE)
             .setFolderName(FOLDER_NAME)
             .setFetchSize(FETCH_SIZE)

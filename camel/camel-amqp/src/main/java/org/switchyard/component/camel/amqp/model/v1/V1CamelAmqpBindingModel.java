@@ -13,8 +13,6 @@
  */
 package org.switchyard.component.camel.amqp.model.v1;
 
-import static org.switchyard.component.camel.amqp.model.Constants.AMQP_NAMESPACE_V1;
-
 import java.net.URI;
 
 import org.switchyard.component.camel.amqp.model.CamelAmqpBindingModel;
@@ -37,10 +35,11 @@ public class V1CamelAmqpBindingModel extends V1CamelJmsBindingModel
     public static final String AMQP = "amqp";
 
     /**
-     * Default consturctor, creates binding using only prefix.
+     * Default constructor, creates binding using only prefix.
+     * @param namespace namespace
      */
-    public V1CamelAmqpBindingModel() {
-        super(AMQP, AMQP_NAMESPACE_V1);
+    public V1CamelAmqpBindingModel(String namespace) {
+        super(AMQP, namespace);
     }
 
     /**

@@ -34,11 +34,13 @@ import org.jboss.forge.shell.plugins.Plugin;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 import org.jboss.forge.shell.plugins.RequiresProject;
 import org.jboss.forge.shell.plugins.Topic;
+import org.switchyard.component.camel.model.CamelNamespace;
 import org.switchyard.component.camel.model.v1.V1CamelImplementationModel;
 import org.switchyard.config.model.composite.v1.V1ComponentModel;
 import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.tools.forge.plugin.SwitchYardFacet;
 import org.switchyard.tools.forge.plugin.TemplateResource;
 
@@ -128,7 +130,7 @@ public class CamelServicePlugin implements Plugin {
         SwitchYardFacet switchYard = _project.getFacet(SwitchYardFacet.class);
         V1ComponentModel component = new V1ComponentModel();
         component.setName(routeName + "Component");
-        V1ComponentServiceModel service = new V1ComponentServiceModel();
+        V1ComponentServiceModel service = new V1ComponentServiceModel(SwitchYardNamespace.DEFAULT.uri());
         service.setName(routeName);
         component.addService(service);
         V1InterfaceModel intfModel = new V1InterfaceModel(typeList.get(typeChoice));
@@ -136,7 +138,7 @@ public class CamelServicePlugin implements Plugin {
         service.setInterface(intfModel);
         
         // Create the Camel implementation model and XML route
-        V1CamelImplementationModel impl = new V1CamelImplementationModel();
+        V1CamelImplementationModel impl = new V1CamelImplementationModel(CamelNamespace.DEFAULT.uri());
         TemplateResource xmlRoute = new TemplateResource(ROUTE_XML_TEMPLATE);
         String routeFile = routeName + ".xml";
         xmlRoute.serviceName(routeName);
