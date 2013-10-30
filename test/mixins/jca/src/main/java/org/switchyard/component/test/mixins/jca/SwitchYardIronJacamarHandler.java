@@ -50,6 +50,7 @@ import com.github.fungal.api.Kernel;
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
  */
+@Deprecated
 public class SwitchYardIronJacamarHandler {
     private static final String TEMPLATE_RA_XML = "jcamixin-ironjacamar-template-ra.xml";
     private static final String TEMP_OUT_DIR = System.getProperty("java.io.tmpdir")

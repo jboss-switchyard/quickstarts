@@ -22,6 +22,7 @@ import javax.resource.cci.MappedRecord;
 import javax.resource.cci.Record;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
@@ -42,6 +43,7 @@ import org.switchyard.test.SwitchYardTestCaseConfig;
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
  */
+@Ignore
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = "switchyard-outbound-cci-test.xml", mixins = {JCAMixIn.class, CDIMixIn.class})
 public class JCACCIReferenceBindingTest  {

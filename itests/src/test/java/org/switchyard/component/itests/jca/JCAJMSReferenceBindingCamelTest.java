@@ -19,6 +19,7 @@ import javax.transaction.UserTransaction;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.Invoker;
@@ -34,6 +35,7 @@ import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
  * Functional test for {@link JCAActivator}.
  * 
  */
+@Ignore
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = "switchyard-outbound-jms-camel-test.xml", mixins = {CDIMixIn.class, HornetQMixIn.class, JCAMixIn.class})
 public class JCAJMSReferenceBindingCamelTest  {

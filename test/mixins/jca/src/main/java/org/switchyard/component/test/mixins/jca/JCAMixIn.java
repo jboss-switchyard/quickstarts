@@ -38,7 +38,6 @@ import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.test.MixInDependencies;
-import org.switchyard.test.ShrinkwrapUtil;
 import org.switchyard.test.mixins.AbstractTestMixIn;
 import org.switchyard.component.test.mixins.naming.NamingMixIn;
 import org.switchyard.component.test.mixins.transaction.TransactionMixInParticipant;
@@ -51,6 +50,7 @@ import com.arjuna.ats.jta.common.JTAEnvironmentBean;
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
  */
+@Deprecated
 @MixInDependencies(required={NamingMixIn.class})
 public class JCAMixIn extends AbstractTestMixIn implements TransactionMixInParticipant {
 
@@ -224,7 +224,7 @@ public class JCAMixIn extends AbstractTestMixIn implements TransactionMixInParti
         }
         deployResourceAdapterArchive(raa, connDefs);
     }
-    
+
     private void deployResourceAdapter(String path, Map<String, String> connDefs) {
         URI uri = null;
         try {
@@ -239,7 +239,7 @@ public class JCAMixIn extends AbstractTestMixIn implements TransactionMixInParti
 
         deployResourceAdapterArchive(raa, connDefs);
     }
-    
+
     private void deployResourceAdapterArchive(ResourceAdapterArchive raa, Map<String, String> connDefs) {
         try {
             _ironJacamar.deploy(raa, connDefs);

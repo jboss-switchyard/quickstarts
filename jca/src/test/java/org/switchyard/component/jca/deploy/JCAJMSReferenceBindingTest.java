@@ -19,6 +19,7 @@ import javax.transaction.UserTransaction;
 
 import junit.framework.Assert;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
@@ -37,6 +38,7 @@ import org.switchyard.test.SwitchYardTestCaseConfig;
  * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
  *
  */
+@Ignore
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(config = "switchyard-outbound-jms-test.xml", mixins = {HornetQMixIn.class, JCAMixIn.class, CDIMixIn.class})
 public class JCAJMSReferenceBindingTest  {
