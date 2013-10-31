@@ -126,8 +126,8 @@
         <version.redhat.eap6.minor>0.Alpha</version.redhat.eap6.minor>
         <version.redhat.eap6.bom>1.0.4.Final-redhat-1</version.redhat.eap6.bom>
         <version.rhq>4.8.0</version.rhq>
-        <version.riftsaw.ode>3.0.0.Final</version.riftsaw.ode>
-        <version.riftsaw.engine>3.0.0.Final</version.riftsaw.engine>
+        <version.riftsaw.ode>3.1.0.Final</version.riftsaw.ode>
+        <version.riftsaw.engine>3.1.1.Final</version.riftsaw.engine>
         <version.riftsaw.console>2.4.5.Final</version.riftsaw.console>
         <version.rhino>1.7R2</version.rhino>
         <version.saxon>9.2.1.5</version.saxon>
