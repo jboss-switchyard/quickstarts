@@ -14,8 +14,6 @@ enable them to be correlated to the same process instance.
 Running the quickstart
 ======================
 
-JBoss AS 7, simple_correlation
-----------
 1. Build the quickstart:
 
         mvn clean install
