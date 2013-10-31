@@ -37,6 +37,7 @@ public class BPELComponent extends BaseComponent {
     private static BPELEngine _engine=null;
     private static java.util.Properties _config=null;
     private static RiftsawServiceLocator _locator=new RiftsawServiceLocator();
+    private static boolean _initialized=false;
     
     /**
      * Default constructor.
@@ -51,50 +52,75 @@ public class BPELComponent extends BaseComponent {
      */
     @Override
     public void init(Configuration config) {
-        super.init(config);   
+        super.init(config);
+        
+        initConfig();
+    }
+    
+    /**
+     * This method initializes the configuration information for use
+     * by the BPEL engine.
+     */
+    protected synchronized void initConfig() {
+        if (_initialized) {
+            return;
+        }
+        
+        BPELLogger.ROOT_LOGGER.initBPELComponent();
+        
+        ClassLoader current=Thread.currentThread().getContextClassLoader();
+        
+        Thread.currentThread().setContextClassLoader(BPELComponent.class.getClassLoader());
+
+        try {
+            // Initialize the BPEL engine service locator
+            BPELEngineFactory.setServiceLocator(_locator);
+            
+            // Initialize the BPEL engine configuration
+            _config = new java.util.Properties();
+
+            // Load default properties
+            try {
+                java.io.InputStream is=BPELEngineImpl.class.getClassLoader().getResourceAsStream("bpel.properties");
+        
+                _config.load(is);
+            } catch (Exception e) {
+                throw BPELMessages.MESSAGES.failedToLoadDefaultProperties(e);
+            }
+
+            if (getConfig() != null) {
+                // Overwrite default properties with values from configuration
+                for (Configuration child : getConfig().getChildren()) {
+                    if (LOG.isDebugEnabled()) {
+                        if (_config.containsKey(child.getName())) {
+                            LOG.debug("Overriding BPEL property: "+child.getName()
+                                    +" = "+child.getValue());
+                        } else {
+                            LOG.debug("Setting BPEL property: "+child.getName()
+                                    +" = "+child.getValue());
+                        }
+                    }
+                    _config.put(child.getName(), child.getValue());
+                }
+            }
+            
+            BPELEngineFactory.setConfig(_config);
+            
+        } finally {
+            Thread.currentThread().setContextClassLoader(current);
+        }
+        
+        _initialized = true;
     }
     
     protected BPELEngine getEngine(final ServiceDomain domain) {
         
         synchronized (this) {
             if (_engine == null) {
-                BPELLogger.ROOT_LOGGER.initBPELComponent();
+                initConfig();
                 
-                ClassLoader current=Thread.currentThread().getContextClassLoader();
-                
-                Thread.currentThread().setContextClassLoader(BPELComponent.class.getClassLoader());
-
                 try {
                     _engine = BPELEngineFactory.getEngine();
-                    
-                    _config = new java.util.Properties();
-        
-                    // Load default properties
-                    try {
-                        java.io.InputStream is=BPELEngineImpl.class.getClassLoader().getResourceAsStream("bpel.properties");
-                
-                        _config.load(is);
-                    } catch (Exception e) {
-                        throw BPELMessages.MESSAGES.failedToLoadDefaultProperties(e);
-                    }
-        
-                    if (getConfig() != null) {
-                        // Overwrite default properties with values from configuration
-                        for (Configuration child : getConfig().getChildren()) {
-                            if (LOG.isDebugEnabled()) {
-                                if (_config.containsKey(child.getName())) {
-                                    LOG.debug("Overriding BPEL property: "+child.getName()
-                                            +" = "+child.getValue());
-                                } else {
-                                    LOG.debug("Setting BPEL property: "+child.getName()
-                                            +" = "+child.getValue());
-                                }
-                            }
-                            _config.put(child.getName(), child.getValue());
-                        }
-                    }
-                    
-                    _engine.init(_locator, _config);
                     
                     _engine.register(new BPELEngineListener() {
                         public void onEvent(BpelEvent bpelEvent) {
@@ -104,8 +130,6 @@ public class BPELComponent extends BaseComponent {
                     
                 } catch (Exception e) {
                     throw BPELMessages.MESSAGES.failedToInitializeTheEngine(e);
-                } finally {
-                    Thread.currentThread().setContextClassLoader(current);
                 }
             }
         }
