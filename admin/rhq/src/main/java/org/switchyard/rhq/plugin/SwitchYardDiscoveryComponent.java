@@ -33,7 +33,7 @@ import org.rhq.core.pluginapi.inventory.DiscoveredResourceDetails;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 import org.rhq.modules.plugins.jbossas7.ASConnection;
-import org.rhq.modules.plugins.jbossas7.BaseServerComponent;
+import org.rhq.modules.plugins.jbossas7.BaseComponent;
 import org.rhq.modules.plugins.jbossas7.json.Operation;
 import org.switchyard.rhq.plugin.model.GetVersionResult;
 import org.switchyard.rhq.plugin.operations.GetVersion;
@@ -41,7 +41,7 @@ import org.switchyard.rhq.plugin.operations.GetVersion;
 /**
  * SwitchYard Discovery Component
  */
-public class SwitchYardDiscoveryComponent implements ResourceDiscoveryComponent<BaseServerComponent<?>> {
+public class SwitchYardDiscoveryComponent implements ResourceDiscoveryComponent<BaseComponent<?>> {
     /**
      * The logger instance.
      */
@@ -60,7 +60,7 @@ public class SwitchYardDiscoveryComponent implements ResourceDiscoveryComponent<
      * @return The discovered resources.
      */
     @Override
-    public Set<DiscoveredResourceDetails> discoverResources(final ResourceDiscoveryContext<BaseServerComponent<?>> context) {
+    public Set<DiscoveredResourceDetails> discoverResources(final ResourceDiscoveryContext<BaseComponent<?>> context) {
 
         final HashSet<DiscoveredResourceDetails> discoveredResources = new HashSet<DiscoveredResourceDetails>();
 
@@ -84,7 +84,7 @@ public class SwitchYardDiscoveryComponent implements ResourceDiscoveryComponent<
         return discoveredResources;
     }
 
-    public static <T> T execute(final BaseServerComponent<?> server,
+    public static <T> T execute(final BaseComponent<?> server,
             final Operation operation, final Class<T> clazz) {
 
         final ASConnection asConnection = server.getASConnection();
