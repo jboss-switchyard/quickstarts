@@ -15,23 +15,23 @@
 <module xmlns="urn:jboss:module:1.0" name="org.apache.xmlgraphics">
 
     <resources>
-        <resource-root path="batik-anim-${version.batik}.jar"/>
-        <resource-root path="batik-awt-util-${version.batik}.jar"/>
-        <resource-root path="batik-bridge-${version.batik}.jar"/>
-        <resource-root path="batik-codec-${version.batik}.jar"/>
-        <resource-root path="batik-css-${version.batik}.jar"/>
-        <resource-root path="batik-dom-${version.batik}.jar"/>
-        <resource-root path="batik-ext-${version.batik}.jar"/>
-        <resource-root path="batik-gvt-${version.batik}.jar"/>
-        <resource-root path="batik-parser-${version.batik}.jar"/>
-        <resource-root path="batik-script-${version.batik}.jar"/>
-        <resource-root path="batik-svg-dom-${version.batik}.jar"/>
-        <resource-root path="batik-svggen-${version.batik}.jar"/>
-        <resource-root path="batik-transcoder-${version.batik}.jar"/>
-        <resource-root path="batik-util-${version.batik}.jar"/>
-        <resource-root path="batik-xml-${version.batik}.jar"/>
-        <resource-root path="axiom-api-${version.axiom}.jar"/>
-        <resource-root path="axiom-impl-${version.axiom}.jar"/>
+        <resource-root path="batik-anim-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-awt-util-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-bridge-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-codec-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-css-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-dom-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-ext-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-gvt-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-parser-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-script-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-svg-dom-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-svggen-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-transcoder-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-util-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-xml-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="axiom-api-${version.org.apache.ws.commons.axiom}.jar"/>
+        <resource-root path="axiom-impl-${version.org.apache.ws.commons.axiom}.jar"/>
         <resource-root path="xml-apis-${version.xml-apis}.jar" />
         <resource-root path="xml-apis-ext-${version.xml-apis}.jar"/>
 

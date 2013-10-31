@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.1" name="net.sf.opencsv">
 
     <resources>
-        <resource-root path="opencsv-${version.opencsv}.jar"/>
+        <resource-root path="opencsv-${version.net.sf.opencsv}.jar"/>
     </resources>
 
 </module>

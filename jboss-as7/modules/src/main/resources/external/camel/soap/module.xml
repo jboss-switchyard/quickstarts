@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.apache.camel.soap">
 
     <resources>
-        <resource-root path="camel-soap-${version.camel}.jar"/>
+        <resource-root path="camel-soap-${version.org.apache.camel}.jar"/>
     </resources>
 
     <dependencies>

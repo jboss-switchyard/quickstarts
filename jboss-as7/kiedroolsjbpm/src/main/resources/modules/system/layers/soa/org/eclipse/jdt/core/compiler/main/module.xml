@@ -14,7 +14,7 @@
   -->
 <module xmlns="urn:jboss:module:1.0" name="org.eclipse.jdt.core.compiler">
     <resources>
-        <resource-root path="ecj-${version.ecj}.jar"/>
+        <resource-root path="ecj-${version.org.eclipse.jdt.core.compiler}.jar"/>
     </resources>
     <dependencies>
     </dependencies>

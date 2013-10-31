@@ -14,9 +14,9 @@
   -->
 <module xmlns="urn:jboss:module:1.0" name="org.apache.poi">
     <resources>
-        <resource-root path="poi-${version.poi}.jar"/>
-        <resource-root path="poi-ooxml-${version.poi}.jar"/>
-        <resource-root path="poi-ooxml-schemas-${version.poi}.jar"/>
+        <resource-root path="poi-${version.org.apache.poi}.jar"/>
+        <resource-root path="poi-ooxml-${version.org.apache.poi}.jar"/>
+        <resource-root path="poi-ooxml-schemas-${version.org.apache.poi}.jar"/>
     </resources>
     <dependencies>
     </dependencies>

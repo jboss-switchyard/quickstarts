@@ -15,14 +15,14 @@
 <module xmlns="urn:jboss:module:1.0" name="org.springframework">
 
     <resources>
-        <resource-root path="spring-beans-${version.spring}.jar"/>
-        <resource-root path="spring-core-${version.spring}.jar"/>
-        <resource-root path="spring-context-${version.spring}.jar"/>
-        <resource-root path="spring-jms-${version.spring}.jar"/>
-        <resource-root path="spring-jdbc-${version.spring}.jar"/>
-        <resource-root path="spring-tx-${version.spring}.jar"/>
-        <resource-root path="spring-orm-${version.spring}.jar"/>
-        <resource-root path="spring-jdbc-${version.spring}.jar"/>
+        <resource-root path="spring-beans-${version.org.springframework}.jar"/>
+        <resource-root path="spring-core-${version.org.springframework}.jar"/>
+        <resource-root path="spring-context-${version.org.springframework}.jar"/>
+        <resource-root path="spring-jms-${version.org.springframework}.jar"/>
+        <resource-root path="spring-jdbc-${version.org.springframework}.jar"/>
+        <resource-root path="spring-tx-${version.org.springframework}.jar"/>
+        <resource-root path="spring-orm-${version.org.springframework}.jar"/>
+        <resource-root path="spring-jdbc-${version.org.springframework}.jar"/>
     </resources>
 
     <dependencies>

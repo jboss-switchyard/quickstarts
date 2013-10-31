@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.apache.commons.collections">
 
     <resources>
-        <resource-root path="commons-collections-${version.commons.collections}.jar"/>
+        <resource-root path="commons-collections-${version.commons-collections}.jar"/>
     </resources>
 
     <dependencies>

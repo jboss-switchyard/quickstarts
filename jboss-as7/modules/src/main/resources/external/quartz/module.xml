@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.quartz-scheduler.quartz">
 
     <resources>
-        <resource-root path="quartz-${version.quartz}.jar"/>
+        <resource-root path="quartz-${version.org.quartz-scheduler}.jar"/>
     </resources>
 
     <dependencies>

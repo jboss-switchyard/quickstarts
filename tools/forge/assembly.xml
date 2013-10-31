@@ -77,8 +77,8 @@
             <outputDirectory>dependencies/${project.version}</outputDirectory>
             <includes>
               <include>org.apache.camel:camel-core</include>
-              <include>org.apache.xalan:xalan</include>
-              <include>org.apache.xalan:serializer</include>
+              <include>xalan:xalan</include>
+              <include>xalan:serializer</include>
             </includes>
         </dependencySet>
     </dependencySets>

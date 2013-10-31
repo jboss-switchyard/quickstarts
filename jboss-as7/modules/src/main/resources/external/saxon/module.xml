@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="net.sourceforge.saxon">
 
     <resources>
-        <resource-root path="saxonhe-${version.saxon}.jar"/>
+        <resource-root path="saxonhe-${version.net.sourceforge.saxon}.jar"/>
     </resources>
 
     <dependencies>

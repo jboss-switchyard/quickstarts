@@ -102,7 +102,7 @@
                                 <artifactItem>
                                     <groupId>mc4j</groupId>
                                     <artifactId>org-mc4j-ems</artifactId>
-                                    <version>${version.ems}</version>
+                                    <version>${version.mc4j}</version>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>

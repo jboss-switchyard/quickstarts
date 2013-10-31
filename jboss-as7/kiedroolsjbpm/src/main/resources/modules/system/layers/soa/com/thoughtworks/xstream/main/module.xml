@@ -14,7 +14,7 @@
   -->
 <module xmlns="urn:jboss:module:1.0" name="com.thoughtworks.xstream">
     <resources>
-        <resource-root path="xstream-${version.xstream}.jar"/>
+        <resource-root path="xstream-${version.com.thoughtworks.xstream}.jar"/>
     </resources>
     <dependencies>
         <module name="javax.api"/>

@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.apache.camel.jms">
 
     <resources>
-        <resource-root path="camel-jms-${version.camel}.jar"/>
+        <resource-root path="camel-jms-${version.org.apache.camel}.jar"/>
     </resources>
 
     <dependencies>

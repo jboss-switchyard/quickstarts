@@ -4,7 +4,7 @@
     <!-- external libs -->
     <resource-root path="xalan-${version.xalan}.jar"/>
     <resource-root path="serializer-${version.xalan}.jar"/>
-    <resource-root path="camel-core-${version.camel}.jar"/>
+    <resource-root path="camel-core-${version.org.apache.camel}.jar"/>
       
     <!-- switchyard libs -->
     <resource-root path="switchyard-api-${project.version}.jar"/>

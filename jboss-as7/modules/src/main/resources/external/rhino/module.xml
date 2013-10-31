@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="rhino">
 
     <resources>
-        <resource-root path="js-${version.rhino}.jar"/>
+        <resource-root path="js-${version.rhino.js}.jar"/>
     </resources>
 
     <dependencies>

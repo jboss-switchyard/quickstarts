@@ -14,7 +14,7 @@
   -->
 <module xmlns="urn:jboss:module:1.0" name="com.google.protobuf">
     <resources>
-        <resource-root path="protobuf-java-${version.protobuf}.jar"/>
+        <resource-root path="protobuf-java-${version.com.google.protobuf}.jar"/>
     </resources>
     <dependencies>
         <module name="org.jbpm"/>
