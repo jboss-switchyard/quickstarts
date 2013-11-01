@@ -26,6 +26,7 @@
                 <outboundInteraction>
                     <processor type="org.switchyard.component.jca.processor.JMSProcessor">
                         <property name="destination" value="ShippingQueue"/>
+                        <property name="messageType" value="Text"/>
                     </processor>
                 </outboundInteraction>
             </binding.jca>
@@ -39,6 +40,7 @@
                 <outboundInteraction>
                     <processor type="org.switchyard.component.jca.processor.JMSProcessor">
                         <property name="destination" value="FillingStockQueue"/>
+                        <property name="messageType" value="Text"/>
                     </processor>
                 </outboundInteraction>
             </binding.jca>

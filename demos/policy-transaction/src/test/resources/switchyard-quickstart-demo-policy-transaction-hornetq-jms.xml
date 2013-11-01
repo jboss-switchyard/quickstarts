@@ -4,18 +4,23 @@
         <jms-destinations>
             <jms-queue name="policyQSTransacted">
                 <entry name="policyQSTransacted"/>
+                <durable>false</durable>
             </jms-queue>
             <jms-queue name="policyQSNonTransacted">
                 <entry name="policyQSNonTransacted"/>
+                <durable>false</durable>
             </jms-queue>
             <jms-queue name="queueA">
                 <entry name="queueA"/>
+                <durable>false</durable>
             </jms-queue>
             <jms-queue name="queueB">
                 <entry name="queueB"/>
+                <durable>false</durable>
             </jms-queue>
             <jms-queue name="queueC">
                 <entry name="queueC"/>
+                <durable>false</durable>
             </jms-queue>
          </jms-destinations>
     </hornetq-server>

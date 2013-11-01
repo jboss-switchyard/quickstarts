@@ -4,6 +4,7 @@
         <jms-destinations>
             <jms-queue name="JCAInflowGreetingServiceQueue">
                 <entry name="JCAInflowGreetingServiceQueue"/>
+                <durable>false</durable>
             </jms-queue>
         </jms-destinations>
     </hornetq-server>

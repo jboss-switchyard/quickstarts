@@ -13,70 +13,87 @@
  */
 package org.switchyard.quickstarts.jca.inflow;
 
+import java.io.File;
+import java.util.zip.ZipFile;
+
+import javax.annotation.Resource;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
+import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import junit.framework.Assert;
-
+import org.jboss.logging.Logger;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.importer.ZipImporter;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.Exchange;
-import org.switchyard.test.BeforeDeploy;
-import org.switchyard.test.MockHandler;
-import org.switchyard.test.SwitchYardRunner;
-import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.test.SwitchYardTestKit;
-import org.switchyard.component.test.mixins.cdi.CDIMixIn;
-import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
-import org.switchyard.component.test.mixins.jca.JCAMixIn;
-import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
 
 /**
- * Functional test for a SwitchYard Service which has a service binding to a HornetQ
- * queue via JCA inflow.
- * 
- * @author Daniel Bevenius
+ * Functional test for the switchyard-quickstart-jca-inflow-hornetq.
  */
-@RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(
-        config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-        mixins = {HornetQMixIn.class, JCAMixIn.class, CDIMixIn.class}
-)
+@RunWith(Arquillian.class)
 public class JCAInflowBindingTest {
+    private static final String QUEUE_FILE = "target/test-classes/switchyard-quickstart-jca-inflow-hornetq-jms.xml";
+    private static final String USER = "guest";
+    private static final String PASSWD = "guestp.1";
+    private static final String JAR_FILE = "target/switchyard-quickstart-jca-inflow-hornetq.jar";
+
+    private static Logger _logger = Logger.getLogger(JCAInflowBindingTest.class);
     
-    private SwitchYardTestKit _testKit;
-    private HornetQMixIn _hqMixIn;
-    private JCAMixIn _jcaMixIn;
+    @Resource(mappedName = "/ConnectionFactory")
+    private ConnectionFactory _connectionFactory;
     
-    @BeforeDeploy
-    public void before() {
-        ResourceAdapterConfig ra = new ResourceAdapterConfig(ResourceAdapterConfig.ResourceAdapterType.HORNETQ);
-        _jcaMixIn.deployResourceAdapters(ra);
+    @Resource(mappedName = "JCAInflowGreetingServiceQueue")
+    private Destination _destination;
+    
+    @Deployment
+    public static Archive<?> createTestArchive() {
+        File artifact = new File(JAR_FILE);
+        try {
+            return ShrinkWrap.create(ZipImporter.class, artifact.getName())
+                         .importFrom(new ZipFile(artifact))
+                         .as(JavaArchive.class)
+                         .addAsManifestResource(new File(QUEUE_FILE));
+        } catch (Exception e) {
+            throw new RuntimeException(JAR_FILE + " not found. Do \"mvn package\" before the test", e);
+        }
     }
-    /**
-     * Triggers the 'GreetingService' by sending a HornetQ Message to the 'GreetingServiceQueue'
-     */
+    
     @Test
     public void triggerGreetingService() throws Exception {
-        // replace existing implementation for testing purposes
-        _testKit.removeService("GreetingService");
-        final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
+        Connection conn = _connectionFactory.createConnection(USER, PASSWD);
         
-        final MessageProducer producer = _hqMixIn.getJMSSession().createProducer(HornetQMixIn.getJMSQueue("JCAInflowGreetingServiceQueue"));
-        final TextMessage message = _hqMixIn.getJMSSession().createTextMessage();
-        message.setText(PAYLOAD);
-        producer.send(message);
-
-        greetingService.waitForOKMessage();
-
-        final Exchange recievedExchange = greetingService.getMessages().iterator().next();
-        Assert.assertEquals(PAYLOAD, recievedExchange.getMessage().getContent(String.class));
+        try {
+            Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            MessageProducer producer = session.createProducer(_destination);
+            TextMessage message = session.createTextMessage();
+            message.setText(PAYLOAD);
+            producer.send(message);
+            session.close();
+            _logger.info("Sent a message into " + _destination.toString() + " - following message should appear on server console:");
+            _logger.info("Hello there dummy :-)");
+            
+            session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            MessageConsumer consumer = session.createConsumer(_destination);
+            conn.start();
+            Assert.assertNull("Request message is still in the queue: " + _destination.toString(), consumer.receive(3000));
+        } finally {
+            conn.close();
+        }
     }
     
     private static final String PAYLOAD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            + "<qs:person xmlnl:qs=\"urn:switchyard-quickstart:jca-inflow-hornetq:0.1.0\">\n"
-            + "    <qs:name>dummy</qs:name>\n"
-            + "    <qs:language>english</qs:language>\n"
-            + "</qs:person>\n";
+            + "<person xmlns=\"urn:switchyard-quickstart:jca-inflow-hornetq:0.1.0\">\n"
+            + "    <name>dummy</name>\n"
+            + "    <language>english</language>\n"
+            + "</person>\n";
     
 }

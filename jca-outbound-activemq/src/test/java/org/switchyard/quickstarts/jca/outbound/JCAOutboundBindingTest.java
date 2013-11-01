@@ -17,99 +17,126 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.ZipFile;
 
+import javax.jms.Connection;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.apache.activemq.ActiveMQConnectionMetaData;
-import org.jboss.shrinkwrap.api.exporter.ZipExporter;
-import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.usage.SystemUsage;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.importer.ZipImporter;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.component.test.mixins.activemq.ActiveMQMixIn;
-import org.switchyard.component.test.mixins.cdi.CDIMixIn;
-import org.switchyard.component.test.mixins.jca.JCAMixIn;
-import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
-import org.switchyard.test.BeforeDeploy;
-import org.switchyard.test.ShrinkwrapUtil;
-import org.switchyard.test.SwitchYardRunner;
-import org.switchyard.test.SwitchYardTestCaseConfig;
 
 /**
- * Functional test for a SwitchYard Service which has reference bindings to a HornetQ
- * queue via JCA outbound.
- * 
- * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
+ * Functional test for a switchyard-quickstart-jca-outbound-activemq.
  */
-@RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(
-        config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-        mixins = {ActiveMQMixIn.class, JCAMixIn.class, CDIMixIn.class}
-)
+@RunWith(Arquillian.class)
 public class JCAOutboundBindingTest {
+    private static final String JAR_FILE = "target/switchyard-quickstart-jca-outbound-activemq.jar";
     private static final String ORDER_QUEUE = "OrderQueue";
     private static final String SHIPPING_QUEUE = "ShippingQueue";
     private static final String FILLING_STOCK_QUEUE = "FillingStockQueue";
     
-    private ActiveMQMixIn mixIn;
-    private JCAMixIn _jcaMixIn;
+    private static final File ACTIVEMQ_DATA_DIR = new File(System.getProperty("java.io.tmpdir"), "activemq-data");
+    private static final long MEMORY_STORE_USAGE_LIMIT = 209715200;
+    private static final long TEMP_STORE_USAGE_LIMIT = 209715200;
+
+    private static BrokerService _broker;
     
-    @BeforeDeploy
-    public void before() {
-        ResourceAdapterConfig ra = new ResourceAdapterConfig(ResourceAdapterConfig.ResourceAdapterType.OTHER);
-        ra.setName("activemq-ra.rar");
-
-        String version = ActiveMQConnectionMetaData.PROVIDER_VERSION;
-
-        // place activemq-ra.rar in test-classes directory to don't ship this dependency as binary
-        File output = new File("target/test-classes", "activemq-ra.rar");
-        ResourceAdapterArchive rar = ShrinkwrapUtil.getArchive("org.apache.activemq", "activemq-rar", version, ResourceAdapterArchive.class, "rar");
-        // copy ironjacamar configuration to resource adapter
-        rar.addAsManifestResource("ironjacamar.xml");
-        rar.as(ZipExporter.class).exportTo(output, true);
-
-        _jcaMixIn.deployResourceAdapters(ra);
+    public static void startActiveMQBroker() throws Exception {
+        _broker = new BrokerService();
+        _broker.setBrokerName("default");
+        _broker.setUseJmx(false);
+        _broker.setPersistent(false);
+        _broker.setDataDirectoryFile(ACTIVEMQ_DATA_DIR);
+        _broker.addConnector(ActiveMQConnectionFactory.DEFAULT_BROKER_BIND_URL);
+        SystemUsage systemUsage = _broker.getSystemUsage();
+        systemUsage.getMemoryUsage().setLimit(MEMORY_STORE_USAGE_LIMIT);
+        systemUsage.getTempUsage().setLimit(TEMP_STORE_USAGE_LIMIT);
+        _broker.start();
     }
+    
+    @Deployment
+    public static Archive<?> createTestArchive() throws Exception {
+        startActiveMQBroker();
+        
+        File artifact = new File(JAR_FILE);
+        try {
+            return ShrinkWrap.create(ZipImporter.class, artifact.getName())
+                             .importFrom(new ZipFile(artifact))
+                             .as(JavaArchive.class);
+        } catch (Exception e) {
+            throw new RuntimeException(JAR_FILE + " not found. Do \"mvn package\" before the test", e);
+         }
+    }
+
     /**
-     * Triggers the 'OrderService' by sending a HornetQ Message to the 'OrderQueue'
+     * Triggers the 'OrderService' by sending a ActiveMQ Message to the 'OrderQueue'
      */
     @Test
     public void testOrderService() throws Exception {
         String[] orders = {"BREAD", "PIZZA", "JAM", "POTATO", "MILK", "JAM"};
+        ActiveMQConnectionFactory connectionFactory =
+                new ActiveMQConnectionFactory(ActiveMQConnectionFactory.DEFAULT_BROKER_URL);
+
+        Connection connection = null;
+        try {
+            connection = connectionFactory.createConnection(
+                    ActiveMQConnectionFactory.DEFAULT_USER,
+                    ActiveMQConnectionFactory.DEFAULT_PASSWORD);
+            connection.start();
+
+            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+       
+            MessageProducer producer = session.createProducer(session.createQueue(ORDER_QUEUE));
+            for (String order : orders ) {
+                TextMessage message = session.createTextMessage();
+                message.setText(order);
+                producer.send(message);
+            }
+            session.close();
         
-        Session session = mixIn.getSession();
-        final MessageProducer producer = session.createProducer(session.createQueue(ORDER_QUEUE));
-        for (String order : orders ) {
-            final TextMessage message = session.createTextMessage();
-            message.setText(order);
-            producer.send(message);
-        }
-        session.close();
-        
-        Thread.sleep(1000);
-        
-        session = mixIn.getSession();
-        MessageConsumer consumer = session.createConsumer(session.createQueue(SHIPPING_QUEUE));
-        List<String> expectedShippingOrders = new ArrayList<String>(Arrays.asList("BREAD", "JAM", "MILK", "JAM"));
-        Message msg = null;
-        while ((msg = consumer.receive(1000)) != null) {
-            if (msg instanceof TextMessage) {
-                Assert.assertTrue(expectedShippingOrders.remove(((TextMessage) msg).getText()));
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            MessageConsumer consumer = session.createConsumer(session.createQueue(ORDER_QUEUE));
+            Assert.assertNull("Request message is still in the queue: " + ORDER_QUEUE, consumer.receive(3000));
+            consumer.close();
+            
+            consumer = session.createConsumer(session.createQueue(SHIPPING_QUEUE));
+            List<String> expectedShippingOrders = new ArrayList<String>(Arrays.asList("BREAD", "JAM", "MILK", "JAM"));
+            Message msg = null;
+            while ((msg = consumer.receive(1000)) != null) {
+                if (msg instanceof TextMessage) {
+                    Assert.assertTrue(expectedShippingOrders.remove(((TextMessage) msg).getText()));
+                }
+            }
+            Assert.assertEquals(0, expectedShippingOrders.size());
+            consumer.close();
+            
+            consumer = session.createConsumer(session.createQueue(FILLING_STOCK_QUEUE));
+            List<String> expectedFillingStockOrders = new ArrayList<String>(Arrays.asList("PIZZA", "POTATO"));
+            while ((msg = consumer.receive(1000)) != null) {
+                if (msg instanceof TextMessage) {
+                    Assert.assertTrue(expectedFillingStockOrders.remove(((TextMessage) msg).getText()));
+                }
+            }
+            Assert.assertEquals(0, expectedFillingStockOrders.size());
+            session.close();
+        } finally {
+            if (connection != null) {
+                connection.close();
             }
         }
-        Assert.assertEquals(0, expectedShippingOrders.size());
-        
-        consumer = session.createConsumer(session.createQueue(FILLING_STOCK_QUEUE));
-        List<String> expectedFillingStockOrders = new ArrayList<String>(Arrays.asList("PIZZA", "POTATO"));
-        while ((msg = consumer.receive(1000)) != null) {
-            if (msg instanceof TextMessage) {
-                Assert.assertTrue(expectedFillingStockOrders.remove(((TextMessage) msg).getText()));
-            }
-        }
-        Assert.assertEquals(0, expectedFillingStockOrders.size());
     }
 }

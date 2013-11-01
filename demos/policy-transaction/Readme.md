@@ -114,3 +114,22 @@ Notes
 o Due to an issue with shutdown processing, server shutdown may take
   more than 2 minutes when this quickstart is deployed.  To avoid this
   problem, undeploy the application before shutting down the server.
+
+Running a functional test
+=========================
+
+Since this quickstart requires Java EE environment, the functional test
+"JmsBindingTest" does not run by default. You need to execute it manually
+by following steps.
+
+1. Build the quickstart:
+
+        mvn clean package
+
+2. Start JBoss AS 7 in standalone-full mode:
+
+        ${AS}/bin/standalone.sh --server-config=standalone-full.xml
+
+3. Execute the test:
+
+        mvn test -DskipTests=false

@@ -23,6 +23,9 @@
     <groupId>org.switchyard.quickstarts.demos</groupId>
     <artifactId>switchyard-quickstart-demo-policy-transaction</artifactId>
     <name>Quickstart Demo : Transaction Policy</name>
+    <properties>
+        <skipTests>true</skipTests>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -48,11 +51,6 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-test-mixin-cdi</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-test-mixin-jca</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -87,6 +85,16 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-arquillian-container-remote</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -145,6 +153,13 @@
                     <executable>java</executable>
                     <classpathScope>test</classpathScope>
                     <mainClass>org.switchyard.quickstarts.demo.policy.transaction.HornetQClient</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>${skipTests}</skip>
                 </configuration>
             </plugin>
         </plugins>

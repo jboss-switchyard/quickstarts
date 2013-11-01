@@ -16,18 +16,16 @@ package org.switchyard.quickstarts.jca.inflow;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
  * Person.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
+@XmlType(name = "person", propOrder = {
     "_name",
     "_language"
 })
-@XmlRootElement(name = "person")
 public class Person {
 
     @XmlElement(name="name", required = true)
