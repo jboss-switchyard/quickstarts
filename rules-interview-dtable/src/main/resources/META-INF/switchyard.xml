@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:rules="urn:switchyard-component-rules:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:soap="urn:switchyard-component-soap:config:1.0" name="rules-interview-dtable">
+<switchyard xmlns="urn:switchyard-config:switchyard:1.1" xmlns:rules="urn:switchyard-component-rules:config:1.1" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:soap="urn:switchyard-component-soap:config:1.1" name="rules-interview-dtable">
   <sca:composite name="Interview" targetNamespace="urn:switchyard-quickstart:rules-interview-dtable:0.1.0">
     <sca:service name="Interview" promote="Interview/Interview">
       <sca:interface.java interface="org.switchyard.quickstarts.rules.interview.Interview"/>
@@ -41,8 +41,8 @@
     </sca:component>
   </sca:composite>
   <transforms>
-    <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.rules.interview.Transformers" from="{urn:switchyard-quickstart:rules-interview-dtable:0.1.0}verify" to="java:org.switchyard.quickstarts.rules.interview.Applicant"/>
-    <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.rules.interview.Transformers" from="java:boolean" to="{urn:switchyard-quickstart:rules-interview-dtable:0.1.0}verifyResponse"/>
+    <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.quickstarts.rules.interview.Transformers" from="{urn:switchyard-quickstart:rules-interview-dtable:0.1.0}verify" to="java:org.switchyard.quickstarts.rules.interview.Applicant"/>
+    <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.quickstarts.rules.interview.Transformers" from="java:boolean" to="{urn:switchyard-quickstart:rules-interview-dtable:0.1.0}verifyResponse"/>
   </transforms>
   <domain>
     <properties>
