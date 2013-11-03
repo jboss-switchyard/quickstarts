@@ -53,6 +53,25 @@ Expected Results
 [INFO] ------------------------------------------------------------------------
 ```
 
+Running a functional test
+=========================
+
+Since this quickstart requires Java EE environment, the functional test
+"JCAOutboundBindingTest" does not run by default. You need to execute it manually
+by following steps.
+
+1. Build the quickstart:
+
+        mvn clean package
+
+2. Start JBoss AS 7 in standalone-full mode:
+
+        ${AS}/bin/standalone.sh --server-config=standalone-full.xml
+
+3. Execute the test:
+
+        mvn test -DskipTests=false
+
 ## Further Reading
 
 1. [JCA Bindings Documentation](https://docs.jboss.org/author/display/SWITCHYARD/JCA)

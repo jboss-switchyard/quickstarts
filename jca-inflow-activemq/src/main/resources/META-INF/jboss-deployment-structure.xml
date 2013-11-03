@@ -1,0 +1,7 @@
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.1">  
+    <deployment>  
+        <dependencies>  
+            <module name="deployment.activemq-ra.rar"/>  
+        </dependencies>  
+    </deployment>  
+</jboss-deployment-structure>

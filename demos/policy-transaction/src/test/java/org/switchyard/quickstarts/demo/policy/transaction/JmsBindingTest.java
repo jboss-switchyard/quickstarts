@@ -13,58 +13,68 @@
  */
 package org.switchyard.quickstarts.demo.policy.transaction;
 
+import java.io.File;
+import java.util.zip.ZipFile;
+
+import javax.annotation.Resource;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.junit.After;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.importer.ZipImporter;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.component.test.mixins.cdi.CDIMixIn;
-import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
-import org.switchyard.component.test.mixins.jca.JCAMixIn;
-import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
-import org.switchyard.test.BeforeDeploy;
-import org.switchyard.test.SwitchYardRunner;
-import org.switchyard.test.SwitchYardTestCaseConfig;
 
 /**
  * Functional test for a policy-transaction demo quickstart.
  */
-@RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(
-        config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-        mixins = {HornetQMixIn.class, JCAMixIn.class, CDIMixIn.class}
-)
+@RunWith(Arquillian.class)
 public class JmsBindingTest {
-    private static final String QUEUE_IN = "policyQSTransacted";
-    private static final String QUEUE_IN_NOTX = "policyQSNonTransacted";
-    private static final String QUEUE_OUT_A = "queueA";
-    private static final String QUEUE_OUT_B = "queueB";
-    private static final String QUEUE_OUT_C = "queueC";
+    private static final String QUEUE_FILE = "target/test-classes/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml";
+    private static final String USER = "guest";
+    private static final String PASSWD = "guestp.1";
+    private static final String JAR_FILE = "target/switchyard-quickstart-demo-policy-transaction.jar";
     
-    private HornetQMixIn _hqMixIn;
-    private JCAMixIn _jcaMixIn;
+    @Resource(mappedName = "/ConnectionFactory")
+    private ConnectionFactory _connectionFactory;
     
-    @BeforeDeploy
-    public void before() {
-        ResourceAdapterConfig ra = new ResourceAdapterConfig(ResourceAdapterConfig.ResourceAdapterType.HORNETQ);
-        _jcaMixIn.deployResourceAdapters(ra);
-    }
-    
-    @After
-    public void after() throws Exception {
-        Session session = _hqMixIn.createJMSSession();
-        MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_A));
-        while (consumer.receive(1000) != null);
-        consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_B));
-        while (consumer.receive(1000) != null);
-        consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_C));
-        while (consumer.receive(1000) != null);
-        session.close();
+    @Resource(mappedName = "policyQSTransacted")
+    private Destination _queueIn;
+
+    @Resource(mappedName = "policyQSNonTransacted")
+    private Destination _queueInNoTx;
+
+    @Resource(mappedName = "queueA")
+    private Destination _queueOutA;
+
+    @Resource(mappedName = "queueB")
+    private Destination _queueOutB;
+
+    @Resource(mappedName = "queueC")
+    private Destination _queueOutC;
+
+    @Deployment
+    public static Archive<?> createTestArchive() {
+        File artifact = new File(JAR_FILE);
+        try {
+            return ShrinkWrap.create(ZipImporter.class, artifact.getName())
+                             .importFrom(new ZipFile(artifact))
+                             .as(JavaArchive.class)
+                             .addAsManifestResource(new File(QUEUE_FILE));
+        } catch (Exception e) {
+            throw new RuntimeException(JAR_FILE + " not found. Do \"mvn package\" before the test", e);
+         }
     }
     
     /**
@@ -73,90 +83,112 @@ public class JmsBindingTest {
     @Test
     public void testRollbackA() throws Exception {
         String command = "rollback.A";
+        Connection conn = _connectionFactory.createConnection(USER, PASSWD);
+        conn.start();
         
-        Session session = _hqMixIn.getJMSSession();
-        final MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(QUEUE_IN));
-        final TextMessage message = _hqMixIn.getJMSSession().createTextMessage();
-        message.setText(command);
-        producer.send(message);
-        session.close();
+        try {
+            Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            MessageProducer producer = session.createProducer(_queueIn);
+            TextMessage message = session.createTextMessage();
+            message.setText(command);
+            producer.send(message);
+            session.close();
         
-        session = _hqMixIn.createJMSSession();
-        MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_A));
-        ObjectMessage msg = ObjectMessage.class.cast(consumer.receive(30000));
-        Assert.assertEquals(command, msg.getObject());
-        Assert.assertNull(consumer.receive(1000));
+            session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            MessageConsumer consumer = session.createConsumer(_queueOutA);
+            ObjectMessage msg = ObjectMessage.class.cast(consumer.receive(30000));
+            Assert.assertEquals(command, msg.getObject());
+            Assert.assertNull(consumer.receive(1000));
+            consumer.close();
 
-        consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_B));
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        Assert.assertNull(consumer.receive(1000));
-        
-        consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_C));
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        Assert.assertNull(consumer.receive(1000));
-        session.close();
+            consumer = session.createConsumer(_queueOutB);
+            msg = ObjectMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getObject());
+            msg = ObjectMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getObject());
+            msg = ObjectMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getObject());
+            msg = ObjectMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getObject());
+            Assert.assertNull(consumer.receive(1000));
+            consumer.close();
+            
+            consumer = session.createConsumer(_queueOutC);
+            msg = ObjectMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getObject());
+            msg = ObjectMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getObject());
+            msg = ObjectMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getObject());
+            msg = ObjectMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getObject());
+            Assert.assertNull(consumer.receive(1000));
+            session.close();
+        } finally {
+            conn.close();
+        }
     }
     
     @Test
     public void testRollbackB() throws Exception {
         String command = "rollback.B";
+        Connection conn = _connectionFactory.createConnection(USER, PASSWD);
+        conn.start();
         
-        Session session = _hqMixIn.getJMSSession();
-        final MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(QUEUE_IN));
-        final TextMessage message = _hqMixIn.getJMSSession().createTextMessage();
-        message.setText(command);
-        producer.send(message);
-        session.close();
+        try {
+            Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            MessageProducer producer = session.createProducer(_queueIn);
+            TextMessage message = session.createTextMessage();
+            message.setText(command);
+            producer.send(message);
+            session.close();
         
-        session = _hqMixIn.createJMSSession();
-        MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_A));
-        ObjectMessage msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        Assert.assertNull(consumer.receive(1000));
+            session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            MessageConsumer consumer = session.createConsumer(_queueOutA);
+            ObjectMessage msg = ObjectMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getObject());
+            Assert.assertNull(consumer.receive(1000));
+            consumer.close();
 
-        consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_B));
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        Assert.assertNull(consumer.receive(1000));
-        
-        consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_C));
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        Assert.assertNull(consumer.receive(1000));
-        session.close();
+            consumer = session.createConsumer(_queueOutB);
+            msg = ObjectMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getObject());
+            Assert.assertNull(consumer.receive(1000));
+            consumer.close();
+            
+            consumer = session.createConsumer(_queueOutC);
+            msg = ObjectMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getObject());
+            Assert.assertNull(consumer.receive(1000));
+            session.close();
+        } finally {
+            conn.close();
+        }
     }
     
     @Test
     public void testNonTransacted() throws Exception {
         String command = "rollback.A";
+        Connection conn = _connectionFactory.createConnection(USER, PASSWD);
+        conn.start();
         
-        Session session = _hqMixIn.getJMSSession();
-        final MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(QUEUE_IN_NOTX));
-        final TextMessage message = _hqMixIn.getJMSSession().createTextMessage();
-        message.setText(command);
-        producer.send(message);
-        session.close();
+        try {
+            Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            MessageProducer producer = session.createProducer(_queueInNoTx);
+            TextMessage message = session.createTextMessage();
+            message.setText(command);
+            producer.send(message);
+            session.close();
         
-        session = _hqMixIn.createJMSSession();
-        MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_A));
-        Assert.assertNull(consumer.receive(1000));
-        consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_B));
-        Assert.assertNull(consumer.receive(1000));
-        consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_C));
-        Assert.assertNull(consumer.receive(1000));
+            session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            MessageConsumer consumer = session.createConsumer(_queueOutA);
+            Assert.assertNull(consumer.receive(1000));
+            consumer = session.createConsumer(_queueOutB);
+            Assert.assertNull(consumer.receive(1000));
+            consumer = session.createConsumer(_queueOutC);
+            Assert.assertNull(consumer.receive(1000));
+        } finally {
+            conn.close();
+        }
     }
 }

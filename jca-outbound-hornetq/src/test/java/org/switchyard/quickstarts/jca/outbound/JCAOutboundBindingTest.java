@@ -13,83 +13,106 @@
  */
 package org.switchyard.quickstarts.jca.outbound;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.ZipFile;
 
+import javax.annotation.Resource;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.importer.ZipImporter;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.test.BeforeDeploy;
-import org.switchyard.test.SwitchYardRunner;
-import org.switchyard.test.SwitchYardTestCaseConfig;
-import org.switchyard.component.test.mixins.cdi.CDIMixIn;
-import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
-import org.switchyard.component.test.mixins.jca.JCAMixIn;
-import org.switchyard.component.test.mixins.jca.ResourceAdapterConfig;
 
 /**
- * Functional test for a SwitchYard Service which has reference bindings to a HornetQ
- * queue via JCA outbound.
- * 
- * @author <a href="mailto:tm.igarashi@gmail.com">Tomohisa Igarashi</a>
+ * Functional test for the switchyard-quickstart-jca-outbound-hornetq.
  */
-@RunWith(SwitchYardRunner.class)
-@SwitchYardTestCaseConfig(
-        config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-        mixins = {HornetQMixIn.class, JCAMixIn.class, CDIMixIn.class}
-)
+@RunWith(Arquillian.class)
 public class JCAOutboundBindingTest {
-    private static final String ORDER_QUEUE = "OrderQueue";
-    private static final String SHIPPING_QUEUE = "ShippingQueue";
-    private static final String FILLING_STOCK_QUEUE = "FillingStockQueue";
+    private static final String QUEUE_FILE = "target/test-classes/switchyard-quickstart-jca-outbound-hornetq-jms.xml";
+    private static final String USER = "guest";
+    private static final String PASSWD = "guestp.1";
+    private static final String JAR_FILE = "target/switchyard-quickstart-jca-outbound-hornetq.jar";
     
-    private HornetQMixIn _hqMixIn;
-    private JCAMixIn _jcaMixIn;
+    @Resource(mappedName = "/ConnectionFactory")
+    private ConnectionFactory _connectionFactory;
     
-    @BeforeDeploy
-    public void before() {
-        ResourceAdapterConfig ra = new ResourceAdapterConfig(ResourceAdapterConfig.ResourceAdapterType.HORNETQ);
-        _jcaMixIn.deployResourceAdapters(ra);
+    @Resource(mappedName = "OrderQueue")
+    private Destination _orderQueue;
+    
+    @Resource(mappedName = "ShippingQueue")
+    private Destination _shippingQueue;
+    
+    @Resource(mappedName = "FillingStockQueue")
+    private Destination _fillingStockQueue;
+
+    @Deployment
+    public static Archive<?> createTestArchive() {
+        File artifact = new File(JAR_FILE);
+        try {
+            return ShrinkWrap.create(ZipImporter.class, artifact.getName())
+                             .importFrom(new ZipFile(artifact))
+                             .as(JavaArchive.class)
+                             .addAsManifestResource(new File(QUEUE_FILE));
+	} catch (Exception e) {
+            throw new RuntimeException(JAR_FILE + " not found. Do \"mvn package\" before the test", e);
+         }
     }
-    /**
-     * Triggers the 'OrderService' by sending a HornetQ Message to the 'OrderQueue'
-     */
+    
     @Test
     public void testOrderService() throws Exception {
         String[] orders = {"BREAD", "PIZZA", "JAM", "POTATO", "MILK", "JAM"};
+        Connection conn = _connectionFactory.createConnection(USER, PASSWD);
+        conn.start();
         
-        Session session = _hqMixIn.getJMSSession();
-        final MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(ORDER_QUEUE));
-        for (String order : orders ) {
-            final TextMessage message = _hqMixIn.getJMSSession().createTextMessage();
-            message.setText(order);
-            producer.send(message);
+        try {
+            Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            MessageProducer producer = session.createProducer(_orderQueue);
+            for (String order : orders ) {
+                final TextMessage message = session.createTextMessage();
+                message.setText(order);
+                producer.send(message);
+            }
+            session.close();
+        
+            session = conn.createSession(false,  Session.AUTO_ACKNOWLEDGE);
+            MessageConsumer consumer = session.createConsumer(_orderQueue);
+            Assert.assertNull("Request message is still in the queue:" + _orderQueue, consumer.receive(3000));
+            consumer.close();
+            
+            consumer = session.createConsumer(_shippingQueue);
+            List<String> expectedShippingOrders = new ArrayList<String>(Arrays.asList("BREAD", "JAM", "MILK", "JAM"));
+            Message msg = null;
+            while ((msg = consumer.receive(1000)) != null) {
+                Assert.assertTrue(expectedShippingOrders.remove(TextMessage.class.cast(msg).getText()));
+            }
+            Assert.assertEquals(0, expectedShippingOrders.size());
+            consumer.close();
+            
+            consumer = session.createConsumer(_fillingStockQueue);
+            List<String> expectedFillingStockOrders = new ArrayList<String>(Arrays.asList("PIZZA", "POTATO"));
+            while ((msg = consumer.receive(1000)) != null) {
+                Assert.assertTrue(expectedFillingStockOrders.remove(TextMessage.class.cast(msg).getText()));
+            }
+            Assert.assertEquals(0, expectedFillingStockOrders.size());
+            consumer.close();
+        } finally {
+            conn.close();
         }
-        session.close();
-        
-        Thread.sleep(1000);
-        
-        session = _hqMixIn.createJMSSession();
-        MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(SHIPPING_QUEUE));
-        List<String> expectedShippingOrders = new ArrayList<String>(Arrays.asList("BREAD", "JAM", "MILK", "JAM"));
-        Message msg = null;
-        while ((msg = consumer.receive(1000)) != null) {
-            Assert.assertTrue(expectedShippingOrders.remove(_hqMixIn.readStringFromJMSMessage(msg)));
-        }
-        Assert.assertEquals(0, expectedShippingOrders.size());
-        
-        consumer = session.createConsumer(HornetQMixIn.getJMSQueue(FILLING_STOCK_QUEUE));
-        List<String> expectedFillingStockOrders = new ArrayList<String>(Arrays.asList("PIZZA", "POTATO"));
-        while ((msg = consumer.receive(1000)) != null) {
-            Assert.assertTrue(expectedFillingStockOrders.remove(_hqMixIn.readStringFromJMSMessage(msg)));
-        }
-        Assert.assertEquals(0, expectedFillingStockOrders.size());
     }
 }

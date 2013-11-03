@@ -4,12 +4,15 @@
         <jms-destinations>
             <jms-queue name="OrderQueue">
                 <entry name="OrderQueue"/>
+                <durable>false</durable>
             </jms-queue>
             <jms-queue name="ShippingQueue">
                 <entry name="ShippingQueue"/>
+                <durable>false</durable>
             </jms-queue>
             <jms-queue name="FillingStockQueue">
                 <entry name="FillingStockQueue"/>
+                <durable>false</durable>
             </jms-queue>
         </jms-destinations>
     </hornetq-server>
