@@ -1,5 +1,5 @@
 
-Welcome to SwitchYard 1.0!  This doc contains some useful links to help you
+Welcome to SwitchYard 1.1!  This doc contains some useful links to help you
 get up and running with SwitchYard.
 
 Documentation
