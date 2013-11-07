@@ -23,8 +23,8 @@
     <module name="javax.xml.bind.api"/>
     <module name="javax.api"/>
     <module name="org.jboss.forge.shell.api"/>
+    <module name="org.jboss.logging"/>
     <module name="org.slf4j"/>
-    <module name="org.apache.log4j"/>
   </dependencies>
   
 </module>
