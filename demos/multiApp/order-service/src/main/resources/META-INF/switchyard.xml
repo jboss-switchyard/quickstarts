@@ -4,7 +4,7 @@
             <interface.wsdl interface="OrderService.wsdl#wsdl.porttype(OrderService)"/>
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
                 <wsdl>OrderService.wsdl</wsdl>
-                <socketAddr>:18001</socketAddr>
+                <socketAddr>:${jettyPort}</socketAddr>
                 <contextPath>quickstart-demo-multiapp</contextPath>
             </binding.soap>
         </service>
@@ -28,7 +28,12 @@
         <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.multiapp.service.Transformers" from="java:org.switchyard.quickstarts.demo.multiapp.OrderAck" to="{urn:switchyard-quickstart-demo:multiapp:1.0}submitOrderResponse"/>
         <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.multiapp.service.Transformers" from="{urn:switchyard-quickstart-demo:multiapp:1.0}submitOrder" to="java:org.switchyard.quickstarts.demo.multiapp.Order"/>
     </transforms>
+    <domain>
+        <properties>
+            <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+        </properties>
+    </domain>
     <artifacts>
-        <artifact name="OrderService" url="http://localhost:8080/guvnorsoa/rest/packages/OrderService"/>
+        <artifact name="OrderService" url="http://localhost:${jettyPort}/guvnorsoa/rest/packages/OrderService"/>
     </artifacts>
 </switchyard>

@@ -20,7 +20,12 @@
             </reference>
         </component>
     </composite>
+    <domain>
+        <properties>
+            <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+        </properties>
+    </domain>
     <artifacts>
-        <artifact name="OrderService" url="http://localhost:8080/guvnorsoa/rest/packages/OrderService"/>
+        <artifact name="OrderService" url="http://localhost:${jettyPort}/guvnorsoa/rest/packages/OrderService"/>
     </artifacts>
 </switchyard>
