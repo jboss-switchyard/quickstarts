@@ -37,12 +37,12 @@ public class SoapMtomClient {
     private static String WSDL = "http://localhost:8080/soap-mtom/ImageServiceService?wsdl";
 
     public static void main(String[] args) throws Exception {
-        Image image = sendMessage();
+        Image image = sendMessage(WSDL);
         System.out.println(image);
     }
 
-    public static Image sendMessage() throws Exception {
-        ImageService imageService = new ImageServiceService(new URL(WSDL)).getImageServicePort(new MTOMFeature());
+    public static Image sendMessage(String wsdl) throws Exception {
+        ImageService imageService = new ImageServiceService(new URL(wsdl)).getImageServicePort(new MTOMFeature());
 
         // Create the Image bytes and send it to the MTOM endpoint...
         URL fileURL = Classes.getResource("switchyard_icon.jpeg");

@@ -13,6 +13,7 @@
       <soap:binding.soap>
         <soap:wsdl>ImageService.wsdl</soap:wsdl>
         <soap:contextPath>soap-mtom</soap:contextPath>
+        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
         <soap:mtom xopExpand="true"/>
       </soap:binding.soap>
     </sca:service>
@@ -21,7 +22,7 @@
       <soap:binding.soap>
         <soap:contextMapper/>
         <soap:wsdl>ImageService-External.wsdl</soap:wsdl>
-        <soap:endpointAddress>http://localhost:8080/soap-mtom-external/ImageServiceService</soap:endpointAddress>
+        <soap:endpointAddress>http://localhost:${jettyPort}/soap-mtom-external/ImageServiceService</soap:endpointAddress>
         <soap:mtom xopExpand="true"/>
       </soap:binding.soap>
     </sca:reference>
@@ -43,6 +44,7 @@
         <soap:contextMapper/>
         <soap:wsdl>ImageService-External.wsdl</soap:wsdl>
         <soap:contextPath>soap-mtom-external</soap:contextPath>
+        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
         <soap:mtom xopExpand="true"/>
       </soap:binding.soap>
     </sca:service>
@@ -55,4 +57,9 @@
       </sca:service>
     </sca:component>
   </sca:composite>
+  <domain>
+    <properties>
+      <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+    </properties>
+  </domain>
 </switchyard>
