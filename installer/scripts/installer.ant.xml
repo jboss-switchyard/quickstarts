@@ -62,14 +62,14 @@
         
         <condition property="switchyardResourcesAlreadyInstalled">
             <or>
-                <available file="switchyard" filepath="${INSTALL_PATH}/modules/org/switchyard"/>
-                <available file="switchyard" filepath="${INSTALL_PATH}/modules/system/layers/soa"/>
+                <available file="switchyard" filepath="${INSTALL_PATH}/modules/org"/>
+                <available file="switchyard" filepath="${INSTALL_PATH}/modules/system/layers/soa/org"/>
             </or>
         </condition>
         
         <condition property="FinalGA">
             <or>
-                <available file="jbossws-spi-2.1.2.Final-redhat-1.jar" filepath="${INSTALL_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"/>
+                <not><available file="jbossws-spi-2.1.1.Final.jar" filepath="${INSTALL_PATH}/modules/system/layers/base/org/jboss/ws/spi/main"/></not>
                 <isset property="SKIP_WS_UPGRADE"/>
             </or>
         </condition>
@@ -161,12 +161,12 @@
     </target>
     
     <target name="unzip-jbossws-modules" unless="FinalGA">
-        <unzip src="res/switchyard-as7-bundle.zip" dest="${INSTALL_PATH}/system/layers/base/org/jboss/webservices" overwrite="true">
+        <unzip src="res/switchyard-as7-bundle.zip" dest="${INSTALL_PATH}" overwrite="true">
             <patternset>
-                <include name="modules/system/layers/base/org/jboss/webservices/**"/>
+                <include name="modules/system/layers/base/org/jboss/as/webservices/**"/>
             </patternset>
         </unzip>
-        <unzip src="res/switchyard-as7-bundle.zip" dest="${INSTALL_PATH}/system/layers/base/org/jboss/ws" overwrite="true">
+        <unzip src="res/switchyard-as7-bundle.zip" dest="${INSTALL_PATH}" overwrite="true">
             <patternset>
                 <include name="modules/system/layers/base/org/jboss/ws/**"/>
             </patternset>
