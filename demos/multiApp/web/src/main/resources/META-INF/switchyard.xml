@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="web" targetNamespace="urn:switchyard-quickstart-demo:multiapp:0.1.0">
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="web" targetNamespace="urn:switchyard-quickstart-demo:multiapp:0.1.0"/>
+    <domain>
+        <properties>
+            <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+        </properties>
+    </domain>
     <artifacts>
-        <artifact name="OrderService" url="http://localhost:8080/guvnorsoa/rest/packages/OrderService"/>
+        <artifact name="OrderService" url="http://localhost:${jettyPort}/guvnorsoa/rest/packages/OrderService"/>
     </artifacts>
 </switchyard>
