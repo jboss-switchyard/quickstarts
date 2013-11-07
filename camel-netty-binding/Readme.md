@@ -30,7 +30,7 @@ JBoss AS 7
 
 To test TCP you will need few additional steps. Stop server if it's running.
 
-1. Add to ${AS}/standalone/configuration/standalone.xml configuration a new security domain (look for subsystem with ID urn:jboss:domain:security:1.1)
+1. Add to ${AS}/standalone/configuration/standalone-full.xml configuration a new security domain (look for subsystem with ID urn:jboss:domain:security:1.1)
 
         <security-domain name="netty-security-cert" cache-type="default">
             <authentication>
