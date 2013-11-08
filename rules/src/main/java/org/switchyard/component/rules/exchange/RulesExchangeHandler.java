@@ -164,7 +164,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                                     entryPoint.insert(fact);
                                 }
                             } else {
-                                throw RulesMessages.MESSAGES.unknownEntryPoint(entryPoint.toString());
+                                throw RulesMessages.MESSAGES.unknownEntryPoint(key);
                             }
                         }
                     }

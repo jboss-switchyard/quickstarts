@@ -87,42 +87,6 @@
             <artifactId>kie-internal</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-commons-cdi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-commons-data</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-commons-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-commons-regex</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-commons-validation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-nio2-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-nio2-fs</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-nio2-jgit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.commons</groupId>
-            <artifactId>kie-nio2-model</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.mvel</groupId>
             <artifactId>mvel2</artifactId>
         </dependency>

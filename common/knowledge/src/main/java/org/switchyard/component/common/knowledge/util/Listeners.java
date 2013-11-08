@@ -23,6 +23,7 @@ import org.kie.api.event.rule.AgendaEventListener;
 import org.kie.api.event.rule.DefaultAgendaEventListener;
 import org.kie.api.event.rule.MatchCreatedEvent;
 import org.kie.api.event.rule.RuleFlowGroupActivatedEvent;
+import org.kie.api.event.rule.RuleRuntimeEventListener;
 import org.kie.api.event.rule.WorkingMemoryEventListener;
 import org.kie.api.runtime.KieRuntime;
 import org.kie.api.runtime.KieSession;
@@ -38,6 +39,7 @@ import org.switchyard.component.common.knowledge.config.model.ListenersModel;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
+@SuppressWarnings("deprecation")
 public final class Listeners {
 
     private static final Class<?>[][] PARMAMETER_TYPES = new Class<?>[][]{
@@ -156,9 +158,12 @@ public final class Listeners {
                 getInternalWorkingMemory((CommandBasedStatefulKnowledgeSession)manager).addEventListener(droolsListener);
             }
         }*/
-        // WORKING MEMORY
-        if (listener instanceof WorkingMemoryEventListener) {
+        // RULE RUNTIME / WORKING MEMORY
+        if (listener instanceof RuleRuntimeEventListener) {
             // current (kie)
+            manager.addEventListener((RuleRuntimeEventListener)listener);
+        } else if (listener instanceof WorkingMemoryEventListener) {
+            // deprecated (kie)
             manager.addEventListener((WorkingMemoryEventListener)listener);
         }/* else if (listener instanceof org.drools.core.event.WorkingMemoryEventListener) {
             // legacy (drools)

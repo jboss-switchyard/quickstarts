@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-// SWITCHYARD-1755: core impl class usage still required (public APIs insufficient)
-import org.drools.core.impl.EnvironmentFactory;
+import org.kie.api.KieServices;
 import org.kie.api.marshalling.ObjectMarshallingStrategy;
 import org.kie.api.runtime.Environment;
 import org.kie.api.runtime.EnvironmentName;
@@ -44,7 +43,7 @@ public final class Environments {
      * @return the Environment
      */
     public static Environment getEnvironment(Map<String, Object> overrides) {
-        Environment env = EnvironmentFactory.newEnvironment();
+        Environment env = KieServices.Factory.get().newEnvironment();
         // set the object marshalling strategies
         List<ObjectMarshallingStrategy> new_oms = new ArrayList<ObjectMarshallingStrategy>();
         new_oms.add(new SerializerObjectMarshallingStrategy(SerializerFactory.create(FormatType.JSON, null, true)));
