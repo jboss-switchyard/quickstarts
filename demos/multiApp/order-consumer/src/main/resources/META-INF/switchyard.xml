@@ -6,6 +6,7 @@
         <reference multiplicity="1..1" name="OrderWebService" promote="OrderInputComponent/OrderWebService">
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
                 <wsdl>OrderService.wsdl</wsdl>
+                <endpointAddress>http://localhost:8080/quickstart-demo-multiapp/OrderService</endpointAddress>
             </binding.soap>
         </reference>
         <component name="OrderInputComponent">
