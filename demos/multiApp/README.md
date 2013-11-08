@@ -13,13 +13,23 @@ Consult the README.md in each individual project for more info.
 
 ## Running the Example
 
-1. Deploy each of the following to a SwitchYard AS7 runtime:
-    * multiApp/artifacts/target/OrderService.jar
-    * multiApp/order-service/target/switchyard-quickstart-demo-multi-order-service.jar
-    * multiApp/order-consumer/target/switchyard-quickstart-demo-multi-order-consumer.jar
-    * multiApp/web/target/switchyard-quickstart-demo-multi-web.war
-    
-2. Use one or both of the consuming application projects:
+1. Build the quickstart:
+
+        mvn clean install
+
+2. Start JBoss AS 7 in standalone-full mode:
+
+        ${AS}/bin/standalone.sh --server-config=standalone-full.xml
+
+3. Deploy JMS Queue
+
+        cp order-consumer/src/test/resources/switchyard-quickstart-demo-multi-order-consumer-hornetq-jms.xml ${AS}/standalone/deployments
+
+4. Deploy the quickstart
+
+        mvn jboss-as:deploy
+
+5. Use one or both of the consuming application projects:
     * <b>Web</b>: Visit <http://localhost:8080/switchyard-quickstart-demo-multi-web>.
     * <b>JMS</b>: Use 'mvn exec:java' in the order-consumer project to submit a JMS order message via the OrderIntake service.
 
