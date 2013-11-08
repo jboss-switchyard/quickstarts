@@ -57,6 +57,7 @@
         <module name="org.switchyard.component.resteasy"/>
         <module name="org.switchyard.component.sca"/>
         <module name="org.switchyard.component.soap"/>
+        <module name="org.switchyard.component.jca"/>
         <module name="org.jboss.resteasy.resteasy-jaxrs"/>
     </dependencies>
 </module>

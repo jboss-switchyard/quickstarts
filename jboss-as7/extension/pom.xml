@@ -55,6 +55,10 @@
             <artifactId>switchyard-component-soap</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-jca</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
         </dependency>
