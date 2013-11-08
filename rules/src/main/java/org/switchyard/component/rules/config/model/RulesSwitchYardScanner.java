@@ -73,8 +73,8 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
      */
     @Override
     public ScannerOutput<SwitchYardModel> scan(ScannerInput<SwitchYardModel> input) throws IOException {
-        String switchyardNamespace = input.getSwitchyardNamespace();
-        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace);
+        SwitchYardNamespace switchyardNamespace = input.getSwitchyardNamespace();
+        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace.uri());
         CompositeModel compositeModel = new V1CompositeModel();
         compositeModel.setName(input.getCompositeName());
         ClasspathScanner rulesScanner = new ClasspathScanner(_rulesFilter);
@@ -108,9 +108,9 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
      * @return the component model
      * @throws IOException oops
      */
-    public ComponentModel scan(Class<?> rulesClass, String switchyardNamespace) throws IOException {
+    public ComponentModel scan(Class<?> rulesClass, SwitchYardNamespace switchyardNamespace) throws IOException {
         if (switchyardNamespace == null) {
-            switchyardNamespace = SwitchYardNamespace.DEFAULT.uri();
+            switchyardNamespace = SwitchYardNamespace.DEFAULT;
         }
         Rules rules = rulesClass.getAnnotation(Rules.class);
         Class<?> rulesInterface = rules.value();
@@ -126,12 +126,18 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
         }
         ComponentModel componentModel = new V1ComponentModel();
         componentModel.setName(rulesName);
-        String rulesNamespace = rules.namespace();
-        if (UNDEFINED.equals(rulesNamespace)) {
-            rulesNamespace = RulesNamespace.DEFAULT.uri();
+        RulesNamespace rulesNamespace = RulesNamespace.fromUri(rules.namespace());
+        if (rulesNamespace == null) {
+            rulesNamespace = RulesNamespace.DEFAULT;
+            for (RulesNamespace value : RulesNamespace.values()) {
+                if (value.versionMatches(switchyardNamespace)) {
+                    rulesNamespace = value;
+                    break;
+                }
+            }
         }
-        RulesComponentImplementationModel componentImplementationModel = new V1RulesComponentImplementationModel(rulesNamespace);
-        OperationsModel operationsModel = new V1OperationsModel(rulesNamespace);
+        RulesComponentImplementationModel componentImplementationModel = new V1RulesComponentImplementationModel(rulesNamespace.uri());
+        OperationsModel operationsModel = new V1OperationsModel(rulesNamespace.uri());
         JavaService javaService = JavaService.fromClass(rulesInterface);
         for (Method method : rulesClass.getDeclaredMethods()) {
             RulesOperationType operationType = null;
@@ -173,7 +179,7 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
             if (operationType != null) {
                 ServiceOperation serviceOperation = javaService.getOperation(method.getName());
                 if (serviceOperation != null) {
-                    OperationModel operationModel = new V1RulesOperationModel(rulesNamespace);
+                    OperationModel operationModel = new V1RulesOperationModel(rulesNamespace.uri());
                     operationModel.setEventId(eventId);
                     operationModel.setName(serviceOperation.getName());
                     operationModel.setType(operationType);
@@ -194,7 +200,7 @@ public class RulesSwitchYardScanner extends KnowledgeSwitchYardScanner {
         componentImplementationModel.setManifest(toManifestModel(rules.manifest(), rulesNamespace));
         componentImplementationModel.setProperties(toPropertiesModel(rules.properties(), rulesNamespace));
         componentModel.setImplementation(componentImplementationModel);
-        ComponentServiceModel componentServiceModel = new V1ComponentServiceModel(switchyardNamespace);
+        ComponentServiceModel componentServiceModel = new V1ComponentServiceModel(switchyardNamespace.uri());
         InterfaceModel interfaceModel = new V1InterfaceModel(InterfaceModel.JAVA);
         interfaceModel.setInterface(rulesInterface.getName());
         componentServiceModel.setInterface(interfaceModel);

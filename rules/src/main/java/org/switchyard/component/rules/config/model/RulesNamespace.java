@@ -13,37 +13,97 @@
  */
 package org.switchyard.component.rules.config.model;
 
-import org.switchyard.config.model.BaseNamespace;
+import org.switchyard.component.common.knowledge.config.model.KnowledgeNamespace;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Namespace;
 
 /**
  * A Rules config model namespace.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public final class RulesNamespace extends BaseNamespace {
+public enum RulesNamespace implements KnowledgeNamespace {
 
     /** The 1.0 namespace. */
-    public static final RulesNamespace V_1_0;
+    V_1_0("1.0"),
     /** The 1.1 namespace. */
-    public static final RulesNamespace V_1_1;
+    V_1_1("1.1"),
     /** The default namespace. */
-    public static final RulesNamespace DEFAULT;
+    DEFAULT(null);
 
-    static {
-        final Descriptor desc = new Descriptor(RulesNamespace.class);
-        final String section = "urn:switchyard-component-rules:config";
-        V_1_0 = new RulesNamespace(desc, section, "1.0");
-        V_1_1 = new RulesNamespace(desc, section, "1.1");
-        DEFAULT = new RulesNamespace(desc, section);
+    private final Util _util;
+
+    /**
+     * Constructs a new RulesNamespace with the specified version.
+     * @param version the specified version, or null to discover the default
+     */
+    RulesNamespace(String version) {
+        _util = new Util(version);
     }
 
-    private RulesNamespace(Descriptor desc, String section) {
-        super(desc, section);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String section() {
+        return _util.section();
     }
 
-    private RulesNamespace(Descriptor desc, String section, String version) {
-        super(desc, section, version);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String version() {
+        return _util.version();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean versionMatches(Namespace namespace) {
+        return _util.versionMatches(namespace);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String uri() {
+        return _util.uri();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean uriMatches(Namespace namespace) {
+        return _util.uriMatches(namespace);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isDefault() {
+        return this == DEFAULT || uriMatches(DEFAULT);
+    }
+
+    /**
+     * Gets the RulesNamespace for the specified uri, or null if no matching uris are found.
+     * @param uri the uri
+     * @return the RulesNamespace
+     */
+    public static RulesNamespace fromUri(String uri) {
+        return Util.fromUri(RulesNamespace.class, uri);
+    }
+
+    private static final class Util extends Namespace.Util {
+        // static final since we only want to do the somewhat expensive work of instantiating this once!
+        private static final Descriptor DESCRIPTOR = new Descriptor(RulesNamespace.class);
+        private Util(String version) {
+            super(DESCRIPTOR, "urn:switchyard-component-rules:config", version);
+        }
     }
 
 }

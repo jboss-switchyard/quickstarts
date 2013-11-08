@@ -45,6 +45,7 @@ import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.policy.Policy.PolicyType;
 import org.switchyard.policy.SecurityPolicy;
@@ -62,10 +63,18 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
      */
     @Override
     public ScannerOutput<SwitchYardModel> scan(ScannerInput<SwitchYardModel> input) throws IOException {
-        String switchyardNamespace = input.getSwitchyardNamespace();
-        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace);
+        SwitchYardNamespace switchyardNamespace = input.getSwitchyardNamespace();
+        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace.uri());
         CompositeModel compositeModel = new V1CompositeModel();
         compositeModel.setName(input.getCompositeName());
+
+        BeanNamespace beanNamespace = BeanNamespace.DEFAULT;
+        for (BeanNamespace value : BeanNamespace.values()) {
+            if (value.versionMatches(switchyardNamespace)) {
+                beanNamespace = value;
+                break;
+            }
+        }
 
         List<Class<?>> serviceClasses = scanForServiceBeans(input.getURLs());
 
@@ -78,10 +87,10 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
 
             ComponentModel componentModel = new V1ComponentModel();
-            ComponentServiceModel serviceModel = new V1ComponentServiceModel(switchyardNamespace);
+            ComponentServiceModel serviceModel = new V1ComponentServiceModel(switchyardNamespace.uri());
             String name = serviceClass.getSimpleName();
             
-            BeanComponentImplementationModel beanModel = new V1BeanComponentImplementationModel(BeanNamespace.DEFAULT.uri());
+            BeanComponentImplementationModel beanModel = new V1BeanComponentImplementationModel(beanNamespace.uri());
             beanModel.setClazz(serviceClass.getName());
             componentModel.setImplementation(beanModel);
 
@@ -147,7 +156,7 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             // Add any references
             for (Field field : getReferences(serviceClass)) {
                 Class<?> reference = field.getType(); 
-                ComponentReferenceModel referenceModel = new V1ComponentReferenceModel(switchyardNamespace);
+                ComponentReferenceModel referenceModel = new V1ComponentReferenceModel(switchyardNamespace.uri());
                 InterfaceModel interfaceModel = new V1InterfaceModel(InterfaceModel.JAVA);
                       
                 if (field.getAnnotation(Reference.class) != null) {

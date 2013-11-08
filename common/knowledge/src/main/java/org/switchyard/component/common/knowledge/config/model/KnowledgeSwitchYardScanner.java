@@ -62,6 +62,7 @@ import org.switchyard.config.model.resource.v1.V1ResourceDetailModel;
 import org.switchyard.config.model.resource.v1.V1ResourceModel;
 import org.switchyard.config.model.resource.v1.V1ResourcesModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 
 /**
  * KnowledgeSwitchYardScanner.
@@ -81,13 +82,13 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
      * @param switchyardNamespace switchyardNamespace
      * @return a channels model
      */
-    protected ChannelsModel toChannelsModel(Channel[] channelAnnotations, String knowledgeNamespace, ComponentModel componentModel, String switchyardNamespace) {
+    protected ChannelsModel toChannelsModel(Channel[] channelAnnotations, KnowledgeNamespace knowledgeNamespace, ComponentModel componentModel, SwitchYardNamespace switchyardNamespace) {
         if (channelAnnotations == null || channelAnnotations.length == 0) {
             return null;
         }
-        ChannelsModel channelsModel = new V1ChannelsModel(knowledgeNamespace);
+        ChannelsModel channelsModel = new V1ChannelsModel(knowledgeNamespace.uri());
         for (Channel channelAnnotation : channelAnnotations) {
-            ChannelModel channelModel = new V1ChannelModel(knowledgeNamespace);
+            ChannelModel channelModel = new V1ChannelModel(knowledgeNamespace.uri());
             Class<? extends org.kie.api.runtime.Channel> clazz = channelAnnotation.value();
             if (Channel.UndefinedChannel.class.isAssignableFrom(clazz)) {
                 clazz = SwitchYardServiceChannel.class;
@@ -114,7 +115,7 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
             String reference = channelAnnotation.reference();
             if (!UNDEFINED.equals(reference)) {
                 channelModel.setReference(reference);
-                ComponentReferenceModel componentReferenceModel = new V1ComponentReferenceModel(switchyardNamespace);
+                ComponentReferenceModel componentReferenceModel = new V1ComponentReferenceModel(switchyardNamespace.uri());
                 componentReferenceModel.setName(reference);
                 Class<?> interfaze = channelAnnotation.interfaze();
                 if (!Channel.UndefinedInterface.class.isAssignableFrom(interfaze)) {
@@ -135,11 +136,11 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
      * @param knowledgeNamespace knowledgeNamespace
      * @return model
      */
-    protected ContainerModel toContainerModel(Container containerAnnotation, String knowledgeNamespace) {
+    protected ContainerModel toContainerModel(Container containerAnnotation, KnowledgeNamespace knowledgeNamespace) {
         if (containerAnnotation == null) {
             return null;
         }
-        ContainerModel containerModel = new V1ContainerModel(knowledgeNamespace);
+        ContainerModel containerModel = new V1ContainerModel(knowledgeNamespace.uri());
         String baseName = containerAnnotation.baseName();
         if (!UNDEFINED.equals(baseName)) {
             containerModel.setBaseName(baseName);
@@ -169,13 +170,13 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
      * @param knowledgeNamespace knowledgeNamespace
      * @return model
      */
-    protected ListenersModel toListenersModel(Listener[] listenerAnnotations, String knowledgeNamespace) {
+    protected ListenersModel toListenersModel(Listener[] listenerAnnotations, KnowledgeNamespace knowledgeNamespace) {
         if (listenerAnnotations == null || listenerAnnotations.length == 0) {
             return null;
         }
-        ListenersModel listenersModel = new V1ListenersModel(knowledgeNamespace);
+        ListenersModel listenersModel = new V1ListenersModel(knowledgeNamespace.uri());
         for (Listener listenerAnnotation : listenerAnnotations) {
-            ListenerModel listenerModel = new V1ListenerModel(knowledgeNamespace);
+            ListenerModel listenerModel = new V1ListenerModel(knowledgeNamespace.uri());
             listenerModel.setClazz(listenerAnnotation.value());
             listenersModel.addListener(listenerModel);
         }
@@ -188,13 +189,13 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
      * @param knowledgeNamespace knowledgeNamespace
      * @return model
      */
-    protected LoggersModel toLoggersModel(Logger[] loggerAnnotations, String knowledgeNamespace) {
+    protected LoggersModel toLoggersModel(Logger[] loggerAnnotations, KnowledgeNamespace knowledgeNamespace) {
         if (loggerAnnotations == null || loggerAnnotations.length == 0) {
             return null;
         }
-        LoggersModel loggersModel = new V1LoggersModel(knowledgeNamespace);
+        LoggersModel loggersModel = new V1LoggersModel(knowledgeNamespace.uri());
         for (Logger loggerAnnotation : loggerAnnotations) {
-            LoggerModel loggerModel = new V1LoggerModel(knowledgeNamespace);
+            LoggerModel loggerModel = new V1LoggerModel(knowledgeNamespace.uri());
             int interval = loggerAnnotation.interval();
             if (interval > -1) {
                 loggerModel.setInterval(interval);
@@ -218,12 +219,12 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
      * @param knowledgeNamespace knowledgeNamespace
      * @return model
      */
-    protected ManifestModel toManifestModel(Manifest[] manifestAnnotations, String knowledgeNamespace) {
+    protected ManifestModel toManifestModel(Manifest[] manifestAnnotations, KnowledgeNamespace knowledgeNamespace) {
         if (manifestAnnotations == null || manifestAnnotations.length == 0) {
             return null;
         }
         Manifest manifestAnnotation = manifestAnnotations[0];
-        ManifestModel manifestModel = new V1ManifestModel(knowledgeNamespace);
+        ManifestModel manifestModel = new V1ManifestModel(knowledgeNamespace.uri());
         Container[] container = manifestAnnotation.container();
         if (container != null && container.length > 0) {
             manifestModel.setContainer(toContainerModel(container[0], knowledgeNamespace));
@@ -238,12 +239,12 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
      * @param knowledgeNamespace knowledgeNamespace
      * @return mappings model
      */
-    protected GlobalsModel toGlobalsModel(Global[] globals, String knowledgeNamespace) {
+    protected GlobalsModel toGlobalsModel(Global[] globals, KnowledgeNamespace knowledgeNamespace) {
         GlobalsModel globalsModel = null;
         if (globals != null) {
             for (Global global : globals) {
                 if (global != null) {
-                    GlobalModel globalModel = new V1GlobalModel(knowledgeNamespace);
+                    GlobalModel globalModel = new V1GlobalModel(knowledgeNamespace.uri());
                     String from = global.from();
                     if (!UNDEFINED.equals(from)) {
                         globalModel.setFrom(from);
@@ -253,7 +254,7 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
                         globalModel.setTo(to);
                     }
                     if (globalsModel == null) {
-                        globalsModel = new V1GlobalsModel(knowledgeNamespace);
+                        globalsModel = new V1GlobalsModel(knowledgeNamespace.uri());
                     }
                     globalsModel.addGlobal(globalModel);
                 }
@@ -268,12 +269,12 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
      * @param knowledgeNamespace knowledgeNamespace
      * @return mappings model
      */
-    protected InputsModel toInputsModel(Input[] inputs, String knowledgeNamespace) {
+    protected InputsModel toInputsModel(Input[] inputs, KnowledgeNamespace knowledgeNamespace) {
         InputsModel inputsModel = null;
         if (inputs != null) {
             for (Input input : inputs) {
                 if (input != null) {
-                    InputModel inputModel = new V1InputModel(knowledgeNamespace);
+                    InputModel inputModel = new V1InputModel(knowledgeNamespace.uri());
                     String from = input.from();
                     if (!UNDEFINED.equals(from)) {
                         inputModel.setFrom(from);
@@ -283,7 +284,7 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
                         inputModel.setTo(to);
                     }
                     if (inputsModel == null) {
-                        inputsModel = new V1InputsModel(knowledgeNamespace);
+                        inputsModel = new V1InputsModel(knowledgeNamespace.uri());
                     }
                     inputsModel.addInput(inputModel);
                 }
@@ -298,12 +299,12 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
      * @param knowledgeNamespace knowledgeNamespace
      * @return mappings model
      */
-    protected OutputsModel toOutputsModel(Output[] outputs, String knowledgeNamespace) {
+    protected OutputsModel toOutputsModel(Output[] outputs, KnowledgeNamespace knowledgeNamespace) {
         OutputsModel outputsModel = null;
         if (outputs != null) {
             for (Output output : outputs) {
                 if (output != null) {
-                    OutputModel outputModel = new V1OutputModel(knowledgeNamespace);
+                    OutputModel outputModel = new V1OutputModel(knowledgeNamespace.uri());
                     String from = output.from();
                     if (!UNDEFINED.equals(from)) {
                         outputModel.setFrom(from);
@@ -313,7 +314,7 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
                         outputModel.setTo(to);
                     }
                     if (outputsModel == null) {
-                        outputsModel = new V1OutputsModel(knowledgeNamespace);
+                        outputsModel = new V1OutputsModel(knowledgeNamespace.uri());
                     }
                     outputsModel.addOutput(outputModel);
                 }
@@ -328,12 +329,12 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
      * @param knowledgeNamespace knowledgeNamespace
      * @return mappings model
      */
-    protected FaultsModel toFaultsModel(Fault[] faults, String knowledgeNamespace) {
+    protected FaultsModel toFaultsModel(Fault[] faults, KnowledgeNamespace knowledgeNamespace) {
         FaultsModel faultsModel = null;
         if (faults != null) {
             for (Fault fault : faults) {
                 if (fault != null) {
-                    FaultModel faultModel = new V1FaultModel(knowledgeNamespace);
+                    FaultModel faultModel = new V1FaultModel(knowledgeNamespace.uri());
                     String from = fault.from();
                     if (!UNDEFINED.equals(from)) {
                         faultModel.setFrom(from);
@@ -343,7 +344,7 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
                         faultModel.setTo(to);
                     }
                     if (faultsModel == null) {
-                        faultsModel = new V1FaultsModel(knowledgeNamespace);
+                        faultsModel = new V1FaultsModel(knowledgeNamespace.uri());
                     }
                     faultsModel.addFault(faultModel);
                 }
@@ -358,13 +359,13 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
      * @param knowledgeNamespace knowledgeNamespace
      * @return model
      */
-    protected PropertiesModel toPropertiesModel(Property[] propertyAnnotations, String knowledgeNamespace) {
+    protected PropertiesModel toPropertiesModel(Property[] propertyAnnotations, KnowledgeNamespace knowledgeNamespace) {
         if (propertyAnnotations == null || propertyAnnotations.length == 0) {
             return null;
         }
-        PropertiesModel propertiesModel = new V1PropertiesModel(knowledgeNamespace);
+        PropertiesModel propertiesModel = new V1PropertiesModel(knowledgeNamespace.uri());
         for (Property propertyAnnotation : propertyAnnotations) {
-            PropertyModel propertyModel = new V1PropertyModel(knowledgeNamespace);
+            PropertyModel propertyModel = new V1PropertyModel(knowledgeNamespace.uri());
             String name = propertyAnnotation.name();
             if (!UNDEFINED.equals(name)) {
                 propertyModel.setName(name);
@@ -384,13 +385,13 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
      * @param knowledgeNamespace knowledgeNamespace
      * @return model
      */
-    protected ResourcesModel toResourcesModel(Resource[] resourceAnnotations, String knowledgeNamespace) {
+    protected ResourcesModel toResourcesModel(Resource[] resourceAnnotations, KnowledgeNamespace knowledgeNamespace) {
         if (resourceAnnotations == null || resourceAnnotations.length == 0) {
             return null;
         }
-        ResourcesModel resourcesModel = new V1ResourcesModel(knowledgeNamespace);
+        ResourcesModel resourcesModel = new V1ResourcesModel(knowledgeNamespace.uri());
         for (Resource resourceAnnotation : resourceAnnotations) {
-            ResourceModel resourceModel = new V1ResourceModel(knowledgeNamespace);
+            ResourceModel resourceModel = new V1ResourceModel(knowledgeNamespace.uri());
             String location = resourceAnnotation.location();
             if (!UNDEFINED.equals(location)) {
                 resourceModel.setLocation(location);
@@ -408,13 +409,13 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
         return resourcesModel;
     }
 
-    private ResourceDetailModel toResourceDetailModel(ResourceDetail[] resourceDetailAnnotations, String knowledgeNamespace) {
+    private ResourceDetailModel toResourceDetailModel(ResourceDetail[] resourceDetailAnnotations, KnowledgeNamespace knowledgeNamespace) {
         if (resourceDetailAnnotations == null || resourceDetailAnnotations.length == 0) {
             return null;
         }
         ResourceDetailModel resourceDetailModel = null;
         for (ResourceDetail resourceDetailAnnotation : resourceDetailAnnotations) {
-            resourceDetailModel = new V1ResourceDetailModel(knowledgeNamespace);
+            resourceDetailModel = new V1ResourceDetailModel(knowledgeNamespace.uri());
             String inputType = resourceDetailAnnotation.inputType();
             if (!UNDEFINED.equals(inputType)) {
                 resourceDetailModel.setInputType(inputType);

@@ -13,37 +13,96 @@
  */
 package org.switchyard.component.clojure.config.model;
 
-import org.switchyard.config.model.BaseNamespace;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Namespace;
 
 /**
  * A Clojure config model namespace.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public final class ClojureNamespace extends BaseNamespace {
+public enum ClojureNamespace implements Namespace {
 
     /** The 1.0 namespace. */
-    public static final ClojureNamespace V_1_0;
+    V_1_0("1.0"),
     /** The 1.1 namespace. */
-    public static final ClojureNamespace V_1_1;
+    V_1_1("1.1"),
     /** The default namespace. */
-    public static final ClojureNamespace DEFAULT;
+    DEFAULT(null);
 
-    static {
-        final Descriptor desc = new Descriptor(ClojureNamespace.class);
-        final String section = "urn:switchyard-component-clojure:config";
-        V_1_0 = new ClojureNamespace(desc, section, "1.0");
-        V_1_1 = new ClojureNamespace(desc, section, "1.1");
-        DEFAULT = new ClojureNamespace(desc, section);
+    private final Util _util;
+
+    /**
+     * Constructs a new ClojureNamespace with the specified version.
+     * @param version the specified version, or null to discover the default
+     */
+    ClojureNamespace(String version) {
+        _util = new Util(version);
     }
 
-    private ClojureNamespace(Descriptor desc, String section) {
-        super(desc, section);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String section() {
+        return _util.section();
     }
 
-    private ClojureNamespace(Descriptor desc, String section, String version) {
-        super(desc, section, version);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String version() {
+        return _util.version();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean versionMatches(Namespace namespace) {
+        return _util.versionMatches(namespace);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String uri() {
+        return _util.uri();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean uriMatches(Namespace namespace) {
+        return _util.uriMatches(namespace);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isDefault() {
+        return this == DEFAULT || uriMatches(DEFAULT);
+    }
+
+    /**
+     * Gets the ClojureNamespace for the specified uri, or null if no matching uris are found.
+     * @param uri the uri
+     * @return the ClojureNamespace
+     */
+    public static ClojureNamespace fromUri(String uri) {
+        return Util.fromUri(ClojureNamespace.class, uri);
+    }
+
+    private static final class Util extends Namespace.Util {
+        // static final since we only want to do the somewhat expensive work of instantiating this once!
+        private static final Descriptor DESCRIPTOR = new Descriptor(ClojureNamespace.class);
+        private Util(String version) {
+            super(DESCRIPTOR, "urn:switchyard-component-clojure:config", version);
+        }
     }
 
 }

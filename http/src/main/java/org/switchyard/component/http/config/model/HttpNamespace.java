@@ -13,37 +13,96 @@
  */
 package org.switchyard.component.http.config.model;
 
-import org.switchyard.config.model.BaseNamespace;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Namespace;
 
 /**
  * A Http config model namespace.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public final class HttpNamespace extends BaseNamespace {
+public enum HttpNamespace implements Namespace {
 
     /** The 1.0 namespace. */
-    public static final HttpNamespace V_1_0;
+    V_1_0("1.0"),
     /** The 1.1 namespace. */
-    public static final HttpNamespace V_1_1;
+    V_1_1("1.1"),
     /** The default namespace. */
-    public static final HttpNamespace DEFAULT;
+    DEFAULT(null);
 
-    static {
-        final Descriptor desc = new Descriptor(HttpNamespace.class);
-        final String section = "urn:switchyard-component-http:config";
-        V_1_0 = new HttpNamespace(desc, section, "1.0");
-        V_1_1 = new HttpNamespace(desc, section, "1.1");
-        DEFAULT = new HttpNamespace(desc, section);
+    private final Util _util;
+
+    /**
+     * Constructs a new HttpNamespace with the specified version.
+     * @param version the specified version, or null to discover the default
+     */
+    HttpNamespace(String version) {
+        _util = new Util(version);
     }
 
-    private HttpNamespace(Descriptor desc, String section) {
-        super(desc, section);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String section() {
+        return _util.section();
     }
 
-    private HttpNamespace(Descriptor desc, String section, String version) {
-        super(desc, section, version);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String version() {
+        return _util.version();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean versionMatches(Namespace namespace) {
+        return _util.versionMatches(namespace);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String uri() {
+        return _util.uri();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean uriMatches(Namespace namespace) {
+        return _util.uriMatches(namespace);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isDefault() {
+        return this == DEFAULT || uriMatches(DEFAULT);
+    }
+
+    /**
+     * Gets the HttpNamespace for the specified uri, or null if no matching uris are found.
+     * @param uri the uri
+     * @return the HttpNamespace
+     */
+    public static HttpNamespace fromUri(String uri) {
+        return Util.fromUri(HttpNamespace.class, uri);
+    }
+
+    private static final class Util extends Namespace.Util {
+        // static final since we only want to do the somewhat expensive work of instantiating this once!
+        private static final Descriptor DESCRIPTOR = new Descriptor(HttpNamespace.class);
+        private Util(String version) {
+            super(DESCRIPTOR, "urn:switchyard-component-http:config", version);
+        }
     }
 
 }

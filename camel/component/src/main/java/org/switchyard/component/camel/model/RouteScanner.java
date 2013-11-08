@@ -35,6 +35,7 @@ import org.switchyard.config.model.composite.v1.V1ComponentServiceModel;
 import org.switchyard.config.model.composite.v1.V1CompositeModel;
 import org.switchyard.config.model.composite.v1.V1InterfaceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 
 /**
@@ -46,10 +47,18 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
 
     @Override
     public ScannerOutput<SwitchYardModel> scan(ScannerInput<SwitchYardModel> input) throws IOException {
-        String switchyardNamespace = input.getSwitchyardNamespace();
-        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace);
+        SwitchYardNamespace switchyardNamespace = input.getSwitchyardNamespace();
+        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace.uri());
         CompositeModel compositeModel = new V1CompositeModel();
         compositeModel.setName(input.getCompositeName());
+
+        CamelNamespace camelNamespace = CamelNamespace.DEFAULT;
+        for (CamelNamespace value : CamelNamespace.values()) {
+            if (value.versionMatches(switchyardNamespace)) {
+                camelNamespace = value;
+                break;
+            }
+        }
 
         List<Class<?>> routeClasses = scanForRoutes(input.getURLs());
 
@@ -60,13 +69,13 @@ public class RouteScanner implements Scanner<SwitchYardModel> {
             componentModel.setName(routeClass.getSimpleName());
 
             // Component implementation definition
-            CamelComponentImplementationModel camelModel = new V1CamelImplementationModel(CamelNamespace.DEFAULT.uri());
+            CamelComponentImplementationModel camelModel = new V1CamelImplementationModel(camelNamespace.uri());
             camelModel.setJavaClass(routeClass.getName());
             componentModel.setImplementation(camelModel);
             compositeModel.addComponent(componentModel);
 
             // Component service definition
-            ComponentServiceModel serviceModel = new V1ComponentServiceModel(switchyardNamespace);
+            ComponentServiceModel serviceModel = new V1ComponentServiceModel(switchyardNamespace.uri());
             InterfaceModel csiModel = new V1InterfaceModel(InterfaceModel.JAVA);
             Class<?> serviceInterface = routeClass.getAnnotation(Route.class).value();
             serviceModel.setName(getServiceName(routeClass));
