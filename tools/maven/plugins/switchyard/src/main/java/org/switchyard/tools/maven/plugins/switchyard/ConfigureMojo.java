@@ -45,6 +45,7 @@ import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 
 /**
  * Maven mojo for configuring SwitchYard.
@@ -233,7 +234,9 @@ public class ConfigureMojo<M extends Model> extends AbstractMojo {
                             Model root = model.getModelRoot();
                             if (root instanceof SwitchYardModel) {
                                 if (!input.isSwitchyardNamespaceSet()) {
-                                    input.setSwitchyardNamespace(root.getModelRootNamespace());
+                                    String uri = root.getModelRootNamespace();
+                                    SwitchYardNamespace ns = SwitchYardNamespace.fromUri(uri);
+                                    input.setSwitchyardNamespace(ns);
                                 }
                             }
                         }

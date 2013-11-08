@@ -26,6 +26,7 @@ import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.transform.v1.V1TransformsModel;
@@ -45,17 +46,15 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
      */
     @Override
     public ScannerOutput<SwitchYardModel> scan(ScannerInput<SwitchYardModel> input) throws IOException {
-        String switchyardNamespace = input.getSwitchyardNamespace();
-        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace);
+        SwitchYardNamespace switchyardNamespace = input.getSwitchyardNamespace();
+        SwitchYardModel switchyardModel = new V1SwitchYardModel(switchyardNamespace.uri());
         TransformsModel transformsModel = null;
 
-        // TODO: Fix hack!
-        String transformNamespace = TransformNamespace.DEFAULT.uri();
-        if (switchyardNamespace != null) {
-            if (switchyardNamespace.endsWith(":1.0")) {
-                transformNamespace = TransformNamespace.V_1_0.uri();
-            } else if (switchyardNamespace.endsWith(":1.1")) {
-                transformNamespace = TransformNamespace.V_1_1.uri();
+        TransformNamespace transformNamespace = TransformNamespace.DEFAULT;
+        for (TransformNamespace value : TransformNamespace.values()) {
+            if (value.versionMatches(switchyardNamespace)) {
+                transformNamespace = value;
+                break;
             }
         }
 
@@ -64,7 +63,7 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
             List<TransformerTypes> supportedTransforms = TransformerUtil.listTransformations(transformer);
 
             for (TransformerTypes supportedTransform : supportedTransforms) {
-                JavaTransformModel transformModel = new V1JavaTransformModel(transformNamespace);
+                JavaTransformModel transformModel = new V1JavaTransformModel(transformNamespace.uri());
 
                 String bean = CDIUtil.getNamedAnnotationValue(transformer);
                 if (bean != null) {
@@ -76,7 +75,7 @@ public class TransformSwitchYardScanner implements Scanner<SwitchYardModel> {
                 transformModel.setTo(supportedTransform.getTo());
 
                 if (transformsModel == null) {
-                    transformsModel = new V1TransformsModel(switchyardNamespace);
+                    transformsModel = new V1TransformsModel(switchyardNamespace.uri());
                     switchyardModel.setTransforms(transformsModel);
                 }
                 transformsModel.addTransform(transformModel);

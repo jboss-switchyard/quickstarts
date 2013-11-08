@@ -30,7 +30,7 @@ import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 public class ScannerInput<M extends Model> {
 
     private List<URL> _urls;
-    private String _switchyardNamespace;
+    private SwitchYardNamespace _switchyardNamespace;
     private String _compositeName;
 
     /**
@@ -77,8 +77,8 @@ public class ScannerInput<M extends Model> {
      * Gets the switchyard namespace for the scan.
      * @return the switchyard namespace
      */
-    public String getSwitchyardNamespace() {
-        return isSwitchyardNamespaceSet() ? _switchyardNamespace : SwitchYardNamespace.DEFAULT.uri();
+    public SwitchYardNamespace getSwitchyardNamespace() {
+        return isSwitchyardNamespaceSet() ? _switchyardNamespace : SwitchYardNamespace.DEFAULT;
     }
 
     /**
@@ -86,7 +86,7 @@ public class ScannerInput<M extends Model> {
      * @param switchyardNamespace the switchyard namespace
      * @return this ScannerInput (useful for chaining)
      */
-    public ScannerInput<M> setSwitchyardNamespace(String switchyardNamespace) {
+    public ScannerInput<M> setSwitchyardNamespace(SwitchYardNamespace switchyardNamespace) {
         _switchyardNamespace = switchyardNamespace;
         return this;
     }

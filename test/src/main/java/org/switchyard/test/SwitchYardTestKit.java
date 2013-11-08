@@ -61,6 +61,7 @@ import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.deploy.Activator;
@@ -907,12 +908,13 @@ public class SwitchYardTestKit {
             ClassLoader classLoader = _testInstance.getClass().getClassLoader();
 
             if (scanners != null && !scanners.isEmpty() && classLoader instanceof URLClassLoader) {
-                String switchyardNamespace = model.getModelRootNamespace();
+                String uri = model.getModelRootNamespace();
+                SwitchYardNamespace ns = SwitchYardNamespace.fromUri(uri);
                 MergeScanner<V1SwitchYardModel> merge_scanner = new MergeScanner<V1SwitchYardModel>(true, scanners);
                 List<URL> scanURLs = getScanURLs((URLClassLoader)classLoader);
 
                 ScannerInput<V1SwitchYardModel> scanner_input = new ScannerInput<V1SwitchYardModel>()
-                        .setSwitchyardNamespace(switchyardNamespace).setCompositeName(model.getName()).setURLs(scanURLs);
+                        .setSwitchyardNamespace(ns).setCompositeName(model.getName()).setURLs(scanURLs);
                 V1SwitchYardModel scannedModel = merge_scanner.scan(scanner_input).getModel();
 
                 returnModel = Models.merge(scannedModel, model, false);
