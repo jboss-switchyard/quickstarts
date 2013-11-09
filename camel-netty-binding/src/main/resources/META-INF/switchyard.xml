@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.1">
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-netty-binding" targetNamespace="urn:switchyard-quickstart:camel-netty-binding:0.1.0">
         <service name="SecuredGreetingService" promote="SecuredGreetingService">
-            <netty:binding.tcp xmlns:netty="urn:switchyard-component-camel-netty:config:1.0">
+            <netty:binding.tcp xmlns:netty="urn:switchyard-component-camel-netty:config:1.1">
                 <netty:host>localhost</netty:host>
                 <netty:port>3939</netty:port>
                 <netty:ssl>true</netty:ssl>
+                <netty:needClientAuth>true</netty:needClientAuth>
                 <netty:passphrase>#password</netty:passphrase>
                 <netty:keyStoreFile>#keyStore</netty:keyStoreFile>
                 <netty:trustStoreFile>#trustStore</netty:trustStoreFile>
@@ -13,7 +14,7 @@
             </netty:binding.tcp>
         </service>
         <service name="DefaultGreetingService" promote="DefaultGreetingService">
-            <netty:binding.udp xmlns:netty="urn:switchyard-component-camel-netty:config:1.0">
+            <netty:binding.udp xmlns:netty="urn:switchyard-component-camel-netty:config:1.1">
                 <netty:host>localhost</netty:host>
                 <netty:port>3940</netty:port>
                 <netty:allowDefaultCodec>false</netty:allowDefaultCodec>
@@ -21,13 +22,13 @@
             </netty:binding.udp>
         </service>
         <component name="SecuredGreetingService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.camel.netty.binding.SecuredGreetingServiceBean" requires="authorization"/>
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.1" class="org.switchyard.quickstarts.camel.netty.binding.SecuredGreetingServiceBean" requires="authorization"/>
             <service name="SecuredGreetingService" requires="confidentiality clientAuthentication">
                 <interface.java interface="org.switchyard.quickstarts.camel.netty.binding.GreetingService"/>
             </service>
         </component>
         <component name="DefaultGreetingService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.camel.netty.binding.DefaultGreetingServiceBean"/>
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.1" class="org.switchyard.quickstarts.camel.netty.binding.DefaultGreetingServiceBean"/>
             <service name="DefaultGreetingService">
                 <interface.java interface="org.switchyard.quickstarts.camel.netty.binding.GreetingService"/>
             </service>
