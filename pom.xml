@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.jboss.integration-platform</groupId>
         <artifactId>jboss-integration-platform-bom</artifactId>
-        <version>6.0.0.CR2</version>
+        <version>6.0.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
     <groupId>org.switchyard</groupId>
@@ -59,6 +59,8 @@
         
         <!-- Versions for local dependencies not eligible for the Integration BOM -->
         <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
+        <!-- This version is only used as a prefix for a jar included in release modules -->
+        <version.deltaspike>0.3-incubating</version.deltaspike>
         <version.drools>6.0.0.CR5</version.drools>
         <version.forge>1.2.2.Final</version.forge>
         <version.forge.arquillian>1.0.0.CR7</version.forge.arquillian>
@@ -70,32 +72,13 @@
         <version.jbossas.maven>7.4.Final</version.jbossas.maven>
         <version.jbpm>6.0.0.CR5</version.jbpm>
         <version.kie>6.0.0.CR5</version.kie>
+        <version.littleproxy>0.5.3</version.littleproxy>
         <version.maven.clean.plugin>2.5</version.maven.clean.plugin>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
+        <version.mock.javamail>1.9</version.mock.javamail>
         <version.riftsaw.ode>3.1.0.Final</version.riftsaw.ode>
         <version.riftsaw.engine>3.1.1.Final</version.riftsaw.engine>
         <version.riftsaw.console>2.4.5.Final</version.riftsaw.console>
-        
-        <!-- Versions for dependencies that need to be added to the Integration BOM -->
-        <version.activemq>5.8.0</version.activemq>
-        <version.clojure>1.3.0-alpha5</version.clojure>
-        <version.commons.ssl>0.3.9</version.commons.ssl>
-        <version.deltaspike>0.3-incubating</version.deltaspike>
-        <version.groovy>2.0.5</version.groovy>
-        <version.jboss.logging.processor>1.1.0.Final</version.jboss.logging.processor>
-        <version.jsch>0.1.48</version.jsch>
-        <version.jruby>1.7.2</version.jruby>
-        <version.jython>2.5.3</version.jython>
-        <version.littleproxy>0.5.3</version.littleproxy>
-        <version.mc4j>1.3</version.mc4j>
-        <version.milyn>1.5.1</version.milyn>
-        <version.mock.javamail>1.9</version.mock.javamail>
-        <version.netty>3.6.2.Final</version.netty>
-        <version.qpid>0.18</version.qpid>
-        <version.ognl>3.0.6</version.ognl>
-        <version.rhq>4.8.0</version.rhq>
-        <version.org.jboss.shrinkwrap.descriptors>2.0.0-alpha-3</version.org.jboss.shrinkwrap.descriptors>
-        <version.xmlbeans>2.2.0</version.xmlbeans>
         
         <!-- Versions for dependencies that conflict with the Integration BOM -->
         <version.beanshell>2.0b5</version.beanshell>
@@ -581,59 +564,20 @@
             </dependency>
             
 <!--  ###################################################################
-      ##                   Add to Integration BOM!                     ##
+      ##           Dependencies Present in Integration BOM             ##
       ################################################################### -->
-            <dependency>
-                <groupId>com.jcraft</groupId>
-                <artifactId>jsch</artifactId>
-                <version>${version.jsch}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty</artifactId>
-                <version>${version.netty}</version>
-            </dependency>
-            <dependency>
-                <groupId>mc4j</groupId>
-                <artifactId>org-mc4j-ems</artifactId>
-                <version>${version.mc4j}</version>
-            </dependency>
-            <dependency>
-                <groupId>ognl</groupId>
-                <artifactId>ognl</artifactId>
-                <version>${version.ognl}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-broker</artifactId>
-                <version>${version.activemq}</version>
-            </dependency>
+      
+            <!-- These need to stay because they contain exclusions -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-client</artifactId>
-                <version>${version.activemq}</version>
+                <version>${version.org.apache.activemq}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.geronimo.specs</groupId>
                         <artifactId>geronimo-jms_1.1_spec</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-openwire-legacy</artifactId>
-                <version>${version.activemq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-ra</artifactId>
-                <version>${version.activemq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-rar</artifactId>
-                <version>${version.activemq}</version>
-                <type>rar</type>
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
@@ -824,17 +768,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-test-spring</artifactId>
-                <version>${version.org.apache.camel}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-impl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-soap</artifactId>
                 <version>${version.org.apache.camel}</version>
                 <exclusions>
@@ -858,31 +791,6 @@
                         <artifactId>bsh</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>not-yet-commons-ssl</artifactId>
-                <version>${version.commons.ssl}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml-schemas</artifactId>
-                <version>${version.org.apache.poi}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.qpid</groupId>
-                <artifactId>qpid-client</artifactId>
-                <version>${version.qpid}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.qpid</groupId>
-                <artifactId>qpid-common</artifactId>
-                <version>${version.qpid}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.qpid</groupId>
-                <artifactId>qpid-broker</artifactId>
-                <version>${version.qpid}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
@@ -915,71 +823,6 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>xalan</groupId>
-                <artifactId>serializer</artifactId>
-                <version>${version.xalan}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.xmlbeans</groupId>
-                <artifactId>xmlbeans</artifactId>
-                <version>${version.xmlbeans}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.clojure</groupId>
-                <artifactId>clojure</artifactId>
-                <version>${version.clojure}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-all</artifactId>
-                <version>${version.groovy}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>${version.org.hamcrest}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hornetq</groupId>
-                <artifactId>hornetq-ra</artifactId>
-                <version>${version.org.hornetq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.ironjacamar</groupId>
-                <artifactId>ironjacamar-core-api</artifactId>
-                <version>${version.org.jboss.ironjacamar}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.ironjacamar</groupId>
-                <artifactId>ironjacamar-embedded</artifactId>
-                <version>${version.org.jboss.ironjacamar}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.ironjacamar</groupId>
-                <artifactId>ironjacamar-deployers-fungal</artifactId>
-                <version>${version.org.jboss.ironjacamar}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.ironjacamar</groupId>
-                <artifactId>ironjacamar-deployers-common</artifactId>
-                <version>${version.org.jboss.ironjacamar}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.ironjacamar</groupId>
-                <artifactId>ironjacamar-common-impl-papaki</artifactId>
-                <version>${version.org.jboss.ironjacamar}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.logging</groupId>
-                <artifactId>jboss-logging-processor</artifactId>
-                <version>${version.jboss.logging.processor}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-                <artifactId>shrinkwrap-descriptors-api-base</artifactId>
-                <version>${version.org.jboss.shrinkwrap.descriptors}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.weld.se</groupId>
                 <artifactId>weld-se-core</artifactId>
                 <version>${version.org.jboss.weld}</version>
@@ -998,86 +841,26 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            
+            
+            <!-- Test dependencies -->
             <dependency>
-                <groupId>org.jboss.weld.servlet</groupId>
-                <artifactId>weld-servlet</artifactId>
-                <version>${version.org.jboss.weld}</version>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-test-spring</artifactId>
+                <version>${version.org.apache.camel}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.jvnet.mock-javamail</groupId>
-                <artifactId>mock-javamail</artifactId>
-                <version>${version.mock.javamail}</version>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>${version.org.hamcrest}</version>
             </dependency>
-            <dependency>
-                <groupId>org.jruby</groupId>
-                <artifactId>jruby</artifactId>
-                <version>${version.jruby}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.littleshoot</groupId>
-                <artifactId>littleproxy</artifactId>
-                <version>${version.littleproxy}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.milyn</groupId>
-                <artifactId>milyn-smooks-all</artifactId>
-                <version>${version.milyn}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.milyn</groupId>
-                <artifactId>milyn-smooks-javabean</artifactId>
-                <version>${version.milyn}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.python</groupId>
-                <artifactId>jython</artifactId>
-                <version>${version.jython}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.rhq</groupId>
-                <artifactId>rhq-enterprise-comm</artifactId>
-                <version>${version.rhq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.rhq</groupId>
-                <artifactId>rhq-jboss-as-7-plugin</artifactId>
-                <version>${version.rhq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.rhq</groupId>
-                <artifactId>rhq-core-domain</artifactId>
-                <version>${version.rhq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.rhq</groupId>
-                <artifactId>rhq-core-plugin-api</artifactId>
-                <version>${version.rhq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.rhq</groupId>
-                <artifactId>rhq-core-native-system</artifactId>
-                <version>${version.rhq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.rhq</groupId>
-                <artifactId>rhq-core-plugin-container</artifactId>
-                <version>${version.rhq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-asm</artifactId>
-                <version>${version.org.springframework}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jms</artifactId>
-                <version>${version.org.springframework}</version>
-            </dependency>
-            <dependency>
-                <groupId>xml-apis</groupId>
-                <artifactId>xml-apis-ext</artifactId>
-                <version>${version.xml-apis}</version>
-            </dependency>
+      
             
 <!--  ###################################################################
       ##                 Local Project Dependencies                    ##
@@ -1434,6 +1217,11 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.jvnet.mock-javamail</groupId>
+                <artifactId>mock-javamail</artifactId>
+                <version>${version.mock.javamail}</version>
+            </dependency>
+            <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${version.junit}</version>
@@ -1502,6 +1290,11 @@
                 <groupId>org.kie.commons</groupId>
                 <artifactId>kie-nio2-model</artifactId>
                 <version>${version.kie}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.littleshoot</groupId>
+                <artifactId>littleproxy</artifactId>
+                <version>${version.littleproxy}</version>
             </dependency>
             <dependency>
                 <groupId>org.mvel</groupId>
