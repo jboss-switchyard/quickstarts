@@ -45,7 +45,7 @@
         <!-- END of RiftSaw console components -->
         
 		<!-- Keep this as a local dependency, as it is an older version that ODE requires -->        
-        <resource-root path="xmlbeans-${version.xmlbeans}.jar"/>
+        <resource-root path="xmlbeans-${version.org.apache.xmlbeans}.jar"/>
     </resources>
 
     <dependencies>

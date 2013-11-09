@@ -92,12 +92,12 @@
                                 <artifactItem>
                                     <groupId>org.rhq</groupId>
                                     <artifactId>rhq-enterprise-comm</artifactId>
-                                    <version>${version.rhq}</version>
+                                    <version>${version.org.rhq}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.rhq</groupId>
                                     <artifactId>rhq-jmx-plugin</artifactId>
-                                    <version>${version.rhq}</version>
+                                    <version>${version.org.rhq}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>mc4j</groupId>

@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.python">
 
     <resources>
-        <resource-root path="jython-${version.jython}.jar"/>
+        <resource-root path="jython-${version.org.python}.jar"/>
     </resources>
 
     <dependencies>

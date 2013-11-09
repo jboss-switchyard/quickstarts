@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.jruby">
 
     <resources>
-        <resource-root path="jruby-${version.jruby}.jar"/>
+        <resource-root path="jruby-${version.org.jruby}.jar"/>
     </resources>
 
     <dependencies>
