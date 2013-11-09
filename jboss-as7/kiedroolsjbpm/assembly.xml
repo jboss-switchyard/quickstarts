@@ -28,7 +28,6 @@
         <componentDescriptor>src/main/resources/modules/system/layers/soa/org/eclipse/jdt/core/compiler/main/assembly-component.xml</componentDescriptor>
         <componentDescriptor>src/main/resources/modules/system/layers/soa/org/jbpm/main/assembly-component.xml</componentDescriptor>
         <componentDescriptor>src/main/resources/modules/system/layers/soa/org/kie/main/assembly-component.xml</componentDescriptor>
-        <componentDescriptor>src/main/resources/modules/system/layers/soa/org/kie/commons/main/assembly-component.xml</componentDescriptor>
         <componentDescriptor>src/main/resources/modules/system/layers/soa/org/mvel/main/assembly-component.xml</componentDescriptor>
     </componentDescriptors>
 </assembly>

@@ -21,7 +21,6 @@
         <module name="javax.enterprise.api"/>
         <module name="org.drools"/>
         <module name="org.jbpm"/>
-        <module name="org.kie.commons" export="true"/>
         <module name="org.slf4j"/>
     </dependencies>
 </module>
