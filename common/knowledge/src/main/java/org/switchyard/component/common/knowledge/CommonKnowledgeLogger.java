@@ -68,5 +68,12 @@ public interface CommonKnowledgeLogger {
     void problemDisposingKnowledgeAgent(String tMessage);
     */
 
+    /**
+     * emsg method definition.
+     * @param emsg the emsg
+     */
+    @LogMessage(level = Level.ERROR)
+    @Message(id = 34606, value = "%s")
+    void formattedFaultMessage(String emsg);
 }
 

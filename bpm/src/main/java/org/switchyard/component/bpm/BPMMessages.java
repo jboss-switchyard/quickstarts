@@ -1,11 +1,13 @@
 package org.switchyard.component.bpm;
 
 import java.io.IOException;
+
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
+
 import org.jboss.logging.Cause;
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Message;
@@ -159,13 +161,5 @@ public interface BPMMessages {
      */
     @Message(id = 32017, value = "Could not instantiate workItemHandler class: %s")
     SwitchYardException couldNotInstantiateWorkItemHandlerClass(String workItemHandlerClassName);
-
-    
-    /**
-     * faultEncountered method definition.
-     * @return String
-     */
-    @Message(id = 32018, value = "Fault encountered")
-    String faultEncountered();
 }
 

@@ -13,8 +13,13 @@
  */
 package org.switchyard.component.common.knowledge.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.switchyard.HandlerException;
+import org.switchyard.component.common.knowledge.CommonKnowledgeLogger;
+import org.switchyard.component.common.knowledge.CommonKnowledgeMessages;
 
 /**
  * SwitchYardServiceResponse.
@@ -58,19 +63,80 @@ public class SwitchYardServiceResponse {
     }
 
     /**
-     * Gets the fault, if it exists.
-     * @return the fault, or null if it doesn't exist
-     */
-    public Object getFault() {
-        return _fault;
-    }
-
-    /**
      * If a fault exists.
      * @return if a fault exists
      */
     public boolean hasFault() {
-        return getFault() != null;
+        return getFault(false) != null;
+    }
+
+    /**
+     * Gets the unwrapped fault, if it exists.
+     * @return the unwrapped fault, or null if it doesn't exist
+     */
+    public Object getFault() {
+        return getFault(true);
+    }
+
+    /**
+     * Gets the fault, optionally unwrapping it, or null if it doesn't exist.
+     * @param unwrap whether to unwrap the fault
+     * @return the fault, or null if it doesn't exist
+     */
+    public Object getFault(boolean unwrap) {
+        return unwrap ? unwrapFault(_fault) : _fault;
+    }
+
+    private Object unwrapFault(Object fault) {
+        if (fault instanceof HandlerException) {
+            Throwable cause = ((HandlerException)fault).getCause();
+            if (cause != null) {
+                return unwrapFault(cause);
+            }
+        }
+        if (fault instanceof InvocationTargetException) {
+            Throwable cause = ((InvocationTargetException)fault).getCause();
+            if (cause != null) {
+                return unwrapFault(cause);
+            }
+        }
+        return fault;
+    }
+
+    /**
+     * Gets a fault message, if a fault exists.
+     * @return the fault message
+     */
+    public String getFaultMessage() {
+        String fmsg = null;
+        Object fault = getFault();
+        if (fault != null) {
+            if (fault instanceof Throwable) {
+                fmsg = String.format(CommonKnowledgeMessages.MESSAGES.faultEncountered()
+                        + " [%s(message=%s)]: %s", fault.getClass().getName(), ((Throwable)fault).getMessage(), fault);
+            } else {
+                fmsg = String.format(CommonKnowledgeMessages.MESSAGES.faultEncountered()
+                        + " [%s]: %s", fault.getClass().getName(), fault);
+            }
+        }
+        return fmsg;
+    }
+
+    /**
+     * Logs a fault message, if a fault exists.
+     */
+    public void logFaultMessage() {
+        logFaultMessage(getFaultMessage());
+    }
+
+    /**
+     * Logs a fault message, if specified.
+     * @param fmsg the fault message
+     */
+    public void logFaultMessage(String fmsg) {
+        if (fmsg != null) {
+            CommonKnowledgeLogger.ROOT_LOGGER.formattedFaultMessage(fmsg);
+        }
     }
 
 }

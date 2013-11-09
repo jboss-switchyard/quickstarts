@@ -19,14 +19,6 @@ public interface BPMLogger {
     BPMLogger ROOT_LOGGER = Logger.getMessageLogger(BPMLogger.class, BPMLogger.class.getPackage().getName());
 
     /**
-     * emsg method definition.
-     * @param emsg the emsg
-     */
-    @LogMessage(level = Level.ERROR)
-    @Message(id = 31600, value = "%s")
-    void formattedFaultMessage(String emsg);
-
-    /**
      * null method definition.
      * @param faultAction the faultAction
      * @param fa the fa

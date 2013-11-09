@@ -17,7 +17,6 @@ import static org.switchyard.component.common.knowledge.KnowledgeConstants.FAULT
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.PARAMETER;
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.RESULT;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -27,12 +26,10 @@ import org.kie.api.runtime.process.ProcessRuntime;
 import org.kie.api.runtime.process.WorkItem;
 import org.kie.api.runtime.process.WorkItemHandler;
 import org.kie.api.runtime.process.WorkItemManager;
-import org.switchyard.HandlerException;
 import org.switchyard.SwitchYardException;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.bpm.BPMLogger;
-import org.switchyard.component.bpm.BPMMessages;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceRequest;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceResponse;
@@ -164,8 +161,7 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
         // results (output)
         Map<String, Object> results = workItem.getResults();
         String resultName = getResultName(parameters);
-        Object fault = response.getFault();
-        if (fault == null) {
+        if (!response.hasFault()) {
             // result (success)
             if (resultName != null) {
                 Object result = response.getContent();
@@ -174,16 +170,9 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
             manager.completeWorkItem(workItem.getId(), results);
         } else {
             // fault (failure)
-            fault = unwrapFault(fault);
-            String emsg;
-            if (fault instanceof Throwable) {
-                emsg = String.format(BPMMessages.MESSAGES.faultEncountered() 
-                        + " [%s(message=%s)]: %s", fault.getClass().getName(), ((Throwable)fault).getMessage(), fault);
-            } else {
-                emsg = String.format(BPMMessages.MESSAGES.faultEncountered()
-                        + " [%s]: %s", fault.getClass().getName(), fault);
-            }
-            BPMLogger.ROOT_LOGGER.formattedFaultMessage(emsg);
+            String fmsg = response.getFaultMessage();
+            response.logFaultMessage(fmsg);
+            Object fault = response.getFault();
             String faultName = getFaultName(parameters);
             if (faultName != null) {
                 results.put(faultName, fault);
@@ -214,10 +203,10 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
                         if (fault instanceof Throwable) {
                             cause = (Throwable)fault;
                         } else {
-                            cause = new SwitchYardException(emsg);
+                            cause = new SwitchYardException(fmsg);
                             cause.fillInStackTrace();
                         }
-                        WorkItemHandlerRuntimeException wihre = new WorkItemHandlerRuntimeException(cause, emsg);
+                        WorkItemHandlerRuntimeException wihre = new WorkItemHandlerRuntimeException(cause, fmsg);
                         wihre.setStackTrace(cause.getStackTrace());
                         wihre.setInformation(SERVICE_NAME, serviceName != null ? serviceName.toString() : null);
                         wihre.setInformation(OPERATION_NAME, operationName);
@@ -233,22 +222,6 @@ public class SwitchYardServiceTaskHandler implements WorkItemHandler {
                 }
             }
         }
-    }
-
-    private Object unwrapFault(Object fault) {
-        if (fault instanceof HandlerException) {
-            Throwable cause = ((HandlerException)fault).getCause();
-            if (cause != null) {
-                return unwrapFault(cause);
-            }
-        }
-        if (fault instanceof InvocationTargetException) {
-            Throwable cause = ((InvocationTargetException)fault).getCause();
-            if (cause != null) {
-                return unwrapFault(cause);
-            }
-        }
-        return fault;
     }
 
     /**

@@ -105,5 +105,12 @@ public interface CommonKnowledgeMessages {
      */
     @Message(id = 34712, value = "Problem building knowledge")
     String problemBuildingKnowledge();
+
+    /**
+     * faultEncountered method definition.
+     * @return String
+     */
+    @Message(id = 34713, value = "Fault encountered")
+    String faultEncountered();
 }
 

@@ -108,7 +108,11 @@ public class SwitchYardServiceChannel implements Channel {
      */
     @Override
     public void send(Object object) {
-        getInvoker().invoke(new SwitchYardServiceRequest(getServiceName(), getOperationName(), object));
+        SwitchYardServiceRequest request = new SwitchYardServiceRequest(getServiceName(), getOperationName(), object);
+        SwitchYardServiceResponse response = getInvoker().invoke(request);
+        if (response.hasFault()) {
+            response.logFaultMessage();
+        }
     }
 
 }
