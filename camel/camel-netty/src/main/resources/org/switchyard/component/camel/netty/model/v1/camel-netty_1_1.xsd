@@ -54,6 +54,7 @@
                     <element name="sendBufferSize" type="switchyard:propLong" minOccurs="0" maxOccurs="1"/>
                     <element name="ssl" type="boolean" minOccurs="0" maxOccurs="1" />
                     <element name="sslHandler" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="needClientAuth" type="boolean" minOccurs="0" maxOccurs="1" />
                     <choice minOccurs="0" maxOccurs="1">
                         <sequence>
                             <element name="passphrase" type="string" minOccurs="0" maxOccurs="1" />

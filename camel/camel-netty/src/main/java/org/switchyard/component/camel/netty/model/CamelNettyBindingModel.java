@@ -14,6 +14,7 @@
 package org.switchyard.component.camel.netty.model;
 
 import org.switchyard.component.camel.common.model.CamelBindingModel;
+import org.switchyard.component.camel.netty.model.v1.V1CamelNettyBindingModel;
 
 /**
  * Configuration binding for netty.
@@ -111,6 +112,20 @@ public interface CamelNettyBindingModel extends CamelBindingModel {
      * @return a reference to this binding model
      */
     CamelNettyBindingModel setSslHandler(String sslHandler);
+    
+    /**
+     * Indicates whether client authentication will be performed for SSL connections.
+     * @return true if client auth will be performed, false otherwise
+     */
+    public Boolean isNeedClientAuth();
+    
+    /**
+     * Specifies whether client authentication should be performed as part of an
+     * SSL exchange.
+     * @param needClientAuth true to enable client authentication, false to disable
+     * @return a reference to this binding model
+     */
+    public V1CamelNettyBindingModel setNeedClientAuth(Boolean needClientAuth);
 
     /**
      * Password bean used to access keystore.

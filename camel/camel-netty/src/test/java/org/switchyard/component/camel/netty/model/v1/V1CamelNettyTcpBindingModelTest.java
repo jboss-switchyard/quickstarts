@@ -43,6 +43,7 @@ public class V1CamelNettyTcpBindingModelTest extends V1BaseCamelServiceBindingMo
     private static final Boolean ALLOW_DEFAULT_CODEC = false;
     private static final Integer WORKER_COUNT = 10;
     private static final Boolean SYNC = false;
+    private static final Boolean NEED_CLIENT_AUTH = true;
     private static final Boolean DISCONNECT = true;
     private static final Boolean TEXTLINE = false;
     private static final Boolean TCP_NO_DELAY = true;
@@ -52,7 +53,7 @@ public class V1CamelNettyTcpBindingModelTest extends V1BaseCamelServiceBindingMo
         "receiveBufferSize=1024&sendBufferSize=128&reuseAddress=true&allowDefaultCodec=false&" +
         "workerCount=10&sync=false&disconnect=true&textline=false&tcpNoDelay=true&" +
         "keepAlive=false&keyStoreFormat=PCKS12&passphrase=camelRider&keyStoreFile=#ks&trustStoreFile=#ts&" +
-        "ssl=true&sslHandler=#myCustomHandler&securityProvider=BC";
+        "ssl=true&sslHandler=#myCustomHandler&needClientAuth=true&securityProvider=BC";
 
     public V1CamelNettyTcpBindingModelTest() {
         super(NettyEndpoint.class, CAMEL_XML);
@@ -62,13 +63,14 @@ public class V1CamelNettyTcpBindingModelTest extends V1BaseCamelServiceBindingMo
 
     @Override
     protected V1CamelNettyTcpBindingModel createTestModel() {
-        return ((V1CamelNettyTcpBindingModel) new V1CamelNettyTcpBindingModel(CamelNettyNamespace.V_1_0.uri())
+        return ((V1CamelNettyTcpBindingModel) new V1CamelNettyTcpBindingModel(CamelNettyNamespace.V_1_1.uri())
             .setHost(HOST)
             .setPort(PORT)
             .setReceiveBufferSize(RECEIVE_BUFFER_SIZE)
             .setSendBufferSize(SEND_BUFFER_SIZE)
             .setSsl(SSL)
             .setSslHandler(SSL_HANDLER)
+            .setNeedClientAuth(NEED_CLIENT_AUTH)
             .setPassphrase(PASSPHRASE)
             .setSecurityProvider(SECURITY_PROVIDER)
             .setKeyStoreFormat(KEY_STORE_FORMAT)
@@ -93,6 +95,7 @@ public class V1CamelNettyTcpBindingModelTest extends V1BaseCamelServiceBindingMo
         assertEquals(SEND_BUFFER_SIZE, model.getSendBufferSize());
         assertEquals(SSL, model.isSsl());
         assertEquals(SSL_HANDLER, model.getSslHandler());
+        assertEquals(NEED_CLIENT_AUTH, model.isNeedClientAuth());
         assertEquals(SECURITY_PROVIDER, model.getSecurityProvider());
         assertEquals(PASSPHRASE, model.getPassphrase());
         assertEquals(KEY_STORE_FORMAT, model.getKeyStoreFormat());

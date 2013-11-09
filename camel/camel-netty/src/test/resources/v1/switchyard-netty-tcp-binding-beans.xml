@@ -12,9 +12,9 @@
  - See the License for the specific language governing permissions and
  - limitations under the License.
  -->
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+<switchyard xmlns="urn:switchyard-config:switchyard:1.1"
     xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-    xmlns:netty="urn:switchyard-component-camel-netty:config:1.0">
+    xmlns:netty="urn:switchyard-component-camel-netty:config:1.1">
 
     <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
         <sca:service name="camelTest" promote="SimpleCamelService">
@@ -25,6 +25,7 @@
                 <netty:sendBufferSize>128</netty:sendBufferSize>
                 <netty:ssl>true</netty:ssl>
                 <netty:sslHandler>#myCustomHandler</netty:sslHandler>
+                <netty:needClientAuth>true</netty:needClientAuth>
                 <netty:passphrase>camelRider</netty:passphrase>
                 <netty:securityProvider>BC</netty:securityProvider>
                 <netty:keyStoreFormat>PCKS12</netty:keyStoreFormat>

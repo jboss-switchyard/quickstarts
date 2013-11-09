@@ -41,6 +41,7 @@ public abstract class V1CamelNettyBindingModel extends V1BaseCamelBindingModel
     private static final String SEND_BUFFER_SIZE = "sendBufferSize";
     private static final String SSL = "ssl";
     private static final String SSL_HANDLER = "sslHandler";
+    private static final String NEED_CLIENT_AUTH = "needClientAuth";
     private static final String PASSPHRASE = "passphrase";
     private static final String SECURITY_PROVIDER = "securityProvider";
     private static final String KEY_STORE_FORMAT = "keyStoreFormat";
@@ -69,7 +70,7 @@ public abstract class V1CamelNettyBindingModel extends V1BaseCamelBindingModel
         super(namespace, name);
 
         setModelChildrenOrder(HOST, PORT, RECEIVE_BUFFER_SIZE, SEND_BUFFER_SIZE,
-                SSL, SSL_HANDLER, PASSPHRASE, SECURITY_PROVIDER, KEY_STORE_FORMAT,
+                SSL, SSL_HANDLER, NEED_CLIENT_AUTH, PASSPHRASE, SECURITY_PROVIDER, KEY_STORE_FORMAT,
                 KEY_STORE_FILE, TRUST_STORE_FILE, SSL_CONTEXT_PARAMETERS_REF, REUSE_ADDRESS,
                 ENCODERS, DECODERS, ALLOW_DEFAULT_CODEC, WORKER_COUNT, SYNC, DISCONNECT);
     }
@@ -132,6 +133,16 @@ public abstract class V1CamelNettyBindingModel extends V1BaseCamelBindingModel
     @Override
     public V1CamelNettyBindingModel setSslHandler(String sslHandler) {
         return setConfig(SSL_HANDLER, sslHandler);
+    }
+
+    @Override
+    public Boolean isNeedClientAuth() {
+        return getBooleanConfig(NEED_CLIENT_AUTH);
+    }
+    
+    @Override
+    public V1CamelNettyBindingModel setNeedClientAuth(Boolean needClientAuth) {
+        return setConfig(NEED_CLIENT_AUTH, needClientAuth);
     }
 
     @Override
