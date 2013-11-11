@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.transform.internal.xslt;
+package org.switchyard.transform.xslt.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,9 +32,9 @@ import org.switchyard.transform.AbstractTransformerTestCase;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.config.model.TransformNamespace;
+import org.switchyard.transform.config.model.XsltTransformModel;
 import org.switchyard.transform.config.model.v1.V1XsltTransformModel;
 import org.switchyard.transform.internal.TransformerRegistryLoader;
-import org.switchyard.transform.xslt.internal.XsltTransformer;
 import org.xml.sax.SAXException;
 
 /**
@@ -125,7 +125,7 @@ public class XsltTransformerTest extends AbstractTransformerTestCase {
     public void test_factoryLoad() {
         V1XsltTransformModel model = new V1XsltTransformModel(TransformNamespace.DEFAULT.uri());
 
-        model.setXsltFile("org/switchyard/transform/internal/xslt/topics.xslt");
+        model.setXsltFile("org/switchyard/transform/xslt/internal/topics.xslt");
         model.setFrom(new QName("A"));
         model.setTo(new QName("B"));
 
@@ -182,6 +182,24 @@ public class XsltTransformerTest extends AbstractTransformerTestCase {
             Assert.assertTrue(exceptionMatch);
         }
     }
+    
+    @Test
+    public void testPoolSizeConfiguration() throws Exception {
+        XsltTransformFactory factory = new XsltTransformFactory();
+        SwitchYardModel switchyard = new ModelPuller<SwitchYardModel>().pull(
+                "xslt-config-06.xml", getClass());
+        XsltTransformModel model = (XsltTransformModel)
+                switchyard.getTransforms().getTransforms().get(0);
+        int maxSize = factory.getTransformPoolSize(model);
+        Assert.assertEquals(123, maxSize);
+    }
+    
+    @Test
+    public void testNoPool() throws Exception {
+        XsltTransformer xslt = (XsltTransformer)getTransformer("xslt-config-07.xml");
+        Assert.assertNull(xslt.getTransformerPool());
+    }
+    
     private DefaultMessage newMessage(Object content) {
         DefaultMessage message = new DefaultMessage().setContent(content);
         message.setTransformerRegistry(xformReg);

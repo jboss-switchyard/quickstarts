@@ -14,6 +14,6 @@
  -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0">
     <transforms>
-        <transform.xslt xmlns="urn:switchyard-config:transform:1.0"  from="A" to="B" xsltFile="org/switchyard/transform/internal/xslt/topics.xslt"/>
+        <transform.xslt xmlns="urn:switchyard-config:transform:1.0"  from="A" to="B" xsltFile="org/switchyard/transform/xslt/internal/topics-warn.xslt" failOnWarning="false"/>
     </transforms>
 </switchyard>

@@ -24,7 +24,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
 import org.switchyard.common.type.Classes;
-
+import org.switchyard.config.model.Model;
+import org.switchyard.config.model.property.PropertyModel;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.transform.TransformLogger;
 import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.Transformer;
@@ -35,6 +37,15 @@ import org.switchyard.transform.internal.TransformerFactory;
  * @author Alejandro Montenegro <a href="mailto:aamonten@gmail.com">aamonten@gmail.com</a>
  */
 public final class XsltTransformFactory implements TransformerFactory<XsltTransformModel>{
+    
+    /**
+     * Property used in a domain property to configure max transformer pool size.
+     */
+    public static final String MAX_POOL_SIZE = "org.switchyard.transform.xslt.maxPoolSize";
+    /**
+     * Default max size for transformer pool.
+     */
+    public static final int DEFAULT_MAX_POOL_SIZE = 50;
     
     /**
      * Create a {@link Transformer} instance from the supplied {@link XsltTransformModel}.
@@ -63,12 +74,31 @@ public final class XsltTransformFactory implements TransformerFactory<XsltTransf
             tFactory.setURIResolver(new XsltUriResolver());
             Templates templates = tFactory.newTemplates(new StreamSource(stylesheetStream));
             
-            return new XsltTransformer(from, to, templates, failOnWarning);
+            return new XsltTransformer(from, to, templates, failOnWarning, getTransformPoolSize(model));
         } catch (TransformerConfigurationException e) {
             throw TransformMessages.MESSAGES.unexpectedErrorOcurred(e);
         } catch (IOException e) {
             throw TransformMessages.MESSAGES.unableToLocateXSLTFile(model.getXsltFile().toString(), e);
         }
+    }
+    
+    // This method looks for the MAX_POOL_SIZE property within switchyard.xml to 
+    // configure the default transformer pool size
+    int getTransformPoolSize(XsltTransformModel model) {
+        int poolSize = DEFAULT_MAX_POOL_SIZE;
+        // attempt to navigate to parent
+        Model root = model.getModelRoot();
+        if (root instanceof SwitchYardModel) {
+            SwitchYardModel syModel = (SwitchYardModel)root;
+            if (syModel.getDomain() != null && syModel.getDomain().getProperties() != null) {
+                PropertyModel poolProp = 
+                        syModel.getDomain().getProperties().getProperty(MAX_POOL_SIZE);
+                if (poolProp != null) {
+                    poolSize = Integer.parseInt(poolProp.getValue());
+                }
+            }
+        }
+        return poolSize;
     }
     
     private class XsltTransformFactoryErrorListener implements ErrorListener {

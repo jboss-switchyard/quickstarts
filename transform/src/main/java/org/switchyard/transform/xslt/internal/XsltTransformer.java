@@ -41,6 +41,7 @@ public class XsltTransformer<F, T> extends BaseTransformer<Message, Message> {
 
     private static final Logger LOGGER = Logger.getLogger(XsltTransformer.class);
     private Templates _templates;
+    private TransformerPool _transformerPool;
     private boolean  _failOnWarning;
     
     /**
@@ -50,28 +51,50 @@ public class XsltTransformer<F, T> extends BaseTransformer<Message, Message> {
      * @param to To type.
      * @param templates XSL Template instance
      * @param failOnWarning whether a warning should be reported as an SwitchYardException or just log
+     * @param maxPoolSize maximum size for the transformer pool
      */
-    public XsltTransformer(QName from, QName to, Templates templates, boolean failOnWarning) {
+    public XsltTransformer(QName from, QName to, Templates templates, boolean failOnWarning, int maxPoolSize) {
         super(from, to);
         this._templates = templates;
         this._failOnWarning = failOnWarning;
+        // max pool size < 0 indicates that pooling should be disabled
+        if (maxPoolSize > 0) {
+            _transformerPool = new TransformerPool(
+                    templates, maxPoolSize, new XsltTransformerErrorListener(_failOnWarning));
+        }
     }
 
     @Override
     public Message transform(Message message) {
-
+        javax.xml.transform.Transformer transformer = null;
+        
         try {
             DOMSource source = message.getContent(DOMSource.class);
             DOMResult result = new DOMResult();
-            javax.xml.transform.Transformer transformer = _templates.newTransformer();
-            transformer.setErrorListener(new XsltTransformerErrorListener(_failOnWarning));
+            
+            if (_transformerPool != null) {
+                transformer = _transformerPool.take();
+            } else {
+                // if no pool is configured, then just create a new transformer for each request
+                transformer = _templates.newTransformer();
+                transformer.setErrorListener(new XsltTransformerErrorListener(_failOnWarning));
+            }
+            
             transformer.transform(source, result);
             message.setContent(((Document)result.getNode()).getDocumentElement());
 
         } catch (Exception e) {
             throw TransformMessages.MESSAGES.errorDuringXsltTransformation(e);
+        } finally {
+            if (_transformerPool != null && transformer != null) {
+                _transformerPool.give(transformer);
+            }
         }
         return message;
+    }
+    
+    TransformerPool getTransformerPool() {
+        return _transformerPool;
     }
 
     private class XsltTransformerErrorListener implements ErrorListener {
