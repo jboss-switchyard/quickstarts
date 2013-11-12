@@ -94,7 +94,7 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
             }
         }
 
-        PackageScanClassResolver packageScanClassResolver = getPackageScanClassResolver();
+        PackageScanClassResolver packageScanClassResolver = findPackageScanClassResolver();
         if (packageScanClassResolver != null) {
             setPackageScanClassResolver(packageScanClassResolver);
         }
@@ -117,14 +117,14 @@ public class SwitchYardCamelContext extends DefaultCamelContext {
      * 
      * @return The first PackageScanClassResolver Service found on the classpath.
      */
-    public PackageScanClassResolver getPackageScanClassResolver() {
-        final ServiceLoader<PackageScanClassResolver> resolverLoaders = ServiceLoader
-            .load(PackageScanClassResolver.class, this.getClass().getClassLoader());
+    public PackageScanClassResolver findPackageScanClassResolver() {
+        final ServiceLoader<PackageScanClassResolver> resolverLoaders = 
+                ServiceLoader.load(PackageScanClassResolver.class);
 
         for (PackageScanClassResolver packageScanClassResolver : resolverLoaders) {
             return packageScanClassResolver;
         }
-
+        
         return null;
     }
 
