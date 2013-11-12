@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.transform.config.model.TransformSwitchYardScanner;
@@ -34,9 +35,16 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
         scanners = {BeanSwitchYardScanner.class, TransformSwitchYardScanner.class })
 public class SoapMtomTest {
 
+    private static String WSDL = "http://localhost:8081/soap-mtom/ImageServiceService?wsdl";
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "8081");
+    }
+
     @Test
     public void testSwitchYardWebService() throws Exception {
-        Image image = SoapMtomClient.sendMessage();
+        Image image = SoapMtomClient.sendMessage(WSDL);
         Assert.assertEquals(256, image.getHeight(null));
         Assert.assertEquals(256, image.getWidth(null));
     }
