@@ -84,5 +84,24 @@ public interface ExtensionLogger {
     @LogMessage(level = ERROR)
     @Message(id = 40006, value = "Unable to stop %s")
     void unableToStop(String componentName, @Cause Exception e);
+    
+    /**
+     * cannotReadPackage method definition.
+     * @param packageName package name
+     * @param e cause
+     */
+    @LogMessage(level = WARN)
+    @Message(id = 40007, value = "Cannot read package: %s")
+    void cannotReadPackage(String packageName, @Cause Exception e);
+    
+    /**
+     * failedToParseURL method definition.
+     * @param url url
+     * @param e cause
+     */
+    @LogMessage(level = WARN)
+    @Message(id = 40008, value = "Failed to parse URL: %s")
+    void failedToParseURL(String url, @Cause Exception e);
+    
 
 }

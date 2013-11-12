@@ -25,6 +25,7 @@
         <module name="org.apache.log4j"/>
         <module name="org.jboss.logging"/>
         <module name="org.infinispan"/>
+        <module name="org.apache.camel.core"/>
         <module name="org.apache.cxf"/>
         <module name="org.jboss.as.clustering.infinispan"/>
         <module name="org.jboss.as.controller"/>
