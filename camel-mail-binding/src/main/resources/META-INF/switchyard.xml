@@ -17,6 +17,20 @@
 -->
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-mail-binding" targetNamespace="urn:switchyard-quickstart:camel-mail-binding:0.1.0">
         <service name="PrintService" promote="PrintService/PrintService">
+	    <!--
+		GMail settings - to run this quickstart with a test
+		GMail account, please uncomment this mail:binding and comment
+		out the mail:binding listed below.   Directions for running
+                and configuring the quickstart are in the Readme.md file.
+            <mail:binding.mail xmlns:mail="urn:switchyard-component-camel-mail:config:1.0" secure="true">
+                <mail:host>imap.gmail.com</mail:host>
+                <mail:username>switchyardtestaccount</mail:username>
+                <mail:password>INSERT-PASSWORD</mail:password>
+                <mail:consume accountType="imap">
+                    <mail:folderName>inbox</mail:folderName>
+                </mail:consume>
+            </mail:binding.mail>
+	    -->
             <mail:binding.mail xmlns:mail="urn:switchyard-component-camel-mail:config:1.0">
                 <mail:host>localhost</mail:host>
                 <mail:username>camel</mail:username>
@@ -28,6 +42,23 @@
             </mail:binding.mail>
         </service>
         <reference multiplicity="1..1" name="OutgoingPrintService" promote="PrintService/OutgoingPrintService">
+            <!--
+                GMail settings - to run this quickstart with a test
+                GMail account, please uncomment this mail:binding and comment
+                out the mail:binding listed below.   Directions for running
+                and configuring the quickstart are in the Readme.md file.
+            <mail:binding.mail xmlns:mail="urn:switchyard-component-camel-mail:config:1.0" secure="true">
+                <mail:host>smtp.gmail.com</mail:host>
+                <mail:port>465</mail:port>
+                <mail:username>switchyardtestaccount@gmail.com</mail:username>
+                <mail:password>INSERT-PASSWORD</mail:password>
+                <mail:produce>
+                    <mail:subject>Forwarded message</mail:subject>
+                    <mail:from>switchyardtestaccount@gmail.com</mail:from>
+                    <mail:to>INSERT-EMAIL-ADDRESS-TO</mail:to>
+                </mail:produce>
+            </mail:binding.mail>
+            -->
             <mail:binding.mail xmlns:mail="urn:switchyard-component-camel-mail:config:1.0">
                 <mail:host>localhost</mail:host>
                 <mail:username>camel</mail:username>
