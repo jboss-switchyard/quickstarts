@@ -16,9 +16,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jboss.integration-platform</groupId>
-        <artifactId>jboss-integration-platform-bom</artifactId>
-        <version>6.0.0-SNAPSHOT</version>
-        <relativePath/>
+        <artifactId>jboss-integration-platform-parent</artifactId>
+        <version>6.0.0.CR3</version>
     </parent>
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-parent</artifactId>
@@ -56,6 +55,7 @@
         
         <version.jbossas.bom>7.2.0.Alpha1-redhat-4</version.jbossas.bom>
         <version.redhat.eap6.bom>1.0.4.Final-redhat-1</version.redhat.eap6.bom>
+        <version.ip.bom>6.0.0.CR3</version.ip.bom>
         
         <!-- Versions for local dependencies not eligible for the Integration BOM -->
         <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
@@ -535,6 +535,13 @@
 <!--  ###################################################################
       ##                         Imported BOMs                         ##
       ################################################################### -->
+            <dependency>
+                <groupId>org.jboss.integration-platform</groupId>
+                <artifactId>jboss-integration-platform-bom</artifactId>
+                <version>${version.ip.bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.jboss.bom</groupId>
                 <artifactId>jboss-javaee-6.0-with-all</artifactId>
