@@ -84,7 +84,7 @@ public class SwitchYardConfigProcessor implements DeploymentUnitProcessor {
 
     }
 
-    private static class JBossPropertyResolver implements PropertyResolver {
+    private static final class JBossPropertyResolver implements PropertyResolver {
 
         private final org.jboss.metadata.property.PropertyResolver _wrapped;
 

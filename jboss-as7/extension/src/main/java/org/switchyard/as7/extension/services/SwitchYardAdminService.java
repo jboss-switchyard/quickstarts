@@ -25,9 +25,6 @@ import org.switchyard.admin.SwitchYard;
 import org.switchyard.admin.base.BaseSwitchYard;
 import org.switchyard.admin.base.SwitchYardBuilder;
 import org.switchyard.deploy.ServiceDomainManager;
-import org.switchyard.deploy.event.ApplicationDeployedEvent;
-import org.switchyard.deploy.event.ApplicationUndeployedEvent;
-import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 /**
  * SwitchYardAdminService

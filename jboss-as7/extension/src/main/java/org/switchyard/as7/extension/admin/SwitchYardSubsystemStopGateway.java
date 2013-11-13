@@ -97,7 +97,7 @@ public final class SwitchYardSubsystemStopGateway implements OperationStepHandle
                     return;
                 }
                 throw new OperationFailedException(new ModelNode().set(
-                        ExtensionMessages.MESSAGES.unknownGateway() ));
+                        ExtensionMessages.MESSAGES.unknownGateway()));
             }
         }, OperationContext.Stage.RUNTIME);
         context.stepCompleted();

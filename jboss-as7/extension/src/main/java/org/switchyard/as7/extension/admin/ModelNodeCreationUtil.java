@@ -817,7 +817,7 @@ final public class ModelNodeCreationUtil {
      *      ]
      * </pre></code>
      * 
-     * @param service the {@link Service} used to populate the node.
+     * @param componentService the {@link Service} used to populate the node.
      * @return a new {@link ModelNode}
      */
     public static ModelNode createComponentServiceMetricsNode(ComponentService componentService) {

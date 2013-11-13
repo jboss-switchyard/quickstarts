@@ -1,7 +1,5 @@
 package org.switchyard.as7.extension;
 
-import javax.xml.namespace.QName;
-
 import static org.jboss.logging.Logger.Level.ERROR;
 import static org.jboss.logging.Logger.Level.WARN;
 

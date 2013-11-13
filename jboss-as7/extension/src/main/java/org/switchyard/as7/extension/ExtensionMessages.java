@@ -2,7 +2,6 @@ package org.switchyard.as7.extension;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.jboss.as.controller.OperationFailedException;
 import org.jboss.logging.Cause;
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Message;
@@ -54,7 +53,7 @@ public interface ExtensionMessages {
     RuntimeException unableToCreateTempDirectory(String path);
     
     /**
-     * contextAlreadyExists
+     * contextAlreadyExists method definition.
      * @param contextName context name
      * @return RuntimeException
      */
@@ -69,5 +68,14 @@ public interface ExtensionMessages {
      */
     @Message(id = 40405, value = "Could not instantiate interceptor class: %s")
     SwitchYardException couldNotInstantiateInterceptor(String interceptorClassName, @Cause Throwable t);
+
+    /**
+     * noSuchOperationGet method definition.
+     * @param method the HTTP method
+     * @param pathInfo the HTTP method path info
+     * @return Exception
+     */
+    @Message(id = 40406, value = "No such operation: / (HTTP %s PATH_INFO: %s)")
+    Exception noSuchOperationGet(String method, String pathInfo);
 
 }

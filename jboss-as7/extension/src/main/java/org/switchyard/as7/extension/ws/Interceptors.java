@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
@@ -55,6 +56,12 @@ import org.switchyard.security.credential.ConfidentialityCredential;
  */
 public final class Interceptors {
 
+    private static final String SLASH_STR = "/";
+    private static final String QUESTION_MARK_STR = "?";
+    private static final String QUESTION_MARK_REGEXP_STR = "\\?";
+    private static final String NULL_STR = "null";
+    private static final String HTTP_POST = "POST";
+
     private static final Class<?>[][] PARAMETER_TYPES = new Class<?>[][]{
         new Class<?>[]{Map.class},
         new Class<?>[0]
@@ -72,6 +79,7 @@ public final class Interceptors {
             List<?> list = new FieldAccess<List<?>>(NonSpringBusHolder.class, "endpoints").read(busHolder);
             for (Object o : list) {
                 for (org.apache.cxf.endpoint.Endpoint e : ((EndpointImpl)o).getService().getEndpoints().values()) {
+                    e.getInInterceptors().add(new SwitchYardURIMappingInterceptor());
                     e.getInInterceptors().add(new SwitchYardEncryptionConfidentialityInterceptor());
                     e.getInInterceptors().addAll(getConfiguredInInterceptors(bindingModel, loader));
                     e.getOutInterceptors().addAll(getConfiguredOutInterceptors(bindingModel, loader));
@@ -217,6 +225,43 @@ public final class Interceptors {
         public void handleFault(Message message) {
             InboundHandler.unsetCredentials();
             SecurityContextAssociation.clearSecurityContext();
+        }
+    }
+
+    private static final class SwitchYardURIMappingInterceptor extends AbstractPhaseInterceptor<Message> {
+
+        private SwitchYardURIMappingInterceptor() {
+            super(Phase.PRE_PROTOCOL);
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void handleMessage(Message message) throws Fault {
+            String method = (String)message.get(Message.HTTP_REQUEST_METHOD);
+            if (method.equals(HTTP_POST)) {
+                return;
+            }
+
+            String path = (String)message.get(Message.PATH_INFO);
+            String basePath = (String)message.get(Message.BASE_PATH);
+            if (basePath == null) {
+              basePath = SLASH_STR;
+            }
+            String rest = StringUtils.diff(path, basePath);
+            String opName = StringUtils.getFirstNotEmpty(rest, SLASH_STR);
+            if (opName.indexOf(QUESTION_MARK_STR) != -1) {
+              opName = opName.split(QUESTION_MARK_REGEXP_STR)[0];
+            }
+            // Funny, we have to check for a 'null' String :)
+            if ((opName == null) || opName.equals(NULL_STR)) {
+                String pathInfo = (String)message.get(Message.PATH_INFO);
+                pathInfo = pathInfo.split(NULL_STR)[0];
+                if (!pathInfo.endsWith(SLASH_STR)) {
+                    pathInfo = pathInfo.concat(SLASH_STR);
+                }
+                throw new Fault(ExtensionMessages.MESSAGES.noSuchOperationGet(method, pathInfo));
+            }
         }
     }
     // class simple names must be unique
