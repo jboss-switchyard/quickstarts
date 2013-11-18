@@ -82,7 +82,7 @@ public final class Containers {
                 return kieServices.newKieContainer(releaseId);
             }
         }
-        return kieServices.getKieClasspathContainer();
+        return kieServices.newKieClasspathContainer();
     }
 
     private Containers() {}

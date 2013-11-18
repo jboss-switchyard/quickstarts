@@ -53,11 +53,11 @@ public interface CommonKnowledgeMessages {
     SwitchYardException serviceReferenceNull(String serviceName);
 
     /**
-     * manifestContainerBaseNameRequiredInConfigurationForPersistentSessions method definition.
+     * manifestContainerRequiredInConfigurationForPersistentSessions method definition.
      * @return SwitchYardException
      */
-    @Message(id = 34706, value = "manifest container baseName required in configuration for persistent sessions")
-    SwitchYardException manifestContainerBaseNameRequiredInConfigurationForPersistentSessions();
+    @Message(id = 34706, value = "manifest container required in configuration for persistent sessions")
+    SwitchYardException manifestContainerRequiredInConfigurationForPersistentSessions();
 
     /**
      * containerScanIntervalMustBePositive method definition.

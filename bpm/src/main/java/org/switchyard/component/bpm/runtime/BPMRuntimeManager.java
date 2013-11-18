@@ -108,4 +108,12 @@ public final class BPMRuntimeManager implements InternalRuntimeManager {
         return _environment;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isClosed() {
+        return false;
+    }
+
 }

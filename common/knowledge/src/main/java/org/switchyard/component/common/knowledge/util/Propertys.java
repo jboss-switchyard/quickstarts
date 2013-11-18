@@ -15,8 +15,6 @@ package org.switchyard.component.common.knowledge.util;
 
 import java.util.Properties;
 
-// SWITCHYARD-1755: internal builder class usage still required (public APIs insufficient)
-import org.kie.internal.builder.conf.ClassLoaderCacheOption;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.config.model.property.PropertiesModel;
 
@@ -35,8 +33,6 @@ public final class Propertys {
      */
     public static Properties getProperties(KnowledgeComponentImplementationModel model, Properties overrides) {
         Properties properties = new Properties();
-        // If this isn't false, then all rules' LHS object conditions will not match on redeploys!
-        properties.setProperty(ClassLoaderCacheOption.PROPERTY_NAME, Boolean.FALSE.toString());
         if (overrides != null) {
             overrideProperties(properties, overrides);
         }

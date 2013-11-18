@@ -46,11 +46,13 @@ class KnowledgeContainerSessionFactory extends KnowledgeSessionFactory {
 
     private final ContainerModel _containerModel;
     private final KieContainer _kieContainer;
+    private final KieSessionConfiguration _sessionConfiguration;
 
     KnowledgeContainerSessionFactory(KnowledgeComponentImplementationModel model, ClassLoader loader, ServiceDomain domain, Properties propertyOverrides) {
         super(model, loader, domain, propertyOverrides);
         _containerModel = Containers.getContainerModel(model);
         _kieContainer = Containers.getContainer(_containerModel);
+        _sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getLoader(), getPropertyOverrides());
         registerScannerForDisposal();
     }
 
@@ -94,15 +96,14 @@ class KnowledgeContainerSessionFactory extends KnowledgeSessionFactory {
         if (_containerModel != null) {
             String sessionName = _containerModel.getSessionName();
             if (sessionName != null) {
-                return _kieContainer.newStatelessKieSession(sessionName);
+                return _kieContainer.newStatelessKieSession(sessionName, _sessionConfiguration);
             }
             String baseName = _containerModel.getBaseName();
             if (baseName != null) {
-                KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getLoader(), getPropertyOverrides());
-                return _kieContainer.getKieBase(baseName).newStatelessKieSession(sessionConfiguration);
+                return _kieContainer.getKieBase(baseName).newStatelessKieSession(_sessionConfiguration);
             }
         }
-        return _kieContainer.newStatelessKieSession();
+        return _kieContainer.newStatelessKieSession(_sessionConfiguration);
     }
 
     private KieSession newKieSession(Map<String, Object> environmentOverrides) {
@@ -110,36 +111,32 @@ class KnowledgeContainerSessionFactory extends KnowledgeSessionFactory {
         if (_containerModel != null) {
             String sessionName = _containerModel.getSessionName();
             if (sessionName != null) {
-                return _kieContainer.newKieSession(sessionName, environment);
+                return _kieContainer.newKieSession(sessionName, environment, _sessionConfiguration);
             }
             String baseName = _containerModel.getBaseName();
             if (baseName != null) {
-                KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getLoader(), getPropertyOverrides());
-                return _kieContainer.getKieBase(baseName).newKieSession(sessionConfiguration, environment);
+                return _kieContainer.getKieBase(baseName).newKieSession(_sessionConfiguration, environment);
             }
         }
-        return _kieContainer.newKieSession(environment);
+        return _kieContainer.newKieSession(environment, _sessionConfiguration);
     }
 
     private KieSession getPersistentKieSession(Map<String, Object> environmentOverrides, Integer sessionId) {
         if (_containerModel != null) {
             String baseName = _containerModel.getBaseName();
-            if (baseName != null) {
-                KieStoreServices kieStoreServices = KieServices.Factory.get().getStoreServices();
-                KieBase base = _kieContainer.getKieBase(baseName);
-                KieSessionConfiguration sessionConfiguration = Configurations.getSessionConfiguration(getModel(), getLoader(), getPropertyOverrides());
-                Environment environment = Environments.getEnvironment(environmentOverrides);
-                KieSession session = null;
-                if (sessionId != null) {
-                    session = kieStoreServices.loadKieSession(sessionId, base, sessionConfiguration, environment);
-                }
-                if (session == null) {
-                    session = kieStoreServices.newKieSession(base, sessionConfiguration, environment);
-                }
-                return session;
+            KieBase base = baseName != null ? _kieContainer.getKieBase(baseName) : _kieContainer.getKieBase();
+            KieStoreServices kieStoreServices = KieServices.Factory.get().getStoreServices();
+            Environment environment = Environments.getEnvironment(environmentOverrides);
+            KieSession session = null;
+            if (sessionId != null) {
+                session = kieStoreServices.loadKieSession(sessionId, base, _sessionConfiguration, environment);
             }
+            if (session == null) {
+                session = kieStoreServices.newKieSession(base, _sessionConfiguration, environment);
+            }
+            return session;
         }
-        throw CommonKnowledgeMessages.MESSAGES.manifestContainerBaseNameRequiredInConfigurationForPersistentSessions();
+        throw CommonKnowledgeMessages.MESSAGES.manifestContainerRequiredInConfigurationForPersistentSessions();
     }
 
     private void registerScannerForDisposal() {
