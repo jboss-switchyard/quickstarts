@@ -17,14 +17,14 @@
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
         <artifactId>switchyard-quickstart-parent</artifactId>
-        <version>1.1.0.CR1</version>
+        <version>1.1.0.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-quickstart-rules-camel-cbr</artifactId>
     <name>Quickstart : Rules+Camel Content-Based Router</name>
     <packaging>jar</packaging>
     <properties>
-        <switchyard.version>1.1.0.CR1</switchyard.version>
+        <switchyard.version>1.1.0.Final</switchyard.version>
     </properties>
     <dependencies>
         <dependency>
