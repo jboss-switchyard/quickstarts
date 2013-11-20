@@ -1,82 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="osdemo" targetNamespace="urn:switchyard-quickstart:bpm-service:1.0">
-        <service name="ProcessOrder" promote="ProcessOrder">
-            <interface.wsdl interface="wsdl/ProcessOrder.wsdl#wsdl.porttype(ProcessOrder)"/>
-            <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
-                <wsdl>wsdl/ProcessOrder.wsdl</wsdl>
-                <socketAddr>localhost:${soapPort:18001}</socketAddr>
-                <contextPath>swydws</contextPath>
-            </binding.soap>
-        </service>
-        <component name="ProcessOrder">
-            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0" processId="ProcessOrder">
-                <!--
-                <listeners>
-                    <listener class="org.drools.core.event.DebugProcessEventListener"/>
-                </listeners>
-                -->
-                <manifest>
-                    <resources>
-                        <resource location="META-INF/ProcessOrder.bpmn" type="BPMN2"/>
-                    </resources>
-                </manifest>
-                <operations>
-                    <operation name="submitOrder" type="START_PROCESS">
-                        <inputs>
-                            <input from="message.content" to="Parameter"/>
-                            <input from="context['org.switchyard.messageId']" to="messageId"/>
-                            <input from="userName" to="userName"/>
-                        </inputs>
-                        <outputs>
-                            <output from="Result" to="message.content"/>
-                        </outputs>
-                    </operation>
-                </operations>
-            </implementation.bpm>
-            <service name="ProcessOrder">
-                <interface.java interface="org.switchyard.quickstarts.bpm.service.ProcessOrder"/>
-            </service>
-            <reference name="Inventory">
-                <interface.java interface="org.switchyard.quickstarts.bpm.service.InventoryBean"/>
-            </reference>
-            <reference name="Shipping">
-                <interface.java interface="org.switchyard.quickstarts.bpm.service.Shipping"/>
-            </reference>
-            <reference name="BackOrder">
-                <interface.java interface="org.switchyard.quickstarts.bpm.service.BackOrder"/>
-            </reference>
-        </component>
-        <component name="Shipping">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.bpm.service.ShippingBean"/>
-            <service name="Shipping">
-                <interface.java interface="org.switchyard.quickstarts.bpm.service.Shipping"/>
-            </service>
-        </component>
-        <component name="BackOrder">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.bpm.service.BackOrderBean"/>
-            <service name="BackOrder">
-                <interface.java interface="org.switchyard.quickstarts.bpm.service.BackOrder"/>
-            </service>
-        </component>
-        <component name="Inventory">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.bpm.service.InventoryBean"/>
-            <service name="Inventory">
-                <interface.java interface="org.switchyard.quickstarts.bpm.service.Inventory"/>
-            </service>
-        </component>
-    </composite>
-    <transforms xmlns:xform="urn:switchyard-config:transform:1.0">
-        <xform:transform.jaxb contextPath="org.switchyard.quickstarts.bpm.service.data" 
-            from="java:org.switchyard.quickstarts.bpm.service.data.OrderAck" 
-            to="{urn:switchyard-quickstart:bpm-service:1.0}submitOrderResponse"/>
-        <xform:transform.jaxb contextPath="org.switchyard.quickstarts.bpm.service.data" 
-            from="{urn:switchyard-quickstart:bpm-service:1.0}submitOrder" 
-            to="java:org.switchyard.quickstarts.bpm.service.data.Order"/>
-    </transforms>
-    <domain>
-        <properties>
-            <property name="userName" value="${user.name}"/>
-        </properties>
-    </domain>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:bpm="urn:switchyard-component-bpm:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:soap="urn:switchyard-component-soap:config:1.0" xmlns:xform="urn:switchyard-config:transform:1.0">
+  <sca:composite name="osdemo" targetNamespace="urn:switchyard-quickstart:bpm-service:1.0">
+    <sca:service name="ProcessOrder" promote="ProcessOrder/ProcessOrder">
+      <sca:interface.wsdl interface="wsdl/ProcessOrder.wsdl#wsdl.porttype(ProcessOrder)"/>
+      <soap:binding.soap>
+        <soap:wsdl>wsdl/ProcessOrder.wsdl</soap:wsdl>
+        <soap:socketAddr>localhost:${soapPort:18001}</soap:socketAddr>
+        <soap:contextPath>swydws</soap:contextPath>
+      </soap:binding.soap>
+    </sca:service>
+    <sca:component name="Shipping">
+      <bean:implementation.bean class="org.switchyard.quickstarts.bpm.service.ShippingBean"/>
+      <sca:service name="Shipping">
+        <sca:interface.java interface="org.switchyard.quickstarts.bpm.service.Shipping"/>
+      </sca:service>
+    </sca:component>
+    <sca:component name="BackOrder">
+      <bean:implementation.bean class="org.switchyard.quickstarts.bpm.service.BackOrderBean"/>
+      <sca:service name="BackOrder">
+        <sca:interface.java interface="org.switchyard.quickstarts.bpm.service.BackOrder"/>
+      </sca:service>
+    </sca:component>
+    <sca:component name="Inventory">
+      <bean:implementation.bean class="org.switchyard.quickstarts.bpm.service.InventoryBean"/>
+      <sca:service name="Inventory">
+        <sca:interface.java interface="org.switchyard.quickstarts.bpm.service.Inventory"/>
+      </sca:service>
+    </sca:component>
+    <sca:component name="ProcessOrder">
+      <bpm:implementation.bpm persistent="false" processId="ProcessOrder">
+        <bpm:manifest>
+          <bpm:resources>
+            <bpm:resource location="ProcessOrder.bpmn" type="BPMN2"/>
+          </bpm:resources>
+        </bpm:manifest>
+        <bpm:operations>
+          <bpm:operation name="submitOrder" type="START_PROCESS">
+            <bpm:inputs>
+              <bpm:input from="message.content" to="Parameter"/>
+              <bpm:input from="userName" to="userName"/>
+              <bpm:input from="context['org.switchyard.messageId']" to="messageId"/>
+            </bpm:inputs>
+            <bpm:outputs>
+              <bpm:output from="Result" to="message.content"/>
+            </bpm:outputs>
+          </bpm:operation>
+        </bpm:operations>
+      </bpm:implementation.bpm>
+      <sca:service name="ProcessOrder">
+        <sca:interface.java interface="org.switchyard.quickstarts.bpm.service.ProcessOrder"/>
+      </sca:service>
+      <sca:reference name="Inventory">
+        <sca:interface.java interface="org.switchyard.quickstarts.bpm.service.Inventory"/>
+      </sca:reference>
+      <sca:reference name="Shipping">
+        <sca:interface.java interface="org.switchyard.quickstarts.bpm.service.Shipping"/>
+      </sca:reference>
+      <sca:reference name="BackOrder">
+        <sca:interface.java interface="org.switchyard.quickstarts.bpm.service.BackOrder"/>
+      </sca:reference>
+    </sca:component>
+  </sca:composite>
+  <transforms>
+    <xform:transform.jaxb from="java:org.switchyard.quickstarts.bpm.service.data.OrderAck" to="{urn:switchyard-quickstart:bpm-service:1.0}submitOrderResponse" contextPath="org.switchyard.quickstarts.bpm.service.data"/>
+    <xform:transform.jaxb from="{urn:switchyard-quickstart:bpm-service:1.0}submitOrder" to="java:org.switchyard.quickstarts.bpm.service.data.Order" contextPath="org.switchyard.quickstarts.bpm.service.data"/>
+  </transforms>
+  <domain>
+    <properties>
+      <property name="userName" value="${user.name}"/>
+    </properties>
+  </domain>
 </switchyard>
