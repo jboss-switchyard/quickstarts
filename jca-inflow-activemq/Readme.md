@@ -15,29 +15,25 @@ then operation selector choose the spanish operation so you would get a spanish 
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
+1. Start ActiveMQ broker (quickstart does not embed it)
 
-        mvn clean install
-
-2. Deploy ActiveMQ resource adapter:
-
-        https://community.jboss.org/wiki/SwitchYardJCAComponentAndActiveMQResourceAdapter
-
-3. Start ActiveMQ broker (quickstart does not embed it)
-
-4. Start JBoss AS 7 in standalone-full mode:
+2. Start JBoss AS 7 in standalone-full mode:
 
         ${AS}/bin/standalone.sh -server-config standalone-full.xml
 
-5. Deploy the quickstart
+3. Build and deploy the quickstart
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-6. Execute ActiveMQClient
+4. Execute ActiveMQClient
 
         mvn exec:java
 
-7. Check the server console for output from the service.
+5. Check the server console for output from the service.
+
+6. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 Expected Results
 ================

@@ -62,7 +62,7 @@ public class SslConfigurationFactory {
      */
     private String getPath(String fileName) {
         if (JBOSS_HOME != null) {
-            return JBOSS_HOME + "/standalone/configuration/" + fileName;
+            return JBOSS_HOME + "/quickstarts/camel-netty-binding/" + fileName;
         }
         return fileName;
     }

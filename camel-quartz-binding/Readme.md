@@ -8,20 +8,20 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Start JBoss AS 7 in standalone-full mode:
+1. Start JBoss AS 7 in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
-3. Deploy the quickstart
+2. Build and deploy the quickstart
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-4. Check the server console for output from the service. By default after every second
+3. Check the server console for output from the service. By default after every second
    message should be printed
+
+4. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 

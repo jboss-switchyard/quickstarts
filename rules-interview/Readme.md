@@ -20,26 +20,47 @@ Maven
 
 Running the quickstart
 ======================
-1. Build the quickstart:
 
-        mvn clean install
+JBoss AS 7
+----------
+1. Start JBoss AS 7 in standalone mode:
 
-2. Run the test:
+        ${AS}/bin/standalone.sh
 
-        (Using java interface:)
-        mvn -Dtest=RulesInterviewTest test
+2. Build and deploy the quickstart: 
 
-        (Using web service interface:)
-        mvn -Dtest=WebServiceTest test
+        mvn install -Pdeploy
 
-Expected Output:
-================
-(userName is a placeholder in this Readme.)
+3. Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
+    - Submit a request with your preferred SOAP client - src/test/resources/xml contains 
+      sample requests and the responses that you should see
+    - Use the simple bundled SOAP client and the sample request XML e.g.
+<br/>
 ```
-Running org.switchyard.quickstarts.rules.interview.RulesInterviewTest
-**** Twenty is an old enough applicant, userName. ****
-**** Sixteen is too young of an applicant, userName. ****
+            mvn exec:java
 ```
+<br/>
+    - SOAP-UI : Use the wsdl for this project (src/main/resources/wsdl/OrderService.wsdl) to 
+      create a soap-ui project. Use the sample request (src/test/resources/xml/soap-request-pass.xml) 
+      as an example of a sample request. The output below is the expected output : 
+
+Expected Output
+===============
+```
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header/>
+   <SOAP-ENV:Body>
+      <urn:verifyResponse xmlns:urn="urn:switchyard-quickstart:rules-interview:0.1.0">
+         <return>true</return>
+      </urn:verifyResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+
+4. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
+
 
 ## Further Reading
 

@@ -23,6 +23,9 @@
     <artifactId>switchyard-quickstart-transform-smooks</artifactId>
     <packaging>jar</packaging>
     <name>Quickstart : Smooks Transformation</name>
+    <properties>
+        <deploy.skip>true</deploy.skip>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -41,6 +44,10 @@
             <artifactId>switchyard-component-bean</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-soap</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
             <scope>test</scope>
@@ -48,6 +55,11 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-test-mixin-cdi</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-test-mixin-http</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -91,6 +103,48 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jboss.as.plugins</groupId>
+                <artifactId>jboss-as-maven-plugin</artifactId>
+                <version>7.5.Final</version>
+                <executions>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${deploy.skip}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>undeploy</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>undeploy</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${deploy.skip}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>org.switchyard.quickstarts.transform.smooks.ServiceTransformationClient</mainClass>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <properties>
+                <deploy.skip>false</deploy.skip>
+            </properties>
+        </profile>
+    </profiles>
 </project>

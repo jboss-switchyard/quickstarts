@@ -10,33 +10,22 @@ This quickstart provides an example packaging multiple SwitchYard applications, 
 
 ## Deploying the EAR
 
-1. Build the entire quickstart from the root of the ear-deployment module:
-
-        mvn clean install
-    
-2. Start JBoss AS 7 in standalone-full mode:
+1. Start JBoss AS 7 in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
-3. Add a JMS user using add-user.sh with username=guest, password=guestp.1, Realm=ApplicationRealm, roles=guest
+2. Add JMS user using add-user.sh with username=guest, password=guestp.1, Realm=ApplicationRealm, role=guest
 
         ${AS}/bin/add-user.sh
         
-4. Deploy the EAR
+3. Build and deploy the EAR
 
-        cd ear-deployment/ear-assembly
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-
-## Testing the application
-
-1. Navigate to the order-consumer project
-
-        cd ear-deployment/order-consumer
-
-2. Execute the test client
+4. Test the application
 
         mvn exec:java
 
-3. Examine output returned from server.
+5. Undeploy the EAR
 
+        mvn clean -Pdeploy

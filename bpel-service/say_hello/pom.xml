@@ -23,8 +23,38 @@
     <artifactId>switchyard-quickstart-bpel-service-say-hello</artifactId>
     <name>Quickstart : BPEL Service : Say Hello</name>
     <packaging>jar</packaging>
+    <properties>
+        <deploy.skip>true</deploy.skip>
+    </properties>
     <build>
         <plugins>
+             <plugin>
+                <groupId>org.jboss.as.plugins</groupId>
+                <artifactId>jboss-as-maven-plugin</artifactId>
+                <version>7.5.Final</version>
+                <executions>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${deploy.skip}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>undeploy</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>undeploy</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${deploy.skip}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -34,4 +64,12 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <properties>
+                <deploy.skip>false</deploy.skip>
+            </properties>
+        </profile>
+    </profiles>
 </project>

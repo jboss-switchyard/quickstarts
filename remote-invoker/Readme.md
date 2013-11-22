@@ -15,19 +15,15 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Start JBoss AS 7 in standalone mode:
+1. Start JBoss AS 7 in standalone mode:
 
         ${AS}/bin/standalone.sh
 
-3. Deploy the Quickstart :
+2. Build and deploy the Quickstart :
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-4. Use the RemoteClient class to send a request message to the Dealer service.  The client can be
+3. Use the RemoteClient class to send a request message to the Dealer service.  The client can be
    run from the command-line using:
 
         mvn exec:java
@@ -38,6 +34,11 @@ You should see the following in the command output:
     Was the offer accepted? true
     ==================================
 ```
+
+4. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
+
 ## Further Reading
 
 1. [Remote Invoker Documentation](https://docs.jboss.org/author/display/SWITCHYARD/Remote+Invoker)

@@ -22,26 +22,27 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Start JBoss AS 7 in standalone mode:
+1. Start JBoss AS 7 in standalone mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone.xml
 
-3. Deploy the quickstart
+2. Build and deploy the quickstart
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-4. Open a console window and type
+3. Open a console window and type
 
         mvn exec:java
 
-5. You should see the following output
+4. You should see the following output
 ```
 BufferedImage@xxxxx: type = 5 ColorModel: #pixelBits = 24 numComponents = 3 color space = java.awt.color.ICC_ColorSpace@xxxxx transparency = 1 has alpha = false isAlphaPre = false ByteInterleavedRaster: width = 256 height = 256 #numDataElements 3 dataOff[0] = 2
 ```
+
+5. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
+
 ## Further Reading
 
 1. [SOAP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SOAP)

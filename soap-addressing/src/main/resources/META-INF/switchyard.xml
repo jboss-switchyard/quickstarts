@@ -12,8 +12,8 @@
       <soap:binding.soap>
         <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>
         <soap:wsdl>OrderService.wsdl</soap:wsdl>
-        <soap:contextPath>soap-addressing/order</soap:contextPath>
         <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:contextPath>soap-addressing/order</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
 
@@ -44,8 +44,8 @@
       <soap:binding.soap>
         <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>
         <soap:wsdl>WarehouseService.wsdl</soap:wsdl>
-        <soap:contextPath>soap-addressing/warehouse</soap:contextPath>
         <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:contextPath>soap-addressing/warehouse</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
 
@@ -91,8 +91,8 @@
       <soap:binding.soap>
         <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>
         <soap:wsdl>ResponseService.wsdl</soap:wsdl>
-        <soap:contextPath>soap-addressing/client</soap:contextPath>
         <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:contextPath>soap-addressing/client</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
 
@@ -124,8 +124,8 @@
       <soap:binding.soap>
         <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>
         <soap:wsdl>FaultService.wsdl</soap:wsdl>
-        <soap:contextPath>soap-addressing/fault</soap:contextPath>
         <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:contextPath>soap-addressing/fault</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
 

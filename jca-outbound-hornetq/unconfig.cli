@@ -1,0 +1,9 @@
+if (outcome == success) of /subsystem=messaging/hornetq-server=default/jms-queue=OrderQueue:read-resource
+    jms-queue remove --queue-address=OrderQueue
+end-if
+if (outcome == success) of /subsystem=messaging/hornetq-server=default/jms-queue=ShippingQueue:read-resource
+    jms-queue remove --queue-address=ShippingQueue
+end-if
+if (outcome == success) of /subsystem=messaging/hornetq-server=default/jms-queue=FillingStockQueue:read-resource
+    jms-queue remove --queue-address=FillingStockQueue
+end-if

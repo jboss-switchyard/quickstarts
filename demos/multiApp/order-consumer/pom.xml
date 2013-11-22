@@ -15,12 +15,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.switchyard.quickstarts</groupId>
-        <artifactId>switchyard-quickstart-parent</artifactId>
+        <groupId>org.switchyard.quickstarts.demos</groupId>
+        <artifactId>switchyard-quickstart-demo-multiapp</artifactId>
         <version>2.0.0-SNAPSHOT</version>
-        <relativePath>../../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>org.switchyard.quickstarts.demos</groupId>
     <artifactId>switchyard-quickstart-demo-multi-order-consumer</artifactId>
     <packaging>jar</packaging>
     <name>Quickstart Demo: Multiple Applications - Order Consumer</name>
@@ -50,11 +49,6 @@
             <artifactId>switchyard-component-soap</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-multi-artifacts</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-core-client</artifactId>
         </dependency>
@@ -76,6 +70,26 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts.demos</groupId>
+            <artifactId>switchyard-quickstart-demo-multi-artifacts</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts.demos</groupId>
+            <artifactId>
+                switchyard-quickstart-demo-multi-order-service
+            </artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts.demos</groupId>
+            <artifactId>
+                switchyard-quickstart-demo-multi-web
+            </artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
         </dependency>
     </dependencies>
     <build>
@@ -121,13 +135,49 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.jboss.as.plugins</groupId>
+                <artifactId>jboss-as-maven-plugin</artifactId>
+                <version>7.5.Final</version>
+                <executions>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                        <configuration>
+                            <beforeDeployment>
+                                <scripts>
+                                    <script>config.cli</script>
+                                </scripts>
+                            </beforeDeployment>
+                            <skip>${deploy.skip}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>undeploy</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>undeploy</goal>
+                        </goals>
+                        <configuration>
+                            <afterDeployment>
+                                <scripts>
+                                    <script>unconfig.cli</script>
+                                </scripts>
+                            </afterDeployment>
+                            <skip>${deploy.skip}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>org.switchyard.quickstarts.demo.multiapp.consumer.OrderIntakeClient</mainClass>
-                    <classpathScope>test</classpathScope>
                     <arguments>
-                        <argument>target/test-classes/order.xml</argument>
+                        <argument>${project.build.directory}/test-classes/order.xml</argument>
                     </arguments>
                 </configuration>
             </plugin>

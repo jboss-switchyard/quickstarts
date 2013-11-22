@@ -8,49 +8,35 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Start JBoss AS 7 in standalone-full mode:
+1. Start JBoss AS 7 in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
-3. Deploy the quickstart
+2. Build and deploy the quickstart:
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-4. Execute client and send text message:
+3. Execute client and send text message:
 
         mvn exec:java -Pudp
 
-5. Check the server console for output from the service:
+4. Check the server console for output from the service:
 
     'Default: Hello there <your text>';
 
-To test TCP you will need few additional steps. Stop server if it's running.
+To test TCP: 
 
-1. Add to ${AS}/standalone/configuration/standalone.xml configuration a new security domain (look for subsystem with ID urn:jboss:domain:security:1.1)
-
-        <security-domain name="netty-security-cert" cache-type="default">
-            <authentication>
-                <login-module code="org.switchyard.security.login.CertificateLoginModule" flag="required">
-                    <module-option name="keyStoreLocation" value="${jboss.server.config.dir}/users.jks"/>
-                    <module-option name="keyStorePassword" value="changeit"/>
-                    <module-option name="rolesProperties" value="${jboss.server.config.dir}/roles.properties"/>
-                </login-module>
-            </authentication>
-        </security-domain>
-
-2. Copy users.jks and roles.properties to ${AS}/standalone/configuration.
-3. Start server
-4. Execute client and send text message:
+5. Execute client and send text message:
 
         mvn exec:java
 
-5. Check the server console for output from the service:
+6. Check the server console for output from the service:
 
         'Secured: Hello there <your text>';
+
+7. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 

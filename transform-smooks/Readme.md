@@ -18,21 +18,45 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Start JBoss AS 7 in standalone mode:
+1. Start JBoss AS 7 in standalone mode:
 
         ${AS}/bin/standalone.sh
 
-3. Deploy the Quickstart : 
+2. Build and deploy the quickstart: 
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-4. Run the test from Maven :
+3. Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
+    - Submit a request with your preferred SOAP client - src/test/resources/xml contains 
+      sample requests and the responses that you should see
+    - Use the simple bundled SOAP client and the sample request XML e.g.
+<br/>
+```
+            mvn exec:java
+```
+<br/>
+    - SOAP-UI : Use the wsdl for this project (src/main/resources/wsdl/OrderService.wsdl) to 
+      create a soap-ui project. Use the sample request (src/test/resources/xml/soap-request.xml) 
+      as an example of a sample request. The output below is the expected output : 
 
-        mvn -Dtest=ServiceTransformationTest test
+Expected Output
+===============
+```
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header/>
+   <SOAP-ENV:Body>
+      <orders:orderAck xmlns:orders="urn:switchyard-quickstart:transform-smooks:1.0">
+         <orderId>PO-19838-XYZ</orderId>
+         <accepted>true</accepted>
+         <status>Order Accepted</status>
+      </orders:orderAck>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+
+4. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 

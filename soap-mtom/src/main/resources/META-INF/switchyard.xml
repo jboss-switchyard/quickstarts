@@ -12,8 +12,8 @@
       <sca:interface.wsdl interface="ImageService.wsdl#wsdl.porttype(ImageService)"/>
       <soap:binding.soap>
         <soap:wsdl>ImageService.wsdl</soap:wsdl>
-        <soap:contextPath>soap-mtom</soap:contextPath>
         <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:contextPath>soap-mtom</soap:contextPath>
         <soap:mtom xopExpand="true"/>
       </soap:binding.soap>
     </sca:service>
@@ -43,8 +43,8 @@
       <soap:binding.soap>
         <soap:contextMapper/>
         <soap:wsdl>ImageService-External.wsdl</soap:wsdl>
-        <soap:contextPath>soap-mtom-external</soap:contextPath>
         <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:contextPath>soap-mtom-external</soap:contextPath>
         <soap:mtom xopExpand="true"/>
       </soap:binding.soap>
     </sca:service>

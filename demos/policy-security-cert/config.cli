@@ -1,0 +1,8 @@
+if (outcome != success) of /subsystem=web/connector=https/:read-resource
+    /subsystem=web/connector=https/:add(socket-binding=https,scheme=https,protocol=HTTP/1.1,secure=true,enabled=true,enable-lookups=false)
+    /subsystem=web/connector=https/ssl=configuration:add(name="https",password="changeit",certificate-key-file="${jboss.home.dir}/quickstarts/demos/policy-security-basic/connector.jks")
+end-if
+if (outcome != success) of /subsystem=security/security-domain=policy-security-cert:read-resource
+    /subsystem=security/security-domain=policy-security-cert:add(cache-type=default)
+    /subsystem=security/security-domain=policy-security-cert/authentication=classic:add(login-modules=[{"code"=>"org.switchyard.security.login.CertificateLoginModule", "flag"=>"required", "module-options"=>[("keyStoreLocation"=>"${jboss.home.dir}/quickstarts/demos/policy-security-cert/users.jks"),("keyStorePassword"=>"changeit"),("rolesProperties"=>"${jboss.home.dir}/quickstarts/demos/policy-security-cert/roles.properties")] }]   )
+end-if

@@ -16,19 +16,15 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Start JBoss AS 7 in standalone mode:
+1. Start JBoss AS 7 in standalone mode:
 
         ${AS}/bin/standalone.sh
 
-3. Deploy the Quickstart :
+2. Build and deploy the Quickstart :
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-4. Submit a request with your preferred SOAP client - src/test/resources/xml contains sample 
+3. Submit a request with your preferred SOAP client - src/test/resources/xml contains sample 
    requests and the responses that you should see
    Alternatively use the simple bundled SOAP client and the sample request XML e.g.
 
@@ -50,6 +46,9 @@ Expected Output:
 </SOAP-ENV:Envelope>
 ```
 
+4. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 

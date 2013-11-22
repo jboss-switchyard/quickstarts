@@ -16,12 +16,31 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
-        <artifactId>switchyard-quickstart-parent</artifactId>
+        <artifactId>switchyard-quickstart-ear-deployment</artifactId>
         <version>2.0.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-quickstart-ear-deployment-artifacts</artifactId>
     <packaging>jar</packaging>
     <name>Quickstart : EAR Deployment - Service Artifacts</name>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jboss.as.plugins</groupId>
+                <artifactId>jboss-as-maven-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>dummy</mainClass>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
