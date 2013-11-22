@@ -1,0 +1,4 @@
+if (outcome != success) of /subsystem=security/security-domain=netty-security-cert:read-resource
+    /subsystem=security/security-domain=netty-security-cert:add(cache-type=default)
+    /subsystem=security/security-domain=netty-security-cert/authentication=classic:add(login-modules=[{"code"=>"org.switchyard.security.login.CertificateLoginModule", "flag"=>"required", "module-options"=>[("keyStoreLocation"=>"${jboss.home.dir}/quickstarts/camel-netty-binding/users.jks"),("keyStorePassword"=>"changeit"),("rolesProperties"=>"${jboss.home.dir}/quickstarts/camel-netty-binding/roles.properties")] }]   )
+end-if

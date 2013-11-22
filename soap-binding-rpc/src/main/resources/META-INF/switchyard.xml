@@ -6,8 +6,8 @@
       <soap:binding.soap>
         <soap:messageComposer class="org.switchyard.quickstarts.soap.binding.rpc.CustomComposer"/>
         <soap:wsdl>HelloWorldWS.wsdl</soap:wsdl>
-        <soap:contextPath>soap-binding-rpc</soap:contextPath>
         <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:contextPath>soap-binding-rpc</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
     <sca:component name="InternalRouter">
@@ -41,8 +41,8 @@
       <soap:binding.soap>
         <soap:contextMapper/>
         <soap:wsdl>HelloWorldWS-External.wsdl</soap:wsdl>
-        <soap:contextPath>external</soap:contextPath>
         <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:contextPath>external</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
   </sca:composite>

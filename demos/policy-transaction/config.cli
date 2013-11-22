@@ -1,0 +1,15 @@
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=policyQSTransacted:read-resource
+    jms-queue add --queue-address=policyQSTransacted --entries=policyQSTransacted
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=policyQSNonTransacted:read-resource
+    jms-queue add --queue-address=policyQSNonTransacted --entries=policyQSNonTransacted
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=queueA:read-resource
+    jms-queue add --queue-address=queueA --entries=queueA
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=queueB:read-resource
+    jms-queue add --queue-address=queueB --entries=queueB
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=queueC:read-resource
+    jms-queue add --queue-address=queueC --entries=queueC
+end-if

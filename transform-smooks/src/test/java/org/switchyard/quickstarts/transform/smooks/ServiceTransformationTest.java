@@ -42,9 +42,9 @@ public class ServiceTransformationTest {
 
     // Message types being transformed
     public static final QName FROM_TYPE =
-        new QName("urn:switchyard-quickstart:transform-smooks:1.0", "submitOrder");
+        new QName("urn:switchyard-quickstart:transform-smooks:1.0", "order");
     public static final QName TO_TYPE =
-        new QName("urn:switchyard-quickstart:transform-smooks:1.0", "submitOrderResponse");
+        new QName("urn:switchyard-quickstart:transform-smooks:1.0", "orderAck");
 
     // Paths to XML test files
     final String ORDER_XML = "/xml/order.xml";

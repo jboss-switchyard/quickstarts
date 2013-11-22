@@ -19,23 +19,19 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Start JBoss AS 7 in standalone mode:
+1. Start JBoss AS 7 in standalone mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone.xml
 
-3. Deploy the quickstart
+2. Build and deploy the quickstart
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-4. Open a console window and type
+3. Open a console window and type
 
         mvn exec:java -Dexec.args=Einstein
 
-5. You should see the following output
+4. You should see the following output
 ```
     <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
         <SOAP-ENV:Header/>
@@ -46,6 +42,10 @@ JBoss AS 7
         </SOAP-ENV:Body>
     </SOAP-ENV:Envelope>
 ```
+
+5. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 

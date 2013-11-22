@@ -8,41 +8,21 @@ SSL is used for "confidentiality", and Certificate Authentication is used for "c
 Running the quickstart
 ======================
 
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Copy the keystore file to support SSL:
-
-        cp connector.jks ${AS}/standalone/configuration/
-
-3. Add the required https connector to the web subsystem in ${AS}/standalone/configuration/standalone.xml to support SSL. (include contents of connector.xml)
-
-4. Add the required security-domain sections to the security subsystem in ${AS}/standalone/configuration/standalone.xml to support JAAS. (include contents of security-domain.xml)
-
-5. Copy the users keystore file:
-
-        cp users.jks ${AS}/standalone/configuration
-
-6. Copy the roles properties file:
-
-        cp roles.properties ${AS}/standalone/configuration
-
-7. Start JBoss AS in standalone mode:
+1. Start JBoss AS in standalone mode:
 
         ${AS}/bin/standalone.sh
 
-8. Deploy the quickstart
+2. Build and deploy the quickstart
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-9. Execute the test. (See "Options" section below.)
+3. Execute the test. (See "Options" section below.)
 
-10. Check the server console for output from the service.
+4. Check the server console for output from the service.
 
-11. Undeploy the application
+5. Undeploy the application
 
-        mvn jboss-as:undeploy
+        mvn clean -Pdeploy
 
 
 Options

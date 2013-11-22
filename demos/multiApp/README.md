@@ -13,25 +13,27 @@ Consult the README.md in each individual project for more info.
 
 ## Running the Example
 
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Start JBoss AS 7 in standalone-full mode:
+1. Start JBoss AS 7 in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
-3. Deploy JMS Queue
+2. Add JMS user using add-user.sh with username=guest, password=guestp.1, Realm=ApplicationRealm, role=guest
 
-        cp order-consumer/src/test/resources/switchyard-quickstart-demo-multi-order-consumer-hornetq-jms.xml ${AS}/standalone/deployments
+        ${AS}/bin/add-user.sh
 
-4. Deploy the quickstart
+3. Build and deploy the quickstart
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-5. Use one or both of the consuming application projects:
+4. Use one or both of the consuming application projects:
     * <b>Web</b>: Visit <http://localhost:8080/switchyard-quickstart-demo-multi-web>.
     * <b>JMS</b>: Use 'mvn exec:java' in the order-consumer project to submit a JMS order message via the OrderIntake service.
+
+5. Check the server console for output from the service.
+
+6. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 

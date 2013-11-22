@@ -8,36 +8,26 @@ SSL is used for "confidentiality", and WS-Security UsernameToken is used for "cl
 Running the quickstart
 ======================
 
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Copy the keystore file to support SSL:
-
-        cp connector.jks ${AS}/standalone/configuration/
-
-3. Add the required https connector to the web subsystem in ${AS}/standalone/configuration/standalone.xml to support SSL. (include contents of connector.xml)
-
-4. Create an application user:
+1. Create an application user:
 
         ${AS}/bin/add-user.sh
 
         (Add username "kermit", password "the-frog-1", and role "friend".)
 
-5. Start JBoss AS in standalone mode:
+2. Start JBoss AS in standalone mode:
         ${AS}/bin/standalone.sh
 
-6. Deploy the quickstart
+3. Build and deploy the quickstart
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-7. Execute the test. (See "Options" section below.)
+4. Execute the test. (See "Options" section below.)
 
-8. Check the server console for output from the service.
+5. Check the server console for output from the service.
 
-9. Undeploy the application
+6. Undeploy the application
 
-        mvn jboss-as:undeploy
+        mvn clean -Pdeploy
 
 
 Options

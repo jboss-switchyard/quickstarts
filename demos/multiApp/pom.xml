@@ -30,6 +30,9 @@
         <module>order-consumer</module>
         <module>web</module>
     </modules>
+    <properties>
+        <deploy.skip>true</deploy.skip>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -40,6 +43,22 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>dummy</mainClass>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <properties>
+                <deploy.skip>false</deploy.skip>
+            </properties>
+        </profile>
+    </profiles>
 </project>

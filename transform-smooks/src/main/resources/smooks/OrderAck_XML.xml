@@ -20,10 +20,10 @@
         <core:namespace prefix="orders" uri="urn:switchyard-quickstart:transform-smooks:1.0"/>
     </core:namespaces>
 
-    <jb:bean beanId="orderAck" class="org.switchyard.quickstarts.transform.smooks.OrderAck" createOnElement="/orders:submitOrderResponse">
-        <jb:value property="orderId" data="/orders:submitOrderResponse/orderAck/orderId"/>
-        <jb:value property="accepted" data="/orders:submitOrderResponse/orderAck/accepted"/>
-        <jb:value property="status" data="/orders:submitOrderResponse/orderAck/status"/>
+    <jb:bean beanId="orderAck" class="org.switchyard.quickstarts.transform.smooks.OrderAck" createOnElement="/orders:orderAck">
+        <jb:value property="orderId" data="/orders:orderAck/orderId"/>
+        <jb:value property="accepted" data="/orders:orderAck/accepted"/>
+        <jb:value property="status" data="/orders:orderAck/status"/>
     </jb:bean>
 
 </smooks-resource-list>

@@ -21,61 +21,61 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Start JBoss AS 7 in standalone mode:
+1. Start JBoss AS 7 in standalone mode:
 
         ${AS}/bin/standalone.sh
 
-3. Deploy the quickstart
+2. Build and deploy the quickstart
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-4. Open a console windows and type  
+3. Open a console windows and type  
 
         mvn exec:java -Dexec.args="new"
 
-5. You should see the following output  
+4. You should see the following output  
     `<order><orderId>1</orderId></order>`
-6. Switch back to server console or log and these messages should be displayed  
+5. Switch back to server console or log and these messages should be displayed  
 ```
     Added item 1 with name Hydrogen Atom - No, we are not kidding!
     Added item 2 with name Handcrafted Copper Plate
     Added item 3 with name Einstein's Bust - Talks about your future :)
     Added item 4 with name Time Machine
 ```
-7. Add an item to the order created in step 5  
+6. Add an item to the order created in step 5  
 
         mvn exec:java -Dexec.args="add 1 3 10"
 
-8. Switch back to server console or log and these messages should be displayed  
+7. Switch back to server console or log and these messages should be displayed  
 ```
     Order after adding items: {OrderId: 1
     Items:{Item: {ItemId: 3, name:Einstein's Bust - Talks about your future :)}, quantity:10},
     }
 ```
-9. Add another item  
+8. Add another item  
 
         mvn exec:java -Dexec.args="add 1 4 1"
 
-10. Switch back to server console or log and these messages should be displayed  
+9. Switch back to server console or log and these messages should be displayed  
 ```
     Order after adding items: {OrderId: 1
     Items:{Item: {ItemId: 3, name:Einstein's Bust - Talks about your future :)}, quantity:10},{Item: {ItemId: 4, name:Time Machine}, quantity:1},
     }
 ```
-11. Delete an item  
+10. Delete an item  
 
         mvn exec:java -Dexec.args="del 1 3"
 
-12. Get the order now  
+11. Get the order now  
 
         mvn exec:java -Dexec.args="get 1"
 
-13. Your output should be like this  
+12. Your output should be like this  
     `<order><orderId>1</orderId><orderItem><item><itemId>4</itemId><name>Time Machine</name></item><quantity>1</quantity></orderItem></order>`
+
+13. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 

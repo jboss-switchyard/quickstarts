@@ -1,0 +1,9 @@
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=OrderQueue:read-resource
+    jms-queue add --queue-address=OrderQueue --entries=OrderQueue
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=ShippingQueue:read-resource
+    jms-queue add --queue-address=ShippingQueue --entries=ShippingQueue
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=FillingStockQueue:read-resource
+    jms-queue add --queue-address=FillingStockQueue --entries=FillingStockQueue
+end-if

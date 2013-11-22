@@ -1,0 +1,9 @@
+if (outcome == success) of /subsystem=web/connector=https/:read-resource
+    /subsystem=web/connector=https/:remove
+end-if
+if (outcome == success) of /subsystem=security/security-domain=picketlink-sts:read-resource
+    /subsystem=security/security-domain=picketlink-sts:remove
+end-if
+if (outcome == success) of /subsystem=security/security-domain=saml-validate-token:read-resource
+    /subsystem=security/security-domain=saml-validate-token:remove
+end-if

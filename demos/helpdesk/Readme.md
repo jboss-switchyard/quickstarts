@@ -29,26 +29,23 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
-   mvn clean install
-
-2. Start the application server:
+1. Start the application server:
     ${AS}/bin/standalone.sh
 
-3. Deploy the web application:
-   mvn jboss-as:deploy
+2. Build and deploy the web application:
+   mvn install -Pdeploy
 
-4. In a web browser window, use the web application:
+3. In a web browser window, use the web application:
     Browse to http://localhost:8080/helpdesk/
     Select the User you want to act as.
     Note that you can toggle back and forth between users. (This would normally be automatically chosen based on the logged on user.)
     So far there are no processes started, so there are no tasks.
 
-5. In a different console window, start a process (this will use the SOAP gateway):
+4. In a different console window, start a process (this will use the SOAP gateway):
     mvn exec:java
     You can do this as many times as you wish, starting as many processes as you wish.
 
-6. Going back to your web browser window:
+5. Going back to your web browser window:
     As krisv (a developer), click the Submit button to get the list of tasks.
     As krisv, review the tasks you want to perform and click the Submit button again.
     As david (a user), click the Submit button to get the list of tasks. He will only have tasks if more details were required.
@@ -65,6 +62,9 @@ INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] (h
 INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] (http-/127.0.0.1:8080-1) ********** approving ticket **********
 INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] (http-/127.0.0.1:8080-1) ********** closing ticket **********
 ```
+
+6. Undeploy the quickstart:
+        mvn clean -Pdeploy
 
 ## Further Reading
 

@@ -26,24 +26,20 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
-<pre>
-    mvn clean install
-</pre>
-2. Start JBoss AS 7 in standalone mode:
+1. Start JBoss AS 7 in standalone mode:
 <pre>
     ${AS}/bin/standalone.sh --server-config=standalone.xml
 </pre>
-3. If on Windows, please create a directory called 'tmp' under c:
-4. Deploy the quickstart
+2. If on Windows, please create a directory called 'tmp' under c:
+3. Build and deploy the quickstart
 <pre>
-    mvn jboss-as:deploy
+    mvn install -Pdeploy
 </pre>
-5. Open a console window and type
+4. Open a console window and type
 <pre>
     mvn exec:java -Dexec.args="Boeing 10"
 </pre>
-6. You should see the following output
+5. You should see the following output
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
     <SOAP-ENV:Header>
         <Action xmlns="http://www.w3.org/2005/08/addressing">urn:switchyard-quickstart:soap-addressing:1.0:OrderService:orderResponse</Action>
@@ -56,9 +52,13 @@ JBoss AS 7
         </orderResponse>
     </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-7. After a few seconds, this also should be displayed
+6. After a few seconds, this also should be displayed
 
 Order Boeing with quantity 10 accepted.
+
+7. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 

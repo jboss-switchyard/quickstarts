@@ -9,31 +9,21 @@ of the SOAP message.
 Running the quickstart
 ======================
 
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Copy the keystore file to support SSL:
-
-        cp connector.jks ${AS}/standalone/configuration/
-
-3. Add the required https connector to the web subsystem in ${AS}/standalone/configuration/standalone.xml to support SSL. (include contents of connector.xml)
-
-4. Start JBoss AS in standalone mode:
+1. Start JBoss AS in standalone mode:
 
         ${AS}/bin/standalone.sh
 
-5. Deploy the quickstart
+2. Build and deploy the quickstart
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-6. Execute the test. (See "Options" section below.)
+3. Execute the test. (See "Options" section below.)
 
-7. Check the server console for output from the service.
+4. Check the server console for output from the service.
 
-8. Undeploy the application
+5. Undeploy the application
 
-        mvn jboss-as:undeploy
+        mvn clean -Pdeploy
 
 
 Options

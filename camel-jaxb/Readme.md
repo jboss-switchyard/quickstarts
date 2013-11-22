@@ -14,19 +14,15 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
-
-        mvn clean install
-
-2. Start JBoss AS 7 in standalone mode:
+1. Start JBoss AS 7 in standalone mode:
 
         ${AS}/bin/standalone.sh
 
-3. Deploy the Quickstart :
+2. Build and deploy the Quickstart :
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy
 
-4. Submit a request with test client. Test application will ask you about name of person to greet
+3. Submit a request with test client. Test application will ask you about name of person to greet
 
         mvn exec:java
 
@@ -47,6 +43,9 @@ Received response
 </ns2:response>
 ```
 
+4. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 

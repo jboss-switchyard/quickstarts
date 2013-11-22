@@ -17,22 +17,23 @@ JBoss AS 7
     user: camel
     password: isMyFriend
 ```
-2. Build the quickstart:
-
-        mvn clean install -Dmaven.test.skip=true
-
-    Tests should be skipped after parameter change because embedded server have hardcoded username and password.
-
-3. Start JBoss AS 7 in standalone-full mode:
+2. Start JBoss AS 7 in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
-4. Deploy the quickstart
+3. Build and deploy the quickstart
 
-        mvn jboss-as:deploy
+        mvn install -Pdeploy -DskipTests=true
 
-5. Create file on ftp server using a standalone FTP client
-6. Check the server console for output from the service.
+    Tests should be skipped after parameter change because embedded server have hardcoded username and password.
+
+4. Create file on ftp server using a standalone FTP client
+
+5. Check the server console for output from the service.
+
+6. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 
