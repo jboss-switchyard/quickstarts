@@ -32,6 +32,7 @@ import org.switchyard.component.test.mixins.jca.JCAMixIn;
 import org.switchyard.component.test.mixins.naming.NamingMixIn;
 
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 
 /**
  * Mixin which bounds JTA beans in JNDI tree.
@@ -70,8 +71,12 @@ public class TransactionMixIn extends AbstractTestMixIn
             if (_jtaEnvironmentBean == null) {
                 System.setProperty("ObjectStoreEnvironmentBean.objectStoreDir", _storeDir);
                 System.setProperty("com.arjuna.ats.arjuna.objectstore.objectStoreDir", _storeDir);
+                _jtaEnvironmentBean = jtaPropertyManager.getJTAEnvironmentBean();
+                _jtaEnvironmentBean.setTransactionManagerClassName(com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple.class.getName());
+                _jtaEnvironmentBean.setUserTransactionClassName(com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple.class.getName());
+                _jtaEnvironmentBean.setTransactionSynchronizationRegistryClassName(com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple.class.getName());
+
                 InitialContext initialContext = new InitialContext();
-                _jtaEnvironmentBean = new JTAEnvironmentBean();
                 initialContext.bind("java:jboss/TransactionManager", _jtaEnvironmentBean.getTransactionManager());
                 initialContext.bind("java:jboss/UserTransaction", _jtaEnvironmentBean.getUserTransaction());
                 initialContext.bind("java:jboss/TransactionSynchronizationRegistry", _jtaEnvironmentBean.getTransactionSynchronizationRegistry());

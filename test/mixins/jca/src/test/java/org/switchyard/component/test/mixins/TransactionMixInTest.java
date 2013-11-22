@@ -15,9 +15,13 @@ package org.switchyard.component.test.mixins;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -68,4 +72,37 @@ public class TransactionMixInTest {
         return (UserTransaction) new InitialContext().lookup("java:jboss/UserTransaction");
     }
 
+    @Test
+    public void testTransactionSynchronizationRegistry() throws Exception {
+        UserTransaction transaction = getUserTransaction();
+        transaction.begin();
+        TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
+        TestSynchronization sync = new TestSynchronization();
+        tsr.registerInterposedSynchronization(sync);
+        transaction.commit();
+        Assert.assertTrue(sync.beforeCompletionInvoked);
+        Assert.assertTrue(sync.afterCompletionInvoked);
+        Assert.assertEquals(Status.STATUS_COMMITTED, sync.transactionStatus);
+    }
+
+    private TransactionSynchronizationRegistry getTransactionSynchronizationRegistry() throws NamingException {
+        return (TransactionSynchronizationRegistry) new InitialContext().lookup("java:jboss/TransactionSynchronizationRegistry");
+    }
+    
+    private class TestSynchronization implements Synchronization {
+        private boolean beforeCompletionInvoked = false;
+        private boolean afterCompletionInvoked = false;
+        private int transactionStatus = Status.STATUS_NO_TRANSACTION;
+        
+        @Override
+        public void afterCompletion(int status) {
+            afterCompletionInvoked = true;
+            transactionStatus = status;
+        }
+
+        @Override
+        public void beforeCompletion() {
+            beforeCompletionInvoked = true;
+        }
+    }
 }
