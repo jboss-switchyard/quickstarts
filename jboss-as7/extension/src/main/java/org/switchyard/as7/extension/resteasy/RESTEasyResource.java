@@ -71,7 +71,7 @@ public class RESTEasyResource implements Resource {
      * {@inheritDoc}
      */
     public void stop() {
-        if (_context != null) {
+        if ((_context != null) && _context.isStarted()) {
             Registry registry = (Registry)_context.getServletContext().getAttribute(Registry.class.getName());
             if (registry != null) {
                 // Remove registrations

@@ -29,6 +29,7 @@ import org.jboss.as.weld.WeldDeploymentMarker;
 import org.jboss.as.weld.deployment.WeldAttachments;
 import org.jboss.modules.Module;
 import org.jboss.weld.bootstrap.spi.Metadata;
+import org.switchyard.as7.extension.ExtensionMessages;
 import org.switchyard.as7.extension.SwitchYardDeploymentMarker;
 
 /**
@@ -84,6 +85,8 @@ public class SwitchYardCdiIntegrationProcessor implements DeploymentUnitProcesso
             }
             if (extensionClass != null) {
                 registerMethod.invoke(extensions, extensionClass, deploymentUnit);
+            } else {
+                throw ExtensionMessages.MESSAGES.extensionNotfound(extensionName);
             }
         } catch (ClassNotFoundException wcnfe) {
             final List<Metadata<Extension>> extensions = parent.getAttachmentList(WeldAttachments.PORTABLE_EXTENSIONS);

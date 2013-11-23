@@ -83,19 +83,33 @@ public class RESTEasyResourcePublisher implements ResourcePublisher {
             host.addChild(serverContext);
             serverContext.create();
             serverContext.start();
+        }
+        while (serverContext.isStarting()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ie) {
+                // Ignore
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Spent sometime to start context.");
+                }
+            }
+        }
+        if (serverContext.isStarted()) {
             LOG.info("Published RESTEasy context " + serverContext.getPath());
+            Registry registry = (Registry)serverContext.getServletContext().getAttribute(Registry.class.getName());
+            List<Class<?>> classes = new ArrayList<Class<?>>();
+            // Add as singleton instance
+            for (Object instance : instances) {
+                registry.addSingletonResource(instance);
+                classes.add(instance.getClass());
+            }
+            RESTEasyResource resource = new RESTEasyResource();
+            resource.setClasses(classes);
+            resource.setContext(serverContext);
+            return resource;
+        } else {
+            throw ExtensionMessages.MESSAGES.unableToStartContext(context);
         }
-        Registry registry = (Registry)serverContext.getServletContext().getAttribute(Registry.class.getName());
-        List<Class<?>> classes = new ArrayList<Class<?>>();
-        // Add as singleton instance
-        for (Object instance : instances) {
-            registry.addSingletonResource(instance);
-            classes.add(instance.getClass());
-        }
-        RESTEasyResource resource = new RESTEasyResource();
-        resource.setClasses(classes);
-        resource.setContext(serverContext);
-        return resource;
     }
 
     private static class LocalInstanceManager implements InstanceManager {
