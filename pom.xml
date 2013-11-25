@@ -61,7 +61,7 @@
         <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
         <!-- This version is only used as a prefix for a jar included in release modules -->
         <version.deltaspike>0.3-incubating</version.deltaspike>
-        <version.drools>6.0.0-SNAPSHOT</version.drools>
+        <version.drools>6.0.0.Final</version.drools>
         <version.forge>1.2.2.Final</version.forge>
         <version.forge.arquillian>1.0.0.CR7</version.forge.arquillian>
         <version.forge.jboss.interceptor>2.0.0.Final</version.forge.jboss.interceptor>
@@ -70,8 +70,8 @@
         <version.jbossas>7.2.0.Alpha1-redhat-4</version.jbossas>
         <version.jbossas.console>1.5.4.Final</version.jbossas.console>
         <version.jbossas.maven>7.4.Final</version.jbossas.maven>
-        <version.jbpm>6.0.0-SNAPSHOT</version.jbpm>
-        <version.kie>6.0.0-SNAPSHOT</version.kie>
+        <version.jbpm>6.0.0.Final</version.jbpm>
+        <version.kie>6.0.0.Final</version.kie>
         <version.littleproxy>0.5.3</version.littleproxy>
         <version.maven.clean.plugin>2.5</version.maven.clean.plugin>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
