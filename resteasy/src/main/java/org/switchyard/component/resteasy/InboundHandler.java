@@ -35,6 +35,7 @@ import org.switchyard.component.resteasy.util.ClassUtil;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
+import org.switchyard.security.context.SecurityContextManager;
 
 /**
  * Handles RESTEasy requests to invoke a SwitchYard service.
@@ -49,6 +50,7 @@ public class InboundHandler extends BaseServiceHandler {
     private ServiceReference _service;
     private Resource _resource;
     private MessageComposer<RESTEasyBindingData> _messageComposer;
+    private SecurityContextManager _securityContextManager;
 
     /**
      * Constructor.
@@ -60,6 +62,7 @@ public class InboundHandler extends BaseServiceHandler {
         _config = config;
         _gatewayName = config.getName();
         _domain = domain;
+        _securityContextManager = new SecurityContextManager(_domain);
     }
 
     /**
@@ -103,6 +106,8 @@ public class InboundHandler extends BaseServiceHandler {
         exchange.getContext().setProperty(ExchangeCompletionEvent.GATEWAY_NAME, _gatewayName, Scope.EXCHANGE)
                 .addLabels(BehaviorLabel.TRANSIENT.label());
 
+        _securityContextManager.addCredentials(exchange, restMessageRequest.extractCredentials());
+
         Message message = null;
         try {
             message = _messageComposer.compose(restMessageRequest, exchange);
@@ -121,7 +126,7 @@ public class InboundHandler extends BaseServiceHandler {
                 throw wae;
             } catch (Exception e) {
                 RestEasyLogger.ROOT_LOGGER.unexpectedExceptionComposingOutboundRESTResponse(e);
-                throw new WebApplicationException(e);            
+                throw new WebApplicationException(e);
             }
         }
         return output;

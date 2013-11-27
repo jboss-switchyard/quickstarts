@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
@@ -83,6 +84,11 @@ public final class RESTEasyProxy implements InvocationHandler {
                 traceLog(LOGGER, headers.getRequestHeaders());
                 LOGGER.trace("]");
             }
+        }
+        SecurityContext securityContext = ResteasyProviderFactory.getContextData(SecurityContext.class);
+        if (securityContext != null) {
+            requestData.setSecured(securityContext.isSecure());
+            requestData.setPrincipal(securityContext.getUserPrincipal());
         }
         requestData.setOperationName(methodName);
         if ((args != null) && (args.length > 0)) {

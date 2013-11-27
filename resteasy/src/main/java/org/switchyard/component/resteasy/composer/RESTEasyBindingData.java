@@ -13,24 +13,34 @@
  */
 package org.switchyard.component.resteasy.composer;
 
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.jboss.resteasy.util.CaseInsensitiveMap;
-import org.switchyard.component.common.composer.BindingData;
+import org.switchyard.common.lang.Strings;
+import org.switchyard.component.common.composer.SecurityBindingData;
+import org.switchyard.security.credential.ConfidentialityCredential;
+import org.switchyard.security.credential.Credential;
+import org.switchyard.security.credential.PrincipalCredential;
+import org.switchyard.security.credential.extractor.AuthorizationHeaderCredentialExtractor;
 
 /**
  * Wrapper for RESTEasy messages.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> &copy; 2012 Red Hat Inc.
  */
-public class RESTEasyBindingData implements BindingData {
+public class RESTEasyBindingData implements SecurityBindingData {
     private Object[] _args = new Object[0];
     private MultivaluedMap<String, String> _headers;
     private String _operationName;
     private Integer _statusCode;
+    private Boolean _secured = false;
+    private Principal _principal;
 
     /**
      * Creates a new RESTEasy message.
@@ -141,5 +151,74 @@ public class RESTEasyBindingData implements BindingData {
      */
     public void setStatusCode(Integer statusCode) {
         _statusCode = statusCode;
+    }
+
+    /**
+     * Returns a boolean stating if this request was made using a secure channel.
+     * @return the true if secure, false otherwise
+     */
+    public Boolean isSecured() {
+        return _secured;
+    }
+
+    /**
+     * Sets, the boolean, if this request was made through a secure channel or not.
+     * @param secured the boolean to set
+     */
+    public void setSecured(Boolean secured) {
+        _secured = secured;
+    }
+
+    /**
+     * Gets the User Principal associated with this request.
+     * @return the Principal
+     */
+    public Principal getPrincipal() {
+        return _principal;
+    }
+
+    /**
+     * Sets the User Principal associated with this request.
+     * @param principal the Principal to set
+     */
+    public void setPrincipal(Principal principal) {
+        _principal = principal;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<Credential> extractCredentials() {
+        Set<Credential> credentials = new HashSet<Credential>();
+        String charsetName = null;
+        List<String> contentTypes = _headers.get("content-type");
+        String contentType = null;
+        if ((contentTypes != null) && (contentTypes.size() > 0)) {
+            contentType = contentTypes.get(0);
+        }
+        if (contentType != null) {
+            int pos = contentType.lastIndexOf("charset=");
+            if (pos > -1) {
+                charsetName = Strings.trimToNull(contentType.substring(pos+8, contentType.length()));
+            }
+        }
+        List<String> authorizations = _headers.get("authorization");
+        if ((authorizations != null) && (authorizations.size() > 0)) {
+            AuthorizationHeaderCredentialExtractor ahce;
+            if (charsetName != null) {
+                ahce = new AuthorizationHeaderCredentialExtractor(charsetName);
+            } else {
+                ahce = new AuthorizationHeaderCredentialExtractor();
+            }
+            credentials.addAll(ahce.extract(authorizations.get(0)));
+        }
+        if (_principal != null) {
+            credentials.add(new PrincipalCredential(_principal, true));
+        }
+        if (_secured) {
+            credentials.add(new ConfidentialityCredential(true));
+        }
+        return credentials;
     }
 }
