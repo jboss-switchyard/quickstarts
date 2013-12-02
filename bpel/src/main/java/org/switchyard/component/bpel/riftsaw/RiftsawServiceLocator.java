@@ -245,14 +245,14 @@ public class RiftsawServiceLocator implements ServiceLocator {
                 Map<String, Object> headers) throws Exception {
             
             // Unwrap the first two levels, to remove the part wrapper
-            mesg = WSDLHelper.unwrapMessagePart(mesg);
+            Node node=WSDLHelper.unwrapMessagePart(mesg);
             
             // Need to create an exchange
             SynchronousInOutHandler rh = new SynchronousInOutHandler();
             Exchange exchange=_serviceReference.createExchange(operationName, rh);
 
             Message req = exchange.createMessage();
-            req.setContent(mesg);
+            req.setContent(node);
             if (headers != null) {
                 Set<String> keys = headers.keySet();
                 for (String key : keys) {

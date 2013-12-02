@@ -19,6 +19,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.ode.utils.DOMUtils;
 import org.junit.Test;
+import org.w3c.dom.Text;
 
 public class WSDLHelperTest {
 
@@ -30,7 +31,7 @@ public class WSDLHelperTest {
 		try {
 			org.w3c.dom.Element elem=DOMUtils.stringToDOM(xml);
 			
-			org.w3c.dom.Element unwrapped=WSDLHelper.unwrapMessagePart(elem);
+			org.w3c.dom.Node unwrapped=WSDLHelper.unwrapMessagePart(elem);
 			
 			if (unwrapped == null) {
 				fail("Result is null");
@@ -45,6 +46,32 @@ public class WSDLHelperTest {
 	}
 
     @Test
+    public void testUnwrapMessagePartText() {
+        String content="content";
+        String xml="<message><partName>"+content+"</partName></message>";
+        
+        try {
+            org.w3c.dom.Element elem=DOMUtils.stringToDOM(xml);
+            
+            org.w3c.dom.Node unwrapped=WSDLHelper.unwrapMessagePart(elem);
+            
+            if (unwrapped == null) {
+                fail("Result is null");
+            }
+            
+            if (!(unwrapped instanceof Text)) {
+                fail("Context was not Text");
+            }
+            
+            if (((Text)unwrapped).getTextContent().equals(content) == false) {
+                fail("Unexpected unwrapped content: "+((Text)unwrapped).getTextContent());
+            }
+        } catch(Exception e) {
+            fail("Failed: "+e);
+        }
+    }
+
+    @Test
     public void testUnwrapMessagePartWhitespace() {
         String content="content";
         String xml="<message><partName>\r\n   <"+content+"/>\r\n</partName></message>";
@@ -52,7 +79,7 @@ public class WSDLHelperTest {
         try {
             org.w3c.dom.Element elem=DOMUtils.stringToDOM(xml);
             
-            org.w3c.dom.Element unwrapped=WSDLHelper.unwrapMessagePart(elem);
+            org.w3c.dom.Node unwrapped=WSDLHelper.unwrapMessagePart(elem);
             
             if (unwrapped == null) {
                 fail("Result is null");

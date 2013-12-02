@@ -133,7 +133,7 @@ public final class WSDLHelper {
      * @param content The wrapped part
      * @return The unwrapped content
      */
-    public static org.w3c.dom.Element unwrapMessagePart(org.w3c.dom.Element content) {
+    public static org.w3c.dom.Node unwrapMessagePart(org.w3c.dom.Element content) {
         
         org.w3c.dom.NodeList nl=content.getChildNodes();
         
@@ -146,8 +146,12 @@ public final class WSDLHelper {
                 for (int j=0; j < nl2.getLength(); j++) {
                     
                     if (nl2.item(j) instanceof org.w3c.dom.Element) {
-                        return ((org.w3c.dom.Element)nl2.item(j));
+                        return ((org.w3c.dom.Node)nl2.item(j));
                     }
+                }
+                
+                if (nl2.getLength() > 0) {
+                    return (nl2.item(0));
                 }
                 
                 return (null);
