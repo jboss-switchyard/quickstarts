@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?><SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header/><SOAP-ENV:Body><goodbyeMessage xmlns="http://www.jboss.org/bpel/examples/simple_correlation/">
+  <sessionId>
+    <id>1</id>
+  </sessionId>
+  <parameter>BPEL, Goodbye World!</parameter>
+</goodbyeMessage></SOAP-ENV:Body></SOAP-ENV:Envelope>
