@@ -1,9 +1,0 @@
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:exam="http://www.jboss.org/bpel/examples">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <exam:completeRequestType>
-      	 <id>5</id>
-      	 <simulateException>false</simulateException>
-      </exam:completeRequestType>
-   </soapenv:Body>
-</soapenv:Envelope>

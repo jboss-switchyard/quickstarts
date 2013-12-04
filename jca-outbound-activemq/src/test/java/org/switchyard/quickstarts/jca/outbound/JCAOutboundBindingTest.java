@@ -1,12 +1,15 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -48,13 +51,13 @@ public class JCAOutboundBindingTest {
     private static final String ORDER_QUEUE = "OrderQueue";
     private static final String SHIPPING_QUEUE = "ShippingQueue";
     private static final String FILLING_STOCK_QUEUE = "FillingStockQueue";
-    
+
     private static final File ACTIVEMQ_DATA_DIR = new File(System.getProperty("java.io.tmpdir"), "activemq-data");
     private static final long MEMORY_STORE_USAGE_LIMIT = 209715200;
     private static final long TEMP_STORE_USAGE_LIMIT = 209715200;
 
     private static BrokerService _broker;
-    
+
     public static void startActiveMQBroker() throws Exception {
         _broker = new BrokerService();
         _broker.setBrokerName("default");
@@ -67,19 +70,19 @@ public class JCAOutboundBindingTest {
         systemUsage.getTempUsage().setLimit(TEMP_STORE_USAGE_LIMIT);
         _broker.start();
     }
-    
+
     @Deployment
     public static Archive<?> createTestArchive() throws Exception {
         startActiveMQBroker();
-        
+
         File artifact = new File(JAR_FILE);
         try {
             return ShrinkWrap.create(ZipImporter.class, artifact.getName())
-                             .importFrom(new ZipFile(artifact))
-                             .as(JavaArchive.class);
+                .importFrom(new ZipFile(artifact))
+                .as(JavaArchive.class);
         } catch (Exception e) {
             throw new RuntimeException(JAR_FILE + " not found. Do \"mvn package\" before the test", e);
-         }
+        }
     }
 
     /**
@@ -87,32 +90,30 @@ public class JCAOutboundBindingTest {
      */
     @Test
     public void testOrderService() throws Exception {
-        String[] orders = {"BREAD", "PIZZA", "JAM", "POTATO", "MILK", "JAM"};
-        ActiveMQConnectionFactory connectionFactory =
-                new ActiveMQConnectionFactory(ActiveMQConnectionFactory.DEFAULT_BROKER_URL);
+        String[] orders = { "BREAD", "PIZZA", "JAM", "POTATO", "MILK", "JAM" };
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(ActiveMQConnectionFactory.DEFAULT_BROKER_URL);
 
         Connection connection = null;
         try {
-            connection = connectionFactory.createConnection(
-                    ActiveMQConnectionFactory.DEFAULT_USER,
-                    ActiveMQConnectionFactory.DEFAULT_PASSWORD);
+            connection = connectionFactory.createConnection(ActiveMQConnectionFactory.DEFAULT_USER,
+                ActiveMQConnectionFactory.DEFAULT_PASSWORD);
             connection.start();
 
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-       
+
             MessageProducer producer = session.createProducer(session.createQueue(ORDER_QUEUE));
-            for (String order : orders ) {
+            for (String order : orders) {
                 TextMessage message = session.createTextMessage();
                 message.setText(order);
                 producer.send(message);
             }
             session.close();
-        
+
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageConsumer consumer = session.createConsumer(session.createQueue(ORDER_QUEUE));
             Assert.assertNull("Request message is still in the queue: " + ORDER_QUEUE, consumer.receive(3000));
             consumer.close();
-            
+
             consumer = session.createConsumer(session.createQueue(SHIPPING_QUEUE));
             List<String> expectedShippingOrders = new ArrayList<String>(Arrays.asList("BREAD", "JAM", "MILK", "JAM"));
             Message msg = null;
@@ -123,7 +124,7 @@ public class JCAOutboundBindingTest {
             }
             Assert.assertEquals(0, expectedShippingOrders.size());
             consumer.close();
-            
+
             consumer = session.createConsumer(session.createQueue(FILLING_STOCK_QUEUE));
             List<String> expectedFillingStockOrders = new ArrayList<String>(Arrays.asList("PIZZA", "POTATO"));
             while ((msg = consumer.receive(1000)) != null) {

@@ -1,3 +1,0 @@
-<requestResponse xmlns="http://example.com/loan-approval/loanService/">
-  <tns:accept xmlns:tns="http://example.com/loan-approval/loanService/">yes</tns:accept>
-</requestResponse>

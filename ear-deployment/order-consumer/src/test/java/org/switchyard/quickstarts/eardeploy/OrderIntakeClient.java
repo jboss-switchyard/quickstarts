@@ -1,22 +1,18 @@
 /*
- * JBoss, Home of Professional Open Source Copyright 2009, Red Hat Middleware
- * LLC, and individual contributors by the @authors tag. See the copyright.txt
- * in the distribution for a full listing of individual contributors.
- * 
- * This is free software; you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- * 
- * This software is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with this software; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
- * site: http://www.fsf.org.
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.switchyard.quickstarts.eardeploy;
 
@@ -36,50 +32,43 @@ import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
  * JMS-based client for submitting orders to the OrderService.
  */
 public final class OrderIntakeClient {
-    
-    
+
     private static final String ORDER_QUEUE_NAME = "EAROrderRequestQueue";
     private static final String ORDERACK_QUEUE_NAME = "EAROrderReplyQueue";
     private static final String USER = "guest";
     private static final String PASSWD = "guestp.1";
-   
+
     /**
      * Main routing for OrderIntakeClient
      * @param args command-line args
      * @throws Exception if something goes wrong.
      */
     public static void main(final String[] args) throws Exception {
-        HornetQMixIn hqMixIn = new HornetQMixIn(false)
-                                    .setUser(USER)
-                                    .setPassword(PASSWD);
+        HornetQMixIn hqMixIn = new HornetQMixIn(false).setUser(USER).setPassword(PASSWD);
         hqMixIn.initialize();
-        
+
         try {
             Session session = hqMixIn.getJMSSession();
             MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(ORDER_QUEUE_NAME));
-            
+
             String orderTxt = readFileContent(args[0]);
-            System.out.println("Submitting Order" + "\n"
-                    + "----------------------------\n"
-                    + orderTxt
-                    + "\n----------------------------");
+            System.out.println("Submitting Order" + "\n" + "----------------------------\n" + orderTxt
+                + "\n----------------------------");
             producer.send(hqMixIn.createJMSMessage(orderTxt));
             MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(ORDERACK_QUEUE_NAME));
             System.out.println("Order submitted ... waiting for reply.");
-            TextMessage reply = (TextMessage)consumer.receive(3000);
+            TextMessage reply = (TextMessage) consumer.receive(3000);
             if (reply == null) {
                 System.out.println("No reply received.");
             } else {
-                System.out.println("Received reply" + "\n"
-                        + "----------------------------\n"
-                        + reply.getText()
-                        + "\n----------------------------");
+                System.out.println("Received reply" + "\n" + "----------------------------\n" + reply.getText()
+                    + "\n----------------------------");
             }
         } finally {
             hqMixIn.uninitialize();
         }
     }
-    
+
     /**
      * Reads the contends of the {@link #MESSAGE_PAYLOAD} file.
      *

@@ -1,17 +1,19 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.switchyard.quickstarts.demo.policy.transaction;
 
 import javax.inject.Inject;
@@ -31,26 +33,31 @@ import org.switchyard.policy.TransactionPolicy;
  */
 @Service(WorkService.class)
 @Requires(transaction = TransactionPolicy.PROPAGATES_TRANSACTION)
-public class WorkServiceBean
-    implements org.switchyard.quickstarts.demo.policy.transaction.WorkService {
-    
+public class WorkServiceBean implements org.switchyard.quickstarts.demo.policy.transaction.WorkService {
+
     /** rollback command. */
     public static final String ROLLBACK = "rollback";
 
     private static final String JNDI_TRANSACTION_MANAGER = "java:jboss/TransactionManager";
-    
-    @Inject @Reference @Requires(transaction = TransactionPolicy.PROPAGATES_TRANSACTION)
+
+    @Inject
+    @Reference
+    @Requires(transaction = TransactionPolicy.PROPAGATES_TRANSACTION)
     private TaskAService _taskAService;
-    
-    @Inject @Reference @Requires(transaction = TransactionPolicy.SUSPENDS_TRANSACTION)
+
+    @Inject
+    @Reference
+    @Requires(transaction = TransactionPolicy.SUSPENDS_TRANSACTION)
     private TaskBService _taskBService;
-    
-    @Inject @Reference @Requires(transaction = TransactionPolicy.SUSPENDS_TRANSACTION)
+
+    @Inject
+    @Reference
+    @Requires(transaction = TransactionPolicy.SUSPENDS_TRANSACTION)
     private TaskCService _taskCService;
 
     @Override
     public final void doWork(final String command) {
-        
+
         print("Received command =>  " + command);
 
         Transaction t = null;
@@ -83,13 +90,12 @@ public class WorkServiceBean
             print("Failed to get current transaction status");
         }
     }
-    
+
     private Transaction getCurrentTransaction() throws Exception {
-        TransactionManager tm = (TransactionManager)
-                new InitialContext().lookup(JNDI_TRANSACTION_MANAGER);
+        TransactionManager tm = (TransactionManager) new InitialContext().lookup(JNDI_TRANSACTION_MANAGER);
         return tm.getTransaction();
     }
-        
+
     private void print(String message) {
         System.out.println(":: WorkService :: " + message);
     }

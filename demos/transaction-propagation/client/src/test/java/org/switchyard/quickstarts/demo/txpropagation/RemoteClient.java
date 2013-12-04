@@ -1,12 +1,15 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -30,9 +33,8 @@ import org.switchyard.remote.http.HttpInvoker;
  */
 public final class RemoteClient {
 
-    private static final QName SERVICE = new QName(
-            "urn:switchyard-quickstart-demo-transaction-propagation-dealer:1.0",
-            "Dealer");
+    private static final QName SERVICE = new QName("urn:switchyard-quickstart-demo-transaction-propagation-dealer:1.0",
+        "Dealer");
     private static final String URL = "http://localhost:8080/switchyard-remote";
 
     /**
@@ -65,15 +67,14 @@ public final class RemoteClient {
         // Invoke the service
         RemoteMessage reply = invoker.invoke(message);
         if (reply.isFault()) {
-            System.err.println("Oops ... something bad happened.  "
-                    + reply.getContent());
+            System.err.println("Oops ... something bad happened.  " + reply.getContent());
         } else {
             Deal deal = (Deal) reply.getContent();
             out.println("==================================");
             out.println("Was the offer accepted? " + deal.isAccepted());
             out.println("==================================");
         }
-        
+
     }
 
     public static Offer createOffer(boolean acceptable) {
