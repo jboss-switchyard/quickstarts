@@ -20,29 +20,36 @@
         <version>1.1.0.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>switchyard-quickstart-bpel-service-xts-subordinate-wsba-ws</artifactId>
-    <name>Quickstart : BPEL Service : XTS Subordinate WSBA : Airport Web Service</name>
-    <packaging>ejb</packaging>
-    <dependencies/>
+    <artifactId>switchyard-quickstart-bpel-service-xts-subordinate-wsba-bpel</artifactId>
+    <name>Quickstart : BPEL Service : XTS Subordinate WSBA : Business Travel Process</name>
+    <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-bpel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-soap</artifactId>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-ejb-plugin</artifactId>
-                <configuration>
-                    <ejbVersion>3.1</ejbVersion>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jboss.as.plugins</groupId>
-                <artifactId>jboss-as-maven-plugin</artifactId>
-                <configuration>
-                    <filename>${project.build.finalName}.jar</filename>
-                </configuration>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>configure</goal>
+                        </goals>
+                        <configuration>
+                            <scannerClassNames>
+                                <param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>
+                            </scannerClassNames>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

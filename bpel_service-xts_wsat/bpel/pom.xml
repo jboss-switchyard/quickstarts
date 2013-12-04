@@ -23,4 +23,34 @@
     <artifactId>switchyard-quickstart-bpel-service-xts-wsat-bpel</artifactId>
     <name>Quickstart : BPEL Service : XTS WSAT : Business Travel Process</name>
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-bpel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-soap</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>configure</goal>
+                        </goals>
+                        <configuration>
+                            <scannerClassNames>
+                                <param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>
+                            </scannerClassNames>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

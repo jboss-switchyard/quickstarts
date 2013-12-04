@@ -16,22 +16,15 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
-        <artifactId>switchyard-quickstart-bpel-service</artifactId>
+        <artifactId>switchyard-quickstart-parent</artifactId>
         <version>1.1.0.Final</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>switchyard-quickstart-bpel-service-say-hello</artifactId>
-    <name>Quickstart : BPEL Service : Say Hello</name>
-    <packaging>jar</packaging>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>org.switchyard.quickstarts.bpel.service.BPELHelloClient</mainClass>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <artifactId>switchyard-quickstart-bpel-service-xts-subordinate-wsba</artifactId>
+    <name>Quickstart : BPEL Service : XTS Subordinate WSBA</name>
+    <packaging>pom</packaging>
+    <modules>
+        <module>bpel</module>
+        <module>ws</module>
+    </modules>
 </project>
