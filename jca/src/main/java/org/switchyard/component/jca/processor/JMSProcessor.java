@@ -24,8 +24,10 @@ import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.jboss.logging.Logger;
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.common.type.Classes;
@@ -41,6 +43,8 @@ import org.switchyard.component.jca.composer.JMSBindingData;
  *
  */
 public class JMSProcessor extends AbstractOutboundProcessor {
+    /** prefix for the context property. */
+    public static final String CONTEXT_PROPERTY_PREFIX = "org.switchyard.component.jca.processor.";
     /** key for username property. */
     public static final String KEY_USERNAME = "userName";
     /** key for password property. */
@@ -55,19 +59,19 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     public static final String KEY_MESSAGE_TYPE  = "messageType";
     /** key for JNDI properties file to look up the JMS destination. */
     public static final String KEY_DESTINATION_JNDI_PROVIDER_URL = "destinationJndiPropertiesFileName";
-            
+
     private Logger _logger = Logger.getLogger(JMSProcessor.class);
     private String _userName;
     private String _password;
     private String _transacted;
-    private boolean _txEnabled;
+    private boolean _defaultTxEnabled;
     private String _destination;
     private String _acknowledgeMode;
-    private int _ackMode;
+    private int _defaultAckMode;
     private ConnectionFactory _connectionFactory;
-    private Destination _jmsDestination;
+    private Destination _defaultJmsDestination;
     private MessageComposer<JMSBindingData> _composer;
-    private MessageType _outMessageType = MessageType.Object;
+    private MessageType _defaultOutMessageType = MessageType.Object;
     private String _destinationJndiPropertiesFileName;
     private Properties _destinationJndiProperties;
     
@@ -89,12 +93,12 @@ public class JMSProcessor extends AbstractOutboundProcessor {
 
     @Override
     public void initialize() {
-        _txEnabled = Boolean.parseBoolean(_transacted);
+        _defaultTxEnabled = Boolean.parseBoolean(_transacted);
 
         if (_acknowledgeMode == null || _acknowledgeMode.equals("")) {
-            _ackMode = Session.AUTO_ACKNOWLEDGE;
+            _defaultAckMode = Session.AUTO_ACKNOWLEDGE;
         } else {
-            _ackMode = Integer.parseInt(_acknowledgeMode);
+            _defaultAckMode = Integer.parseInt(_acknowledgeMode);
         }
 
         if (_destination == null) {
@@ -119,7 +123,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             } else {
                 destic = cfic;
             }
-            _jmsDestination = (Destination) destic.lookup(_destination);
+            _defaultJmsDestination = (Destination) destic.lookup(_destination);
             destic.close();
         } catch (Exception e) {
             throw JCAMessages.MESSAGES.failedToInitialize(this.getClass().getName(), e);
@@ -143,11 +147,12 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             }
             connection.start();
             
-            session = connection.createSession(_txEnabled, _ackMode);
-            MessageProducer producer = session.createProducer(_jmsDestination);
+            Context context = exchange.getContext();
+            session = connection.createSession(getTxEnabledFromContext(context), getAcknowledgeModeFromContext(context));
+            MessageProducer producer = session.createProducer(getDestinationFromContext(context));
             
             Message msg;
-            switch (_outMessageType) {
+            switch (getOutputMessageTypeFromContext(context)) {
             case Stream:
                 msg = session.createStreamMessage();
                 break;
@@ -188,6 +193,61 @@ public class JMSProcessor extends AbstractOutboundProcessor {
         }
     }
     
+    protected boolean getTxEnabledFromContext(Context ctx) {
+        String key = CONTEXT_PROPERTY_PREFIX + KEY_TRANSACTED;
+        if (ctx.getProperty(key) != null) {
+            return Boolean.parseBoolean(ctx.getProperty(key).getValue().toString());
+        }
+        return _defaultTxEnabled;
+    }
+    
+    protected int getAcknowledgeModeFromContext(Context ctx) {
+        String key = CONTEXT_PROPERTY_PREFIX + KEY_ACKNOWLEDGE_MODE;
+        if (ctx.getProperty(key) != null) {
+            return Integer.parseInt(ctx.getProperty(key).getValue().toString());
+        }
+        return _defaultAckMode;
+    }
+
+    protected Destination getDestinationFromContext(Context ctx) {
+        String key = CONTEXT_PROPERTY_PREFIX + KEY_DESTINATION;
+        if (ctx.getProperty(key) != null) {
+            String destName = ctx.getProperty(key).getValue().toString();
+            InitialContext ic = null;
+            try {
+                if (getDestinationJndiProperties() != null) {
+                    ic = new InitialContext(getDestinationJndiProperties());
+                } else if (getJndiProperties() != null) {
+                    ic = new InitialContext(getJndiProperties());
+                } else {
+                    ic = new InitialContext();
+                }
+                return (Destination) ic.lookup(destName);
+            } catch (NamingException e) {
+                JCALogger.ROOT_LOGGER.contextDestinationNotFound(destName, _destination);
+            } finally {
+                if (ic != null) {
+                    try {
+                        ic.close();
+                    } catch (Exception e) {
+                        // avoid checkstype error
+                        e.getMessage();
+                        }
+                }
+            }
+        }
+        return _defaultJmsDestination;
+        
+    }
+    
+    protected MessageType getOutputMessageTypeFromContext(Context ctx) {
+        String key = CONTEXT_PROPERTY_PREFIX + KEY_MESSAGE_TYPE;
+        if (ctx.getProperty(key) != null) {
+            return MessageType.valueOf(ctx.getProperty(key).getValue().toString());
+        }
+        return _defaultOutMessageType;
+    }
+
     /**
      * set destination name.
      * @param name destination name
@@ -238,7 +298,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
      * @param type message type
      */
     public void setMessageType(String type) {
-        _outMessageType = MessageType.valueOf(type);
+        _defaultOutMessageType = MessageType.valueOf(type);
     }
     
     /**

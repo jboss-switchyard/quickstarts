@@ -104,5 +104,13 @@ public interface JCALogger {
     @Message(id = 36809, value = "Failed to load JNDI properties from file: %s")
     void failedToLoadJndiPropertiesFile(String name, @Cause Exception e);
 
+    /**
+     * contextDestinationNotFound method definition.
+     * @param contextDest destination name retrieved from context property
+     * @param defaultDest default destination name
+     */
+    @LogMessage(level = Level.WARN)
+    @Message(id = 36810, value = "Destination '%s' could not be found. using '%s' instead")
+    void contextDestinationNotFound(String contextDest, String defaultDest);
 }
 
