@@ -57,8 +57,8 @@
   <portType name="WarehouseService">
     <operation name="order">
       <input wsaw:Action="urn:switchyard-quickstart:soap-addressing:1.0:WarehouseService:orderRequest" message="tns:order"/>
-      <!--<output message="tns:orderResponse"/>-->
-      <fault message="tns:ItemNotAvailable" name="ItemNotAvailable"/>
+      <output message="tns:orderResponse" wsaw:Action="urn:switchyard-quickstart:soap-addressing:1.0:ResponseService:orderResponse"/>
+      <fault message="tns:ItemNotAvailable" name="ItemNotAvailable" wsaw:Action="urn:switchyard-quickstart:soap-addressing:1.0:FaultService:fault"/>
     </operation>
   </portType>
   <binding name="WarehouseServicePortBinding" type="tns:WarehouseService">
@@ -70,9 +70,9 @@
       <input>
         <soap:body use="literal"/>
       </input>
-      <!--<output>
+      <output>
         <soap:body use="literal"/>
-      </output>-->
+      </output>
       <fault name="ItemNotAvailable">
         <soap:fault name="ItemNotAvailable" use="literal"/>
       </fault>

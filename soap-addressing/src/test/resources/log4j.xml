@@ -16,6 +16,9 @@
     <logger name="org.jboss.weld.Bootstrap">
         <level value="ERROR"/>
     </logger>
+    <logger name="org.apache.cxf">
+        <level value="TRACE"/>
+    </logger>
     <logger name="org.apache.commons.httpclient.HttpMethodBase">
         <level value="ERROR"/>
     </logger>

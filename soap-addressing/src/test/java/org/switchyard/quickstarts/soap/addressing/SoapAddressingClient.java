@@ -62,7 +62,7 @@ public class SoapAddressingClient {
         if (testFile.exists()) {
             testFile.delete();
         }
-        String command =  null;
+
         HTTPMixIn http = new HTTPMixIn();
         http.initialize();
         return http.postString(switchyard_web_service, String.format(SOAP_TEMPLATE, item, quantity));

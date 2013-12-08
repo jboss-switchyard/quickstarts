@@ -14,24 +14,8 @@
 
 package org.switchyard.quickstarts.soap.addressing;
 
-import javax.inject.Named;
+public interface WarehouseService {
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-
-@Named("faultProcessor")
-public class FaultProcessor implements Processor {
-
-    /**
-     * Creates new processor.
-     */
-    public FaultProcessor() {
-    }
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        ItemNotAvailable fault = exchange.getIn().getBody(ItemNotAvailable.class);
-        exchange.getOut().setBody(fault.getMessage());
-    }
+    public void order(final Order order) throws ItemNotAvailable;
 
 }
