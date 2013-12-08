@@ -16,34 +16,8 @@
  */
 package org.switchyard.quickstarts.soap.addressing;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+public interface WarehouseService {
 
-@XmlRootElement(name = "ItemNotAvailable", namespace = "urn:switchyard-quickstart:soap-addressing:1.0")
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ItemNotAvailable", namespace = "urn:switchyard-quickstart:soap-addressing:1.0")
-public class ItemNotAvailableBean {
-
-    private String message;
-
-    /**
-     * 
-     * @return
-     *     returns String
-     */
-    public String getMessage() {
-        return this.message;
-    }
-
-    /**
-     * 
-     * @param message
-     *     the value for the message property
-     */
-    public void setMessage(String message) {
-        this.message = message;
-    }
+    public void order(final Order order) throws ItemNotAvailable;
 
 }

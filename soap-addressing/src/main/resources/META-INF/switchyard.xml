@@ -15,34 +15,24 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
-    xmlns:camel="urn:switchyard-component-camel:config:1.0"
-    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
-    xmlns:soap="urn:switchyard-component-soap:config:1.0"
-    xmlns:file="urn:switchyard-component-camel-file:config:1.0"
-    name="switchyard-quickstart-soap-addressing" targetNamespace="urn:switchyard-quickstart:soap-addressing:1.0">
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:camel="urn:switchyard-component-camel:config:1.0" xmlns:file="urn:switchyard-component-camel-file:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:soap="urn:switchyard-component-soap:config:1.0" xmlns:http="urn:switchyard-component-http:config:1.0" xmlns:xform="urn:switchyard-config:transform:1.0" name="switchyard-quickstart-soap-addressing" targetNamespace="urn:switchyard-quickstart:soap-addressing:1.0">
   <sca:composite name="switchyard-quickstart-soap-addressing" targetNamespace="urn:switchyard-quickstart:soap-addressing:1.0">
-
     <sca:service name="OrderService" promote="Route/OrderService">
       <sca:interface.wsdl interface="OrderService.wsdl#wsdl.porttype(OrderService)"/>
       <soap:binding.soap>
-        <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>
+        <soap:contextMapper includeNamespaces="http://www.w3.org/2005/08/addressing" includes=".*" soapHeadersType="DOM"/>
         <soap:wsdl>OrderService.wsdl</soap:wsdl>
-        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:socketAddr>:${soapPort}</soap:socketAddr>
         <soap:contextPath>soap-addressing/order</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
-
     <sca:reference name="WarehouseServiceExternal" multiplicity="0..1" promote="Route/WarehouseServiceExternal">
       <sca:interface.wsdl interface="WarehouseService.wsdl#wsdl.porttype(WarehouseService)"/>
       <soap:binding.soap>
-        <!-- Will be set by the Addressing handler  -->
-        <!--<soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>-->
         <soap:wsdl>WarehouseService.wsdl</soap:wsdl>
-        <soap:endpointAddress>http://localhost:${jettyPort}/soap-addressing/warehouse/WarehouseService</soap:endpointAddress>
+        <soap:endpointAddress>http://localhost:${soapPort}/soap-addressing/warehouse/WarehouseService</soap:endpointAddress>
       </soap:binding.soap>
     </sca:reference>
-
     <sca:component name="Route">
       <camel:implementation.camel>
         <camel:xml path="route.xml"/>
@@ -54,75 +44,43 @@
         <interface.esb inputType="java:org.switchyard.quickstarts.soap.addressing.Order"/>
       </sca:reference>
     </sca:component>
-
     <sca:service name="WarehouseService" promote="Route2/WarehouseService">
       <sca:interface.wsdl interface="WarehouseService.wsdl#wsdl.porttype(WarehouseService)"/>
       <soap:binding.soap>
-        <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>
+        <soap:contextMapper includeNamespaces="http://www.w3.org/2005/08/addressing" includes=".*" soapHeadersType="DOM"/>
         <soap:wsdl>WarehouseService.wsdl</soap:wsdl>
-        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:socketAddr>:${soapPort}</soap:socketAddr>
         <soap:contextPath>soap-addressing/warehouse</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
-
-    <sca:reference name="ClientServiceExternal" multiplicity="0..1" promote="Route2/ClientServiceExternal">
-      <sca:interface.wsdl interface="ResponseService.wsdl#wsdl.porttype(ResponseService)"/>
-      <soap:binding.soap>
-        <!-- Will be set by the Addressing handler  -->
-        <!-- <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/> -->
-        <soap:wsdl>ResponseService.wsdl</soap:wsdl>
-        <!-- Will be set by To header -->
-        <!-- <soap:endpointAddress>http://localhost:${jettyPort}/soap-addressing/client/ResponseService</soap:endpointAddress> -->
-      </soap:binding.soap>
-    </sca:reference>
-
-    <sca:reference name="FaultServiceExternal" multiplicity="0..1" promote="Route2/FaultServiceExternal">
-      <sca:interface.wsdl interface="FaultService.wsdl#wsdl.porttype(FaultService)"/>
-      <soap:binding.soap>
-        <!-- Will be set by the Addressing handler  -->
-        <!-- <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/> -->
-        <soap:wsdl>FaultService.wsdl</soap:wsdl>
-        <!-- Will be set by To header -->
-        <!-- <soap:endpointAddress>http://localhost:${jettyPort}/soap-addressing/fault/FaultService</soap:endpointAddress> -->
-      </soap:binding.soap>
-    </sca:reference>
-
     <sca:component name="Route2">
       <camel:implementation.camel>
         <camel:xml path="route2.xml"/>
       </camel:implementation.camel>
       <sca:service name="WarehouseService">
-        <interface.esb inputType="java:org.switchyard.quickstarts.soap.addressing.Order" outputType="java:org.switchyard.quickstarts.soap.addressing.OrderResponse" faultType="java:org.switchyard.quickstarts.soap.addressing.ItemNotAvailable"/>
+        <interface.esb faultType="java:org.switchyard.quickstarts.soap.addressing.ItemNotAvailable" inputType="java:org.switchyard.quickstarts.soap.addressing.Order" outputType="java:org.switchyard.quickstarts.soap.addressing.OrderResponse"/>
+        <!--<sca:interface.java interface="org.switchyard.quickstarts.soap.addressing.WarehouseService"/>-->
       </sca:service>
-      <sca:reference name="ClientServiceExternal">
-        <interface.esb inputType="java:org.switchyard.quickstarts.soap.addressing.OrderResponse"/>
-      </sca:reference>
-      <sca:reference name="FaultServiceExternal">
-        <interface.esb inputType="java:org.switchyard.quickstarts.soap.addressing.ItemNotAvailable"/>
-      </sca:reference>
     </sca:component>
-
     <sca:service name="ClientService" promote="Route3/ClientService">
       <sca:interface.wsdl interface="ResponseService.wsdl#wsdl.porttype(ResponseService)"/>
       <soap:binding.soap>
-        <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>
+        <soap:contextMapper includeNamespaces="http://www.w3.org/2005/08/addressing" includes=".*" soapHeadersType="DOM"/>
         <soap:wsdl>ResponseService.wsdl</soap:wsdl>
-        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:socketAddr>:${soapPort}</soap:socketAddr>
         <soap:contextPath>soap-addressing/client</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
-
     <sca:reference name="ClientFileService" multiplicity="1..1" promote="Route3/ClientFileService">
-        <interface.esb inputType="java:java.lang.String"/>
-        <file:binding.file>
-            <file:directory>/tmp</file:directory>
-            <file:fileName>test.txt</file:fileName>
-            <file:produce>
-                <file:fileExist>Override</file:fileExist>
-            </file:produce>
-        </file:binding.file>
+      <interface.esb inputType="java:java.lang.String"/>
+      <file:binding.file>
+        <file:directory>/tmp</file:directory>
+        <file:fileName>test.txt</file:fileName>
+        <file:produce>
+          <file:fileExist>Override</file:fileExist>
+        </file:produce>
+      </file:binding.file>
     </sca:reference>
-
     <sca:component name="Route3">
       <camel:implementation.camel>
         <camel:xml path="client-route.xml"/>
@@ -134,50 +92,45 @@
         <interface.esb inputType="java:java.lang.String"/>
       </sca:reference>
     </sca:component>
-
     <sca:service name="FaultService" promote="Route4/FaultService">
-      <sca:interface.wsdl interface="FaultService.wsdl#wsdl.porttype(FaultService)"/>
-      <soap:binding.soap>
-        <soap:contextMapper includes=".*" includeNamespaces="http://www.w3.org/2005/08/addressing" soapHeadersType="DOM"/>
-        <soap:wsdl>FaultService.wsdl</soap:wsdl>
-        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
-        <soap:contextPath>soap-addressing/fault</soap:contextPath>
-      </soap:binding.soap>
+      <interface.esb inputType="java:java.lang.String"/>
+      <http:binding.http>
+         <http:contextPath>soap-addressing/fault/FaultService</http:contextPath>
+      </http:binding.http>
     </sca:service>
-
     <sca:reference name="FaultFileService" multiplicity="1..1" promote="Route4/FaultFileService">
-        <interface.esb inputType="java:java.lang.String"/>
-        <file:binding.file>
-            <file:directory>/tmp</file:directory>
-            <file:fileName>test.txt</file:fileName>
-            <file:produce>
-                <file:fileExist>Override</file:fileExist>
-            </file:produce>
-        </file:binding.file>
+      <interface.esb inputType="java:java.lang.String"/>
+      <file:binding.file>
+        <file:directory>/tmp</file:directory>
+        <file:fileName>test.txt</file:fileName>
+        <file:produce>
+          <file:fileExist>Override</file:fileExist>
+        </file:produce>
+      </file:binding.file>
     </sca:reference>
-
     <sca:component name="Route4">
       <camel:implementation.camel>
         <camel:xml path="fault-route.xml"/>
       </camel:implementation.camel>
       <sca:service name="FaultService">
-        <interface.esb inputType="java:org.switchyard.quickstarts.soap.addressing.ItemNotAvailable"/>
+        <interface.esb inputType="java:java.lang.String"/>
       </sca:service>
       <sca:reference name="FaultFileService">
         <interface.esb inputType="java:java.lang.String"/>
       </sca:reference>
     </sca:component>
-
   </sca:composite>
-  <transforms xmlns:xform="urn:switchyard-config:transform:1.0">
+  <transforms>
     <xform:transform.jaxb from="{urn:switchyard-quickstart:soap-addressing:1.0}order" to="java:org.switchyard.quickstarts.soap.addressing.Order"/>
     <xform:transform.jaxb from="java:org.switchyard.quickstarts.soap.addressing.Order" to="{urn:switchyard-quickstart:soap-addressing:1.0}order"/>
     <xform:transform.jaxb from="java:org.switchyard.quickstarts.soap.addressing.OrderResponse" to="{urn:switchyard-quickstart:soap-addressing:1.0}orderResponse"/>
     <xform:transform.jaxb from="{urn:switchyard-quickstart:soap-addressing:1.0}orderResponse" to="java:org.switchyard.quickstarts.soap.addressing.OrderResponse"/>
+    <!--<xform:transform.jaxb from="java:org.switchyard.quickstarts.soap.addressing.ItemNotAvailable" to="{urn:switchyard-quickstart:soap-addressing:1.0}ItemNotAvailable"/>-->
   </transforms>
   <domain>
     <properties>
-      <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+      <property name="soapPort" value="${org.switchyard.component.soap.standalone.port:8080}"/>
+      <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
     </properties>
   </domain>
 </switchyard>
