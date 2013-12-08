@@ -16,16 +16,9 @@
  */
 package org.switchyard.quickstarts.soap.addressing;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import javax.inject.Named;
-import javax.xml.soap.SOAPHeaderElement;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.w3c.dom.Element;
 
 @Named("orderReplyProcessor")
 public class OrderReplyProcessor implements Processor {

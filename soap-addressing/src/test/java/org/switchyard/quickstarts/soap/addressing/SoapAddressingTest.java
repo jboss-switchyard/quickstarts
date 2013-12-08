@@ -20,7 +20,6 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.switchyard.test.BeforeDeploy;
@@ -30,9 +29,9 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
-    mixins = { CDIMixIn.class, HTTPMixIn.class },
-    config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-    scanners = { BeanSwitchYardScanner.class, TransformSwitchYardScanner.class })
+        config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
+        mixins = {CDIMixIn.class, HTTPMixIn.class},
+        scanners = {TransformSwitchYardScanner.class })
 public class SoapAddressingTest {
 
     private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8081/soap-addressing/order/OrderService";
@@ -41,7 +40,8 @@ public class SoapAddressingTest {
 
     @BeforeDeploy
     public void setProperties() {
-        System.setProperty("org.switchyard.component.http.standalone.port", "8081");
+        System.setProperty("org.switchyard.component.soap.standalone.port", "8081");
+        System.setProperty("org.switchyard.component.http.standalone.port", "8082");
     }
 
     @Test
@@ -71,16 +71,12 @@ public class SoapAddressingTest {
         Assert.assertEquals("Order Boeing with quantity 10 accepted.", text);
     }
 
-    /**
-     * Could not get this to work yet due to Exception transformation. All method Exceptions, when mapped to Fault should be transformed as SOAPFault.
-     */
-    @Ignore
     @Test
     public void wsAddressingFaultTo() throws Exception {
         String response = SoapAddressingClient.sendMessage("Guardian Angel", "3", SWITCHYARD_WEB_SERVICE);
         Assert.assertTrue(response.contains("Thank you for your order. You should hear back from our WarehouseService shortly!"));
 
         String text = SoapAddressingClient.getFileMessage();
-        Assert.assertEquals("Sorry, all Guardian Angels are sold out!", text);
+        Assert.assertTrue(text.contains("Sorry, all Guardian Angels are sold out!"));
     }
 }

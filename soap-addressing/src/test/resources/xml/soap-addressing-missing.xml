@@ -1,6 +1,5 @@
 <?xml version="1.0" ?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-    <soap:Header/>
     <soap:Body>
         <soap:Fault>
             <faultcode xmlns:ns1="http://www.w3.org/2005/08/addressing">ns1:MessageAddressingHeaderRequired</faultcode>
