@@ -58,7 +58,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     /** key for message type property. */
     public static final String KEY_MESSAGE_TYPE  = "messageType";
     /** key for JNDI properties file to look up the JMS destination. */
-    public static final String KEY_DESTINATION_JNDI_PROVIDER_URL = "destinationJndiPropertiesFileName";
+    public static final String KEY_DESTINATION_JNDI_PROPERTIES_FILE = "destinationJndiPropertiesFileName";
 
     private Logger _logger = Logger.getLogger(JMSProcessor.class);
     private String _userName;

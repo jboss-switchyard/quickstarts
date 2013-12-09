@@ -304,5 +304,6 @@ public interface JCAMessages {
      */
     @Message(id = 37246, value = "No outboundConnection was configured for the JCA Component")
     IllegalArgumentException noOutboundConnectionConfigured();
+
 }
 

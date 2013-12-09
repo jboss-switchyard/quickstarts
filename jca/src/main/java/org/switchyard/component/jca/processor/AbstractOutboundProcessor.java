@@ -34,7 +34,7 @@ import org.switchyard.component.jca.config.model.JCABindingModel;
 public abstract class AbstractOutboundProcessor {
     
     /** key for JNDI properties file. */
-    public static final String KEY_JNDI_PROVIDER_URL = "jndiPropertiesFileName";
+    public static final String KEY_JNDI_PROPERTIES_FILE = "jndiPropertiesFileName";
 
     private String _connectionFactoryJNDIName;
     private Properties _mcfProperties;
