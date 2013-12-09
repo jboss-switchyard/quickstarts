@@ -54,11 +54,11 @@
     </profiles>
     <dependencies>
         <dependency>
-            <groupId>org.apache.xalan</groupId>
+            <groupId>xalan</groupId>
             <artifactId>serializer</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.xalan</groupId>
+            <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
         </dependency>
         <dependency>
