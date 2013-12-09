@@ -1,17 +1,19 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.switchyard.quickstarts.transform.xslt;
 
 import java.io.StringWriter;
@@ -39,20 +41,17 @@ public class XsltTransformationTest {
     private Invoker submitOrder;
 
     private SwitchYardTestKit _testKit;
-    
-    public static final QName FROM_TYPE =
-        new QName("urn:switchyard-quickstart:transform-xslt:1.0", "order");
-    public static final QName TO_TYPE =
-        new QName("urn:switchyard-quickstart:transform-xslt:1.0", "orderAck");
-    
+
+    public static final QName FROM_TYPE = new QName("urn:switchyard-quickstart:transform-xslt:1.0", "order");
+    public static final QName TO_TYPE = new QName("urn:switchyard-quickstart:transform-xslt:1.0", "orderAck");
+
     // Paths to XML test files
     final String ORDER_XML = "/xml/order.xml";
     final String ORDER_ACK_XML = "/xml/orderAck.xml";
-    
+
     @Test
     public void testTransformXSLT() throws Exception {
-        Element orderAck = submitOrder
-            .inputType(FROM_TYPE)
+        Element orderAck = submitOrder.inputType(FROM_TYPE)
             .expectedOutputType(TO_TYPE)
             .sendInOut(_testKit.readResourceDocument(ORDER_XML).getDocumentElement())
             .getContent(Element.class);

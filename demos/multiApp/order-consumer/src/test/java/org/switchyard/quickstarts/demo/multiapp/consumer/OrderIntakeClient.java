@@ -1,12 +1,15 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -29,53 +32,46 @@ import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
  * JMS-based client for submitting orders to the OrderService.
  */
 public final class OrderIntakeClient {
-    
-    
+
     private static final String ORDER_QUEUE_NAME = "OrderRequestQueue";
     private static final String ORDERACK_QUEUE_NAME = "OrderReplyQueue";
     private static final String USER = "guest";
     private static final String PASSWD = "guestp.1";
-   
+
     /**
      * Main routing for OrderIntakeClient
      * @param args command-line args
      * @throws Exception if something goes wrong.
      */
     public static void main(final String[] args) throws Exception {
-        HornetQMixIn hqMixIn = new HornetQMixIn(false)
-                                    .setUser(USER)
-                                    .setPassword(PASSWD);
+        HornetQMixIn hqMixIn = new HornetQMixIn(false).setUser(USER).setPassword(PASSWD);
         hqMixIn.initialize();
-        
+
         try {
             Session session = hqMixIn.getJMSSession();
             MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(ORDER_QUEUE_NAME));
-            
+
             String orderTxt = readFileContent(args[0]);
-            System.out.println("Submitting Order" + "\n"
-                    + "----------------------------\n"
-                    + orderTxt
-                    + "\n----------------------------");
+            System.out.println("Submitting Order" + "\n" + "----------------------------\n" + orderTxt
+                + "\n----------------------------");
             producer.send(hqMixIn.createJMSMessage(orderTxt));
             MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(ORDERACK_QUEUE_NAME));
             System.out.println("Order submitted ... waiting for reply.");
-            BytesMessage reply = (BytesMessage)consumer.receive(3000);
+            BytesMessage reply = (BytesMessage) consumer.receive(3000);
             if (reply == null) {
                 System.out.println("No reply received.");
             } else {
                 byte[] buf = new byte[1024];
                 int count = reply.readBytes(buf);
                 String str = new String(buf, 0, count);
-                System.out.println("Received reply" + "\n"
-                        + "----------------------------\n"
-                        + str
-                        + "\n----------------------------");
+                System.out.println("Received reply" + "\n" + "----------------------------\n" + str
+                    + "\n----------------------------");
             }
         } finally {
             hqMixIn.uninitialize();
         }
     }
-    
+
     /**
      * Reads the contends of the {@link #MESSAGE_PAYLOAD} file.
      *

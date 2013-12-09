@@ -1,17 +1,19 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.switchyard.quickstarts.http.binding;
 
 import org.junit.Assert;
@@ -30,22 +32,19 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-@SwitchYardTestCaseConfig(
-        config = SwitchYardTestCaseConfig.SWITCHYARD_XML, 
-        mixins = {CDIMixIn.class, HTTPMixIn.class},
-        scanners = TransformSwitchYardScanner.class)
+@SwitchYardTestCaseConfig(config = SwitchYardTestCaseConfig.SWITCHYARD_XML, mixins = { CDIMixIn.class, HTTPMixIn.class }, scanners = TransformSwitchYardScanner.class)
 @RunWith(SwitchYardRunner.class)
 public class HttpBindingTest {
 
     private static final String BASE_URL = "http://localhost:8081/http-binding";
 
     private HTTPMixIn http;
-    
+
     @BeforeDeploy
     public void setProperties() {
         System.setProperty("org.switchyard.component.http.standalone.port", "8081");
     }
-    
+
     /**
      * Ignore until this is fixed http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7189193
      */

@@ -1,17 +1,19 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.switchyard.quickstarts.rest.binding;
 
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
@@ -26,7 +28,7 @@ public class RESTEasyBindingClient {
     private static final String BASE_URL = "http://localhost:8080/rest-binding";
 
     public static void main(String[] args) throws Exception {
-        String command =  null;
+        String command = null;
         if (args.length == 0) {
             System.out.println("Usage: RESTEasyBindingClient new|get|add|del [orderId] [itemId]");
             System.out.println("  new - create a new Order");
@@ -67,15 +69,9 @@ public class RESTEasyBindingClient {
                     System.out.println("No quantity found!");
                     System.out.println("Usage: get <orderId> <itemId> <quantity>");
                 }
-                String order = "<order>"
-                               + "    <orderId>" + args[1] + "</orderId>"
-                               + "    <orderItem>"
-                               + "        <item>"
-                               + "            <itemId>" + args[2] + "</itemId>"
-                               + "         </item>"
-                               + "         <quantity>" + args[3]+ "</quantity>"
-                               + "     </orderItem>"
-                               + "</order>";
+                String order = "<order>" + "    <orderId>" + args[1] + "</orderId>" + "    <orderItem>" + "        <item>"
+                    + "            <itemId>" + args[2] + "</itemId>" + "         </item>" + "         <quantity>" + args[3]
+                    + "</quantity>" + "     </orderItem>" + "</order>";
                 System.out.println(http.sendString(BASE_URL + "/order/item", order, HTTPMixIn.HTTP_PUT));
             } else if (command.equals("del")) {
                 if (args.length < 2) {

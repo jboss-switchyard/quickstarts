@@ -1,3 +1,0 @@
-<exam:sayHello xmlns:exam="http://www.jboss.org/bpel/examples">
-    <exam:input>Fred</exam:input>
-</exam:sayHello>

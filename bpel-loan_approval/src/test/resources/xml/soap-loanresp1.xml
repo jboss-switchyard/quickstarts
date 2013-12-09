@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?><SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+   <SOAP-ENV:Header>
+    <ns:conversationId xmlns:ns="http://www.jboss.org/cid">12345</ns:conversationId>
+    <ns:exampleHeader xmlns:ns="http://www.jboss.org/header">Outbound</ns:exampleHeader>
+   </SOAP-ENV:Header>
+   <SOAP-ENV:Body>
+    <requestResponse xmlns="http://example.com/loan-approval/loanService/">
+        <tns:accept xmlns:tns="http://example.com/loan-approval/loanService/">yes</tns:accept>
+    </requestResponse>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
