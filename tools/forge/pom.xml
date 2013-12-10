@@ -117,7 +117,7 @@
             <artifactId>switchyard-component-common-knowledge</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.xalan</groupId>
+            <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
         </dependency>
         <dependency>
@@ -125,7 +125,7 @@
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.xalan</groupId>
+            <groupId>xalan</groupId>
             <artifactId>serializer</artifactId>
         </dependency>
         <dependency>
