@@ -1,17 +1,19 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.switchyard.quickstarts.soap.addressing;
 
 import java.io.BufferedReader;
@@ -31,20 +33,20 @@ public class SoapAddressingClient {
     private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8080/soap-addressing/order/OrderService";
 
     private static String SOAP_TEMPLATE =
-         "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\""
-        + "    xmlns:urn=\"urn:switchyard-quickstart:soap-addressing:1.0\""
-        + "    xmlns:wsa=\"http://www.w3.org/2005/08/addressing\">"
-        + "    <soapenv:Header>"
-        + "        <wsa:MessageID>uuid:3d3fcbbb-fd43-4118-b40e-62577894f39a</wsa:MessageID>"
-        + "        <wsa:Action>urn:switchyard-quickstart:soap-addressing:1.0:OrderService:orderRequest</wsa:Action>"
-        + "    </soapenv:Header>"
-        + "    <soapenv:Body>"
-        + "        <urn:order>"
-        + "            <item>%s</item>"
-        + "            <quantity>%s</quantity>"
-        + "        </urn:order>"
-        + "    </soapenv:Body>"
-        + "</soapenv:Envelope>";
+        "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\""
+            + "    xmlns:urn=\"urn:switchyard-quickstart:soap-addressing:1.0\""
+            + "    xmlns:wsa=\"http://www.w3.org/2005/08/addressing\">"
+            + "    <soapenv:Header>"
+            + "        <wsa:MessageID>uuid:3d3fcbbb-fd43-4118-b40e-62577894f39a</wsa:MessageID>"
+            + "        <wsa:Action>urn:switchyard-quickstart:soap-addressing:1.0:OrderService:orderRequest</wsa:Action>"
+            + "    </soapenv:Header>"
+            + "    <soapenv:Body>"
+            + "        <urn:order>"
+            + "            <item>%s</item>"
+            + "            <quantity>%s</quantity>"
+            + "        </urn:order>"
+            + "    </soapenv:Body>"
+            + "</soapenv:Envelope>";
 
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
@@ -62,7 +64,7 @@ public class SoapAddressingClient {
         if (testFile.exists()) {
             testFile.delete();
         }
-        String command =  null;
+        String command = null;
         HTTPMixIn http = new HTTPMixIn();
         http.initialize();
         return http.postString(switchyard_web_service, String.format(SOAP_TEMPLATE, item, quantity));
