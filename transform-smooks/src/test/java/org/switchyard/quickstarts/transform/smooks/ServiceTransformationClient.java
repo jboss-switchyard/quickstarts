@@ -20,7 +20,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 public class ServiceTransformationClient {
 
-    private static final String URL = "http://localhost:8080/quickstart-transform-xslt/OrderService";
+    private static final String URL = "http://localhost:8080/quickstart-transform-smooks/OrderService";
     private static final String XML = "src/test/resources/xml/soap-request.xml";
 
     /**

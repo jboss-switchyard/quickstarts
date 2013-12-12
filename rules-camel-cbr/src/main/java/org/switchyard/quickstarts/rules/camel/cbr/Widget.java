@@ -24,10 +24,18 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Widget implements Serializable {
 
-    private final String _id;
+    private String _id;
     private Box _box;
+    
+    public Widget() {
+    
+    }
 
     public Widget(String id) {
+        _id = id;
+    }
+    
+    public void setId(String id) {
         _id = id;
     }
 

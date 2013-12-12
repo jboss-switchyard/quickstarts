@@ -120,6 +120,11 @@
                             <goal>deploy</goal>
                         </goals>
                         <configuration>
+                            <beforeDeployment>
+                                <scripts>
+                                    <script>config.cli</script>
+                                </scripts>
+                            </beforeDeployment>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
@@ -130,6 +135,11 @@
                             <goal>undeploy</goal>
                         </goals>
                         <configuration>
+                           <afterDeployment>
+                                <scripts>
+                                    <script>unconfig.cli</script>
+                                </scripts>
+                            </afterDeployment>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
@@ -143,6 +153,65 @@
             <properties>
                 <deploy.skip>false</deploy.skip>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.edugility</groupId>
+                        <artifactId>h2-maven-plugin</artifactId>
+                        <version>1.0</version>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <baseDirectory>${project.build.directory}</baseDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>Spawn a new H2 TCP server</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>spawn</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>Stop a spawned H2 TCP server</id>
+                                <phase>pre-clean</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>sql-maven-plugin</artifactId>
+                        <version>1.5</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.h2database</groupId>
+                                <artifactId>h2</artifactId>
+                                <version>${version.com.h2database}</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <driver>org.h2.Driver</driver>
+                            <url>jdbc:h2:tcp://localhost/h2db</url>
+                            <username>sa</username>
+                            <skip>${deploy.skip}</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>create</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                   <sqlCommand>CREATE TABLE IF NOT EXISTS greetings ( id INT PRIMARY KEY AUTO_INCREMENT, receiver VARCHAR(255), sender VARCHAR(255) )</sqlCommand>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

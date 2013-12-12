@@ -24,10 +24,20 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class Box implements Serializable {
 
-    private final Widget _widget;
+    private Widget _widget;
     private String _destination;
+    
+    public Box() {
+    
+    }
 
     public Box(Widget widget) {
+        _widget = widget;
+        _widget.setBox(this);
+    }
+    
+    public void setWidget(Widget widget)
+    {
         _widget = widget;
         _widget.setBox(this);
     }

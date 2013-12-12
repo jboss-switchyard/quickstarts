@@ -16,13 +16,18 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
+1. Start JBoss AS 7 in standalone mode:
 
-        mvn clean install
+        ${AS}/bin/standalone.sh
 
-2. Run the test:
+2. Build and deploy the Quickstart :
 
-        mvn -Dtest=CamelServiceTest test
+        mvn install -Pdeploy
+
+3. Use the CamelServiceClient class to send a request message to the JavaDSL service.  The client can be
+   run from the command-line using:
+
+        mvn exec:java
 
 Expected Output:
 ================
@@ -52,6 +57,10 @@ sally: Actually, any kind of dairy is OK in my book
 13:59:45,470 INFO  [route2] [message] 'sally: Actually, any kind of dairy is OK in my book'
 13:59:45,473 INFO  [org.apache.camel.impl.DefaultCamelContext] Apache Camel 2.8.0 (CamelContext:camel-4) is shutting down
 ```
+
+4. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 

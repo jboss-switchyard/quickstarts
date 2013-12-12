@@ -38,27 +38,14 @@ _Window 3_
 
 *3. In a separate terminal window deploy the dealer and credit applications.*
 
-Build the client and service applications
+Build and deploy the quickstart
 
-    cd quickstarts/demos/cluster
-    mvn package
-
-Deploy Credit Service to node2 and node3.
-
-    cd credit
-    mvn -Djboss-as.port=10999 jboss-as:deploy
-    mvn -Djboss-as.port=11999 jboss-as:deploy
-
-Deploy Dealer Service to node1.
-
-    cd ../dealer
-    mvn -Djboss-as.port=9999 jboss-as:deploy
+    mvn -Pdeploy install
 
 *4. Run the test client and check output.*
 
 Submit a message using the client project:
 
-    cd ../client
     mvn exec:java
 
 You should see the following output in the client terminal:
@@ -71,6 +58,10 @@ If you submit multiple messages, you'll notice that the requests are split betwe
 the Credit Service is deployed.  Check the console output on node2 and node3 to see where messages are being routed:
 
     Credit Service : Approving credit for John Smith
+
+*5. Undpeloy the quickstart
+
+    mvn -Pdeploy clean
 
 
 ## Further Reading
