@@ -16,25 +16,42 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
-        <artifactId>switchyard-quickstart-bpel-service</artifactId>
+        <artifactId>switchyard-quickstart-bpel-service-xts-subordinate-wsba</artifactId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>switchyard-quickstart-bpel-service-xts-subordinate-wsba</artifactId>
-    <name>Quickstart : BPEL Service : XTS Subordinate WSBA</name>
-    <packaging>pom</packaging>
-    <modules>
-        <module>bpel</module>
-        <module>ws</module>
-    </modules>
+    <artifactId>switchyard-quickstart-bpel-service-xts-subordinate-wsba-ws</artifactId>
+    <name>Quickstart : BPEL Service : XTS Subordinate WSBA : Airport Web Service</name>
+    <packaging>ejb</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.jbossts</groupId>
+            <artifactId>jbossxts-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-ejb-plugin</artifactId>
+                <configuration>
+                    <ejbVersion>3.1</ejbVersion>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.jboss.as.plugins</groupId>
                 <artifactId>jboss-as-maven-plugin</artifactId>
-                <inherited>false</inherited>
                 <configuration>
-                    <skip>true</skip>
+                    <filename>${project.build.finalName}.jar</filename>
                 </configuration>
             </plugin>
         </plugins>
