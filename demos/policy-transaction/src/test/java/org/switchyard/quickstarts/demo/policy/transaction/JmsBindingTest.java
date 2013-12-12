@@ -1,12 +1,15 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -45,10 +48,10 @@ public class JmsBindingTest {
     private static final String USER = "guest";
     private static final String PASSWD = "guestp.1";
     private static final String JAR_FILE = "target/switchyard-quickstart-demo-policy-transaction.jar";
-    
+
     @Resource(mappedName = "/ConnectionFactory")
     private ConnectionFactory _connectionFactory;
-    
+
     @Resource(mappedName = "policyQSTransacted")
     private Destination _queueIn;
 
@@ -69,14 +72,14 @@ public class JmsBindingTest {
         File artifact = new File(JAR_FILE);
         try {
             return ShrinkWrap.create(ZipImporter.class, artifact.getName())
-                             .importFrom(new ZipFile(artifact))
-                             .as(JavaArchive.class)
-                             .addAsManifestResource(new File(QUEUE_FILE));
+                .importFrom(new ZipFile(artifact))
+                .as(JavaArchive.class)
+                .addAsManifestResource(new File(QUEUE_FILE));
         } catch (Exception e) {
             throw new RuntimeException(JAR_FILE + " not found. Do \"mvn package\" before the test", e);
-         }
+        }
     }
-    
+
     /**
      * Triggers the 'WorkService' by sending a HornetQ Message to the 'policyQSTransacted' queue.
      */
@@ -85,7 +88,7 @@ public class JmsBindingTest {
         String command = "rollback.A";
         Connection conn = _connectionFactory.createConnection(USER, PASSWD);
         conn.start();
-        
+
         try {
             Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageProducer producer = session.createProducer(_queueIn);
@@ -93,7 +96,7 @@ public class JmsBindingTest {
             message.setText(command);
             producer.send(message);
             session.close();
-        
+
             session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageConsumer consumer = session.createConsumer(_queueOutA);
             ObjectMessage msg = ObjectMessage.class.cast(consumer.receive(30000));
@@ -112,7 +115,7 @@ public class JmsBindingTest {
             Assert.assertEquals(command, msg.getObject());
             Assert.assertNull(consumer.receive(1000));
             consumer.close();
-            
+
             consumer = session.createConsumer(_queueOutC);
             msg = ObjectMessage.class.cast(consumer.receive(1000));
             Assert.assertEquals(command, msg.getObject());
@@ -128,13 +131,13 @@ public class JmsBindingTest {
             conn.close();
         }
     }
-    
+
     @Test
     public void testRollbackB() throws Exception {
         String command = "rollback.B";
         Connection conn = _connectionFactory.createConnection(USER, PASSWD);
         conn.start();
-        
+
         try {
             Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageProducer producer = session.createProducer(_queueIn);
@@ -142,7 +145,7 @@ public class JmsBindingTest {
             message.setText(command);
             producer.send(message);
             session.close();
-        
+
             session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageConsumer consumer = session.createConsumer(_queueOutA);
             ObjectMessage msg = ObjectMessage.class.cast(consumer.receive(1000));
@@ -155,7 +158,7 @@ public class JmsBindingTest {
             Assert.assertEquals(command, msg.getObject());
             Assert.assertNull(consumer.receive(1000));
             consumer.close();
-            
+
             consumer = session.createConsumer(_queueOutC);
             msg = ObjectMessage.class.cast(consumer.receive(1000));
             Assert.assertEquals(command, msg.getObject());
@@ -165,13 +168,13 @@ public class JmsBindingTest {
             conn.close();
         }
     }
-    
+
     @Test
     public void testNonTransacted() throws Exception {
         String command = "rollback.A";
         Connection conn = _connectionFactory.createConnection(USER, PASSWD);
         conn.start();
-        
+
         try {
             Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageProducer producer = session.createProducer(_queueInNoTx);
@@ -179,7 +182,7 @@ public class JmsBindingTest {
             message.setText(command);
             producer.send(message);
             session.close();
-        
+
             session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageConsumer consumer = session.createConsumer(_queueOutA);
             Assert.assertNull(consumer.receive(1000));

@@ -1,3 +1,19 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.switchyard.quickstarts.bpel.xts.wsat.ws;
 
 import static javax.jws.soap.SOAPBinding.Style.DOCUMENT;
@@ -41,12 +57,12 @@ public class AirportService {
     @WebMethod
     @WebResult(name = "fltid")
     public String getFLTID(@WebParam(name = "from") String from,
-            @WebParam(name = "to") String to, @WebParam(name = "date") Date date) {
+        @WebParam(name = "to") String to, @WebParam(name = "date") Date date) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
         return from + "/" + to + "/"
-                + String.valueOf(c.get(Calendar.MONTH) + 1) + "/"
-                + String.valueOf(c.get(Calendar.DAY_OF_MONTH));
+            + String.valueOf(c.get(Calendar.MONTH) + 1) + "/"
+            + String.valueOf(c.get(Calendar.DAY_OF_MONTH));
     }
 
     /**
@@ -56,11 +72,11 @@ public class AirportService {
      */
     @WebMethod
     public void order(@WebParam(name = "name") String name,
-            @WebParam(name = "fltid") String fltid) {
+        @WebParam(name = "fltid") String fltid) {
         log.info("AirportService:order");
 
         UserTransaction transactionId = UserTransactionFactory
-                .userTransaction();
+            .userTransaction();
 
         if (transactionId != null) {
             log.info("Transaction ID = " + transactionId.toString());
@@ -71,15 +87,15 @@ public class AirportService {
 
             // Create order participant (fly ticket)
             OrderParticipant op = new OrderParticipant(
-                    transactionId.toString(), name, fltid);
+                transactionId.toString(), name, fltid);
 
             try {
                 // Enlist order participant to the transaction
                 TransactionManagerFactory.transactionManager()
-                        .enlistForDurableTwoPhase(
-                                op,
-                                "org.switchyard.quickstarts.bpel.xts.wsat.ws:AirportService:" + name
-                                        + ":" + fltid);
+                    .enlistForDurableTwoPhase(
+                        op,
+                        "org.switchyard.quickstarts.bpel.xts.wsat.ws:AirportService:" + name
+                            + ":" + fltid);
             } catch (Exception e) {
                 log.log(Level.SEVERE, e.getMessage());
                 e.printStackTrace();

@@ -1,12 +1,15 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -37,7 +40,7 @@ import org.switchyard.component.bpm.runtime.BPMTaskServiceRegistry;
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@ManagedBean(name="helpDesk")
+@ManagedBean(name = "helpDesk")
 @SessionScoped
 public class HelpDesk {
 
@@ -69,8 +72,8 @@ public class HelpDesk {
         return (groups != null && groups.size() > 0) ? groups.get(0) : null;
     }
 
-    public Map<String,String> getUsersGroups() {
-        Map<String,String> usersGroups = new LinkedHashMap<String,String>();
+    public Map<String, String> getUsersGroups() {
+        Map<String, String> usersGroups = new LinkedHashMap<String, String>();
         for (Map.Entry<String, List<String>> entry : USERS_GROUPS.entrySet()) {
             String key = entry.getKey();
             usersGroups.put(key + " (" + entry.getValue().get(0) + ")", key);
@@ -87,7 +90,7 @@ public class HelpDesk {
     }
 
     public void selectUser(ValueChangeEvent vce) {
-        setUserId((String)vce.getNewValue());
+        setUserId((String) vce.getNewValue());
         fetchTasks();
     }
 
@@ -99,7 +102,7 @@ public class HelpDesk {
             for (TaskSummary task : tasks) {
                 _userTasks.add(task);
                 Map<String, Object> params = _taskService.getTaskContent(task.getId());
-                Ticket ticket = (Ticket)params.get(TICKET);
+                Ticket ticket = (Ticket) params.get(TICKET);
                 _userTickets.put(task.getProcessInstanceId(), ticket);
             }
         }

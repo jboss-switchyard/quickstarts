@@ -1,12 +1,15 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -70,7 +73,7 @@ public final class WorkServiceMain {
 
     private static Element getAssertion() throws Exception {
         WSTrustClient client = new WSTrustClient("PicketLinkSTS", "PicketLinkSTSPort",
-                "http://localhost:8080/picketlink-sts/PicketLinkSTS", new SecurityInfo("admin", "admin"));
+            "http://localhost:8080/picketlink-sts/PicketLinkSTS", new SecurityInfo("admin", "admin"));
         //Element assertion = client.issueTokenForEndpoint("urn:switchyard-quickstart-demo:policy-security-saml:0.1.0");
         Element assertion = client.issueToken(SAMLUtil.SAML2_TOKEN_TYPE);
         /*
@@ -80,7 +83,7 @@ public final class WorkServiceMain {
         } else {
             throw new Exception("Token is invalid.");
         }
-        */
+         */
         return assertion;
     }
 
