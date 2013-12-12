@@ -15,35 +15,29 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
-    xmlns:file="urn:switchyard-component-camel-file:config:1.0"
-    xmlns:swyd="urn:switchyard-config:switchyard:1.0">
-
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-service"
-        targetNamespace="urn:switchyard-quickstart:camel-service:0.1.0">
-        <service name="JavaDSL" promote="JavaDSLBuilder/JavaDSL">
-            <file:binding.file>
-                <file:directory>data/</file:directory>
-            </file:binding.file>
-        </service>
-        <component name="JavaDSLBuilder">
-            <implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
-                <java class="org.switchyard.quickstarts.camel.service.JavaDSLBuilder"/>
-            </implementation.camel>
-            <service name="JavaDSL">
-                <interface.java interface="org.switchyard.quickstarts.camel.service.JavaDSL"/>
-            </service>
-            <reference name="XMLService">
-                <swyd:interface.esb xmlns:swyd="urn:switchyard-config:switchyard:1.0" inputType="java:java.lang.String"/>
-            </reference>
-        </component>
-        <component name="XMLComponent">
-            <implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
-                <xml path="META-INF/route.xml"/>
-            </implementation.camel>
-            <service name="XMLService">
-                <swyd:interface.esb xmlns:swyd="urn:switchyard-config:switchyard:1.0" inputType="java:java.lang.String"/>
-            </service>
-        </component>
-    </composite>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:camel="urn:switchyard-component-camel:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912">
+    <sca:composite name="camel-service" targetNamespace="urn:switchyard-quickstart:camel-service:0.1.0">
+        <sca:service name="JavaDSL" promote="JavaDSLBuilder/JavaDSL">
+            <sca:binding.sca/>
+        </sca:service>
+        <sca:component name="JavaDSLBuilder">
+            <camel:implementation.camel>
+                <camel:java class="org.switchyard.quickstarts.camel.service.JavaDSLBuilder"/>
+            </camel:implementation.camel>
+            <sca:service name="JavaDSL">
+                <sca:interface.java interface="org.switchyard.quickstarts.camel.service.JavaDSL"/>
+            </sca:service>
+            <sca:reference name="XMLService">
+                <interface.esb inputType="java:java.lang.String"/>
+            </sca:reference>
+        </sca:component>
+        <sca:component name="XMLComponent">
+            <camel:implementation.camel>
+                <camel:xml path="META-INF/route.xml"/>
+            </camel:implementation.camel>
+            <sca:service name="XMLService">
+                <interface.esb inputType="java:java.lang.String"/>
+            </sca:service>
+        </sca:component>
+    </sca:composite>
 </switchyard>

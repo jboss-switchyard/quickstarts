@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
     JBoss, Home of Professional Open Source
     Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
@@ -15,69 +15,69 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="rules-camel-cbr" targetNamespace="urn:switchyard-quickstart:rules-camel-cbr:0.1.0">
-        <component name="RoutingService">
-            <implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
-                <xml path="META-INF/route.xml"/>
-            </implementation.camel>
-            <service name="RoutingService">
-                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.RoutingService"/>
-            </service>
-            <reference name="DestinationService">
-                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.DestinationService"/>
-            </reference>
-            <reference name="RedService">
-                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.RedService"/>
-            </reference>
-            <reference name="GreenService">
-                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.GreenService"/>
-            </reference>
-            <reference name="BlueService">
-                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.BlueService"/>
-            </reference>
-        </component>
-        <component name="DestinationService">
-            <implementation.rules xmlns="urn:switchyard-component-rules:config:1.0">
-                <!--
-                <listeners>
-                    <listener class="org.kie.api.event.rule.DebugAgendaEventListener"/>
-                    <listener class="org.kie.api.event.rule.DebugWorkingMemoryEventListener"/>
-                </listeners>
-                -->
-                <manifest>
-                    <resources>
-                        <resource location="/META-INF/DestinationServiceRules.drl" type="DRL"/>
-                    </resources>
-                </manifest>
-                <operations>
-                    <operation name="determineDestination" type="EXECUTE">
-                        <inputs>
-                            <input from="message.content.widget"/>
-                        </inputs>
-                    </operation>
-                </operations>
-            </implementation.rules>
-            <service name="DestinationService">
-                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.DestinationService"/>
-            </service>
-        </component>
-        <component name="GreenService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.rules.camel.cbr.GreenServiceBean"/>
-            <service name="GreenService">
-                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.GreenService"/>
-            </service>
-        </component>
-        <component name="BlueService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.rules.camel.cbr.BlueServiceBean"/>
-            <service name="BlueService">
-                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.BlueService"/>
-            </service>
-        </component>
-        <component name="RedService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.rules.camel.cbr.RedServiceBean"/>
-            <service name="RedService">
-                <interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.RedService"/>
-            </service>
-        </component>
-    </composite>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:camel="urn:switchyard-component-camel:config:1.0" xmlns:rules="urn:switchyard-component-rules:config:1.0"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912">
+    <sca:composite name="rules-camel-cbr" targetNamespace="urn:switchyard-quickstart:rules-camel-cbr:0.1.0">
+        <sca:component name="RoutingService">
+            <camel:implementation.camel>
+                <camel:xml path="META-INF/route.xml" />
+            </camel:implementation.camel>
+            <sca:service name="RoutingService">
+                <sca:interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.RoutingService" />
+            </sca:service>
+            <sca:reference name="DestinationService">
+                <sca:interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.DestinationService" />
+            </sca:reference>
+            <sca:reference name="RedService">
+                <sca:interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.RedService" />
+            </sca:reference>
+            <sca:reference name="GreenService">
+                <sca:interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.GreenService" />
+            </sca:reference>
+            <sca:reference name="BlueService">
+                <sca:interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.BlueService" />
+            </sca:reference>
+        </sca:component>
+        <sca:component name="DestinationService">
+            <rules:implementation.rules>
+                <rules:manifest>
+                    <rules:resources>
+                        <rules:resource location="/META-INF/DestinationServiceRules.drl" type="DRL" />
+                    </rules:resources>
+                </rules:manifest>
+                <rules:operations>
+                    <rules:operation name="determineDestination" type="EXECUTE">
+                        <rules:inputs>
+                            <rules:input from="message.content.widget" />
+                        </rules:inputs>
+                    </rules:operation>
+                </rules:operations>
+            </rules:implementation.rules>
+            <sca:service name="DestinationService">
+                <sca:interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.DestinationService" />
+            </sca:service>
+        </sca:component>
+        <sca:component name="GreenService">
+            <bean:implementation.bean class="org.switchyard.quickstarts.rules.camel.cbr.GreenServiceBean" />
+            <sca:service name="GreenService">
+                <sca:interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.GreenService" />
+            </sca:service>
+        </sca:component>
+        <sca:component name="BlueService">
+            <bean:implementation.bean class="org.switchyard.quickstarts.rules.camel.cbr.BlueServiceBean" />
+            <sca:service name="BlueService">
+                <sca:interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.BlueService" />
+            </sca:service>
+        </sca:component>
+        <sca:component name="RedService">
+            <bean:implementation.bean class="org.switchyard.quickstarts.rules.camel.cbr.RedServiceBean" />
+            <sca:service name="RedService">
+                <sca:interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.RedService" />
+            </sca:service>
+        </sca:component>
+        <sca:service name="RoutingService" promote="RoutingService/RoutingService">
+            <sca:interface.java interface="org.switchyard.quickstarts.rules.camel.cbr.RoutingService" />
+            <sca:binding.sca />
+        </sca:service>
+    </sca:composite>
 </switchyard>

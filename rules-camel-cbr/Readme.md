@@ -5,13 +5,13 @@ This quickstart also demonstrates the ability to use MVEL expressions to extract
 The drl resource is specified using annotations within the DestinationServiceRules interface, and checks the id of Widgets to determine the destination to set on their Boxes.
 Then, a Camel route looks at the destination set on the Box for each Widget, and routes it to the appropriate service (RedService, GreenService, or BlueService).
 
-If you would like to watch the rules execution, uncomment these lines in
+If you would like to watch the rules execution, add these lines to
 src/main/resources/META-INF/switchyard.xml:
 ```
-<listeners>
-    <listener class="org.kie.api.event.rule.DebugAgendaEventListener"/>
-    <listener class="org.kie.api.event.rule.DebugWorkingMemoryEventListener"/>
-</listeners>
+<rules:listeners>
+    <rules:listener class="org.kie.api.event.rule.DebugAgendaEventListener"/>
+    <rules:listener class="org.kie.api.event.rule.DebugWorkingMemoryEventListener"/>
+</rules:listeners>
 ```
 
 ![Rules Camel CBR Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/rules-camel-cbr/rules-camel-cbr.jpg)
@@ -26,23 +26,26 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
+1. Start JBoss AS 7 in standalone mode:
 
-        mvn clean install
+        ${AS}/bin/standalone.sh
 
-2. Run the test:
+2. Build and deploy the Quickstart :
 
-        mvn -Dtest=RulesCamelCBRTest test
+        mvn install -Pdeploy
 
-Expected Output:
-================
+3. Use the RulesCamelCBRClient class to send a request message to the Dealer service.  The client can be
+   run from the command-line using:
+
+        mvn exec:java
+
+You should see the following in the command output:
 ```
-Running org.switchyard.quickstarts.rules.camel.cbr.RulesCamelCBRTest
-INFO  [org.switchyard.quickstarts.rules.camel.cbr.RedServiceBean] Red service processing boxed widget with id: FF0000-ABC-123
-INFO  [org.switchyard.quickstarts.rules.camel.cbr.GreenServiceBean] Green service processing boxed widget with id: 00FF00-DEF-456
-INFO  [org.switchyard.quickstarts.rules.camel.cbr.BlueServiceBean] Blue service processing boxed widget with id: 0000FF-GHI-789
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.312 sec
 ```
+
+4. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 

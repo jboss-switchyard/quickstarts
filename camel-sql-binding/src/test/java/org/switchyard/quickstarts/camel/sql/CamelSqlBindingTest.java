@@ -64,7 +64,7 @@ public abstract class CamelSqlBindingTest {
 
         namingMixIn = new NamingMixIn();
         namingMixIn.initialize();
-        bindDataSource(namingMixIn.getInitialContext(), "java:jboss/datasources/ExampleDS", dataSource);
+        bindDataSource(namingMixIn.getInitialContext(), "java:jboss/myDS", dataSource);
     }
 
     private static void bindDataSource(InitialContext context, String name, DataSource ds) throws Exception {

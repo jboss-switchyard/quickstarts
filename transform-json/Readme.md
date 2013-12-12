@@ -15,13 +15,30 @@ Maven
 Running the quickstart
 ======================
 
-1. Build the quickstart:
+JBoss AS 7
+----------
+1. Start JBoss AS 7 in standalone mode:
 
-        mvn clean install
+        ${AS}/bin/standalone.sh
 
-2. Run the test:
+2. Build and deploy the Quickstart :
 
-        mvn -Dtest=JsonTransformationTest test
+        mvn install -Pdeploy
+
+3. Use the JsonTransformationClient class to send a request message to the OrderService.  The client can be run from the command-line using:
+
+        mvn exec:java
+
+You should see the following in the command output:
+```
+    ==================================
+    Was the offer accepted? true
+    ==================================
+```
+
+4. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
 
 ## Further Reading
 

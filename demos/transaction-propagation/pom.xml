@@ -38,10 +38,78 @@
     <properties>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <deploy.skip>true</deploy.skip>
     </properties>
     <modules>
         <module>client</module>
         <module>credit</module>
         <module>dealer</module>
     </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jboss.as.plugins</groupId>
+                <artifactId>jboss-as-maven-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>dummy</mainClass>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <properties>
+                <deploy.skip>false</deploy.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.edugility</groupId>
+                        <artifactId>h2-maven-plugin</artifactId>
+                        <version>1.0</version>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <baseDirectory>${project.build.directory}</baseDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>Spawn a new H2 TCP server</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>spawn</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>Stop a spawned H2 TCP server</id>
+                                <phase>pre-clean</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${project.build.directory}</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
