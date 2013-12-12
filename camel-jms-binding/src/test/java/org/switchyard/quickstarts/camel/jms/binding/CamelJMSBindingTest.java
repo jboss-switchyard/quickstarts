@@ -1,3 +1,19 @@
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.switchyard.quickstarts.camel.jms.binding;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -39,32 +55,31 @@ import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
  */
 
 @SwitchYardTestCaseConfig(
-        config = SwitchYardTestCaseConfig.SWITCHYARD_XML, 
-        mixins = {CDIMixIn.class, HornetQMixIn.class}
-)
+    config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
+    mixins = { CDIMixIn.class, HornetQMixIn.class })
 @RunWith(SwitchYardRunner.class)
 public class CamelJMSBindingTest {
-    
+
     private static final String QUEUE_NAME = "GreetingServiceQueue";
     private SwitchYardTestKit _testKit;
-    
+
     @Test
     public void sendTextMessageToJMSQueue() throws Exception {
         final String payload = "dummy payload";
         // replace existing implementation for testing purposes
         _testKit.removeService("GreetingService");
         final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
-        
+
         sendTextToQueue(payload, QUEUE_NAME);
         // Allow for the JMS Message to be processed.
         Thread.sleep(3000);
-        
+
         final LinkedBlockingQueue<Exchange> recievedMessages = greetingService.getMessages();
         assertThat(recievedMessages, is(notNullValue()));
         final Exchange recievedExchange = recievedMessages.iterator().next();
         assertThat(recievedExchange.getMessage().getContent(String.class), is(equalTo(payload)));
     }
-    
+
     private void sendTextToQueue(final String text, final String queueName) throws Exception {
         InitialContext initialContext = null;
         Connection connection = null;
@@ -81,16 +96,16 @@ public class CamelJMSBindingTest {
             producer.send(session.createTextMessage(text));
         } finally {
             if (producer != null) {
-	            producer.close();
+                producer.close();
             }
             if (session != null) {
-	            session.close();
+                session.close();
             }
             if (connection != null) {
-	            connection.close();
+                connection.close();
             }
             if (initialContext != null) {
-	            initialContext.close();
+                initialContext.close();
             }
         }
     }

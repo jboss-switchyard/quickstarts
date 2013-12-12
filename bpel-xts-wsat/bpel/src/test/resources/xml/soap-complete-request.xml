@@ -2,8 +2,8 @@
    <soapenv:Header/>
    <soapenv:Body>
       <exam:completeRequestType>
-      	 <id>5</id>
-      	 <simulateException>false</simulateException>
+           <id>5</id>
+           <simulateException>false</simulateException>
       </exam:completeRequestType>
    </soapenv:Body>
 </soapenv:Envelope>
