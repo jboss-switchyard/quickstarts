@@ -15,33 +15,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
+        <artifactId>switchyard-quickstart-parent</artifactId>
         <groupId>org.switchyard.quickstarts</groupId>
-        <artifactId>switchyard-quickstart-bpel-service-xts-wsat</artifactId>
         <version>2.0.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>switchyard-quickstart-bpel-service-xts-wsat-ws</artifactId>
-    <name>Quickstart : BPEL Service : XTS WSAT : Airport Web Service</name>
-    <packaging>ejb</packaging>
-    <dependencies/>
+    <artifactId>switchyard-quickstart-bpel-service-xts-wsat</artifactId>
+    <name>Quickstart : BPEL Service : XTS WSAT</name>
+    <packaging>pom</packaging>
+    <modules>
+        <module>bpel</module>
+        <module>ws</module>
+    </modules>
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-ejb-plugin</artifactId>
-                <configuration>
-                    <ejbVersion>3.1</ejbVersion>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.jboss.as.plugins</groupId>
                 <artifactId>jboss-as-maven-plugin</artifactId>
+                <inherited>false</inherited>
                 <configuration>
-                    <filename>${project.build.finalName}.jar</filename>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
         </plugins>

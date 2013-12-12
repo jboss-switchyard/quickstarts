@@ -37,7 +37,12 @@
     </scm>
     <modules>
         <module>bean-service</module>
-        <module>bpel-service</module>
+        <module>bpel-jms-binding</module>
+        <module>bpel-loan-approval</module>
+        <module>bpel-say-hello</module>
+        <module>bpel-simple-correlation</module>
+        <module>bpel-xts-subordinate-wsba</module>
+        <module>bpel-xts-wsat</module>
         <module>bpm-service</module>
         <module>camel-binding</module>
         <module>camel-jaxb</module>
