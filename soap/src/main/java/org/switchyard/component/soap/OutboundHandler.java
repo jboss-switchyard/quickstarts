@@ -240,7 +240,6 @@ public class OutboundHandler extends BaseServiceHandler {
 
             SOAPMessage request;
             Boolean oneWay = false;
-            Boolean replyToSet = false;
             String action = null;
             try {
                 request = _messageComposer.decompose(exchange, new SOAPBindingData(SOAPUtil.createMessage(_bindingId))).getSOAPMessage();
@@ -253,10 +252,6 @@ public class OutboundHandler extends BaseServiceHandler {
                     Context context = exchange.getContext();
                     _dispatcher.getRequestContext().put(SOAPUtil.SWITCHYARD_CONTEXT, context);
                     // It is a one way if a replyto address is set
-                    if ((exchange.getContext().getPropertyValue(SOAPUtil.WSA_REPLYTO_STR) != null) 
-                        || (exchange.getContext().getPropertyValue(SOAPUtil.WSA_REPLYTO_STR.toLowerCase()) != null)) {
-                        replyToSet = true;
-                    }
                     String toAddress = SOAPUtil.getToAddress(exchange.getContext());
                     if (toAddress != null) {
                         _dispatcher.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, toAddress);

@@ -166,7 +166,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
                 } else if (matches(name) || property.hasLabel(EndpointLabel.HTTP.label())) {
                     if (HTTP_RESPONSE_STATUS.equalsIgnoreCase(name)) {
                         if (value instanceof String) {
-                            target.setStatus(Integer.valueOf((String) value).intValue());
+                            target.setStatus(Integer.parseInt((String) value));
                         } else if (value instanceof Integer) {
                             target.setStatus((Integer) value);
                         }

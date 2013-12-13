@@ -317,6 +317,9 @@ public class HTTPMixIn extends AbstractTestMixIn {
         try {
             HttpResponse httpResponse = postResourceAndGetMethod(endpointURL, requestResource);
             int status = httpResponse.getStatusLine().getStatusCode();
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Response returned status code " + status);
+            }
             response = EntityUtils.toString(httpResponse.getEntity());
         } catch (IOException ioe) {
             _logger.error("Unable to get response", ioe);

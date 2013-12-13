@@ -155,7 +155,7 @@ public class HttpGatewayServlet extends HttpServlet {
                         response.setStatus(httpResponse.getStatus());
                         httpResponse.writeBodyToStream(response.getOutputStream());
                     } else {
-                        if ((httpResponse != null) && (httpResponse.getStatus() != null)) {
+                        if (httpResponse.getStatus() != null) {
                             response.setStatus(httpResponse.getStatus());
                         } else {
                             // Consider it as a One-Way MEP

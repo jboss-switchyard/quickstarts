@@ -42,7 +42,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     private static final String TIMEZONE = "trigger.timeZone";
 
     // Used for dateTime fields
-    private static DateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static final String DATE_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ss";
 
     /**
      * Create a new CamelQuartzBindingModel.
@@ -96,22 +96,26 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
 
     @Override
     public Date getStartTime() {
-        return getDateConfig(START_TIME, _dateFormat);
+        DateFormat startTimeFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
+        return getDateConfig(START_TIME, startTimeFormat);
     }
 
     @Override
     public V1CamelQuartzBindingModel setStartTime(Date startTime) {
-        return setConfig(START_TIME, _dateFormat.format(startTime));
+        DateFormat startTimeForamt = new SimpleDateFormat(DATE_FORMAT_STRING);
+        return setConfig(START_TIME, startTimeForamt.format(startTime));
     }
 
     @Override
     public Date getEndTime() {
-        return getDateConfig(END_TIME, _dateFormat);
+        DateFormat endTimeFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
+        return getDateConfig(END_TIME, endTimeFormat);
     }
 
     @Override
     public V1CamelQuartzBindingModel setEndTime(Date endTime) {
-        return setConfig(END_TIME, _dateFormat.format(endTime));
+        DateFormat endTimeFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
+        return setConfig(END_TIME, endTimeFormat.format(endTime));
     }
 
     @Override

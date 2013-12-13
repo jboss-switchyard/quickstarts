@@ -83,7 +83,7 @@ public class BPELActivator extends BaseActivator {
             }
         }
         
-        if (service.getInterface() == null) {
+        if ((service == null) || (service.getInterface() == null)) {
             throw BPELMessages.MESSAGES.interfaceNotDefinedForComponentWithBPELImplementation();
         }
 

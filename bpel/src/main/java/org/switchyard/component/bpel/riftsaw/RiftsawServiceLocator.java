@@ -15,7 +15,6 @@ package org.switchyard.component.bpel.riftsaw;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
@@ -254,11 +253,12 @@ public class RiftsawServiceLocator implements ServiceLocator {
             Message req = exchange.createMessage();
             req.setContent(node);
             if (headers != null) {
-                Set<String> keys = headers.keySet();
-                for (String key : keys) {
-                    exchange.getContext(req).setProperty(key,headers.get(key)).addLabels(EndpointLabel.SOAP.label());
+                
+                for (Map.Entry<String, Object> e : headers.entrySet()) {
+                    exchange.getContext(req).setProperty(e.getKey(), headers.get(e.getKey())).addLabels(EndpointLabel.SOAP.label());
+                    
                 }
-
+                
                 // Clear the headers in preparation for response headers
                 headers.clear();
             }

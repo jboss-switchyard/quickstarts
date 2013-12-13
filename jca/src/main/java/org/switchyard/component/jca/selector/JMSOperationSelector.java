@@ -63,7 +63,7 @@ public class JMSOperationSelector extends BaseOperationSelector<JMSBindingData> 
         } else if (content instanceof BytesMessage) {
             BytesMessage sourceBytes = BytesMessage.class.cast(content);
             if (sourceBytes.getBodyLength() > Integer.MAX_VALUE) {
-                throw JCAMessages.MESSAGES.theSizeOfMessageContentExceedsBytesThatIsNotSupportedByThisOperationSelector(new String("" + Integer.MAX_VALUE));
+                throw JCAMessages.MESSAGES.theSizeOfMessageContentExceedsBytesThatIsNotSupportedByThisOperationSelector("" + Integer.MAX_VALUE);
             }
             byte[] bytearr = new byte[(int)sourceBytes.getBodyLength()];
             sourceBytes.readBytes(bytearr);

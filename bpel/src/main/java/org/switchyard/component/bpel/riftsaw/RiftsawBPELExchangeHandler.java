@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -288,10 +287,10 @@ public class RiftsawBPELExchangeHandler extends BaseServiceHandler implements BP
                 reply.setContent(WSDLHelper.unwrapMessagePart(response));
                 
                 // Set header parts for a response message
-                Set<String> keys = headers.keySet(); // headers are set by invoke method !!!
-                for (String key : keys) {
-                    exchange.getContext(reply).setProperty(key, headers.get(key)).addLabels(EndpointLabel.SOAP.label());
-                }
+                for (Map.Entry<String, Object> e : headers.entrySet()) {
+                    exchange.getContext(reply).setProperty(e.getKey(),
+                            headers.get(e.getKey())).addLabels(EndpointLabel.SOAP.label());
+                }                
 
                 exchange.send(reply);
             }

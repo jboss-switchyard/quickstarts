@@ -32,16 +32,24 @@ public class StandaloneEndpoint implements Endpoint {
      */
     public StandaloneEndpoint(final HttpContext context) {
         _httpContext = context;
-        _contextCount++;
+        incrementContextCount();
     }
 
+    private synchronized void incrementContextCount() {
+        _contextCount++;
+    }
+    
+    private synchronized void decrementContextCount() {
+        _contextCount--;
+    }
+    
     /**
      * {@inheritDoc}
      */
     public void stop() {
         if (_httpContext != null) {
             _httpContext.getServer().removeContext(_httpContext);
-            _contextCount--;
+            decrementContextCount();
         }
     }
 }

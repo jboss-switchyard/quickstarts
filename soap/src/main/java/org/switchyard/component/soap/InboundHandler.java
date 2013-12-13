@@ -395,8 +395,14 @@ public class InboundHandler extends BaseServiceHandler {
             expectedPayloadType = new QName(_targetNamespace, operation.getName());
         }
 
-        String expectedNS = expectedPayloadType.getNamespaceURI();
-        String expectedLN = expectedPayloadType.getLocalPart();
+        String expectedNS = null;
+        String expectedLN = null;
+        
+        if (expectedPayloadType != null) {
+            expectedNS = expectedPayloadType.getNamespaceURI();
+            expectedLN = expectedPayloadType.getLocalPart();
+
+        }
         if (!_documentStyle) {
             expectedLN = operation.getName();
         }

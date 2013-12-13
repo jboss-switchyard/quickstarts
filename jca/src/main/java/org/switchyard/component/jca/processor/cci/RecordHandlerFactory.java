@@ -49,8 +49,12 @@ public final class RecordHandlerFactory {
             try {
                 Class<?> clazz = loader.loadClass(RecordHandlerFactory.class.getPackage().getName() + "." + recordType.getSimpleName() + "RecordHandler");
                 return (RecordHandler<?>)clazz.newInstance();
-            } catch (Exception e) {
+            } catch (ClassNotFoundException e) {
                 throw JCAMessages.MESSAGES.recordTypeIsNotSupported(recordType.getName());
+            } catch (InstantiationException e) {
+                throw JCAMessages.MESSAGES.recordTypeIsNotSupported(recordType.getName());                
+            } catch (IllegalAccessException iae) {
+                throw JCAMessages.MESSAGES.recordTypeIsNotSupported(recordType.getName());                                
             }
         }
     }

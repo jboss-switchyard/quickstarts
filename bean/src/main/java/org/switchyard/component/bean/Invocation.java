@@ -104,7 +104,7 @@ public class Invocation {
             }
         } else {
             if (_args.length > 1) {
-                throw BeanMessages.MESSAGES.beanServiceOperationSupportsSingle(operationName(), new String("" + _args.length));
+                throw BeanMessages.MESSAGES.beanServiceOperationSupportsSingle(operationName(), Integer.toString(_args.length));
             }
 
             if (_args[0] != null) {

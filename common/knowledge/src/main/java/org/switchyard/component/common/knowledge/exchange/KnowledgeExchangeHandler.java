@@ -288,7 +288,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
         } else if (value instanceof String) {
             return Boolean.valueOf(((String)value).trim());
         }
-        return null;
+        return false;
     }
 
     /**

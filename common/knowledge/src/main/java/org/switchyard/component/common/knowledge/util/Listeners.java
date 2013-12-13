@@ -16,6 +16,7 @@ package org.switchyard.component.common.knowledge.util;
 import java.lang.reflect.Constructor;
 import java.util.EventListener;
 
+import org.jboss.logging.Logger;
 import org.kie.api.event.KieRuntimeEventManager;
 import org.kie.api.event.kiebase.KieBaseEventListener;
 import org.kie.api.event.process.ProcessEventListener;
@@ -41,7 +42,8 @@ import org.switchyard.component.common.knowledge.config.model.ListenersModel;
  */
 @SuppressWarnings("deprecation")
 public final class Listeners {
-
+    private static final Logger LOG = Logger.getLogger(Listeners.class);
+    
     private static final Class<?>[][] PARMAMETER_TYPES = new Class<?>[][]{
         new Class<?>[]{KieRuntimeEventManager.class}, // current (kie)
         new Class<?>[]{KieRuntime.class}, // current (kie)
@@ -96,6 +98,9 @@ public final class Listeners {
             } else if (parameterTypes.length == 1) {
                 // automatic registration
                 listener = Construction.construct(listenerClass, parameterTypes, new Object[]{manager});
+                if (listener == null) {
+                    LOG.debug("Attempt to register listener returned null");
+                }
             }
         } catch (Throwable t) {
             throw CommonKnowledgeMessages.MESSAGES.couldNotInstantiateListenerClass(listenerClass.getName());

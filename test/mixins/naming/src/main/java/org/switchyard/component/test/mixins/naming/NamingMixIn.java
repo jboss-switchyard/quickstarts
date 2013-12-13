@@ -38,7 +38,7 @@ public class NamingMixIn extends AbstractTestMixIn {
     /**
      * Instance of context shared with children classes.
      */
-    private static InitialContext initialContext;
+    private static InitialContext initialContext = null;
 
     @Override
     public void initialize() {
@@ -59,6 +59,10 @@ public class NamingMixIn extends AbstractTestMixIn {
             }
         });
 
+        setInitialContext();
+    }
+    
+    private synchronized void setInitialContext() {
         if (initialContext == null) {
             try {
                 initialContext = new InitialContext();

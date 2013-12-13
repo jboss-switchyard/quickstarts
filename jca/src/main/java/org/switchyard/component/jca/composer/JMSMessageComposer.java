@@ -17,7 +17,9 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.jms.BytesMessage;
 import javax.jms.MapMessage;
@@ -50,7 +52,7 @@ public class JMSMessageComposer extends BaseMessageComposer<JMSBindingData> {
         if (jmsMessage instanceof BytesMessage) {
             BytesMessage sourceBytes = BytesMessage.class.cast(jmsMessage);
             if (sourceBytes.getBodyLength() > Integer.MAX_VALUE) {
-                throw JCAMessages.MESSAGES.theSizeOfMessageContentExceedsBytesThatIsNotSupportedByThisMessageComposer(new String("" + Integer.MAX_VALUE));
+                throw JCAMessages.MESSAGES.theSizeOfMessageContentExceedsBytesThatIsNotSupportedByThisMessageComposer("" + Integer.MAX_VALUE);
             }
             byte[] bytearr = new byte[(int)sourceBytes.getBodyLength()];
             sourceBytes.readBytes(bytearr);
@@ -128,9 +130,11 @@ public class JMSMessageComposer extends BaseMessageComposer<JMSBindingData> {
         } else if (jmsMessage instanceof MapMessage) {
             MapMessage msg = MapMessage.class.cast(jmsMessage);
             Map<?,?> map = syMessage.getContent(Map.class);
-            for (Object key : map.keySet()) {
-                msg.setObject(key.toString(), map.get(key));
-            }
+            Iterator entries = (Iterator)map.entrySet().iterator();
+            while (entries.hasNext()) {
+                Entry<?,?> entry = (Entry<?, ?>) entries.next();
+                msg.setObject((String) entry.getKey(), entry.getValue());
+            }            
         }
         return target;
     }

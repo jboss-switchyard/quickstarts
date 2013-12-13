@@ -52,7 +52,7 @@ public class V1CamelAtomBindingModel extends V1BaseCamelBindingModel
     private CamelScheduledPollConsumer _consume;
 
     // Used for dateTime fields
-    private static DateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static final String DATE_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ss";
 
     /**
      * Create a new AtomBindingModel.
@@ -92,12 +92,14 @@ public class V1CamelAtomBindingModel extends V1BaseCamelBindingModel
 
     @Override
     public Date getLastUpdate() {
-        return getDateConfig(LAST_UPDATE, _dateFormat);
+        final DateFormat lastUpdateDateFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
+        return getDateConfig(LAST_UPDATE, lastUpdateDateFormat);
     }
 
     @Override
     public V1CamelAtomBindingModel setLastUpdate(Date date) {
-        setConfig(LAST_UPDATE, _dateFormat.format(date));
+        final DateFormat lastUpdateDateFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
+        setConfig(LAST_UPDATE, lastUpdateDateFormat.format(date));
         return this;
     }
     

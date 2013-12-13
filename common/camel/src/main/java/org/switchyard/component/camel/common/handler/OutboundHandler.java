@@ -183,7 +183,11 @@ public class OutboundHandler extends BaseServiceHandler {
             } else if (camelFault instanceof Throwable) {
                 throw new HandlerException(Throwable.class.cast(camelFault));
             } else {
-                throw CommonCamelMessages.MESSAGES.camelExchangeFailedWithoutAnException(camelFault.toString());
+                if (camelFault == null) {
+                    throw CommonCamelMessages.MESSAGES.camelExchangeFailedWithoutAnException("");                    
+                } else {
+                    throw CommonCamelMessages.MESSAGES.camelExchangeFailedWithoutAnException(camelFault.toString());
+                }
             }
         }
     }

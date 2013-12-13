@@ -25,7 +25,6 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.resources.java.JavaResource;
-import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.ShellColor;
 import org.jboss.forge.shell.plugins.Alias;
@@ -82,14 +81,6 @@ public class BeanReferencePlugin implements Plugin {
              final String referenceBeanName,
              final PipeOut out)
     throws java.io.IOException {
-      
-        String pkgName = _project.getFacet(MetadataFacet.class).getTopLevelPackage();
-        
-        if (pkgName == null) {
-            pkgName = _shell.promptCommon(
-                "Java package for service interface and implementation:",
-                PromptType.JAVA_PACKAGE);
-        }
         
         final MetadataFacet meta = _project.getFacet(MetadataFacet.class);
         final JavaSourceFacet java = _project.getFacet(JavaSourceFacet.class);

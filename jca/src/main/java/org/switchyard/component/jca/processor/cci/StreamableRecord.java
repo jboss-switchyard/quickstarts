@@ -70,7 +70,7 @@ public class StreamableRecord implements Streamable, Record {
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        StreamableRecord clone = new StreamableRecord();
+        StreamableRecord clone = (StreamableRecord) super.clone();
         clone._recordName = _recordName;
         clone._recordShortDescription = _recordShortDescription;
         if (_bytes != null) {

@@ -48,7 +48,7 @@ public abstract class V1BaseCamelModel extends BaseModel {
 
     protected final Boolean getBooleanConfig(String configName) {
         String value = getConfig(configName);
-        return value != null ? Boolean.valueOf(value) : null;
+        return value != null ? Boolean.valueOf(value) : Boolean.FALSE;
     }
 
     protected final Long getLongConfig(String configName) {

@@ -80,7 +80,6 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
     public Message compose(SOAPBindingData source, Exchange exchange) throws Exception {
         final SOAPMessage soapMessage = source.getSOAPMessage();
         final Message message = exchange.createMessage();
-        final Boolean input = exchange.getPhase() == null;
         getContextMapper().mapFrom(source, exchange.getContext(message));
 
         final SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
@@ -187,8 +186,8 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
                 throw (SOAPException) ex;
             }
             throw new SOAPException(ex);
-        }
-
+        } 
+ 
         return message;
     }
 

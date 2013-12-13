@@ -36,7 +36,12 @@ public class V1CamelTimerBindingModel extends V1BaseCamelBindingModel
      * Camel endpoint type.
      */
     public static final String TIMER = "timer";
-
+    
+    /**
+     * Date format string.
+     */
+    public static final String DATE_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ss";
+    
     /**
      * Camel endpoint configuration values.
      */
@@ -47,9 +52,6 @@ public class V1CamelTimerBindingModel extends V1BaseCamelBindingModel
     private static final String DELAY = "delay";
     private static final String FIXED_RATE = "fixedRate";
     private static final String DAEMON = "daemon";
-
-    // Used for dateTime fields
-    private static DateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     /**
      * Create a new CamelTimerBindingModel.
@@ -83,12 +85,14 @@ public class V1CamelTimerBindingModel extends V1BaseCamelBindingModel
 
     @Override
     public Date getTime() {
-        return getDateConfig(TIME, _dateFormat);
+        final DateFormat dateConfigFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
+        return getDateConfig(TIME, dateConfigFormat);
     }
 
     @Override
     public V1CamelTimerBindingModel setTime(Date time) {
-        return setConfig(TIME, _dateFormat.format(time));
+        final DateFormat timeDateFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
+        return setConfig(TIME, timeDateFormat.format(time));
     }
 
     @Override

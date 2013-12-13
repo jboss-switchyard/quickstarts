@@ -14,6 +14,7 @@
 package org.switchyard.test.mixins.amqp;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
@@ -95,8 +96,13 @@ public class AMQPMixIn extends AbstractTestMixIn {
      */
     public AMQPMixIn() throws Exception {
         _properties = new Properties();
-        _properties.load(this.getClass().getResourceAsStream(AMQP_PROPERTIES_FILE));
-        _qpidConnectionFactory = _properties.getProperty(AMQP_PROPS_QPID_CONNECTIONFACTORY);
+        InputStream is = this.getClass().getResourceAsStream(AMQP_PROPERTIES_FILE);
+        try {
+            _properties.load(is);
+            _qpidConnectionFactory = _properties.getProperty(AMQP_PROPS_QPID_CONNECTIONFACTORY);
+        } finally {
+            is.close();
+        }
         if (_qpidConnectionFactory == null) {
             throw new SwitchYardException("No connection factory configured. Please set "+ AMQP_PROPS_QPID_CONNECTIONFACTORY
                 + " in the "+AMQP_PROPERTIES_FILE+" file found in the class path of your application");

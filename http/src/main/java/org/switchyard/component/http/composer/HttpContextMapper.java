@@ -82,7 +82,7 @@ public class HttpContextMapper extends BaseRegexContextMapper<HttpBindingData> {
                 if (HTTP_RESPONSE_STATUS.equalsIgnoreCase(name) && (target instanceof HttpResponseBindingData)) {
                     HttpResponseBindingData response = (HttpResponseBindingData)target;
                     if (value instanceof String) {
-                        response.setStatus(Integer.valueOf((String) value).intValue());
+                        response.setStatus(Integer.parseInt((String) value));
                     } else if (value instanceof Integer) {
                         response.setStatus((Integer) value);
                     }
