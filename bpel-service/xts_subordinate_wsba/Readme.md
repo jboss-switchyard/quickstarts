@@ -14,21 +14,43 @@ Running the quickstart
 
 JBoss AS 7
 ----------
-1. Build the quickstart:
+1. Start JBoss AS 7 in standalone-full mode:
 
-        mvn clean install
+        ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
-2. Configure JBoss AS7 to enable XTS (https://community.jboss.org/wiki/DistributedTransactionsInRiftSaw3#JBoss_AS7_XTS_Configuration) 
-2. Start JBoss AS 7 in standalone-xts mode:
+2. Build and deploy the quickstart
 
-        ${AS}/bin/standalone.sh --server-config=standalone-xts.xml
+        mvn install -Pdeploy
 
-3. Deploy the BPEL process and the Web service :
+3. Execute BPELClient
 
-        mvn jboss-as:deploy
+        mvn exec:java
 
-4. Submit a webservice requests to invoke the SOAP gateway.  There are a number of ways to do this :
-      - Submit a request with your preferred SOAP client - bpel/src/test/resources/xml contains sample
-        requests and the responses that you should see
-      - SOAP-UI : Use the wsdl for this project (bpel/src/main/resources/DefaultBusinessTravelArtifacts.wsdl) to create a soap-ui project.
-        Use the sample requests from "bpel/src/test/resources/xml" in the way described in Introduction.
+Expected Output
+===============
+
+```
+SOAP Reply:
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <orderResponseType xmlns="http://www.jboss.org/bpel/examples">
+            <id xmlns="">4</id>
+            <fltid xmlns="">Prague/Brno/3/18</fltid>
+            <return_fltid xmlns="">Brno/Prague/3/23</return_fltid>
+        </orderResponseType>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+SOAP Reply:
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <completeResponseType xmlns="http://www.jboss.org/bpel/examples">
+            <id xmlns="">4</id>
+        </completeResponseType>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+```
+
+4. Undeploy the quickstart:
+        mvn clean -Pdeploy

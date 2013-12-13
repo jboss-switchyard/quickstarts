@@ -57,7 +57,7 @@
 								<bpel:query>id</bpel:query>
 							</bpel:from>
 							<bpel:to part="parameters" variable="orderResp">
-								<bpel:query>respid</bpel:query>
+								<bpel:query>id</bpel:query>
 							</bpel:to>
 						</bpel:copy>
 					</bpel:assign>
@@ -296,7 +296,7 @@
 					<bpel:query>id</bpel:query>
 				</bpel:from>
 				<bpel:to part="parameters" variable="completeResp">
-					<bpel:query>respid</bpel:query>
+					<bpel:query>id</bpel:query>
 				</bpel:to>
 			</bpel:copy>
 		</bpel:assign>
