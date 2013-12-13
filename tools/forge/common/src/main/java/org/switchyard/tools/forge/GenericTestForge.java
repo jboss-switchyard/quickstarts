@@ -20,11 +20,12 @@ import org.switchyard.common.version.Versions;
  */
 public abstract class GenericTestForge extends AbstractShellTest {
 
-    private static String switchyardVersion;
+    private static String switchyardVersion = Versions.getSwitchYardVersion();
 
-    private static OutputStream outputStream;
+    private OutputStream _outputStream;
 
-    private static String switchyardVersionSuccessMsg;
+    private static String switchyardVersionSuccessMsg = "SwitchYard version " 
+            + Versions.getSwitchYardVersion();
     
     private static final String FORGE_APP_NAME = "ForgeTestApp";
 
@@ -32,8 +33,6 @@ public abstract class GenericTestForge extends AbstractShellTest {
      * Constructor.
      */
     public GenericTestForge() {
-        switchyardVersion = Versions.getSwitchYardVersion();
-        switchyardVersionSuccessMsg = "SwitchYard version " + switchyardVersion;
     }
 
     /**
@@ -48,12 +47,12 @@ public abstract class GenericTestForge extends AbstractShellTest {
             queueInputLines(FORGE_APP_NAME);
             getShell().execute("project install-facet switchyard");
             getShell().execute("switchyard get-version");
-            Assert.assertTrue(outputStream.toString().contains(switchyardVersionSuccessMsg));
-            System.out.println(outputStream);
+            Assert.assertTrue(_outputStream.toString().contains(switchyardVersionSuccessMsg));
+            System.out.println(_outputStream);
             resetOutputStream();
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(outputStream);
+            System.out.println(_outputStream);
         }
     }
 
@@ -85,16 +84,16 @@ public abstract class GenericTestForge extends AbstractShellTest {
      * 2 - Before invoking forge operations which will subsequently be asserted in order
      * to avoid the assertion to wrongly match previous similar output lines
      */
-    public void resetOutputStream() {
-        if (outputStream != null) {
+    public synchronized void resetOutputStream() {
+        if (_outputStream != null) {
             try {
-                outputStream.close();
+                _outputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         
-        outputStream = new OutputStream() {
+        _outputStream = new OutputStream() {
             private StringBuilder _stringBuilder = new StringBuilder();
             @Override
             public void write(int b) throws IOException {
@@ -107,7 +106,7 @@ public abstract class GenericTestForge extends AbstractShellTest {
         
         TerminalFactory.configure(TerminalFactory.Type.AUTO);
         Terminal terminal = TerminalFactory.get();
-        BufferManager screenBuffer = new JLineScreenBuffer(terminal, outputStream);
+        BufferManager screenBuffer = new JLineScreenBuffer(terminal, _outputStream);
         getShell().registerBufferManager(screenBuffer); 
     }
 
@@ -125,7 +124,7 @@ public abstract class GenericTestForge extends AbstractShellTest {
      * latest reset output stream reset {@link #resetOutputStream()} 
      */
     public String getOutput() {
-        return outputStream.toString();
+        return _outputStream.toString();
     }
 
 

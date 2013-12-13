@@ -14,6 +14,7 @@
 
 package org.switchyard.validate.internal;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -402,7 +403,7 @@ public final class ValidatorUtil {
         }
     }
 
-    private static final class ValidatorTypesComparator implements Comparator<ValidatorTypes> {
+    private static final class ValidatorTypesComparator implements Comparator<ValidatorTypes>, Serializable {
         /**
          * {@inheritDoc}
          */

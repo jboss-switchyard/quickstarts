@@ -58,11 +58,11 @@ public final class PolicyConfig {
             return;
         }
         Iterator<String> it = requiredSet.iterator();
-        String requires = it.next();
+        StringBuilder requires = new StringBuilder(it.next());
         while (it.hasNext()) {
-            requires += " " + it.next();
+            requires.append(" " + it.next());
         }
         
-        model.getModelConfiguration().setAttribute(REQUIRES, requires);
+        model.getModelConfiguration().setAttribute(REQUIRES, requires.toString());
     }
 }

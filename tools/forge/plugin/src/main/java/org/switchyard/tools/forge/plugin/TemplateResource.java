@@ -103,16 +103,16 @@ public class TemplateResource {
         
         packageName(packageName);
 
-        String destDir = ".." + File.separator + ".." + File.separator
+        StringBuilder destDir = new StringBuilder(".." + File.separator + ".." + File.separator
             + File.separator + (isTest ? "test" : "main")
-            + File.separator + "java";
+            + File.separator + "java");
         if (packageName != null && packageName.length() > 0) {
             for (String pkgDir : packageName.split("\\.")) {
-                destDir += File.separator + pkgDir;
-            }
+                destDir.append(File.separator + pkgDir);
+            }            
         }
         String destFile = className + ".java";
-        writeResource(resources.getResource(destDir + File.separator + destFile));
+        writeResource(resources.getResource(destDir.toString() + File.separator + destFile));
         
         return destFile;
     }

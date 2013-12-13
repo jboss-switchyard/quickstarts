@@ -421,7 +421,11 @@ public class SwitchYardPlugin implements Plugin {
             try {
                 File artifactDir = new File(ARTIFACT_DIR);
                 if (!artifactDir.exists()) {
-                    artifactDir.mkdirs();
+                    boolean result = artifactDir.mkdirs();
+                    if (!result) {
+                        out.println(out.renderColor(ShellColor.RED, "Unable to create directory: " 
+                                + artifactDir.getAbsolutePath()));
+                    }
                 }
                 // detect if this is a Guvnor repository
                 if (url.getProtocol().contains("http") && url.getPath().contains("rest/packages")) {

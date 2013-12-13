@@ -144,7 +144,7 @@ public class InterceptProcessor implements Processor {
         if (traceProp != null) {
             boolean enabled = false;
             if (Boolean.class.isAssignableFrom(traceProp.getClass())) {
-                enabled = Boolean.valueOf((Boolean)traceProp);
+                enabled = ((Boolean)traceProp).booleanValue();
             } else if (String.class.isAssignableFrom(traceProp.getClass())) {
                 enabled = Boolean.valueOf((String)traceProp);
             } else {

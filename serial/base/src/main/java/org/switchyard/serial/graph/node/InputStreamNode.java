@@ -73,6 +73,12 @@ public final class InputStreamNode implements Node {
             bos.flush();
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
+        } finally {
+            try {
+                bis.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         setBase64(Base64.encode(baos.toByteArray()));
     }

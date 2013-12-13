@@ -100,8 +100,15 @@ public class XmlValidator extends BaseValidator<Message> {
             _schemaTypeUri = XMLConstants.RELAXNG_NS_URI;
             break;
         default:
+            StringBuilder builder = new StringBuilder();
+            for (XmlSchemaType s : XmlSchemaType.values()) {
+                builder.append(s.name() + ", ");
+            }
+            if (builder.length() >= 2) {
+                builder.delete(builder.length()-2, builder.length());
+            }
             throw ValidateMessages.MESSAGES.couldNotInstantiateXmlValidatorBadSchemaType(_schemaType.toString(),
-                    XmlSchemaType.values().toString());
+                    builder.toString());
         }
         
         _failOnWarning = model.failOnWarning();

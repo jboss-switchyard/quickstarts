@@ -45,9 +45,7 @@ public final class FieldAccess<T> implements Access<T> {
     public FieldAccess(Class<?> clazz, String fieldName) {
         Field field;
         fieldName = Strings.trimToNull(fieldName);
-        if (fieldName == null) {
-            field = null;
-        } else {
+        if (fieldName != null) {
             try {
                 field = clazz.getDeclaredField(fieldName);
             } catch (NoSuchFieldException nsfe1) {
@@ -57,13 +55,16 @@ public final class FieldAccess<T> implements Access<T> {
                     field = null;
                 }
             }
+            
+            if (field != null) {
+                setField(field);
+            }
         }
-        setField(field);
     }
 
     private void setField(Field field) {
         _field = field;
-        if (!_field.isAccessible()) {
+        if ((field != null) && (!_field.isAccessible())) {
             _field.setAccessible(true);
         }
     }
@@ -73,7 +74,11 @@ public final class FieldAccess<T> implements Access<T> {
      */
     @Override
     public String getName() {
-        return _field.getName();
+        if (_field != null) {
+            return _field.getName();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -82,7 +87,11 @@ public final class FieldAccess<T> implements Access<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Class<T> getType() {
-        return (Class<T>)_field.getType();
+        if (_field != null) {
+            return (Class<T>)_field.getType();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -90,7 +99,11 @@ public final class FieldAccess<T> implements Access<T> {
      */
     @Override
     public boolean isReadable() {
-        return !Modifier.isStatic(_field.getModifiers());
+        if (_field != null) {
+            return !Modifier.isStatic(_field.getModifiers());
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -98,8 +111,12 @@ public final class FieldAccess<T> implements Access<T> {
      */
     @Override
     public boolean isWriteable() {
-        int mod = _field.getModifiers();
-        return !Modifier.isStatic(mod) && !Modifier.isFinal(mod);
+        if (_field != null) {
+            int mod = _field.getModifiers();
+            return !Modifier.isStatic(mod) && !Modifier.isFinal(mod);
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -112,6 +129,8 @@ public final class FieldAccess<T> implements Access<T> {
             return (T)_field.get(target);
         } catch (IllegalAccessException iae) {
             throw new RuntimeException(iae);
+        } catch (NullPointerException npe) {
+            throw new RuntimeException(npe);
         }
     }
 
@@ -124,6 +143,8 @@ public final class FieldAccess<T> implements Access<T> {
             _field.set(target, value);
         } catch (IllegalAccessException iae) {
             throw new RuntimeException(iae);
+        } catch (NullPointerException npe) {
+            throw new RuntimeException(npe);
         }
     }
 

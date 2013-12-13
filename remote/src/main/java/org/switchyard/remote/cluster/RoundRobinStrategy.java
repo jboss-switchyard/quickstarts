@@ -58,5 +58,4 @@ public class RoundRobinStrategy extends BaseStrategy {
         
         return selectedEp;
     }
-
 }

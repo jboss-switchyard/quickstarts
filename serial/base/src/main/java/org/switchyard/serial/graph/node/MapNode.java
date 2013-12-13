@@ -13,6 +13,7 @@
  */
 package org.switchyard.serial.graph.node;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -57,10 +58,14 @@ public final class MapNode implements Node {
     public void compose(Object obj, Graph graph) {
         _ids = new LinkedHashMap<Integer, Integer>();
         Map map = (Map)obj;
-        for (Object key : map.keySet()) {
+        
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pairs = (Map.Entry)it.next();
+            Object key = pairs.getKey();
             Integer key_id = NodeBuilder.build(key, graph);
             if (!(graph.getReference(key_id) instanceof NoopNode)) {
-                Object val = map.get(key);
+                Object val = pairs.getValue();
                 Integer val_id = NodeBuilder.build(val, graph);
                 if (!(graph.getReference(val_id) instanceof NoopNode)) {
                     _ids.put(key_id, val_id);

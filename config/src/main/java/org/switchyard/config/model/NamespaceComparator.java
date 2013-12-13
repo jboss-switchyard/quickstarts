@@ -13,6 +13,7 @@
  */
 package org.switchyard.config.model;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -20,8 +21,8 @@ import java.util.Comparator;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2011 Red Hat Inc.
  */
-class NamespaceComparator implements Comparator<String> {
-
+class NamespaceComparator implements Comparator<String>, Serializable {
+    private final static long serialVersionUID = 1L;
     private static final String W3 = "http://www.w3.org/";
 
     private static final String OASIS_WSS = "http://docs.oasis-open.org/wss/";

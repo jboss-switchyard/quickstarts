@@ -237,8 +237,16 @@ public class TransformerRegistryLoader {
             }
             
             return _transformerFactories.get(factoryClass);
-        } catch (Exception e) {
+        } catch (ClassCastException  e) {
             throw TransformMessages.MESSAGES.failedCreateInstanceofTransformerFactory(factoryClass.getName());
+        } catch (IllegalArgumentException iae) {
+            throw TransformMessages.MESSAGES.failedCreateInstanceofTransformerFactory(factoryClass.getName());
+        } catch (NullPointerException npe) {
+            throw TransformMessages.MESSAGES.failedCreateInstanceofTransformerFactory(factoryClass.getName());
+        } catch (InstantiationException ie) {
+            throw TransformMessages.MESSAGES.failedCreateInstanceofTransformerFactory(factoryClass.getName());
+        } catch (IllegalAccessException iae) {
+            throw TransformMessages.MESSAGES.failedCreateInstanceofTransformerFactory(factoryClass.getName());            
         }
     }
 }

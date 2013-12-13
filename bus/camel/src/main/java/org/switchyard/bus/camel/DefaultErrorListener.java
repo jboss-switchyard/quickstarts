@@ -34,23 +34,24 @@ public class DefaultErrorListener implements ErrorListener {
     public void notify(Exchange exchange, Throwable throwable) {
         ExchangePattern pattern = exchange.getContract().getConsumerOperation().getExchangePattern();
         
-        String message = String.format("%s\nCaught exception of type %s with message: %s", ExchangeFormatter.format(exchange, false), throwable.getClass().getName(), throwable.getMessage());
-        String causeTrace = "";
+        String message = String.format("%s%nCaught exception of type %s with message: %s", ExchangeFormatter.format(exchange, false), throwable.getClass().getName(), throwable.getMessage());
+        StringBuilder causeTrace = new StringBuilder();
 
         if (throwable.getCause() != null) {
-            String causedBy = "\n%sCaused by exception of type %s, message: %s";
+            String causedBy = "%n%sCaused by exception of type %s, message: %s";
             Throwable cause = throwable.getCause();
             int depth = 0;
+            
             while (cause != null) {
-                causeTrace += String.format(causedBy, Strings.repeat("  ", ++depth), cause.getClass().getName(), cause.getMessage());
+                causeTrace.append(String.format(causedBy, Strings.repeat("  ", ++depth), cause.getClass().getName(), cause.getMessage()));
                 cause = cause.getCause();
             }
         }
 
         if (pattern == ExchangePattern.IN_ONLY) {
-            LOG.error(message + causeTrace, throwable);
+            LOG.error(message + causeTrace.toString(), throwable);
         } else {
-            LOG.debug(message + causeTrace, throwable);
+            LOG.debug(message + causeTrace.toString(), throwable);
         }
     }
 

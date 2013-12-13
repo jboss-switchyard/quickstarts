@@ -154,12 +154,12 @@ public class DefaultHandlerChain implements HandlerChain {
                 }
             }
         } catch (HandlerException handlerEx) {
-            String errorMsg = handlerEx.getClass().getName() + " was thrown by handler(" + handlerRef.getName() + "): " + handlerEx.getMessage();
+            StringBuilder errorMsg = new StringBuilder(handlerEx.getClass().getName() + " was thrown by handler(" + handlerRef.getName() + "): " + handlerEx.getMessage());
             Throwable cause = handlerEx;
             while ((cause = cause.getCause()) != null) {
-                errorMsg += " --- Caused by " + cause.getClass().getName() + ": " + cause.getMessage();
+                errorMsg.append(" --- Caused by " + cause.getClass().getName() + ": " + cause.getMessage());
             }
-            _logger.error(errorMsg);
+            _logger.error(errorMsg.toString());
             _logger.debug("", handlerEx);
 
             Message faultMessage = exchange.createMessage().setContent(handlerEx);

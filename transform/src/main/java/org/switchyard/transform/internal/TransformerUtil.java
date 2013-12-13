@@ -14,6 +14,7 @@
 
 package org.switchyard.transform.internal;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -336,7 +337,7 @@ public final class TransformerUtil {
         }
     }
 
-    private static final class TransformerTypesComparator implements Comparator<TransformerTypes> {
+    private static final class TransformerTypesComparator implements Comparator<TransformerTypes>, Serializable {
         /**
          * {@inheritDoc}
          */

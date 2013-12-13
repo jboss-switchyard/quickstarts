@@ -94,10 +94,11 @@ public class DefaultServiceRegistry implements ServiceRegistry {
    
     @Override
     public void registerServiceReference(ServiceReference reference) {
-        _references.putIfAbsent(reference.getName(), reference);
+        ServiceReference ref = _references.putIfAbsent(reference.getName(), reference);
 
         if (_logger.isDebugEnabled()) {
-            _logger.debug("Registered ServiceReference '" + reference.getName() + "'.");
+            _logger.debug("Registered ServiceReference '" + reference.getName() + "', "
+                    + "found previous map value of " + ref + ".");
         }
     }
 

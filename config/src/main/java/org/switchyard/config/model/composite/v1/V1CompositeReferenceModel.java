@@ -103,11 +103,9 @@ public class V1CompositeReferenceModel extends BaseNamedModel implements Composi
                             } else if (namesCount == 2) {
                                 for (ComponentReferenceModel componentReference : componentReferences) {
                                     if (componentReferenceName.equals(componentReference.getName())) {
-                                        if (componentReference != null) {
-                                            list.add(componentReference);
-                                            componentMissing = false;
-                                            break componentLoop;
-                                        }
+                                        list.add(componentReference);
+                                        componentMissing = false;
+                                        break componentLoop;
                                     }
                                 }
                             }

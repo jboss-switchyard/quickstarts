@@ -35,10 +35,10 @@ public class ExceptionTransforms {
     @Transformer
     public String toString(Throwable t) {
         Throwable cause = t;
-        String result = cause.getClass().getName() + ": " + cause.getMessage();
+        StringBuilder result = new StringBuilder(cause.getClass().getName() + ": " + cause.getMessage());
         while ((cause = cause.getCause()) != null) {
-            result += NL + " --- Caused by " + cause.getClass().getName() + ": " + cause.getMessage();
+            result.append(NL + " --- Caused by " + cause.getClass().getName() + ": " + cause.getMessage());
         }
-        return result;
+        return result.toString();
     }
 }

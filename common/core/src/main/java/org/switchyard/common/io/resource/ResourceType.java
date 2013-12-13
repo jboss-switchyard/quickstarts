@@ -431,7 +431,7 @@ public final class ResourceType implements Comparable<ResourceType> {
      */
     public static void main(String... args) {
         for (ResourceType type : values()) {
-            System.out.printf("%s: %s %s\n", type.getName(), type.getDescription(), type.getExtensions());
+            System.out.printf("%s: %s %s%n", type.getName(), type.getDescription(), type.getExtensions());
         }
     }
 

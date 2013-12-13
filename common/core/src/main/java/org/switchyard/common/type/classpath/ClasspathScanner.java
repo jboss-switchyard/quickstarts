@@ -110,16 +110,22 @@ public class ClasspathScanner {
         }
 
         ZipFile zip = new ZipFile(file);
-        Enumeration<? extends ZipEntry> entries = zip.entries();
+        try {
+            Enumeration<? extends ZipEntry> entries = zip.entries();
 
-        while (entries.hasMoreElements()) {
-            if (!_filter.continueScanning()) {
-                break;
+            while (entries.hasMoreElements()) {
+                if (!_filter.continueScanning()) {
+                    break;
+                }
+
+                ZipEntry entry = entries.nextElement();
+                String name = entry.getName();
+                _filter.filter(name);
             }
-
-            ZipEntry entry = entries.nextElement();
-            String name = entry.getName();
-            _filter.filter(name);
+        } catch (IllegalStateException ise) {
+            throw new IOException(ise);
+        } finally {
+            zip.close();
         }
     }
 

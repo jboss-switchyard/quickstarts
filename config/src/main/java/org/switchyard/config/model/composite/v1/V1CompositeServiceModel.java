@@ -103,9 +103,7 @@ public class V1CompositeServiceModel extends BaseNamedModel implements Composite
                                 } else if (namesCount == 2) {
                                     for (ComponentServiceModel componentService : componentServices) {
                                         if (componentServiceName.equals(componentService.getName())) {
-                                            if (componentService != null) {
-                                                return componentService;
-                                            }
+                                            return componentService;
                                         }
                                     }
                                 }

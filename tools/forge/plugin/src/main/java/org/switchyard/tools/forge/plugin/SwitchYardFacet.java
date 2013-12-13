@@ -215,7 +215,10 @@ public class SwitchYardFacet extends AbstractFacet {
                 _shell.println("Error while reading SwitchYard configuration: " + ioEx.getMessage());
             }
         }
-        config.orderModelChildren();
+        
+        if (config != null) {
+            config.orderModelChildren();
+        }
         return config;
     }
     
@@ -440,8 +443,11 @@ public class SwitchYardFacet extends AbstractFacet {
         }
         File backup = new File(asConfigPath + ".orig");
         if (backup.exists()) {
-            if (_shell.promptBoolean("backup standalone.xml '" + backup.getAbsolutePath() + "' already exists: remove it?")) {
-                backup.delete();
+            if (_shell.promptBoolean("backup standalone.xml '" + backup.getAbsolutePath() + "' already exists: remove it?")) {                
+                boolean result = backup.delete();
+                if (!result) {
+                    throw new Exception("Unable to delete " + backup.getAbsolutePath());
+                }
             } else {
                 throw new Exception("backup standalone.xml already exists " + backup.getAbsolutePath());
             }
@@ -449,7 +455,10 @@ public class SwitchYardFacet extends AbstractFacet {
         if (!orig.renameTo(backup)) {
             throw new Exception("Failed to create backup standalone.xml " + backup.getAbsolutePath());
         }
-        orig.createNewFile();
+        boolean createResult = orig.createNewFile();
+        if (!createResult) {
+            throw new Exception("Unable to create new file " + orig.getAbsolutePath());
+        } 
         
         // transform the original
         InputStream xslStream = null;

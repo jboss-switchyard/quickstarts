@@ -21,6 +21,8 @@ import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 
+import org.jboss.logging.Logger;
+
 /**
  * Provides a pool of javax.xml.transform.Transformer instances which are
  * created on demand and bounded by a pool maxSize.  If a pooled instance
@@ -28,6 +30,7 @@ import javax.xml.transform.Transformer;
  * to the pool.
  */
 public class TransformerPool {
+    private Logger _logger = Logger.getLogger(TransformerPool.class);
     
     private BlockingQueue<Transformer> _pool;
     private Templates _templates;
@@ -95,7 +98,10 @@ public class TransformerPool {
             transformer.setErrorListener(_errorListener);
         }
         _count.incrementAndGet();
-        _pool.offer(transformer);
+        boolean result = _pool.offer(transformer);
+        if ((!result) && (_logger.isDebugEnabled())) {
+            _logger.debug("Unable to add " + transformer.toString() + " to blocking queue");
+        }
     }
     
 }
