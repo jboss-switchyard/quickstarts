@@ -54,6 +54,7 @@ public class ResourceDeployer {
         op.get("address").add("jms-queue", queueName);
         op.get("entries").add(queueName)
                          .add("java:jboss/exported/jms/" + queueName);
+        op.get("durable").set(false);
 
         return client.execute(op);
     }

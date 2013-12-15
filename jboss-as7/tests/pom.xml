@@ -51,6 +51,10 @@
             <artifactId>arquillian-junit-container</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+            <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-arquillian-common</artifactId>
         </dependency>
