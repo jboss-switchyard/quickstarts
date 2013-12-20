@@ -52,10 +52,10 @@ public final class RemoteClient {
 
         // Create request payload
         Offer offer = null;
-        if (args.length == 1 && args[0].equals("accept")) {
-            offer = createOffer(true);
-        } else {
+        if (args.length == 1 && args[0].equals("deny")) {
             offer = createOffer(false);
+        } else {
+            offer = createOffer(true);
         }
 
         // Create the request message

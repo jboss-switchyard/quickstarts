@@ -1,8 +1,14 @@
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pp="http://www.jboss.org/bpel/examples/pp">
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:exam="http://www.jboss.org/bpel/examples">
    <soapenv:Header/>
    <soapenv:Body>
-      <pp:orderRequestType>
+      <exam:orderRequestType>
          <id>4</id>
-      </pp:orderRequestType>
+         <name>Ivo</name>
+         <from>Prague</from>
+         <to>Brno</to>
+         <persons>1</persons>
+         <arrival>2012-03-18</arrival>
+         <departure>2012-03-23</departure>
+      </exam:orderRequestType>
    </soapenv:Body>
 </soapenv:Envelope>

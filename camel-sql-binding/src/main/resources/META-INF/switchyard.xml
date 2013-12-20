@@ -1,42 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0">
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-sql-binding" targetNamespace="urn:switchyard-quickstart:camel-sql-binding:0.1.0">
-        <service name="GreetingService" promote="GreetingService/GreetingService">
-            <sql:binding.sql xmlns:sql="urn:switchyard-component-camel-sql:config:1.0" initialDelay="1000" period="1s">
-                <swyd:operationSelector xmlns:swyd="urn:switchyard-config:switchyard:1.0" operationName="consume"/>
-                <sql:query>SELECT * FROM greetings</sql:query>
-                <sql:dataSourceRef>java:jboss/datasources/ExampleDS</sql:dataSourceRef>
-            </sql:binding.sql>
-            <quartz:binding.quartz xmlns:quartz="urn:switchyard-component-camel-quartz:config:1.0">
-                <swyd:operationSelector xmlns:swyd="urn:switchyard-config:switchyard:1.0" operationName="generate"/>
-                <quartz:name>EveryFiveSecondsJob</quartz:name>
-                <quartz:cron>*/5 * * * * ?</quartz:cron>
-            </quartz:binding.quartz>
-        </service>
-        <reference multiplicity="0..1" name="StoreService" promote="GreetingService/StoreService">
-            <interface.java interface="org.switchyard.quickstarts.camel.sql.binding.SingleGreetService"/>
-            <sql:binding.sql xmlns:sql="urn:switchyard-component-camel-sql:config:1.0">
-                <sql:query>INSERT INTO greetings (receiver,sender,id) VALUES (#,#,#)</sql:query>
-                <sql:dataSourceRef>java:jboss/datasources/ExampleDS</sql:dataSourceRef>
-            </sql:binding.sql>
-        </reference>
-        <reference multiplicity="0..1" name="RemoveService" promote="GreetingService/RemoveService">
-            <interface.java interface="org.switchyard.quickstarts.camel.sql.binding.SingleGreetService"/>
-            <sql:binding.sql xmlns:sql="urn:switchyard-component-camel-sql:config:1.0">
-                <sql:query>DELETE FROM greetings WHERE receiver = # AND sender = # AND id = #</sql:query>
-                <sql:dataSourceRef>java:jboss/datasources/ExampleDS</sql:dataSourceRef>
-            </sql:binding.sql>
-        </reference>
-        <component name="GreetingService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.camel.sql.binding.GreetingServiceImpl"/>
-            <service name="GreetingService">
-                <interface.java interface="org.switchyard.quickstarts.camel.sql.binding.GreetingService"/>
-            </service>
-            <reference name="RemoveService">
-                <interface.java interface="org.switchyard.quickstarts.camel.sql.binding.SingleGreetService"/>
-            </reference>
-            <reference name="StoreService">
-                <interface.java interface="org.switchyard.quickstarts.camel.sql.binding.SingleGreetService"/>
-            </reference>
-        </component>
-    </composite>
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:swyd="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:quartz="urn:switchyard-component-camel-quartz:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:sql="urn:switchyard-component-camel-sql:config:1.0">
+  <sca:composite name="camel-sql-binding" targetNamespace="urn:switchyard-quickstart:camel-sql-binding:0.1.0">
+    <sca:service name="GreetingService" promote="GreetingService/GreetingService">
+      <sql:binding.sql initialDelay="1000" period="1s">
+        <operationSelector operationName="consume"/>
+        <sql:query>SELECT * FROM greetings</sql:query>
+        <sql:dataSourceRef>java:jboss/myDS</sql:dataSourceRef>
+      </sql:binding.sql>
+      <quartz:binding.quartz>
+        <operationSelector operationName="generate"/>
+        <quartz:name>EveryFiveSecondsJob</quartz:name>
+        <quartz:cron>*/5 * * * * ?</quartz:cron>
+      </quartz:binding.quartz>
+    </sca:service>
+    <sca:reference name="StoreService" multiplicity="0..1" promote="GreetingService/StoreService">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.sql.binding.SingleGreetService"/>
+      <sql:binding.sql>
+        <sql:query>INSERT INTO greetings (receiver,sender,id) VALUES (#,#,#)</sql:query>
+        <sql:dataSourceRef>java:jboss/myDS</sql:dataSourceRef>
+      </sql:binding.sql>
+    </sca:reference>
+    <sca:reference name="RemoveService" multiplicity="0..1" promote="GreetingService/RemoveService">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.sql.binding.SingleGreetService"/>
+      <sql:binding.sql>
+        <sql:query>DELETE FROM greetings WHERE receiver = # AND sender = # AND id = #</sql:query>
+        <sql:dataSourceRef>java:jboss/myDS</sql:dataSourceRef>
+      </sql:binding.sql>
+    </sca:reference>
+    <sca:component name="GreetingService">
+      <bean:implementation.bean class="org.switchyard.quickstarts.camel.sql.binding.GreetingServiceImpl"/>
+      <sca:service name="GreetingService">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.sql.binding.GreetingService"/>
+      </sca:service>
+      <sca:reference name="RemoveService">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.sql.binding.SingleGreetService"/>
+      </sca:reference>
+      <sca:reference name="StoreService">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.sql.binding.SingleGreetService"/>
+      </sca:reference>
+    </sca:component>
+  </sca:composite>
 </switchyard>

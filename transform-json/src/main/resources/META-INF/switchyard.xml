@@ -1,14 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="transform-json">
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="transform-json" targetNamespace="urn:switchyard-quickstart:transform-json:0.1.0">
-        <component name="OrderService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.transform.json.OrderServiceBean"/>
-            <service name="OrderService">
-                <interface.java interface="org.switchyard.quickstarts.transform.json.OrderService"/>
-            </service>
-        </component>
-    </composite>
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:trfm="urn:switchyard-config:transform:1.0" name="transform-json">
+    <sca:composite name="transform-json" targetNamespace="urn:switchyard-quickstart:transform-json:0.1.0">
+        <sca:service name="OrderService" promote="OrderServiceBean/OrderService">
+            <sca:interface.java interface="org.switchyard.quickstarts.transform.json.OrderService" />
+            <sca:binding.sca />
+        </sca:service>
+        <sca:component name="OrderServiceBean">
+            <bean:implementation.bean class="org.switchyard.quickstarts.transform.json.OrderServiceBean" />
+            <sca:service name="OrderService">
+                <sca:interface.java interface="org.switchyard.quickstarts.transform.json.OrderService" />
+            </sca:service>
+        </sca:component>
+    </sca:composite>
     <transforms>
-        <trfm:transform.json xmlns:trfm="urn:switchyard-config:transform:1.0" from="java:org.switchyard.quickstarts.transform.json.OrderAck" to="{urn:switchyard-quickstart:transform-json:1.0}orderResponse"/>
-        <trfm:transform.json xmlns:trfm="urn:switchyard-config:transform:1.0" from="{urn:switchyard-quickstart:transform-json:1.0}order" to="java:org.switchyard.quickstarts.transform.json.Order"/>
+        <trfm:transform.json from="java:org.switchyard.quickstarts.transform.json.OrderAck" to="{urn:switchyard-quickstart:transform-json:1.0}orderResponse"/>
+        <trfm:transform.json from="{urn:switchyard-quickstart:transform-json:1.0}order" to="java:org.switchyard.quickstarts.transform.json.Order"/>
     </transforms>
 </switchyard>
