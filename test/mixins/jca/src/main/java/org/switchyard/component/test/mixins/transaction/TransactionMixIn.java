@@ -28,7 +28,6 @@ import org.switchyard.test.MixInDependencies;
 import org.switchyard.test.TestMixIn;
 import org.switchyard.test.mixins.AbstractTestMixIn;
 import org.switchyard.component.test.mixins.cdi.CDIMixInParticipant;
-import org.switchyard.component.test.mixins.jca.JCAMixIn;
 import org.switchyard.component.test.mixins.naming.NamingMixIn;
 
 import com.arjuna.ats.jta.common.JTAEnvironmentBean;
@@ -39,7 +38,7 @@ import com.arjuna.ats.jta.common.jtaPropertyManager;
  * 
  * @author Lukasz Dywicki
  */
-@MixInDependencies(required={NamingMixIn.class}, optional={JCAMixIn.class})
+@MixInDependencies(required={NamingMixIn.class})
 public class TransactionMixIn extends AbstractTestMixIn 
     implements CDIMixInParticipant {
 
