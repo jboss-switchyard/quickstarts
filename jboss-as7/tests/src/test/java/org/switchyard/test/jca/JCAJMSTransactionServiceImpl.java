@@ -55,6 +55,15 @@ public class JCAJMSTransactionServiceImpl implements JCAJMSTransactionService {
         camelService.onMessage(name);
     }
 
+    @Override
+    public void onMessageContextProperty(String name) throws Exception {
+        int txStatus = getTransactionStatus();
+        if (txStatus != Status.STATUS_ACTIVE) {
+            throw new RuntimeException("Unexpected Transaction Status: " + txStatus);
+        }
+        service.onMessageContextProperty(name);
+    }
+
     private int getTransactionStatus() {
         try {
             InitialContext ic = new InitialContext();

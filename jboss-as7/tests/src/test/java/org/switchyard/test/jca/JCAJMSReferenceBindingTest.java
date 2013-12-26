@@ -15,6 +15,7 @@ package org.switchyard.test.jca;
 
 import java.net.URL;
 
+import javax.jms.BytesMessage;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
@@ -52,6 +53,7 @@ public class JCAJMSReferenceBindingTest  {
     private static final String INPUT_TX_QUEUE = "TestQueue";
     private static final String INPUT_NOTX_QUEUE = "NonTransactedTestQueue";
     private static final String OUTPUT_QUEUE = "ResultQueue";
+    private static final String OUTPUT_PROP_QUEUE = "ResultPropQueue";
 
     private Logger _logger = Logger.getLogger(JCAJMSReferenceBindingTest.class);
     private HornetQMixIn _hqMixIn;
@@ -61,6 +63,7 @@ public class JCAJMSReferenceBindingTest  {
         ResourceDeployer.addQueue(INPUT_TX_QUEUE);
         ResourceDeployer.addQueue(INPUT_NOTX_QUEUE);
         ResourceDeployer.addQueue(OUTPUT_QUEUE);
+        ResourceDeployer.addQueue(OUTPUT_PROP_QUEUE);
         ResourceDeployer.addPropertiesUser();
 
         URL testConfigUrl = Classes.getResource(TEST_CONFIG);
@@ -99,6 +102,7 @@ public class JCAJMSReferenceBindingTest  {
             ResourceDeployer.removeQueue(INPUT_TX_QUEUE);
             ResourceDeployer.removeQueue(INPUT_NOTX_QUEUE);
             ResourceDeployer.removeQueue(OUTPUT_QUEUE);
+            ResourceDeployer.removeQueue(OUTPUT_PROP_QUEUE);
         } catch (Exception e) {
             _logger.warn(e);
         }
@@ -186,7 +190,7 @@ public class JCAJMSReferenceBindingTest  {
     public void testManagedOutboundJMSSetHeaderFromCamelRoute() throws Exception {
         String payload = "onMessageCamel";
         Session session = _hqMixIn.createJMSSession();
-        
+
         try {
             MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(INPUT_TX_QUEUE));
             TextMessage inMsg = session.createTextMessage();
@@ -203,6 +207,34 @@ public class JCAJMSReferenceBindingTest  {
             Assert.assertTrue(msg instanceof ObjectMessage);
             Assert.assertEquals(payload, ObjectMessage.class.cast(msg).getObject().toString());
             Assert.assertEquals("jmscorrelation-onMessageCamel", msg.getJMSCorrelationID());
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    public void testManagedOutboundJMSWithContextProperty() throws Exception {
+        String payload = "onMessageContextProperty";
+        Session session = _hqMixIn.createJMSSession();
+
+        try {
+            MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(INPUT_TX_QUEUE));
+            TextMessage inMsg = session.createTextMessage();
+            inMsg.setText(payload);
+            producer.send(inMsg);
+            producer.close();
+            session.close();
+
+            session = _hqMixIn.createJMSSession();
+            MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(OUTPUT_PROP_QUEUE));
+            javax.jms.Message msg = consumer.receive(3000);
+            consumer.close();
+            Assert.assertNotNull(msg);
+            Assert.assertTrue(msg instanceof BytesMessage);
+            BytesMessage bmsg = BytesMessage.class.cast(msg);
+            byte[] bytes = new byte[(int)bmsg.getBodyLength()];
+            bmsg.readBytes(bytes);
+            Assert.assertEquals(payload + "test", new String(bytes));
         } finally {
             session.close();
         }
