@@ -15,6 +15,7 @@ package org.switchyard.test.jca;
 
 import java.net.URL;
 
+import javax.jms.BytesMessage;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
@@ -47,6 +48,9 @@ public class JCAJMSServiceBindingTest  {
 
     private static final String TEST_CONFIG = "org/switchyard/test/jca/switchyard-inbound-jms-test.xml";
     private static final String INPUT_QUEUE = "TestQueue";
+    private static final String INPUT_INOUT_QUEUE = "InOutTestQueue";
+    private static final String INOUT_REPLY_TO_QUEUE = "InOutTestQueue_replyTo";
+    private static final String INOUT_FAULT_TO_QUEUE = "InOutTestQueue_faultTo";
     private static final String RESULT_QUEUE = "StoreResultQueue";
     private static final String FAULT_QUEUE = "StoreFaultQueue";
 
@@ -56,6 +60,9 @@ public class JCAJMSServiceBindingTest  {
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws Exception {
         ResourceDeployer.addQueue(INPUT_QUEUE);
+        ResourceDeployer.addQueue(INPUT_INOUT_QUEUE);
+        ResourceDeployer.addQueue(INOUT_REPLY_TO_QUEUE);
+        ResourceDeployer.addQueue(INOUT_FAULT_TO_QUEUE);
         ResourceDeployer.addQueue(RESULT_QUEUE);
         ResourceDeployer.addQueue(FAULT_QUEUE);
         ResourceDeployer.addPropertiesUser();
@@ -84,6 +91,9 @@ public class JCAJMSServiceBindingTest  {
         try {
             _hqMixIn.uninitialize();
             ResourceDeployer.removeQueue(INPUT_QUEUE);
+            ResourceDeployer.removeQueue(INPUT_INOUT_QUEUE);
+            ResourceDeployer.removeQueue(INOUT_REPLY_TO_QUEUE);
+            ResourceDeployer.removeQueue(INOUT_FAULT_TO_QUEUE);
             ResourceDeployer.removeQueue(RESULT_QUEUE);
             ResourceDeployer.removeQueue(FAULT_QUEUE);
         } catch (Exception e) {
@@ -102,19 +112,20 @@ public class JCAJMSServiceBindingTest  {
             producer.send(inMsg);
             producer.close();
             session.close();
-            
+
             session = _hqMixIn.createJMSSession();
             MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(RESULT_QUEUE));
-            assertMessage(consumer.receive(1000), TextMessage.class, "onMessagetesttest");
-            Assert.assertNull(consumer.receive(1000));
+            assertMessage(consumer.receive(3000), TextMessage.class, "onMessagetesttest");
+            Assert.assertNull(consumer.receive(3000));
+            consumer.close();
             consumer = session.createConsumer(HornetQMixIn.getJMSQueue(FAULT_QUEUE));
-            Assert.assertNull(consumer.receive(1000));
+            Assert.assertNull(consumer.receive(3000));
             consumer.close();
         } finally {
             session.close();
         }
     }
-    
+
     @Test
     public void testInflowJMS_fault_rollback() throws Exception {
         Session session = _hqMixIn.createJMSSession();
@@ -128,15 +139,15 @@ public class JCAJMSServiceBindingTest  {
 
             session = _hqMixIn.createJMSSession();
             MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(FAULT_QUEUE));
-            assertMessage(consumer.receive(1000), TextMessage.class, "faultmessagetest");
-            assertMessage(consumer.receive(1000), TextMessage.class, "faultmessagetest");
-            assertMessage(consumer.receive(1000), TextMessage.class, "faultmessagetest");
-            assertMessage(consumer.receive(1000), TextMessage.class, "faultmessagetest");
-            Assert.assertNull(consumer.receive(1000));
+            assertMessage(consumer.receive(3000), TextMessage.class, "faultmessagetest");
+            assertMessage(consumer.receive(3000), TextMessage.class, "faultmessagetest");
+            assertMessage(consumer.receive(3000), TextMessage.class, "faultmessagetest");
+            assertMessage(consumer.receive(3000), TextMessage.class, "faultmessagetest");
+            Assert.assertNull(consumer.receive(3000));
             consumer.close();
             consumer = session.createConsumer(HornetQMixIn.getJMSQueue(RESULT_QUEUE));
-            assertMessage(consumer.receive(1000), TextMessage.class, "onMessage_fault_rollbacktesttest");
-            Assert.assertNull(consumer.receive(1000));
+            assertMessage(consumer.receive(3000), TextMessage.class, "onMessage_fault_rollbacktesttest");
+            Assert.assertNull(consumer.receive(3000));
             consumer.close();
         } finally {
             session.close();
@@ -156,12 +167,75 @@ public class JCAJMSServiceBindingTest  {
 
             session = _hqMixIn.createJMSSession();
             MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(FAULT_QUEUE));
-            assertMessage(consumer.receive(1000), TextMessage.class, "faultmessagetest");
-            Assert.assertNull(consumer.receive(1000));
+            assertMessage(consumer.receive(3000), TextMessage.class, "faultmessagetest");
+            Assert.assertNull(consumer.receive(3000));
             consumer.close();
             consumer = session.createConsumer(HornetQMixIn.getJMSQueue(RESULT_QUEUE));
-            assertMessage(consumer.receive(1000), TextMessage.class, "onMessage_fault_committesttest");
-            Assert.assertNull(consumer.receive(1000));
+            assertMessage(consumer.receive(3000), TextMessage.class, "onMessage_fault_committesttest");
+            Assert.assertNull(consumer.receive(3000));
+            consumer.close();
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    public void testInflowJMS_inout() throws Exception {
+        String payload = "onMessage_inout";
+        Session session = _hqMixIn.createJMSSession();
+        try {
+            MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(INPUT_INOUT_QUEUE));
+            TextMessage inMsg = session.createTextMessage();
+            inMsg.setText(payload);
+            producer.send(inMsg);
+            producer.close();
+            session.close();
+
+            session = _hqMixIn.createJMSSession();
+            MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(INOUT_REPLY_TO_QUEUE));
+            assertMessage(consumer.receive(3000), TextMessage.class, payload + "_replyTo");
+            consumer.close();
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    public void testInflowJMS_inout_fault() throws Exception {
+        String payload = "onMessage_inout_fault";
+        Session session = _hqMixIn.createJMSSession();
+        try {
+            MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(INPUT_INOUT_QUEUE));
+            TextMessage inMsg = session.createTextMessage();
+            inMsg.setText(payload);
+            producer.send(inMsg);
+            producer.close();
+            session.close();
+
+            session = _hqMixIn.createJMSSession();
+            MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(INOUT_FAULT_TO_QUEUE));
+            assertMessage(consumer.receive(3000), TextMessage.class, "org.switchyard.test.jca.JCAJMSFault: " + payload + "_faultTo");
+            consumer.close();
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    public void testInflowJMS_inout_context_property() throws Exception {
+        String payload = "onMessage_inout_context_property";
+        Session session = _hqMixIn.createJMSSession();
+        try {
+            MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(INPUT_INOUT_QUEUE));
+            TextMessage inMsg = session.createTextMessage();
+            inMsg.setText(payload);
+            producer.send(inMsg);
+            producer.close();
+            session.close();
+
+            session = _hqMixIn.createJMSSession();
+            MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(RESULT_QUEUE));
+            assertMessage(consumer.receive(3000), BytesMessage.class, payload + "_replyTo");
             consumer.close();
         } finally {
             session.close();
@@ -170,9 +244,17 @@ public class JCAJMSServiceBindingTest  {
 
     private <T extends Message> void assertMessage(Message msg, Class<T> type, String expect) throws Exception {
         Assert.assertNotNull(msg);
-        Assert.assertTrue(type.isAssignableFrom(msg.getClass()));
-        Assert.assertEquals(expect, TextMessage.class.cast(msg).getText());
-        
+        Assert.assertTrue("Unexpected message type: " + msg.getClass().getName(), type.isAssignableFrom(msg.getClass()));
+        if (msg instanceof TextMessage) {
+            Assert.assertEquals(expect, TextMessage.class.cast(msg).getText());
+        } else if (msg instanceof BytesMessage) {
+            BytesMessage bmsg = BytesMessage.class.cast(msg);
+            byte[] bytes = new byte[(int) bmsg.getBodyLength()];
+            bmsg.readBytes(bytes);
+            Assert.assertEquals(expect, new String(bytes));
+        } else {
+            Assert.fail("Unexpected message type: " + msg.getClass().getName());
+        }
     }
 }
 
