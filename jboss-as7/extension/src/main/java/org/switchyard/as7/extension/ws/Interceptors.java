@@ -21,11 +21,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.cxf.common.util.StringUtils;
+import org.apache.cxf.feature.Feature;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
+import org.apache.cxf.ws.addressing.WSAddressingFeature;
+import org.apache.cxf.ws.addressing.soap.DecoupledFaultHandler;
 import org.apache.cxf.ws.policy.AssertionInfo;
 import org.apache.cxf.ws.policy.AssertionInfoMap;
 import org.apache.cxf.ws.security.policy.SP12Constants;
@@ -42,6 +45,7 @@ import org.jboss.wsf.stack.cxf.security.authentication.SubjectCreatingPolicyInte
 import org.switchyard.as7.extension.ExtensionMessages;
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.type.reflect.FieldAccess;
+import org.switchyard.component.soap.AddressingInterceptor;
 import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.config.model.InterceptorModel;
 import org.switchyard.component.soap.config.model.InterceptorsModel;
@@ -79,6 +83,7 @@ public final class Interceptors {
             List<?> list = new FieldAccess<List<?>>(NonSpringBusHolder.class, "endpoints").read(busHolder);
             for (Object o : list) {
                 for (org.apache.cxf.endpoint.Endpoint e : ((EndpointImpl)o).getService().getEndpoints().values()) {
+                    checkAddressingEnabled(e);
                     e.getInInterceptors().add(new SwitchYardURIMappingInterceptor());
                     e.getInInterceptors().add(new SwitchYardEncryptionConfidentialityInterceptor());
                     e.getInInterceptors().addAll(getConfiguredInInterceptors(bindingModel, loader));
@@ -86,6 +91,18 @@ public final class Interceptors {
                     e.getOutInterceptors().add(new SwitchYardSecurityCleanupOutInterceptor());
                     e.getOutFaultInterceptors().add(new SwitchYardSecurityCleanupOutFaultInterceptor());
                 }
+            }
+        }
+    }
+
+    private static void checkAddressingEnabled(org.apache.cxf.endpoint.Endpoint e) {
+        for (Feature feature : e.getActiveFeatures()) {
+            if (feature instanceof WSAddressingFeature) {
+                 //TODO: remove this DecoupledFaultHandler once CXF is upgraded, see JBWS-3516
+                e.getInInterceptors().add(new DecoupledFaultHandler());
+                e.getOutInterceptors().add(new AddressingInterceptor());
+                e.getOutFaultInterceptors().add(new AddressingInterceptor());
+                break;
             }
         }
     }
