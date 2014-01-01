@@ -32,8 +32,10 @@ import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.ws.addressing.WSAddressingFeature;
 import org.apache.cxf.ws.addressing.impl.AddressingFeatureApplier;
+import org.apache.cxf.ws.addressing.soap.DecoupledFaultHandler;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.soap.SOAPLogger;
+import org.switchyard.component.soap.AddressingInterceptor;
 import org.switchyard.component.soap.InboundHandler;
 
 /**
@@ -72,10 +74,12 @@ public class CXFJettyEndpoint implements WSEndpoint {
         _svrFactory.setBindingId(bindingId);
         Map<String, Object> props = new HashMap<String, Object>();
         List<WebServiceFeature> cxfFeatures = new ArrayList<WebServiceFeature>();
+        Boolean addressingEnabled = false;
 
         for (WebServiceFeature feature : features) {
             cxfFeatures.add(feature);
             if ((feature instanceof AddressingFeature) && ((AddressingFeature)feature).isEnabled()) {
+                addressingEnabled = true;
                 SOAPLogger.ROOT_LOGGER.addressingEnabledRequired(String.valueOf(((AddressingFeature)feature).isEnabled()),
                         String.valueOf(((AddressingFeature)feature).isRequired()));
             } else if (feature instanceof MTOMFeature) {
@@ -86,6 +90,11 @@ public class CXFJettyEndpoint implements WSEndpoint {
         }
         ((JaxWsServiceFactoryBean)_svrFactory.getServiceFactory()).setWsFeatures(cxfFeatures);
         _svrFactory.setProperties(props);
+        if (addressingEnabled) {
+            _svrFactory.getInInterceptors().add(new DecoupledFaultHandler());
+            _svrFactory.getOutInterceptors().add(new AddressingInterceptor());
+            _svrFactory.getOutFaultInterceptors().add(new AddressingInterceptor());
+        }
         _svrFactory.getInInterceptors().add(new LoggingInInterceptor());
         _svrFactory.getInInterceptors().add(new org.apache.cxf.binding.soap.saaj.SAAJInInterceptor());
         _svrFactory.getInInterceptors().add(new org.apache.cxf.binding.soap.interceptor.SoapActionInInterceptor());

@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.jws.HandlerChain;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.BindingType;
@@ -41,7 +40,6 @@ import org.switchyard.component.soap.InboundHandler;
 @WebServiceProvider
 @ServiceMode(Mode.MESSAGE)
 @BindingType(SOAPBinding.SOAP12HTTP_BINDING) // Actually accepts both 1.1 and 1.2; needs to be present for ws-security to work.
-@HandlerChain(file="jaxws-handlers.xml")
 public class BaseWebService implements Provider<SOAPMessage> {
 
     private static String ACTION_EQUALS = "action=";

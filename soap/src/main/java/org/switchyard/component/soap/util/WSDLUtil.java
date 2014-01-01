@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
+import javax.wsdl.Fault;
 import javax.wsdl.Import;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
@@ -548,14 +549,14 @@ outer:      while (services.hasNext()) {
      *
      * @param port The WSDL service port.
      * @param operationName The SOAP Operation element QName.
-     * @param targetNamespace The target namespace.
      * @param documentStyle true if it is 'document', false if 'rpc'.
      * @return the input action value.
      */
-    public static String getInputAction(final Port port, final QName operationName, String targetNamespace, Boolean documentStyle) {
+    public static String getInputAction(final Port port, final QName operationName, Boolean documentStyle) {
         // Overloaded methods not supported
         Operation operation = getOperationByElement(port, operationName, documentStyle);
         String action = null;
+        String targetNamespace = operationName.getNamespaceURI();
         for (QName attribute : (Set<QName>)operation.getInput().getExtensionAttributes().keySet()) {
             if (attribute.equals(WSDL_ACTION_QNAME)) {
                 Object value = operation.getInput().getExtensionAttribute(WSDL_ACTION_QNAME);
@@ -586,14 +587,14 @@ outer:      while (services.hasNext()) {
      *
      * @param port The WSDL service port.
      * @param operationName The SOAP Operation element QName.
-     * @param targetNamespace The target namespace.
      * @param documentStyle true if it is 'document', false if 'rpc'.
      * @return the output action value.
      */
-    public static String getOutputAction(final Port port, final QName operationName, String targetNamespace, Boolean documentStyle) {
+    public static String getOutputAction(final Port port, final QName operationName, Boolean documentStyle) {
         // Overloaded methods not supported
         Operation operation = getOperationByElement(port, operationName, documentStyle);
         String action = null;
+        String targetNamespace = operationName.getNamespaceURI();
 
         for (QName attribute : (Set<QName>)operation.getOutput().getExtensionAttributes().keySet()) {
             if (attribute.equals(WSDL_ACTION_QNAME)) {
@@ -625,28 +626,35 @@ outer:      while (services.hasNext()) {
      *
      * @param port The WSDL service port.
      * @param operationName The SOAP Operation element QName.
-     * @param targetNamespace The target namespace.
      * @param faultName The fault name.
      * @param documentStyle true if it is 'document', false if 'rpc'.
      * @return the fault action value.
      */
-    public static String getFaultAction(final Port port, final QName operationName, String targetNamespace, String faultName, Boolean documentStyle) {
+    public static String getFaultAction(final Port port, final QName operationName, String faultName, Boolean documentStyle) {
         // Overloaded methods not supported
         Operation operation = getOperationByElement(port, operationName, documentStyle);
-        String action = null;
 
         if (operation.getFault(faultName) == null) {
             throw SOAPMessages.MESSAGES.faultNameNotFoundOnOperation(faultName, operationName.getLocalPart());
         }
+        return getFaultAction(operation.getFault(faultName), port, operationName);
 
-        for (QName attribute : (Set<QName>)operation.getFault(faultName).getExtensionAttributes().keySet()) {
-            if (attribute.equals(WSDL_ACTION_QNAME)) {
-                Object value = operation.getFault(faultName).getExtensionAttribute(WSDL_ACTION_QNAME);
-                if (value != null) {
-                    action = ((QName)value).getLocalPart();
-                    break;
-                }
-            }
+    }
+
+    /**
+     * Get the fault action value for a given operation.
+     *
+     * @param fault The WSDL Fault.
+     * @param port The WSDL service port.
+     * @param operationName The SOAP Operation element QName.
+     * @return the fault action value.
+     */
+    public static String getFaultAction(final Fault fault, final Port port, final QName operationName) {
+        String action = null;
+        String targetNamespace = operationName.getNamespaceURI();
+        Object value = fault.getExtensionAttribute(WSDL_ACTION_QNAME);
+        if (value != null) {
+            action = ((QName)value).getLocalPart();
         }
 
         if (action == null) {
@@ -655,10 +663,26 @@ outer:      while (services.hasNext()) {
             String delimiter = targetNamespace.startsWith(SCHEME_URN) ? STR_COLON : STR_SLASH;
             String namespace = targetNamespace.endsWith(delimiter) ? targetNamespace.substring(0, targetNamespace.length()-2) : targetNamespace;
             action = namespace + delimiter + port.getBinding().getPortType().getQName().getLocalPart() + delimiter
-                            + operationName.getLocalPart() + delimiter + STR_FAULT + delimiter + faultName;
+                            + operationName.getLocalPart() + delimiter + STR_FAULT + delimiter + fault.getName();
         }
 
         return action;
+    }
+
+    /**
+     * Get the fault QName.
+     *
+     * @param operation The WSDL operation.
+     * @param faultName the name of the Fault
+     * @return the fault QName or null.
+     */
+    public static QName getFaultQName(final Operation operation, final String faultName) {
+        Fault fault = operation.getFault(faultName);
+        QName qName = null;
+        if (fault != null) {
+            qName = fault.getMessage().getQName();
+        }
+        return qName;
     }
 
     /**

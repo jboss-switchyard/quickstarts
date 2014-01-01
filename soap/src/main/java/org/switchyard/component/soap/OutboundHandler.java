@@ -16,7 +16,6 @@ package org.switchyard.component.soap;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
@@ -24,22 +23,23 @@ import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
-import javax.xml.ws.handler.Handler;
+import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.MTOMFeature;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.jaxws.DispatchImpl;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 import org.jboss.logging.Logger;
+import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
@@ -137,25 +137,22 @@ public class OutboundHandler extends BaseServiceHandler {
                 // this does not return a proper qualified Fault element and has no Detail so deferring for now
                 // _dispatcher.getRequestContext().put("jaxws.response.throwExceptionIfSOAPFault", Boolean.FALSE);
 
-                Binding binding = _dispatcher.getBinding();
-                List<Handler> handlers = binding.getHandlerChain();
-                handlers.add(new OutboundResponseHandler());
-
+                Client client = ((DispatchImpl)_dispatcher).getClient();
                 if (_feature.isAddressingEnabled()) {
                     // Add handler to process WS-A headers
-                    handlers.add(new AddressingHandler());
+                    client.getOutInterceptors().add(new AddressingInterceptor());
+                    client.getOutFaultInterceptors().add(new AddressingInterceptor());
                 } else {
                     // Defaulting to use soapAction property in request header
                     _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
                 }
-                binding.setHandlerChain(handlers);
 
                 if (_config.getEndpointAddress() != null) {
                     _dispatcher.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, _config.getEndpointAddress());
                 }
 
                 Integer timeout = _config.getTimeout();
-                HTTPConduit conduit = (HTTPConduit)((DispatchImpl)_dispatcher).getClient().getConduit();
+                HTTPConduit conduit = (HTTPConduit)client.getConduit();
                 // Proxy authentication
                 if (_config.getProxyConfig() != null) {
                     HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
@@ -253,7 +250,8 @@ public class OutboundHandler extends BaseServiceHandler {
                 oneWay = WSDLUtil.isOneWay(_wsdlPort, firstBodyElement, _documentStyle);
 
                 if (_feature.isAddressingEnabled()) {
-                    _dispatcher.getRequestContext().put(SOAPUtil.SWITCHYARD_CONTEXT, exchange.getContext());
+                    Context context = exchange.getContext();
+                    _dispatcher.getRequestContext().put(SOAPUtil.SWITCHYARD_CONTEXT, context);
                     // It is a one way if a replyto address is set
                     if ((exchange.getContext().getPropertyValue(SOAPUtil.WSA_REPLYTO_STR) != null) 
                         || (exchange.getContext().getPropertyValue(SOAPUtil.WSA_REPLYTO_STR.toLowerCase()) != null)) {
@@ -268,11 +266,11 @@ public class OutboundHandler extends BaseServiceHandler {
                 throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
             }
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Outbound ---> Request:[" + SOAPUtil.soapMessageToString(request) + "]" + (oneWay ? " oneWay " : ""));
+                LOGGER.trace("Outbound ---> Request:[" + _referenceName + "][" + SOAPUtil.soapMessageToString(request) + "]" + (oneWay ? " oneWay " : ""));
             }
             SOAPMessage response = invokeService(request, oneWay, action);
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Outbound <--- Response:[" + SOAPUtil.soapMessageToString(response) + "]");
+                LOGGER.trace("Outbound <--- Response:[" + _referenceName + "][" + SOAPUtil.soapMessageToString(response) + "]");
             }
             if (response != null) {
                 // This property vanishes once message composer processes this message
@@ -286,9 +284,9 @@ public class OutboundHandler extends BaseServiceHandler {
                         faultInfo.copyFaultInfo(response);
                         bindingData.setSOAPFaultInfo(faultInfo);
                     }
-                    String status = (String)response.getProperty(BaseHandler.STATUS);
-                    if (!hasFault && (status != null)) {
-                        bindingData.setStatus(Integer.valueOf(status));
+                    Integer status = (Integer)_dispatcher.getResponseContext().get(MessageContext.HTTP_RESPONSE_CODE);
+                    if (status != null) {
+                        bindingData.setStatus(status);
                     }
                     message = _messageComposer.compose(bindingData, exchange);
                 } catch (Exception e) {

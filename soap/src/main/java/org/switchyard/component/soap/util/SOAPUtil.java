@@ -34,11 +34,10 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.handler.MessageContext.Scope;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
@@ -173,9 +172,24 @@ public final class SOAPUtil {
     public static final String WSA_RELATESTO_STR = WSA_RELATESTO_QNAME.toString();
 
     /**
+     * The WS-A MessageID QName String.
+     */
+    public static final String WSA_MESSAGEID_STR = WSA_MESSAGEID_QNAME.toString();
+
+    /**
      * The WS-A To QName String.
      */
     public static final String WSA_TO_STR = WSA_TO_QNAME.toString();
+
+    /**
+     * Http status code.
+     */
+    public static final String STATUS = "org.switchyard.http.status";
+
+    /**
+     * Default fault response code.
+     */
+    public static final Integer DEFAULT_FAULT_RESONSE_CODE = 500;
 
     private static final boolean RETURN_STACK_TRACES = false;
     private static final String INDENT_FEATURE = "{http://xml.apache.org/xslt}indent-amount";
@@ -186,6 +200,10 @@ public final class SOAPUtil {
     /** SOAP Message Factory holder. */
     private static final MessageFactory SOAP11_MESSAGE_FACTORY;
     private static final MessageFactory SOAP12_MESSAGE_FACTORY;
+
+    /** SOAP Factory holder. */
+    private static final SOAPFactory SOAP11_FACTORY;
+    private static final SOAPFactory SOAP12_FACTORY;
 
     private SOAPUtil() {
     }
@@ -244,69 +262,6 @@ public final class SOAPUtil {
             }
         }
         return action;
-    }
-
-    /**
-     * Add/Replace all WS-A headers if found on the context.
-     *
-     * @param soapContext The SOAPMessageContext
-     * @return The modified envelope
-     * @throws SOAPException If the envelope could not be read
-     */
-    public static SOAPEnvelope addReplaceAddressingHeaders(SOAPMessageContext soapContext) throws SOAPException {
-        SOAPEnvelope soapEnvelope = soapContext.getMessage().getSOAPPart().getEnvelope();
-        Context context = (Context)soapContext.get(SWITCHYARD_CONTEXT);
-        if (context != null) {
-            soapEnvelope = addReplaceHeader(soapEnvelope, context, WSA_ACTION_STR);
-            soapEnvelope = addReplaceHeader(soapEnvelope, context, WSA_FROM_STR);
-            soapEnvelope = addReplaceHeader(soapEnvelope, context, WSA_TO_STR);
-            soapEnvelope = addReplaceHeader(soapEnvelope, context, WSA_REPLYTO_STR);
-            soapEnvelope = addReplaceHeader(soapEnvelope, context, WSA_FAULTTO_STR);
-            soapEnvelope = addReplaceHeader(soapEnvelope, context, WSA_RELATESTO_STR);
-        }
-        return soapEnvelope;
-    }
-
-    /**
-     * Replace a header node if the envelope has one or else add it.
-     *
-     * @param soapEnvelope The SOAPEnvelope
-     * @param context The SwitchYard Context
-     * @param property The context property
-     * @return The modified envelope
-     * @throws SOAPException If the envelope could not be read
-     */
-    public static SOAPEnvelope addReplaceHeader(SOAPEnvelope soapEnvelope, Context context, String property) throws SOAPException {
-        Node header = (Node)context.getPropertyValue(property);
-        if (header == null) {
-            // When a ReplyTo header was added in Camel messgae header JAX-WS did not generate a MessageID
-            // and ReplyTo headers. So allow lower case replyto header to be set in Camel
-            header = (Node)context.getPropertyValue(property.toLowerCase());
-        }
-        if (header != null) {
-            NodeList headers = soapEnvelope.getHeader().getElementsByTagNameNS(header.getNamespaceURI(), header.getLocalName());
-            if (headers.getLength() == 1) {
-                ((javax.xml.soap.Node)headers.item(0)).detachNode();
-            }
-            Node domNode = soapEnvelope.getHeader().getOwnerDocument().importNode((Node)header, true);
-            soapEnvelope.getHeader().appendChild(domNode);
-        }
-        return soapEnvelope;
-    }
-
-    /**
-     * Set the WS-A MessageID to context.
-     *
-     * @param context The SOAPMessageContext
-     * @throws SOAPException If the envelope could not be read
-     */
-    public static void setMessageIDtoContext(SOAPMessageContext context) throws SOAPException {
-        SOAPEnvelope soapEnvelope = context.getMessage().getSOAPPart().getEnvelope();
-        String messageID = getMessageID(soapEnvelope);
-        if (messageID != null) {
-            context.put(WSA_MESSAGEID_QNAME.getLocalPart(), messageID);
-            context.setScope(WSA_MESSAGEID_QNAME.getLocalPart(), Scope.APPLICATION);
-        }
     }
 
     /**
@@ -496,6 +451,53 @@ public final class SOAPUtil {
     }
 
     /**
+     * Generates a SOAP 1.1 or 1.2 Fault based on binding id and Exception passed.
+     *
+     * @param th The Exception
+     * @param bindingId SOAPBinding type
+     * @param detail Fault detail QName
+     * @return The SOAP Fault
+     * @throws SOAPException If the Fault could not be generated
+     */
+    public static SOAPFault createFault(final Throwable th, final String bindingId, final QName detail) throws SOAPException {
+        SOAPFault fault = null;
+        if (bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING) || bindingId.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+            fault = createSOAP12Fault(th);
+        } else {
+            fault = createSOAP11Fault(th);
+        }
+        if (detail !=  null) {
+            fault.addDetail().addDetailEntry(detail);
+        }
+        return fault;
+    }
+
+    private static SOAPFault createSOAP11Fault(final Throwable th) throws SOAPException {
+        return createFault(th, SOAP11_FACTORY, SOAP11_SERVER_FAULT_TYPE);
+    }
+
+    private static SOAPFault createSOAP12Fault(final Throwable th) throws SOAPException {
+        return createFault(th, SOAP12_FACTORY, SOAP12_RECEIVER_FAULT_TYPE);
+    }
+
+    private static SOAPFault createFault(final Throwable th, SOAPFactory factory, final QName faultQname) throws SOAPException {
+        if (LOGGER.isDebugEnabled()) {
+            final StringWriter sw = new StringWriter();
+            final PrintWriter pw = new PrintWriter(sw);
+            th.printStackTrace(pw);
+            pw.flush();
+            pw.close();
+            LOGGER.debug(sw.toString());
+        }
+        String message = th.getMessage();
+        if (message == null) {
+            message = th.toString();
+        }
+        SOAPFault fault = factory.createFault(message, faultQname);
+        return fault;
+    }
+
+    /**
      * Create a new document based on a SOAP Message.
      * @param soapRes the SOAP Message
      * @return the new document
@@ -599,19 +601,25 @@ public final class SOAPUtil {
 
     static {
         MessageFactory soapMessageFactory = null;
+        SOAPFactory soapFactory = null;
         try {
             soapMessageFactory = MessageFactory.newInstance();
+            soapFactory = SOAPFactory.newInstance();
         } catch (final SOAPException soape) {
             SOAPLogger.ROOT_LOGGER.couldNotInstantiateSOAP11MessageFactory(soape);
         }
         SOAP11_MESSAGE_FACTORY = soapMessageFactory;
+        SOAP11_FACTORY = soapFactory;
 
         soapMessageFactory = null;
+        soapFactory = null;
         try {
             soapMessageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+            soapFactory = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
         } catch (final SOAPException soape) {
             SOAPLogger.ROOT_LOGGER.couldNotInstantiateSOAP12MessageFactory(soape);
         }
         SOAP12_MESSAGE_FACTORY = soapMessageFactory;
+        SOAP12_FACTORY = soapFactory;
     }
 }

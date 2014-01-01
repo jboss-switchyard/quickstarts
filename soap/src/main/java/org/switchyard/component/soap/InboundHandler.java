@@ -14,6 +14,7 @@
  
 package org.switchyard.component.soap;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.Set;
 
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
+import javax.wsdl.Fault;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
@@ -32,6 +34,7 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.MTOMFeature;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
@@ -41,7 +44,6 @@ import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.SwitchYardException;
 import org.switchyard.component.common.DeliveryException;
 import org.switchyard.component.common.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
@@ -70,7 +72,6 @@ public class InboundHandler extends BaseServiceHandler {
 
     private static final Logger LOGGER = Logger.getLogger(InboundHandler.class);
     private static final long DEFAULT_TIMEOUT = 15000;
-    private static final int DEFAULT_FAULT_RESONSE_CODE = 500;
     private static final String MESSAGE_NAME = "org.switchyard.soap.messageName";
 
     private final SOAPBindingModel _config;
@@ -88,6 +89,7 @@ public class InboundHandler extends BaseServiceHandler {
     private String _targetNamespace;
     private Feature _feature = new Feature();
     private Map<String, Operation> _operationsMap = new HashMap<String, Operation>();
+    private Map<String, String> _faultsMap = new HashMap<String, String>();
 
     private static final ThreadLocal<Set<Credential>> CREDENTIALS = new ThreadLocal<Set<Credential>>();
 
@@ -159,8 +161,12 @@ public class InboundHandler extends BaseServiceHandler {
                 @SuppressWarnings("unchecked")
                 List<BindingOperation> bindingOperations = _wsdlPort.getBinding().getBindingOperations();
                 for (BindingOperation bindingOp : bindingOperations) {
-                    String inputAction = WSDLUtil.getInputAction(_wsdlPort, new QName(_targetNamespace, bindingOp.getOperation().getName()), _targetNamespace, _documentStyle);
+                    String inputAction = WSDLUtil.getInputAction(_wsdlPort, new QName(_targetNamespace, bindingOp.getOperation().getName()), _documentStyle);
                     _operationsMap.put(inputAction, bindingOp.getOperation());
+                    for (Fault fault : (Collection<Fault>)bindingOp.getOperation().getFaults().values()) {
+                        String faultAction = WSDLUtil.getFaultAction(fault, _wsdlPort, new QName(_targetNamespace, bindingOp.getOperation().getName()));
+                        _faultsMap.put(fault.getName(), faultAction);
+                    }
                 }
             }
 
@@ -246,7 +252,7 @@ public class InboundHandler extends BaseServiceHandler {
                      SOAPMessages.MESSAGES.noSuchOperation(_wsdlPort.getName().toString()));
         }
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Inbound <-- Request:[" + SOAPUtil.soapMessageToString(soapMessage) + "]");
+            LOGGER.trace("Inbound <-- Request:[" + _service.getName() + "][" + SOAPUtil.soapMessageToString(soapMessage) + "]");
         }
         try {
             String action = SOAPUtil.getAddressingAction(soapMessage);
@@ -326,17 +332,25 @@ public class InboundHandler extends BaseServiceHandler {
                 if (SOAPUtil.getFactory(_bindingId) == null) {
                     throw SOAPMessages.MESSAGES.failedToInstantiateSOAPMessageFactory();
                 }
+                if (msgContext != null) {
+                    msgContext.put(SOAPUtil.SWITCHYARD_CONTEXT, exchange.getContext());
+                }
                 SOAPMessage soapResponse;
                 try {
                     SOAPBindingData bindingData = new SOAPBindingData(SOAPUtil.createMessage(_bindingId));
                     soapResponse = _messageComposer.decompose(exchange, bindingData).getSOAPMessage();
-                    if (msgContext != null) {
-                        msgContext.put(BaseHandler.STATUS, bindingData.getStatus());
+                    if ((msgContext != null) && (bindingData.getStatus() != null)) {
+                        msgContext.put(MessageContext.HTTP_RESPONSE_CODE, bindingData.getStatus());
                     }
                 } catch (SOAPException soapEx) {
                     throw soapEx;
                 } catch (Exception ex) {
-                    throw new SwitchYardException(ex);
+                    // The map will contain the exception name only if WS-A is enabled, so no need to check if WS-A is enabled
+                    String faultAction = _faultsMap.get(ex.getClass().getSimpleName());
+                    if ((faultAction != null) && (msgContext != null)) {
+                        msgContext.put(SOAPUtil.WSA_ACTION_STR, faultAction);
+                    }
+                    throw new SOAPFaultException(SOAPUtil.createFault(ex, _bindingId, WSDLUtil.getFaultQName(operation, ex.getClass().getSimpleName())));
                 }
                 if (exchange.getState() == ExchangeState.FAULT && soapResponse.getSOAPBody().getFault() == null) {
                     return handleException(oneWay, 
@@ -344,13 +358,13 @@ public class InboundHandler extends BaseServiceHandler {
                 }
                 
                 if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Inbound --> Response:[" + SOAPUtil.soapMessageToString(soapResponse) + "]");
+                    LOGGER.trace("Inbound --> Response:[" + _service.getName() + "][" + SOAPUtil.soapMessageToString(soapResponse) + "]");
                 }
                 return soapResponse;
             }
         } catch (SOAPException se) {
             if (msgContext != null) {
-                msgContext.put(BaseHandler.STATUS, DEFAULT_FAULT_RESONSE_CODE);
+                msgContext.put(MessageContext.HTTP_RESPONSE_CODE, SOAPUtil.DEFAULT_FAULT_RESONSE_CODE);
             }
             return handleException(oneWay, se);
         }
