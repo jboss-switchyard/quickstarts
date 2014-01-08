@@ -34,7 +34,6 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.dom.DOMSource;
 
 import org.jboss.logging.Logger;
 import org.switchyard.Exchange;
@@ -108,7 +107,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
                     }
                     if (entry != null) {
                         Node detailNode = entry.getParentNode().removeChild(entry);
-                        message.setContent(new DOMSource(detailNode));
+                        message.setContent(detailNode);
                         return message;
                     }
                 }
@@ -182,7 +181,7 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
                 // Expand xop message by inlining Base64 content
                 bodyNode = SOAPUtil.expandXop((Element)bodyNode, attachments);
             }
-            message.setContent(new DOMSource(bodyNode));
+            message.setContent(bodyNode);
         } catch (Exception ex) {
             if (ex instanceof SOAPException) {
                 throw (SOAPException) ex;
