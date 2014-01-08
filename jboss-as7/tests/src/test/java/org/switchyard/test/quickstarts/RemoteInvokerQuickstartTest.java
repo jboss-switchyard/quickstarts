@@ -38,7 +38,7 @@ public class RemoteInvokerQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-remote-invoker");
+        return ArquillianUtil.createJarQSDeployment("switchyard-remote-invoker");
     }
 
     @Test

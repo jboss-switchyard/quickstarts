@@ -46,7 +46,7 @@ public class CamelJMSBindingQuickstartTest {
     public static JavaArchive createDeployment() throws IOException {
         ResourceDeployer.addQueue(QUEUE);
         ResourceDeployer.addPropertiesUser();
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-camel-jms-binding");
+        return ArquillianUtil.createJarQSDeployment("switchyard-camel-jms-binding");
     }
 
     @Test

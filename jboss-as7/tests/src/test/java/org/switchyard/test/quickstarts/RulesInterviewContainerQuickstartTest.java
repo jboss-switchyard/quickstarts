@@ -28,7 +28,7 @@ public class RulesInterviewContainerQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-rules-interview-container");
+        return ArquillianUtil.createJarQSDeployment("switchyard-rules-interview-container");
     }
 
     @Test

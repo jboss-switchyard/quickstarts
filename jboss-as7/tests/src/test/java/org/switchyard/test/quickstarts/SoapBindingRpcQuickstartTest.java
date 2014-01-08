@@ -31,7 +31,7 @@ public class SoapBindingRpcQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-soap-binding-rpc");
+        return ArquillianUtil.createJarQSDeployment("switchyard-soap-binding-rpc");
     }
 
     @Test

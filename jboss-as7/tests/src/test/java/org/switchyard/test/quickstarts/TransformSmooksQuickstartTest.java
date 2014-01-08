@@ -30,7 +30,7 @@ public class TransformSmooksQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-transform-smooks");
+        return ArquillianUtil.createJarQSDeployment("switchyard-transform-smooks");
     }
 
     @Test

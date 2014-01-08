@@ -34,7 +34,7 @@ public class HttpBindingQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-http-binding");
+        return ArquillianUtil.createJarQSDeployment("switchyard-http-binding");
     }
 
     @Test

@@ -28,7 +28,7 @@ public class CamelSqlBindingQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-camel-sql-binding");
+        return ArquillianUtil.createJarQSDeployment("switchyard-camel-sql-binding");
     }
 
     @Test

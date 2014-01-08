@@ -62,225 +62,225 @@
         <!-- Quickstart dependencies -->
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-transform-json</artifactId>
+            <artifactId>switchyard-transform-json</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-transform-smooks</artifactId>
+            <artifactId>switchyard-transform-smooks</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-transform-jaxb</artifactId>
+            <artifactId>switchyard-transform-jaxb</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-transform-xslt</artifactId>
+            <artifactId>switchyard-transform-xslt</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-camel-service</artifactId>
+            <artifactId>switchyard-camel-service</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-bean-service</artifactId>
+            <artifactId>switchyard-bean-service</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-camel-binding</artifactId>
+            <artifactId>switchyard-camel-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-camel-jms-binding</artifactId>
+            <artifactId>switchyard-camel-jms-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-camel-jpa-binding</artifactId>
+            <artifactId>switchyard-camel-jpa-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-camel-ftp-binding</artifactId>
+            <artifactId>switchyard-camel-ftp-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-camel-mail-binding</artifactId>
+            <artifactId>switchyard-camel-mail-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-camel-netty-binding</artifactId>
+            <artifactId>switchyard-camel-netty-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-camel-quartz-binding</artifactId>
+            <artifactId>switchyard-camel-quartz-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-camel-sql-binding</artifactId>
+            <artifactId>switchyard-camel-sql-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-camel-soap-proxy</artifactId>
+            <artifactId>switchyard-camel-soap-proxy</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-ear-deployment-assembly</artifactId>
+            <artifactId>switchyard-ear-deployment-ear-assembly</artifactId>
             <type>ear</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-http-binding</artifactId>
+            <artifactId>switchyard-http-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-remote-invoker</artifactId>
+            <artifactId>switchyard-remote-invoker</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-rest-binding</artifactId>
+            <artifactId>switchyard-rest-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-rules-camel-cbr</artifactId>
+            <artifactId>switchyard-rules-camel-cbr</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-rules-interview</artifactId>
+            <artifactId>switchyard-rules-interview</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-rules-interview-container</artifactId>
+            <artifactId>switchyard-rules-interview-container</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-rules-interview-dtable</artifactId>
+            <artifactId>switchyard-rules-interview-dtable</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-soap-addressing</artifactId>
+            <artifactId>switchyard-soap-addressing</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-soap-attachment</artifactId>
+            <artifactId>switchyard-soap-attachment</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-soap-binding-rpc</artifactId>
+            <artifactId>switchyard-soap-binding-rpc</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-soap-mtom</artifactId>
+            <artifactId>switchyard-soap-mtom</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-bpm-service</artifactId>
+            <artifactId>switchyard-bpm-service</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-bpel-service-say-hello</artifactId>
+            <artifactId>switchyard-bpel-say-hello</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-bpel-service-loan-approval</artifactId>
+            <artifactId>switchyard-bpel-loan-approval</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-bpel-service-jms-binding</artifactId>
+            <artifactId>switchyard-bpel-jms-binding</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-validate-xml</artifactId>
+            <artifactId>switchyard-validate-xml</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-jca-inflow-hornetq</artifactId>
+            <artifactId>switchyard-jca-inflow-hornetq</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-jca-outbound-hornetq</artifactId>
+            <artifactId>switchyard-jca-outbound-hornetq</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-quickstart-camel-bus-cdi</artifactId>
+            <artifactId>switchyard-camel-bus-cdi</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-orders</artifactId>
+            <artifactId>switchyard-demo-orders</artifactId>
             <type>war</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-policy-transaction</artifactId>
+            <artifactId>switchyard-demo-policy-transaction</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-helpdesk</artifactId>
+            <artifactId>switchyard-demo-helpdesk</artifactId>
             <type>war</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-policy-security-basic</artifactId>
+            <artifactId>switchyard-demo-policy-security-basic</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-policy-security-basic-propagate</artifactId>
+            <artifactId>switchyard-demo-policy-security-basic-propagate</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-policy-security-cert</artifactId>
+            <artifactId>switchyard-demo-policy-security-cert</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-policy-security-saml</artifactId>
+            <artifactId>switchyard-demo-policy-security-saml</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-policy-security-wss-signencrypt</artifactId>
+            <artifactId>switchyard-demo-policy-security-wss-signencrypt</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-quickstart-demo-policy-security-wss-username</artifactId>
+            <artifactId>switchyard-demo-policy-security-wss-username</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

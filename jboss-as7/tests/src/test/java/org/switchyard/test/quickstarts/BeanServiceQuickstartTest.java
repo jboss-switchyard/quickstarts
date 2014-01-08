@@ -39,7 +39,7 @@ public class BeanServiceQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-bean-service");
+        return ArquillianUtil.createJarQSDeployment("switchyard-bean-service");
     }
 
     @Test

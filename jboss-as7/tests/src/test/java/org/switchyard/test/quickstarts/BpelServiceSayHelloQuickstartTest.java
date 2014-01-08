@@ -37,7 +37,7 @@ public class BpelServiceSayHelloQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-bpel-service-say-hello");
+        return ArquillianUtil.createJarQSDeployment("switchyard-bpel-say-hello");
     }
 
     @Test

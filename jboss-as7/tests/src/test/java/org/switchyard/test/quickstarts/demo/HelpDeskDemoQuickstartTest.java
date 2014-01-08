@@ -32,7 +32,7 @@ public class HelpDeskDemoQuickstartTest {
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
-        return ArquillianUtil.createWarDemoDeployment("switchyard-quickstart-demo-helpdesk");
+        return ArquillianUtil.createWarDemoDeployment("switchyard-demo-helpdesk");
     }
 
     @Test

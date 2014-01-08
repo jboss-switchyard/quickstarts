@@ -28,7 +28,7 @@ public class CamelQuartzBindingQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-camel-quartz-binding");
+        return ArquillianUtil.createJarQSDeployment("switchyard-camel-quartz-binding");
     }
 
     @Test

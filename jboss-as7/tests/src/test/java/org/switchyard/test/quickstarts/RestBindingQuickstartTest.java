@@ -35,7 +35,7 @@ public class RestBindingQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-rest-binding");
+        return ArquillianUtil.createJarQSDeployment("switchyard-rest-binding");
     }
 
     @Test

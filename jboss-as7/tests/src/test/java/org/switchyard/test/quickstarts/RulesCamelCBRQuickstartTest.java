@@ -29,7 +29,7 @@ public class RulesCamelCBRQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-rules-camel-cbr");
+        return ArquillianUtil.createJarQSDeployment("switchyard-rules-camel-cbr");
     }
 
     @Test

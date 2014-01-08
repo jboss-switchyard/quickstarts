@@ -28,7 +28,7 @@ public class CamelNettyBindingQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-camel-netty-binding");
+        return ArquillianUtil.createJarQSDeployment("switchyard-camel-netty-binding");
     }
 
     @Test

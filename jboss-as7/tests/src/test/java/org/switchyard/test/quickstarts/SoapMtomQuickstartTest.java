@@ -45,7 +45,7 @@ public class SoapMtomQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-soap-mtom");
+        return ArquillianUtil.createJarQSDeployment("switchyard-soap-mtom");
     }
 
     @Test

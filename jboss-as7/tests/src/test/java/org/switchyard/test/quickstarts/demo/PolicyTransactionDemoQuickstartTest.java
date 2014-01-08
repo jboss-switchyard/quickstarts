@@ -56,7 +56,7 @@ public class PolicyTransactionDemoQuickstartTest {
         ResourceDeployer.addQueue(QUEUE_OUT_B);
         ResourceDeployer.addQueue(QUEUE_OUT_C);
         ResourceDeployer.addPropertiesUser();
-        return ArquillianUtil.createJarDemoDeployment("switchyard-quickstart-demo-policy-transaction");
+        return ArquillianUtil.createJarDemoDeployment("switchyard-demo-policy-transaction");
     }
 
     @Before

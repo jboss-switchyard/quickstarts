@@ -47,7 +47,7 @@ public class BpelServiceJmsBindingQuickstartTest {
         ResourceDeployer.addQueue(REQUEST_QUEUE);
         ResourceDeployer.addQueue(REPLY_QUEUE);
         ResourceDeployer.addPropertiesUser();
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-bpel-service-jms-binding");
+        return ArquillianUtil.createJarQSDeployment("switchyard-bpel-jms-binding");
     }
 
     @Test

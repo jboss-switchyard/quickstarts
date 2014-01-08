@@ -32,7 +32,7 @@ public class ValidateXmlQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-validate-xml");
+        return ArquillianUtil.createJarQSDeployment("switchyard-validate-xml");
     }
 
     @Test

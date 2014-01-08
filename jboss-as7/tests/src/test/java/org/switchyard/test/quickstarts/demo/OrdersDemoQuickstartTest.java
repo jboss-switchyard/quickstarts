@@ -37,7 +37,7 @@ public class OrdersDemoQuickstartTest {
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
-        return ArquillianUtil.createWarDemoDeployment("switchyard-quickstart-demo-orders");
+        return ArquillianUtil.createWarDemoDeployment("switchyard-demo-orders");
     }
 
     @Test

@@ -30,7 +30,7 @@ public class RulesInterviewQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-rules-interview");
+        return ArquillianUtil.createJarQSDeployment("switchyard-rules-interview");
     }
 
     @Test

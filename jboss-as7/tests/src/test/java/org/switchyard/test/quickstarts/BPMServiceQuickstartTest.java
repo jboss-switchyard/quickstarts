@@ -32,7 +32,7 @@ public class BPMServiceQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-bpm-service");
+        return ArquillianUtil.createJarQSDeployment("switchyard-bpm-service");
     }
 
     @Test

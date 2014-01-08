@@ -41,7 +41,7 @@ public class CamelJpaBindingQuickstartTest {
 
     @Deployment(testable = true)
     public static JavaArchive createDeployment() throws IOException {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-camel-jpa-binding");
+        return ArquillianUtil.createJarQSDeployment("switchyard-camel-jpa-binding");
     }
 
     private static final String namespace = "urn:switchyard-quickstart:camel-jpa-binding:0.1.0";

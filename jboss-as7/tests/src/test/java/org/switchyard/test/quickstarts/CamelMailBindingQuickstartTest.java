@@ -29,7 +29,7 @@ public class CamelMailBindingQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
-        JavaArchive quickstart = ArquillianUtil.createJarQSDeployment("switchyard-quickstart-camel-mail-binding");
+        JavaArchive quickstart = ArquillianUtil.createJarQSDeployment("switchyard-camel-mail-binding");
         // copy mock javamail to archive to use mock mail providers instead of real
         quickstart.addAsResource(Mailbox.class.getResource("/META-INF/javamail.providers"),
             "/META-INF/javamail.providers");

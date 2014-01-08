@@ -32,7 +32,7 @@ public class PolicySecurityCertDemoQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarDemoDeployment("switchyard-quickstart-demo-policy-security-cert");
+        return ArquillianUtil.createJarDemoDeployment("switchyard-demo-policy-security-cert");
     }
 
     @Test

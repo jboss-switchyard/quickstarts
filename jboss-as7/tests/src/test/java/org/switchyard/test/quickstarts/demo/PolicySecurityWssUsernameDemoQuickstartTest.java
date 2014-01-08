@@ -32,7 +32,7 @@ public class PolicySecurityWssUsernameDemoQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarDemoDeployment("switchyard-quickstart-demo-policy-security-wss-username");
+        return ArquillianUtil.createJarDemoDeployment("switchyard-demo-policy-security-wss-username");
     }
 
     @Test

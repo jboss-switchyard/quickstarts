@@ -29,7 +29,7 @@ public class CamelCdiBusQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-camel-bus-cdi");
+        return ArquillianUtil.createJarQSDeployment("switchyard-camel-bus-cdi");
     }
 
     @Test

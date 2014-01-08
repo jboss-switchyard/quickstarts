@@ -37,7 +37,7 @@ public class BpelServiceLoanApprovalQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-bpel-service-loan-approval");
+        return ArquillianUtil.createJarQSDeployment("switchyard-bpel-loan-approval");
     }
 
     @Test

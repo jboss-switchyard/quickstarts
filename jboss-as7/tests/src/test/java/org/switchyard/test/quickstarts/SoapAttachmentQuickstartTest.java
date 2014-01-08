@@ -58,7 +58,7 @@ public class SoapAttachmentQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-soap-attachment");
+        return ArquillianUtil.createJarQSDeployment("switchyard-soap-attachment");
     }
 
     @Test

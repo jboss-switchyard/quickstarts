@@ -39,7 +39,7 @@ public class SoapAddressingQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-quickstart-soap-addressing");
+        return ArquillianUtil.createJarQSDeployment("switchyard-soap-addressing");
     }
 
     @Test
