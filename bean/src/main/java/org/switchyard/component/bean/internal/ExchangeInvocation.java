@@ -44,7 +44,7 @@ public class ExchangeInvocation implements ReferenceInvocation {
         }
         _exchange.send(_inMessage);
         if (_replyHandler.isFault()) {
-            Object error = _replyHandler.getExchange().getMessage();
+            Object error = _replyHandler.getExchange().getMessage().getContent();
 
             // Handling case where fault content is not an exception
             if (!Throwable.class.isAssignableFrom(error.getClass())) {
@@ -81,7 +81,7 @@ public class ExchangeInvocation implements ReferenceInvocation {
 
     @Override
     public Object getProperty(String name) {
-        return _exchange.getContext().getProperty(name);
+        return _exchange.getContext().getPropertyValue(name);
     }
     
     boolean isNew() {

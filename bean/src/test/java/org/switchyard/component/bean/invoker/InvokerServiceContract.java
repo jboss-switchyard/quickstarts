@@ -10,4 +10,6 @@ public interface InvokerServiceContract {
     void getContract(String msg);
     void invokeWithContent(String msg);
     void messageTest(String msg);
+    void declaredException(String msg);
+    void undeclaredException(String msg);
 }

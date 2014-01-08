@@ -112,4 +112,25 @@ public class ReferenceInvokerBean implements InvokerServiceContract {
         Assert.assertEquals(((JavaService)invokerA.getContract()).getJavaInterface(), InvokerReferenceContract.class);
     }
 
+    @Override
+    public void declaredException(String msg) {
+        try {
+            invokerA.newInvocation("declaredException").invoke();
+            Assert.fail("Fault returned on reference invocation not thrown as exception");
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof DummyException);
+        }
+    }
+
+    @Override
+    public void undeclaredException(String msg) {
+        try {
+            invokerA.newInvocation("undeclaredException").invoke();
+            Assert.fail();
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof DummyException);
+        }
+    }
+
+
 }

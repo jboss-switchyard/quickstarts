@@ -49,7 +49,7 @@ public class ReferenceInvokerTest {
     public void invokeReferenceA() {
         MockHandler handlerA = testKit.registerInOnlyService(REFERENCE_A);
         MockHandler handlerB = testKit.registerInOnlyService(REFERENCE_B);
-        invokerService.operation("testA").sendInOnly("testA");
+        invokerService.operation("testA").sendInOut("testA");
         Assert.assertEquals(1, handlerA.getMessages().size());
         Assert.assertEquals(0, handlerB.getMessages().size());
     }
@@ -58,24 +58,24 @@ public class ReferenceInvokerTest {
     public void invokeReferenceB() {
         MockHandler handlerA = testKit.registerInOnlyService(REFERENCE_A);
         MockHandler handlerB = testKit.registerInOnlyService(REFERENCE_B);
-        invokerService.operation("testB").sendInOnly("testB");
+        invokerService.operation("testB").sendInOut("testB");
         Assert.assertEquals(0, handlerA.getMessages().size());
         Assert.assertEquals(1, handlerB.getMessages().size());
     }
     
     @Test
     public void invokeNonexistentReference() {
-        invokerService.operation("testZ").sendInOnly("testZ");
+        invokerService.operation("testZ").sendInOut("testZ");
     }
     
     @Test
     public void invokeWithoutOperationName() {
-        invokerService.operation("noOperation").sendInOnly("noOperation");
+        invokerService.operation("noOperation").sendInOut("noOperation");
     }
     
     @Test
     public void getContract() {
-        invokerService.operation("getContract").sendInOnly("getContract");
+        invokerService.operation("getContract").sendInOut("getContract");
     }
     
     @Test
@@ -93,6 +93,7 @@ public class ReferenceInvokerTest {
                 exchange.send(reply);
             }
         });
+        invokerService.operation("messageTest").sendInOut("messageTest");
     }
     
     @Test
@@ -105,6 +106,7 @@ public class ReferenceInvokerTest {
                 Assert.assertEquals("content-test-in", exchange.getMessage().getContent());
             }
         });
+        invokerService.operation("invokeWithContent").sendInOut("invokeWithContent");
     }
     
     @Test
@@ -125,6 +127,30 @@ public class ReferenceInvokerTest {
                 exchange.send(reply);
             }
         });
-        invokerService.operation("propertyTest").sendInOnly("propertyTest");
+        invokerService.operation("propertyTest").sendInOut("propertyTest");
+    }
+    
+    @Test
+    public void declaredException() {
+        testKit.registerInOutService(REFERENCE_A, new BaseHandler() {
+            public void handleMessage(Exchange exchange) throws HandlerException {
+                Message reply = exchange.createMessage();
+                reply.setContent(new DummyException(
+                        exchange.getMessage().getContent(String.class)));
+                exchange.sendFault(reply);
+            }
+        });
+        invokerService.operation("declaredException").sendInOut("declaredException");
+    }
+    
+    @Test
+    public void undeclaredException() {
+        testKit.registerInOutService(REFERENCE_A, new BaseHandler() {
+            public void handleMessage(Exchange exchange) throws HandlerException {
+                throw new HandlerException(new DummyException(
+                        exchange.getMessage().getContent(String.class)));
+            }
+        });
+        invokerService.operation("undeclaredException").sendInOut("undeclaredException");
     }
 }
