@@ -24,7 +24,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.switchyard.quickstarts.demos</groupId>
-    <artifactId>switchyard-demos-policy-security-basic-propagate</artifactId>
+    <artifactId>switchyard-demo-policy-security-basic-propagate</artifactId>
     <name>Quickstart Demo : Security Policy : Basic Authentication (+SSL) with Propagation</name>
     <description>Quickstart Demo : Security Policy : Basic Authentication (+SSL) with Propagation</description>
     <licenses>

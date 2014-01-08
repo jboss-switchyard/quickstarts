@@ -24,7 +24,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.switchyard.quickstarts.demos</groupId>
-    <artifactId>switchyard-demos-policy-transaction</artifactId>
+    <artifactId>switchyard-demo-policy-transaction</artifactId>
     <name>Quickstart Demo : Transaction Policy</name>
     <description>Quickstart Demo : Transaction Policy</description>
     <licenses>

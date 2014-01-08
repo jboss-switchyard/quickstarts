@@ -24,7 +24,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.switchyard.quickstarts.demos</groupId>
-    <artifactId>switchyard-demos-helpdesk</artifactId>
+    <artifactId>switchyard-demo-helpdesk</artifactId>
     <packaging>war</packaging>
     <name>Quickstart Demo : Help Desk</name>
     <description>Quickstart Demo : Help Desk</description>

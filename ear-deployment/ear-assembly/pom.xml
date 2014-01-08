@@ -81,7 +81,7 @@
                         </jarModule>
                     </modules>
                     <packagingIncludes>
-                        switchyard-quickstart-*, 
+                        switchyard-ear-*, 
                         lib/*,
                         META-INF/*
                     </packagingIncludes>

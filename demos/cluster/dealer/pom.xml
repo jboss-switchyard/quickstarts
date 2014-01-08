@@ -24,7 +24,7 @@
         <relativePath>../../../pom.xml</relativePath>
     </parent>
     <groupId>org.switchyard.quickstarts.demos</groupId>
-    <artifactId>switchyard-demos-cluster-dealer</artifactId>
+    <artifactId>switchyard-demo-cluster-dealer</artifactId>
     <name>Quickstart Demo: Cluster - Dealer Service</name>
     <description>Quickstart Demo: Cluster - Dealer Service</description>
     <licenses>

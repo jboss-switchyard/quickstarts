@@ -24,7 +24,7 @@
         <relativePath>../../../pom.xml</relativePath>
     </parent>
     <groupId>org.switchyard.quickstarts.demos</groupId>
-    <artifactId>switchyard-demos-transaction-propagation-dealer</artifactId>
+    <artifactId>switchyard-demo-transaction-propagation-dealer</artifactId>
     <name>Quickstart Demo: Remote Transaction Propagation - Dealer Service</name>
     <description>Quickstart Demo: Remote Transaction Propagation - Dealer Service</description>
     <licenses>

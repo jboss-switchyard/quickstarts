@@ -19,11 +19,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.switchyard.quickstarts.demos</groupId>
-        <artifactId>switchyard-demos-multiApp</artifactId>
+        <artifactId>switchyard-demo-multiApp</artifactId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>switchyard-demos-multiApp-web</artifactId>
+    <artifactId>switchyard-demo-multiApp-web</artifactId>
     <packaging>war</packaging>
     <name>Quickstart Demo: Multiple Applications - Web App</name>
     <description>Quickstart Demo: Multiple Applications - Web App</description>
@@ -41,7 +41,7 @@
     <dependencies>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-demos-multiApp-artifacts</artifactId>
+            <artifactId>switchyard-demo-multiApp-artifacts</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

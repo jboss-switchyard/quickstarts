@@ -24,7 +24,7 @@
         <relativePath>../../../pom.xml</relativePath>
     </parent>
     <groupId>org.switchyard.quickstarts.demos</groupId>
-    <artifactId>switchyard-demos-cluster-client</artifactId>
+    <artifactId>switchyard-demo-cluster-client</artifactId>
     <packaging>jar</packaging>
     <name>Quickstart Demo: Cluster - Client</name>
     <description>Quickstart Demo: Cluster - Client</description>

@@ -24,7 +24,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <groupId>org.switchyard.quickstarts.demos</groupId>
-    <artifactId>switchyard-demos-policy-security-cert</artifactId>
+    <artifactId>switchyard-demo-policy-security-cert</artifactId>
     <name>Quickstart Demo : Security Policy : Certificate Authentication (+SSL)</name>
     <description>Quickstart Demo : Security Policy : Certificate Authentication (+SSL)</description>
     <licenses>
