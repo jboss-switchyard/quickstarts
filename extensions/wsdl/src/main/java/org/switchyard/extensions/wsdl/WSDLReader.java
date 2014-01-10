@@ -77,6 +77,7 @@ public class WSDLReader {
     private static final String RESPONSE = "Response";
 
     private Boolean _documentStyle;
+    private String _wsdlURI;
 
     /**
      * Read the WSDL document accessible via the specified
@@ -117,8 +118,12 @@ public class WSDLReader {
      */
     public Element readWSDL(final String wsdlURI) throws WSDLReaderException {
         try {
+            // this is a hack, but it's necessary to avoid making breaking changes to 
+            // the API by requiring the WSDL URI in the constructor
+            if (_wsdlURI == null) {
+                _wsdlURI = wsdlURI;
+            }
             LOGGER.trace("Retrieving document at '" + wsdlURI + "'");
-
             URL url = getURL(wsdlURI);
             InputStream inputStream = url.openStream();
             InputSource inputSource = new InputSource(inputStream);
@@ -491,7 +496,12 @@ outer:  while (tempEl != null) {
         } else {
             URL url;
             try {
-                url = Classes.getResource(path, getClass());
+                if (_wsdlURI.equals(path)) {
+                    url = Classes.getResource(path, getClass());
+                } else {
+                    // we are loading an imported resource, so use relative path
+                    url = Classes.getResource(createRelativePath(_wsdlURI, path), getClass());
+                }
             } catch (IOException ioe) {
                 url = null;
             }
@@ -500,6 +510,17 @@ outer:  while (tempEl != null) {
                 url = localFile.toURI().toURL();
             }
             return url;
+        }
+    }
+    
+    // This method creates a relative path for an imported WSDL (path) based on the URI for 
+    // the importing WSDL (baseURI).
+    String createRelativePath(String baseURI, String path) {
+        int lastPathIdx = baseURI.lastIndexOf('/');
+        if (lastPathIdx > 0) {
+            return baseURI.substring(0, lastPathIdx + 1) + path;
+        } else {
+            return path;
         }
     }
 }
