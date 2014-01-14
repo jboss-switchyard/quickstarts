@@ -134,20 +134,18 @@ public final class WorkItemHandlers {
         if (!registeredNames.contains(HUMAN_TASK) && runtimeManager != null) {
             RuntimeEngine runtimeEngine = runtimeManager.getRuntimeEngine();
             ExternalTaskEventListener listener = new ExternalTaskEventListener();
-            listener.setRuntimeManager(runtimeManager);
             LocalHTWorkItemHandler htwih = new LocalHTWorkItemHandler();
             htwih.setRuntimeManager(runtimeManager);
             // NOTE: Cannot remove next two blocks for SWITCHYARD-1755 yet...
             if (runtimeEngine.getTaskService() instanceof EventService) {
-                ((EventService)runtimeEngine.getTaskService()).registerTaskLifecycleEventListener(listener);
+                ((EventService)runtimeEngine.getTaskService()).registerTaskEventListener(listener);
             }
             if (processRuntime instanceof Disposable) {
                 ((Disposable)processRuntime).addDisposeListener(new DisposeListener() {
                     @Override
                     public void onDispose(RuntimeEngine re) {
                         if (re.getTaskService() instanceof EventService) {
-                            ((EventService)re.getTaskService()).clearTaskLifecycleEventListeners();
-                            ((EventService)re.getTaskService()).clearTasknotificationEventListeners();
+                            ((EventService)re.getTaskService()).clearTaskEventListeners();
                         }
                     }
                 });
