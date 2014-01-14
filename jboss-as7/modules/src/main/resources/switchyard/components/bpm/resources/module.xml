@@ -20,7 +20,14 @@
         <module name="com.google.protobuf"/>
         <module name="org.jboss.logging"/>
         <module name="org.drools" export="true"/>
-        <module name="org.jbpm" export="true"/>
+        <module name="org.jbpm" export="true">
+            <imports>
+                <include path="META-INF/services"/>
+            </imports>
+            <exports>
+                <include path="META-INF/services"/>
+            </exports>
+        </module>
         <module name="org.kie" export="true"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>

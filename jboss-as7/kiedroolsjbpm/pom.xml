@@ -56,13 +56,25 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
-                                    <artifactId>jbpm-persistence-jpa</artifactId>
+                                    <artifactId>jbpm-human-task-audit</artifactId>
                                     <version>${version.jbpm}</version>
                                     <type>jar</type>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-human-task-core</artifactId>
+                                    <version>${version.jbpm}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-kie-services</artifactId>
+                                    <version>${version.jbpm}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-persistence-jpa</artifactId>
                                     <version>${version.jbpm}</version>
                                     <type>jar</type>
                                 </artifactItem>
@@ -184,6 +196,10 @@
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-flow-builder</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-human-task-audit</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
