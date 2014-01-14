@@ -1,15 +1,12 @@
 package org.switchyard.bus.camel;
 
-import java.util.List;
 import java.util.Set;
 import javax.xml.namespace.QName;
-import org.apache.camel.Processor;
 
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageBundle;
-import org.switchyard.ExchangeHandler;
 import org.switchyard.SwitchYardException;
 
 /**
@@ -57,30 +54,6 @@ public interface BusMessages {
      */
     @Message(id = 10803, value = "Failed to create Camel route for service %s")
     SwitchYardException failedToCreateRoute(QName name, @Cause Exception e);
-
-    /**
-     * faultProcessorString method definition.
-     * @param processor processor
-     * @return String
-     */
-    @Message(id = 10804, value = "FaultProcessor [%s]")
-    String faultProcessorString(Processor processor);
-
-    /**
-     * handlerProcessorString method definition.
-     * @param handlers handlers
-     * @return String
-     */
-    @Message(id = 10805, value = "HandlerProcessor [%s]")
-    String handlerProcessorString(List<ExchangeHandler> handlers);
- 
-    /**
-     * providerProcessorString method definition.
-     * @param hashCode hashCode
-     * @return String
-     */
-    @Message(id = 10806, value = "ProviderProcessor@ %d")
-    String providerProcessorString(int hashCode);
 
     /**
      * methodMustBeOverridden method definition.

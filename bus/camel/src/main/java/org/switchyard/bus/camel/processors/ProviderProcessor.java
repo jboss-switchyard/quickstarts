@@ -16,7 +16,6 @@ package org.switchyard.bus.camel.processors;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.switchyard.bus.camel.CamelExchange;
-import org.switchyard.bus.camel.BusMessages;
 
 /**
  * Processor calling service provider.
@@ -31,7 +30,7 @@ public class ProviderProcessor implements Processor {
 
     @Override
     public String toString() {
-        return BusMessages.MESSAGES.providerProcessorString(System.identityHashCode(this));
+        return String.format("ProviderProcessor@ %d", System.identityHashCode(this));
     }
 
 }

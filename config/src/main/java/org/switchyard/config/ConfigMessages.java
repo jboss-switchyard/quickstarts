@@ -1,9 +1,5 @@
 package org.switchyard.config;
 
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.Message;
@@ -21,15 +17,6 @@ public interface ConfigMessages {
      * Default messages.
      */
     ConfigMessages MESSAGES = Messages.getBundle(ConfigMessages.class);
-
-    /**
-     * configurationString method definition.
-     * @param qname qname
-     * @param ids ids
-     * @return Localized string
-     */
-    @Message(id = 11600, value = "Key [_qname=%s, _ids=%s]")
-    String configurationString(QName qname, Map<String,Object> ids);
 
     /**
      * cannotFindMarshaller method definition.

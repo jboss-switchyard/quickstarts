@@ -233,7 +233,7 @@ public final class Configurations {
          */
         @Override
         public String toString() {
-            return ConfigMessages.MESSAGES.configurationString(_qname, _ids);
+            return String.format("Key [_qname=%s, _ids=%s]", _qname, _ids);
         }
 
         /**

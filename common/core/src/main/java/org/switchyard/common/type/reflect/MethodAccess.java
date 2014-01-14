@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.switchyard.common.lang.Strings;
-import org.switchyard.common.CommonCoreMessages;
 
 /**
  * Access via wrapped read and write Methods.
@@ -186,7 +185,8 @@ public final class MethodAccess<T> implements Access<T> {
     public String toString() {
         Class<?> clazz = getType();
         String type = clazz != null ? clazz.getSimpleName() : null;
-        return CommonCoreMessages.MESSAGES.methodAccessString(getName(), type, isReadable(), isWriteable());
+        return String.format("MethodAccess(name=%s, type=%s, readable=%b, writeable=%b)",
+                getName(), type, isReadable(), isWriteable());
     }
 
 }

@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeState;
 import org.switchyard.Property;
-import org.switchyard.admin.AdminMessages;
 import org.switchyard.admin.MessageMetrics;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
@@ -114,9 +113,15 @@ public class MessageMetricsSupport implements MessageMetrics {
     
     @Override
     public String toString() {
-        return AdminMessages.MESSAGES.messageMetricsString(getSuccessCount() + NL,
-                getFaultCount() + NL, getTotalCount() + NL, getAverageProcessingTime() + NL,
-                getMinProcessingTime() + NL, getMaxProcessingTime() + NL,
-                getTotalProcessingTime() + NL);
+        return String.format("Success Count : %s%n" 
+                + "Fault Count   : %s%n" 
+                + "Total Count   : %s%n"
+                + "Avg Time MS   : %s%n"
+                + "Min Time MS   : %s%n"
+                + "Max Time MS   : %s%n"
+                + "Total Time MS : %s%n", getSuccessCount(),
+                getFaultCount(), getTotalCount(), getAverageProcessingTime(),
+                getMinProcessingTime(), getMaxProcessingTime(),
+                getTotalProcessingTime());
     }
 }

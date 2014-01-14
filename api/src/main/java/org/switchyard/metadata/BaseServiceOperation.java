@@ -16,7 +16,6 @@ package org.switchyard.metadata;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.APIMessages;
 import org.switchyard.ExchangePattern;
 
 /**
@@ -114,7 +113,7 @@ public class BaseServiceOperation implements ServiceOperation {
 
     @Override
     public String toString() {
-        return APIMessages.MESSAGES.baseServiceOperationString(_name, _pattern, getInputType(), 
+        return String.format("%s : %s  : [%s, %s, %s]", _name, _pattern, getInputType(), 
                 getOutputType(), getFaultType());
     }
     

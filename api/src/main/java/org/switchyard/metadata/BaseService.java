@@ -17,8 +17,6 @@ package org.switchyard.metadata;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.switchyard.APIMessages;
-
 /**
  * Base implementation of ServiceInterface.  Specific interface types such as
  * Java and WSDL will extend this class or provide their own implementation of
@@ -108,7 +106,7 @@ public class BaseService implements ServiceInterface {
 
     @Override
     public String toString() {
-        return APIMessages.MESSAGES.baseInterfaceString(_type, _operations);
+        return String.format("BaseServiceInterface [type=%s, operations=%s]", _type, _operations);
     }
     
     protected void setType(String type) {

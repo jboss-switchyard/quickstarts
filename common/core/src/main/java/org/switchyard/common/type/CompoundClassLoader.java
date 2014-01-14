@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.switchyard.common.CommonCoreMessages;
-
 /**
  * A ClassLoader implementation that iterates over a collection of other ClassLoaders until it finds everything it's looking for.
  *
@@ -136,6 +134,6 @@ public class CompoundClassLoader extends ClassLoader {
 
     @Override
     public String toString() {
-        return CommonCoreMessages.MESSAGES.compoundClassLoaderString(_loaders);
+        return String.format("CompoundClassloader %s", _loaders);
     }
 }

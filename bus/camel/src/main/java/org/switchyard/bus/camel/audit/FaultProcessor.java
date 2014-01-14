@@ -20,7 +20,6 @@ import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.jboss.logging.Logger;
 import org.switchyard.bus.camel.CamelExchange;
 import org.switchyard.bus.camel.BusLogger;
-import org.switchyard.bus.camel.BusMessages;
 
 /**
  * This processor catches exceptions from camel thrown during handling fault replies
@@ -74,7 +73,7 @@ public class FaultProcessor extends DelegateAsyncProcessor {
 
     @Override
     public String toString() {
-        return BusMessages.MESSAGES.faultProcessorString(getProcessor());
+        return String.format("FaultProcessor [%s]", getProcessor());
     }
 
 }

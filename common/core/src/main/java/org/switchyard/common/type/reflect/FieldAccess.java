@@ -17,7 +17,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import org.switchyard.common.lang.Strings;
-import org.switchyard.common.CommonCoreMessages;
 
 /**
  * Access via a wrapped Field.
@@ -132,7 +131,8 @@ public final class FieldAccess<T> implements Access<T> {
     public String toString() {
         Class<?> clazz = getType();
         String type = clazz != null ? clazz.getSimpleName() : null;
-        return CommonCoreMessages.MESSAGES.fieldAccessString(getName(), type, isReadable(), isWriteable());
+        return String.format("FieldAccess(name=%s, type=%s, readable=%b, writeable=%b)", 
+                getName(), type, isReadable(), isWriteable());
     }
 
 }
