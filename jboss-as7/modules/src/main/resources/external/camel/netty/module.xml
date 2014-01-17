@@ -23,5 +23,6 @@
         <module name="javax.api"/>
         <module name="org.jboss.netty"/>
         <module name="org.apache.camel.core"/>
+        <module name="org.apache.commons.pool"/>
     </dependencies>
 </module>
