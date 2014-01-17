@@ -17,10 +17,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.jms.BytesMessage;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.milyn.io.StreamUtils;
 import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
@@ -59,13 +59,11 @@ public final class OrderIntakeClient {
             producer.send(hqMixIn.createJMSMessage(orderTxt));
             MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(ORDERACK_QUEUE_NAME));
             System.out.println("Order submitted ... waiting for reply.");
-            BytesMessage reply = (BytesMessage)consumer.receive(3000);
+            TextMessage reply = (TextMessage)consumer.receive(3000);
             if (reply == null) {
                 System.out.println("No reply received.");
             } else {
-                byte[] buf = new byte[1024];
-                int count = reply.readBytes(buf);
-                String str = new String(buf, 0, count);
+                String str = reply.getText();
                 System.out.println("Received reply" + "\n"
                         + "----------------------------\n"
                         + str
