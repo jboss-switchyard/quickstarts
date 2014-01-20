@@ -24,6 +24,7 @@ import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.interceptor.OneWayProcessorInterceptor;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
@@ -85,6 +86,7 @@ public final class Interceptors {
                 for (org.apache.cxf.endpoint.Endpoint e : ((EndpointImpl)o).getService().getEndpoints().values()) {
                     checkAddressingEnabled(e);
                     e.getInInterceptors().add(new SwitchYardURIMappingInterceptor());
+                    e.getInInterceptors().add(new SwitchYardDispatchInterceptor());
                     e.getInInterceptors().add(new SwitchYardEncryptionConfidentialityInterceptor());
                     e.getInInterceptors().addAll(getConfiguredInInterceptors(bindingModel, loader));
                     e.getOutInterceptors().addAll(getConfiguredOutInterceptors(bindingModel, loader));
@@ -243,6 +245,17 @@ public final class Interceptors {
             InboundHandler.unsetCredentials();
             SecurityContextAssociation.clearSecurityContext();
         }
+    }
+    
+    private static final class SwitchYardDispatchInterceptor extends AbstractPhaseInterceptor<Message> {
+    	private SwitchYardDispatchInterceptor() {
+            super(Phase.POST_PROTOCOL);
+        }
+    	@Override
+        public void handleMessage(Message message) throws Fault {
+    		// SWITCHYARD-1936 : prevent timing issues with web container by using original thread
+    		message.setContextualProperty(OneWayProcessorInterceptor.USE_ORIGINAL_THREAD, true);
+    	}
     }
 
     private static final class SwitchYardURIMappingInterceptor extends AbstractPhaseInterceptor<Message> {
