@@ -28,6 +28,8 @@ import org.junit.Test;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
+import org.switchyard.component.bean.deploy.CDIBeanServiceDescriptorTest;
+import org.switchyard.component.bean.tests.BeanUTConstants;
 import org.switchyard.component.bean.tests.OneWay;
 import org.switchyard.component.bean.tests.ServiceWithReferenceBean;
 import org.switchyard.config.model.ScannerInput;
@@ -53,7 +55,6 @@ public class BeanSwitchYardScannerTest {
         // root of the bean module !!
         _scannedURLs = new ArrayList<URL>();
         _scannedURLs.add(new File("./target/test-classes").toURI().toURL());
-
     }
 
     @Test
@@ -125,7 +126,9 @@ public class BeanSwitchYardScannerTest {
         if (urls != null && urls.length > 0) {
             _scannedURLs.addAll(Arrays.asList(urls));
         }
-        ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setURLs(_scannedURLs);
+        ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>()
+                                                    .setURLs(_scannedURLs)
+                                                    .setExcludePackages(BeanUTConstants.BEAN_SCANNER_BLACK_LIST);
         _scannedModel = _scanner.scan(input).getModel();
     }
 }

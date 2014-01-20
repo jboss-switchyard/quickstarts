@@ -29,6 +29,31 @@ public class CDIBeanServiceDescriptorTest {
     }
 
     @Test
+    public void test_OmmitInterface_OK() {
+        CDIBeanServiceDescriptor.getServiceInterface(ZImpl.class);
+    }
+    
+    @Test
+    public void test_OmmitInterface_Fail_noInterface() {
+        try {
+            CDIBeanServiceDescriptor.getServiceInterface(TImpl.class);
+        } catch (RuntimeException e) {
+            String message = e.getMessage();
+            Assert.assertTrue(message.contains("SWITCHYARD030420"));
+        }
+    }
+    
+    @Test
+    public void test_OmmitInterface_Fail_multipleInterfaces() {
+        try {
+            CDIBeanServiceDescriptor.getServiceInterface(UImpl.class);
+        } catch (RuntimeException e) {
+            String message = e.getMessage();
+            Assert.assertTrue(message.contains("SWITCHYARD030420"));
+        }
+    }
+    
+    @Test
     public void test_IsInterface_Fail() {
         try {
             CDIBeanServiceDescriptor.getServiceInterface(YImpl.class);
@@ -45,5 +70,18 @@ public class CDIBeanServiceDescriptorTest {
     }
     @Service(String.class)
     private class YImpl {
+    }
+    @Service
+    private class ZImpl implements Z {
+    }
+    private interface Z {
+    }
+    @Service
+    private class TImpl {
+    }
+    @Service
+    private class UImpl implements U, Z {
+    }
+    private interface U {
     }
 }

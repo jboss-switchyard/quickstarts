@@ -109,8 +109,13 @@ public class CDIBeanServiceDescriptor implements ServiceDescriptor {
         Service serviceAnnotation = beanClass.getAnnotation(Service.class);
         Class<?> serviceInterface = serviceAnnotation.value();
 
-        if (serviceInterface == null) {
-            throw BeanMessages.MESSAGES.unexpectedExceptionTheServiceAnnotationRequiresAServiceInterfaceClassValueToBeDefinedYetTheAnnotationHasNoValue();
+        if (serviceInterface == Service.class) {
+            Class<?>[] interfaces = beanClass.getInterfaces();
+            if (interfaces.length == 1) {
+                serviceInterface = interfaces[0];
+            } else {
+                throw BeanMessages.MESSAGES.unexpectedExceptionTheServiceAnnotationHasNoValueItCannotBeOmmittedUnlessTheBeanImplementsExactlyOneInterface();
+            }
         } else if (!serviceInterface.isInterface()) {
             throw BeanMessages.MESSAGES.invalidServiceSpecificationService(serviceInterface.getName());
         }

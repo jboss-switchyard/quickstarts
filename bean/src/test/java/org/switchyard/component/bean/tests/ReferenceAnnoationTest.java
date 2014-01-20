@@ -39,7 +39,9 @@ public class ReferenceAnnoationTest {
         List<URL> urls = new ArrayList<URL>();
         urls.add(new File("./target/test-classes").toURI().toURL());
 
-        ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setURLs(urls);
+        ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>()
+                                                    .setURLs(urls)
+                                                    .setExcludePackages(BeanUTConstants.BEAN_SCANNER_BLACK_LIST);
         _scannedModel = scanner.scan(input).getModel();
     }
 

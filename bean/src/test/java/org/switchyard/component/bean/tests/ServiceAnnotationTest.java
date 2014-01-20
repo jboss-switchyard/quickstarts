@@ -34,7 +34,7 @@ import org.switchyard.config.model.switchyard.SwitchYardModel;
 public class ServiceAnnotationTest {
     
     private SwitchYardModel _scannedModel;
-    
+
     @Before
     public void setUp() throws Exception {
         BeanSwitchYardScanner scanner = new BeanSwitchYardScanner();
@@ -44,7 +44,9 @@ public class ServiceAnnotationTest {
         // root of the bean module !!
         urls.add(new File("./target/test-classes").toURI().toURL());
 
-        ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>().setURLs(urls);
+        ScannerInput<SwitchYardModel> input = new ScannerInput<SwitchYardModel>()
+                                                    .setURLs(urls)
+                                                    .setExcludePackages(BeanUTConstants.BEAN_SCANNER_BLACK_LIST);
         _scannedModel = scanner.scan(input).getModel();
     }
 

@@ -160,8 +160,8 @@ public interface BeanMessages {
      * unexpectedExceptionThe@ServiceAnnotationRequiresAServiceInterfaceClassValueToBeDefinedYetTheAnnotationHasNoValue method definition.
      * @return SwitchYardException
      */
-    @Message(id = 30420, value = "Unexpected exception.  The @Service annotation requires a Service interface Class value to be defined, yet the annotation has no value.")
-    SwitchYardException unexpectedExceptionTheServiceAnnotationRequiresAServiceInterfaceClassValueToBeDefinedYetTheAnnotationHasNoValue();
+    @Message(id = 30420, value = "Unexpected exception. The @Service annotation has no value. It cannot be ommitted unless the bean implements exactly one interface.")
+    SwitchYardException unexpectedExceptionTheServiceAnnotationHasNoValueItCannotBeOmmittedUnlessTheBeanImplementsExactlyOneInterface();
 
     /**
      * invalid@ServiceSpecification@Service method definition.

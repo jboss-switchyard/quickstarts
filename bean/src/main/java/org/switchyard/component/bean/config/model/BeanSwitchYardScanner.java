@@ -26,7 +26,9 @@ import javax.xml.namespace.QName;
 
 import org.switchyard.annotations.Requires;
 import org.switchyard.common.type.classpath.ClasspathScanner;
+import org.switchyard.common.type.classpath.CompositeFilter;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
+import org.switchyard.common.type.classpath.PackageFilter;
 import org.switchyard.component.bean.BeanMessages;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
@@ -76,7 +78,7 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
         }
 
-        List<Class<?>> serviceClasses = scanForServiceBeans(input.getURLs());
+        List<Class<?>> serviceClasses = scanForServiceBeans(input);
 
         for (Class<?> serviceClass : serviceClasses) {
             if (serviceClass.isInterface()) {
@@ -97,6 +99,14 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             Service service = serviceClass.getAnnotation(Service.class);
             if (service != null) {
                 Class<?> iface = service.value();
+                if (iface == Service.class) {
+                    Class<?>[] interfaces = serviceClass.getInterfaces();
+                    if (interfaces.length == 1) {
+                        iface = interfaces[0];
+                    } else {
+                        throw BeanMessages.MESSAGES.unexpectedExceptionTheServiceAnnotationHasNoValueItCannotBeOmmittedUnlessTheBeanImplementsExactlyOneInterface();
+                    }
+                }
                 InterfaceModel csiModel = new V1InterfaceModel(InterfaceModel.JAVA);
 
                 if (service.name().equals(Service.EMPTY)) {
@@ -154,51 +164,10 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
             }
 
             // Add any references
-            for (Field field : getReferences(serviceClass)) {
-                Class<?> reference = field.getType(); 
-                ComponentReferenceModel referenceModel = new V1ComponentReferenceModel(switchyardNamespace.uri());
-                InterfaceModel interfaceModel = new V1InterfaceModel(InterfaceModel.JAVA);
-                      
-                if (field.getAnnotation(Reference.class) != null) {
-                    Reference ref = field.getAnnotation(Reference.class);
-                    if (ref.value() == null || "".equals(ref.value())) {
-                        referenceModel.setName(reference.getSimpleName());
-                    } else {
-                        QName qname = QName.valueOf(ref.value());
-                        referenceModel.setName(qname.getLocalPart());
-                    }
-                } else {
-                    referenceModel.setName(reference.getSimpleName());
-                }
-                
-                referenceModel.setInterface(interfaceModel);
-                interfaceModel.setInterface(reference.getCanonicalName());
-                // Add policy requirements to reference if specified
-                Requires refRequires = field.getAnnotation(Requires.class);
-                if (refRequires != null) {
-                    for (SecurityPolicy secPolicy : refRequires.security()) {
-                        if (!secPolicy.supports(PolicyType.INTERACTION)) {
-                            throw BeanMessages.MESSAGES.referenceOnlyCouldBeMarkedWithInteractionPolicyButIsNotTheOne(secPolicy.toString());
-                        }
-                        referenceModel.addPolicyRequirement(secPolicy.getName());
-                    }
-                    for (TransactionPolicy txPolicy : refRequires.transaction()) {
-                        if (!txPolicy.supports(PolicyType.INTERACTION)) {
-                            throw BeanMessages.MESSAGES.referenceOnlyCouldBeMarkedWithInteractionPolicyButIsNotTheOne(txPolicy.toString());
-                        }
-                        referenceModel.addPolicyRequirement(txPolicy.getName());
-                    }
-                    // Make sure we don't have conflicting policies
-                    String ptx = TransactionPolicy.PROPAGATES_TRANSACTION.getName();
-                    String stx = TransactionPolicy.SUSPENDS_TRANSACTION.getName();
-                    if (referenceModel.hasPolicyRequirement(ptx) && referenceModel.hasPolicyRequirement(stx)) {
-                        throw BeanMessages.MESSAGES.transactionPoliciesCannotCoexistService(ptx, stx, name);
-                    }
-                }
-                
-                componentModel.addReference(referenceModel);
+            for (ComponentReferenceModel reference : getReferences(switchyardNamespace, serviceClass, name)) {
+                componentModel.addReference(reference);
             }
-
+            
             compositeModel.addComponent(componentModel);
             componentModel.setName(getComponentName(name, service));
             compositeModel.addComponent(componentModel);
@@ -218,12 +187,17 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
         String componentName = service.componentName();
         return Service.EMPTY.equals(componentName) ? serviceName : componentName;
     }
-    private List<Class<?>> scanForServiceBeans(List<URL> urls) throws IOException {
-        IsAnnotationPresentFilter filter = new IsAnnotationPresentFilter(Service.class);
-        filter.addType(Reference.class);
+    private List<Class<?>> scanForServiceBeans(ScannerInput<SwitchYardModel> input) throws IOException {
+        IsAnnotationPresentFilter annoFilter = new IsAnnotationPresentFilter(Service.class);
+        annoFilter.addType(Reference.class);
+        PackageFilter pkgFilter = new PackageFilter(input.getIncludePackages().toArray(new Package[0]));
+        for (Package pkg : input.getExcludePackages()) {
+            pkgFilter.addExclude(pkg);
+        }
+        CompositeFilter filter = new CompositeFilter(annoFilter, pkgFilter);
         ClasspathScanner serviceScanner = new ClasspathScanner(filter);
 
-        for (URL url : urls) {
+        for (URL url : input.getURLs()) {
             serviceScanner.scan(url);
         }
 
@@ -231,14 +205,60 @@ public class BeanSwitchYardScanner implements Scanner<SwitchYardModel> {
     }
     
     /**
-     * Pick up @Reference fields in the specified class
+     * Pick up @Reference fields in the specified class and
+     * create corresponding ComponentReferenceModel
      */
-    private Set<Field> getReferences(Class<?> serviceClass) {
-        HashSet<Field> references = new HashSet<Field>();
+    private Set<ComponentReferenceModel> getReferences(
+                                            SwitchYardNamespace switchyardNamespace,
+                                            Class<?> serviceClass,
+                                            String name) throws IOException {
+        HashSet<ComponentReferenceModel> references = new HashSet<ComponentReferenceModel>();
         for (Field field : serviceClass.getDeclaredFields()) {
-            if (field.isAnnotationPresent(Reference.class)) {
-                references.add(field);
+            if (!field.isAnnotationPresent(Reference.class)) {
+                continue;
             }
+            
+            Class<?> reference = field.getType(); 
+            ComponentReferenceModel referenceModel = new V1ComponentReferenceModel(switchyardNamespace.uri());
+            InterfaceModel interfaceModel = new V1InterfaceModel(InterfaceModel.JAVA);
+                  
+            if (field.getAnnotation(Reference.class) != null) {
+                Reference ref = field.getAnnotation(Reference.class);
+                if (ref.value() == null || "".equals(ref.value())) {
+                    referenceModel.setName(reference.getSimpleName());
+                } else {
+                    QName qname = QName.valueOf(ref.value());
+                    referenceModel.setName(qname.getLocalPart());
+                }
+            } else {
+                referenceModel.setName(reference.getSimpleName());
+            }
+            
+            referenceModel.setInterface(interfaceModel);
+            interfaceModel.setInterface(reference.getCanonicalName());
+            // Add policy requirements to reference if specified
+            Requires refRequires = field.getAnnotation(Requires.class);
+            if (refRequires != null) {
+                for (SecurityPolicy secPolicy : refRequires.security()) {
+                    if (!secPolicy.supports(PolicyType.INTERACTION)) {
+                        throw BeanMessages.MESSAGES.referenceOnlyCouldBeMarkedWithInteractionPolicyButIsNotTheOne(secPolicy.toString());
+                    }
+                    referenceModel.addPolicyRequirement(secPolicy.getName());
+                }
+                for (TransactionPolicy txPolicy : refRequires.transaction()) {
+                    if (!txPolicy.supports(PolicyType.INTERACTION)) {
+                        throw BeanMessages.MESSAGES.referenceOnlyCouldBeMarkedWithInteractionPolicyButIsNotTheOne(txPolicy.toString());
+                    }
+                    referenceModel.addPolicyRequirement(txPolicy.getName());
+                }
+                // Make sure we don't have conflicting policies
+                String ptx = TransactionPolicy.PROPAGATES_TRANSACTION.getName();
+                String stx = TransactionPolicy.SUSPENDS_TRANSACTION.getName();
+                if (referenceModel.hasPolicyRequirement(ptx) && referenceModel.hasPolicyRequirement(stx)) {
+                    throw BeanMessages.MESSAGES.transactionPoliciesCannotCoexistService(ptx, stx, name);
+                }
+            }
+            references.add(referenceModel);
         }
         return references;
     }

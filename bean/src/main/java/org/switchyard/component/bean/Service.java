@@ -37,7 +37,8 @@ public @interface Service {
     /**
      * Get the Service Interface for the Service.
      */
-    Class<?> value();
+    // Class field couldn't be declared so using a literal anyway
+    Class<?> value() default Service.class; 
     
     /**
      * Optional Service name.
@@ -54,5 +55,5 @@ public @interface Service {
      * Annotations are not allowed to have empty values, so a default
      * representation for an empty value is used.
      */
-    public static final String EMPTY = "";    
+    public static final String EMPTY = "";
 }
