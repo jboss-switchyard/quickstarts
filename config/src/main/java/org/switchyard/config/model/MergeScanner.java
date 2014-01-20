@@ -13,9 +13,13 @@
  */
 package org.switchyard.config.model;
 
+import static javax.xml.XMLConstants.XMLNS_ATTRIBUTE;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.switchyard.config.Configuration;
 
 /**
  * A {@link Scanner} that merges all {@link Model}s from other Scanners into one.
@@ -86,6 +90,13 @@ public class MergeScanner<M extends Model> implements Scanner<M> {
                     }
                 }
             }
+        }
+        Configuration config = merged.getModelConfiguration();
+        final String xmlns_x2 = XMLNS_ATTRIBUTE + ":" + XMLNS_ATTRIBUTE;
+        if (config.hasAttribute(xmlns_x2)) {
+            String xmlns = config.getAttribute(xmlns_x2);
+            config.setAttribute(xmlns_x2, null);
+            config.setAttribute(XMLNS_ATTRIBUTE, xmlns);
         }
         return new ScannerOutput<M>().setModel(merged);
     }
