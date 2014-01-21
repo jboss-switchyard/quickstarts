@@ -13,7 +13,7 @@
  */
 package org.switchyard.security.context;
 
-import static org.switchyard.security.principal.Group.ROLES;
+import static org.switchyard.security.principal.GroupPrincipal.ROLES;
 
 import java.security.Principal;
 import java.security.acl.Group;

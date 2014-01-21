@@ -37,9 +37,9 @@ import org.switchyard.security.credential.PasswordCredential;
 import org.switchyard.security.credential.PrincipalCredential;
 import org.switchyard.security.credential.extractor.SOAPMessageCredentialExtractorTests;
 import org.switchyard.security.crypto.PrivateCrypto;
-import org.switchyard.security.principal.Group;
-import org.switchyard.security.principal.Role;
-import org.switchyard.security.principal.User;
+import org.switchyard.security.principal.GroupPrincipal;
+import org.switchyard.security.principal.RolePrincipal;
+import org.switchyard.security.principal.UserPrincipal;
 
 /**
  * SecurityContext tests.
@@ -81,17 +81,17 @@ public class SecurityContextTests {
     private SecurityContext getContext() throws Exception {
         SecurityContext context = new DefaultSecurityContext();
         Subject subject = context.getSubject("testSecurityDomain");
-        subject.getPrincipals().add(new User("testUser"));
+        subject.getPrincipals().add(new UserPrincipal("testUser"));
         context.getCredentials().addAll(getCredentials());
         return context;
     }
 
     private Set<Credential> getCredentials() throws Exception {
-        User user = new User("testUser");
-        Role role = new Role("testRole");
-        Group parentGroup = new Group("testParentGroup");
+        UserPrincipal user = new UserPrincipal("testUser");
+        RolePrincipal role = new RolePrincipal("testRole");
+        GroupPrincipal parentGroup = new GroupPrincipal("testParentGroup");
         parentGroup.addMember(user);
-        Group childGroup = new Group("testChildGroup");
+        GroupPrincipal childGroup = new GroupPrincipal("testChildGroup");
         childGroup.addMember(role);
         parentGroup.addMember(childGroup);
         Set<Credential> creds = new LinkedHashSet<Credential>();

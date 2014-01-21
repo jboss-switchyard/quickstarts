@@ -15,38 +15,28 @@ package org.switchyard.security.principal;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.switchyard.security.BaseSecurityMessages;
 
 /**
- * Group.
+ * RolePrincipal.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class Group implements java.security.acl.Group, Serializable {
+public class RolePrincipal implements Principal, Serializable {
 
-    private static final long serialVersionUID = -909127780618924905L;
-    private static final String FORMAT = Group.class.getSimpleName() + "@%s[name=%s, members=%s]";
-
-    /**
-     * The "Roles" group name.
-     */
-    public static final String ROLES = "Roles";
+    private static final long serialVersionUID = 7278196575770196005L;
+    private static final String FORMAT = RolePrincipal.class.getSimpleName() + "@%s[name=%s]";
 
     private final String _name;
-    private final Set<Principal> _members = new HashSet<Principal>();
 
     /**
-     * Constructs a Group with the specified name.
+     * Constructs a RolePrincipal with the specified name.
      * @param name the specified name
      */
-    public Group(String name) {
+    public RolePrincipal(String name) {
         if (name == null) {
-            throw BaseSecurityMessages.MESSAGES.groupNameCannotBeNull();
+            throw BaseSecurityMessages.MESSAGES.roleCannotBeNull();
         }
         _name = name;
     }
@@ -63,40 +53,8 @@ public class Group implements java.security.acl.Group, Serializable {
      * {@inheritDoc}
      */
     @Override
-    public boolean addMember(Principal user) {
-        return _members.add(user);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isMember(Principal member) {
-        return _members.contains(member);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Enumeration<? extends Principal> members() {
-        return Collections.enumeration(_members);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean removeMember(Principal user) {
-        return _members.remove(user);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String toString() {
-        return String.format(FORMAT, System.identityHashCode(this), _name, _members);
+        return String.format(FORMAT, System.identityHashCode(this), _name);
     }
 
     /**
@@ -106,7 +64,6 @@ public class Group implements java.security.acl.Group, Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((_members == null) ? 0 : _members.hashCode());
         result = prime * result + ((_name == null) ? 0 : _name.hashCode());
         return result;
     }
@@ -125,14 +82,7 @@ public class Group implements java.security.acl.Group, Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        Group other = (Group)obj;
-        if (_members == null) {
-            if (other._members != null) {
-                return false;
-            }
-        } else if (!_members.equals(other._members)) {
-            return false;
-        }
+        RolePrincipal other = (RolePrincipal)obj;
         if (_name == null) {
             if (other._name != null) {
                 return false;

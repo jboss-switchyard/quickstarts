@@ -32,9 +32,9 @@ import org.switchyard.common.io.pull.Puller.PathType;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.security.BaseSecurityMessages;
 import org.switchyard.security.callback.CertificateCallback;
-import org.switchyard.security.principal.Group;
-import org.switchyard.security.principal.Role;
-import org.switchyard.security.principal.User;
+import org.switchyard.security.principal.GroupPrincipal;
+import org.switchyard.security.principal.RolePrincipal;
+import org.switchyard.security.principal.UserPrincipal;
 import org.switchyard.security.pull.KeyStorePuller;
 
 /**
@@ -98,22 +98,22 @@ public class CertificateLoginModule extends SwitchYardLoginModule {
             String userName = _verifiedCallerCertificate.getSubjectX500Principal().getName();
             // get the CN from the DN.
             userName = userName.substring(userName.indexOf('=') + 1, userName.indexOf(','));
-            User authenticatedPrincipal = new User(userName);
+            UserPrincipal authenticatedPrincipal = new UserPrincipal(userName);
             principals.add(authenticatedPrincipal);
             // maybe add roles
             Properties rolesProperties = getRolesProperties();
             if (rolesProperties != null) {
-                Set<Group> groups = getSubject().getPrincipals(Group.class);
+                Set<GroupPrincipal> groups = getSubject().getPrincipals(GroupPrincipal.class);
                 Set<String> roleNames = Strings.uniqueSplitTrimToNull(rolesProperties.getProperty(userName), ",");
                 for (String roleName : roleNames) {
-                    Role role = new Role(roleName);
+                    RolePrincipal role = new RolePrincipal(roleName);
                     if (groups.isEmpty()) {
-                        Group rolesGroup = new Group(Group.ROLES);
+                        GroupPrincipal rolesGroup = new GroupPrincipal(GroupPrincipal.ROLES);
                         rolesGroup.addMember(role);
                         getSubject().getPrincipals().add(rolesGroup);
                     } else {
-                        for (Group group : groups) {
-                            if (Group.ROLES.equals(group.getName())) {
+                        for (GroupPrincipal group : groups) {
+                            if (GroupPrincipal.ROLES.equals(group.getName())) {
                                 group.addMember(role);
                             }
                         }

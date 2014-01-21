@@ -19,24 +19,24 @@ import java.security.Principal;
 import org.switchyard.security.BaseSecurityMessages;
 
 /**
- * Role.
+ * UserPrincipal.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class Role implements Principal, Serializable {
+public class UserPrincipal implements Principal, Serializable {
 
-    private static final long serialVersionUID = 7278196575770196005L;
-    private static final String FORMAT = Role.class.getSimpleName() + "@%s[name=%s]";
+    private static final long serialVersionUID = 1931117417458834463L;
+    private static final String FORMAT = UserPrincipal.class.getSimpleName() + "@%s[name=%s]";
 
     private final String _name;
 
     /**
-     * Constructs a Role with the specified name.
+     * Constructs a UserPrincipal with the specified name.
      * @param name the specified name
      */
-    public Role(String name) {
+    public UserPrincipal(String name) {
         if (name == null) {
-            throw BaseSecurityMessages.MESSAGES.roleCannotBeNull();
+            throw BaseSecurityMessages.MESSAGES.userNameCannotBeNull();
         }
         _name = name;
     }
@@ -82,7 +82,7 @@ public class Role implements Principal, Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        Role other = (Role)obj;
+        UserPrincipal other = (UserPrincipal)obj;
         if (_name == null) {
             if (other._name != null) {
                 return false;

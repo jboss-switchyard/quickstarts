@@ -27,8 +27,8 @@ import org.switchyard.security.BaseSecurityLogger;
 import org.switchyard.security.callback.handler.NamePasswordCallbackHandler;
 import org.switchyard.security.callback.handler.SwitchYardCallbackHandler;
 import org.switchyard.security.context.SecurityContext;
-import org.switchyard.security.principal.Group;
-import org.switchyard.security.principal.Role;
+import org.switchyard.security.principal.GroupPrincipal;
+import org.switchyard.security.principal.RolePrincipal;
 
 /**
  * JaasSecurityProvider.
@@ -87,18 +87,18 @@ public class JaasSecurityProvider extends SecurityProvider {
         String runAs = Strings.trimToNull(serviceSecurity.getRunAs());
         if (runAs != null) {
             success = false;
-            Role runAsRole = new Role(runAs);
+            RolePrincipal runAsRole = new RolePrincipal(runAs);
             String securityDomain = serviceSecurity.getSecurityDomain();
             Subject subject = securityContext.getSubject(securityDomain);
-            Set<Group> groups = subject.getPrincipals(Group.class);
+            Set<GroupPrincipal> groups = subject.getPrincipals(GroupPrincipal.class);
             if (groups.isEmpty()) {
-                Group rolesGroup = new Group(Group.ROLES);
+                GroupPrincipal rolesGroup = new GroupPrincipal(GroupPrincipal.ROLES);
                 rolesGroup.addMember(runAsRole);
                 subject.getPrincipals().add(rolesGroup);
                 success = true;
             } else {
-                for (Group group : groups) {
-                    if (Group.ROLES.equals(group.getName())) {
+                for (GroupPrincipal group : groups) {
+                    if (GroupPrincipal.ROLES.equals(group.getName())) {
                         group.addMember(runAsRole);
                         success = true;
                     }

@@ -15,28 +15,39 @@ package org.switchyard.security.principal;
 
 import java.io.Serializable;
 import java.security.Principal;
+import java.security.acl.Group;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.switchyard.security.BaseSecurityMessages;
 
 /**
- * User.
+ * GroupPrincipal.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class User implements Principal, Serializable {
+public class GroupPrincipal implements Group, Serializable {
 
-    private static final long serialVersionUID = 1931117417458834463L;
-    private static final String FORMAT = User.class.getSimpleName() + "@%s[name=%s]";
-
-    private final String _name;
+    private static final long serialVersionUID = -909127780618924905L;
+    private static final String FORMAT = GroupPrincipal.class.getSimpleName() + "@%s[name=%s, members=%s]";
 
     /**
-     * Constructs a User with the specified name.
+     * The "Roles" group name.
+     */
+    public static final String ROLES = "Roles";
+
+    private final String _name;
+    private final Set<Principal> _members = new HashSet<Principal>();
+
+    /**
+     * Constructs a GroupPrincipal with the specified name.
      * @param name the specified name
      */
-    public User(String name) {
+    public GroupPrincipal(String name) {
         if (name == null) {
-            throw BaseSecurityMessages.MESSAGES.userNameCannotBeNull();
+            throw BaseSecurityMessages.MESSAGES.groupNameCannotBeNull();
         }
         _name = name;
     }
@@ -53,8 +64,40 @@ public class User implements Principal, Serializable {
      * {@inheritDoc}
      */
     @Override
+    public boolean addMember(Principal user) {
+        return _members.add(user);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isMember(Principal member) {
+        return _members.contains(member);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Enumeration<? extends Principal> members() {
+        return Collections.enumeration(_members);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean removeMember(Principal user) {
+        return _members.remove(user);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
-        return String.format(FORMAT, System.identityHashCode(this), _name);
+        return String.format(FORMAT, System.identityHashCode(this), _name, _members);
     }
 
     /**
@@ -64,6 +107,7 @@ public class User implements Principal, Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((_members == null) ? 0 : _members.hashCode());
         result = prime * result + ((_name == null) ? 0 : _name.hashCode());
         return result;
     }
@@ -82,7 +126,14 @@ public class User implements Principal, Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        User other = (User)obj;
+        GroupPrincipal other = (GroupPrincipal)obj;
+        if (_members == null) {
+            if (other._members != null) {
+                return false;
+            }
+        } else if (!_members.equals(other._members)) {
+            return false;
+        }
         if (_name == null) {
             if (other._name != null) {
                 return false;
