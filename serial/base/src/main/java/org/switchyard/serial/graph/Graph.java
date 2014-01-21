@@ -14,10 +14,12 @@
 package org.switchyard.serial.graph;
 
 import java.io.Serializable;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.switchyard.serial.graph.node.Node;
 import org.switchyard.serial.graph.node.NodeBuilder;
@@ -32,6 +34,8 @@ public final class Graph implements Serializable {
 
     private Integer _root;
     private Map<Integer, Object> _references = new LinkedHashMap<Integer, Object>();
+    private transient Map<Object, Integer> _ids;
+    private transient AtomicInteger _sequence;
     private transient Queue<Runnable> _resolutions;
 
     /**
@@ -148,13 +152,36 @@ public final class Graph implements Serializable {
         return obj;
     }
 
+    private Map<Object, Integer> getIds() {
+        if (_ids == null) {
+            _ids = new IdentityHashMap<Object, Integer>();
+        }
+        return _ids;
+    }
+
+    private Integer nextId() {
+        if (_sequence == null) {
+            _sequence = new AtomicInteger(0);
+        }
+        return _sequence.incrementAndGet();
+    }
+
     /**
      * Creates an id for the specified object.
      * @param obj the specified object
-     * @return the id
+     * @return the id, or 0 if obj is null
      */
     public Integer id(Object obj) {
-        return System.identityHashCode(obj);
+        if (obj == null) {
+            return 0;
+        }
+        Map<Object, Integer> ids = getIds();
+        Integer id = ids.get(obj);
+        if (id == null) {
+            id = nextId();
+            ids.put(obj, id);
+        }
+        return id;
     }
 
 }
