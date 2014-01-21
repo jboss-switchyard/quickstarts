@@ -32,12 +32,16 @@ public class ScannerInput<M extends Model> {
     private List<URL> _urls;
     private SwitchYardNamespace _switchyardNamespace;
     private String _compositeName;
+    private List<Package> _includes;
+    private List<Package> _excludes;
 
     /**
      * Constructs a new ScannerInput.
      */
     public ScannerInput() {
         _urls = new ArrayList<URL>();
+        _includes = new ArrayList<Package>();
+        _excludes = new ArrayList<Package>();
     }
 
     /**
@@ -59,6 +63,56 @@ public class ScannerInput<M extends Model> {
             for (URL url : urls) {
                 if (url != null) {
                     _urls.add(url);
+                }
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Gets the Packages to include.
+     * @return the Packages
+     */
+    public synchronized List<Package> getIncludePackages() {
+        return Collections.unmodifiableList(_includes);
+    }
+
+    /**
+     * Sets the Packages to include.
+     * @param includes packages to include
+     * @return this ScannerInput (useful for chaining)
+     */
+    public synchronized ScannerInput<M> setIncludePackages(List<Package> includes) {
+        _includes.clear();
+        if (includes != null) {
+            for (Package p : includes) {
+                if (p != null) {
+                    _includes.add(p);
+                }
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Gets the Packages to exclude.
+     * @return the Packages
+     */
+    public synchronized List<Package> getExcludePackages() {
+        return Collections.unmodifiableList(_excludes);
+    }
+
+    /**
+     * Sets the Packages to exclude.
+     * @param excludes packages to exclude
+     * @return this ScannerInput (useful for chaining)
+     */
+    public synchronized ScannerInput<M> setExcludePackages(List<Package> excludes) {
+        _excludes.clear();
+        if (excludes != null) {
+            for (Package p : excludes) {
+                if (p != null) {
+                    _excludes.add(p);
                 }
             }
         }
@@ -108,5 +162,5 @@ public class ScannerInput<M extends Model> {
         _compositeName = compositeName;
         return this;
     }
-
+    
 }
