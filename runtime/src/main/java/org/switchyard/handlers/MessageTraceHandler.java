@@ -36,7 +36,7 @@ public class MessageTraceHandler implements ExchangeHandler {
     @Override
     public void handleFault(Exchange exchange) {
         if (_log.isInfoEnabled()) {
-            _log.info(ExchangeFormatter.format(exchange, false));
+            _log.info(ExchangeFormatter.format(exchange, true));
         }
     }
 
