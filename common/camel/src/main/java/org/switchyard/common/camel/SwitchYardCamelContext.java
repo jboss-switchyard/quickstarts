@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.component.cdi.CdiBeanRegistry;
-import org.apache.camel.component.cdi.CdiInjector;
+import org.apache.camel.cdi.CdiBeanRegistry;
+import org.apache.camel.cdi.CdiInjector;
 import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
