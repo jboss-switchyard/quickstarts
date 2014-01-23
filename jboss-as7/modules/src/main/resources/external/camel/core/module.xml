@@ -24,5 +24,6 @@
         <module name="org.apache.commons.logging" export="true"/>
         <module name="org.slf4j" export="true"/>
         <module name="org.switchyard.jaxb-impl" services="export" export="true"/>
+        <module name="sun.jdk" />
     </dependencies>
 </module>
