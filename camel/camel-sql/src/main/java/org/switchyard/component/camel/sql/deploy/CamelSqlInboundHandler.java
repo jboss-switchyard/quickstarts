@@ -57,13 +57,14 @@ public class CamelSqlInboundHandler extends InboundHandler<CamelSqlBindingModel>
 
             RouteDefinition definition = new RouteDefinition();
             definition.routeId(getRouteId())
-                .from(getBindingModel().getTimerURI(getRouteId()).toString())
+                .from(getBindingModel().getTimerURI(getRouteId()).toString());
+            return addTransactionPolicy(definition)
                 .to(getBindingModel().getComponentURI().toString())
                 .setProperty(ExchangeCompletionEvent.GATEWAY_NAME).simple(getBindingModel().getName(), String.class)
                 .setProperty(CamelConstants.APPLICATION_NAMESPACE).constant(serviceName.getNamespaceURI())
                 .process(new MessageComposerProcessor(getBindingModel()))
-                .process(new OperationSelectorProcessor(serviceName, bindingModel));
-            return addTransactionPolicy(definition);
+                .process(new OperationSelectorProcessor(serviceName, bindingModel))
+                .to(getSwitchyardEndpointUri());
         }
         return super.createRouteDefinition();
     }

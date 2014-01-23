@@ -78,12 +78,13 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
     protected RouteDefinition createRouteDefinition() {
         final RouteDefinition route = new RouteDefinition();
 
-        route.routeId(getRouteId()).from(getComponentUri().toString())
+        route.routeId(getRouteId()).from(getComponentUri().toString());
+        return addTransactionPolicy(route)
             .setProperty(ExchangeCompletionEvent.GATEWAY_NAME).simple(getBindingModel().getName(), String.class)
             .setProperty(CamelConstants.APPLICATION_NAMESPACE).constant(_serviceName.getNamespaceURI())
             .process(new MessageComposerProcessor(getBindingModel()))
-            .process(new OperationSelectorProcessor(getServiceName(), getBindingModel()));
-        return addTransactionPolicy(route);
+            .process(new OperationSelectorProcessor(getServiceName(), getBindingModel()))
+            .to(getSwitchyardEndpointUri());
     }
 
     /**
@@ -111,13 +112,9 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
      * @return 
      */
     protected RouteDefinition addTransactionPolicy(final RouteDefinition route) {
-        if (!TransactionHelper.useTransactionManager(getComponentUri(), _camelContext)) {
-            // namespace will be added by SwitchYardRouteDefinition
-            return route.to(getSwitchyardEndpointUri());
+        if (TransactionHelper.useTransactionManager(getComponentUri(), _camelContext)) {
+            route.transacted(CamelConstants.TRANSACTED_REF);
         }
-
-        // Tell Camel the route is transacted
-        route.transacted(CamelConstants.TRANSACTED_REF).to(getSwitchyardEndpointUri());
         
         return route;
     }

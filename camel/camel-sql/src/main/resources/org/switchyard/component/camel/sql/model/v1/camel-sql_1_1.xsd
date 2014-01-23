@@ -27,7 +27,7 @@
             <extension base="tns:BaseCamelBinding">
                 <sequence>
                     <element name="query" type="string" />
-                    <element name="dataSourceRef" type="string" />
+                    <element name="dataSourceRef" type="string" minOccurs="0" maxOccurs="1"/>
                     <element name="batch" type="boolean" minOccurs="0" maxOccurs="1"/>
                     <element name="placeholder" type="string" minOccurs="0" maxOccurs="1"/>
                 </sequence>
