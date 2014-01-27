@@ -1,6 +1,18 @@
-Introduction
-============
-This quickstart demonstrates the usage of the bean component.   This example shows a bean component 
+bean-service: demonstrates the usage of the bean component
+============================================
+Author: SwitchYard Team  
+Level: Beginner  
+Technologies: SwitchYard, Camel, SOAP 
+Summary: Demonstrates the usage of a rules service in conjunction with a camel service, creating a Content-Based Router. 
+Target Product: FSW  
+Source: <https://github.com/jboss-switchyard/quickstarts>
+
+
+What is it?
+-----------
+This quickstart demonstrates the usage of the bean component.   
+
+This example shows a bean component 
 service, OrderService, which is provided through the OrderServiceBean, and an InventoryService which 
 is provided through the InventoryServiceBean implementation.    Orders are submitted through the 
 OrderService, and the OrderService then looks items up in the InventoryService to see if they are 
@@ -10,31 +22,42 @@ This example is invoked through a SOAP gateway binding.
 
 ![Bean Service Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/bean-service/bean-service.jpg)
 
-Running the quickstart
-======================
 
-JBoss AS 7
-----------
+
+System requirements
+-------------------
+
+Before building and running this quick start you need:
+
+* Maven 3.0.3 or higher
+* JDK 1.6 or 1.7
+* JBoss AS 7
+
+Build and Deploy the Quickstart
+-------------------------
 1. Start JBoss AS 7 in standalone mode:
 
-        ${AS}/bin/standalone.sh
+    `${AS}/bin/standalone.sh`
 
 2. Build and deploy the Quickstart : 
 
-        mvn install -Pdeploy
+    mvn install -Pdeploy
 
-3. Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
-      - Submit a request with your preferred SOAP client - src/test/resources/xml contains sample 
+Use the bundle
+-------------------
+
+Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
+      * Submit a request with your preferred SOAP client - src/test/resources/xml contains sample 
         requests and the responses that you should see
-      - Use the simple bundled SOAP client and the sample request XML e.g.
+      * Use the simple bundled SOAP client and the sample request XML e.g.
 <br/>
 ```
             mvn exec:java
 ```
 <br/>
-      - SOAP-UI : Use the wsdl for this project (src/main/resources/wsdl/OrderService.wsdl) to create 
+      * SOAP-UI : Use the wsdl for this project (src/main/resources/wsdl/OrderService.wsdl) to create 
         a soap-ui project.    Use the sample request (src/test/resources/xml/soap-request.xml) as an 
-        example of a sample request.  The output below is the expected output :
+        example of a sample request.  The expected output is below:
 
 ```
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
@@ -51,7 +74,10 @@ JBoss AS 7
 </SOAP-ENV:Envelope>
 ```
 
-4. Undeploy the quickstart:
+Undeploy the bundle
+-------------------
+
+Undeploy the quickstart:
         mvn clean -Pdeploy
 
 ## Further Reading
