@@ -19,7 +19,7 @@ The client service then again writes the response to a file.
 
 </pre>
 
-![SOAP with WS-Addressing](https://github.com/jboss-switchyard/quickstarts/raw/master/soap-binding-rpc/soap-addressing.jpg)
+![SOAP with WS-Addressing](https://github.com/jboss-switchyard/quickstarts/raw/master/soap-addressing/soap-addressing.jpg)
 
 Running the quickstart
 ======================
