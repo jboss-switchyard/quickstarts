@@ -14,6 +14,7 @@
 package org.switchyard.as7.extension.deployment;
 
 import org.jboss.as.server.deployment.AttachmentKey;
+import org.jboss.msc.service.ServiceName;
 import org.jboss.vfs.VirtualFile;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 
@@ -26,6 +27,9 @@ public class SwitchYardMetaData {
 
     /** The attachment key. */
     public static final AttachmentKey<SwitchYardMetaData> ATTACHMENT_KEY = AttachmentKey.create(SwitchYardMetaData.class);
+
+    /** The service name attachment key. */
+    public static final AttachmentKey<ServiceName> SERVICENAME_ATTACHMENT_KEY = AttachmentKey.create(ServiceName.class);
 
     /** The name of the SwitchYard archive. */
     private String _archiveName = null;

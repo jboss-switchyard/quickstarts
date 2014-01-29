@@ -30,6 +30,7 @@ import org.jboss.as.weld.WeldDeploymentMarker;
 import org.jboss.as.weld.WeldStartService;
 import org.jboss.as.weld.services.BeanManagerService;
 import org.jboss.logging.Logger;
+import org.jboss.metadata.ear.spec.EarMetaData;
 import org.jboss.modules.Module;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
@@ -74,6 +75,18 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
         if (!SwitchYardDeploymentMarker.isSwitchYardDeployment(deploymentUnit)) {
             return;
         }
+        final DeploymentUnit parent = deploymentUnit.getParent();
+        Boolean initializeInOrder = false;
+        if (parent != null) {
+            final EarMetaData earConfig = deploymentUnit.getParent().getAttachment(org.jboss.as.ee.structure.Attachments.EAR_METADATA);
+            if (earConfig != null) {
+                initializeInOrder = earConfig.getInitializeInOrder();
+            }
+        }
+        doDeploy(phaseContext, deploymentUnit, initializeInOrder);
+    }
+
+    private void doDeploy(DeploymentPhaseContext phaseContext, final DeploymentUnit deploymentUnit, final Boolean initializeInOrder) {
         LOG.info("Deploying SwitchYard application '" + deploymentUnit.getName() + "'");
 
         ServiceDomainManager domainManager =
@@ -150,6 +163,16 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
         for (String raName : resourceAdapters) {
             switchyardServiceBuilder.addDependency(ConnectorServices.RESOURCE_ADAPTER_SERVICE_PREFIX
                                                                     .append(stripDotRarSuffix(raName)));
+        }
+
+        // Add dependency in the order defined in ear config
+        if (initializeInOrder) {
+            final DeploymentUnit parent = deploymentUnit.getParent();
+            ServiceName previousServiceName = parent.getAttachment(SwitchYardMetaData.SERVICENAME_ATTACHMENT_KEY);
+            if (previousServiceName != null) {
+                switchyardServiceBuilder.addDependency(previousServiceName);
+            }
+            parent.putAttachment(SwitchYardMetaData.SERVICENAME_ATTACHMENT_KEY, switchyardServiceName);
         }
 
         switchyardServiceBuilder.addDependency(DependencyType.OPTIONAL, CacheService.getServiceName("cluster", null));
