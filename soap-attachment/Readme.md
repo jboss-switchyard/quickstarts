@@ -10,7 +10,7 @@ It also invokes an external Webservice with the passed in attachment.
 +-----------------+      +--------------+      +-------------+      +----------------------+
 ```
 
-![SOAP with Attachments Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/soap-binding-rpc/soap-attachment.jpg)
+![SOAP with Attachments Quickstart](https://github.com/jboss-switchyard/quickstarts/raw/master/soap-attachment/soap-attachment.jpg)
 
 Running the quickstart
 ======================
