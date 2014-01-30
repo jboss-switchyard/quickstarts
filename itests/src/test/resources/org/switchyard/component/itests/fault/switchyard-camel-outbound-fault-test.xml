@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:jms="urn:switchyard-component-camel-jms:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912">
+  <sca:composite name="camel-jms-outbound-fault" targetNamespace="urn:reproducer:camel-jms-outbound-fault:0.1.0">
+    <sca:service name="GreetingService" promote="GreetingService/GreetingService">
+      <jms:binding.jms name="jms1">
+        <jms:queue>GreetingServiceQueue</jms:queue>
+        <jms:connectionFactory>#ConnectionFactory</jms:connectionFactory>
+        <jms:disableReplyTo>true</jms:disableReplyTo>
+        <jms:transacted>true</jms:transacted>
+        <jms:transactionManager>#jtaTransactionManager</jms:transactionManager>
+      </jms:binding.jms>
+    </sca:service>
+    <sca:component name="GreetingService">
+      <bean:implementation.bean class="org.switchyard.component.itests.fault.GreetingServiceBean"/>
+      <sca:service name="GreetingService">
+        <sca:interface.java interface="org.switchyard.component.itests.fault.GreetingService"/>
+      </sca:service>
+      <sca:reference name="StoreService">
+        <sca:interface.java interface="org.switchyard.component.itests.fault.StoreService"/>
+      </sca:reference>
+    </sca:component>
+    <sca:reference name="StoreService" multiplicity="0..1" promote="GreetingService/StoreService">
+      <sca:interface.java interface="org.switchyard.component.itests.fault.StoreService"/>
+      <jms:binding.jms name="jms2">
+        <jms:queue>StoreQueue</jms:queue>
+        <jms:connectionFactory>#ConnectionFactory</jms:connectionFactory>
+        <jms:disableReplyTo>true</jms:disableReplyTo>
+        <jms:transacted>true</jms:transacted>
+        <jms:transactionManager>#jtaTransactionManager</jms:transactionManager>
+      </jms:binding.jms>
+    </sca:reference>
+  </sca:composite>
+  <domain>
+    <properties>
+      <property name="org.switchyard.propagateExceptionOnInOnly" value="true"/>
+    </properties>
+  </domain>
+</switchyard>

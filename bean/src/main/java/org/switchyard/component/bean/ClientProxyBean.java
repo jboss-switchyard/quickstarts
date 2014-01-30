@@ -298,22 +298,7 @@ public class ClientProxyBean implements Bean {
                 if (exchangeOut.getState() == ExchangeState.OK) {
                     return exchangeOut.getMessage().getContent(method.getReturnType());
                 } else {
-                    Object exceptionObj = exchangeOut.getMessage().getContent();
-
-                    if (exceptionObj instanceof Throwable) {
-                        if (exceptionObj instanceof BeanComponentException) {
-                            BeanComponentException beanCompException = (BeanComponentException) exceptionObj;
-                            Throwable cause = beanCompException.getCause();
-                            if (cause instanceof InvocationTargetException) {
-                                throw cause.getCause();
-                            } else {
-                                throw cause;
-                            }
-                        }
-                        throw (Throwable) exceptionObj;
-                    } else {
-                        throw BeanMessages.MESSAGES.beanComponentInvocationFailureServiceOperation(_serviceName, method.getName()).setFaultExchange(exchangeOut);
-                    }
+                    return handleException(exchangeOut, method);
                 }
             } else {
                 Exchange exchange = createExchange(_service, method, null);
@@ -326,6 +311,11 @@ public class ClientProxyBean implements Bean {
                     exchange.send(exchange.createMessage().setContent(args));
                 }
 
+                Object propagateException = _service.getDomain().getProperty(Exchange.PROPAGATE_EXCEPTION_ON_IN_ONLY);
+                if (propagateException != null && Boolean.parseBoolean(propagateException.toString())
+                        && exchange.getState().equals(ExchangeState.FAULT)) {
+                    handleException(exchange, method);
+                }
                 return null;
             }
         }
@@ -339,5 +329,23 @@ public class ClientProxyBean implements Bean {
             return service.createExchange(operationName, responseExchangeHandler);
         }
 
+        private Throwable handleException(Exchange exchange, Method method) throws Throwable {
+            Object exceptionObj = exchange.getMessage().getContent();
+            if (exceptionObj instanceof Throwable) {
+                if (exceptionObj instanceof BeanComponentException) {
+                    BeanComponentException beanCompException = (BeanComponentException) exceptionObj;
+                    Throwable cause = beanCompException.getCause();
+                    if (cause instanceof InvocationTargetException) {
+                        throw cause.getCause();
+                    } else {
+                        throw cause;
+                    }
+                }
+                throw (Throwable) exceptionObj;
+            } else {
+                throw BeanMessages.MESSAGES.beanComponentInvocationFailureServiceOperation(_serviceName, method.getName()).setFaultExchange(exchange);
+            }
+        }
+        
     }
 }

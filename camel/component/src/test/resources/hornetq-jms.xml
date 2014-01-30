@@ -14,5 +14,9 @@
       <entry name="testQueue"/>
       <durable>true</durable>
    </queue>
-   
+   <queue name="GreetingServiceQueue">
+      <entry name="GreetingServiceQueue"/>
+      <durable>false</durable>
+   </queue>
 </configuration>
+

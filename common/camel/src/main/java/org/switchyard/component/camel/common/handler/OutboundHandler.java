@@ -58,6 +58,7 @@ public class OutboundHandler extends BaseServiceHandler {
     private final String _bindingName;
     private final String _referenceName;
     private final String _uri;
+    private final ServiceDomain _domain;
 
     /**
      * Constructor that will create a default {@link ProducerTemplate}.
@@ -82,6 +83,7 @@ public class OutboundHandler extends BaseServiceHandler {
      */
     public OutboundHandler(final CamelBindingModel binding, final SwitchYardCamelContext context, MessageComposer<CamelBindingData> messageComposer, ProducerTemplate producerTemplate, ServiceDomain domain) {
         super(domain);
+        _domain = domain;
         if (binding == null) {
             throw CommonCamelMessages.MESSAGES.bindingArgumentMustNotBeNull();
         }
@@ -152,7 +154,17 @@ public class OutboundHandler extends BaseServiceHandler {
 
     private void handleInOnly(final Exchange exchange) throws HandlerException {
         try {
-            _producerTemplate.send(_uri, createProcessor(exchange));
+            final org.apache.camel.Exchange camelExchange = _producerTemplate.send(_uri, createProcessor(exchange));
+            Object propagateException = _domain.getProperty(Exchange.PROPAGATE_EXCEPTION_ON_IN_ONLY);
+            if (propagateException != null && Boolean.parseBoolean(propagateException.toString())
+                    && camelExchange.isFailed()) {
+                Exception camelException = camelExchange.getException();
+                if (camelException != null) {
+                    throw new HandlerException(camelException);
+                } else {
+                    throw CommonCamelMessages.MESSAGES.camelExchangeFailedWithoutAnException("");
+                }
+            }
         } catch (final CamelExecutionException e) {
             throw new HandlerException(e);
         }

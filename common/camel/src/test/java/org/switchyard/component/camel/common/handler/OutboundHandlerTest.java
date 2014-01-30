@@ -100,7 +100,7 @@ public class OutboundHandlerTest extends CamelTestSupport {
         _serviceDomain.registerService(_targetService.getServiceName(),
             new InOnlyService(), 
             new OutboundHandler(bindingModel,
-                (SwitchYardCamelContext) context, _messageComposer, null
+                (SwitchYardCamelContext) context, _messageComposer, _serviceDomain
             ) {
             {
                 setState(State.STARTED);
