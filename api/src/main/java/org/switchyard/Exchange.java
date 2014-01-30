@@ -63,6 +63,12 @@ public interface Exchange {
     String ROLLBACK_ON_FAULT = "org.switchyard.rollbackOnFault";
 
     /**
+     * Domain property name used for a boolean flag which indicates if the exception should
+     * be propagate back to the service consumer.
+     */
+    String PROPAGATE_EXCEPTION_ON_IN_ONLY = "org.switchyard.propagateExceptionOnInOnly";
+
+    /**
      * Retrieves the exchange context.
      * @return the exchange context
      */

@@ -28,6 +28,7 @@ import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
+import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
@@ -267,8 +268,9 @@ public class Invoker {
     /**
      * Send an IN_ONLY message to the target Service.
      * @param messagePayload The message payload.
+     * @throws InvocationFaultException if the message exchange produces a fault
      */
-    public void sendInOnly(Object messagePayload) {
+    public void sendInOnly(Object messagePayload) throws InvocationFaultException {
         ExchangeHandlerProxy exchangeHandlerProxy = _exchangeHandlerProxy;
         ResponseCatcher responseCatcher = null;
 
@@ -283,6 +285,10 @@ public class Invoker {
         setProperties(exchange, message);
         addAttachments(message);
         exchange.send(message);
+        
+        if (exchange.getState().equals(ExchangeState.FAULT)) {
+            throw new InvocationFaultException(exchange.getMessage());
+        }
     }
 
     /**
