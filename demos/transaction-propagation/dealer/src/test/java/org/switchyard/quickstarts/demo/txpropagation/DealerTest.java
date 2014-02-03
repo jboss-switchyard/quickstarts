@@ -73,6 +73,7 @@ public class DealerTest {
         offer.setAmount(450.00);
 
         // configure our proxy for the service reference
+        testKit.replaceService("DealLogger");
         MockHandler creditService = testKit.replaceService("CreditCheckService");
         Application reply = new Application();
         reply.setApproved(true);
