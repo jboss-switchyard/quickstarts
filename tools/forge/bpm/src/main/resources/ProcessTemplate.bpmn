@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="Definition" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.jboss.org/drools" typeLanguage="http://www.java.com/javaTypes">
-  <itemDefinition id="_ParameterItem"/>
-  <itemDefinition id="_ResultItem"/>
-  <process id="${process.id}" tns:packageName="${package.name}" name="${service.name}" isExecutable="true" processType="Private"/>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_Process_1" bpmnElement="${process.id}"/>
-  </bpmndi:BPMNDiagram>
-</definitions>
