@@ -44,12 +44,6 @@
             <artifactId>switchyard-bpel-console</artifactId>
             <type>war</type>
         </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-forge-plugin-dist</artifactId>
-            <type>zip</type>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

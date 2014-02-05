@@ -35,19 +35,6 @@
             <type>zip</type>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-forge-plugin-dist</artifactId>
-            <type>zip</type>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-forge-installer</artifactId>
-            <type>jar</type>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -75,42 +62,6 @@
                                     <type>zip</type>
                                     <version>${project.version}</version>
                                     <includes>xsl/*</includes>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${bundle.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-forge</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-plugin-dist</artifactId>
-                                    <type>zip</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${bundle.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-forge-installer</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-forge-installer</artifactId>
-                                    <type>jar</type>
-                                    <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${bundle.dir}</outputDirectory>

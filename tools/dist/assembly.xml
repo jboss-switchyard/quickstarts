@@ -46,14 +46,6 @@
             <unpack>true</unpack>
             <outputDirectory>${tools.root.dir}/switchyard-bpel-console.war</outputDirectory>
         </dependencySet>
-        <dependencySet>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>org.switchyard:switchyard-forge-plugin-dist</include>
-            </includes>
-            <outputDirectory>${tools.root.dir}</outputDirectory>
-            <outputFileNameMapping>switchyard-forge-plugins.zip</outputFileNameMapping>
-        </dependencySet>
     </dependencySets>
 
 </assembly>

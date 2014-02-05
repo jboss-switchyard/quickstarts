@@ -37,8 +37,6 @@
         <module>distribution</module>
         <module>jboss-as7</module>
         <module>tools/dist</module>
-        <module>tools/forge</module>
-        <module>tools/forge-installer</module>
         <module>admin/rhq</module>
         <module>installer</module>
     </modules>

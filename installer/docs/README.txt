@@ -27,13 +27,3 @@ Instructions:
 
 The script will ask for the location of your EAP install where the console server and webapp will be deployed.
 
-Installing Forge Tooling
-------------------------
-Prerequisites:
-    1. Fully installed Forge 1.3.2 Final or above
-    2. $FORGE_HOME environment variable set to above path.
-
-Instructions:
-    1. Execute command "ant install-forge"
-
-The installer will copy the necessary SwitchYard forge plugins directly into your ~/.forge directory.
