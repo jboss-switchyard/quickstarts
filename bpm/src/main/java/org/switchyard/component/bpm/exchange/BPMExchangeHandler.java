@@ -226,11 +226,13 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                         if (processInstanceId == null) {
                             throw BPMMessages.MESSAGES.cannotSignalEventUnknownProcessInstanceIdOrUnknownunmatchedCorrelationKey();
                         }
-                        session.getStateful().signalEvent(eventId, eventObject, processInstanceId);
                         if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                            expressionContext.putAll(getGlobalVariables(session));
                             ProcessInstance processInstance = session.getStateful().getProcessInstance(processInstanceId);
+                            processInstance.signalEvent(eventId, eventObject);
+                            expressionContext.putAll(getGlobalVariables(session));
                             expressionContext.putAll(getProcessInstanceVariables(processInstance));
+                        } else {
+                            session.getStateful().signalEvent(eventId, eventObject, processInstanceId);
                         }
                     } else if (BPMOperationType.SIGNAL_EVENT_ALL.equals(operationType)) {
                         session.getStateful().signalEvent(eventId, eventObject);

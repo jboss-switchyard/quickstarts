@@ -16,6 +16,8 @@ package org.switchyard.component.bpm.service;
 import static org.switchyard.component.bpm.BPMConstants.CORRELATION_KEY_PROPERTY;
 import static org.switchyard.component.bpm.BPMConstants.PROCESSS_INSTANCE_ID_PROPERTY;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.activation.DataSource;
@@ -47,6 +49,7 @@ import org.switchyard.component.bpm.config.model.BPMSwitchYardScanner;
 import org.switchyard.component.bpm.exchange.BPMExchangeHandler;
 import org.switchyard.component.common.knowledge.annotation.Input;
 import org.switchyard.component.common.knowledge.annotation.Manifest;
+import org.switchyard.component.common.knowledge.annotation.Output;
 import org.switchyard.component.common.knowledge.annotation.Resource;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
 import org.switchyard.extensions.java.JavaService;
@@ -74,6 +77,7 @@ public class BPMServiceTests {
     private static final String REUSE_HANDLER_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-ReuseHandler.bpmn";
     private static final String RULES_FIRED_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-RulesFired.bpmn";
     private static final String RULES_FIRED_DRL = "org/switchyard/component/bpm/service/BPMServiceTests-RulesFired.drl";
+    private static final String SIGNAL_PROCESS_BPMN = "org/switchyard/component/bpm/service/BPMServiceTests-SignalProcess.bpmn";
 
     private ServiceDomain serviceDomain;
 
@@ -392,6 +396,62 @@ public class BPMServiceTests {
         new Invoker(serviceDomain, serviceName).operation("process").sendInOnly(holder);
         handler.stop();
         Assert.assertEquals("rules fired", holder.getValue());
+    }
+
+    @BPM(processId="SignalProcess", manifest=@Manifest(resources=@Resource(location=SIGNAL_PROCESS_BPMN, type="BPMN2")))
+    public interface SignalProcess {
+        @StartProcess(
+            inputs={@Input(from="message.content", to="Parameter")},
+            outputs={@Output(from="Result", to="message.content")}
+        )
+        public Object process(Object content);
+        @SignalEvent(
+            eventId="Signal_1",
+            inputs={@Input(from="message.content", to="Parameter")},
+            outputs={@Output(from="Result", to="message.content")}
+        )
+        public void signal(Object content);
+    }
+
+    @Test
+    public void testSignalProcess() throws Exception {
+        final Map<String,String> testAssertionMap = new HashMap<String,String>();
+        Service serviceOne = serviceDomain.registerService(new QName("ServiceOne"), new InOnlyService(), new BaseHandler(){
+            public void handleMessage(Exchange exchange) throws HandlerException {
+                Holder h = exchange.getMessage().getContent(Holder.class);
+                testAssertionMap.put("ServiceOne", h.getValue());
+            }
+        });
+        Service serviceTwo = serviceDomain.registerService(new QName("ServiceTwo"), new InOutService(), new BaseHandler(){
+            public void handleMessage(Exchange exchange) throws HandlerException {
+                Holder h = exchange.getMessage().getContent(Holder.class);
+                testAssertionMap.put("ServiceTwo", h.getValue());
+            }
+        });
+        serviceDomain.registerServiceReference(serviceOne.getName(), serviceOne.getInterface(), serviceOne.getProviderHandler());
+        serviceDomain.registerServiceReference(serviceTwo.getName(), serviceTwo.getInterface(), serviceTwo.getProviderHandler());
+        BPMComponentImplementationModel bci_model = (BPMComponentImplementationModel)new BPMSwitchYardScanner().scan(SignalProcess.class).getImplementation();
+        // setting the component name to null so that the service reference doesn't use the component-qualified name
+        bci_model.getComponent().setName(null);
+        QName serviceName = new QName("SignalProcess");
+        BPMExchangeHandler handler = new BPMExchangeHandler(bci_model, serviceDomain, serviceName);
+        Service signalService = serviceDomain.registerService(serviceName, JavaService.fromClass(SignalProcess.class), handler);
+        serviceDomain.registerServiceReference(signalService.getName(), signalService.getInterface(), signalService.getProviderHandler());
+        handler.start();
+        Invoker processInvoker = new Invoker(serviceDomain, serviceName);
+        Holder holderOne = new Holder();
+        holderOne.setValue("HolderOne");
+        Message processResponse = processInvoker.operation("process").sendInOut(holderOne);
+        Long processInstanceId = (Long)processResponse.getContext().getPropertyValue(PROCESSS_INSTANCE_ID_PROPERTY);
+        Invoker signalInvoker = new Invoker(serviceDomain, serviceName);
+        Holder holderTwo = new Holder();
+        holderTwo.setValue("HolderTwo");
+        Message signalResponse = signalInvoker.operation("signal").property(PROCESSS_INSTANCE_ID_PROPERTY, processInstanceId).sendInOut(holderTwo);
+        Holder holderResponse = signalResponse.getContent(Holder.class);
+        handler.stop();
+        Assert.assertEquals(holderOne.getValue(), testAssertionMap.get("ServiceOne"));
+        Assert.assertEquals(holderTwo.getValue(), testAssertionMap.get("ServiceTwo"));
+        Assert.assertEquals(holderTwo.getValue(), holderResponse.getValue());
     }
 
     public static final class Holder {
