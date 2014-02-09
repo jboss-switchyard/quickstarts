@@ -15,14 +15,25 @@ package org.switchyard.component.camel.common.handler;
 
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
+import junit.framework.Assert;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.TypeConverterSupport;
+import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.camel.common.CamelConstants;
+import org.switchyard.component.camel.common.composer.CamelBindingData;
+import org.switchyard.component.camel.common.selector.CamelOperationSelector;
+import org.switchyard.config.model.selector.XPathOperationSelectorModel;
 import org.switchyard.config.model.selector.v1.V1StaticOperationSelectorModel;
+import org.switchyard.config.model.selector.v1.V1XPathOperationSelectorModel;
 import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.selector.OperationSelector;
 
@@ -66,4 +77,38 @@ public class OperationSelectorTest extends InboundHandlerTestBase {
         handler2.stop();
     }
 
+    @Test
+    public void testOperationSelectorOnNettyChannelBuffer() throws Exception {
+        String payload = "<body><operation>greet</operation><name>Tomas</name></body>";
+        ProducerTemplate producer = _camelContext.createProducerTemplate();
+        XPathOperationSelectorModel operationSelectorModel = new V1XPathOperationSelectorModel(SwitchYardNamespace.DEFAULT.uri());
+        operationSelectorModel.setExpression("//body/operation");
+        InboundHandler<?> handler = createInboundHandler("direct://xpath", "xpath", operationSelectorModel);
+        handler.start();
+        
+        try {
+            // BigEndianHeapChannelBuffer->String converter is provided by camel-netty component
+            _camelContext.getTypeConverterRegistry()
+                         .addTypeConverter(String.class, BigEndianHeapChannelBuffer.class, new MyConverter()); 
+            MockEndpoint mockEndpoint = _camelContext.getEndpoint("switchyard://dummyService", MockEndpoint.class);
+            producer.sendBody("direct://xpath", new BigEndianHeapChannelBuffer(payload.getBytes()));
+            Exchange exchange = mockEndpoint.getExchanges().get(0);
+            CamelOperationSelector selector = new CamelOperationSelector(operationSelectorModel);
+            QName operation = selector.selectOperation(new CamelBindingData(exchange.getIn()));
+            Assert.assertNotNull(operation);
+            Assert.assertEquals("greet", operation.getLocalPart());
+        } finally {
+            handler.stop();
+        }
+    }
+
+    private class MyConverter extends TypeConverterSupport {
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value)
+                throws TypeConversionException {
+            BigEndianHeapChannelBuffer buffer = BigEndianHeapChannelBuffer.class.cast(value);
+            return (T) new String(buffer.array());
+        }
+    }
 }

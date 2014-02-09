@@ -13,6 +13,7 @@
  */
 package org.switchyard.component.camel.common.selector;
 
+import org.apache.camel.Message;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.common.selector.BaseOperationSelector;
 import org.switchyard.config.model.selector.OperationSelectorModel;
@@ -32,8 +33,17 @@ public class CamelOperationSelector extends BaseOperationSelector<CamelBindingDa
     }
 
     @Override
-    protected Document extractDomDocument(CamelBindingData content) {
-        return content.getMessage().getBody(Document.class);
+    protected Document extractDomDocument(CamelBindingData content) throws Exception {
+        // expect Camel TypeConverter would convert it to a Document directly
+        Document document = content.getMessage().getBody(Document.class);
+        if (document == null) {
+            // falling back to let Camel TypeConverter convert it to String,
+            // and then convert that String to Document.
+            Message msg = content.getMessage();
+            msg.setBody(msg.getBody(String.class));
+            document = msg.getBody(Document.class);
+        }
+        return document;
     }
 
     @Override
