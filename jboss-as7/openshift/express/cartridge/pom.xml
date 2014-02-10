@@ -33,7 +33,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>install-as7-kiedroolsjbpm</id>
+                        <id>install-as7-bpms-layer</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>unpack</goal>
@@ -41,12 +41,14 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-as7-kiedroolsjbpm</artifactId>
+                                    <groupId>org.kie</groupId>
+                                    <artifactId>${artifactId.kie-eap-bpms-layer}</artifactId>
+                                    <version>${version.org.kie}</version>
+                                    <classifier>${classifier.kie-eap-bpms-layer}</classifier>
                                     <type>zip</type>
-                                    <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
+                            <excludes>modules/layers.conf</excludes>
                             <outputDirectory>${cartridge.dir}</outputDirectory>
                         </configuration>
                     </execution>
@@ -91,4 +93,30 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>release-jboss-as7-openshift-express-cartridge-profile-product</id>
+            <activation>
+                <property>
+                    <name>switchyard.product</name>
+                </property>
+            </activation>
+            <properties>
+                <artifactId.kie-eap-bpms-layer>kie-eap-integration-bpms</artifactId.kie-eap-bpms-layer>
+                <classifier.kie-eap-bpms-layer>bpms-layer</classifier.kie-eap-bpms-layer>
+            </properties>
+        </profile>
+        <profile>
+            <id>release-jboss-as7-openshift-express-cartridge-profile-community</id>
+            <activation>
+                <property>
+                    <name>!switchyard.product</name>
+                </property>
+            </activation>
+            <properties>
+                <artifactId.kie-eap-bpms-layer>kie-eap-distributions-bpms-layer</artifactId.kie-eap-bpms-layer>
+                <classifier.kie-eap-bpms-layer></classifier.kie-eap-bpms-layer>
+            </properties>
+        </profile>
+    </profiles>
 </project>

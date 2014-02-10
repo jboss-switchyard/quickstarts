@@ -18,14 +18,21 @@
     </resources>
     <dependencies>
         <module name="com.google.protobuf"/>
+        <module name="javax.api"/>
+        <module name="javax.enterprise.api"/>
+        <module name="javax.persistence.api"/>
+        <module name="javax.transaction.api"/>
         <module name="org.jboss.logging"/>
         <module name="org.drools" export="true"/>
+        <module name="org.hibernate"/>
         <module name="org.jbpm" export="true">
             <imports>
                 <include path="META-INF/services"/>
+                <exclude path="META-INF/beans.xml"/>
             </imports>
             <exports>
                 <include path="META-INF/services"/>
+                <exclude path="META-INF/beans.xml"/>
             </exports>
         </module>
         <module name="org.kie" export="true"/>

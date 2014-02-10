@@ -14,6 +14,7 @@
                 <include>*.txt</include>
                 <include>standalone/**/standalone*.xml</include>
                 <include>domain/**/domain*.xml</include>
+                <include>modules/system/layers/bpms/**</include>
                 <include>modules/system/layers/soa/**</include>
                 <include>modules/layers.conf</include>
                 <include>quickstarts/**</include>

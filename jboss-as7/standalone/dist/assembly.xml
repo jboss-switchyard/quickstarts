@@ -18,6 +18,7 @@
                 <include>modules/system/layers/base/org/jboss/as/webservices/main/module.xml</include>
                 <include>modules/system/layers/base/org/jboss/ws/spi/main/jbossws-spi-${version.jbossws.spi}.jar</include>
                 <include>modules/system/layers/base/org/jboss/ws/spi/main/module.xml</include>
+                <include>modules/system/layers/bpms/**</include>
                 <include>modules/system/layers/soa/**</include>
                 <include>modules/layers.conf</include>
                 <include>quickstarts/**</include>
