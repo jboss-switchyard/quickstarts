@@ -18,6 +18,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,10 +69,11 @@ import org.jboss.resteasy.client.core.extractors.EntityExtractor;
 import org.jboss.resteasy.client.core.extractors.EntityExtractorFactory;
 import org.jboss.resteasy.client.core.marshallers.ClientMarshallerFactory;
 import org.jboss.resteasy.client.core.marshallers.Marshaller;
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
+import org.jboss.resteasy.client.exception.mapper.ClientExceptionMapper;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.resteasy.util.MediaTypeHelper;
 import org.jboss.resteasy.util.IsHttpMethod;
+import org.switchyard.component.resteasy.RestEasyLogger;
 import org.switchyard.component.resteasy.RestEasyMessages;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 import org.switchyard.component.resteasy.config.model.ProxyModel;
@@ -87,18 +89,36 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
 
     private static final Logger LOGGER = Logger.getLogger(ClientInvoker.class);
 
-    private URI _baseUri;
+    private static final String AS7_URIBUILDER = "org.jboss.resteasy.specimpl.UriBuilderImpl";
+    private static final String WFLY_URIBUILDER = "org.jboss.resteasy.specimpl.ResteasyUriBuilder";
+    private static Class<?> URIBUILDER_CLASS = null;
+
     private String _subResourcePath;
     private Class<?> _resourceClass;
     private Method _method;
     private String _httpMethod;
-    private UriBuilderImpl _uri;
+    private UriBuilder _uri;
     private MediaType _accepts;
     private Marshaller[] _marshallers;
     private ClientExecutor _executor;
+    private boolean _followRedirects;
     private EntityExtractor _extractor;
     private EntityExtractorFactory _extractorFactory;
     private ResteasyProviderFactory _providerFactory;
+    private URI _baseUri;
+    private Map<String, Object> _attributes = new HashMap<String, Object>();
+
+    static {
+        try {
+            URIBUILDER_CLASS = Class.forName(AS7_URIBUILDER);
+        } catch (ClassNotFoundException cnfe) {
+            try {
+                URIBUILDER_CLASS = Class.forName(WFLY_URIBUILDER);
+            } catch (ClassNotFoundException e) {
+                RestEasyLogger.ROOT_LOGGER.unableToFindURIBuilder(e);
+            }
+        }
+    }
 
     private static URI createUri(String base) {
         try {
@@ -139,7 +159,13 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
         _httpMethod = httpMethods.iterator().next();
         _resourceClass = resourceClass;
         _method = method;
-        _uri = new UriBuilderImpl();
+        try {
+            _uri = (UriBuilder)URIBUILDER_CLASS.newInstance();
+        } catch (InstantiationException ie) {
+            throw new RuntimeException(ie);
+        } catch (IllegalAccessException iae) {
+            throw new RuntimeException(iae);
+        }
         _uri.uri(_baseUri);
         if (_resourceClass.isAnnotationPresent(Path.class)) {
             _uri.path(_resourceClass);
@@ -261,6 +287,26 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
         return base + path;
     }
 
+    /*public Map<String, Object> getAttributes() {
+        return _attributes;
+    }
+
+    public MediaType getAccepts() {
+        return _accepts;
+    }
+
+    public Method getMethod() {
+        return _method;
+    }
+
+    public Class getDeclaring() {
+        return _resourceClass;
+    }
+
+    public ResteasyProviderFactory getProviderFactory() {
+        return _providerFactory;
+    }*/
+
     @Override
     public RESTEasyBindingData invoke(Object[] args, MultivaluedMap<String, String> headers) {
         boolean isProvidersSet = ResteasyProviderFactory.getContextData(Providers.class) != null;
@@ -282,7 +328,12 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
             } catch (ClientResponseFailure crf) {
                 clientResponse = (BaseClientResponse) crf.getResponse();
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                ClientExceptionMapper<Exception> mapper = _providerFactory.getClientExceptionMapper(Exception.class);
+                if (mapper != null) {
+                   throw mapper.toException(e);
+                } else {
+                   throw new RuntimeException(e);
+                }
             }
             ClientErrorHandler errorHandler = new ClientErrorHandler(_providerFactory.getClientErrorInterceptors());
             clientResponse.setAttributeExceptionsTo(_method.toString());
@@ -340,4 +391,24 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
         }
         return request;
     }
+
+    /*public String getHttpMethod() {
+        return _httpMethod;
+    }
+
+    public void setHttpMethod(String httpMethod) {
+        _httpMethod = httpMethod;
+    }
+
+    public boolean isFollowRedirects() {
+        return _followRedirects;
+    }
+
+    public void setFollowRedirects(boolean followRedirects) {
+        _followRedirects = followRedirects;
+    }
+
+    public void followRedirects() {
+        setFollowRedirects(true);
+    }*/
 }

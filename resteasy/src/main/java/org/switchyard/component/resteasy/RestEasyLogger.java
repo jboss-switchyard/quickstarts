@@ -51,5 +51,13 @@ public interface RestEasyLogger {
     @Message(id = 37605, value = "Unable to launch standalone http server")
     void unableToLaunchStandaloneHttpServer(@Cause IOException ioe);
 
+    /**
+     * unableToFindURIBuilder method definition.
+     * @param cnfe the cnfe
+     */
+    @LogMessage(level = Level.ERROR)
+    @Message(id = 37606, value = "Unable to find URI builder")
+    void unableToFindURIBuilder(@Cause ClassNotFoundException cnfe);
+
 }
 

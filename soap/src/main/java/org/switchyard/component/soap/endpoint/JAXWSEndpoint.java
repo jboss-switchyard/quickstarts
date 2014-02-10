@@ -17,11 +17,11 @@ package org.switchyard.component.soap.endpoint;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import javax.xml.ws.Endpoint;
 import javax.xml.ws.WebServiceFeature;
 
 import org.jboss.logging.Logger;
 import org.switchyard.common.type.Classes;
+import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.soap.SOAPLogger;
 import org.switchyard.component.soap.InboundHandler;
 
@@ -30,11 +30,11 @@ import org.switchyard.component.soap.InboundHandler;
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class JAXWSEndpoint implements WSEndpoint {
+public class JAXWSEndpoint implements Endpoint {
 
     private static final Logger LOGGER = Logger.getLogger(JAXWSEndpoint.class);
 
-    private Endpoint _endpoint;
+    private javax.xml.ws.Endpoint _endpoint;
     private String _publishUrl;
 
     /**
@@ -48,7 +48,7 @@ public class JAXWSEndpoint implements WSEndpoint {
         wsProvider.setInvocationClassLoader(Classes.getTCCL());
         // Hook the handler
         wsProvider.setConsumer(handler);
-        _endpoint = Endpoint.create(bindingId, wsProvider);
+        _endpoint = javax.xml.ws.Endpoint.create(bindingId, wsProvider);
         try {
             Method method = _endpoint.getBinding().getClass().getSuperclass().getMethod("addFeature", new Class<?>[]{WebServiceFeature.class});
             for (WebServiceFeature feature : features) {
@@ -70,7 +70,7 @@ public class JAXWSEndpoint implements WSEndpoint {
      * Returns the wrapped JAX-WS endpoint.
      * @return The JAX-WS endpoint
      */
-    public Endpoint getEndpoint() {
+    public javax.xml.ws.Endpoint getEndpoint() {
         return _endpoint;
     }
 
@@ -82,6 +82,12 @@ public class JAXWSEndpoint implements WSEndpoint {
         _publishUrl = publishUrl;
        SOAPLogger.ROOT_LOGGER.publishingWebServiceAt(_publishUrl);
         _endpoint.publish(_publishUrl);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void start() {
     }
 
     /**

@@ -177,6 +177,8 @@ public class HttpProxyTest {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             e.printStackTrace(new PrintStream(baos));
             Assert.assertTrue(baos.toString().contains("Error status 407 null returned"));
+            // Newer version returns correct string e.g. WildFly's RESTEasy
+            // Assert.assertTrue(baos.toString().contains("Error status 407 Proxy Authentication Required returned"));
         }
     }
 

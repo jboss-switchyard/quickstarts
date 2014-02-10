@@ -14,12 +14,21 @@
  
 package org.switchyard.component.resteasy.resource;
 
+import org.switchyard.component.common.Endpoint;
+
 /**
  * A standalone RESTEasy resource.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class StandaloneResource implements Resource {
+public class StandaloneResource implements Endpoint {
+
+    /**
+     * {@inheritDoc}
+     */
+    public void start() {
+        // NO OP
+    }
 
     /**
      * {@inheritDoc}

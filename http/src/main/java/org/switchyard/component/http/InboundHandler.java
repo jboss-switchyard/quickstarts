@@ -23,6 +23,7 @@ import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.common.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.common.selector.OperationSelectorFactory;
@@ -31,7 +32,6 @@ import org.switchyard.component.http.composer.HttpComposition;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
 import org.switchyard.component.http.composer.HttpResponseBindingData;
 import org.switchyard.component.http.config.model.HttpBindingModel;
-import org.switchyard.component.http.endpoint.Endpoint;
 import org.switchyard.component.http.endpoint.EndpointPublisherFactory;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.label.BehaviorLabel;
@@ -85,12 +85,13 @@ public class InboundHandler extends BaseServiceHandler {
             if (contextPath == null) {
                 contextPath = "/";
             }
-            _endpoint = EndpointPublisherFactory.getPublisher().publish(contextPath, this);
+            _endpoint = EndpointPublisherFactory.getPublisher().publish(_domain, contextPath, this);
             // Create and configure the HTTP message composer
             _messageComposer = HttpComposition.getMessageComposer(_config);
         } catch (Exception e) {
             throw HttpMessages.MESSAGES.unableToPublish(e);
         }
+        _endpoint.start();
     }
 
     /**

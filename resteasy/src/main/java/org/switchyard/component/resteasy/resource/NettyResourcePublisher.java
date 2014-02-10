@@ -17,6 +17,8 @@ package org.switchyard.component.resteasy.resource;
 import java.util.List;
 
 import org.jboss.resteasy.spi.ResteasyDeployment;
+import org.switchyard.ServiceDomain;
+import org.switchyard.component.common.Endpoint;
 
 /**
  * Publishes standalone RESTEasy resource to Netty.
@@ -44,7 +46,7 @@ public class NettyResourcePublisher implements ResourcePublisher {
     /**
      * {@inheritDoc}
      */
-    public Resource publish(String context, List<Object> instances) throws Exception {
+    public Endpoint publish(ServiceDomain domain, String context, List<Object> instances) throws Exception {
         _nettyServer.stop();
         // CAUTION: Note that this publisher ignores context. Use it only for test purpose.
         for (Object instance : instances) {

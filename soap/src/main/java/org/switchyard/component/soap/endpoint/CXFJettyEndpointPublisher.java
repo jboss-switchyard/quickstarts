@@ -18,10 +18,11 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.ws.Endpoint;
 import javax.xml.ws.WebServiceFeature;
 import javax.xml.ws.handler.MessageContext;
 
+import org.switchyard.ServiceDomain;
+import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.WebServicePublishException;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
@@ -38,13 +39,13 @@ public class CXFJettyEndpointPublisher extends AbstractEndpointPublisher {
     /**
      * {@inheritDoc}
      */
-    public synchronized WSEndpoint publish(final SOAPBindingModel config, final String bindingId, final InboundHandler handler, WebServiceFeature... features) {
+    public synchronized Endpoint publish(ServiceDomain domain, final SOAPBindingModel config, final String bindingId, final InboundHandler handler, WebServiceFeature... features) {
         CXFJettyEndpoint wsEndpoint = null;
         try {
             initialize(config);
             Map<String, Object> properties = new HashMap<String, Object>();
-            properties.put(Endpoint.WSDL_SERVICE, config.getPort().getServiceQName());
-            properties.put(Endpoint.WSDL_PORT, config.getPort().getPortQName());
+            properties.put(javax.xml.ws.Endpoint.WSDL_SERVICE, config.getPort().getServiceQName());
+            properties.put(javax.xml.ws.Endpoint.WSDL_PORT, config.getPort().getPortQName());
             properties.put(MessageContext.WSDL_DESCRIPTION, getWsdlLocation());
 
             String publishUrl = HTTP_SCHEME + "://" + config.getSocketAddr().getHost() + ":" + config.getSocketAddr().getPort() + "/" + getContextPath();

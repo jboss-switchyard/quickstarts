@@ -15,6 +15,8 @@
 package org.switchyard.component.soap.endpoint;
 import javax.xml.ws.WebServiceFeature;
 
+import org.switchyard.ServiceDomain;
+import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 
@@ -27,20 +29,22 @@ public interface EndpointPublisher {
 
     /**
      * Publish a Webservice Endpoint.
+     * @param domain The ServiceDomain for the application
      * @param config The SOAP binding config
      * @param bindingId The SOAP binding version
      * @param handler The handler instance that contains the actual invoke method implementation
      * @return The published endpoint
      */
-    WSEndpoint publish(SOAPBindingModel config, String bindingId, InboundHandler handler);
+    Endpoint publish(ServiceDomain domain, SOAPBindingModel config, String bindingId, InboundHandler handler);
 
     /**
      * Publish a Webservice Endpoint.
+     * @param domain The ServiceDomain for the application
      * @param config The SOAP binding config
      * @param bindingId The SOAP binding version
      * @param handler The handler instance that contains the actual invoke method implementation
      * @param features A list of WebServiceFeature to configure on the endpoint.
      * @return The published endpoint
      */
-    WSEndpoint publish(SOAPBindingModel config, String bindingId, InboundHandler handler, WebServiceFeature... features);
+    Endpoint publish(ServiceDomain domain, SOAPBindingModel config, String bindingId, InboundHandler handler, WebServiceFeature... features);
 }

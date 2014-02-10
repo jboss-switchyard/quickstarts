@@ -29,6 +29,8 @@ import org.jboss.com.sun.net.httpserver.HttpContext;
 import org.jboss.com.sun.net.httpserver.HttpExchange;
 import org.jboss.com.sun.net.httpserver.HttpHandler;
 import org.jboss.com.sun.net.httpserver.HttpServer;
+import org.switchyard.ServiceDomain;
+import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.http.ContentType;
 import org.switchyard.component.http.HttpLogger;
 import org.switchyard.component.http.InboundHandler;
@@ -78,7 +80,7 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
     /**
      * {@inheritDoc}
      */
-    public Endpoint publish(String context, InboundHandler handler) throws Exception {
+    public Endpoint publish(ServiceDomain domain, String context, InboundHandler handler) throws Exception {
         HttpContext httpContext = null;
         if (!context.startsWith("/")) {
             context = "/" + context;

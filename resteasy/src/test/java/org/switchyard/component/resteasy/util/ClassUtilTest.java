@@ -32,7 +32,6 @@ import org.switchyard.component.resteasy.util.support.Item;
 public class ClassUtilTest extends InboundHandler {
 
     public ClassUtilTest() {
-        super(new V1RESTEasyBindingModel(RESTEasyNamespace.DEFAULT.uri()), null);
     }
 
     @Test

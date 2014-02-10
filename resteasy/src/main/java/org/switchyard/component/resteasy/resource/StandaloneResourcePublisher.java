@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.jboss.logging.Logger;
 import com.sun.net.httpserver.HttpServer;
+import org.switchyard.ServiceDomain;
+import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.resteasy.RestEasyLogger;
 import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
 
@@ -55,7 +57,7 @@ public class StandaloneResourcePublisher implements ResourcePublisher {
     /**
      * {@inheritDoc}
      */
-    public Resource publish(String context, List<Object> instances) throws Exception {
+    public Endpoint publish(ServiceDomain domain, String context, List<Object> instances) throws Exception {
         List<Object> resourceInstances = new ArrayList<Object>();
         String path = _contextBuilder.getPath();
         if (path.startsWith("/")) {

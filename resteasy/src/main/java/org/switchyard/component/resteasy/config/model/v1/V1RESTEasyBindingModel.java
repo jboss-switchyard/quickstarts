@@ -131,7 +131,12 @@ public class V1RESTEasyBindingModel extends V1BindingModel implements RESTEasyBi
      * {@inheritDoc}
      */
     public String[] getInterfacesAsArray() {
-        return getInterfaces().split(",");
+        String interfaces = getInterfaces();
+        if (interfaces != null) {
+            return interfaces.split(",");
+        } else {
+            return new String[0];
+        }
     }
 
     /**

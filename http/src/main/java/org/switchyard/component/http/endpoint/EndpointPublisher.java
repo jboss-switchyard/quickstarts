@@ -14,6 +14,8 @@
  
 package org.switchyard.component.http.endpoint;
 
+import org.switchyard.ServiceDomain;
+import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.http.InboundHandler;
 
 /**
@@ -25,10 +27,11 @@ public interface EndpointPublisher {
 
     /**
      * Publish a HTTP endpoint.
+     * @param domain The ServiceDomain for the application
      * @param context The web context root where the resource need to be published
      * @param handler A handler instance
      * @return The published endpoint holder
      * @throws Exception if endpoint could not be published
      */
-    Endpoint publish(String context, InboundHandler handler) throws Exception;
+    Endpoint publish(ServiceDomain domain, String context, InboundHandler handler) throws Exception;
 }

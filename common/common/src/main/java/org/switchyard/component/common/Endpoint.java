@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,17 +12,22 @@
  * limitations under the License.
  */
  
-package org.switchyard.component.http.endpoint;
+package org.switchyard.component.common;
 
 /**
- * Interface for allowing to stop published HTTP endpoint.
+ * Interface for allowing to start and stop endpoints.
  *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2014 Red Hat Inc.
  */
 public interface Endpoint {
 
     /**
-     * Stop the published HTTP endpoint.
+     * Start/publish Endpoint.
+     */
+    void start();
+
+    /**
+     * Stop the published Endpoint.
      */
     void stop();
 }

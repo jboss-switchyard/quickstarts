@@ -24,12 +24,12 @@ import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
+import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.common.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 import org.switchyard.component.resteasy.composer.RESTEasyComposition;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
-import org.switchyard.component.resteasy.resource.Resource;
 import org.switchyard.component.resteasy.resource.ResourcePublisherFactory;
 import org.switchyard.component.resteasy.util.ClassUtil;
 import org.switchyard.deploy.BaseServiceHandler;
@@ -48,9 +48,17 @@ public class InboundHandler extends BaseServiceHandler {
     private final String _gatewayName;
     private ServiceDomain _domain;
     private ServiceReference _service;
-    private Resource _resource;
+    private Endpoint _resource;
     private MessageComposer<RESTEasyBindingData> _messageComposer;
     private SecurityContextManager _securityContextManager;
+
+    /**
+     * Constructor for unit test.
+     */
+    protected InboundHandler() {
+        _config = null;
+        _gatewayName = null;
+    }
 
     /**
      * Constructor.
@@ -81,12 +89,13 @@ public class InboundHandler extends BaseServiceHandler {
                 contextPath = "/";
             }
             // Add as singleton instances
-            _resource = ResourcePublisherFactory.getPublisher().publish(contextPath, instances);
+            _resource = ResourcePublisherFactory.getPublisher().publish(_domain, contextPath, instances);
             // Create and configure the RESTEasy message composer
             _messageComposer = RESTEasyComposition.getMessageComposer(_config);
         } catch (Exception e) {
             throw new RESTEasyPublishException(e);
         }
+        _resource.start();
     }
 
     /**

@@ -45,6 +45,7 @@ import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.component.common.DeliveryException;
+import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.common.SynchronousInOutHandler;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.soap.composer.SOAPBindingData;
@@ -52,7 +53,6 @@ import org.switchyard.component.soap.composer.SOAPComposition;
 import org.switchyard.component.soap.composer.SOAPMessageComposer;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.endpoint.EndpointPublisherFactory;
-import org.switchyard.component.soap.endpoint.WSEndpoint;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.deploy.BaseServiceHandler;
@@ -81,7 +81,7 @@ public class InboundHandler extends BaseServiceHandler {
     private ServiceDomain _domain;
     private ServiceReference _service;
     private long _waitTimeout = DEFAULT_TIMEOUT; // default of 15 seconds
-    private WSEndpoint _endpoint;
+    private Endpoint _endpoint;
     private Port _wsdlPort;
     private String _bindingId;
     private Boolean _documentStyle = false;
@@ -174,7 +174,7 @@ public class InboundHandler extends BaseServiceHandler {
             MTOMFeature mtom = _feature.getMtom(_config);
             _bindingId = WSDLUtil.getBindingId(_wsdlPort, mtom.isEnabled());
 
-            _endpoint = EndpointPublisherFactory.getEndpointPublisher().publish(_config,
+            _endpoint = EndpointPublisherFactory.getEndpointPublisher().publish(_domain, _config,
                 _bindingId,
                 this,
                 _feature.getAddressing(),
