@@ -13,7 +13,7 @@
  */
 package org.switchyard.component.rules.config.model;
 
-import org.kie.api.event.rule.DebugWorkingMemoryEventListener;
+import org.kie.api.event.rule.DebugRuleRuntimeEventListener;
 import org.switchyard.component.common.knowledge.LoggerType;
 import org.switchyard.component.common.knowledge.annotation.Channel;
 import org.switchyard.component.common.knowledge.annotation.Fault;
@@ -34,7 +34,7 @@ import org.switchyard.component.rules.annotation.Rules;
  */
 @Rules(
     channels=@Channel(name="theName", operation="theOperation", reference="theReference", value=RulesModelTests.TestChannel.class),
-    listeners=@Listener(DebugWorkingMemoryEventListener.class),
+    listeners=@Listener(DebugRuleRuntimeEventListener.class),
     loggers=@Logger(interval=2000, log="theLog", type=LoggerType.CONSOLE),
     manifest=@Manifest(
         //container=@Container(baseName="theBase", scan=true, scanInterval=1000, releaseId="theGroupId:theArtifactId:theVersion", sessionName="theSession"),

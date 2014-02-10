@@ -37,6 +37,54 @@
                     </delimiters>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>extract-jbpm-orm</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-executor</artifactId>
+                                    <version>${version.org.jbpm}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-human-task-audit</artifactId>
+                                    <version>${version.org.jbpm}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>${artifactId.jbpm-human-task-orm}</artifactId>
+                                    <version>${version.org.jbpm}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-kie-services</artifactId>
+                                    <version>${version.org.jbpm}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-persistence-jpa</artifactId>
+                                    <version>${version.org.jbpm}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>META-INF/*orm.xml</includes>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -99,4 +147,34 @@
             <artifactId>jbpm-workitems</artifactId>
         </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+            <id>components-bpm-profile-product</id>
+            <activation>
+                <property>
+                    <name>switchyard.product</name>
+                </property>
+            </activation>
+            <properties>
+                <artifactId.jbpm-human-task-orm>jbpm-human-task-core</artifactId.jbpm-human-task-orm>
+            </properties>
+        </profile>
+        <profile>
+            <id>components-bpm-profile-community</id>
+            <activation>
+                <property>
+                    <name>!switchyard.product</name>
+                </property>
+            </activation>
+            <properties>
+                <artifactId.jbpm-human-task-orm>jbpm-human-task-jpa</artifactId.jbpm-human-task-orm>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jbpm</groupId>
+                    <artifactId>jbpm-human-task-jpa</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>

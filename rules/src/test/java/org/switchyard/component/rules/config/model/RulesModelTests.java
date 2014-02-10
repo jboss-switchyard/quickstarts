@@ -27,7 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.api.builder.ReleaseId;
-import org.kie.api.event.rule.DebugWorkingMemoryEventListener;
+import org.kie.api.event.rule.DebugRuleRuntimeEventListener;
 import org.kie.api.runtime.Channel;
 import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.io.resource.ResourceDetail;
@@ -130,7 +130,7 @@ public class RulesModelTests {
         Assert.assertEquals("theOperation", channel.getOperation());
         Assert.assertEquals("theReference", channel.getReference());
         ListenerModel listener = rules.getListeners().getListeners().get(0);
-        Assert.assertEquals(DebugWorkingMemoryEventListener.class, listener.getClazz(loader));
+        Assert.assertEquals(DebugRuleRuntimeEventListener.class, listener.getClazz(loader));
         LoggerModel logger = rules.getLoggers().getLoggers().get(0);
         Assert.assertEquals(Integer.valueOf(2000), logger.getInterval());
         Assert.assertEquals("theLog", logger.getLog());

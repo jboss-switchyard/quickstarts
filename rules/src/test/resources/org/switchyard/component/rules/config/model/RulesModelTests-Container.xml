@@ -20,7 +20,7 @@
                     <channel class="org.switchyard.component.rules.config.model.RulesModelTests$TestChannel" name="theName" operation="theOperation" reference="theReference"/>
                 </channels>
                 <listeners>
-                    <listener class="org.kie.api.event.rule.DebugWorkingMemoryEventListener"/>
+                    <listener class="org.kie.api.event.rule.DebugRuleRuntimeEventListener"/>
                 </listeners>
                 <loggers>
                     <logger interval="2000" log="theLog" type="CONSOLE"/>
