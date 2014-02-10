@@ -61,6 +61,9 @@ public class SymbolServiceImpl implements SymbolService {
         if (prop == null) {
             prop = context.getProperty("Content-type");
         }
+        if (prop == null) {
+            prop = context.getProperty("Content-Type");
+        }
         String contentType = (prop == null) ? null : (String) prop.getValue();
         if (contentType != null) {
             if (contentType.contains("text/plain")) {

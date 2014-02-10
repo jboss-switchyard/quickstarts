@@ -25,14 +25,15 @@
         <sca:service xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="SymbolService" promote="SymbolService/SymbolService">
             <http:binding.http xmlns:http="urn:switchyard-component-http:config:1.0">
                 <operationSelector xmlns="urn:switchyard-config:switchyard:1.0" operationName="getSymbol"/>
-                <http:contextMapper includes="[cC]ontent-type"/>
+                <http:contextMapper includes="[cC]ontent-[tT]ype"/>
                 <http:messageComposer class="org.switchyard.quickstarts.http.binding.CustomComposer"/>
                 <http:contextPath>http-binding/symbol</http:contextPath>
             </http:binding.http>
         </sca:service>
         <sca:reference xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" multiplicity="1..1" name="Symbol" promote="QuoteService/Symbol">
             <http:binding.http xmlns:http="urn:switchyard-component-http:config:1.0">
-                <http:address>http://localhost:8080/http-binding/symbol</http:address>
+                <!-- This worked without the httpPort, because the test was not enabled. See stockServiceEndpoint in HttpBindingTest -->
+                <http:address>http://localhost:${httpPort}/http-binding/symbol</http:address>
                 <http:method>POST</http:method>
                 <http:contentType>text/plain</http:contentType>
             </http:binding.http>
@@ -53,11 +54,12 @@
             </reference>
         </component>
     </composite>
-    <!-- Uncomment this section to trace message exchange activity
     <domain>
         <properties>
-          <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
+            <property name="httpPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+            <!-- Uncomment this section to trace message exchange activity
+            <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
+            -->
         </properties>
     </domain>
-    -->
 </switchyard>
