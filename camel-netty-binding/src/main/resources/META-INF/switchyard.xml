@@ -22,7 +22,7 @@
                 <netty:port>3939</netty:port>
                 <netty:ssl>true</netty:ssl>
                 <netty:needClientAuth>true</netty:needClientAuth>
-                <netty:passphrase>#password</netty:passphrase>
+                <netty:passphrase>${keystore.pass}</netty:passphrase>
                 <netty:keyStoreFile>#keyStore</netty:keyStoreFile>
                 <netty:trustStoreFile>#trustStore</netty:trustStoreFile>
                 <netty:allowDefaultCodec>false</netty:allowDefaultCodec>
@@ -51,6 +51,9 @@
         </component>
     </composite>
     <domain>
+        <properties>
+            <property name="keystore.pass" value="changeit"/>
+        </properties>
         <securities>
             <security callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler" rolesAllowed="analysts" securityDomain="netty-security-cert">
                 <properties>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
     JBoss, Home of Professional Open Source
     Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
@@ -15,51 +15,57 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-jpa-retrieve-binding" targetNamespace="urn:switchyard-quickstart:camel-jpa-binding:0.1.0">
-        <service name="GreetingService" promote="GreetingService/GreetingService" requires="propagatesTransaction">
-            <interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.GreetingService"/>
-            <jpa:binding.jpa xmlns:jpa="urn:switchyard-component-camel-jpa:config:1.0">
-                <jpa:entityClassName>org.switchyard.quickstarts.camel.jpa.binding.domain.Greet</jpa:entityClassName>
-                <jpa:persistenceUnit>JpaEvents</jpa:persistenceUnit>
-                <jpa:transactionManager>#jtaTransactionManager</jpa:transactionManager>
-                <jpa:consume>
-                    <jpa:initialDelay>1000</jpa:initialDelay>
-                    <jpa:delay>500</jpa:delay>
-                    <jpa:consumeDelete>true</jpa:consumeDelete>
-                    <jpa:consumeLockEntity>false</jpa:consumeLockEntity>
-                    <jpa:consumer.transacted>true</jpa:consumer.transacted>
-                </jpa:consume>
-            </jpa:binding.jpa>
-        </service>
-        <service name="PeriodicService" promote="PeriodicService/PeriodicService">
-            <interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.StoreService"/>
-            <quartz:binding.quartz xmlns:quartz="urn:switchyard-component-camel-quartz:config:1.0">
-                <quartz:name>EveryFiveSecondsJob</quartz:name>
-                <quartz:cron>*/5 * * * * ?</quartz:cron>
-            </quartz:binding.quartz>
-        </service>
-        <reference multiplicity="0..1" name="StoreReference" promote="PeriodicService/StoreReference">
-            <interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.StoreService"/>
-            <jpa:binding.jpa xmlns:jpa="urn:switchyard-component-camel-jpa:config:1.0">
-                <jpa:entityClassName>org.switchyard.quickstarts.camel.jpa.binding.domain.Greet</jpa:entityClassName>
-                <jpa:persistenceUnit>JpaEvents</jpa:persistenceUnit>
-                <jpa:transactionManager>#jtaTransactionManager</jpa:transactionManager>
-            </jpa:binding.jpa>
-        </reference>
-        <component name="GreetingService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.camel.jpa.binding.GreetingServiceBean"/>
-            <service name="GreetingService">
-                <interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.GreetingService"/>
-            </service>
-        </component>
-        <component name="PeriodicService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.camel.jpa.binding.PeriodicServiceImpl"/>
-            <service name="PeriodicService">
-                <interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.PeriodicService"/>
-            </service>
-            <reference name="StoreReference">
-                <interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.StoreService"/>
-            </reference>
-        </component>
-    </composite>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:jpa="urn:switchyard-component-camel-jpa:config:1.0" xmlns:quartz="urn:switchyard-component-camel-quartz:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912">
+  <sca:composite name="camel-jpa-retrieve-binding" targetNamespace="urn:switchyard-quickstart:camel-jpa-binding:0.1.0">
+    <sca:service name="GreetingService" requires="sca:propagatesTransaction" promote="GreetingService/GreetingService">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.GreetingService"/>
+      <jpa:binding.jpa>
+        <jpa:entityClassName>org.switchyard.quickstarts.camel.jpa.binding.domain.Greet</jpa:entityClassName>
+        <jpa:persistenceUnit>JpaEvents</jpa:persistenceUnit>
+        <jpa:transactionManager>#jtaTransactionManager</jpa:transactionManager>
+        <jpa:consume>
+          <jpa:initialDelay>1000</jpa:initialDelay>
+          <jpa:delay>500</jpa:delay>
+          <jpa:consumeDelete>true</jpa:consumeDelete>
+          <jpa:consumeLockEntity>false</jpa:consumeLockEntity>
+          <jpa:consumer.transacted>true</jpa:consumer.transacted>
+        </jpa:consume>
+      </jpa:binding.jpa>
+    </sca:service>
+    <sca:service name="PeriodicService" promote="PeriodicService/PeriodicService">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.StoreService"/>
+      <quartz:binding.quartz>
+        <quartz:name>EveryFiveSecondsJob</quartz:name>
+        <quartz:cron>*/5 * * * * ?</quartz:cron>
+      </quartz:binding.quartz>
+    </sca:service>
+    <sca:reference name="StoreReference" multiplicity="0..1" promote="PeriodicService/StoreReference">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.StoreService"/>
+      <jpa:binding.jpa>
+        <jpa:entityClassName>org.switchyard.quickstarts.camel.jpa.binding.domain.Greet</jpa:entityClassName>
+        <jpa:persistenceUnit>JpaEvents</jpa:persistenceUnit>
+        <jpa:transactionManager>#jtaTransactionManager</jpa:transactionManager>
+      </jpa:binding.jpa>
+    </sca:reference>
+    <sca:component name="GreetingService">
+      <bean:implementation.bean class="org.switchyard.quickstarts.camel.jpa.binding.GreetingServiceBean"/>
+      <sca:service name="GreetingService">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.GreetingService"/>
+      </sca:service>
+    </sca:component>
+    <sca:component name="PeriodicService">
+      <bean:implementation.bean class="org.switchyard.quickstarts.camel.jpa.binding.PeriodicServiceImpl"/>
+      <sca:service name="PeriodicService">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.PeriodicService"/>
+      </sca:service>
+      <sca:reference name="StoreReference">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.jpa.binding.StoreService"/>
+      </sca:reference>
+    </sca:component>
+  </sca:composite>
+  <domain>
+    <properties>
+      <property name="org.switchyard.camel.ShutdownTimeout" value="300000"/>
+    </properties>
+  </domain>
 </switchyard>
