@@ -1,4 +1,4 @@
-package org.switchyard.transform;
+package org.switchyard.transform.internal;
 
 import java.beans.IntrospectionException;
 import java.io.IOException;

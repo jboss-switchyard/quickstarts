@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.switchyard.common.xml.QNameUtil;
-import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.DozerFileEntryModel;
 import org.switchyard.transform.config.model.DozerMappingFilesModel;
 import org.switchyard.transform.config.model.DozerTransformModel;
+import org.switchyard.transform.internal.TransformMessages;
 import org.switchyard.transform.internal.TransformerFactory;
 
 import javax.xml.namespace.QName;

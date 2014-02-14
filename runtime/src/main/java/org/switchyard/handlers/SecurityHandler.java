@@ -36,8 +36,8 @@ import org.switchyard.security.context.SecurityContext;
 import org.switchyard.security.context.SecurityContextManager;
 import org.switchyard.security.credential.ConfidentialityCredential;
 import org.switchyard.security.credential.PrincipalCredential;
-import org.switchyard.security.spi.JaasSecurityProvider;
-import org.switchyard.security.spi.SecurityProvider;
+import org.switchyard.security.provider.JaasSecurityProvider;
+import org.switchyard.security.provider.SecurityProvider;
 
 /**
  * A security ExchangeHandler implementation.
@@ -75,7 +75,7 @@ public class SecurityHandler extends BaseHandler {
             provider = new JaasSecurityProvider();
         }
         _securityProvider = provider;
-        _securityAction = action;
+        _securityAction = securityAction;
     }
 
     /**

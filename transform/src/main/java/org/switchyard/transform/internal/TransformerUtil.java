@@ -30,7 +30,6 @@ import org.jboss.logging.Logger;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.metadata.JavaTypes;
 import org.switchyard.transform.BaseTransformer;
-import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.Transformer;
 
 /**

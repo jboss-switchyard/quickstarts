@@ -30,7 +30,6 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.transform.TransformModel;
 import org.switchyard.config.model.transform.TransformsModel;
-import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.transform.config.model.JavaTransformModel;

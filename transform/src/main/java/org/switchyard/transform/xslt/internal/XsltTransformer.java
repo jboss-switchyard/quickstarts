@@ -25,8 +25,8 @@ import org.jboss.logging.Logger;
 import org.switchyard.Message;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.transform.BaseTransformer;
-import org.switchyard.transform.TransformLogger;
-import org.switchyard.transform.TransformMessages;
+import org.switchyard.transform.internal.TransformLogger;
+import org.switchyard.transform.internal.TransformMessages;
 import org.w3c.dom.Document;
 
 /**

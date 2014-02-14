@@ -26,8 +26,8 @@ import org.milyn.payload.JavaResult;
 import org.milyn.payload.StringResult;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.transform.BaseTransformer;
-import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.config.model.SmooksTransformModel;
+import org.switchyard.transform.internal.TransformMessages;
 
 /**
  * Smooks {@link org.switchyard.transform.Transformer}.

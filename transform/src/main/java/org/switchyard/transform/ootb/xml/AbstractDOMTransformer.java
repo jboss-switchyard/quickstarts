@@ -16,8 +16,8 @@ package org.switchyard.transform.ootb.xml;
 
 import org.jboss.logging.Logger;
 import org.switchyard.transform.BaseTransformer;
-import org.switchyard.transform.TransformLogger;
-import org.switchyard.transform.TransformMessages;
+import org.switchyard.transform.internal.TransformLogger;
+import org.switchyard.transform.internal.TransformMessages;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;

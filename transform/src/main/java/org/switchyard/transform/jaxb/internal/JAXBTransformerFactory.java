@@ -29,10 +29,10 @@ import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.metadata.JavaTypes;
-import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.JAXBTransformModel;
 import org.switchyard.transform.config.model.JavaTransformType;
+import org.switchyard.transform.internal.TransformMessages;
 import org.switchyard.transform.internal.TransformerFactory;
 
 /**

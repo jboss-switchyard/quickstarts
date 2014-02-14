@@ -24,7 +24,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.switchyard.Message;
 import org.switchyard.transform.BaseTransformer;
-import org.switchyard.transform.TransformMessages;
+import org.switchyard.transform.internal.TransformMessages;
 
 /**
  * JSON to Java Transformer.

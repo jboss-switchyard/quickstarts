@@ -16,10 +16,10 @@ package org.switchyard.transform.smooks.internal;
 
 import org.milyn.Smooks;
 import org.milyn.javabean.binding.model.ModelSet;
-import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.SmooksTransformModel;
 import org.switchyard.transform.config.model.SmooksTransformType;
+import org.switchyard.transform.internal.TransformMessages;
 import org.switchyard.transform.internal.TransformerFactory;
 
 import javax.xml.namespace.QName;

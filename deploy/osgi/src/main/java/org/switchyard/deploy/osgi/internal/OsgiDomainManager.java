@@ -22,15 +22,19 @@ import org.osgi.framework.BundleContext;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.bus.camel.CamelExchangeBus;
+import org.switchyard.config.model.property.PropertiesModel;
+import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.internal.DomainImpl;
 import org.switchyard.internal.transform.BaseTransformerRegistry;
 import org.switchyard.internal.validate.BaseValidatorRegistry;
+import org.switchyard.security.service.ServiceDomainSecurity;
 import org.switchyard.transform.TransformerRegistry;
 import org.switchyard.validate.ValidatorRegistry;
 
 import javax.xml.namespace.QName;
+
 import java.util.Map;
 
 /**
@@ -50,16 +54,27 @@ public class OsgiDomainManager extends ServiceDomainManager {
         OsgiSwitchYardCamelContextImpl camelContext = new OsgiSwitchYardCamelContextImpl(bundleContext);
         CamelExchangeBus bus = new CamelExchangeBus(camelContext);
 
-        Map<String, ServiceSecurity> serviceSecurities = getServiceSecurities(switchyardConfig);
+        ServiceDomainSecurity serviceSecurities = getServiceDomainSecurity(switchyardConfig);
 
         DomainImpl domain = new DomainImpl(
                 domainName, getRegistry(), bus, transformerRegistry,
                 validatorRegistry, getEventManager(), serviceSecurities);
         camelContext.setServiceDomain(domain);
 
-        if (switchyardConfig != null) {
+        /*if (switchyardConfig != null) {
             domain.getHandlers().addAll(getDomainHandlers(switchyardConfig.getDomain()));
+        }*/
+        
+        // set properties on the domain
+        PropertiesModel properties = getProperties(switchyardConfig);
+        if (properties != null) {
+            for (PropertyModel property : properties.getProperties()) {
+                domain.setProperty(property.getName(), property.getValue());
+            }
         }
+
+        // now that all resources and properties are set, init the domain
+        domain.init();
 
         return domain;
     }

@@ -1,4 +1,4 @@
-package org.switchyard.transform;
+package org.switchyard.transform.internal;
 
 import static org.jboss.logging.Logger.Level.ERROR;
 import static org.jboss.logging.Logger.Level.WARN;

@@ -28,6 +28,7 @@
     <properties>
         <switchyard.osgi.export.pkg>
             org.switchyard.transform.config.*;
+            org.switchyard.transform.dozer.*;
             org.switchyard.transform.internal.*;
             org.switchyard.transform.jaxb.*;
             org.switchyard.transform.json.*;
@@ -36,6 +37,7 @@
             org.switchyard.transform.xslt.*;
         </switchyard.osgi.export.pkg>
         <switchyard.osgi.import>
+            org.dozer.*;resolution:=optional,
             org.milyn.*;resolution:=optional,
             javax.enterprise.inject.spi;resolution:=optional,
             org.switchyard.common.cdi;resolution:=optional;${switchyard.osgi.import.switchyard.version},

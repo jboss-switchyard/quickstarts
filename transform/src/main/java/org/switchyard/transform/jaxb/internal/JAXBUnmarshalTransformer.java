@@ -26,7 +26,7 @@ import org.switchyard.SwitchYardException;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.transform.BaseTransformer;
-import org.switchyard.transform.TransformMessages;
+import org.switchyard.transform.internal.TransformMessages;
 
 /**
  * JAXB Unmarshalling transformer.

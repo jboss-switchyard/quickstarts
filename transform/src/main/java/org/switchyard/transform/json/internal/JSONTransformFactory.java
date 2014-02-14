@@ -18,9 +18,9 @@ import javax.xml.namespace.QName;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.switchyard.common.xml.QNameUtil;
-import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.JSONTransformModel;
+import org.switchyard.transform.internal.TransformMessages;
 import org.switchyard.transform.internal.TransformerFactory;
 
 /**

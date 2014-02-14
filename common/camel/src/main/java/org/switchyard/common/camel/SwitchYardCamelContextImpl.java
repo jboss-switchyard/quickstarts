@@ -21,8 +21,8 @@
  */
 package org.switchyard.common.camel;
 
-import org.apache.camel.component.cdi.CdiBeanRegistry;
-import org.apache.camel.component.cdi.CdiInjector;
+import org.apache.camel.cdi.CdiBeanRegistry;
+import org.apache.camel.cdi.CdiInjector;
 import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
@@ -30,8 +30,6 @@ import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
-import org.apache.log4j.Logger;
-import org.switchyard.ProviderRegistry;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.camel.event.CamelEventBridge;
 import org.switchyard.common.cdi.CDIUtil;
@@ -49,9 +47,10 @@ public class SwitchYardCamelContextImpl extends DefaultCamelContext implements S
 
     private final SimpleRegistry _writeableRegistry = new SimpleRegistry();
     private ServiceDomain _domain;
-    private Logger _logger = Logger.getLogger(SwitchYardCamelContextImpl.class);
 
     private AtomicInteger _count = new AtomicInteger();
+
+    private static final int DEFAULT_TIMEOUT = 30;
 
     /**
      * Flag to turn on/off cdi integration.
@@ -74,7 +73,7 @@ public class SwitchYardCamelContextImpl extends DefaultCamelContext implements S
         if (isEnableCdiIntegration()) {
             CDISupport.setCdiInjector(this);
         } else {
-            _logger.warn("CDI environment not detected, disabling Camel CDI integration");
+        	CommonCamelLogger.ROOT_LOGGER.cdiNotDetected();
         }
         getManagementStrategy().addEventNotifier(new CamelEventBridge());
     }
@@ -93,12 +92,12 @@ public class SwitchYardCamelContextImpl extends DefaultCamelContext implements S
             }
         }
 
-        PackageScanClassResolver packageScanClassResolver = getPackageScanClassResolver();
+        PackageScanClassResolver packageScanClassResolver = findPackageScanClassResolver();
         if (packageScanClassResolver != null) {
             setPackageScanClassResolver(packageScanClassResolver);
         }
 
-        this._domain.getProperties().put(CAMEL_CONTEXT_PROPERTY, this);
+        _domain.setProperty(CAMEL_CONTEXT_PROPERTY, this);
     }
 
     /**
@@ -116,9 +115,8 @@ public class SwitchYardCamelContextImpl extends DefaultCamelContext implements S
      * 
      * @return The first PackageScanClassResolver Service found on the classpath.
      */
-    public PackageScanClassResolver getPackageScanClassResolver() {
-        final ServiceLoader<PackageScanClassResolver> resolverLoaders = ServiceLoader
-            .load(PackageScanClassResolver.class, this.getClass().getClassLoader());
+    public PackageScanClassResolver findPackageScanClassResolver() {
+        final ServiceLoader<PackageScanClassResolver> resolverLoaders = ServiceLoader.load(PackageScanClassResolver.class);
 
         for (PackageScanClassResolver packageScanClassResolver : resolverLoaders) {
             return packageScanClassResolver;
@@ -127,14 +125,20 @@ public class SwitchYardCamelContextImpl extends DefaultCamelContext implements S
         return null;
     }
 
-    protected Registry createRegistry() {
+    protected CompositeRegistry createRegistry() {
+        final ServiceLoader<Registry> registriesLoaders = ServiceLoader.load(Registry.class, getClass().getClassLoader());
+
         final List<Registry> registries = new ArrayList<Registry>();
         registries.add(new JndiRegistry());
         if (isEnableCdiIntegration()) {
-            CDISupport.addCdiRegistry(registries);
+        	registries.add(new CdiBeanRegistry());
         }
         registries.add(_writeableRegistry);
-        registries.addAll(ProviderRegistry.getProviders(Registry.class));
+
+        for (Registry registry : registriesLoaders) {
+            registries.add(registry);
+        }
+
         return new CompositeRegistry(registries);
     }
 
@@ -167,6 +171,7 @@ public class SwitchYardCamelContextImpl extends DefaultCamelContext implements S
     @Override
     public void start() throws Exception {
         if (_count.incrementAndGet() == 1) {
+            applyConfiguration();
             super.start();
         }
     }
@@ -181,6 +186,24 @@ public class SwitchYardCamelContextImpl extends DefaultCamelContext implements S
         if (_count.decrementAndGet() == 0) {
             super.stop();
         }
+    }
+
+    // Applies domain configuration to this camel context
+    private void applyConfiguration() {
+        if (_domain == null || _domain.getProperties() == null) {
+            // no config to apply
+            return;
+        }
+        
+        // set shutdown timeout
+        Object timeoutProp = _domain.getProperty(SHUTDOWN_TIMEOUT);
+        int timeout;
+        if (timeoutProp != null) {
+            timeout = Integer.parseInt(timeoutProp.toString());
+        } else {
+            timeout = DEFAULT_TIMEOUT;
+        }
+        getShutdownStrategy().setTimeout(timeout);
     }
 
     static class CDISupport {

@@ -8,19 +8,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.ExchangeInterceptor;
 import org.switchyard.MockDomain;
-import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.common.camel.SwitchYardCamelContextImpl;
 import org.switchyard.handlers.MessageTraceHandler;
 
 public class InterceptorProcessorTest {
     
     private MockDomain _domain;
-    private SwitchYardCamelContext _context;
+    private SwitchYardCamelContextImpl _context;
     private Exchange _exchange;
     
     @Before
     public void setUp() throws Exception {
         _domain = new MockDomain();
-        _context = new SwitchYardCamelContext();
+        _context = new SwitchYardCamelContextImpl();
         _context.setServiceDomain(_domain);
         _context.start();
         _exchange = new DefaultExchange(_context);

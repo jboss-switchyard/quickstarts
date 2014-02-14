@@ -22,7 +22,7 @@ import org.milyn.javabean.binding.model.ModelSet;
 import org.milyn.javabean.binding.xml.XMLBinding;
 import org.switchyard.config.model.Scannable;
 import org.switchyard.transform.BaseTransformer;
-import org.switchyard.transform.TransformMessages;
+import org.switchyard.transform.internal.TransformMessages;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;

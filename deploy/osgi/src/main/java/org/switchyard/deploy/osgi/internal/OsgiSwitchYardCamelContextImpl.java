@@ -23,6 +23,7 @@ import org.apache.camel.core.osgi.OsgiCamelContextHelper;
 import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
 import org.apache.camel.core.osgi.OsgiTypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
+import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
 import org.osgi.framework.BundleContext;
@@ -40,8 +41,8 @@ public class OsgiSwitchYardCamelContextImpl extends SwitchYardCamelContextImpl {
     }
 
     @Override
-    protected Registry createRegistry() {
-        return OsgiCamelContextHelper.wrapRegistry(this, super.createRegistry(), bundleContext);
+    protected CompositeRegistry createRegistry() {
+        return (CompositeRegistry) OsgiCamelContextHelper.wrapRegistry(this, super.createRegistry(), bundleContext);
     }
 
     @Override

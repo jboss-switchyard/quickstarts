@@ -17,8 +17,8 @@ package org.switchyard.transform.ootb.map;
 import org.jboss.logging.Logger;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.transform.BaseTransformer;
-import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.Transformer;
+import org.switchyard.transform.internal.TransformMessages;
 
 import javax.xml.namespace.QName;
 

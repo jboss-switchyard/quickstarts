@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.switchyard.transform.BaseTransformer;
-import org.switchyard.transform.TransformMessages;
+import org.switchyard.transform.internal.TransformMessages;
 
 /**
  * Java to JSON Transformer.

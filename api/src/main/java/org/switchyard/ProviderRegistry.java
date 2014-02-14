@@ -18,7 +18,7 @@
  */
 package org.switchyard;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.Iterator;

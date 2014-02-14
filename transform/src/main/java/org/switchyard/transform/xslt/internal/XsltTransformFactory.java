@@ -27,10 +27,10 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
-import org.switchyard.transform.TransformLogger;
-import org.switchyard.transform.TransformMessages;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.XsltTransformModel;
+import org.switchyard.transform.internal.TransformLogger;
+import org.switchyard.transform.internal.TransformMessages;
 import org.switchyard.transform.internal.TransformerFactory;
 
 /**

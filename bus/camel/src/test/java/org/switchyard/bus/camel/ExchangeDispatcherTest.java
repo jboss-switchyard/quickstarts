@@ -181,7 +181,7 @@ public class ExchangeDispatcherTest {
     }
     
     private void initDomain(ServiceDomain domain) throws Exception {
-        _camelContext = new SwitchYardCamelContext();
+        _camelContext = new SwitchYardCamelContextImpl();
         _camelContext.setServiceDomain(domain);
         _provider = new CamelExchangeBus(_camelContext);
         _provider.init(domain);

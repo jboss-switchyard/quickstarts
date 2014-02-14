@@ -50,10 +50,16 @@ public interface SwitchYardCamelContext extends ModelCamelContext {
     
     /**
      * Gets SwitchYard domain associated with this context.
-     *
+     * 
      * @return SwitchYard domain.
      */
-    ServiceDomain getServiceDomain();
+    public ServiceDomain getServiceDomain();
 
-    SimpleRegistry getWritebleRegistry();
+    /**
+     * Gets mutable registry associated with context. Allows to dynamically register
+     * bean instances.
+     * 
+     * @return Registry which allows to put new objects.
+     */
+    public SimpleRegistry getWritebleRegistry();
 }

@@ -144,7 +144,7 @@ public class ServiceDomainManager {
         return _registry;
     }
 
-    private ServiceDomainSecurity getServiceDomainSecurity(SwitchYardModel switchyard) {
+    protected ServiceDomainSecurity getServiceDomainSecurity(SwitchYardModel switchyard) {
         Map<String, ServiceSecurity> serviceSecurities = new HashMap<String, ServiceSecurity>();
         if (switchyard != null) {
             DomainModel domain = switchyard.getDomain();
@@ -175,7 +175,7 @@ public class ServiceDomainManager {
         return new DefaultServiceDomainSecurity(serviceSecurities, _systemSecurity);
     }
     
-    private PropertiesModel getProperties(SwitchYardModel config) {
+    protected PropertiesModel getProperties(SwitchYardModel config) {
         if (config == null || config.getDomain() == null) {
             return null;
         } else {
