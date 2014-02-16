@@ -37,7 +37,7 @@ public class CamelImplementationNonJavaTypeTest {
 
     @Test
     public void sendInOutMessageThroughCamelToSwitchYardService() throws Exception {
-        final String output = _proxy.sendInOut("<input>hello</input>").getContent(String.class);
-        assertThat(output, is(equalTo("<input>hello</input>")));
+        final String output = _proxy.sendInOut("<input xmlns=\"http://example.com/input\">hello</input>").getContent(String.class);
+        assertThat(output, is(equalTo("<input xmlns=\"http://example.com/input\">hello</input>")));
     }
 }

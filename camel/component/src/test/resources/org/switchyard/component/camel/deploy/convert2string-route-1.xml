@@ -12,11 +12,15 @@
  - See the License for the specific language governing permissions and
  - limitations under the License.
  -->
-<routes xmlns="http://camel.apache.org/schema/spring">
+<routes xmlns="http://camel.apache.org/schema/spring" xmlns:input="http://example.com/input">
     <route id="CamelConvertString1">
         <from uri="switchyard://EchoProxyService" />
         <!-- <convertBodyTo type="java.lang.String"/> --> 
-        <log message="String 3 [${body}]"/>
-        <log message="String 4 [${body}]"/>
+        <filter>
+            <xpath>/input:input[text()='hello']</xpath>
+            <log message="String 1 [${body}]"/>
+            <log message="String 2 [${body}]"/>
+        </filter>
     </route>
 </routes>
+
