@@ -57,19 +57,16 @@
 
         <version.jbossas.bom>7.2.0.Alpha1-redhat-4</version.jbossas.bom>
         <version.redhat.eap6.bom>1.0.4.Final-redhat-1</version.redhat.eap6.bom>
-        <version.ip.bom>6.0.0.CR3</version.ip.bom>
+        <version.ip.bom>6.0.0.CR6</version.ip.bom>
         
         <!-- Versions for local dependencies not eligible for the Integration BOM -->
         <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
         <!-- This version is only used as a prefix for a jar included in release modules -->
         <version.deltaspike>0.3-incubating</version.deltaspike>
-        <version.drools>6.0.1.Final</version.drools>
         <version.fungal>0.10.2.Final</version.fungal>
         <version.jbossas>7.2.0.Alpha1-redhat-4</version.jbossas>
         <version.jbossas.console>1.5.4.Final</version.jbossas.console>
         <version.jbossas.maven>7.4.Final</version.jbossas.maven>
-        <version.jbpm>6.0.1.Final</version.jbpm>
-        <version.kie>6.0.1.Final</version.kie>
         <version.littleproxy>0.5.3</version.littleproxy>
         <version.maven.clean.plugin>2.5</version.maven.clean.plugin>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
@@ -78,6 +75,11 @@
         <version.riftsaw.ode>3.1.0.Final</version.riftsaw.ode>
         <version.riftsaw.engine>3.1.1.Final</version.riftsaw.engine>
         <version.riftsaw.console>2.4.5.Final</version.riftsaw.console>
+
+        <!-- KIE/Drools/jBPM -->
+        <version.org.kie>${version.kiedroolsjbpm}</version.org.kie>
+        <version.org.drools>${version.kiedroolsjbpm}</version.org.drools>
+        <version.org.jbpm>${version.kiedroolsjbpm}</version.org.jbpm>
         
         <!-- Versions for dependencies that conflict with the Integration BOM -->
         <version.beanshell>2.0b5</version.beanshell>
@@ -86,7 +88,6 @@
         <version.arquillian.container>7.1.3.Final</version.arquillian.container>
         <version.org.hamcrest>1.1</version.org.hamcrest>
         <version.junit>4.10</version.junit>
-        <version.mvel>2.1.6.Final</version.mvel>
         <version.org.hornetq>2.3.0.CR1</version.org.hornetq>
         <version.jbossws.spi>2.1.2.Final</version.jbossws.spi>
         <version.jbossws.jboss720.server.integration>4.2.0.Final</version.jbossws.jboss720.server.integration>
@@ -438,6 +439,28 @@
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>parent-profile-product</id>
+            <activation>
+                <property>
+                    <name>switchyard.product</name>
+                </property>
+            </activation>
+            <properties>
+                <version.kiedroolsjbpm>6.0.2-SNAPSHOT</version.kiedroolsjbpm>
+            </properties>
+        </profile>
+        <profile>
+            <id>parent-profile-community</id>
+            <activation>
+                <property>
+                    <name>!switchyard.product</name>
+                </property>
+            </activation>
+            <properties>
+                <version.kiedroolsjbpm>6.1.0.Beta1</version.kiedroolsjbpm>
+            </properties>
+        </profile>
         <profile>
             <!-- https://cwiki.apache.org/confluence/display/MAVEN/Maven+3.x+and+site+plugin -->
             <id>maven-3</id>
@@ -900,34 +923,34 @@
             <dependency>
                 <groupId>org.drools</groupId>
                 <artifactId>drools-compiler</artifactId>
-                <version>${version.drools}</version>
+                <version>${version.org.drools}</version>
             </dependency>
             <dependency>
                 <groupId>org.drools</groupId>
                 <artifactId>drools-core</artifactId>
-                <version>${version.drools}</version>
+                <version>${version.org.drools}</version>
             </dependency>
             <dependency>
                 <groupId>org.drools</groupId>
                 <artifactId>drools-decisiontables</artifactId>
-                <version>${version.drools}</version>
+                <version>${version.org.drools}</version>
             </dependency>
             <dependency>
                 <groupId>org.drools</groupId>
                 <artifactId>drools-persistence-jpa</artifactId>
-                <version>${version.drools}</version>
+                <version>${version.org.drools}</version>
             </dependency>
             <!-- SWITCHYARD-1662
             <dependency>
                 <groupId>org.drools</groupId>
                 <artifactId>drools-scorecards</artifactId>
-                <version>${version.drools}</version>
+                <version>${version.org.drools}</version>
             </dependency>
             -->
             <dependency>
                 <groupId>org.drools</groupId>
                 <artifactId>drools-templates</artifactId>
-                <version>${version.drools}</version>
+                <version>${version.org.drools}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.as</groupId>
@@ -1084,32 +1107,54 @@
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-audit</artifactId>
-                <version>${version.jbpm}</version>
+                <version>${version.org.jbpm}</version>
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-bpmn2</artifactId>
-                <version>${version.jbpm}</version>
+                <version>${version.org.jbpm}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jbpm</groupId>
+                <artifactId>jbpm-executor</artifactId>
+                <version>${version.org.jbpm}</version>
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-flow</artifactId>
-                <version>${version.jbpm}</version>
+                <version>${version.org.jbpm}</version>
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-flow-builder</artifactId>
-                <version>${version.jbpm}</version>
+                <version>${version.org.jbpm}</version>
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-human-task-audit</artifactId>
-                <version>${version.jbpm}</version>
+                <version>${version.org.jbpm}</version>
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-human-task-core</artifactId>
-                <version>${version.jbpm}</version>
+                <version>${version.org.jbpm}</version>
+                <!-- in jBPM 6.0.x, human task persistence is here -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.seam.persistence</groupId>
+                        <artifactId>seam-persistence</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.seam.transaction</groupId>
+                        <artifactId>seam-transaction</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.jbpm</groupId>
+                <artifactId>jbpm-human-task-jpa</artifactId>
+                <version>${version.org.jbpm}</version>
+                <!-- in jBPM 6.1.x, human task persistence is here -->
                 <exclusions>
                     <exclusion>
                         <groupId>org.jboss.seam.persistence</groupId>
@@ -1124,12 +1169,12 @@
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-human-task-workitems</artifactId>
-                <version>${version.jbpm}</version>
+                <version>${version.org.jbpm}</version>
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-kie-services</artifactId>
-                <version>${version.jbpm}</version>
+                <version>${version.org.jbpm}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jboss.seam.persistence</groupId>
@@ -1148,17 +1193,17 @@
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-persistence-jpa</artifactId>
-                <version>${version.jbpm}</version>
+                <version>${version.org.jbpm}</version>
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-runtime-manager</artifactId>
-                <version>${version.jbpm}</version>
+                <version>${version.org.jbpm}</version>
             </dependency>
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-shared-services</artifactId>
-                <version>${version.jbpm}</version>
+                <version>${version.org.jbpm}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jboss.seam.persistence</groupId>
@@ -1173,7 +1218,7 @@
             <dependency>
                 <groupId>org.jbpm</groupId>
                 <artifactId>jbpm-workitems</artifactId>
-                <version>${version.jbpm}</version>
+                <version>${version.org.jbpm}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.cxf</groupId>
@@ -1206,22 +1251,17 @@
             <dependency>
                 <groupId>org.kie</groupId>
                 <artifactId>kie-api</artifactId>
-                <version>${version.kie}</version>
+                <version>${version.org.kie}</version>
             </dependency>
             <dependency>
                 <groupId>org.kie</groupId>
                 <artifactId>kie-internal</artifactId>
-                <version>${version.kie}</version>
+                <version>${version.org.kie}</version>
             </dependency>
             <dependency>
                 <groupId>org.littleshoot</groupId>
                 <artifactId>littleproxy</artifactId>
                 <version>${version.littleproxy}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mvel</groupId>
-                <artifactId>mvel2</artifactId>
-                <version>${version.mvel}</version>
             </dependency>
             <dependency>
                 <groupId>org.riftsaw</groupId>
