@@ -127,7 +127,11 @@ public class JCAActivator extends BaseActivator {
         if (raName == null) {
             throw JCAMessages.MESSAGES.noResourceAdapterNameConfigured();
         }
-        String raid = ConnectorServices.getRegisteredResourceAdapterIdentifier(stripDotRarSuffix(raName));
+        String raid = ConnectorServices.getRegisteredResourceAdapterIdentifier(raName);
+        if (raid == null && raName.endsWith(".rar")) {
+            // AS7 registers adapter's name with stripping .rar suffix unlike WildFly
+            raid = ConnectorServices.getRegisteredResourceAdapterIdentifier(stripDotRarSuffix(raName));
+        }
         if (raid == null) {
             throw JCAMessages.MESSAGES.uniqueKeyForResourceAdapter(raName);
         }
