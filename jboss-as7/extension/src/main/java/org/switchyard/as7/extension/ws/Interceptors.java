@@ -248,14 +248,14 @@ public final class Interceptors {
     }
     
     private static final class SwitchYardDispatchInterceptor extends AbstractPhaseInterceptor<Message> {
-    	private SwitchYardDispatchInterceptor() {
+        private SwitchYardDispatchInterceptor() {
             super(Phase.POST_PROTOCOL);
         }
-    	@Override
+        @Override
         public void handleMessage(Message message) throws Fault {
-    		// SWITCHYARD-1936 : prevent timing issues with web container by using original thread
-    		message.setContextualProperty(OneWayProcessorInterceptor.USE_ORIGINAL_THREAD, true);
-    	}
+            // SWITCHYARD-1936 : prevent timing issues with web container by using original thread
+            message.setContextualProperty(OneWayProcessorInterceptor.USE_ORIGINAL_THREAD, true);
+        }
     }
 
     private static final class SwitchYardURIMappingInterceptor extends AbstractPhaseInterceptor<Message> {

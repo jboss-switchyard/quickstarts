@@ -2,7 +2,6 @@ package org.switchyard.as7.extension;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.logging.Cause;
 import org.jboss.logging.Messages;
@@ -80,7 +79,7 @@ public interface ExtensionMessages {
     @Message(id = 40406, value = "No such operation: / (HTTP %s PATH_INFO: %s)")
     Exception noSuchOperationGet(String method, String pathInfo);
     
-    /*
+    /**
      * extensionNotfound method definition.
      * @param extensionClassName extension class name
      * @return DeploymentUnitProcessingException

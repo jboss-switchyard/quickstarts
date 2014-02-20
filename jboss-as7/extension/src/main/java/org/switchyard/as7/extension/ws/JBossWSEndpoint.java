@@ -18,9 +18,12 @@ import java.net.URL;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+import javax.xml.ws.WebServiceException;
+
 import org.jboss.logging.Logger;
 import org.jboss.wsf.spi.classloading.ClassLoaderProvider;
 import org.jboss.wsf.spi.deployment.Endpoint;
+import org.jboss.wsf.spi.metadata.webservices.JBossWebservicesFactory;
 import org.jboss.wsf.spi.metadata.webservices.JBossWebservicesMetaData;
 import org.jboss.wsf.spi.metadata.webservices.WebservicesMetaData;
 import org.jboss.wsf.spi.publish.Context;
@@ -76,8 +79,15 @@ public class JBossWSEndpoint implements WSEndpoint {
             String configFile = epcModel.getConfigFile();
             if (configFile != null) {
                 URL jbwsURL = Classes.getResource(configFile, getClass());
-                jbwsMetadata = new JBossWebservicesMetaData(jbwsURL);
-                jbwsMetadata.setConfigFile(configFile);
+                try {
+                    jbwsMetadata = JBossWebservicesFactory.load(jbwsURL);
+                } catch (WebServiceException e) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.error("Unable to load jboss-webservices metadata", e);
+                    }
+                    jbwsMetadata = new JBossWebservicesMetaData(jbwsURL);
+                    jbwsMetadata.setConfigFile(configFile);
+                }
             }
             String configName = epcModel.getConfigName();
             if (configName != null) {
