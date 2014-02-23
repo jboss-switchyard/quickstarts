@@ -74,6 +74,7 @@
         <version.maven.clean.plugin>2.5</version.maven.clean.plugin>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
         <version.mock.javamail>1.9</version.mock.javamail>
+        <version.net.sf.dozer>5.4.0</version.net.sf.dozer>
         <version.riftsaw.ode>3.1.0.Final</version.riftsaw.ode>
         <version.riftsaw.engine>3.1.1.Final</version.riftsaw.engine>
         <version.riftsaw.console>2.4.5.Final</version.riftsaw.console>
@@ -881,6 +882,11 @@
                 <version>${version.fungal}</version>
             </dependency>
             <dependency>
+                <groupId>net.sf.dozer</groupId>
+                <artifactId>dozer</artifactId>
+                <version>${version.net.sf.dozer}</version>
+            </dependency>
+             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>${version.maven.plugin.plugin}</version>
