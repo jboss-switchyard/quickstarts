@@ -68,6 +68,10 @@
         </dependency>
         <!-- external dependencies -->
         <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+        </dependency>
+         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-runtime</artifactId>
             <scope>test</scope>

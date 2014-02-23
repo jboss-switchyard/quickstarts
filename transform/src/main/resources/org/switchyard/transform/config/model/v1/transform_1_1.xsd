@@ -201,4 +201,32 @@
         </complexContent>
     </complexType>
 
+    <element name="transform.dozer" type="trfm:DozerTransformType" substitutionGroup="swyd:transform" />
+    <complexType name="DozerTransformType">
+        <annotation>
+            <documentation xml:lang="en">
+                Dozer Transformer Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:TransformType">
+                <sequence>
+                    <element name="mappingFiles" type="trfm:dozerMappingFilesType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    <complexType name="dozerMappingFilesType">
+        <annotation>
+            <documentation xml:lang="en">
+                Dozer mapping file configuration.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="entry" type="trfm:dozerFileEntryType" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+    <complexType name="dozerFileEntryType">
+        <attribute name="file" type="string" use="required"/>
+    </complexType>
 </schema>

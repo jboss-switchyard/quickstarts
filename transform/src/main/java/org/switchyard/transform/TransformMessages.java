@@ -1,11 +1,10 @@
 package org.switchyard.transform;
 
 import java.beans.IntrospectionException;
-
 import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
-
+import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -13,12 +12,10 @@ import javax.xml.transform.TransformerConfigurationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonMappingException;
-
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageBundle;
-
 import org.switchyard.SwitchYardException;
 import org.xml.sax.SAXException;
 
@@ -529,5 +526,19 @@ public interface TransformMessages {
     @Message(id=16858, value = "Invalid @Transformer method '%s' on class '%s'.  Must return a result.")
     SwitchYardException invalidTransformerMethodResult(String methodName, String className);
     
+    /**
+     * invalidFromTypeForDozerTransformer method definition.
+     * @param from 'from' QName
+     * @return SwitchYardException
+     */
+    @Message(id=16859, value = "Invalid 'from' type '%s' for Dozer transformer")
+    SwitchYardException invalidFromTypeForDozerTransformer(QName from);
     
+    /**
+     * invalidToTypeForDozerTransformer method definition.
+     * @param to 'to' QName
+     * @return SwitchYardException
+     */
+    @Message(id=16860, value = "Invalid 'to' type '%s' for Dozer transformer")
+    SwitchYardException invalidToTypeForDozerTransformer(QName to);
 }

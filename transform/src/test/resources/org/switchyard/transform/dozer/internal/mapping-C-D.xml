@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://dozer.sourceforge.net
+                http://dozer.sourceforge.net/schema/beanmapping.xsd">
+    <mapping>
+        <class-a>org.switchyard.transform.dozer.internal.ClassC</class-a>
+        <class-b>org.switchyard.transform.dozer.internal.ClassD</class-b>
+        <field>
+            <a>fieldA</a>
+            <b>fieldB</b>
+        </field>
+        <field>
+            <a>fieldC</a>
+            <b>fieldD</b>
+        </field>
+    </mapping>
+</mappings>
