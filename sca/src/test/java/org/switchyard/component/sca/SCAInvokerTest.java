@@ -1,4 +1,20 @@
+/*
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.switchyard.component.sca;
+
+import java.io.IOException;
+import java.util.LinkedList;
 
 import javax.xml.namespace.QName;
 
@@ -6,6 +22,7 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
@@ -21,7 +38,9 @@ import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 import org.switchyard.metadata.InOnlyOperation;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.remote.RemoteEndpoint;
+import org.switchyard.remote.RemoteMessage;
 import org.switchyard.remote.RemoteRegistry;
+import org.switchyard.remote.cluster.ClusteredInvoker;
 import org.switchyard.remote.cluster.LoadBalanceStrategy;
 import org.switchyard.remote.cluster.RandomStrategy;
 import org.switchyard.remote.cluster.RoundRobinStrategy;
@@ -287,6 +306,54 @@ public class SCAInvokerTest {
         } catch (SwitchYardException ex) {
             // expected
         }
+    }
+    
+    @Test
+    public void verifyRemoteMessageCreation() throws Exception {
+        // Create a binding config with clustering enabled
+        V1SCABindingModel config = new V1SCABindingModel(SwitchYardNamespace.DEFAULT.uri()) {
+            @Override
+            public String getName() {
+                return "verifyRemoteMessageCreation";
+            }
+            @Override
+            public boolean isClustered() {
+                return true;
+            }
+            @Override
+            public String getTarget() {
+                return "test-target";
+            }
+            public CompositeReferenceModel getReference() {
+                return new V1CompositeReferenceModel();
+            };
+        };
+        
+        // Mock the invoker so that we don't need an actual remote endpoint
+        final LinkedList<RemoteMessage> msgs = new LinkedList<RemoteMessage>();
+        ClusteredInvoker clInovker = new ClusteredInvoker(null) {
+            @Override
+            public RemoteMessage invoke(RemoteMessage request) throws IOException {
+                msgs.push(request);
+                return null;
+            }
+        };
+        
+        SCAInvoker scaInvoker = new SCAInvoker(config);
+        scaInvoker.setInvoker(clInovker);
+        scaInvoker.start();
+        
+        // Verify that exchange is mapped to remote message correctly
+        Exchange mockEx = Mockito.mock(Exchange.class, Mockito.RETURNS_DEEP_STUBS);
+        Mockito.when(mockEx.getContract().getConsumerOperation().getName()).thenReturn("test-operation");
+        Mockito.when(mockEx.getProvider().getDomain().getName()).thenReturn(new QName("test-domain"));
+        Mockito.when(mockEx.getMessage().getContent()).thenReturn("test-content");
+        scaInvoker.handleMessage(mockEx);
+        
+        RemoteMessage remoteMsg = msgs.pop();
+        Assert.assertEquals(new QName("test-domain"), remoteMsg.getDomain());
+        Assert.assertEquals("test-operation", remoteMsg.getOperation());
+        Assert.assertEquals("test-content", remoteMsg.getContent());
     }
 }
 

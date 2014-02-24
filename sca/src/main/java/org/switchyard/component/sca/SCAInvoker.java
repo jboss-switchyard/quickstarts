@@ -105,6 +105,12 @@ public class SCAInvoker extends BaseServiceHandler {
         }
     }
     
+    // This method exists for test purposes and should not be used at runtime.  Initialization
+    // of the invoker instance occurs in the constructor for SCAInvoker.
+    void setInvoker(ClusteredInvoker invoker) {
+        _invoker = invoker;
+    }
+    
     private void invokeLocal(Exchange exchange) throws HandlerException {
         // Figure out the QName for the service were invoking
         QName serviceName = getTargetServiceName(exchange);
@@ -145,6 +151,7 @@ public class SCAInvoker extends BaseServiceHandler {
         RemoteMessage request = new RemoteMessage()
             .setDomain(exchange.getProvider().getDomain().getName())
             .setService(serviceName)
+            .setOperation(exchange.getContract().getConsumerOperation().getName())
             .setContent(exchange.getMessage().getContent());
         exchange.getContext().mergeInto(request.getContext());
         boolean transactionPropagated = bridgeOutgoingTransaction(request);
