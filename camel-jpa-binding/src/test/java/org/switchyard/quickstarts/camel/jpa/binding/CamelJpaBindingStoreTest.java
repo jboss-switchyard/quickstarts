@@ -48,6 +48,9 @@ public class CamelJpaBindingStoreTest extends CamelJpaBindingTest {
     @Before
     public void startUp() throws Exception {
         _context.getComponent("quartz", QuartzComponent.class).getScheduler().pauseAll();
+        Thread.sleep(100);
+        PreparedStatement statement = connection.prepareStatement("delete from events");
+        statement.execute();
     }
 
     @Test
