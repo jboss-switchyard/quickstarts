@@ -70,6 +70,7 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
             for (InjectedValue<Component> component : _components) {
                 components.add(component.getValue());
             }
+            _switchyardDeployment.setNamespaceContextSelector(_namespaceSelector.getValue());
             _switchyardDeployment.start(components);
         } catch (Exception e) {
             try {

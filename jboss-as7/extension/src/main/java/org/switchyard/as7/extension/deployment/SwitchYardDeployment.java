@@ -18,6 +18,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.jboss.as.controller.PathElement;
+import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -30,7 +31,9 @@ import org.switchyard.admin.base.BaseSwitchYard;
 import org.switchyard.as7.extension.SwitchYardExtension;
 import org.switchyard.as7.extension.SwitchYardModelConstants;
 import org.switchyard.as7.extension.admin.ModelNodeCreationUtil;
+import org.switchyard.as7.extension.camel.JBossThreadPoolFactory;
 import org.switchyard.as7.extension.services.SwitchYardAdminService;
+import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.ActivatorLoader;
@@ -54,6 +57,7 @@ public class SwitchYardDeployment {
     private Deployment _deployment;
     private ServiceDomainManager _domainManager;
     private ServiceDomain _appServiceDomain;
+    private NamespaceContextSelector _contextSelector;
 
     /**
      * Creates a new SwitchYard deployment.
@@ -79,6 +83,15 @@ public class SwitchYardDeployment {
      */
     public void destroy() {
     }
+    
+    /**
+     * Set by SwitchYardService before start() is called to allow the namespace
+     * context to be set for any threads created in the application.
+     * @param contextSelector NamespaceContextSelector
+     */
+    public void setNamespaceContextSelector(NamespaceContextSelector contextSelector) {
+        _contextSelector = contextSelector;
+    }
 
     /**
      * Start the application.
@@ -93,10 +106,17 @@ public class SwitchYardDeployment {
             setDeploymentState(SwitchYardDeploymentState.INITIALIZING);
 
             _appServiceDomain = _domainManager.createDomain(_deployment.getName(), _deployment.getConfig());
+
+            // Override the default Camel ThreadPoolFactory to allow for naming
+            // context to be set on any threads created within Camel
+            SwitchYardCamelContext camelCtx = (SwitchYardCamelContext)
+                    _appServiceDomain.getProperty(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY);
+            camelCtx.getExecutorServiceManager().setThreadPoolFactory(
+                    new JBossThreadPoolFactory(_contextSelector));
+            
             List<Activator> activators = ActivatorLoader.createActivators(
                     _appServiceDomain, components, _deployment.getActivationTypes());
             _deployment.init(_appServiceDomain, activators);
-            
             setDeploymentState(SwitchYardDeploymentState.STARTING);
             _deployment.start();
             setDeploymentState(SwitchYardDeploymentState.STARTED);
