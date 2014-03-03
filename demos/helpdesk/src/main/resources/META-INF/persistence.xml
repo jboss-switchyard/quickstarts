@@ -23,12 +23,15 @@
     <persistence-unit name="org.jbpm.persistence.jpa" transaction-type="JTA">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
-        <mapping-file>TaskAuditorm.xml</mapping-file>
-        <mapping-file>Taskorm.xml</mapping-file>
-        <mapping-file>Servicesorm.xml</mapping-file>
-        <mapping-file>JBPMorm.xml</mapping-file>
+        <mapping-file>META-INF/Executor-orm.xml</mapping-file>
+        <mapping-file>META-INF/JBPMorm.xml</mapping-file>
+        <mapping-file>META-INF/Servicesorm.xml</mapping-file>
+        <mapping-file>META-INF/TaskAuditorm.xml</mapping-file>
+        <mapping-file>META-INF/Taskorm.xml</mapping-file>
         <class>org.drools.persistence.info.SessionInfo</class>
         <class>org.drools.persistence.info.WorkItemInfo</class>
+        <class>org.jbpm.executor.entities.ErrorInfo</class>
+        <class>org.jbpm.executor.entities.RequestInfo</class>
         <class>org.jbpm.persistence.correlation.CorrelationKeyInfo</class>
         <class>org.jbpm.persistence.correlation.CorrelationPropertyInfo</class>
         <class>org.jbpm.persistence.processinstance.ProcessInstanceEventInfo</class>
@@ -36,6 +39,7 @@
         <class>org.jbpm.process.audit.NodeInstanceLog</class>
         <class>org.jbpm.process.audit.ProcessInstanceLog</class>
         <class>org.jbpm.process.audit.VariableInstanceLog</class>
+        <class>org.jbpm.runtime.manager.impl.jpa.ContextMappingInfo</class>
         <class>org.jbpm.services.task.audit.TaskEventImpl</class>
         <class>org.jbpm.services.task.impl.model.AttachmentImpl</class>
         <class>org.jbpm.services.task.impl.model.BAMTaskSummaryImpl</class>

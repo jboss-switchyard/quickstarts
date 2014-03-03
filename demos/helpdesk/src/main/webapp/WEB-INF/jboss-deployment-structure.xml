@@ -18,7 +18,7 @@
 <jboss-deployment-structure>
     <deployment>
         <dependencies>
-            <module name="org.switchyard.component.bpm"/>
+            <module name="org.switchyard.component.bpm" meta-inf="import"/>
         </dependencies>
     </deployment>
 </jboss-deployment-structure>
