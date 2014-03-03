@@ -40,6 +40,12 @@
         </sca:component>
         <sca:component name="DestinationService">
             <rules:implementation.rules>
+                <!--
+                <rules:listeners>
+                    <rules:listener class="org.kie.api.event.rule.DebugAgendaEventListener"/>
+                    <rules:listener class="org.kie.api.event.rule.DebugRuleRuntimeEventListener"/>
+                </rules:listeners>
+                -->
                 <rules:manifest>
                     <rules:resources>
                         <rules:resource location="/META-INF/DestinationServiceRules.drl" type="DRL" />
