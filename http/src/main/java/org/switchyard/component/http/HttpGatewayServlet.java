@@ -148,7 +148,7 @@ public class HttpGatewayServlet extends HttpServlet {
                         String name = entry.getKey();
                         List<String> values = entry.getValue();
                         for (String value : values) {
-                            response.setHeader(name, value);
+                            response.addHeader(name, value);
                         }
                     }
                     if (httpResponse.getBodyBytes() != null) {
