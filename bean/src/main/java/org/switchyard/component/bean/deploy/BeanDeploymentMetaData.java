@@ -155,7 +155,7 @@ public class BeanDeploymentMetaData {
     public static BeanDeploymentMetaData lookupBeanDeploymentMetaData() {
         BeanManager beanManager = CDIUtil.lookupBeanManager();
         if (beanManager == null) {
-            throw BeanMessages.MESSAGES.nameBeanManagerIsNotBoundInThisContext();
+            throw BeanMessages.MESSAGES.failedToLookupBeanManagerMustBeBoundIntoJavaCompAsPerCDISpecification();
         }
         
         Set<Bean<?>> beans = beanManager.getBeans(BeanDeploymentMetaData.class);

@@ -19,8 +19,7 @@ import java.util.Date;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
-
-import org.switchyard.component.camel.CommonCamelMessages;
+import org.switchyard.component.camel.common.CommonCamelMessages;
 
 /**
  * Base class for all camel models which are not related to binding.

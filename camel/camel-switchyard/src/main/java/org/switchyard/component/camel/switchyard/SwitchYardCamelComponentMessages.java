@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.component.camel;
+package org.switchyard.component.camel.switchyard;
 
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Message;

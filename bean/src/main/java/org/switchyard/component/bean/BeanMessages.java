@@ -126,11 +126,10 @@ public interface BeanMessages {
 
     /**
      * failedToLookupBeanManagerMustBeBoundIntoJavaCompAsPerCDISpecification method definition.
-     * @param e the e
      * @return SwitchYardException
      */
     @Message(id = 30416, value = "Failed to lookup BeanManager.  Must be bound into java:comp as per CDI specification.")
-    SwitchYardException failedToLookupBeanManagerMustBeBoundIntoJavaCompAsPerCDISpecification(@Cause NamingException e);
+    SwitchYardException failedToLookupBeanManagerMustBeBoundIntoJavaCompAsPerCDISpecification();
 
     /**
      * nameBeanManagerIsNotBoundInThisContext method definition.

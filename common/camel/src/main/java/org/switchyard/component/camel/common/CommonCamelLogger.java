@@ -1,4 +1,4 @@
-package org.switchyard.component.camel;
+package org.switchyard.component.camel.common;
 
 import org.jboss.logging.Cause;
 import org.jboss.logging.Logger;

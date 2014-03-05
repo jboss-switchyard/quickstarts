@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.switchyard.component.camel.CommonCamelMessages;
+import org.switchyard.component.camel.common.CommonCamelMessages;
 import org.switchyard.component.camel.common.QueryString;
 import org.switchyard.component.camel.common.model.AdditionalUriParametersModel;
 import org.switchyard.component.camel.common.model.CamelBindingModel;

@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.switchyard.ProviderRegistry;
 import org.switchyard.common.type.Classes;
+import org.switchyard.common.util.ProviderRegistry;
 import org.switchyard.component.common.CommonCommonLogger;
 import org.switchyard.config.model.composer.MessageComposerModel;
 

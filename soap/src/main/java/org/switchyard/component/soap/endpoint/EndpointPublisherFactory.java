@@ -14,9 +14,7 @@
  
 package org.switchyard.component.soap.endpoint;
 
-import java.util.ServiceLoader;
-
-import org.switchyard.ProviderRegistry;
+import org.switchyard.common.util.ProviderRegistry;
 import org.switchyard.component.soap.WebServicePublishException;
 
 /**

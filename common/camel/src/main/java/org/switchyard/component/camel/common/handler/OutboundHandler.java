@@ -28,7 +28,7 @@ import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.xml.QNameUtil;
-import org.switchyard.component.camel.CommonCamelMessages;
+import org.switchyard.component.camel.common.CommonCamelMessages;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
 import org.switchyard.component.camel.common.transaction.TransactionHelper;

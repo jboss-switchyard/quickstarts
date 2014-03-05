@@ -13,7 +13,6 @@
  */
 package org.switchyard.component.camel.switchyard;
 
-import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -127,6 +126,11 @@ public class SwitchYardEndpoint extends DefaultEndpoint {
         return ((SwitchYardComponent) getComponent()).getBindingDataCreatorResolver();
     }
 
+    /**
+     * Returns the ServiceDomain used for this endpoint.
+     * 
+     * @return ServiceDomain used for this endpoint.
+     */
     public ServiceDomain getServiceDomain() {
         return ((SwitchYardCamelContext) getCamelContext()).getServiceDomain();
     }

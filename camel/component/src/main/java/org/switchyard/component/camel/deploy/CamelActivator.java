@@ -27,6 +27,7 @@ import org.switchyard.ServiceReference;
 import org.switchyard.SwitchYardException;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.property.PropertyResolver;
+import org.switchyard.component.camel.CamelComponentMessages;
 import org.switchyard.component.camel.switchyard.ComponentNameComposer;
 import org.switchyard.component.camel.RouteFactory;
 import org.switchyard.component.camel.switchyard.SwitchYardConsumer;

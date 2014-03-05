@@ -38,6 +38,7 @@ import org.switchyard.component.camel.common.composer.CamelComposition;
 import org.switchyard.component.camel.switchyard.CamelResponseHandler;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.deploy.ServiceDomainManager;
+import org.switchyard.extensions.java.JavaService;
 import org.switchyard.internal.DefaultContext;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;

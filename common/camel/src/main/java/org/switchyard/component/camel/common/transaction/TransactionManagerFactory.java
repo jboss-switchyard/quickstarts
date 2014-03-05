@@ -18,7 +18,7 @@ import javax.naming.NamingException;
 
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
-import org.switchyard.component.camel.CommonCamelMessages;
+import org.switchyard.component.camel.common.CommonCamelMessages;
 
 /**
  * Simple factory which creates TransactedManager instances.

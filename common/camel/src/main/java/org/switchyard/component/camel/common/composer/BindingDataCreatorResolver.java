@@ -16,7 +16,7 @@ package org.switchyard.component.camel.common.composer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.FactoryFinder;
-import org.switchyard.component.camel.CommonCamelMessages;
+import org.switchyard.component.camel.common.CommonCamelMessages;
 
 /**
  * Resolver which allows to plug-in custom {@link BindingDataCreator} injection.
