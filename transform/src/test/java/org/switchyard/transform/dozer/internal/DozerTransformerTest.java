@@ -19,8 +19,6 @@ import java.io.IOException;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.switchyard.Message;
-import org.switchyard.internal.DefaultMessage;
 import org.switchyard.transform.AbstractTransformerTestCase;
 import org.switchyard.transform.Transformer;
 
@@ -37,8 +35,8 @@ public class DozerTransformerTest extends AbstractTransformerTestCase {
         ClassA a = new ClassA();
         a.setFieldA("testa");
         a.setFieldB("testb");
-        Message msg = dozer.transform(new DefaultMessage().setContent(a));
-        Object result = msg.getContent();
+        
+        Object result = dozer.transform(a);
         Assert.assertTrue(result instanceof ClassB);
         ClassB b = ClassB.class.cast(result);
         Assert.assertEquals("testa", b.getFieldA());
@@ -53,8 +51,7 @@ public class DozerTransformerTest extends AbstractTransformerTestCase {
         ClassA a = new ClassA();
         a.setFieldA("testa");
         a.setFieldB("testb");
-        Message msg = dozer.transform(new DefaultMessage().setContent(a));
-        Object result = msg.getContent();
+        Object result = dozer.transform(a);
         Assert.assertTrue(result instanceof ClassB);
         ClassB b = ClassB.class.cast(result);
         Assert.assertEquals("testa", b.getFieldA());
@@ -72,8 +69,8 @@ public class DozerTransformerTest extends AbstractTransformerTestCase {
         ClassC c = new ClassC();
         c.setFieldA(a);
         c.setFieldC("testc");
-        Message msg = dozer.transform(new DefaultMessage().setContent(c));
-        Object result = msg.getContent();
+        
+        Object result = dozer.transform(c);
         Assert.assertTrue(result instanceof ClassD);
         ClassD d = ClassD.class.cast(result);
         ClassB b = d.getFieldB();
