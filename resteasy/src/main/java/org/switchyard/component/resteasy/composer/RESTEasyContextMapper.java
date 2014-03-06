@@ -77,7 +77,15 @@ public class RESTEasyContextMapper extends BaseRegexContextMapper<RESTEasyBindin
                     target.setStatusCode((Integer)property.getValue());
                 } else {
                     if (value instanceof List) {
-                        httpHeaders.put(name, (List<String>)value);
+                        List<String> stringList = new ArrayList<String>();
+                        for (Object obj : ((List)value)) {
+                            if (obj != null) {
+                                stringList.add(obj.toString());
+                            } else {
+                                stringList.add(null);
+                            }
+                        }
+                        httpHeaders.put(name, stringList);
                     } else if (value instanceof String) {
                         List<String> list = new ArrayList<String>();
                         list.add(String.valueOf(value));
