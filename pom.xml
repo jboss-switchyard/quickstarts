@@ -61,6 +61,7 @@
         
         <!-- Versions for local dependencies not eligible for the Integration BOM -->
         <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
+        <version.commons-lang3>3.1</version.commons-lang3>
         <!-- This version is only used as a prefix for a jar included in release modules -->
         <version.deltaspike>0.3-incubating</version.deltaspike>
         <version.felix.maven>2.4.0</version.felix.maven>
@@ -1024,7 +1025,12 @@
                 <artifactId>dozer</artifactId>
                 <version>${version.net.sf.dozer}</version>
             </dependency>
-             <dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${version.commons-lang3}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>${version.maven.plugin.plugin}</version>
@@ -1832,6 +1838,11 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>servlet-api</artifactId>
                 <version>${version.servlet.api}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-transform-dozer</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
