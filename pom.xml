@@ -103,6 +103,7 @@
         <module>jca-outbound-hornetq</module>
         <module>jca-inflow-activemq</module>
         <module>jca-outbound-activemq</module>
+        <module>transform-dozer</module>
         <module>transform-jaxb</module>
         <module>transform-json</module>
         <module>transform-smooks</module>

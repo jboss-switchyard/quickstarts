@@ -20,6 +20,7 @@ Quickstarts
 * __rules-camel-cbr__ : uses the combination of a rules service and a camel service to create a content-based router.
 * __rules-interview__ : demonstrates the use of simple business rules using drools drl.
 * __rules-interview-agent__ : same as rules-interview, but uses a compiled KnowledgePackage and a KnowledgeAgent.
+* __transform-dozer__ : transformation using Dozer bean mapper.
 * __transform-jaxb__ : automatic transformation of JAXB-annotated message payloads.
 * __transform-json__ : transformation to/from JSON using the JSON transformer.
 * __transform-smooks__ : Smooks-based transformers to map between XML and Java.
