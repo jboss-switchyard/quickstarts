@@ -61,6 +61,7 @@
         
         <!-- Versions for local dependencies not eligible for the Integration BOM -->
         <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
+        <version.camelsap>1.0.0-SNAPSHOT</version.camelsap>
         <version.commons-lang3>3.1</version.commons-lang3>
         <!-- This version is only used as a prefix for a jar included in release modules -->
         <version.deltaspike>0.3-incubating</version.deltaspike>
@@ -167,6 +168,18 @@
         <repository>
             <id>codehaus.m2.snapshots</id>
             <url>http://snapshots.repository.codehaus.org</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>fusesource-public-snapshots-repository-group</id>
+            <url>http://repository.jboss.org/nexus/content/groups/fs-public-snapshots</url>
             <releases>
                 <enabled>true</enabled>
                 <updatePolicy>never</updatePolicy>
@@ -1074,6 +1087,11 @@
                 <version>${version.org.drools}</version>
             </dependency>
             <dependency>
+                <groupId>org.fusesource</groupId>
+                <artifactId>camel-sap</artifactId>
+                <version>${version.camelsap}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jboss.as</groupId>
                 <artifactId>jboss-as-dist</artifactId>
                 <version>${version.jbossas}</version>
@@ -1725,6 +1743,11 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-camel-sap</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
                 <artifactId>switchyard-component-camel-sql</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1922,6 +1945,11 @@
             <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
                 <artifactId>switchyard-camel-quartz-binding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-camel-sap-binding</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
