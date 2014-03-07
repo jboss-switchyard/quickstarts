@@ -120,6 +120,8 @@ public class InboundHandler extends BaseServiceHandler {
         Message message = null;
         try {
             message = _messageComposer.compose(restMessageRequest, exchange);
+        } catch (WebApplicationException wae) {
+            throw wae;
         } catch (Exception e) {
             RestEasyLogger.ROOT_LOGGER.unexpectedExceptionComposingInboundMessage(e);
             throw new WebApplicationException(e);
