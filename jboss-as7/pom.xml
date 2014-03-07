@@ -131,6 +131,11 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-transform-dozer</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-camel-service</artifactId>
             <scope>test</scope>
             <exclusions>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
- -
+ - 
  - Licensed under the Apache License, Version 2.0 (the "License");
  - you may not use this file except in compliance with the License.
  - You may obtain a copy of the License at
@@ -12,15 +12,12 @@
  - See the License for the specific language governing permissions and
  - limitations under the License.
  -->
-<module xmlns="urn:jboss:module:1.1" name="net.sf.dozer">
+<module xmlns="urn:jboss:module:1.0" name="org.apache.commons.lang3">
 
     <resources>
-        <resource-root path="dozer-${version.net.sf.dozer}.jar"/>
+        <resource-root path="commons-lang3-${version.commons-lang3}.jar"/>
     </resources>
+
     <dependencies>
-        <module name="javax.api"/>
-        <module name="org.apache.commons.beanutils"/>
-        <module name="org.apache.commons.lang3"/>
-        <module name="org.slf4j"/>
     </dependencies>
 </module>

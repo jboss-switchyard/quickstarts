@@ -68,6 +68,7 @@
 
       <componentDescriptor>src/main/resources/external/apache/commons/collections/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/apache/commons/net/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/apache/commons/lang3/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/apache/deltaspike/core-api/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/batik/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/beanshell/assembly-component.xml</componentDescriptor>
