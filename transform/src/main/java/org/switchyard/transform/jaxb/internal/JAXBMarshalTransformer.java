@@ -81,7 +81,7 @@ public class JAXBMarshalTransformer<F, T> extends BaseTransformer<Message, Messa
 
             message.setContent(resultWriter.toString());
         } catch (JAXBException e) {
-            throw TransformMessages.MESSAGES.failedToUnmarshallForType(getFrom().toString(), e);
+            throw TransformMessages.MESSAGES.failedToMarshallForType(getFrom().toString(), e);
         }
 
         return message;

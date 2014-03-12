@@ -358,6 +358,7 @@ public interface TransformMessages {
      * @param type type
      * @param e e
      * @return SwitchYardException
+     * @see #failedToMarshallForType(String, JAXBException)
      */
     @Message(id=16839, value = "Failed to unmarshall for type '%s'.")
     SwitchYardException failedToUnmarshallForType(String type, @Cause JAXBException e);
@@ -541,4 +542,15 @@ public interface TransformMessages {
      */
     @Message(id=16860, value = "Invalid 'to' type '%s' for Dozer transformer")
     SwitchYardException invalidToTypeForDozerTransformer(QName to);
+
+    /**
+     * failedToMarshallForType method definition.
+     * @param type type
+     * @param e e
+     * @return SwitchYardException
+     * @see #failedToUnmarshallForType(String, JAXBException)
+     */
+    @Message(id=16861, value = "Failed to marshall for type '%s'.")
+    SwitchYardException failedToMarshallForType(String type, @Cause JAXBException e);
+
 }
