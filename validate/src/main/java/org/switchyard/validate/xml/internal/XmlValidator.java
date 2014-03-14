@@ -218,7 +218,7 @@ public class XmlValidator extends BaseValidator<Message> {
             } else if (Reader.class.isAssignableFrom(msg.getContent().getClass())) {
                 msg.setContent(new StringReader(input));
             }
-            validatingParser.parse(new InputSource(new ByteArrayInputStream(input.getBytes())));
+            validatingParser.parse(new InputSource(new StringReader(input)));
             if (errorHandler.validationFailed()) {
                 return invalidResult(formatErrorMessage(errorHandler.getErrors()).toString());
             }

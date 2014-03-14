@@ -67,7 +67,7 @@ public class XmlValidatorTest extends AbstractValidatorTestCase {
         if (!result.isValid()) {
             Assert.fail(result.getDetail());
         }
-        source = "<person2 firstName='foo' lastName='bar' age='50' />";
+        source = "<person2 firstName='ﾀﾛｳ' lastName='ﾔﾏﾀﾞ' age='50' />";
         result = validator.validate(new DefaultMessage().setContent(source));
         if (!result.isValid()) {
             Assert.fail(result.getDetail());
