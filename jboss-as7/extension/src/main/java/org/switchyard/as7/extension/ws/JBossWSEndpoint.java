@@ -22,7 +22,6 @@ import javax.xml.ws.WebServiceException;
 
 import org.jboss.logging.Logger;
 import org.jboss.wsf.spi.classloading.ClassLoaderProvider;
-import org.jboss.wsf.spi.deployment.Endpoint;
 import org.jboss.wsf.spi.metadata.webservices.JBossWebservicesFactory;
 import org.jboss.wsf.spi.metadata.webservices.JBossWebservicesMetaData;
 import org.jboss.wsf.spi.metadata.webservices.WebservicesMetaData;
@@ -30,19 +29,19 @@ import org.jboss.wsf.spi.publish.Context;
 import org.jboss.wsf.spi.publish.EndpointPublisher;
 import org.jboss.wsf.spi.publish.EndpointPublisherFactory;
 import org.switchyard.common.type.Classes;
+import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.WebServicePublishException;
 import org.switchyard.component.soap.config.model.EndpointConfigModel;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.endpoint.BaseWebService;
-import org.switchyard.component.soap.endpoint.WSEndpoint;
 
 /**
  * Wrapper for JBossWS endpoints.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class JBossWSEndpoint implements WSEndpoint {
+public class JBossWSEndpoint implements Endpoint {
 
     private static final Logger LOGGER = Logger.getLogger("org.switchyard");
 
@@ -99,7 +98,7 @@ public class JBossWSEndpoint implements WSEndpoint {
         }
         ClassLoader tccl = Classes.getTCCL();
         _context = _publisher.publish(contextRoot, tccl, urlPatternToClassNameMap, wsMetadata, jbwsMetadata);
-        for (Endpoint ep : _context.getEndpoints()) {
+        for (org.jboss.wsf.spi.deployment.Endpoint ep : _context.getEndpoints()) {
             BaseWebService wsProvider = (BaseWebService)ep.getInstanceProvider().getInstance(BaseWebService.class.getName()).getValue();
             wsProvider.setInvocationClassLoader(tccl);
             // Hook the handler
@@ -107,6 +106,12 @@ public class JBossWSEndpoint implements WSEndpoint {
             // Hook the interceptors
             Interceptors.addInterceptors(ep, bindingModel, tccl);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void start() {
     }
 
     /**

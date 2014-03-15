@@ -46,13 +46,14 @@ public class RemoteInvokerQuickstartTest {
         
         RemoteInvoker invoker = new HttpInvoker(URL);
         Application app = new Application();
-        app.setCreditScore(700);
+        app.setName("Magesh");
+        app.setCreditScore(812);
         Car car = new Car();
-        car.setPrice(18000);
+        car.setPrice(9600);
         Offer offer = new Offer();
         offer.setApplication(app);
         offer.setCar(car);
-        offer.setAmount(17000);
+        offer.setAmount(9000);
 
         RemoteMessage message = new RemoteMessage();
         message.setService(SERVICE)

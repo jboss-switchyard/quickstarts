@@ -46,7 +46,6 @@ public class JCAInflowHornetQQuickstartTest {
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
         ResourceDeployer.addQueue(QUEUE);
-        ResourceDeployer.addPropertiesUser();
         return ArquillianUtil.createJarQSDeployment("switchyard-jca-inflow-hornetq");
     }
 

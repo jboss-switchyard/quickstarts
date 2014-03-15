@@ -64,7 +64,6 @@ public class JCAJMSReferenceBindingTest  {
         ResourceDeployer.addQueue(INPUT_NOTX_QUEUE);
         ResourceDeployer.addQueue(OUTPUT_QUEUE);
         ResourceDeployer.addQueue(OUTPUT_PROP_QUEUE);
-        ResourceDeployer.addPropertiesUser();
 
         URL testConfigUrl = Classes.getResource(TEST_CONFIG);
         URL camelRouteUrl = Classes.getResource(CAMEL_ROUTE);

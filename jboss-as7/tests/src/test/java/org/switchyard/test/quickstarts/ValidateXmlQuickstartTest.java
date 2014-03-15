@@ -41,7 +41,7 @@ public class ValidateXmlQuickstartTest {
 
         httpMixIn.initialize();
         try {
-            String response = httpMixIn.postString("http://localhost:8080/quickstart-validate-xml/OrderService", SOAP_REQUEST);System.out.println(response);
+            String response = httpMixIn.postString("http://localhost:8080/quickstart-validate-xml/OrderService", SOAP_REQUEST);
             Assert.assertTrue(response.contains("Invalid content was found starting with element 'invalid-element'. No child element is expected at this point."));
         } finally {
             httpMixIn.uninitialize();

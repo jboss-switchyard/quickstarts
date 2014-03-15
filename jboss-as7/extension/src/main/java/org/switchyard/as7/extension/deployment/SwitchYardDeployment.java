@@ -167,6 +167,15 @@ public class SwitchYardDeployment {
         return _deploymentState;
     }
 
+    /**
+     * Get the application domain.
+     * 
+     * @return ServiceDomain
+     */
+    public ServiceDomain getDomain() {
+        return _appServiceDomain;
+    }
+
     private void registerManagementNodes() {
         QName applicationName = _deployment.getName();
         if (applicationName == null) {

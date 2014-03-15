@@ -28,11 +28,12 @@ import org.apache.tomcat.InstanceManager;
 import org.jboss.as.server.ServerEnvironment;
 import org.jboss.as.web.deployment.WebCtxLoader;
 import org.jboss.logging.Logger;
+import org.switchyard.ServiceDomain;
 import org.switchyard.as7.extension.ExtensionMessages;
 import org.switchyard.as7.extension.util.ServerUtil;
+import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.http.InboundHandler;
 import org.switchyard.component.http.HttpGatewayServlet;
-import org.switchyard.component.http.endpoint.Endpoint;
 import org.switchyard.component.http.endpoint.EndpointPublisher;
 
 /**
@@ -49,7 +50,7 @@ public class JBossWebEndpointPublisher implements EndpointPublisher {
     /**
      * {@inheritDoc}
      */
-    public synchronized Endpoint publish(String context, InboundHandler handler) throws Exception {
+    public synchronized Endpoint publish(ServiceDomain domain, String context, InboundHandler handler) throws Exception {
         
         Host host = ServerUtil.getDefaultHost().getHost();
         StandardContext serverContext = (StandardContext) host.findChild("/" + context);
@@ -73,7 +74,7 @@ public class JBossWebEndpointPublisher implements EndpointPublisher {
             Wrapper wrapper = serverContext.createWrapper();
             wrapper.setName(SERVLET_NAME);
             wrapper.setServletClass(HttpGatewayServlet.class.getName());
-            //wrapper.setServlet(new HttpGatewayServlet(handler));
+            wrapper.setServlet(new HttpGatewayServlet());
             wrapper.setLoadOnStartup(1);
             serverContext.addChild(wrapper);
             serverContext.addServletMapping("/*", SERVLET_NAME);

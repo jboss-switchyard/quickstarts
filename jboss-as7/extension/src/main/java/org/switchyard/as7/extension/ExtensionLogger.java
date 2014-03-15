@@ -25,11 +25,12 @@ public interface ExtensionLogger {
 
     /**
      * unableToDestroyWebContext method definition.
+     * @param context context
      * @param e cause
      */
     @LogMessage(level = ERROR)
-    @Message(id = 40000, value = "Unable to destroy web context")
-    void unableToDestroyWebContext(@Cause Exception e);
+    @Message(id = 40000, value = "Unable to destroy web context: %s")
+    void unableToDestroyWebContext(String context, @Cause Exception e);
 
     /**
      * unableToDetermineHostAddress method definition.

@@ -17,7 +17,7 @@ package org.switchyard.as7.extension.http;
 import org.apache.catalina.Container;
 import org.apache.catalina.core.StandardContext;
 import org.jboss.logging.Logger;
-import org.switchyard.component.http.endpoint.Endpoint;
+import org.switchyard.component.common.Endpoint;
 
 /**
  * A JBossWeb HTTP endpoint.
@@ -53,6 +53,12 @@ public class JBossWebEndpoint implements Endpoint {
     public void setContext(StandardContext context) {
         _context = context;
     }
+	
+	/**
+     * {@inheritDoc}
+     */
+    public void start() {
+	}
 
     /**
      * {@inheritDoc}

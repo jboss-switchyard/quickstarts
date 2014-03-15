@@ -46,7 +46,6 @@ public class JCAOutboundHornetQQuickstartTest {
         ResourceDeployer.addQueue(ORDER_QUEUE);
         ResourceDeployer.addQueue(SHIPPING_QUEUE);
         ResourceDeployer.addQueue(FILLING_STOCK_QUEUE);
-        ResourceDeployer.addPropertiesUser();
         return ArquillianUtil.createJarQSDeployment("switchyard-jca-outbound-hornetq");
     }
 

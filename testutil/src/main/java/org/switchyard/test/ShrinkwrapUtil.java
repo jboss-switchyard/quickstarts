@@ -25,7 +25,6 @@ import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
-import org.jboss.shrinkwrap.resolver.api.ResolutionException;
 import org.junit.Assert;
 
 /**
@@ -182,13 +181,13 @@ public final class ShrinkwrapUtil {
     }
 
     // converts a file to a ZIP file
-    private static ZipFile convert(File file) throws ResolutionException {
+    private static ZipFile convert(File file) {
         try {
             return new ZipFile(file);
         } catch (ZipException e) {
-            throw new ResolutionException("Unable to treat dependency artifact \"" + file.getAbsolutePath() + "\" as a ZIP file", e);
+            throw new RuntimeException("Unable to treat dependency artifact \"" + file.getAbsolutePath() + "\" as a ZIP file", e);
         } catch (IOException e) {
-            throw new ResolutionException("Unable to access artifact file at \"" + file.getAbsolutePath() + "\".", e);
+            throw new RuntimeException("Unable to access artifact file at \"" + file.getAbsolutePath() + "\".", e);
         }
     }
 }

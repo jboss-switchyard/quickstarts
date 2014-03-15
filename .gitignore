@@ -7,3 +7,4 @@ target/
 *.ipr
 *.iws
 .DS_Store
+transaction.log

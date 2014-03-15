@@ -39,7 +39,7 @@ public class RestBindingQuickstartTest {
     }
 
     @Test
-    public void testOrders() throws Exception {
+    public void testOrders(@ArquillianResource ManagementClient client) throws Exception {
         HTTPMixIn httpMixIn = new HTTPMixIn();
 
         httpMixIn.initialize();
@@ -88,19 +88,8 @@ public class RestBindingQuickstartTest {
             response = httpMixIn.sendString(BASE_URL + "/inventory/remove", "", HTTPMixIn.HTTP_OPTIONS);
             Assert.assertEquals(SUCCESS, response);
 
-        } finally {
-            httpMixIn.uninitialize();
-        }
-    }
-
-    @Test
-    public void testRestartGateway(@ArquillianResource ManagementClient client) throws Exception {
-        HTTPMixIn httpMixIn = new HTTPMixIn();
-
-        httpMixIn.initialize();
-        try {
             // Create our inventory
-            String response = httpMixIn.sendString(BASE_URL + "/inventory/create", "", HTTPMixIn.HTTP_OPTIONS);
+            response = httpMixIn.sendString(BASE_URL + "/inventory/create", "", HTTPMixIn.HTTP_OPTIONS);
             Assert.assertEquals(SUCCESS, response);
 
             // Look at our order

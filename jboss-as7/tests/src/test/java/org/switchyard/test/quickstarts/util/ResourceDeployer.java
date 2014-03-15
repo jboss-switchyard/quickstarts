@@ -37,8 +37,6 @@ public class ResourceDeployer {
     
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_PORT = 9999;
-    public static final String DEFAULT_REALM = "ApplicationRealm";
-    public static final String APPLICATION_ROLES_PROPERTIES = "application-roles.properties";
     public static final String USER = "guest";
     public static final String PASSWD = "Guestp123!";
     
@@ -77,44 +75,6 @@ public class ResourceDeployer {
         return addQueue(DEFAULT_HOST, DEFAULT_PORT, queueName);
     }
 
-    public static void addPropertiesUser() throws IOException {
-        addPropertiesUser(USER, PASSWD);
-    }
-
-    public static void addPropertiesUser(String user, String passwd) throws IOException {
-        try {
-            org.jboss.as.domain.management.security.AddPropertiesUser.main(
-                new String[]{"--silent",
-                             "-a",
-                             "--role",
-                             "guest",
-                             user,
-                             passwd,
-                             DEFAULT_REALM});
-        } catch (RuntimeException re) {
-            if (!re.getMessage().contains("JBAS015243")) {
-                throw re;
-            }
-        }
-        
-        /* https://issues.jboss.org/browse/AS7-3950 AddPropertiesUser should do this but doesn't right now
-        String home = System.getenv("JBOSS_HOME");
-        File roleFile = new File(home + "/standalone/configuration/" + APPLICATION_ROLES_PROPERTIES);
-        BufferedReader read = new BufferedReader(new FileReader(roleFile));
-        String line = null;
-        while ((line = read.readLine()) != null) {
-            if (line.trim().startsWith("user")) {
-                read.close();
-                return;
-            }
-        }
-        
-        BufferedWriter write = new BufferedWriter(new FileWriter(roleFile,true));
-        write.newLine();
-        write.append(user + "=guest");
-        write.close();*/
-    }
-    
     private static ModelControllerClient createClient(final String host, final int port) throws UnknownHostException {
         return ModelControllerClient.Factory.create(InetAddress.getByName(host), port);
     }

@@ -93,6 +93,6 @@ public interface ExtensionMessages {
      * @return RuntimeException
      */
     @Message(id = 40408, value = "Unable to start context : %s")
-    RuntimeException unableToStartContext(String contextPath);
+    RuntimeException unableToStartContext(String contextPath, @Cause Throwable t);
 
 }

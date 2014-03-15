@@ -21,14 +21,14 @@ import org.apache.catalina.core.StandardContext;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.spi.Registry;
 import org.switchyard.as7.extension.ExtensionLogger;
-import org.switchyard.component.resteasy.resource.Resource;
+import org.switchyard.component.common.Endpoint;
 
 /**
  * A standalone RESTEasy resource.
  *
  * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
  */
-public class RESTEasyResource implements Resource {
+public class RESTEasyResource implements Endpoint {
 
     private static final Logger LOG = Logger.getLogger("org.switchyard");
 
@@ -70,6 +70,12 @@ public class RESTEasyResource implements Resource {
     /**
      * {@inheritDoc}
      */
+    public void start() {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void stop() {
         if ((_context != null) && _context.isStarted()) {
             Registry registry = (Registry)_context.getServletContext().getAttribute(Registry.class.getName());
@@ -88,7 +94,7 @@ public class RESTEasyResource implements Resource {
                         _context.destroy();
                         LOG.info("Destroyed RESTEasy context " + _context.getPath());
                     } catch (Exception e) {
-                        ExtensionLogger.ROOT_LOGGER.unableToDestroyWebContext(e);
+                        ExtensionLogger.ROOT_LOGGER.unableToDestroyWebContext(_context.getPath(), e);
                     }
                 }
             }

@@ -72,7 +72,6 @@ public class BpelServiceLoanApprovalQuickstartTest {
         httpMixIn.initialize();
         try {
             String response = httpMixIn.postString("http://localhost:8080/loanService/loanService", SOAP_REQUEST_2);
-            System.out.println(response);
 
             org.w3c.dom.Document d = XMLUnit.buildControlDocument(response);
             java.util.HashMap<String,String> m = new java.util.HashMap<String,String>();

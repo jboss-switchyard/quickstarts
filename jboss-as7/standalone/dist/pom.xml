@@ -219,7 +219,27 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
+                            <excludes>application-roles.properties, application-users.properties</excludes>
                             <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-users</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-as7-tests</artifactId>
+                                    <type>test-jar</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>application-roles.properties, application-users.properties</includes>
+                            <outputDirectory>${staging.jboss.dir}/standalone/configuration</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -391,10 +411,12 @@
                         <executions>
                             <execution>
                                 <id>prepare</id>
-                                <phase>process-test-resources</phase>
+                                <phase>process-test-classes</phase>
                                 <configuration>
                                     <tasks>
                                         <unzip dest="${jboss.home}" src="${project.build.directory}/${zip.file.name}"/>
+                                        <copy todir="${jboss.home}/standalone/configuration" file="${staging.jboss.dir}/standalone/configuration/application-users.properties"/>
+                                        <copy todir="${jboss.home}/standalone/configuration" file="${staging.jboss.dir}/standalone/configuration/application-roles.properties"/>
                                     </tasks>
                                 </configuration>
                                 <goals>

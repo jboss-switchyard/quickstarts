@@ -25,11 +25,12 @@ import org.jboss.logging.Logger;
 import org.jboss.wsf.spi.metadata.webservices.PortComponentMetaData;
 import org.jboss.wsf.spi.metadata.webservices.WebserviceDescriptionMetaData;
 import org.jboss.wsf.spi.metadata.webservices.WebservicesMetaData;
+import org.switchyard.ServiceDomain;
+import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.WebServicePublishException;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
 import org.switchyard.component.soap.endpoint.AbstractEndpointPublisher;
-import org.switchyard.component.soap.endpoint.WSEndpoint;
 
 /**
  * Handles publishing of Webservice Endpoints on JBossWS stack.
@@ -46,7 +47,7 @@ public class JBossWSEndpointPublisher extends AbstractEndpointPublisher {
     /**
      * {@inheritDoc}
      */
-    public synchronized WSEndpoint publish(final SOAPBindingModel config, final String bindingId, final InboundHandler handler, WebServiceFeature... features) {
+    public synchronized Endpoint publish(ServiceDomain domain, final SOAPBindingModel config, final String bindingId, final InboundHandler handler, WebServiceFeature... features) {
         JBossWSEndpoint wsEndpoint = null;
         try {
             initialize(config);

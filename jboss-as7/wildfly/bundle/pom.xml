@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+- Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+-
+- Licensed under the Apache License, Version 2.0 (the "License")
+- you may not use this file except in compliance with the License.
+- You may obtain a copy of the License at
+- http://www.apache.org/licenses/LICENSE-2.0
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-wildfly-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>switchyard-wildfly-bundle</artifactId>
+    <packaging>pom</packaging>
+    <name>SwitchYard: WildFly Bundle</name>
+    <description>SwitchYard WildFly Bundle</description>
+    <properties>
+        <staging.dir>${project.build.directory}/jboss-switchyard</staging.dir>
+        <staging.jboss.dir>${staging.dir}/jboss-as-${version.jbossas}</staging.jboss.dir>
+        <distro.root.dir>/</distro.root.dir>
+        <switchyard.jboss.home>${project.build.directory}${distro.root.dir}</switchyard.jboss.home>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-release-distribution</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>install-as7-bpms-layer</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.kie</groupId>
+                                    <artifactId>${artifactId.kie-eap-bpms-layer}</artifactId>
+                                    <version>${version.org.kie}</version>
+                                    <classifier>${classifier.kie-eap-bpms-layer}</classifier>
+                                    <type>zip</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <excludes>modules/layers.conf</excludes>
+                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-as7-modules</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-wildfly-modules</artifactId>
+                                    <type>zip</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-quickstarts</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard.quickstarts</groupId>
+                                    <artifactId>switchyard-quickstart-distro</artifactId>
+                                    <type>zip</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${staging.jboss.dir}/quickstarts</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-distribution-files</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.switchyard</groupId>
+                                    <artifactId>switchyard-release-distribution</artifactId>
+                                    <type>jar</type>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${staging.jboss.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>switchyard-wildfly-bundle</finalName>
+                            <descriptors>
+                                <descriptor>${basedir}/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>release-jboss-as7-bundle-profile-product</id>
+            <activation>
+                <property>
+                    <name>switchyard.product</name>
+                </property>
+            </activation>
+            <properties>
+                <artifactId.kie-eap-bpms-layer>kie-eap-integration-bpms</artifactId.kie-eap-bpms-layer>
+                <classifier.kie-eap-bpms-layer>bpms-layer</classifier.kie-eap-bpms-layer>
+            </properties>
+        </profile>
+        <profile>
+            <id>release-jboss-as7-bundle-profile-community</id>
+            <activation>
+                <property>
+                    <name>!switchyard.product</name>
+                </property>
+            </activation>
+            <properties>
+                <artifactId.kie-eap-bpms-layer>kie-eap-distributions-bpms-layer</artifactId.kie-eap-bpms-layer>
+                <classifier.kie-eap-bpms-layer></classifier.kie-eap-bpms-layer>
+            </properties>
+        </profile>
+    </profiles>
+</project>

@@ -130,7 +130,7 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
                     _serverContext.destroy();
                     _log.info("Destroyed HTTP context " + _serverContext.getPath());
                 } catch (Exception e) {
-                    ExtensionLogger.ROOT_LOGGER.unableToDestroyWebContext(e);
+                    ExtensionLogger.ROOT_LOGGER.unableToDestroyWebContext(_contextName, e);
                 }
             }
         }

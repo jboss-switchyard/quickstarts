@@ -40,7 +40,6 @@ public class EarDeployQuickstartTest {
 
     @Deployment(testable = false)
     public static EnterpriseArchive createDeployment() throws IOException {
-        ResourceDeployer.addPropertiesUser();
         return ArquillianUtil.createEarQSDeployment("switchyard-ear-deployment-ear-assembly");
     }
 

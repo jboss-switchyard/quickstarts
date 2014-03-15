@@ -65,7 +65,6 @@ public class JCAJMSServiceBindingTest  {
         ResourceDeployer.addQueue(INOUT_FAULT_TO_QUEUE);
         ResourceDeployer.addQueue(RESULT_QUEUE);
         ResourceDeployer.addQueue(FAULT_QUEUE);
-        ResourceDeployer.addPropertiesUser();
 
         URL testConfigUrl = Classes.getResource(TEST_CONFIG);
         String beansXml = Descriptors.create(BeansDescriptor.class).exportAsString();

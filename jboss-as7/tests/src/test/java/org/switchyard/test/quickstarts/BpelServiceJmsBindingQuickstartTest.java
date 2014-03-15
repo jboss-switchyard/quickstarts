@@ -46,7 +46,6 @@ public class BpelServiceJmsBindingQuickstartTest {
     public static JavaArchive createDeployment() throws IOException {
         ResourceDeployer.addQueue(REQUEST_QUEUE);
         ResourceDeployer.addQueue(REPLY_QUEUE);
-        ResourceDeployer.addPropertiesUser();
         return ArquillianUtil.createJarQSDeployment("switchyard-bpel-jms-binding");
     }
 
