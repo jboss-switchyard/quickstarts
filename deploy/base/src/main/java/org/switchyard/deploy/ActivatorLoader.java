@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.logging.Logger;
-import org.switchyard.ProviderRegistry;
 import org.switchyard.ServiceDomain;
+import org.switchyard.common.util.ProviderRegistry;
 
 /**
  * Contains utilities for creating {@link Activator}s.

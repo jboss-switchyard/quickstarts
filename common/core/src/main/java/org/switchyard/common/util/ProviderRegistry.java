@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA  02110-1301, USA.
  */
-package org.switchyard;
+package org.switchyard.common.util;
 
 import org.jboss.logging.Logger;
 
@@ -26,24 +26,30 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 /**
+ * A registry for service providers which allows for service lookup using a
+ * registry in place of ServiceLoader. If no registry is available,
+ * ServiceLoader is used as a fallback.
  */
 public final class ProviderRegistry {
+
+    private static Registry _registry;
+    private static Logger _logger = Logger.getLogger(ProviderRegistry.class);
 
     private ProviderRegistry() {
     }
 
     /**
-     * Obtain a provider
-     *
+     * Obtain a provider.
+     * 
      * @param clazz the class of the provider to find
      * @param <T> the provider type
      * @return a provider of the specified class or null if none is available
      */
     public static <T> T getProvider(Class<T> clazz) {
-        if (registry != null) {
-            return registry.getProvider(clazz);
+        if (_registry != null) {
+            return _registry.getProvider(clazz);
         }
-        ServiceLoader<T> services = ServiceLoader.load(clazz, clazz.getClassLoader());
+        ServiceLoader<T> services = ServiceLoader.load(clazz);
         Iterator<T> iterator = services.iterator();
         while (iterator.hasNext()) {
             try {
@@ -56,18 +62,18 @@ public final class ProviderRegistry {
     }
 
     /**
-     * Obtain a list of providers
-     *
+     * Obtain a list of providers.
+     * 
      * @param clazz the class of the provider to find
      * @param <T> the provider type
      * @return the list of providers found
      */
     public static <T> List<T> getProviders(Class<T> clazz) {
-        if (registry != null) {
-            return registry.getProviders(clazz);
+        if (_registry != null) {
+            return _registry.getProviders(clazz);
         }
         List<T> list = new ArrayList<T>();
-        ServiceLoader<T> services = ServiceLoader.load(clazz, clazz.getClassLoader());
+        ServiceLoader<T> services = ServiceLoader.load(clazz);
         Iterator<T> iterator = services.iterator();
         while (iterator.hasNext()) {
             try {
@@ -79,15 +85,32 @@ public final class ProviderRegistry {
         return list;
     }
 
-    private static Registry registry;
-    private static Logger _logger = Logger.getLogger(ProviderRegistry.class);
-
+    /**
+     * Set a registry provider to be used for service lookups.
+     * @param registry service provider registry
+     */
     public static void setRegistry(Registry registry) {
-        ProviderRegistry.registry = registry;
+        ProviderRegistry._registry = registry;
     }
 
+    /**
+     * Represents a pluggable service registry provider.
+     */
     public interface Registry {
+        /**
+         * Return a provider for the specified interface.
+         * @param clazz the class of the provider to find
+         * @param <T> the provider type
+         * @return provider
+         */
         <T> T getProvider(Class<T> clazz);
+
+        /**
+         * Return a list of providers for the specified interface.
+         * @param clazz the class of the provider to find
+         * @param <T> the provider type
+         * @return list of providers
+         */
         <T> List<T> getProviders(Class<T> clazz);
     }
 

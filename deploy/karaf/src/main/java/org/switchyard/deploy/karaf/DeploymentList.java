@@ -1,28 +1,23 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.switchyard.deploy.karaf;
 
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.osgi.framework.ServiceRegistration;
-import org.switchyard.deploy.osgi.SwitchyardEvent;
-import org.switchyard.deploy.osgi.SwitchyardListener;
+import org.switchyard.deploy.osgi.SwitchYardEvent;
+import org.switchyard.deploy.osgi.SwitchYardListener;
 
 import java.io.PrintStream;
 import java.util.Hashtable;
@@ -31,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
+ * Shell commands for deployments.
  */
 @Command(scope = "switchyard", name = "deployment-list", description = "List switchyard deployments.")
 public class DeploymentList extends OsgiCommandSupport {
@@ -47,34 +43,34 @@ public class DeploymentList extends OsgiCommandSupport {
     private static final int DEFAULT_COLUMN_WIDTH_INCREMENT = 0;
     private static final int MAX_COLUMN_WIDTH = Integer.MAX_VALUE;
 
-    private final List<SwitchyardEvent> events = new CopyOnWriteArrayList<SwitchyardEvent>();
+    private final List<SwitchYardEvent> _events = new CopyOnWriteArrayList<SwitchYardEvent>();
 
     @Override
     protected Object doExecute() throws Exception {
-        SwitchyardListener listener = new SwitchyardListener() {
+        SwitchYardListener listener = new SwitchYardListener() {
             @Override
-            public void switchyardEvent(SwitchyardEvent event) {
-                events.add(event);
+            public void switchyardEvent(SwitchYardEvent event) {
+                _events.add(event);
             }
         };
-        ServiceRegistration<SwitchyardListener> reg = getBundleContext().registerService(SwitchyardListener.class, listener, null);
+        ServiceRegistration<SwitchYardListener> reg = getBundleContext().registerService(SwitchYardListener.class, listener, null);
         reg.unregister();
 
-        if (!events.isEmpty()) {
-            final Map<String, Integer> columnWidths = computeColumnWidths(events);
+        if (!_events.isEmpty()) {
+            final Map<String, Integer> columnWidths = computeColumnWidths(_events);
             final String headerFormat = buildFormatString(columnWidths, true);
             final String rowFormat = buildFormatString(columnWidths, false);
             final PrintStream out = System.out;
 
             out.println(String.format(headerFormat, ID_COLUMN_LABEL, NAME_COLUMN_LABEL, STATUS_COLUMN_LABEL));
-            for (SwitchyardEvent event : events) {
+            for (SwitchYardEvent event : _events) {
                 out.println(String.format(rowFormat, getId(event), getName(event), getStatus(event)));
             }
         }
         return null;
     }
 
-    private static Map<String, Integer> computeColumnWidths(final Iterable<SwitchyardEvent> events) throws Exception {
+    private static Map<String, Integer> computeColumnWidths(final Iterable<SwitchYardEvent> events) throws Exception {
         if (events == null) {
             throw new IllegalArgumentException("Unable to determine column widths from null Iterable<SwitchyardEvent>");
         } else {
@@ -82,7 +78,7 @@ public class DeploymentList extends OsgiCommandSupport {
             int maxNameLen = 0;
             int maxStatusLen = 0;
 
-            for (final SwitchyardEvent event : events) {
+            for (final SwitchYardEvent event : events) {
                 maxIdLen = java.lang.Math.max(maxIdLen, getId(event).length());
                 maxNameLen = java.lang.Math.max(maxNameLen, getName(event).length());
                 maxStatusLen = java.lang.Math.max(maxStatusLen, getStatus(event).length());
@@ -97,22 +93,22 @@ public class DeploymentList extends OsgiCommandSupport {
         }
     }
 
-    private static String getId(SwitchyardEvent event) {
+    private static String getId(SwitchYardEvent event) {
         return Long.toString(event.getBundle().getBundleId());
     }
 
-    private static String getName(SwitchyardEvent event) {
+    private static String getName(SwitchYardEvent event) {
         return event.getBundle().getSymbolicName();
     }
 
-    private static String getStatus(SwitchyardEvent event) {
+    private static String getStatus(SwitchYardEvent event) {
         switch (event.getType()) {
-            case SwitchyardEvent.CREATING:     return "Creating";
-            case SwitchyardEvent.GRACE_PERIOD: return "Grace Period";
-            case SwitchyardEvent.CREATED:      return "Created";
-            case SwitchyardEvent.DESTROYING:   return "Destroying";
-            case SwitchyardEvent.DESTROYED:    return "Destroyed";
-            case SwitchyardEvent.FAILURE:      return "Failure";
+            case SwitchYardEvent.CREATING:     return "Creating";
+            case SwitchYardEvent.GRACE_PERIOD: return "Grace Period";
+            case SwitchYardEvent.CREATED:      return "Created";
+            case SwitchYardEvent.DESTROYING:   return "Destroying";
+            case SwitchYardEvent.DESTROYED:    return "Destroyed";
+            case SwitchYardEvent.FAILURE:      return "Failure";
             default:                           return "Unknown";
         }
     }

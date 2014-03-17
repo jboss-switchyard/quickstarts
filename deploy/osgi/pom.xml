@@ -34,7 +34,7 @@
     <description>OSGi-Based Deployer</description>
     <url>http://switchyard.org</url>
     <properties>
-        <switchyard.osgi.activator>org.switchyard.deploy.osgi.internal.SwitchyardExtender</switchyard.osgi.activator>
+        <switchyard.osgi.activator>org.switchyard.deploy.osgi.internal.SwitchYardExtender</switchyard.osgi.activator>
         <switchyard.osgi.export>
             org.switchyard.deploy.osgi
         </switchyard.osgi.export>
@@ -47,6 +47,7 @@
             org.switchyard.*;${switchyard.osgi.import.switchyard.version},
             *
         </switchyard.osgi.import>
+        <checkstyle.skip>true</checkstyle.skip>
     </properties>
     <dependencies>
         <!-- internal dependencies -->

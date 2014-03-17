@@ -1,36 +1,15 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.switchyard.deploy.osgi.internal;
 
@@ -39,7 +18,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
-import org.switchyard.ProviderRegistry;
+import org.switchyard.common.util.ProviderRegistry;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -55,23 +34,30 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * ProviderRegistryImpl.
+ */
 public class ProviderRegistryImpl implements ProviderRegistry.Registry, BundleTrackerCustomizer<Bundle> {
 
     public static final long DEFAULT_TIMEOUT = 0l;
     public static final String TIMEOUT = "org.switchyard.providers.timeout";
 
-    private Map<String, List<Callable<Class>>> factories;
+    private Map<String, List<Callable<Class>>> _factories;
 
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
-    private final BundleContext bundleContext;
-    private final BundleTracker<Bundle> tracker;
+    private ReadWriteLock _lock = new ReentrantReadWriteLock();
+    private final BundleContext _bundleContext;
+    private final BundleTracker<Bundle> _tracker;
 
     private ConcurrentMap<Long, Map<String, Callable<Class>>> allFactories = new ConcurrentHashMap<Long, Map<String, Callable<Class>>>();
 
+    /**
+     * Create a new instance of ProviderRegistryImpl.
+     * @param bundleContext bundleContext
+     */
     public ProviderRegistryImpl(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
-        tracker = new BundleTracker<Bundle>(bundleContext, Bundle.ACTIVE, this);
-        tracker.open();
+        _bundleContext = bundleContext;
+        _tracker = new BundleTracker<Bundle>(bundleContext, Bundle.ACTIVE, this);
+        _tracker.open();
     }
 
     @Override
@@ -99,7 +85,7 @@ public class ProviderRegistryImpl implements ProviderRegistry.Registry, BundleTr
     }
 
     public void destroy() {
-        tracker.close();
+        _tracker.close();
     }
 
     @Override
@@ -118,37 +104,37 @@ public class ProviderRegistryImpl implements ProviderRegistry.Registry, BundleTr
     }
 
     public void register(String id, Callable<Class> factory) {
-        lock.writeLock().lock();
+        _lock.writeLock().lock();
         try {
-            if (factories == null) {
-                factories = new HashMap<String, List<Callable<Class>>>();
+            if (_factories == null) {
+                _factories = new HashMap<String, List<Callable<Class>>>();
             }
-            List<Callable<Class>> l = factories.get(id);
+            List<Callable<Class>> l = _factories.get(id);
             if (l ==  null) {
                 l = new ArrayList<Callable<Class>>();
-                factories.put(id, l);
+                _factories.put(id, l);
             }
             l.add(0, factory);
-            synchronized (lock) {
-                lock.notifyAll();
+            synchronized (_lock) {
+                _lock.notifyAll();
             }
         } finally {
-            lock.writeLock().unlock();
+            _lock.writeLock().unlock();
         }
     }
 
 
     public void unregister(String id, Callable<Class> factory) {
-        lock.writeLock().lock();
+        _lock.writeLock().lock();
         try {
-            if (factories != null) {
-                List<Callable<Class>> l = factories.get(id);
+            if (_factories != null) {
+                List<Callable<Class>> l = _factories.get(id);
                 if (l != null) {
                     l.remove(factory);
                 }
             }
         } finally {
-            lock.writeLock().unlock();
+            _lock.writeLock().unlock();
         }
     }
 
@@ -179,9 +165,9 @@ public class ProviderRegistryImpl implements ProviderRegistry.Registry, BundleTr
             if (impl != null) {
                 return impl;
             }
-            synchronized (lock) {
+            synchronized (_lock) {
                 try {
-                    lock.wait(timeout - (t1 - t0));
+                    _lock.wait(timeout - (t1 - t0));
                 } catch (InterruptedException e) {
                     return null;
                 }
@@ -192,10 +178,10 @@ public class ProviderRegistryImpl implements ProviderRegistry.Registry, BundleTr
     }
 
     private <T> Class<? extends T> doLocate(Class<T> factoryClass, String factoryId) {
-        lock.readLock().lock();
+        _lock.readLock().lock();
         try {
-            if (factories != null) {
-                List<Callable<Class>> l = factories.get(factoryId);
+            if (_factories != null) {
+                List<Callable<Class>> l = _factories.get(factoryId);
                 if (l != null && !l.isEmpty()) {
                     // look up the System property first
                     String factoryClassName = System.getProperty(factoryId);
@@ -220,7 +206,7 @@ public class ProviderRegistryImpl implements ProviderRegistry.Registry, BundleTr
             }
             return null;
         } finally {
-            lock.readLock().unlock();
+            _lock.readLock().unlock();
         }
     }
 
@@ -229,11 +215,11 @@ public class ProviderRegistryImpl implements ProviderRegistry.Registry, BundleTr
     }
 
     public <T> List<Class<? extends T>> locateAll(Class<T> factoryClass, String factoryId) {
-        lock.readLock().lock();
+        _lock.readLock().lock();
         try {
             List<Class<? extends T>> classes = new ArrayList<Class<? extends T>>();
-            if (factories != null) {
-                List<Callable<Class>> l = factories.get(factoryId);
+            if (_factories != null) {
+                List<Callable<Class>> l = _factories.get(factoryId);
                 if (l != null) {
                     for (Callable<Class> i : l) {
                         try {
@@ -248,7 +234,7 @@ public class ProviderRegistryImpl implements ProviderRegistry.Registry, BundleTr
             }
             return classes;
         } finally {
-            lock.readLock().unlock();
+            _lock.readLock().unlock();
         }
     }
 

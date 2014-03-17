@@ -1,20 +1,15 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.switchyard.deploy.osgi.internal;
 
@@ -25,24 +20,28 @@ import org.apache.camel.core.osgi.OsgiTypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.Registry;
 import org.osgi.framework.BundleContext;
 import org.switchyard.common.camel.SwitchYardCamelContextImpl;
 
 /**
+ * OsgiSwitchYardCamelContextImpl.
  */
 public class OsgiSwitchYardCamelContextImpl extends SwitchYardCamelContextImpl {
 
-    private final BundleContext bundleContext;
+    private final BundleContext _bundleContext;
 
+    /**
+     * Create a new instance of OsgiSwitchYardCamelContextImpl.
+     * @param bundleContext bundleContext
+     */
     public OsgiSwitchYardCamelContextImpl(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
+        _bundleContext = bundleContext;
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
     }
 
     @Override
     protected CompositeRegistry createRegistry() {
-        return (CompositeRegistry) OsgiCamelContextHelper.wrapRegistry(this, super.createRegistry(), bundleContext);
+        return (CompositeRegistry) OsgiCamelContextHelper.wrapRegistry(this, super.createRegistry(), _bundleContext);
     }
 
     @Override
@@ -50,9 +49,9 @@ public class OsgiSwitchYardCamelContextImpl extends SwitchYardCamelContextImpl {
         // CAMEL-3614: make sure we use a bundle context which imports org.apache.camel.impl.converter package
         BundleContext ctx = BundleContextUtils.getBundleContext(getClass());
         if (ctx == null) {
-            ctx = bundleContext;
+            ctx = _bundleContext;
         }
-        FactoryFinder finder = new OsgiFactoryFinderResolver(bundleContext).resolveDefaultFactoryFinder(getClassResolver());
+        FactoryFinder finder = new OsgiFactoryFinderResolver(_bundleContext).resolveDefaultFactoryFinder(getClassResolver());
         return new OsgiTypeConverter(ctx, getInjector(), finder);
     }
 

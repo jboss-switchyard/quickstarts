@@ -1,22 +1,16 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 package org.switchyard.deploy.osgi.internal;
 
 import org.osgi.framework.Bundle;
@@ -24,13 +18,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.switchyard.ServiceDomain;
 import org.switchyard.admin.base.SwitchYardBuilder;
+import org.switchyard.common.util.ProviderRegistry;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.osgi.ComponentRegistry;
 import org.switchyard.deploy.osgi.NamespaceHandlerRegistry;
-import org.switchyard.ProviderRegistry;
-import org.switchyard.deploy.osgi.SwitchyardListener;
+import org.switchyard.deploy.osgi.SwitchYardListener;
 import org.switchyard.deploy.osgi.base.AbstractExtender;
 import org.switchyard.deploy.osgi.base.CompoundExtension;
 import org.switchyard.deploy.osgi.base.Extension;
@@ -42,72 +36,72 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *
+ * SwitchYardExtender.
  */
-public class SwitchyardExtender extends AbstractExtender {
+public class SwitchYardExtender extends AbstractExtender {
 
     public static final String SWITCHYARD_XML = "META-INF/switchyard.xml";
 
-    private final Logger logger = LoggerFactory.getLogger(SwitchyardExtender.class);
+    private final Logger _logger = LoggerFactory.getLogger(SwitchYardExtender.class);
 
-    private NamespaceHandlerRegistry namespaceHandlerRegistry;
+    private NamespaceHandlerRegistry _namespaceHandlerRegistry;
 
-    private ComponentRegistry componentRegistry;
+    private ComponentRegistry _componentRegistry;
 
-    private ProviderRegistryImpl providerRegistry;
+    private ProviderRegistryImpl _providerRegistry;
 
-    private OsgiDomainManager domainManager = new OsgiDomainManager(this);
+    private OsgiDomainManager _domainManager = new OsgiDomainManager(this);
 
-    private SwitchyardEventDispatcher eventDispatcher;
+    private SwitchYardEventDispatcher _eventDispatcher;
 
-    private Runnable management;
+    private Runnable _management;
 
     @Override
     protected void doStart() throws Exception {
         try {
-            management = Management.create(domainManager);
+            _management = Management.create(_domainManager);
         } catch (NoClassDefFoundError e) {
-            logger.warn("Management support disabled (package not available)");
+            _logger.warn("Management support disabled (package not available)");
         }
-        eventDispatcher = new SwitchyardEventDispatcher(getBundleContext(), getExecutors());
-        namespaceHandlerRegistry = new NamespaceHandlerRegistryImpl(getBundleContext());
-        componentRegistry = new ComponentRegistryImpl(getBundleContext());
-        providerRegistry = new ProviderRegistryImpl(getBundleContext());
-        ProviderRegistry.setRegistry(providerRegistry);
+        _eventDispatcher = new SwitchYardEventDispatcher(getBundleContext(), getExecutors());
+        _namespaceHandlerRegistry = new NamespaceHandlerRegistryImpl(getBundleContext());
+        _componentRegistry = new ComponentRegistryImpl(getBundleContext());
+        _providerRegistry = new ProviderRegistryImpl(getBundleContext());
+        ProviderRegistry.setRegistry(_providerRegistry);
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (management != null) {
-            management.run();
+        if (_management != null) {
+            _management.run();
         }
         ProviderRegistry.setRegistry(null);
-        providerRegistry.destroy();
-        componentRegistry.destroy();
-        namespaceHandlerRegistry.destroy();
-        eventDispatcher.destroy();
+        _providerRegistry.destroy();
+        _componentRegistry.destroy();
+        _namespaceHandlerRegistry.destroy();
+        _eventDispatcher.destroy();
     }
 
     protected ExecutorService createExecutor() {
-        return Executors.newScheduledThreadPool(3, new SwitchyardThreadFactory("Switchyard Extender"));
+        return Executors.newScheduledThreadPool(3, new SwitchYardThreadFactory("Switchyard Extender"));
     }
 
     public NamespaceHandlerRegistry getNamespaceHandlerRegistry() {
-        return namespaceHandlerRegistry;
+        return _namespaceHandlerRegistry;
     }
 
     public ComponentRegistry getComponentRegistry() {
-        return componentRegistry;
+        return _componentRegistry;
     }
 
     public OsgiDomainManager getDomainManager() {
-        return domainManager;
+        return _domainManager;
     }
 
-    public SwitchyardListener getEventDispatcher() {
-        return eventDispatcher;
+    public SwitchYardListener getEventDispatcher() {
+        return _eventDispatcher;
     }
 
     @Override
@@ -128,7 +122,7 @@ public class SwitchyardExtender extends AbstractExtender {
         }
         URL swXml = bundle.getEntry(SWITCHYARD_XML);
         if (swXml != null) {
-            extensions.add(new SwitchyardContainerImpl(this, bundle, getExecutors()));
+            extensions.add(new SwitchYardContainerImpl(this, bundle, getExecutors()));
         }
         return extensions.isEmpty() ? null : new CompoundExtension(bundle, extensions);
     }
@@ -149,17 +143,17 @@ public class SwitchyardExtender extends AbstractExtender {
 
     @Override
     protected void debug(Bundle bundle, String msg) {
-        logger.debug("Switchyard extender for bundle " + bundle + ": " + msg);
+        _logger.debug("Switchyard extender for bundle " + bundle + ": " + msg);
     }
 
     @Override
     protected void warn(Bundle bundle, String msg, Throwable t) {
-        logger.warn("Switchyard extender for bundle " + bundle + ": " + msg, t);
+        _logger.warn("Switchyard extender for bundle " + bundle + ": " + msg, t);
     }
 
     @Override
     protected void error(String msg, Throwable t) {
-        logger.debug("Switchyard extender: " + msg, t);
+        _logger.debug("Switchyard extender: " + msg, t);
     }
 
     static class Management {

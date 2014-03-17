@@ -73,7 +73,7 @@ public class SwitchYardCamelContextImpl extends DefaultCamelContext implements S
         if (isEnableCdiIntegration()) {
             CDISupport.setCdiInjector(this);
         } else {
-        	CommonCamelLogger.ROOT_LOGGER.cdiNotDetected();
+            CommonCamelLogger.ROOT_LOGGER.cdiNotDetected();
         }
         getManagementStrategy().addEventNotifier(new CamelEventBridge());
     }
@@ -131,7 +131,7 @@ public class SwitchYardCamelContextImpl extends DefaultCamelContext implements S
         final List<Registry> registries = new ArrayList<Registry>();
         registries.add(new JndiRegistry());
         if (isEnableCdiIntegration()) {
-        	registries.add(new CdiBeanRegistry());
+            registries.add(new CdiBeanRegistry());
         }
         registries.add(_writeableRegistry);
 

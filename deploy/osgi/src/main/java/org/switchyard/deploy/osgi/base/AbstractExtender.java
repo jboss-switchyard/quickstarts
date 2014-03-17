@@ -1,33 +1,13 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
- */
-/*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- *
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
@@ -67,15 +47,15 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class AbstractExtender implements BundleActivator, BundleTrackerCustomizer<Bundle>, SynchronousBundleListener {
 
-    private final ConcurrentMap<Bundle, Extension> extensions = new ConcurrentHashMap<Bundle, Extension>();
-    private final ConcurrentMap<Bundle, FutureTask> destroying = new ConcurrentHashMap<Bundle, FutureTask>();
-    private volatile boolean stopping;
+    private final ConcurrentMap<Bundle, Extension> _extensions = new ConcurrentHashMap<Bundle, Extension>();
+    private final ConcurrentMap<Bundle, FutureTask> _destroying = new ConcurrentHashMap<Bundle, FutureTask>();
+    private volatile boolean _stopping;
 
-    private boolean synchronous;
-    private boolean preemptiveShutdown;
-    private BundleContext context;
-    private ExecutorService executors;
-    private BundleTracker tracker;
+    private boolean _synchronous;
+    private boolean _preemptiveShutdown;
+    private BundleContext _context;
+    private ExecutorService _executors;
+    private BundleTracker _tracker;
 
     /**
      * Check if the extender is synchronous or not.
@@ -86,7 +66,7 @@ public abstract class AbstractExtender implements BundleActivator, BundleTracker
      * @return if the extender is synchronous
      */
     public boolean isSynchronous() {
-        return synchronous;
+        return _synchronous;
     }
 
     /**
@@ -98,57 +78,141 @@ public abstract class AbstractExtender implements BundleActivator, BundleTracker
      * @return if the extender use a preemptive shutdown
      */
     public boolean isPreemptiveShutdown() {
-        return preemptiveShutdown;
+        return _preemptiveShutdown;
     }
 
+    /**
+     * Retrieve the bundle context for extensions.
+     * @return bundle context
+     */
     public BundleContext getBundleContext() {
-        return context;
+        return _context;
     }
 
+    /**
+     * Retrieve ExecutorService.
+     * @return ExecutorService
+     */
     public ExecutorService getExecutors() {
-        return executors;
+        return _executors;
     }
 
+    /**
+     * Indicates whether extensions should be started in the calling thread.
+     * @param synchronous true for sync, false otherwise
+     */
     public void setSynchronous(boolean synchronous) {
-        this.synchronous = synchronous;
+        _synchronous = synchronous;
     }
 
+    /**
+     * Specify whether extensions are subject to preemptive shutdown.
+     * @param preemptiveShutdown true for preemptiveShutdown
+     */
     public void setPreemptiveShutdown(boolean preemptiveShutdown) {
-        this.preemptiveShutdown = preemptiveShutdown;
+        _preemptiveShutdown = preemptiveShutdown;
     }
 
+    @Override
     public void start(BundleContext context) throws Exception {
-        this.context = context;
-        this.context.addBundleListener(this);
-        this.tracker = new BundleTracker<Bundle>(this.context, Bundle.ACTIVE | Bundle.STARTING, this);
-        if (!this.synchronous) {
-            this.executors = createExecutor();
+        _context = context;
+        _context.addBundleListener(this);
+        _tracker = new BundleTracker<Bundle>(_context, Bundle.ACTIVE | Bundle.STARTING, this);
+        if (!_synchronous) {
+            _executors = createExecutor();
         }
         doStart();
     }
 
+    @Override
     public void stop(BundleContext context) throws Exception {
-        stopping = true;
-        while (!extensions.isEmpty()) {
-            Collection<Bundle> toDestroy = chooseBundlesToDestroy(extensions.keySet());
+        _stopping = true;
+        while (!_extensions.isEmpty()) {
+            Collection<Bundle> toDestroy = chooseBundlesToDestroy(_extensions.keySet());
             if (toDestroy == null || toDestroy.isEmpty()) {
-                toDestroy = new ArrayList<Bundle>(extensions.keySet());
+                toDestroy = new ArrayList<Bundle>(_extensions.keySet());
             }
             for (Bundle bundle : toDestroy) {
                 destroyExtension(bundle);
             }
         }
         doStop();
-        if (executors != null) {
-            executors.shutdown();
+        if (_executors != null) {
+            _executors.shutdown();
             try {
-                executors.awaitTermination(60, TimeUnit.SECONDS);
+                _executors.awaitTermination(60, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 // Ignore
+                e.getMessage();
             }
-            executors = null;
+            _executors = null;
         }
     }
+
+    public void bundleChanged(BundleEvent event) {
+        Bundle bundle = event.getBundle();
+        if (bundle.getState() != Bundle.ACTIVE && bundle.getState() != Bundle.STARTING) {
+            // The bundle is not in STARTING or ACTIVE state anymore
+            // so destroy the context.  Ignore our own bundle since it
+            // needs to kick the orderly shutdown.
+            if (bundle != _context.getBundle()) {
+                destroyExtension(bundle);
+            }
+        }
+    }
+
+    @Override
+    public Bundle addingBundle(Bundle bundle, BundleEvent event) {
+        modifiedBundle(bundle, event, bundle);
+        return bundle;
+    }
+
+    @Override
+    public void modifiedBundle(Bundle bundle, BundleEvent event, Bundle object) {
+        // If the bundle being stopped is the system bundle,
+        // do an orderly shutdown of all blueprint contexts now
+        // so that service usage can actually be useful
+        if (bundle.getBundleId() == 0 && bundle.getState() == Bundle.STOPPING) {
+            if (_preemptiveShutdown) {
+                try {
+                    stop(_context);
+                } catch (Exception e) {
+                    error("Error while performing preemptive shutdown", e);
+                }
+                return;
+            }
+        }
+        if (bundle.getState() != Bundle.ACTIVE && bundle.getState() != Bundle.STARTING) {
+            // The bundle is not in STARTING or ACTIVE state anymore
+            // so destroy the context.  Ignore our own bundle since it
+            // needs to kick the orderly shutdown and not unregister the namespaces.
+            if (bundle != _context.getBundle()) {
+                destroyExtension(bundle);
+            }
+            return;
+        }
+        // Do not track bundles given we are stopping
+        if (_stopping) {
+            return;
+        }
+        // For starting bundles, ensure, it's a lazy activation,
+        // else we'll wait for the bundle to become ACTIVE
+        if (bundle.getState() == Bundle.STARTING) {
+            String activationPolicyHeader = (String) bundle.getHeaders().get(Constants.BUNDLE_ACTIVATIONPOLICY);
+            if (activationPolicyHeader == null || !activationPolicyHeader.startsWith(Constants.ACTIVATION_LAZY)) {
+                // Do not track this bundle yet
+                return;
+            }
+        }
+        createExtension(bundle);
+    }
+
+    @Override
+    public void removedBundle(Bundle bundle, BundleEvent event, Bundle object) {
+        // Nothing to do
+        destroyExtension(bundle);
+    }
+    
 
     protected void doStart() throws Exception {
         startTracking();
@@ -159,11 +223,11 @@ public abstract class AbstractExtender implements BundleActivator, BundleTracker
     }
 
     protected void startTracking() {
-        this.tracker.open();
+        _tracker.open();
     }
 
     protected void stopTracking() {
-        this.tracker.close();
+        _tracker.close();
     }
 
     /**
@@ -184,67 +248,18 @@ public abstract class AbstractExtender implements BundleActivator, BundleTracker
         return null;
     }
 
+    /**
+     * Create the extension for the given bundle, or null if the bundle is not to be extended.
+     *
+     * @param bundle the bundle to extend
+     * @return
+     * @throws Exception
+     */
+    protected abstract Extension doCreateExtension(Bundle bundle) throws Exception;
 
-    public void bundleChanged(BundleEvent event) {
-        Bundle bundle = event.getBundle();
-        if (bundle.getState() != Bundle.ACTIVE && bundle.getState() != Bundle.STARTING) {
-            // The bundle is not in STARTING or ACTIVE state anymore
-            // so destroy the context.  Ignore our own bundle since it
-            // needs to kick the orderly shutdown.
-            if (bundle != this.context.getBundle()) {
-                destroyExtension(bundle);
-            }
-        }
-    }
-
-    public Bundle addingBundle(Bundle bundle, BundleEvent event) {
-        modifiedBundle(bundle, event, bundle);
-        return bundle;
-    }
-
-    public void modifiedBundle(Bundle bundle, BundleEvent event, Bundle object) {
-        // If the bundle being stopped is the system bundle,
-        // do an orderly shutdown of all blueprint contexts now
-        // so that service usage can actually be useful
-        if (bundle.getBundleId() == 0 && bundle.getState() == Bundle.STOPPING) {
-            if (preemptiveShutdown) {
-                try {
-                    stop(context);
-                } catch (Exception e) {
-                    error("Error while performing preemptive shutdown", e);
-                }
-                return;
-            }
-        }
-        if (bundle.getState() != Bundle.ACTIVE && bundle.getState() != Bundle.STARTING) {
-            // The bundle is not in STARTING or ACTIVE state anymore
-            // so destroy the context.  Ignore our own bundle since it
-            // needs to kick the orderly shutdown and not unregister the namespaces.
-            if (bundle != this.context.getBundle()) {
-                destroyExtension(bundle);
-            }
-            return;
-        }
-        // Do not track bundles given we are stopping
-        if (stopping) {
-            return;
-        }
-        // For starting bundles, ensure, it's a lazy activation,
-        // else we'll wait for the bundle to become ACTIVE
-        if (bundle.getState() == Bundle.STARTING) {
-            String activationPolicyHeader = (String) bundle.getHeaders().get(Constants.BUNDLE_ACTIVATIONPOLICY);
-            if (activationPolicyHeader == null || !activationPolicyHeader.startsWith(Constants.ACTIVATION_LAZY)) {
-                // Do not track this bundle yet
-                return;
-            }
-        }
-        createExtension(bundle);
-    }
-
-    public void removedBundle(Bundle bundle, BundleEvent event, Bundle object) {
-        // Nothing to do
-        destroyExtension(bundle);
-    }
+    protected abstract void debug(Bundle bundle, String msg);
+    protected abstract void warn(Bundle bundle, String msg, Throwable t);
+    protected abstract void error(String msg, Throwable t);
 
     private void createExtension(final Bundle bundle) {
         try {
@@ -258,12 +273,12 @@ public abstract class AbstractExtender implements BundleActivator, BundleTracker
                 // This bundle is not to be extended
                 return;
             }
-            synchronized (extensions) {
-                if (extensions.putIfAbsent(bundle, extension) != null) {
+            synchronized (_extensions) {
+                if (_extensions.putIfAbsent(bundle, extension) != null) {
                     return;
                 }
             }
-            if (synchronous) {
+            if (_synchronous) {
                 debug(bundle, "Starting extension synchronously");
                 extension.start();
             } else {
@@ -285,11 +300,11 @@ public abstract class AbstractExtender implements BundleActivator, BundleTracker
 
     private void destroyExtension(final Bundle bundle) {
         FutureTask future;
-        synchronized (extensions) {
+        synchronized (_extensions) {
             debug(bundle, "Starting destruction process");
-            future = destroying.get(bundle);
+            future = _destroying.get(bundle);
             if (future == null) {
-                final Extension extension = extensions.remove(bundle);
+                final Extension extension = _extensions.remove(bundle);
                 if (extension != null) {
                     debug(bundle, "Scheduling extension destruction");
                     future = new FutureTask<Void>(new Runnable() {
@@ -301,13 +316,13 @@ public abstract class AbstractExtender implements BundleActivator, BundleTracker
                                 warn(bundle, "Error while destroying extension", t);
                             } finally {
                                 debug(bundle, "Finished destroying extension");
-                                synchronized (extensions) {
-                                    destroying.remove(bundle);
+                                synchronized (_extensions) {
+                                    _destroying.remove(bundle);
                                 }
                             }
                         }
                     }, null);
-                    destroying.put(bundle, future);
+                    _destroying.put(bundle, future);
                 } else {
                     debug(bundle, "Not an extended bundle or destruction of extension already finished");
                 }
@@ -325,18 +340,5 @@ public abstract class AbstractExtender implements BundleActivator, BundleTracker
             }
         }
     }
-
-    /**
-     * Create the extension for the given bundle, or null if the bundle is not to be extended.
-     *
-     * @param bundle the bundle to extend
-     * @return
-     * @throws Exception
-     */
-    protected abstract Extension doCreateExtension(Bundle bundle) throws Exception;
-
-    protected abstract void debug(Bundle bundle, String msg);
-    protected abstract void warn(Bundle bundle, String msg, Throwable t);
-    protected abstract void error(String msg, Throwable t);
 
 }

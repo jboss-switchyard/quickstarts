@@ -1,20 +1,15 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.switchyard.deploy.osgi.internal;
@@ -34,40 +29,46 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 /**
+ * ConfigurationExtension.
  */
 public class ConfigurationExtension extends SimpleExtension {
 
-    private final Logger logger = LoggerFactory.getLogger(SwitchyardExtender.class);
+    private final Logger _logger = LoggerFactory.getLogger(SwitchYardExtender.class);
 
-    private final SwitchyardExtender extender;
-    private SimpleNamespaceHandler handler;
-    private ServiceRegistration<NamespaceHandler> registration;
+    private final SwitchYardExtender _extender;
+    private SimpleNamespaceHandler _handler;
+    private ServiceRegistration<NamespaceHandler> _registration;
 
-    public ConfigurationExtension(SwitchyardExtender extender, Bundle bundle) {
+    /**
+     * Create a new instance of ConfigurationExtension.
+     * @param extender SY extender
+     * @param bundle configuration bundle
+     */
+    public ConfigurationExtension(SwitchYardExtender extender, Bundle bundle) {
         super(bundle);
-        this.extender = extender;
+        _extender = extender;
     }
 
     @Override
     protected void doStart() throws Exception {
         URL configUrl = getBundle().getEntry(Descriptor.DEFAULT_PROPERTIES);
         Properties properties = new PropertiesPuller().pull(configUrl);
-        handler = new SimpleNamespaceHandler(getBundle(), properties);
-        logger.info("Registering namespace handler for " + handler.getNamespaces());
-        if (registration == null) {
+        _handler = new SimpleNamespaceHandler(getBundle(), properties);
+        _logger.info("Registering namespace handler for " + _handler.getNamespaces());
+        if (_registration == null) {
             Dictionary<String, Object> props = new Hashtable<String, Object>();
-            props.put(NamespaceHandler.NAMESPACES, handler.getNamespaces());
-            registration = getBundleContext().registerService(NamespaceHandler.class, handler, props);
+            props.put(NamespaceHandler.NAMESPACES, _handler.getNamespaces());
+            _registration = getBundleContext().registerService(NamespaceHandler.class, _handler, props);
         }
     }
 
     @Override
     protected void doDestroy() throws Exception {
-        if (handler != null) {
-            logger.info("Unregistering namespace handler for " + handler.getNamespaces());
-            if (registration != null) {
-                registration.unregister();
-                registration = null;
+        if (_handler != null) {
+            _logger.info("Unregistering namespace handler for " + _handler.getNamespaces());
+            if (_registration != null) {
+                _registration.unregister();
+                _registration = null;
             }
         }
     }

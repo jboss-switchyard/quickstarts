@@ -1,74 +1,76 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.switchyard.deploy.osgi;
 
 import org.osgi.framework.Bundle;
 
 /**
+ * SwitchyardEvent.
  */
-public class SwitchyardEvent {
+public class SwitchYardEvent {
 
-    public static final int	CREATING		= 1;
-    public static final int	CREATED			= 2;
-    public static final int	DESTROYING		= 3;
-    public static final int	DESTROYED		= 4;
-    public static final int	FAILURE			= 5;
-    public static final int	GRACE_PERIOD	= 6;
+    /** CREATING. */
+    public static final int CREATING = 1;
+    /** CREATED. */
+    public static final int CREATED = 2;
+    /** DESTROYING. */
+    public static final int DESTROYING = 3;
+    /** DESTROYED. */
+    public static final int DESTROYED = 4;
+    /** FAILURE. */
+    public static final int FAILURE = 5;
+    /** GRACE_PERIOD. */
+    public static final int GRACE_PERIOD = 6;
 
-    private final int		type;
+    private final int _type;
     /**
      * The time when the event occurred.
-     *
+     * 
      * @see #getTimestamp()
      */
-    private final long		timestamp;
+    private final long _timestamp;
     /**
      * The Switchyard bundle.
-     *
+     * 
      * @see #getBundle()
      */
-    private final Bundle bundle;
+    private final Bundle _bundle;
     /**
      * The Switchyard extender bundle.
-     *
+     * 
      * @see #getExtenderBundle()
      */
-    private final Bundle	extenderBundle;
+    private final Bundle _extenderBundle;
     /**
      * An array containing filters identifying the missing dependencies. Must
      * not be <code>null</code> when the event type requires it.
-     *
+     * 
      * @see #getDependencies()
      */
-    private final String[]	dependencies;
+    private final String[] _dependencies;
     /**
      * Cause of the failure.
-     *
+     * 
      * @see #getCause()
      */
-    private final Throwable	cause;
+    private final Throwable _cause;
     /**
      * Indicate if this event is a replay event or not.
-     *
+     * 
      * @see #isReplay()
      */
-    private final boolean	replay;
+    private final boolean _replay;
 
     /**
      * Create a simple <code>SwitchyardEvent</code> object.
@@ -79,7 +81,7 @@ public class SwitchyardEvent {
      * @param extenderBundle The Switchyard extender bundle that is generating
      *        this event. This parameter must not be <code>null</code>.
      */
-    public SwitchyardEvent(int type, Bundle bundle, Bundle extenderBundle) {
+    public SwitchYardEvent(int type, Bundle bundle, Bundle extenderBundle) {
         this(type, bundle, extenderBundle, null, null);
     }
 
@@ -97,7 +99,7 @@ public class SwitchyardEvent {
      *        for event types {@link #FAILURE}, {@link #GRACE_PERIOD}.
      *        Must be <code>null</code> for other event types.
      */
-    public SwitchyardEvent(int type, Bundle bundle, Bundle extenderBundle,
+    public SwitchYardEvent(int type, Bundle bundle, Bundle extenderBundle,
                           String[] dependencies) {
         this(type, bundle, extenderBundle, dependencies, null);
     }
@@ -114,7 +116,7 @@ public class SwitchyardEvent {
      * @param cause A <code>Throwable</code> object describing the root cause of
      *        the event. May be <code>null</code>.
      */
-    public SwitchyardEvent(int type, Bundle bundle, Bundle extenderBundle,
+    public SwitchYardEvent(int type, Bundle bundle, Bundle extenderBundle,
                           Throwable cause) {
         this(type, bundle, extenderBundle, null, cause);
     }
@@ -136,16 +138,16 @@ public class SwitchyardEvent {
      * @param cause A <code>Throwable</code> object describing the root cause of
      *        this event. May be <code>null</code>.
      */
-    public SwitchyardEvent(int type, Bundle bundle, Bundle extenderBundle,
+    public SwitchYardEvent(int type, Bundle bundle, Bundle extenderBundle,
                           String[] dependencies, Throwable cause) {
-        this.type = type;
-        this.timestamp = System.currentTimeMillis();
-        this.bundle = bundle;
-        this.extenderBundle = extenderBundle;
-        this.dependencies = dependencies == null ? null
+        _type = type;
+        _timestamp = System.currentTimeMillis();
+        _bundle = bundle;
+        _extenderBundle = extenderBundle;
+        _dependencies = dependencies == null ? null
                 : (String[]) dependencies.clone();;
-        this.cause = cause;
-        this.replay = false;
+        _cause = cause;
+        _replay = false;
         if (bundle == null) {
             throw new NullPointerException("bundle must not be null");
         }
@@ -193,14 +195,14 @@ public class SwitchyardEvent {
      * @param replay <code>true</code> if this event should be used as a replay
      *        event.
      */
-    public SwitchyardEvent(SwitchyardEvent event, boolean replay) {
-        this.type = event.type;
-        this.timestamp = event.timestamp;
-        this.bundle = event.bundle;
-        this.extenderBundle = event.extenderBundle;
-        this.dependencies = event.dependencies;
-        this.cause = event.cause;
-        this.replay = replay;
+    public SwitchYardEvent(SwitchYardEvent event, boolean replay) {
+        _type = event._type;
+        _timestamp = event._timestamp;
+        _bundle = event._bundle;
+        _extenderBundle = event._extenderBundle;
+        _dependencies = event._dependencies;
+        _cause = event._cause;
+        _replay = replay;
     }
 
     /**
@@ -219,7 +221,7 @@ public class SwitchyardEvent {
      * @return The type of this event.
      */
     public int getType() {
-        return type;
+        return _type;
     }
 
     /**
@@ -228,7 +230,7 @@ public class SwitchyardEvent {
      * @return The time at which this event was created.
      */
     public long getTimestamp() {
-        return timestamp;
+        return _timestamp;
     }
 
     /**
@@ -237,7 +239,7 @@ public class SwitchyardEvent {
      * @return The Blueprint bundle associated with this event.
      */
     public Bundle getBundle() {
-        return bundle;
+        return _bundle;
     }
 
     /**
@@ -246,7 +248,7 @@ public class SwitchyardEvent {
      * @return The Blueprint extender bundle that is generating this event.
      */
     public Bundle getExtenderBundle() {
-        return extenderBundle;
+        return _extenderBundle;
     }
 
     /**
@@ -259,7 +261,7 @@ public class SwitchyardEvent {
      *         for the other event types.
      */
     public String[] getDependencies() {
-        return dependencies == null ? null : (String[]) dependencies.clone();
+        return _dependencies == null ? null : (String[]) _dependencies.clone();
     }
 
     /**
@@ -269,7 +271,7 @@ public class SwitchyardEvent {
      *         .
      */
     public Throwable getCause() {
-        return cause;
+        return _cause;
     }
 
     /**
@@ -279,6 +281,6 @@ public class SwitchyardEvent {
      *         <code>false</code> otherwise.
      */
     public boolean isReplay() {
-        return replay;
+        return _replay;
     }
 }

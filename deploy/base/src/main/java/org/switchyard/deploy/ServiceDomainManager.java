@@ -24,7 +24,6 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.bus.camel.CamelExchangeBus;
 import org.switchyard.common.camel.SwitchYardCamelContextImpl;
-import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.SecuritiesModel;
 import org.switchyard.config.model.domain.SecurityModel;

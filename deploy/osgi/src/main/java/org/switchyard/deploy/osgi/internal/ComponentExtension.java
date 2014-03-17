@@ -1,20 +1,15 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.switchyard.deploy.osgi.internal;
 
@@ -36,20 +31,32 @@ import java.util.Hashtable;
 import java.util.List;
 
 /**
+ * ComponentExtension.
  */
 public class ComponentExtension extends SimpleExtension {
 
+    /**
+     * Location of component descriptor.
+     */
     public static final String META_INF_COMPONENT = "META-INF/services/org.switchyard.deploy.Component";
+    /**
+     * List of activation types.
+     */
     public static final String SWITCHYARD_TYPES = "switchyard.types";
 
-    private final Logger logger = LoggerFactory.getLogger(SwitchyardExtender.class);
+    private final Logger _logger = LoggerFactory.getLogger(SwitchYardExtender.class);
 
-    private final SwitchyardExtender extender;
-    private List<ServiceRegistration<Component>> registrations = new ArrayList<ServiceRegistration<Component>>();
+    private final SwitchYardExtender _extender;
+    private List<ServiceRegistration<Component>> _registrations = new ArrayList<ServiceRegistration<Component>>();
 
-    public ComponentExtension(SwitchyardExtender extender, Bundle bundle) {
+    /**
+     * Create a new instance of ComponentExtension.
+     * @param extender extender
+     * @param bundle component bundle
+     */
+    public ComponentExtension(SwitchYardExtender extender, Bundle bundle) {
         super(bundle);
-        this.extender = extender;
+        _extender = extender;
     }
 
     @Override
@@ -62,13 +69,13 @@ public class ComponentExtension extends SimpleExtension {
             Dictionary<String, Object> props = new Hashtable<String, Object>();
             props.put(SWITCHYARD_TYPES, component.getActivationTypes());
             ServiceRegistration<Component> reg = getBundleContext().registerService(Component.class, component, props);
-            registrations.add(reg);
+            _registrations.add(reg);
         }
     }
 
     @Override
     protected void doDestroy() throws Exception {
-        for (ServiceRegistration<Component> reg : registrations) {
+        for (ServiceRegistration<Component> reg : _registrations) {
             reg.unregister();
         }
     }
@@ -107,8 +114,12 @@ public class ComponentExtension extends SimpleExtension {
             fail(service, "Error reading configuration file", x);
         } finally {
             try {
-                if (r != null) r.close();
-                if (in != null) in.close();
+                if (r != null) {
+                    r.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
             } catch (IOException y) {
                 fail(service, "Error closing configuration file", y);
             }
@@ -123,22 +134,28 @@ public class ComponentExtension extends SimpleExtension {
             return -1;
         }
         int ci = ln.indexOf('#');
-        if (ci >= 0) ln = ln.substring(0, ci);
+        if (ci >= 0) {
+            ln = ln.substring(0, ci);
+        }
         ln = ln.trim();
         int n = ln.length();
         if (n != 0) {
-            if ((ln.indexOf(' ') >= 0) || (ln.indexOf('\t') >= 0))
+            if ((ln.indexOf(' ') >= 0) || (ln.indexOf('\t') >= 0)) {
                 fail(service, u, lc, "Illegal configuration-file syntax");
+            }
             int cp = ln.codePointAt(0);
-            if (!Character.isJavaIdentifierStart(cp))
+            if (!Character.isJavaIdentifierStart(cp)) {
                 fail(service, u, lc, "Illegal provider-class name: " + ln);
+            }
             for (int i = Character.charCount(cp); i < n; i += Character.charCount(cp)) {
                 cp = ln.codePointAt(i);
-                if (!Character.isJavaIdentifierPart(cp) && (cp != '.'))
+                if (!Character.isJavaIdentifierPart(cp) && (cp != '.')) {
                     fail(service, u, lc, "Illegal provider-class name: " + ln);
+                }
             }
-            if (!names.contains(ln))
+            if (!names.contains(ln)) {
                 names.add(ln);
+            }
         }
         return lc + 1;
     }

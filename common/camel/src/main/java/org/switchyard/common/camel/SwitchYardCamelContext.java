@@ -13,24 +13,9 @@
  */
 package org.switchyard.common.camel;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.camel.cdi.CdiBeanRegistry;
-import org.apache.camel.cdi.CdiInjector;
-import org.apache.camel.impl.CompositeRegistry;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.spi.EventNotifier;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.Registry;
 import org.switchyard.ServiceDomain;
-import org.switchyard.common.camel.event.CamelEventBridge;
-import org.switchyard.common.cdi.CDIUtil;
 
 /**
  * Extension of default camel context. Supports access to mutable registry and

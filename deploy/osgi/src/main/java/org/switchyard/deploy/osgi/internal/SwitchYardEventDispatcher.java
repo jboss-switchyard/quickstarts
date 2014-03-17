@@ -1,20 +1,15 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.switchyard.deploy.osgi.internal;
 
@@ -28,8 +23,8 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.switchyard.deploy.osgi.EventConstants;
-import org.switchyard.deploy.osgi.SwitchyardEvent;
-import org.switchyard.deploy.osgi.SwitchyardListener;
+import org.switchyard.deploy.osgi.SwitchYardEvent;
+import org.switchyard.deploy.osgi.SwitchYardListener;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,26 +43,27 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
+ * SwitchYardEventDispatcher.
  */
-public class SwitchyardEventDispatcher implements SwitchyardListener {
+public class SwitchYardEventDispatcher implements SwitchYardListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SwitchyardEventDispatcher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SwitchYardEventDispatcher.class);
 
-    private final Set<SwitchyardListener> listeners = new CopyOnWriteArraySet<SwitchyardListener>();
-    private final Map<Bundle, SwitchyardEvent> states = new ConcurrentHashMap<Bundle, SwitchyardEvent>();
-    private final ExecutorService executor;
-    private final ExecutorService sharedExecutor;
-    private final EventAdminListener eventAdminListener;
-    private final ServiceTracker<SwitchyardListener, SwitchyardListener> containerListenerTracker;
+    private final Set<SwitchYardListener> _listeners = new CopyOnWriteArraySet<SwitchYardListener>();
+    private final Map<Bundle, SwitchYardEvent> _states = new ConcurrentHashMap<Bundle, SwitchYardEvent>();
+    private final ExecutorService _executor;
+    private final ExecutorService _sharedExecutor;
+    private final EventAdminListener _eventAdminListener;
+    private final ServiceTracker<SwitchYardListener, SwitchYardListener> _containerListenerTracker;
 
-    SwitchyardEventDispatcher(final BundleContext bundleContext, ExecutorService sharedExecutor) {
+    SwitchYardEventDispatcher(final BundleContext bundleContext, ExecutorService sharedExecutor) {
 
         assert bundleContext != null;
         assert sharedExecutor != null;
 
-        executor = Executors.newSingleThreadExecutor(new SwitchyardThreadFactory("Switchyard Event Dispatcher"));
+        _executor = Executors.newSingleThreadExecutor(new SwitchYardThreadFactory("Switchyard Event Dispatcher"));
 
-        this.sharedExecutor = sharedExecutor;
+        _sharedExecutor = sharedExecutor;
 
         EventAdminListener listener = null;
         try {
@@ -77,33 +73,33 @@ public class SwitchyardEventDispatcher implements SwitchyardListener {
             // Ignore, if the EventAdmin package is not available, just don't use it
             LOGGER.debug("EventAdmin package is not available, just don't use it");
         }
-        this.eventAdminListener = listener;
+        _eventAdminListener = listener;
 
-        this.containerListenerTracker = new ServiceTracker<SwitchyardListener, SwitchyardListener>(bundleContext, SwitchyardListener.class.getName(), new ServiceTrackerCustomizer<SwitchyardListener, SwitchyardListener>() {
-            public SwitchyardListener addingService(ServiceReference<SwitchyardListener> reference) {
-                SwitchyardListener listener = bundleContext.getService(reference);
-                synchronized (listeners) {
+        _containerListenerTracker = new ServiceTracker<SwitchYardListener, SwitchYardListener>(bundleContext, SwitchYardListener.class.getName(), new ServiceTrackerCustomizer<SwitchYardListener, SwitchYardListener>() {
+            public SwitchYardListener addingService(ServiceReference<SwitchYardListener> reference) {
+                SwitchYardListener listener = bundleContext.getService(reference);
+                synchronized (_listeners) {
                     sendInitialEvents(listener);
-                    listeners.add(listener);
+                    _listeners.add(listener);
                 }
                 return listener;
             }
 
-            public void modifiedService(ServiceReference<SwitchyardListener> reference, SwitchyardListener service) {
+            public void modifiedService(ServiceReference<SwitchYardListener> reference, SwitchYardListener service) {
             }
 
-            public void removedService(ServiceReference<SwitchyardListener> reference, SwitchyardListener service) {
-                listeners.remove(service);
+            public void removedService(ServiceReference<SwitchYardListener> reference, SwitchYardListener service) {
+                _listeners.remove(service);
                 bundleContext.ungetService(reference);
             }
         });
-        this.containerListenerTracker.open();
+        _containerListenerTracker.open();
     }
 
-    private void sendInitialEvents(SwitchyardListener listener) {
-        for (Map.Entry<Bundle, SwitchyardEvent> entry : states.entrySet()) {
+    private void sendInitialEvents(SwitchYardListener listener) {
+        for (Map.Entry<Bundle, SwitchYardEvent> entry : _states.entrySet()) {
             try {
-                callListener(listener, new SwitchyardEvent(entry.getValue(), true));
+                callListener(listener, new SwitchYardEvent(entry.getValue(), true));
             } catch (RejectedExecutionException ree) {
                 LOGGER.warn("Executor shut down", ree);
                 break;
@@ -111,21 +107,21 @@ public class SwitchyardEventDispatcher implements SwitchyardListener {
         }
     }
 
-    public void switchyardEvent(final SwitchyardEvent event) {
+    public void switchyardEvent(final SwitchYardEvent event) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Sending switchyard container event {} for bundle {}", toString(event), event.getBundle().getSymbolicName());
         }
 
-        synchronized (listeners) {
+        synchronized (_listeners) {
             callListeners(event);
-            states.put(event.getBundle(), event);
+            _states.put(event.getBundle(), event);
         }
 
-        if (eventAdminListener != null) {
+        if (_eventAdminListener != null) {
             try {
-                sharedExecutor.submit(new Runnable() {
+                _sharedExecutor.submit(new Runnable() {
                     public void run() {
-                        eventAdminListener.switchyardEvent(event);
+                        _eventAdminListener.switchyardEvent(event);
                     }
                 });
             } catch (RejectedExecutionException ree) {
@@ -135,7 +131,7 @@ public class SwitchyardEventDispatcher implements SwitchyardListener {
     }
 
     @SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
-    private static String toString(SwitchyardEvent event) {
+    private static String toString(SwitchYardEvent event) {
         return "SwitchyardEvent[type=" + getEventType(event.getType())
                 + (event.getDependencies() != null ? ", dependencies=" + Arrays.asList(event.getDependencies()) : "")
                 + (event.getCause() != null ? ", exception=" + event.getCause().getMessage() : "")
@@ -144,25 +140,25 @@ public class SwitchyardEventDispatcher implements SwitchyardListener {
 
     private static String getEventType(int type) {
         switch (type) {
-            case SwitchyardEvent.CREATING:
+            case SwitchYardEvent.CREATING:
                 return "CREATING";
-            case SwitchyardEvent.CREATED:
+            case SwitchYardEvent.CREATED:
                 return "CREATED";
-            case SwitchyardEvent.DESTROYING:
+            case SwitchYardEvent.DESTROYING:
                 return "DESTROYING";
-            case SwitchyardEvent.DESTROYED:
+            case SwitchYardEvent.DESTROYED:
                 return "DESTROYED";
-            case SwitchyardEvent.FAILURE:
+            case SwitchYardEvent.FAILURE:
                 return "FAILURE";
-            case SwitchyardEvent.GRACE_PERIOD:
+            case SwitchYardEvent.GRACE_PERIOD:
                 return "GRACE_PERIOD";
             default:
                 return "UNKNOWN";
         }
     }
 
-    private void callListeners(SwitchyardEvent event) {
-        for (final SwitchyardListener listener : listeners) {
+    private void callListeners(SwitchYardEvent event) {
+        for (final SwitchYardListener listener : _listeners) {
             try {
                 callListener(listener, event);
             } catch (RejectedExecutionException ree) {
@@ -172,9 +168,9 @@ public class SwitchyardEventDispatcher implements SwitchyardListener {
         }
     }
 
-    private void callListener(final SwitchyardListener listener, final SwitchyardEvent event) throws RejectedExecutionException {
+    private void callListener(final SwitchYardListener listener, final SwitchYardEvent event) throws RejectedExecutionException {
         try {
-            executor.invokeAny(Collections.<Callable<Void>>singleton(new Callable<Void>() {
+            _executor.invokeAny(Collections.<Callable<Void>>singleton(new Callable<Void>() {
                 public Void call() throws Exception {
                     listener.switchyardEvent(event);
                     return null;
@@ -185,33 +181,33 @@ public class SwitchyardEventDispatcher implements SwitchyardListener {
             Thread.currentThread().interrupt();
         } catch (TimeoutException te) {
             LOGGER.warn("Listener timed out, will be ignored", te);
-            listeners.remove(listener);
+            _listeners.remove(listener);
         } catch (ExecutionException ee) {
             LOGGER.warn("Listener caused an exception, will be ignored", ee);
-            listeners.remove(listener);
+            _listeners.remove(listener);
         }
     }
 
     void destroy() {
-        executor.shutdown();
+        _executor.shutdown();
         // wait for the queued tasks to execute
         try {
-            executor.awaitTermination(60, TimeUnit.SECONDS);
+            _executor.awaitTermination(60, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             // ignore
         }
-        containerListenerTracker.close();
+        _containerListenerTracker.close();
         // clean up the EventAdmin tracker if we're using that
-        if (eventAdminListener != null) {
-            eventAdminListener.destroy();
+        if (_eventAdminListener != null) {
+            _eventAdminListener.destroy();
         }
     }
 
     public void removeSwitchyardBundle(Bundle bundle) {
-        states.remove(bundle);
+        _states.remove(bundle);
     }
 
-    private static class EventAdminListener implements SwitchyardListener {
+    private static class EventAdminListener implements SwitchYardListener {
 
         private final ServiceTracker tracker;
 
@@ -221,7 +217,7 @@ public class SwitchyardEventDispatcher implements SwitchyardListener {
         }
 
         @SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
-        public void switchyardEvent(SwitchyardEvent event) {
+        public void switchyardEvent(SwitchYardEvent event) {
             EventAdmin eventAdmin = (EventAdmin) tracker.getService();
             if (eventAdmin == null) {
                 return;
@@ -248,22 +244,22 @@ public class SwitchyardEventDispatcher implements SwitchyardListener {
             }
             String topic;
             switch (event.getType()) {
-                case SwitchyardEvent.CREATING:
+                case SwitchYardEvent.CREATING:
                     topic = EventConstants.TOPIC_CREATING;
                     break;
-                case SwitchyardEvent.CREATED:
+                case SwitchYardEvent.CREATED:
                     topic = EventConstants.TOPIC_CREATED;
                     break;
-                case SwitchyardEvent.DESTROYING:
+                case SwitchYardEvent.DESTROYING:
                     topic = EventConstants.TOPIC_DESTROYING;
                     break;
-                case SwitchyardEvent.DESTROYED:
+                case SwitchYardEvent.DESTROYED:
                     topic = EventConstants.TOPIC_DESTROYED;
                     break;
-                case SwitchyardEvent.FAILURE:
+                case SwitchYardEvent.FAILURE:
                     topic = EventConstants.TOPIC_FAILURE;
                     break;
-                case SwitchyardEvent.GRACE_PERIOD:
+                case SwitchYardEvent.GRACE_PERIOD:
                     topic = EventConstants.TOPIC_GRACE_PERIOD;
                     break;
                 default:

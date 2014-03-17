@@ -1,20 +1,15 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
- * as indicated by the @author tags. All rights reserved.
- * See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
- * This copyrighted material is made available to anyone wishing to use,
- * modify, copy, or redistribute it subject to the terms and conditions
- * of the GNU Lesser General Public License, v. 2.1.
- * This program is distributed in the hope that it will be useful, but WITHOUT A
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public License,
- * v.2.1 along with this distribution; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA  02110-1301, USA.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.switchyard.deploy.osgi.internal;
 
@@ -31,32 +26,37 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
+ * ComponentRegistryImpl.
  */
 public class ComponentRegistryImpl implements ComponentRegistry, ServiceTrackerCustomizer<Component, Component> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NamespaceHandlerRegistryImpl.class);
 
     // The bundle context is thread safe
-    private final BundleContext bundleContext;
+    private final BundleContext _bundleContext;
 
     // The service tracker is thread safe
-    private final ServiceTracker<Component, Component> tracker;
+    private final ServiceTracker<Component, Component> _tracker;
 
     // List of listeners
-    private final List<Listener> listeners = new CopyOnWriteArrayList<Listener>();
+    private final List<Listener> _listeners = new CopyOnWriteArrayList<Listener>();
 
     // List of components
-    private final List<Component> components = new CopyOnWriteArrayList<Component>();
+    private final List<Component> _components = new CopyOnWriteArrayList<Component>();
 
+    /**
+     * Create a new ComponentRegistryImpl.
+     * @param bundleContext bundleContext
+     */
     public ComponentRegistryImpl(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
-        tracker = new ServiceTracker<Component, Component>(bundleContext, Component.class, this);
-        tracker.open();
+        _bundleContext = bundleContext;
+        _tracker = new ServiceTracker<Component, Component>(bundleContext, Component.class, this);
+        _tracker.open();
     }
 
     @Override
     public Component getComponent(String type) {
-        for (Component component : components) {
+        for (Component component : _components) {
             if (component.getActivationTypes().contains(type)) {
                 return component;
             }
@@ -64,17 +64,19 @@ public class ComponentRegistryImpl implements ComponentRegistry, ServiceTrackerC
         return null;
     }
 
+    @Override
     public void addListener(Listener listener) {
-        listeners.add(listener);
+        _listeners.add(listener);
     }
 
+    @Override
     public void removeListener(Listener listener) {
-        listeners.remove(listener);
+        _listeners.remove(listener);
     }
 
     @Override
     public Component addingService(ServiceReference<Component> reference) {
-        Component component = bundleContext.getService(reference);
+        Component component = _bundleContext.getService(reference);
         registerComponent(component);
         return component;
     }
@@ -90,13 +92,14 @@ public class ComponentRegistryImpl implements ComponentRegistry, ServiceTrackerC
         unregisterComponent(component);
     }
 
+    @Override
     public void destroy() {
-        tracker.close();
+        _tracker.close();
     }
 
     private void registerComponent(Component component) {
-        components.add(component);
-        for (Listener listener : listeners) {
+        _components.add(component);
+        for (Listener listener : _listeners) {
             for (String type : component.getActivationTypes()) {
                 listener.componentRegistered(type);
             }
@@ -104,12 +107,12 @@ public class ComponentRegistryImpl implements ComponentRegistry, ServiceTrackerC
     }
 
     private void unregisterComponent(Component component) {
-        for (Listener listener : listeners) {
+        for (Listener listener : _listeners) {
             for (String type : component.getActivationTypes()) {
                 listener.componentUnregistered(type);
             }
         }
-        components.remove(component);
+        _components.remove(component);
     }
 
 }

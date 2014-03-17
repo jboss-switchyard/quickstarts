@@ -11,26 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.deploy.osgi.base;
+package org.switchyard.deploy.osgi;
 
 /**
- * A simple interface used by the extender to manage extensions.
+ * Listens for SwitchYard events.
  */
-public interface Extension {
+public interface SwitchYardListener {
 
     /**
-     * Start this extension. Starting and stopping of the extension
-     * should be synchronized.
-     * @throws Exception failed
+     * Receives notifications of a SwitchYard Event.
+     * 
+     * Implementers should quickly process the event and return.
+     * @param event The {@link SwitchYardEvent}.
      */
-    void start() throws Exception;
-
-    /**
-     * Destroy should be synchronous and only return when the extension
-     * has been fully destroyed.  In addition it must be synchronized with
-     * start, because start() and destroy() can be called concurrently.
-     * @throws Exception failed
-     */
-    void destroy() throws Exception;
-
+    void switchyardEvent(SwitchYardEvent event);
 }
