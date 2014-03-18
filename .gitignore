@@ -14,3 +14,4 @@ transaction.log
 .xml
 .DS_Store
 .metadata/
+.idea
