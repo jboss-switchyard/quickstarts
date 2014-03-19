@@ -8,3 +8,4 @@ target/
 *.iws
 .DS_Store
 transaction.log
+.fbExcludeFilterFile

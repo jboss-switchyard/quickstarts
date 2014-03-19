@@ -24,16 +24,18 @@
     <packaging>jar</packaging>
     <name>SwitchYard: WildFly Extension</name>
     <description>SwitchYard WildFly Extension and Subsystem</description>
+    <properties>
+        <common.sources.dir>${project.build.directory}/dependency/jboss-as7/java</common.sources.dir>
+        <common.resources.dir>${project.build.directory}/dependency/jboss-as7/resources</common.resources.dir>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.wildfly</groupId>
             <artifactId>wildfly-web-common</artifactId>
-            <version>${version.wildfly}</version>
         </dependency>
         <dependency>
             <groupId>org.wildfly</groupId>
             <artifactId>wildfly-weld</artifactId>
-            <version>${version.wildfly}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -64,8 +66,27 @@
             <artifactId>switchyard-component-soap</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jboss.ws.cxf</groupId>
+            <artifactId>jbossws-cxf-server</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-security</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.security</groupId>
+            <artifactId>wss4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.ws</groupId>
             <artifactId>jbossws-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging-processor</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -79,41 +100,71 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>stage-classes</id>
+                        <id>stage-common-sources</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>unpack</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-deploy-jboss-as7</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                            </artifactItems>
-                            <excludes>
-                                org/switchyard/as7/extension/SwitchYardExtensionAdd.class,
-                                org/switchyard/as7/extension/SwitchYardModuleAdd.class,
-                                org/switchyard/as7/extension/SwitchYardSubsystemAdd.class,
-                                org/switchyard/as7/extension/cluster/RemoteEndpointListener.class,
-                                org/switchyard/as7/extension/deployment/SwitchYardCdiIntegrationProcessor.class,
-                                org/switchyard/as7/extension/deployment/SwitchYardDeployment.class,
-                                org/switchyard/as7/extension/deployment/SwitchYardDeploymentProcessor.class,
-                                org/switchyard/as7/extension/http/JBossWebEndpoint.class,
-                                org/switchyard/as7/extension/http/JBossWebEndpointPublisher.class,
-                                org/switchyard/as7/extension/resteasy/RESTEasyResource.class,
-                                org/switchyard/as7/extension/resteasy/RESTEasyResourcePublisher.class,
-                                org/switchyard/as7/extension/util/ServerUtil.class,
-                                org/switchyard/as7/extension/ws/JBossWSEndpoint.class,
-                                org/switchyard/as7/extension/ws/JBossWSEndpointPublisher.class
-                            </excludes>
-                            <outputDirectory>${staging.configs.dir}</outputDirectory>
-                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                            <tasks>
+                                <copy todir="${common.sources.dir}">
+                                    <fileset dir="../../extension/src/main/java/" includes="**/*.java">
+                                        <exclude name="org/switchyard/as7/extension/SwitchYardExtensionAdd.java"/>
+                                        <exclude name="org/switchyard/as7/extension/SwitchYardModuleAdd.java"/>
+                                        <exclude name="org/switchyard/as7/extension/SwitchYardSubsystemAdd.java"/>
+                                        <exclude name="org/switchyard/as7/extension/cluster/RemoteEndpointListener.java"/>
+                                        <exclude name="org/switchyard/as7/extension/deployment/SwitchYardCdiIntegrationProcessor.java"/>
+                                        <exclude name="org/switchyard/as7/extension/deployment/SwitchYardDeployment.java"/>
+                                        <exclude name="org/switchyard/as7/extension/deployment/SwitchYardDeploymentProcessor.java"/>
+                                        <exclude name="org/switchyard/as7/extension/http/JBossWebEndpoint.java"/>
+                                        <exclude name="org/switchyard/as7/extension/http/JBossWebEndpointPublisher.java"/>
+                                        <exclude name="org/switchyard/as7/extension/resteasy/RESTEasyResource.java"/>
+                                        <exclude name="org/switchyard/as7/extension/resteasy/RESTEasyResourcePublisher.java"/>
+                                        <exclude name="org/switchyard/as7/extension/util/ServerUtil.java"/>
+                                        <exclude name="org/switchyard/as7/extension/ws/JBossWSEndpoint.java"/>
+                                        <exclude name="org/switchyard/as7/extension/ws/JBossWSEndpointPublisher.java"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${common.resources.dir}">
+                                    <fileset dir="../../extension/src/main/resources/"/>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-common-sources-dir</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${common.sources.dir}</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-common-resources-dir</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${common.resources.dir}</directory>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>

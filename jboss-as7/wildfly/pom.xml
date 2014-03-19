@@ -26,18 +26,14 @@
     <description>SwitchYard Wildfly Standalone Parent</description>
     <properties>
         <version.wildfly>8.0.0.Final</version.wildfly>
-        <version.arquillian>1.1.2.Final-wildfly-1</version.arquillian>
-        <version.xnio>3.2.0.Beta4</version.xnio>
-        <version.xnio.netty>0.1.1.Final</version.xnio.netty>
         <version.shrinkwrap>1.1.2</version.shrinkwrap>
         <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
         <version.shrinkwrap.descriptors>2.0.0-alpha-3</version.shrinkwrap.descriptors>
-        <version.remoting>4.0.0.Final</version.remoting>
-        <version.remotingjmx>2.0.0.Final</version.remotingjmx>
+        <!-- Required for the module.xml file generation. -->
         <version.jboss.netty>3.6.6.Final</version.jboss.netty>
-        <version.hornetq>2.4.1.Final</version.hornetq>
-        <version.hibernate>4.3.1.Final</version.hibernate>
-        <version.jboss.ws>2.2.2.Final</version.jboss.ws>
+        <!-- Overridden version settings. -->
+        <version.arquillian.container>1.1.2.Final-wildfly-1</version.arquillian.container>
+        <version.jbossws.spi>2.2.2.Final</version.jbossws.spi>
     </properties>
     <modules>
         <module>extension</module>
@@ -48,127 +44,49 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty</artifactId>
-                <version>${version.jboss.netty}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.junit</groupId>
-                <artifactId>arquillian-junit-container</artifactId>
-                <version>${version.arquillian}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.container</groupId>
-                <artifactId>arquillian-container-test-api</artifactId>
-                <version>${version.arquillian}</version>
-            </dependency> 
-            <dependency>
-                <groupId>org.jboss.arquillian.protocol</groupId>
-                <artifactId>arquillian-protocol-jmx</artifactId>
-                <version>${version.arquillian}</version>
+                <groupId>org.wildfly</groupId>
+                <artifactId>wildfly-parent</artifactId>
+                <type>pom</type>
+                <scope>import</scope>
+                <version>${version.wildfly}</version>
             </dependency>
             <!--<dependency>
                 <groupId>org.jboss.arquillian.protocol</groupId>
                 <artifactId>arquillian-protocol-servlet</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.container}</version>
             </dependency>-->
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>${version.arquillian}</version>
+                <version>${version.arquillian.container}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-arquillian-container-managed</artifactId>
-                <version>${version.wildfly}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-arquillian-common</artifactId>
-                <version>${version.wildfly}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-arquillian-protocol-jmx</artifactId>
-                <version>${version.wildfly}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.xnio</groupId>
-                <artifactId>xnio-api</artifactId>
-                <version>${version.xnio}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.xnio</groupId>
-                <artifactId>xnio-nio</artifactId>
-                <version>${version.xnio}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-api</artifactId>
-                <version>${version.shrinkwrap}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-spi</artifactId>
+                <artifactId>shrinkwrap-bom</artifactId>
+                <type>pom</type>
+                <scope>import</scope>
                 <version>${version.shrinkwrap}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-                <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
+                <artifactId>shrinkwrap-descriptors-bom</artifactId>
+                <type>pom</type>
+                <scope>import</scope>
                 <version>${version.shrinkwrap.descriptors}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-impl-base</artifactId>
-                <version>${version.shrinkwrap}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
-                <artifactId>shrinkwrap-resolver-api</artifactId>
+                <artifactId>shrinkwrap-resolver-bom</artifactId>
+                <type>pom</type>
+                <scope>import</scope>
                 <version>${version.shrinkwrap.resolver}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.shrinkwrap.resolver</groupId>
-                <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-                <version>${version.shrinkwrap.resolver}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.remoting</groupId>
-                <artifactId>jboss-remoting</artifactId>
-                <version>${version.remoting}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.remotingjmx</groupId>
-                <artifactId>remoting-jmx</artifactId>
-                <version>${version.remotingjmx}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.jboss.logging</groupId>
-                        <artifactId>jboss-logging-processor</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.jboss.logmanager</groupId>
-                        <artifactId>jboss-logmanager</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>${version.hibernate}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${version.hibernate}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.ws</groupId>
-                <artifactId>jbossws-spi</artifactId>
-                <version>${version.jboss.ws}</version>
+                <groupId>io.netty</groupId>
+                <artifactId>netty</artifactId>
+                <version>${version.jboss.netty}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
