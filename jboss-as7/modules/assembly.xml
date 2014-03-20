@@ -49,6 +49,7 @@
       <componentDescriptor>src/main/resources/switchyard/components/camel/netty/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/quartz/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/sap/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/rss/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/sql/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/switchyard/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/http/assembly-component.xml</componentDescriptor>
@@ -66,7 +67,11 @@
       <componentDescriptor>src/main/resources/switchyard/console/assembly-component.xml</componentDescriptor>
 
       <!-- ## External assembly references ## -->
-
+      <componentDescriptor>src/main/resources/external/apache/ws/commons/axiom/api/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/apache/ws/commons/axiom/impl/assembly-component.xml</componentDescriptor> 
+      <componentDescriptor>src/main/resources/external/apache/abdera/core/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/apache/abdera/i18n/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/apache/abdera/parser/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/apache/commons/collections/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/apache/commons/net/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/apache/commons/lang3/assembly-component.xml</componentDescriptor>
@@ -76,6 +81,7 @@
 
       <!--Camel assemblies -->
       <componentDescriptor>src/main/resources/external/camel/bindy/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/atom/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/cdi/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/core/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/cxf/assembly-component.xml</componentDescriptor>
@@ -87,6 +93,7 @@
       <componentDescriptor>src/main/resources/external/camel/mvel/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/netty/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/quartz/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/rss/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/ognl/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/script/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/soap/assembly-component.xml</componentDescriptor>
@@ -104,6 +111,7 @@
       <componentDescriptor>src/main/resources/external/opencsv/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/python/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/quartz/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/rome/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/rhino/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/saaj-impl/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/saxon/assembly-component.xml</componentDescriptor>
