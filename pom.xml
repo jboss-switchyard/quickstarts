@@ -74,6 +74,7 @@
         <module>bpel-xts-subordinate-wsba</module>
         <module>bpel-xts-wsat</module>
         <module>bpm-service</module>
+	<module>camel-atom-binding</module>
         <module>camel-binding</module>
         <module>camel-jaxb</module>
         <module>camel-amqp-binding</module>
@@ -81,6 +82,7 @@
         <module>camel-jms-binding</module>
         <module>camel-netty-binding</module>
         <module>camel-quartz-binding</module>
+	<module>camel-rss-binding</module>
         <module>camel-jpa-binding</module>
         <module>camel-sql-binding</module>
         <module>camel-mail-binding</module>
