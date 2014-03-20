@@ -48,6 +48,7 @@
       <componentDescriptor>src/main/resources/switchyard/components/camel/mail/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/netty/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/quartz/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/sap/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/sql/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/switchyard/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/http/assembly-component.xml</componentDescriptor>
@@ -89,6 +90,7 @@
       <componentDescriptor>src/main/resources/external/camel/script/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/soap/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/spring/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/sap/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/sql/assembly-component.xml</componentDescriptor>
 
       <componentDescriptor>src/main/resources/external/dozer/assembly-component.xml</componentDescriptor>
