@@ -37,6 +37,7 @@
         <module>camel-mail</module>
         <module>camel-netty</module>
         <module>camel-quartz</module>
+	<module>camel-rss</module>
         <module>camel-sap</module>
         <module>camel-sql</module>
         <module>camel-test</module>

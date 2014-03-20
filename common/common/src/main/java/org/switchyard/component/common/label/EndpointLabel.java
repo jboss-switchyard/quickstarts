@@ -23,7 +23,7 @@ import org.switchyard.label.Label;
 public enum EndpointLabel implements Label {
 
     /** Endpoint labels. */
-    AMQP, ATOM, DIRECT, FILE, FTP, FTPS, HTTP, JCA, JMS, JPA, MAIL, MOCK, QUARTZ, REST, SEDA, SFTP, SOAP, SQL, TCP, TIMER, UDP, URI;
+    AMQP, ATOM, DIRECT, FILE, FTP, FTPS, HTTP, JCA, JMS, JPA, MAIL, MOCK, QUARTZ, REST, RSS, SEDA, SFTP, SOAP, SQL, TCP, TIMER, UDP, URI;
 
     private final String _label;
 
