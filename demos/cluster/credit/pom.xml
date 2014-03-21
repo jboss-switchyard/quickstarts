@@ -130,6 +130,7 @@
                         </goals>
                         <configuration>
                             <port>10999</port>
+                            <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
@@ -141,6 +142,7 @@
                         </goals>
                         <configuration>
                             <port>11999</port>
+                            <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
@@ -152,6 +154,7 @@
                         </goals>
                         <configuration>
                             <port>10999</port>
+                            <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
@@ -163,6 +166,7 @@
                         </goals>
                         <configuration>
                             <port>11999</port>
+                            <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>

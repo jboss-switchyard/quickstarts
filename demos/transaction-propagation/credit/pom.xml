@@ -203,6 +203,7 @@
                                 </scripts>
                             </afterDeployment>
                             <port>10999</port>
+                            <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
@@ -219,6 +220,7 @@
                                 </scripts>
                             </afterDeployment>
                             <port>10999</port>
+                            <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
