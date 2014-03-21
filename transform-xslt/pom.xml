@@ -117,6 +117,7 @@
                             <goal>deploy</goal>
                         </goals>
                         <configuration>
+                            <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
@@ -127,6 +128,7 @@
                             <goal>undeploy</goal>
                         </goals>
                         <configuration>
+                            <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
