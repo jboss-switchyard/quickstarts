@@ -12,3 +12,4 @@ core/bin/
 .xml
 .DS_Store
 .idea
+.fbExcludeFilterFile

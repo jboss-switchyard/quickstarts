@@ -13,9 +13,6 @@
  */
 package org.switchyard.common.cdi;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleReference;
-import org.osgi.framework.ServiceReference;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
@@ -24,7 +21,6 @@ import javax.inject.Named;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.lang.reflect.Method;
 import java.util.Set;
 /**
  * CDI bean utilities.
@@ -116,27 +112,6 @@ public final class CDIUtil {
         try {
             return OSGICDISupport.getBeanManager();
         } catch (Throwable t) {
-            return null;
-        }
-    }
-
-    private static class OSGICDISupport {
-        public static BeanManager getBeanManager() throws Exception {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            if (classLoader instanceof BundleReference) {
-                Bundle bundle = ((BundleReference) classLoader).getBundle();
-                ServiceReference[] refs = bundle.getBundleContext().getServiceReferences(
-                        "org.ops4j.pax.cdi.spi.CdiContainer", "(bundleId=" + bundle.getBundleId() + ")");
-                if (refs != null && refs.length == 1) {
-                    Object cdiContainer = bundle.getBundleContext().getService(refs[0]);
-                    try {
-                        Method method = cdiContainer.getClass().getMethod("getBeanManager");
-                        return (BeanManager) method.invoke(cdiContainer);
-                    } finally {
-                        bundle.getBundleContext().ungetService(refs[0]);
-                    }
-                }
-            }
             return null;
         }
     }
