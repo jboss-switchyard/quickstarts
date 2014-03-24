@@ -19,7 +19,6 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.BaseDeployMessages;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceSecurity;
 import org.switchyard.bus.camel.CamelExchangeBus;

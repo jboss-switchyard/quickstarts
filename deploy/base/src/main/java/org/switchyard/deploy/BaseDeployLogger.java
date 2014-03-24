@@ -1,4 +1,4 @@
-package org.switchyard;
+package org.switchyard.deploy;
 
 import static org.jboss.logging.Logger.Level.ERROR;
 

@@ -16,7 +16,6 @@ package org.switchyard.deploy;
 
 import static org.switchyard.deploy.internal.AbstractDeployment.CLASSLOADER_PROPERTY;
 
-import org.switchyard.BaseDeployMessages;
 import org.switchyard.BaseHandler;
 import org.switchyard.ServiceDomain;
 

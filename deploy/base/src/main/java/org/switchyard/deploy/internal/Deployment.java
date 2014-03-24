@@ -27,8 +27,6 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.jboss.logging.Logger;
-import org.switchyard.BaseDeployLogger;
-import org.switchyard.BaseDeployMessages;
 import org.switchyard.Service;
 import org.switchyard.ServiceMetadata;
 import org.switchyard.ServiceReference;
@@ -52,6 +50,8 @@ import org.switchyard.config.model.switchyard.ThrottlingModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.deploy.Activator;
+import org.switchyard.deploy.BaseDeployLogger;
+import org.switchyard.deploy.BaseDeployMessages;
 import org.switchyard.deploy.Binding;
 import org.switchyard.deploy.ComponentNames;
 import org.switchyard.deploy.Implementation;

@@ -1,10 +1,10 @@
-package org.switchyard;
+package org.switchyard.deploy;
 
 import org.jboss.logging.annotations.Cause;
-
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageBundle;
+import org.switchyard.SwitchYardException;
 /**
  * <p/>
  * This file is using the subset 12200-12399 for logger messages.

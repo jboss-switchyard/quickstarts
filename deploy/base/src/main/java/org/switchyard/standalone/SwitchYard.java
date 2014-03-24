@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.jboss.logging.Logger;
 import org.switchyard.ServiceDomain;
-import org.switchyard.BaseDeployMessages;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.ActivatorLoader;
+import org.switchyard.deploy.BaseDeployMessages;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.internal.AbstractDeployment;
 import org.switchyard.deploy.internal.Deployment;

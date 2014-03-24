@@ -22,7 +22,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.switchyard.BaseDeployMessages;
 import org.switchyard.ServiceDomain;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentModel;
