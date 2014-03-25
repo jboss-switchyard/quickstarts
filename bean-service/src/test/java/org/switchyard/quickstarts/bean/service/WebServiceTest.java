@@ -18,6 +18,7 @@ package org.switchyard.quickstarts.bean.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
@@ -33,11 +34,16 @@ public class WebServiceTest {
 
     private HTTPMixIn httpMixIn;
 
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "8081");
+    }
+
     @Test
     public void invokeOrderWebService() throws Exception {
         // Use the HttpMixIn to invoke the SOAP binding endpoint with a SOAP input (from the test classpath)
         // and compare the SOAP response to a SOAP response resource (from the test classpath)...
         httpMixIn.setContentType("application/soap+xml");
-        httpMixIn.postResourceAndTestXML("http://localhost:18001/quickstart-bean/OrderService", "/xml/soap-request.xml", "/xml/soap-response.xml");
+        httpMixIn.postResourceAndTestXML("http://localhost:8081/quickstart-bean/OrderService", "/xml/soap-request.xml", "/xml/soap-response.xml");
     }
 }

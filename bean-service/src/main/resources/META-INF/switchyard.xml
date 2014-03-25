@@ -20,7 +20,7 @@
             <interface.wsdl interface="wsdl/OrderService.wsdl#wsdl.porttype(OrderService)"/>
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
                 <wsdl>wsdl/OrderService.wsdl</wsdl>
-                <socketAddr>:18001</socketAddr>
+                <socketAddr>:${jettyPort}</socketAddr>
                 <contextPath>quickstart-bean</contextPath>
             </binding.soap>
         </service>
@@ -48,4 +48,9 @@
         <validate.java xmlns="urn:switchyard-config:validate:1.0" bean="Validators" name="java:org.switchyard.quickstarts.bean.service.Order"/>
         <validate.java xmlns="urn:switchyard-config:validate:1.0" bean="Validators" name="java:org.switchyard.quickstarts.bean.service.OrderAck"/>
     </validates>
+    <domain>
+        <properties>
+            <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+        </properties>
+    </domain>
 </switchyard>
