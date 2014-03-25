@@ -37,6 +37,13 @@
         <deploy.skip>true</deploy.skip>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <switchyard.osgi.export.pkg>org.switchyard.quickstarts.camel.sql.binding*</switchyard.osgi.export.pkg>
+        <switchyard.osgi.require.capability>
+            org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
+            org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
+            osgi.extender; filter:="(osgi.extender=pax.cdi)"
+        </switchyard.osgi.require.capability>
+        <switchyard.osgi.provide.capability />
     </properties>
     <dependencies>
         <dependency>
@@ -214,4 +221,5 @@
             </build>
         </profile>
     </profiles>
+    <packaging>bundle</packaging>
 </project>
