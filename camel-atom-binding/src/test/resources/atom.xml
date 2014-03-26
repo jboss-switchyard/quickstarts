@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<feed
+ xmlns="http://www.w3.org/2005/Atom"
+ xml:lang="en-us"
+>
+
+<title>SwitchYard Test</title>
+<id>https://www.jboss.org/switchyard</id>
+<link href="https://www.jboss.org/switchyard"/>
+<link rel="self" href="https://www.jboss.org/switchyard"/>
+<subtitle>Garfield</subtitle>
+<updated>2014-03-19T01:40:17+00:00</updated>
+<author>
+ <name>garfield</name>
+ <email>ilovelasagna@garfield.com</email>
+</author>
+<category term="Technology"/>
+
+<entry>
+<id>https://www.jboss.org/switchyard</id>
+<title>cat loves lasagna</title>
+<link href="http://www.garfield.com"/>
+<summary type="xhtml">i love lasagna</summary>
+<updated>2010-09-08T20:51:00+00:00</updated>
+<author>
+ <name>garfield</name>
+</author>
+<category term="switchyard"/>
+</entry>
+
+</feed>

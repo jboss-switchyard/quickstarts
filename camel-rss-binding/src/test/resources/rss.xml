@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>5 Worst Songs Ever</title>
+		<link>http://worstsongsever.com</link>
+		<description>New Releases</description>
+		<language>en</language>
+		<copyright></copyright>
+		<lastBuildDate>Wed, 12 Mar 2014 07:48:52 -0700</lastBuildDate>
+		<generator>Manual</generator>
+		<sy:updatePeriod>hourly</sy:updatePeriod>
+		<sy:updateFrequency>1</sy:updateFrequency>
+		<sy:updateBase>2003-09-01T12:00+00:00</sy:updateBase>
+<item>
+    <title>We Built this City</title>
+    <link>http://en.wikipedia.org/wiki/We_Built_This_City</link>
+    <description>We Built this City by Starship</description>
+    <pubDate>Wed, 12 Mar 2014 07:48:52 -0700</pubDate>
+</item>
+<item>
+    <title>Rockstar</title>
+    <link>http://en.wikipedia.org/wiki/Rockstar_(Nickelback_song)</link>
+    <description>Rockstar by Nickelback</description>
+    <pubDate>Wed, 12 Mar 2014 07:48:52 -0700</pubDate>
+</item>
+<item>
+    <title>The Christmas Shoes</title>
+    <link>http://en.wikipedia.org/wiki/The_Christmas_Shoes_(song)</link>
+    <description>The Christmas Shoes by NewSong</description>
+    <pubDate>Wed, 12 Mar 2014 07:48:52 -0700</pubDate>
+</item>
+<item>
+    <title>Friday</title>
+    <link>http://en.wikipedia.org/wiki/Rebecca_Black</link>
+    <description>Friday by Rebecca Black</description>
+    <pubDate>Wed, 12 Mar 2014 07:48:52 -0700</pubDate>
+</item>
+<item>
+    <title>I'd Do Anything For Love (But I won't Do that)</title>
+    <link>http://en.wikipedia.org/wiki/I%27d_Do_Anything_for_Love_(But_I_Won%27t_Do_That)</link>
+    <description>I'd Do Anything For Love (But I won't Do That) by Meatloaf</description>
+    <pubDate>Wed, 12 Mar 2014 07:48:52 -0700</pubDate>
+</item>
+	</channel>
+</rss>
