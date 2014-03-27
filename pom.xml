@@ -219,6 +219,7 @@
                                         <artifactId>maven-dependency-plugin</artifactId>
                                         <versionRange>[2.3,)</versionRange>
                                         <goals>
+                                            <goal>unpack</goal>
                                             <goal>unpack-dependencies</goal>
                                             <goal>copy-dependencies</goal>
                                         </goals>
@@ -266,6 +267,19 @@
                                         <execute/>
                                     </action>
                                 </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.felix</groupId>
+                                        <artifactId>maven-bundle-plugin</artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals>
+                                            <goal>cleanVersions</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
@@ -305,8 +319,8 @@
                             <Embed-Dependency>${switchyard.osgi.embed.dependency}</Embed-Dependency>
                             <Require-Bundle>${switchyard.osgi.require.bundle}</Require-Bundle>
                             <Fragment-Host>${switchyard.osgi.fragment.host}</Fragment-Host>
-	                        <Provide-Capability>${switchyard.osgi.provide.capability}</Provide-Capability>
-	                        <Require-Capability>${switchyard.osgi.require.capability}</Require-Capability>
+                            <Provide-Capability>${switchyard.osgi.provide.capability}</Provide-Capability>
+                            <Require-Capability>${switchyard.osgi.require.capability}</Require-Capability>
                         </instructions>
                         <archive>
                             <manifestEntries>
@@ -630,11 +644,11 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>2.5.2</version>
-        <configuration>
-          <xmlOutput>true</xmlOutput>
-          <!-- Optional directory to put findbugs xdoc xml report -->
-          <xmlOutputDirectory>target/site</xmlOutputDirectory>
-        </configuration>
+                <configuration>
+                    <xmlOutput>true</xmlOutput>
+                    <!-- Optional directory to put findbugs xdoc xml report -->
+                    <xmlOutputDirectory>target/site</xmlOutputDirectory>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
