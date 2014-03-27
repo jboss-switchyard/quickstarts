@@ -46,6 +46,10 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
+                <!-- NOT INHERITED! :(
+                <version>${version.com.google.gwt}</version>
+                -->
+                <version>2.5.1</version>
                 <configuration>
                     <!-- fixes the web mode problem -->
                     <fragmentCount>-1</fragmentCount>
