@@ -58,7 +58,7 @@ public class ComponentList extends OsgiCommandSupport {
         } else if (ns instanceof String[]) {
             return Arrays.asList((String[]) ns);
         } else if (ns instanceof URI) {
-            return Collections.singletonList((String) ns);
+            return Collections.singletonList(ns.toString());
         } else if (ns instanceof String) {
             return Collections.singletonList((String) ns);
         } else if (ns instanceof Collection) {

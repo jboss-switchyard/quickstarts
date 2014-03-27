@@ -34,7 +34,10 @@
 
      <!-- Occurs in test, okay to test for null here -->
      <Match>
-         <Class name="org.switchyard.test.SwitchYardRunner"/>
+	 <Or>
+	     <Class name="org.switchyard.component.camel.switchyard.SwitchYardProducer"/>
+             <Class name="org.switchyard.test.SwitchYardRunner"/>
+	 </Or>
          <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
      </Match>
 
@@ -63,7 +66,7 @@
             <Bug pattern="EI_EXPOSE_REP2"/>
         </Or>
      </Match>
- 
+
      <!-- Findbugs not taking into account other methods of class -->
      <Match>
         <Or>
@@ -75,6 +78,8 @@
             <Class name="org.switchyard.component.rules.exchange.RulesExchangeHandler$FireUntilHalt"/>
             <Class name="org.switchyard.validate.xml.internal.XmlValidator"/>
             <Class name="org.switchyard.validate.config.model.ValidateSwitchYardScanner"/>
+            <Package name="org.switchyard.deploy.osgi.internal"/>
+	    <Package name="org.switchyard.deploy.osgi.base"/>
         </Or>
         <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
      </Match>
@@ -139,8 +144,12 @@
      <!-- In this instance findbugs, is wrong also - there are multiple accesses
           so the AtomicInteger needs to be synchronized. -->
      <Match>
-       <Class name="org.switchyard.remote.cluster.RoundRobinStrategy"/>
-       <Bug pattern="JLM_JSR166_UTILCONCURRENT_MONITORENTER"/>
+        <Or>
+	  <Package name="org.switchyard.deploy.osgi.internal"/>
+	  <Package name="org.switchyard.deploy.osgi.base"/>
+          <Class name="org.switchyard.remote.cluster.RoundRobinStrategy"/>
+        </Or>
+        <Bug pattern="JLM_JSR166_UTILCONCURRENT_MONITORENTER"/>
      </Match>
 
      <Match>
@@ -159,9 +168,13 @@
      </Match>
 
      <Match>
-       <Class name="org.switchyard.component.camel.SwitchYardProducer"/>
-       <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+       <Package name="org.switchyard.deploy.osgi.internal"/>
+       <Bug pattern="DMI_BLOCKING_METHODS_ON_URL"/>
      </Match>
 
+     <Match>
+       <Package name="org.switchyard.deploy.osgi.internal"/>
+       <Bug pattern="WMI_WRONG_MAP_ITERATOR"/>
+     </Match>
 
 </FindBugsFilter>
