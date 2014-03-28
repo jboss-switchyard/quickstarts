@@ -28,6 +28,8 @@ public enum BPMNamespace implements KnowledgeNamespace {
     V_1_0("1.0"),
     /** The 1.1 namespace. */
     V_1_1("1.1"),
+    /** The 2.0 namespace. */
+    V_2_0("2.0"),
     /** The default namespace. */
     DEFAULT(null);
 

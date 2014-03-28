@@ -13,3 +13,4 @@ jca/transaction.log
 transaction.log.*
 itests/transaction.log
 .idea
+.fbExcludeFilterFile
