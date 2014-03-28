@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:switchyard-config:validate:2.0"
+        xmlns:swyd="urn:switchyard-config:switchyard:2.0"
+        xmlns:vldt="urn:switchyard-config:validate:2.0"
+        elementFormDefault="qualified">
+
+    <import namespace="urn:switchyard-config:switchyard:2.0"/>
+
+    <element name="validate.xml" type="vldt:XmlValidateType" substitutionGroup="swyd:validate" />
+    <complexType name="XmlValidateType">
+        <annotation>
+            <documentation xml:lang="en">
+                XML Validator Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:ValidateType">
+                <sequence>
+                    <element name="schemaFiles" type="vldt:schemaFilesType" minOccurs="0" maxOccurs="1"/>
+                    <element name="schemaCatalogs" type="vldt:schemaCatalogsType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+                <attribute name="schemaType" type="vldt:xmlSchemaType" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            XML schema type.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="failOnWarning" type="string" use="optional">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            whether a warning should be reported as an SwitchYardException or just log. default is false
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="namespaceAware" type="string" use="optional">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            whether the validator should be namespace aware or not.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="schemaFilesType">
+        <annotation>
+            <documentation xml:lang="en">
+                Schema file configuration.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="entry" type="vldt:fileEntryType" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+    <complexType name="schemaCatalogsType">
+        <annotation>
+            <documentation xml:lang="en">
+                Schema catalog configuration.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="entry" type="vldt:fileEntryType" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+    <complexType name="fileEntryType">
+        <attribute name="file" type="string" use="required"/>
+    </complexType>
+    
+    <element name="validate.java" type="vldt:JavaValidateType" substitutionGroup="swyd:validate" />
+    <complexType name="JavaValidateType">
+        <annotation>
+            <documentation xml:lang="en">
+                Generic/Custom Java Validator Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:ValidateType">
+                <attribute name="class" type="string" use="optional">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            The name of the Java Validator implementation class.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="bean" type="string" use="optional">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            The name of the Java Validator CDI bean.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="xmlSchemaType">
+        <restriction base="string">
+            <enumeration value="DTD">
+                <annotation>
+                    <documentation xml:lang="en">
+                        DTD.
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="XML_SCHEMA">
+                <annotation>
+                    <documentation xml:lang="en">
+                        W3C XML Schema.
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="RELAX_NG">
+                <annotation>
+                    <documentation xml:lang="en">
+                        RELAX NG.
+                    </documentation>
+                </annotation>
+            </enumeration>
+        </restriction>
+    </simpleType>
+
+</schema>

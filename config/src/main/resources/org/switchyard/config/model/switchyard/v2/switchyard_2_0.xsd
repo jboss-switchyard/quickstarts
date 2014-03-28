@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:switchyard-config:switchyard:2.0"
+        xmlns:swyd="urn:switchyard-config:switchyard:2.0"
+        xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+        elementFormDefault="qualified">
+
+    <import namespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"/>
+
+    <element name="switchyard" type="swyd:SwitchYardType"/>
+    <complexType name="SwitchYardType">
+        <sequence>
+           <element ref="sca:composite" minOccurs="0" maxOccurs="1"/>
+           <element ref="swyd:transforms" minOccurs="0" maxOccurs="1"/>
+           <element ref="swyd:validates" minOccurs="0" maxOccurs="1"/>
+           <element ref="swyd:domain" minOccurs="0" maxOccurs="1"/>
+           <element ref="swyd:artifacts" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+        <attribute name="name" type="string" use="optional"/>
+        <attribute name="targetNamespace" type="string" use="optional"/>
+    </complexType>
+
+    <element name="binding.switchyard" type="swyd:SwitchYardBindingType" substitutionGroup="sca:binding" abstract="true"/>
+    <complexType name="SwitchYardBindingType" abstract="true">
+        <complexContent>
+            <extension base="sca:Binding"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ContextMapperType">
+        <attribute name="class" type="string" use="optional"/>
+        <attribute name="includes" type="string" use="optional"/>
+        <attribute name="excludes" type="string" use="optional"/>
+        <attribute name="includeNamespaces" type="string" use="optional"/>
+        <attribute name="excludeNamespaces" type="string" use="optional"/>
+    </complexType>
+
+    <complexType name="MessageComposerType">
+        <attribute name="class" type="string" use="optional"/>
+    </complexType>
+
+    <element name="operationSelector.switchyard" type="swyd:SwitchYardOperationSelectorType" substitutionGroup="sca:operationSelector" abstract="true"/>
+    <complexType name="SwitchYardOperationSelectorType" abstract="true">
+        <complexContent>
+            <extension base="sca:OperationSelectorType"/>
+        </complexContent>
+    </complexType>
+    
+    <element name="operationSelector" type="swyd:StaticOperationSelectorType" substitutionGroup="swyd:operationSelector.switchyard"/>
+    <complexType name="StaticOperationSelectorType">
+        <annotation>
+            <documentation xml:lang="en">
+                Static Operation Selector Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:SwitchYardOperationSelectorType">
+                <attribute name="operationName" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            Operation name.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="operationSelector.xpath" type="swyd:XPathOperationSelectorType" substitutionGroup="swyd:operationSelector.switchyard"/>
+    <complexType name="XPathOperationSelectorType">
+        <annotation>
+            <documentation xml:lang="en">
+                XPath Operation Selector Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:SwitchYardOperationSelectorType">
+                <attribute name="expression" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            XPath expression.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="operationSelector.regex" type="swyd:RegexOperationSelectorType" substitutionGroup="swyd:operationSelector.switchyard"/>
+    <complexType name="RegexOperationSelectorType">
+        <annotation>
+            <documentation xml:lang="en">
+                XPath Operation Selector Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:SwitchYardOperationSelectorType">
+                <attribute name="expression" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            Regex expression.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="operationSelector.java" type="swyd:JavaOperationSelectorType" substitutionGroup="swyd:operationSelector.switchyard"/>
+    <complexType name="JavaOperationSelectorType">
+        <annotation>
+            <documentation xml:lang="en">
+                Java Operation Selector Configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="swyd:SwitchYardOperationSelectorType">
+                <attribute name="class" type="string" use="required">
+                    <annotation>
+                        <documentation xml:lang="en">
+                            operation selector implementation class name.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="transforms" type="swyd:TransformsType"/>
+    <complexType name="TransformsType">
+        <sequence>
+            <element ref="swyd:transform" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <element name="transform" type="swyd:TransformType" abstract="true"/>
+    <complexType name="TransformType" abstract="true">
+        <attribute name="from" type="string" use="required"/>
+        <attribute name="to" type="string" use="required"/>
+    </complexType>
+
+    <element name="validates" type="swyd:ValidatesType"/>
+    <complexType name="ValidatesType">
+        <sequence>
+            <element ref="swyd:validate" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <element name="validate" type="swyd:ValidateType" abstract="true"/>
+    <complexType name="ValidateType" abstract="true">
+        <attribute name="name" type="string" use="required"/>
+    </complexType>
+
+    <element name="domain" type="swyd:DomainType"/>
+    <complexType name="DomainType">
+        <sequence>
+            <element ref="swyd:transforms" minOccurs="0" maxOccurs="1"/>
+            <element ref="swyd:validates" minOccurs="0" maxOccurs="1"/>
+            <element ref="swyd:properties" minOccurs="0" maxOccurs="1"/>
+            <element ref="swyd:securities" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+        <attribute name="name" type="string" use="optional"/>
+    </complexType>
+
+    <element name="properties" type="swyd:PropertiesType"/>
+    <complexType name="PropertiesType">
+        <sequence>
+            <element ref="swyd:property" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <element name="property" type="swyd:PropertyType"/>
+    <complexType name="PropertyType">
+        <attribute name="name" type="string" use="required"/>
+        <attribute name="value" type="string" use="required"/>
+    </complexType>
+
+    <element name="resource" type="swyd:ResourceType"/>
+    <complexType name="ResourceType">
+        <attribute name="location" type="string" use="required"/>
+        <attribute name="type" type="NCName" use="required"/>
+    </complexType>
+
+    <element name="artifacts" type="swyd:ArtifactsType"/>
+    <complexType name="ArtifactsType">
+        <sequence>
+            <element ref="swyd:artifact" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <element name="artifact" type="swyd:ArtifactType"/>
+    <complexType name="ArtifactType">
+        <attribute name="name" type="string" use="required"/>
+        <attribute name="url" type="string" use="required"/>
+    </complexType>
+
+    <element name="securities" type="swyd:SecuritiesType"/>
+    <complexType name="SecuritiesType">
+        <sequence>
+            <element ref="swyd:security" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <element name="security" type="swyd:SecurityType"/>
+    <complexType name="SecurityType">
+        <sequence>
+            <element ref="swyd:properties" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+        <attribute name="callbackHandler" type="string" use="optional"/>
+        <attribute name="name" type="string" use="optional"/>
+        <attribute name="rolesAllowed" type="string" use="optional"/>
+        <attribute name="runAs" type="string" use="optional"/>
+        <attribute name="securityDomain" type="string" use="optional"/>
+    </complexType>
+
+    <element name="interface.esb" type="swyd:EsbInterface" substitutionGroup="sca:interface"/>
+    <complexType name="EsbInterface">
+        <complexContent>
+            <extension base="sca:Interface">
+                <attribute name="inputType" type="string" use="optional"/>
+                <attribute name="outputType" type="string" use="optional"/>
+                <attribute name="faultType" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <element name="throttling" type="swyd:ThrottlingType"/>
+    <complexType name="ThrottlingType">
+        <annotation>
+            <documentation xml:lang="en">
+                SCA extension for configuring throttling details.
+            </documentation>
+        </annotation>
+        <attribute name="timePeriod" type="swyd:propLong" use="optional" default="1000">
+          <annotation>
+              <documentation xml:lang="en">
+                  The time period in milliseconds over which requests are counted.  Defaults to 1000 (1 second).
+              </documentation>
+          </annotation>
+        </attribute>
+        <attribute name="maxRequests" type="swyd:propInteger" use="required">
+          <annotation>
+              <documentation xml:lang="en">
+                  The maximum number of requests which can be processed during the specified timePeriod.
+              </documentation>
+          </annotation>
+        </attribute>
+    </complexType>
+    
+    <!-- binding.sca extensions -->
+    <attribute name="target" type="string"/>
+    <attribute name="targetNamespace" type="string"/>
+    <attribute name="clustered" type="boolean"/>
+    <attribute name="loadBalance" type="string"/>
+    
+    <!-- service and reference extensions -->
+    <attribute name="security" type="string"/>
+    
+    <!-- Support for using ${property} values in non-string content -->
+    <simpleType name="propInteger">
+        <union memberTypes="integer swyd:propertyValue"/>
+    </simpleType>
+    
+    <simpleType name="propLong">
+        <union memberTypes="long swyd:propertyValue"/>
+    </simpleType>
+    
+    <simpleType name="propBoolean">
+        <union memberTypes="boolean swyd:propertyValue"/>
+    </simpleType>
+    
+    <simpleType name="propertyValue">
+        <restriction base="string">
+            <pattern value="\$\{([a-zA-Z0-9\.-_])*(:([a-zA-Z0-9])*)?\}"/>
+        </restriction>
+    </simpleType>
+   
+</schema>

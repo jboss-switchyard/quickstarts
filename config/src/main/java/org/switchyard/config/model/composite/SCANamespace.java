@@ -23,8 +23,6 @@ import org.switchyard.config.model.Namespace;
  */
 public enum SCANamespace implements Namespace {
 
-    /** The 1.0 namespace. */
-    V_1_0("1.0"),
     /** The 1.1 namespace. */
     V_1_1("1.1"),
     /** The default namespace. */
