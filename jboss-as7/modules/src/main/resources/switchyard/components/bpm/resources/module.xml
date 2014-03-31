@@ -17,29 +17,11 @@
         <resource-root path="switchyard-component-bpm-${project.version}.jar"/>
     </resources>
     <dependencies>
-        <module name="com.google.protobuf"/>
         <module name="javax.api"/>
-        <module name="javax.enterprise.api"/>
-        <module name="javax.persistence.api"/>
-        <module name="javax.transaction.api"/>
         <module name="org.jboss.logging"/>
-        <module name="org.drools" export="true"/>
-        <module name="org.hibernate"/>
-        <module name="org.jbpm" export="true">
-            <imports>
-                <include path="META-INF/services"/>
-                <exclude path="META-INF/beans.xml"/>
-            </imports>
-            <exports>
-                <include path="META-INF/services"/>
-                <exclude path="META-INF/beans.xml"/>
-            </exports>
-        </module>
-        <module name="org.kie" export="true"/>
-        <module name="org.kie.remote" services="import"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
-        <module name="org.switchyard.component.common.knowledge"/>
+        <module name="org.switchyard.component.common.knowledge" export="true"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>
     </dependencies>

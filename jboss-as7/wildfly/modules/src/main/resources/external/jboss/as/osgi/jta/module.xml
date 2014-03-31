@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<module xmlns="urn:jboss:module:1.0" name="org.jboss.as.osgi.jta">
+    <!-- this file is needed for wildfly since the eap bpms-layer references "org.jboss.as.osgi.jta", which doesn't exist in wildfly -->
+    <resources>
+        <!-- no resources since we bring in "javax.transaction.api" as a dependency of "org.switchyard.component.common.knowledge" --> 
+    </resources>
+    <dependencies>
+        <!-- eclipse compiler found in "org.jboss.as.web" for eap, but found below for wildfly; we reference and export it here as a useful hook -->
+        <module name="io.undertow.jasper-jdt" export="true" optional="false"/>
+    </dependencies>
+</module>

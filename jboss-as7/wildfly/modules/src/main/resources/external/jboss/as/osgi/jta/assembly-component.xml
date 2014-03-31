@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  - 
  - Licensed under the Apache License, Version 2.0 (the "License");
  - you may not use this file except in compliance with the License.
@@ -17,20 +17,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <files>
     <file>
-      <source>src/main/resources/external/kie/remote/module.xml</source>
-      <outputDirectory>/modules/system/layers/bpms/org/kie/remote/main</outputDirectory>
+      <source>src/main/resources/external/jboss/as/osgi/jta/module.xml</source>
+      <outputDirectory>/modules/system/layers/soa/org/jboss/as/osgi/jta/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
-    <dependencySet>
-      <outputDirectory>/modules/system/layers/bpms/org/kie/remote/main</outputDirectory>
-      <includes>
-        <include>org.kie.remote:kie-services-client</include>
-        <include>org.kie.remote:kie-services-jaxb</include>
-      </includes>
-      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
-      <useTransitiveDependencies>false</useTransitiveDependencies>
-    </dependencySet>
   </dependencySets>
 </component>
