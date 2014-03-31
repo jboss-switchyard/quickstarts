@@ -293,6 +293,7 @@
                 <module identifier="org.switchyard.component.sca" implClass="org.switchyard.component.sca.deploy.SCAComponent"/>
             </modules>
             <extensions>
+		<extension identifier-"org.apache.camel.bindy"/>
                 <extension identifier="org.apache.camel.mvel"/>
                 <extension identifier="org.apache.camel.ognl"/>
                 <extension identifier="org.apache.camel.jaxb"/>

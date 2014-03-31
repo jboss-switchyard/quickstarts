@@ -98,6 +98,7 @@
                 <module identifier="org.switchyard.component.resteasy" implClass="org.switchyard.component.resteasy.deploy.RESTEasyComponent"/>
             </modules>
             <extensions>
+		<extension identifier="org.apache.camel.bindy"/>
                 <extension identifier="org.apache.camel.mvel"/>
                 <extension identifier="org.apache.camel.ognl"/>
                 <extension identifier="org.apache.camel.jaxb"/>

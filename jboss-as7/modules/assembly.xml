@@ -75,6 +75,7 @@
       <componentDescriptor>src/main/resources/external/beanshell/assembly-component.xml</componentDescriptor>
 
       <!--Camel assemblies -->
+      <componentDescriptor>src/main/resources/external/camel/bindy/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/cdi/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/core/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/cxf/assembly-component.xml</componentDescriptor>
