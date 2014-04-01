@@ -564,7 +564,7 @@ public class Deployment extends AbstractDeployment {
                         if (!service.getQName().equals(compositeService.getQName())) {
                             validateServiceRegistration(compositeService.getQName());
                             Service promotedService = getDomain().registerService(
-                                    compositeService.getQName(), serviceIntf, handler);
+                                    compositeService.getQName(), serviceIntf, handler, metadata);
                             activation.addPromotion(promotedService);
                         }
                     }

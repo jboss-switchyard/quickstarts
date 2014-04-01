@@ -43,6 +43,7 @@ import org.switchyard.extensions.wsdl.WSDLService;
 import org.switchyard.internal.DomainImpl;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
+import org.switchyard.policy.TransactionPolicy;
 import org.switchyard.spi.ServiceRegistry;
 import org.switchyard.transform.Transformer;
 import org.switchyard.validate.Validator;
@@ -119,8 +120,17 @@ public class DeploymentTest {
         Service implService = deployment.getDomain().getServices(
                 new QName("urn:test:config-mock-binding:1.0", "TestService")).get(0);
         Assert.assertNotNull(implService.getServiceMetadata().getRegistrant());
+        Assert.assertTrue(implService.getServiceMetadata().getRequiredPolicies().contains(TransactionPolicy.MANAGED_TRANSACTION_GLOBAL));
+        Assert.assertTrue(implService.getServiceMetadata().getRequiredPolicies().contains(TransactionPolicy.PROPAGATES_TRANSACTION));
         Assert.assertTrue(implService.getServiceMetadata().getRegistrant().getConfig() instanceof ComponentImplementationModel);
         
+        Service promotedService = deployment.getDomain().getServices(
+                new QName("urn:test:config-mock-binding:1.0", "PromotedTestService")).get(0);
+        Assert.assertNotNull(promotedService.getServiceMetadata().getRegistrant());
+        Assert.assertTrue(promotedService.getServiceMetadata().getRequiredPolicies().contains(TransactionPolicy.MANAGED_TRANSACTION_GLOBAL));
+        Assert.assertTrue(promotedService.getServiceMetadata().getRequiredPolicies().contains(TransactionPolicy.PROPAGATES_TRANSACTION));
+        Assert.assertTrue(promotedService.getServiceMetadata().getRegistrant().getConfig() instanceof ComponentImplementationModel);
+
         Service bindingService = deployment.getDomain().getServices(
                 new QName("urn:test:config-mock-binding:1.0", "TestReference")).get(0);
         Assert.assertNotNull(bindingService.getServiceMetadata().getRegistrant());
@@ -133,7 +143,7 @@ public class DeploymentTest {
         Assert.assertTrue(implReference.getServiceMetadata().getRegistrant().getConfig() instanceof ComponentImplementationModel);
         
         ServiceReference bindingReference = deployment.getDomain().getServiceReference(
-                new QName("urn:test:config-mock-binding:1.0", "TestService"));
+                new QName("urn:test:config-mock-binding:1.0", "PromotedTestService"));
         Assert.assertNotNull(bindingReference.getServiceMetadata().getRegistrant());
         List<BindingModel> refBindings = bindingReference.getServiceMetadata().getRegistrant().getConfig();
         Assert.assertEquals(2, refBindings.size());

@@ -18,7 +18,7 @@
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:schemaLocation="urn:switchyard-component-mock:config:1.0 org/switchyard/component/mock/config/model/v1/mock_1_0.xsd">
     <sca:composite name="mockBinding" targetNamespace="urn:test:config-mock-binding:1.0">
-        <sca:service name="TestService" promote="TestService">
+        <sca:service name="PromotedTestService" promote="TestService">
             <mock:binding.mock name="binding1"/>
             <mock:binding.mock name="binding2"/>
         </sca:service>
@@ -26,8 +26,8 @@
             <mock:binding.mock/>
         </sca:reference>
         <sca:component name="TestService">
-            <mock:implementation.mock/>
-            <sca:service name="TestService">
+            <mock:implementation.mock requires="managedTransaction.Global"/>
+            <sca:service name="TestService" requires="propagatesTransaction">
                 <mock:interface.mock/>
             </sca:service>
             <sca:reference name="TestReference">
