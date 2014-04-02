@@ -25,6 +25,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
+import org.switchyard.ExchangeSecurity;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.Scope;
@@ -39,6 +40,7 @@ import org.switchyard.runtime.RuntimeLogger;
 import org.switchyard.runtime.RuntimeMessages;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.runtime.event.ExchangeInitiatedEvent;
+import org.switchyard.security.context.DefaultExchangeSecurity;
 import org.switchyard.spi.Dispatcher;
 
 /**
@@ -48,18 +50,19 @@ public class ExchangeImpl implements Exchange {
 
     private static Logger _log = Logger.getLogger(ExchangeImpl.class);
 
-    private ExchangePhase           _phase;
-    private Message                 _message;
-    private ExchangeState           _state = ExchangeState.OK;
-    private Dispatcher              _dispatch;
-    private ExchangeHandler         _replyHandler;
-    private ServiceDomain           _domain;
-    private Long                    _startTime;
-    private Context                 _context;
-    private CompositeContext        _compositeContext;
-    private ServiceReference        _consumer;
-    private Service                 _provider;
-    private BaseExchangeContract    _contract = new BaseExchangeContract();
+    private ExchangePhase              _phase;
+    private Message                    _message;
+    private ExchangeState              _state = ExchangeState.OK;
+    private Dispatcher                 _dispatch;
+    private ExchangeHandler            _replyHandler;
+    private ServiceDomain              _domain;
+    private Long                       _startTime;
+    private Context                    _context;
+    private CompositeContext           _compositeContext;
+    private ServiceReference           _consumer;
+    private Service                    _provider;
+    private BaseExchangeContract       _contract = new BaseExchangeContract();
+    private transient ExchangeSecurity _security = null;
 
     /**
      * Create a new exchange with no endpoints initialized.  At a minimum, the 
@@ -171,6 +174,14 @@ public class ExchangeImpl implements Exchange {
             pattern = getContract().getConsumerOperation().getExchangePattern();
         }
         return pattern;
+    }
+
+    @Override
+    public ExchangeSecurity getSecurity() {
+        if (_security == null) {
+            _security = new DefaultExchangeSecurity(this);
+        }
+        return _security;
     }
 
     /**
@@ -340,5 +351,4 @@ public class ExchangeImpl implements Exchange {
         return (ExchangePhase.IN.equals(phase) && ExchangePattern.IN_ONLY.equals(mep))
                 || (ExchangePhase.OUT.equals(phase) && ExchangePattern.IN_OUT.equals(mep));
     }
-
 }

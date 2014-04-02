@@ -13,6 +13,9 @@
  */
 package org.switchyard.security.provider;
 
+import java.security.Principal;
+import java.security.acl.Group;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.security.auth.Subject;
@@ -92,10 +95,49 @@ public class JaasSecurityProvider implements SecurityProvider {
      */
     protected void transfer(Subject fromSubject, Subject toSubject) {
         if (toSubject != null && fromSubject != null && toSubject != fromSubject && !toSubject.equals(fromSubject)) {
-            toSubject.getPrincipals().addAll(fromSubject.getPrincipals());
+            Set<Principal> toPrincipals = toSubject.getPrincipals();
+            Group toRoleGroup = null;
+            for (Principal fromPrincipal : fromSubject.getPrincipals()) {
+                if (fromPrincipal instanceof Group && GroupPrincipal.ROLES.equals(fromPrincipal.getName())) {
+                    Group fromRoleGroup = (Group)fromPrincipal;
+                    if (toRoleGroup == null) {
+                        toRoleGroup = getRoleGroup(toSubject);
+                    }
+                    if (toRoleGroup == fromRoleGroup) {
+                        continue;
+                    }
+                    for (Principal fromRole : Collections.list(fromRoleGroup.members())) {
+                        RolePrincipal toRole = fromRole instanceof RolePrincipal ? (RolePrincipal)fromRole : new RolePrincipal(fromRole.getName());
+                        toRoleGroup.addMember(toRole);
+                    }
+                } else {
+                    toPrincipals.add(fromPrincipal);
+                }
+            }
             toSubject.getPrivateCredentials().addAll(fromSubject.getPrivateCredentials());
             toSubject.getPublicCredentials().addAll(fromSubject.getPublicCredentials());
         }
+    }
+
+    /**
+     * Gets the Group with the name "Roles" from the specified Subject, creating one if not pre-existent.
+     * @param subject the subject
+     * @return the "Roles" Group
+     */
+    private GroupPrincipal getRoleGroup(Subject subject) {
+        GroupPrincipal roleGroup = null;
+        Set<GroupPrincipal> groups = subject.getPrincipals(GroupPrincipal.class);
+        for (GroupPrincipal group : groups) {
+            if (GroupPrincipal.ROLES.equals(group.getName())) {
+                roleGroup = group;
+                break;
+            }
+        }
+        if (roleGroup == null) {
+            roleGroup = new GroupPrincipal(GroupPrincipal.ROLES);
+            subject.getPrincipals().add(roleGroup);
+        }
+        return roleGroup;
     }
 
     /**
@@ -103,29 +145,15 @@ public class JaasSecurityProvider implements SecurityProvider {
      */
     @Override
     public boolean addRunAs(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
-        boolean success = true;
         String runAs = Strings.trimToNull(serviceSecurity.getRunAs());
         if (runAs != null) {
-            success = false;
-            RolePrincipal runAsRole = new RolePrincipal(runAs);
             String securityDomain = serviceSecurity.getSecurityDomain();
             Subject subject = securityContext.getSubject(securityDomain);
-            Set<GroupPrincipal> groups = subject.getPrincipals(GroupPrincipal.class);
-            if (groups.isEmpty()) {
-                GroupPrincipal rolesGroup = new GroupPrincipal(GroupPrincipal.ROLES);
-                rolesGroup.addMember(runAsRole);
-                subject.getPrincipals().add(rolesGroup);
-                success = true;
-            } else {
-                for (GroupPrincipal group : groups) {
-                    if (GroupPrincipal.ROLES.equals(group.getName())) {
-                        group.addMember(runAsRole);
-                        success = true;
-                    }
-                }
-            }
+            GroupPrincipal roleGroup = getRoleGroup(subject);
+            roleGroup.addMember(new RolePrincipal(runAs));
+            return true;
         }
-        return success;
+        return false;
     }
 
     /**

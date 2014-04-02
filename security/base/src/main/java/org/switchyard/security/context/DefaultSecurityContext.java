@@ -13,6 +13,7 @@
  */
 package org.switchyard.security.context;
 
+import static org.switchyard.security.principal.GroupPrincipal.CALLER_PRINCIPAL;
 import static org.switchyard.security.principal.GroupPrincipal.ROLES;
 
 import java.security.Principal;
@@ -29,6 +30,7 @@ import java.util.UUID;
 import javax.security.auth.Subject;
 
 import org.switchyard.security.credential.Credential;
+import org.switchyard.security.principal.UserPrincipal;
 import org.switchyard.security.system.SystemSecurity;
 
 /**
@@ -137,8 +139,33 @@ public final class DefaultSecurityContext implements SecurityContext {
      * {@inheritDoc}
      */
     @Override
+    public Principal getCallerPrincipal(String securityDomain) {
+        Subject subject = getSubject(securityDomain);
+        Principal callerPrincipal = null;
+        outerLoop : for (Principal principal : subject.getPrincipals()) {
+            if (principal instanceof Group) {
+                Group group = (Group)principal;
+                if (group.getName().equalsIgnoreCase(CALLER_PRINCIPAL)) {
+                    Enumeration<? extends Principal> members = group.members();
+                    while (members.hasMoreElements()) {
+                        callerPrincipal = members.nextElement();
+                        break outerLoop;
+                    }
+                }
+            } else if (callerPrincipal == null && principal instanceof UserPrincipal) {
+                callerPrincipal = principal;
+            }
+        }
+        return callerPrincipal;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isCallerInRole(String roleName, String securityDomain) {
-        for (Principal principal : getSubject(securityDomain).getPrincipals()) {
+        Subject subject = getSubject(securityDomain);
+        for (Principal principal : subject.getPrincipals()) {
             if (principal instanceof Group) {
                 Group group = (Group)principal;
                 if (group.getName().equalsIgnoreCase(ROLES)) {

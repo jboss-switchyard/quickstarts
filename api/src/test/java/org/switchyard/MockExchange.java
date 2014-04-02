@@ -139,4 +139,8 @@ public class MockExchange implements Exchange {
         return pattern;
     }
 
+    @Override
+    public ExchangeSecurity getSecurity() {
+        return null;
+    }
 }

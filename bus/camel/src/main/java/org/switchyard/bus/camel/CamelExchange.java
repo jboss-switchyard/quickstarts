@@ -23,6 +23,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
+import org.switchyard.ExchangeSecurity;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.Scope;
@@ -35,6 +36,7 @@ import org.switchyard.metadata.BaseExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.runtime.event.ExchangeInitiatedEvent;
+import org.switchyard.security.context.DefaultExchangeSecurity;
 
 /**
  * Exchange implementation which wraps Camel {@link org.apache.camel.Exchange} interface.
@@ -60,6 +62,8 @@ public class CamelExchange implements Exchange {
     public static final String MESSAGE_SENT      = "org.switchyard.bus.camel.messageSent";
 
     private org.apache.camel.Exchange _exchange;
+
+    private transient ExchangeSecurity _security = null;
 
     /**
      * Creates new CamelExchange.
@@ -291,4 +295,11 @@ public class CamelExchange implements Exchange {
         return pattern;
     }
 
+    @Override
+    public ExchangeSecurity getSecurity() {
+        if (_security == null) {
+            _security = new DefaultExchangeSecurity(this);
+        }
+        return _security;
+    }
 }

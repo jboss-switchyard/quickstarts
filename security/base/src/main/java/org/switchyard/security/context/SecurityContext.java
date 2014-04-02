@@ -14,6 +14,7 @@
 package org.switchyard.security.context;
 
 import java.io.Serializable;
+import java.security.Principal;
 import java.util.Set;
 import java.util.UUID;
 
@@ -66,6 +67,13 @@ public interface SecurityContext extends Serializable {
      * @param securityDomain the security domain
      */
     public void clearSubject(String securityDomain);
+
+    /**
+     * Gets the caller Principal for the security domain.
+     * @param securityDomain the security domain
+     * @return the caller Principal
+     */
+    public Principal getCallerPrincipal(String securityDomain);
 
     /**
      * Is the caller in the role name for the security domain.

@@ -34,6 +34,11 @@ public class GroupPrincipal implements Group, Serializable {
     private static final String FORMAT = GroupPrincipal.class.getSimpleName() + "@%s[name=%s, members=%s]";
 
     /**
+     * The "CallerPrincipal" group name.
+     */
+    public static final String CALLER_PRINCIPAL = "CallerPrincipal";
+
+    /**
      * The "Roles" group name.
      */
     public static final String ROLES = "Roles";

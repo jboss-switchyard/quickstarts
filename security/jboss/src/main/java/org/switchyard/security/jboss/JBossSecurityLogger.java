@@ -1,7 +1,7 @@
 package org.switchyard.security.jboss;
 
-import static org.jboss.logging.Logger.Level.WARN;
 import static org.jboss.logging.Logger.Level.ERROR;
+import static org.jboss.logging.Logger.Level.WARN;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.annotations.LogMessage;
