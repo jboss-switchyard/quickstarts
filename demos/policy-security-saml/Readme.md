@@ -62,6 +62,8 @@ When running with this option:
 
 , you will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
 
-    INFO  [org.switchyard.quickstarts.demo.policy.security.saml.WorkServiceBean] (http--127.0.0.1-8443-1) :: WorkService :: Received work command => CMD-1345738943385
+    :: WorkService :: Received work command => CMD-1398967051060 (caller principal=UserPrincipal@1045975928[name=admin])
+
+    (Because the WorkService is secured, you will see the not-null principal.)
 
 You can play with the exec.args and only specify one of "confidentiality" or "clientAuthentication". I bet you can guess what will happen... ;)

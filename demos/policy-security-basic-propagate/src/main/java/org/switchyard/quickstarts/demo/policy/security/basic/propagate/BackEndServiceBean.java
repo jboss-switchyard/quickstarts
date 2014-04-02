@@ -17,7 +17,11 @@ import static org.switchyard.policy.SecurityPolicy.AUTHORIZATION;
 import static org.switchyard.policy.SecurityPolicy.CLIENT_AUTHENTICATION;
 import static org.switchyard.policy.SecurityPolicy.CONFIDENTIALITY;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
+import org.switchyard.Exchange;
+import org.switchyard.ExchangeSecurity;
 import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Service;
 
@@ -26,10 +30,16 @@ import org.switchyard.component.bean.Service;
 public class BackEndServiceBean implements BackEndService {
 
     private static final Logger LOGGER = Logger.getLogger(BackEndServiceBean.class);
+    private static final String MSG = ":: BackEndService :: process => %s (caller principal=%s, in roles? 'friend'=%s 'enemy'=%s)";
+
+    @Inject
+    private Exchange exchange;
 
     @Override
     public String process(String in) {
-        LOGGER.info(":: BackEndService :: process => " + in);
+        ExchangeSecurity es = exchange.getSecurity();
+        String msg = String.format(MSG, in, es.getCallerPrincipal(), es.isCallerInRole("friend"), es.isCallerInRole("enemy"));
+        LOGGER.info(msg);
         return "Processed by BackEndService: " + in;
     }
 

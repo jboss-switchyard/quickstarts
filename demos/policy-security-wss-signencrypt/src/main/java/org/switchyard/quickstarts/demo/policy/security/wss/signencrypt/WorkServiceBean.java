@@ -25,11 +25,13 @@ import org.switchyard.component.bean.Service;
 public class WorkServiceBean implements WorkService {
 
     private static final Logger LOGGER = Logger.getLogger(WorkServiceBean.class);
+    private static final String MSG = ":: WorkService :: Received work command => %s";
 
     @Override
     public WorkAck doWork(Work work) {
         String cmd = work.getCommand();
-        LOGGER.info(":: WorkService :: Received work command => " + cmd);
+        String msg = String.format(MSG, cmd);
+        LOGGER.info(msg);
         return new WorkAck().setCommand(cmd).setReceived(true);
     }
 

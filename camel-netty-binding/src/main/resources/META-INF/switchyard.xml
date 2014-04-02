@@ -36,7 +36,7 @@
     </composite>
     <domain>
         <securities>
-            <security callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler" rolesAllowed="analysts" securityDomain="netty-security-cert">
+            <security callbackHandler="org.switchyard.security.callback.handler.CertificateCallbackHandler" rolesAllowed="friend" securityDomain="netty-security-cert">
                 <properties>
                     <property name="alias" value="users"/>
                 </properties>

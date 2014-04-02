@@ -33,7 +33,7 @@ public class SecuredGreetingServiceBean extends GreetingServiceBean {
      * Creates secured version of greeting service.
      */
     public SecuredGreetingServiceBean() {
-        super("Secured");
+        super("SecuredGreetingService");
     }
 
 }

@@ -26,7 +26,9 @@ JBoss AS 7
 
 5. Check the server console for output from the service:
 
-    'Default: Hello there <your text>';
+        :: DefaultGreetingService :: Hello <your text>! (caller principal=null, in roles? 'friend'=false 'enemy'=false)
+
+   (Because the DefaultGreetingService is not secured, you will see the null principal, and false for both security roles.)
 
 To test TCP you will need few additional steps. Stop server if it's running.
 
@@ -47,6 +49,10 @@ To test TCP you will need few additional steps. Stop server if it's running.
 4. Execute client and send text message:
 
         mvn exec:java
+
+    :: SecuredGreetingService :: Hello <your text>! (caller principal=UserPrincipal@1741605094[name=kermit], in roles? 'friend'=true 'enemy'=false)
+
+   (Because the SecuredGreetingService is secured, you will see the not-null principal, and true for the expected security role.)
 
 5. Check the server console for output from the service:
 
