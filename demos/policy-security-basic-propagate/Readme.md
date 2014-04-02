@@ -51,8 +51,10 @@ When running with this option:
 
 , you will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
 
-    INFO  [org.switchyard.quickstarts.demo.policy.security.basic.propagate.WorkServiceBean] (http-/127.0.0.1:8443-1) :: WorkService :: Received work command => CMD-1381749901521
-    INFO  [org.switchyard.quickstarts.demo.policy.security.basic.propagate.BackEndServiceBean] (http-/127.0.0.1:8443-1) :: BackEndService :: process => CMD-1381749901521
-    INFO  [org.switchyard.quickstarts.demo.policy.security.basic.propagate.WorkServiceBean] (http-/127.0.0.1:8443-1) :: WorkService :: BackEndService Call => Processed by BackEndService: CMD-1381749901521
+    :: WorkService :: Received work command => CMD-1398262425267 (caller principal=kermit, in roles? 'friend'=true 'enemy'=false)
+    :: BackEndService :: process => CMD-1398262425267 (caller principal=kermit, in roles? 'friend'=true 'enemy'=false)
+    :: WorkService :: BackEndService received => Processed by BackEndService: CMD-1398262425267
+
+    (Because the WorkService and BackEndService are secured, you will see the not-null principal, and true for the expected security role.)
 
 You can play with the exec.args and only specify one of "confidentiality" or "clientAuthentication". I bet you can guess what will happen... ;)

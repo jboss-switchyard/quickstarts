@@ -30,7 +30,7 @@ public class DefaultGreetingServiceBean extends GreetingServiceBean {
      * Creates default, unsecured extension of {@link GreetingServiceBean}.
      */
     public DefaultGreetingServiceBean() {
-        super("Default");
+        super("DefaultGreetingService");
     }
 
 }

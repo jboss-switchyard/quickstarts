@@ -50,7 +50,7 @@ When running with this option:
 
 , you will be hitting the https (SSL) URL while providing signed and encrypted information, and see this in your log:
 
-    INFO  [org.switchyard.quickstarts.demo.policy.security.wss.signencrypt.WorkServiceBean] (http--127.0.0.1-8443-1) :: WorkService :: Received work command => CMD-86
+    :: WorkService :: Received work command => CMD-86
 
 When running with this option:
 
@@ -58,7 +58,7 @@ When running with this option:
 
 , you will be hitting the http (non-SSL) URL while providing signed and encrypted information, and see this in your log:
 
-    INFO  [org.switchyard.quickstarts.demo.policy.security.wss.signencrypt.WorkServiceBean] (http--127.0.0.1-8080-1) :: WorkService :: Received work command => CMD-86
+    :: WorkService :: Received work command => CMD-86
 
 Wait - why did this work? Even though SSL was not used, the content of the message is encrypted, thus the confidentiality policy is still being fulfilled.
 

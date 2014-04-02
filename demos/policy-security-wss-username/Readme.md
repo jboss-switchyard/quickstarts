@@ -55,6 +55,8 @@ When running with this option:
 
 , you will be hitting the https (SSL) URL while providing authentication information, and see this in your log:
 
-    INFO  [org.switchyard.quickstarts.demo.policy.security.wss.username.WorkServiceBean] (http--127.0.0.1-8443-1) :: WorkService :: Received work command => CMD-1345738943385
+    :: WorkService :: Received work command => CMD-1398262803294 (caller principal=kermit, in roles? 'friend'=true 'enemy'=false)
+
+    (Because the WorkService is secured, you will see the not-null principal, and true for the expected security role.)
 
 Success!

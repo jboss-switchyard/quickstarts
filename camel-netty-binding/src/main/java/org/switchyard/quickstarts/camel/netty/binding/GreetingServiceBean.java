@@ -16,6 +16,12 @@
  */
 package org.switchyard.quickstarts.camel.netty.binding;
 
+import javax.inject.Inject;
+
+import org.apache.log4j.Logger;
+import org.switchyard.Exchange;
+import org.switchyard.ExchangeSecurity;
+
 /**
  * A POJO Service implementation.
  *
@@ -23,7 +29,13 @@ package org.switchyard.quickstarts.camel.netty.binding;
  */
 public class GreetingServiceBean implements GreetingService {
 
+    private static final String MSG = ":: %s :: Hello %s! (caller principal=%s, in roles? 'friend'=%s 'enemy'=%s)";
+
+    private final Logger _logger;
     private final String _type;
+
+    @Inject
+    private Exchange exchange;
 
     /**
      * Creates new service bean.
@@ -31,11 +43,15 @@ public class GreetingServiceBean implements GreetingService {
      * @param type Type of service.
      */
     protected GreetingServiceBean(String type) {
-        this._type = type;
+        _logger = Logger.getLogger(getClass());
+        _type = type;
     }
 
     @Override
     public final void greet(final String name) {
-        System.out.println(_type + ": Hello there " + name + " :-) ");
+        ExchangeSecurity es = exchange.getSecurity();
+        String msg = String.format(MSG, _type, name, es.getCallerPrincipal(), es.isCallerInRole("friend"), es.isCallerInRole("enemy"));
+        _logger.info(msg);
     }
+
 }
