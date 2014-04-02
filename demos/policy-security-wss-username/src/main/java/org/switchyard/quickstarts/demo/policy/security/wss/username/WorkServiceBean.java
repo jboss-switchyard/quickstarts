@@ -20,7 +20,11 @@ import static org.switchyard.policy.SecurityPolicy.AUTHORIZATION;
 import static org.switchyard.policy.SecurityPolicy.CLIENT_AUTHENTICATION;
 import static org.switchyard.policy.SecurityPolicy.CONFIDENTIALITY;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
+import org.switchyard.Exchange;
+import org.switchyard.ExchangeSecurity;
 import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Service;
 
@@ -29,11 +33,17 @@ import org.switchyard.component.bean.Service;
 public class WorkServiceBean implements WorkService {
 
     private static final Logger LOGGER = Logger.getLogger(WorkServiceBean.class);
+    private static final String MSG = ":: WorkService :: Received work command => %s (caller principal=%s, in roles? 'friend'=%s 'enemy'=%s)";
+
+    @Inject
+    private Exchange exchange;
 
     @Override
     public WorkAck doWork(Work work) {
         String cmd = work.getCommand();
-        LOGGER.info(":: WorkService :: Received work command => " + cmd);
+        ExchangeSecurity es = exchange.getSecurity();
+        String msg = String.format(MSG, cmd, es.getCallerPrincipal(), es.isCallerInRole("friend"), es.isCallerInRole("enemy"));
+        LOGGER.info(msg);
         return new WorkAck().setCommand(cmd).setReceived(true);
     }
 
