@@ -64,6 +64,7 @@
                <outboundInteraction>
                    <processor type="org.switchyard.component.jca.processor.JMSProcessor">
                        <property name="destination" value="ResultQueue"/>
+                       <jca:property name="transacted" value="true"/>
                    </processor>
                </outboundInteraction>
             </binding.jca>
