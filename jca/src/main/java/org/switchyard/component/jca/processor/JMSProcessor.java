@@ -173,8 +173,29 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             }
             
             producer.send(_composer.decompose(exchange, new JMSBindingData(msg)).getMessage());
+            
+            if (session.getTransacted()) {
+                try {
+                    session.commit();
+                } catch (Exception e) {
+                    // managed by global transaction. ignoring...
+                    if (_logger.isDebugEnabled()) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             return null;
         } catch (Exception e) {
+            try {
+                if (session != null && session.getTransacted()) {
+                    session.rollback();
+                }
+            } catch (Exception e2) {
+                // managed by global transaction. ignoring...
+                if (_logger.isDebugEnabled()) {
+                    e2.printStackTrace();
+                }
+            }
             throw JCAMessages.MESSAGES.failedToProcessJMSOutboundInteraction(e);
         } finally {
             try {
