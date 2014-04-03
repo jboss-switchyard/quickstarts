@@ -20,6 +20,7 @@ import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangePhase;
+import org.switchyard.ExchangeSecurity;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.Service;
@@ -27,7 +28,6 @@ import org.switchyard.ServiceReference;
 import org.switchyard.component.bean.BeanMessages;
 import org.switchyard.metadata.ExchangeContract;
 import org.switchyard.metadata.ServiceOperation;
-
 
 /**
  * SwitchYard Exchange proxy.
@@ -136,5 +136,10 @@ public class ExchangeProxy implements Exchange {
     @Override
     public ExchangePattern getPattern() {
         return getExchange().getPattern();
+    }
+
+    @Override
+    public ExchangeSecurity getSecurity() {
+        return getExchange().getSecurity();
     }
 }
