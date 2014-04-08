@@ -84,6 +84,7 @@
         <module>camel-jpa-binding</module>
         <module>camel-sql-binding</module>
         <module>camel-mail-binding</module>
+        <module>camel-sap-binding</module>
         <module>camel-service</module>
         <module>camel-soap-proxy</module>
         <module>camel-bus-cdi</module>

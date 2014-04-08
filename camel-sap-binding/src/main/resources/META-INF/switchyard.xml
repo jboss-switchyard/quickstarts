@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sy:switchyard xmlns:camel="urn:switchyard-component-camel:config:1.1" xmlns:sap="urn:switchyard-component-camel-sap:config:1.1" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:sy="urn:switchyard-config:switchyard:1.1" name="switchyard-camel-sap-binding" targetNamespace="urn:org.switchyard.quickstarts:switchyard-camel-sap-binding:2.0.0-SNAPSHOT">
+  <sca:composite name="switchyard-camel-sap-binding" targetNamespace="urn:org.switchyard.quickstarts:switchyard-camel-sap-binding:2.0.0-SNAPSHOT">
+    <sca:component name="FlightBookingService">
+      <camel:implementation.camel>
+        <camel:xml path="route.xml"/>
+      </camel:implementation.camel>
+      <sca:service name="FlightBookingService">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.FlightBookingService"/>
+      </sca:service>
+      <sca:reference name="GetFlightConnectionListService">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.GetFlightConnectionListService"/>
+      </sca:reference>
+      <sca:reference name="GetFlightConnectionDetailService">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.GetFlightConnectionDetailService"/>
+      </sca:reference>
+      <sca:reference name="GetFlightCustomerListService">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.GetFlightCustomerListService"/>
+      </sca:reference>
+      <sca:reference name="CreateFlightTripService">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.CreateFlightTripService"/>
+      </sca:reference>
+    </sca:component>
+    <sca:service name="FlightBookingService" promote="FlightBookingService/FlightBookingService">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.FlightBookingPromotedService"/>
+      <sap:binding.sap name="FlightBookingServiceBinding">
+        <sap:server>nplServer</sap:server>
+        <sap:rfcName>BOOK_FLIGHT</sap:rfcName>
+      </sap:binding.sap>
+    </sca:service>
+    <sca:reference name="GetFlightConnectionListService" multiplicity="0..1" promote="FlightBookingService/GetFlightConnectionListService">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.GetFlightConnectionListService"/>
+      <sap:binding.sap name="GetFlightConnectionListReferenceBinding">
+        <sap:destination>nplDest</sap:destination>
+        <sap:rfcName>BAPI_FLCONN_GETLIST</sap:rfcName>
+      </sap:binding.sap>
+    </sca:reference>
+    <sca:reference name="GetFlightConnectionDetailService" multiplicity="0..1" promote="FlightBookingService/GetFlightConnectionDetailService">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.GetFlightConnectionDetailService"/>
+      <sap:binding.sap name="GetFlightConnectionDetailReferenceBinding">
+        <sap:destination>nplDest</sap:destination>
+        <sap:rfcName>BAPI_FLCONN_GETDETAIL</sap:rfcName>
+      </sap:binding.sap>
+    </sca:reference>
+    <sca:reference name="GetFlightCustomerListService" multiplicity="0..1" promote="FlightBookingService/GetFlightCustomerListService">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.GetFlightCustomerListService"/>
+      <sap:binding.sap name="GetFlightCustomerListReferenceBinding">
+        <sap:destination>nplDest</sap:destination>
+        <sap:rfcName>BAPI_FLCUST_GETLIST</sap:rfcName>
+      </sap:binding.sap>
+    </sca:reference>
+    <sca:reference name="CreateFlightTripService" multiplicity="0..1" promote="FlightBookingService/CreateFlightTripService">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.CreateFlightTripService"/>
+      <sap:binding.sap name="CreateFlightTripReferenceBinding">
+        <sap:destination>nplDest</sap:destination>
+        <sap:rfcName>BAPI_FLTRIP_CREATE</sap:rfcName>
+        <sap:transacted>true</sap:transacted>
+      </sap:binding.sap>
+    </sca:reference>
+  </sca:composite>
+  <sy:transforms xmlns:trfm="urn:switchyard-config:transform:1.1">
+    <trfm:transform.jaxb contextPath="org.switchyard.quickstarts.camel.sap.binding.jaxb" from="java:org.switchyard.quickstarts.camel.sap.binding.jaxb.BookFlightResponse" to="{http://sap.fusesource.org/rfc/nplServer/BOOK_FLIGHT}Response"/>
+    <trfm:transform.jaxb contextPath="org.switchyard.quickstarts.camel.sap.binding.jaxb" from="{http://sap.fusesource.org/rfc/nplServer/BOOK_FLIGHT}Request" to="java:org.switchyard.quickstarts.camel.sap.binding.jaxb.BookFlightRequest"/>
+  </sy:transforms>
+<!--
+  <sy:domain>
+    <sy:properties>
+        <sy:property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
+    </sy:properties>
+  </sy:domain>
+-->
+</sy:switchyard>
