@@ -14,13 +14,11 @@
  * permissions and limitations under the License.
  * 
  */
-package org.switchyard.quickstarts.camel.sap.binding.processor;
+package org.switchyard.quickstarts.camel.sap.binding;
 
 import java.util.Date;
 
-import javax.inject.Named;
-
-import org.apache.camel.Exchange;
+import org.switchyard.component.bean.Service;
 import org.switchyard.quickstarts.camel.sap.binding.bean.PassengerInfo;
 import org.switchyard.quickstarts.camel.sap.binding.jaxb.BookFlightRequest;
 import org.slf4j.Logger;
@@ -32,10 +30,10 @@ import org.slf4j.LoggerFactory;
  * @author William Collins <punkhornsw@gmail.com>
  *
  */
-@Named("returnPassengerInfo")
-public class ReturnPassengerInfo {
+@Service(PassengerInfoService.class)
+public class PassengerInfoServiceBean implements PassengerInfoService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ReturnPassengerInfo.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PassengerInfoServiceBean.class);
 
 
     /**
@@ -45,16 +43,13 @@ public class ReturnPassengerInfo {
      * @param exchange
      * @throws Exception
      */
-    public void createPassengerInfo(Exchange exchange) {
-
-        // Retrieve SAP request object from body of exchange message.
-        BookFlightRequest bookFlightRequest = exchange.getIn().getBody(BookFlightRequest.class);
+    public PassengerInfo getPassengerInfo(BookFlightRequest request) {
 
         // Create passenger info bean.
         PassengerInfo passengerInfo = new PassengerInfo();
 
         // Add passenger form of address to passenger info if set.
-        String passengerFormOfAddress = bookFlightRequest.getPassengerFormOfAddress();
+        String passengerFormOfAddress = request.getPassengerFormOfAddress();
         if (passengerFormOfAddress != null) {
             passengerInfo.setFormOfAddress(passengerFormOfAddress);
             if (LOG.isDebugEnabled()) {
@@ -63,7 +58,7 @@ public class ReturnPassengerInfo {
         }
 
         // Add passenger name to passenger info if set.
-        String passengerName = bookFlightRequest.getPassengerName();
+        String passengerName = request.getPassengerName();
         if (passengerName != null) {
             passengerInfo.setName(passengerName);
             if (LOG.isDebugEnabled()) {
@@ -72,7 +67,7 @@ public class ReturnPassengerInfo {
         }
 
         // Add passenger date of birth to passenger info if set.
-        Date passengerDateOfBirth = bookFlightRequest.getPassengerDateOfBirth();
+        Date passengerDateOfBirth = request.getPassengerDateOfBirth();
         if (passengerDateOfBirth != null) {
             passengerInfo.setDateOfBirth(passengerDateOfBirth);
             if (LOG.isDebugEnabled()) {
@@ -80,8 +75,7 @@ public class ReturnPassengerInfo {
             }
         }
 
-        // Put passenger info bean into header of exchange message. 
-        exchange.getIn().setHeader(AggregateFlightBookingStrategy.PASSENGER_INFO, passengerInfo);
+        return passengerInfo;
     }
 
 }

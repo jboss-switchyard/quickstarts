@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="switchyard://FlightBookingService"/>
+        <multicast strategyRef="aggregateFlightBookingStrategy" stopOnException="true">
+            <to uri="switchyard://FlightConnectionInfoService"/>
+            <to uri="switchyard://FlightCustomerInfoService"/>
+            <to uri="switchyard://PassengerInfoService"/>
+        </multicast>
+        <to uri="switchyard://CreateFlightTripService"/>
+    </route>
+</routes>

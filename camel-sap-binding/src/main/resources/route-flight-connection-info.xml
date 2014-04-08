@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ASCII"?>
+<routes xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="switchyard://FlightConnectionInfoService"/>
+    <to uri="switchyard://GetFlightConnectionListService"/>
+    <to uri="switchyard://GetFlightConnectionDetailService"/>
+  </route>
+</routes>

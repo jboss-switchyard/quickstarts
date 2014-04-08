@@ -1,7 +1,8 @@
 package org.switchyard.quickstarts.camel.sap.binding;
 
-import org.fusesource.camel.component.sap.model.rfc.Structure;
+import org.switchyard.quickstarts.camel.sap.binding.bean.FlightTripRequestInfo;
+import org.switchyard.quickstarts.camel.sap.binding.jaxb.BookFlightResponse;
 
 public interface CreateFlightTripService {
-    Structure invoke(Structure request);
+    BookFlightResponse invoke(FlightTripRequestInfo request);
 }

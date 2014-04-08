@@ -1,59 +1,49 @@
-/**
- * Copyright 2013 Red Hat, Inc.
- * 
- * Red Hat licenses this file to you under the Apache License, version
- * 2.0 (the "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.  See the License for the specific language governing
- * permissions and limitations under the License.
- * 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-package org.switchyard.quickstarts.camel.sap.binding.processor;
+package org.switchyard.quickstarts.camel.sap.binding.composer;
 
 import java.util.Date;
 
-import javax.inject.Named;
-
-import org.apache.camel.Exchange;
 import org.fusesource.camel.component.sap.SAPEndpoint;
 import org.fusesource.camel.component.sap.model.rfc.Structure;
 import org.fusesource.camel.component.sap.model.rfc.Table;
 import org.fusesource.camel.component.sap.util.RfcUtil;
-import org.switchyard.quickstarts.camel.sap.binding.jaxb.BookFlightRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.switchyard.Exchange;
+import org.switchyard.component.camel.common.composer.CamelBindingData;
+import org.switchyard.component.camel.common.composer.CamelMessageComposer;
+import org.switchyard.quickstarts.camel.sap.binding.jaxb.BookFlightRequest;
 
 /**
- * Processor that builds SAP Request object for BAPI_FLCONN_GETLIST RFC call. 
- * 
- * @author William Collins <punkhornsw@gmail.com>
- *
+ * A MessageComposer for GetFlightConnectionListService.
  */
-@Named("createFlightConnectionGetListRequest")
-public class CreateFlightConnectionGetListRequest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CreateFlightConnectionGetListRequest.class);
-
-    /**
-     * Builds SAP Request Object for BAPI_FLCONN_GETLIST call using data from
-     * the BOOK_FLIGHT request.
-     * 
-     * @param exchange
-     * @throws Exception
-     */
-    public void create(Exchange exchange) throws Exception {
-
+public class GetFlightConnectionListMessageComposer extends CamelMessageComposer {
+    private static final Logger LOG = LoggerFactory.getLogger(GetFlightConnectionListMessageComposer.class);
+    
+    @Override
+    public CamelBindingData decompose(Exchange exchange, CamelBindingData target) throws Exception {
+        CamelBindingData response = super.decompose(exchange, target);
+        
         // Get BOOK_FLIGHT Request JAXB Bean object.
-        BookFlightRequest bookFlightRequest = exchange.getIn().getBody(BookFlightRequest.class);
+        BookFlightRequest bookFlightRequest = exchange.getMessage().getContent(BookFlightRequest.class);
 
         // Create SAP Request object from target endpoint.
-        SAPEndpoint endpoint = exchange.getContext().getEndpoint("sap:destination:nplDest:BAPI_FLCONN_GETLIST", SAPEndpoint.class);
+        SAPEndpoint endpoint = response.getMessage().getExchange().getContext().getEndpoint("sap:destination:nplDest:BAPI_FLCONN_GETLIST", SAPEndpoint.class);
         Structure request = endpoint.getRequest();
 
         // Add Travel Agency Number to request if set
@@ -105,8 +95,7 @@ public class CreateFlightConnectionGetListRequest {
         }
 
         // Put request object into body of exchange message.
-        exchange.getIn().setBody(request);
-
+        response.getMessage().setBody(request);
+        return response;
     }
-
 }
