@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  * 
  */
-package org.switchyard.quickstarts.camel.sap.binding.processor;
+package org.switchyard.quickstarts.camel.sap.binding;
 
 import javax.inject.Named;
 
@@ -22,6 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.switchyard.quickstarts.camel.sap.binding.bean.FlightConnectionInfo;
+import org.switchyard.quickstarts.camel.sap.binding.bean.FlightCustomerInfo;
+import org.switchyard.quickstarts.camel.sap.binding.bean.FlightTripRequestInfo;
+import org.switchyard.quickstarts.camel.sap.binding.bean.PassengerInfo;
 
 /**
  * @author William Collins <punkhornsw@gmail.com>
@@ -31,9 +35,6 @@ import org.slf4j.LoggerFactory;
 public class AggregateFlightBookingStrategy implements AggregationStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregateFlightBookingStrategy.class);
-    public static final String FLIGHT_CONNECTION_INFO = "flightConnectionInfo";
-    public static final String FLIGHT_CUSTOMER_INFO = "flightCustomerInfo";
-    public static final String PASSENGER_INFO = "passengerInfo";
 
     /**
      * Merges the message headers of sub-routes.
@@ -41,6 +42,15 @@ public class AggregateFlightBookingStrategy implements AggregationStrategy {
      */
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        Exchange answer = oldExchange == null ? newExchange : oldExchange;
+        FlightTripRequestInfo flightTripRequestInfo;
+        Object payload = answer.getIn().getBody();
+        if (payload instanceof FlightTripRequestInfo) {
+            flightTripRequestInfo = FlightTripRequestInfo.class.cast(payload);
+        } else {
+            flightTripRequestInfo = new FlightTripRequestInfo();
+        }
+        
         String to = newExchange.getProperty(Exchange.TO_ENDPOINT, String.class);
         if (LOG.isDebugEnabled()) {
             LOG.debug("To endpoint = {}", to);
@@ -49,38 +59,19 @@ public class AggregateFlightBookingStrategy implements AggregationStrategy {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Adding Flight Connection Info to exchange.");
             }
-            return mergeHeaderIntoOldExchange(FLIGHT_CONNECTION_INFO, oldExchange, newExchange);
+           flightTripRequestInfo.setFlightConnectionInfo(newExchange.getIn().getBody(FlightConnectionInfo.class));
         } else if (to.contains("FlightCustomerInfo")){
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Adding Flight Customer Info to exchange.");
             }
-            return mergeHeaderIntoOldExchange(FLIGHT_CUSTOMER_INFO, oldExchange, newExchange);
+            flightTripRequestInfo.setFlightCustomerInfo(newExchange.getIn().getBody(FlightCustomerInfo.class));
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Adding Passenger Info to exchange.");
             }
-            return mergeHeaderIntoOldExchange(PASSENGER_INFO, oldExchange, newExchange);
+            flightTripRequestInfo.setPassengerInfo(newExchange.getIn().getBody(PassengerInfo.class));
         }
-    }
-
-    /**
-     * Merges the message header of input message in new exchange
-     * into exchange property of old exchange.
-     * 
-     * @param messageHeader
-     *            - the name of message header to merge.
-     * @param oldExchange
-     *            - the old exchange.
-     * @param newExchange
-     *            - the new exchange.
-     * @return The merged exchange.
-     */
-    public Exchange mergeHeaderIntoOldExchange(String messageHeader, Exchange oldExchange, Exchange newExchange) {
-
-        Exchange answer = oldExchange == null ? newExchange : oldExchange;
-
-        answer.setProperty(messageHeader, newExchange.getIn().getHeader(messageHeader));
-
+        answer.getIn().setBody(flightTripRequestInfo);
         return answer;
     }
 

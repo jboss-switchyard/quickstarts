@@ -1,59 +1,131 @@
-/**
- * Copyright 2013 Red Hat, Inc.
- * 
- * Red Hat licenses this file to you under the Apache License, version
- * 2.0 (the "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * contributors by the @authors tag. See the copyright.txt in the
+ * distribution for a full listing of individual contributors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.  See the License for the specific language governing
- * permissions and limitations under the License.
- * 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-package org.switchyard.quickstarts.camel.sap.binding.processor;
+package org.switchyard.quickstarts.camel.sap.binding.composer;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
-import javax.inject.Named;
+import javax.activation.DataHandler;
 
-import org.apache.camel.Exchange;
+import org.fusesource.camel.component.sap.SAPEndpoint;
 import org.fusesource.camel.component.sap.model.rfc.Structure;
 import org.fusesource.camel.component.sap.model.rfc.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.switchyard.Exchange;
+import org.switchyard.Message;
+import org.switchyard.component.camel.common.composer.CamelBindingData;
+import org.switchyard.component.camel.common.composer.CamelMessageComposer;
 import org.switchyard.quickstarts.camel.sap.binding.bean.FlightConnectionInfo;
 import org.switchyard.quickstarts.camel.sap.binding.bean.FlightHop;
 import org.switchyard.quickstarts.camel.sap.binding.bean.PriceInfo;
 import org.switchyard.quickstarts.camel.sap.binding.bean.SeatAvailibility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Processor that builds Flight Connection Info object.
- * 
- * @author William Collins <punkhornsw@gmail.com>
- *
+ * A MessageComposer for GetFlightConnectionDetailService.
  */
-@Named("returnFlightConnectionInfo")
-public class ReturnFlightConnectionInfo {
+public class GetFlightConnectionDetailMessageComposer extends CamelMessageComposer {
+    private static final Logger LOG = LoggerFactory.getLogger(GetFlightConnectionDetailMessageComposer.class);
+    
+    @Override
+    public CamelBindingData decompose(Exchange exchange, CamelBindingData target) throws Exception {
+        CamelBindingData response = super.decompose(exchange, target);
 
-    private static final Logger LOG = LoggerFactory.getLogger(ReturnFlightConnectionInfo.class);
+        // Get BAPI_FLCONN_GETLIST SAP Response object.
+        Structure flightConnectionGetListResponse = exchange.getMessage().getContent(Structure.class);
 
-    /**
-     * Builds Flight Connection Info bean from BAPI_FLCONN_GETDETAIL response in
-     * exchange message body and adds to exchange message's header.
-     * 
-     * @param exchange
-     * @throws Exception
-     */
-    public void createFlightConnectionInfo(Exchange exchange) throws Exception {
+        if (flightConnectionGetListResponse == null) {
+            throw new Exception("No Flight Connection Get List Response.");
+        }
 
-        Structure flightConnectionGetDetailResponse = exchange.getIn().getBody(Structure.class);
+        // Get the list of matching flight connections in response object. 
+        @SuppressWarnings("unchecked")
+        Table<? extends Structure> connectionList = flightConnectionGetListResponse.get("FLIGHT_CONNECTION_LIST", Table.class);
+        if (connectionList == null || connectionList.size() == 0) {
+            throw new Exception("No Flight Connections");
+        }
+
+        // Select the first connection.
+        Structure connection = connectionList.get(0);
+
+        // Create SAP Request object from target endpoint.
+        SAPEndpoint endpoint = response.getMessage().getExchange().getContext().getEndpoint("sap:destination:nplDest:BAPI_FLCONN_GETDETAIL", SAPEndpoint.class);
+        Structure request = endpoint.getRequest();
+
+        // Copy connection number of matching connection into request.
+        String connectionNumber = connection.get("FLIGHTCONN", String.class);
+        if (connectionNumber != null) {
+            request.put("CONNECTIONNUMBER", connectionNumber);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Added CONNECTIONNUMBER = '{}' to request", connectionNumber);
+            }
+        } else {
+            throw new Exception("No Flight Connection Number");
+        }
+
+        // Copy agency number of matching connection into request.
+        String travelAgencyNumber = connection.get("AGENCYNUM", String.class);
+        if (travelAgencyNumber != null) {
+            request.put("TRAVELAGENCYNUMBER", travelAgencyNumber);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Added TRAVELAGENCYNUMBER = '{}' to request", travelAgencyNumber);
+            }
+        } else {
+            throw new Exception("No Agency Number");
+        }
+
+        // Copy flight date of matching connection into request.
+        Date flightDate = connection.get("FLIGHTDATE", Date.class);
+        if (flightDate != null) {
+            request.put("FLIGHTDATE", flightDate);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Added FLIGHTDATE = '{}' to request", flightDate);
+            }
+        } else {
+            throw new Exception("No Flight Date");
+        }
+
+        // Include availability data in RFC response.
+        request.put("NO_AVAILIBILITY", "");
+
+        // Put request object into body of exchange message.
+        response.getMessage().setBody(request);
+        return response;
+    }
+    
+    @Override
+    public Message compose(CamelBindingData source, Exchange exchange) throws Exception {
+        Message response = exchange.createMessage();
+
+        // map context properties
+        getContextMapper().mapFrom(source, exchange.getContext(response));
+
+        Set<String> attachements = source.getMessage().getAttachmentNames();
+        if (!attachements.isEmpty()) {
+            for (Entry<String, DataHandler> entry : source.getMessage().getAttachments().entrySet()) {
+                response.addAttachment(entry.getKey(), entry.getValue().getDataSource());
+            }
+        }
+
+        Structure flightConnectionGetDetailResponse = source.getMessage().getBody(Structure.class);
 
         if (flightConnectionGetDetailResponse == null) {
             throw new Exception("No Flight Connection Get Detail Response");
@@ -558,8 +630,8 @@ public class ReturnFlightConnectionInfo {
             flightConnectionInfo.setPriceInfo(priceInfo);
         }
 
-        // Put flight connection info object into header of exchange message.
-        exchange.getIn().setHeader(AggregateFlightBookingStrategy.FLIGHT_CONNECTION_INFO, flightConnectionInfo);
+        // Put flight connection info object
+        response.setContent(flightConnectionInfo);
+        return response;
     }
-
 }
