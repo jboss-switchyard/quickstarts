@@ -172,10 +172,11 @@ public class OutboundHandler extends BaseServiceHandler {
 
     private void handleInOut(final Exchange switchyardExchange) throws HandlerException {
         final org.apache.camel.Exchange camelExchange = _producerTemplate.request(_uri, createProcessor(switchyardExchange));
+        CamelBindingData bindingData = new CamelBindingData(camelExchange.getOut());
         Exception camelException = camelExchange.getException();
 
         if (!camelExchange.isFailed()) {
-            sendResponseToSwitchyard(switchyardExchange, camelExchange.getOut().getBody());
+            sendResponseToSwitchyard(switchyardExchange, bindingData);
 
         } else {
             QName faultName = switchyardExchange.getContract().getProviderOperation().getFaultType();
@@ -183,14 +184,19 @@ public class OutboundHandler extends BaseServiceHandler {
 
             Object camelFault = camelException;
             if (camelFault == null) {
-                if (camelExchange.hasOut() && camelExchange.getOut().isFault()) {
+                if (camelExchange.hasOut() && bindingData.getMessage().isFault()) {
                     // Use Out body as a fault content if camelExchange.getException() returns null
-                    camelFault = camelExchange.getOut().getBody();
+                    camelFault = bindingData.getMessage().getBody();
                 }
             }
             
             if (camelFault != null && declaredFault != null && declaredFault.isAssignableFrom(camelFault.getClass())) {
-                Message msg = switchyardExchange.createMessage().setContent(camelFault);
+                Message msg = null;
+                try {
+                    msg = _messageComposer.compose(bindingData, switchyardExchange);
+                } catch (Exception e) {
+                    throw new HandlerException(e);
+                }
                 switchyardExchange.sendFault(msg);
             } else if (camelFault instanceof Throwable) {
                 throw new HandlerException(Throwable.class.cast(camelFault));
@@ -204,8 +210,14 @@ public class OutboundHandler extends BaseServiceHandler {
         }
     }
 
-    private void sendResponseToSwitchyard(final Exchange switchyardExchange, final Object payload) {
-        switchyardExchange.send(switchyardExchange.createMessage().setContent(payload));
+    private void sendResponseToSwitchyard(final Exchange switchyardExchange, CamelBindingData bindingData) throws HandlerException {
+        Message msg = null;
+        try {
+            msg = _messageComposer.compose(bindingData, switchyardExchange);
+        } catch (Exception e) {
+            throw new HandlerException(e);
+        }
+        switchyardExchange.send(msg);
     }
 
     private Processor createProcessor(final Exchange switchyardExchange) {

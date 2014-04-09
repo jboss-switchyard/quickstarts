@@ -25,6 +25,7 @@ import java.net.URI;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
+import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
@@ -46,6 +47,8 @@ import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.common.camel.SwitchYardCamelContextImpl;
 import org.switchyard.component.camel.common.composer.CamelBindingData;
 import org.switchyard.component.camel.common.composer.CamelComposition;
+import org.switchyard.component.camel.common.composer.CamelContextMapper;
+import org.switchyard.component.camel.common.composer.CamelMessageComposer;
 import org.switchyard.component.camel.common.model.CamelBindingModel;
 import org.switchyard.component.camel.common.transaction.TransactionManagerFactory;
 import org.switchyard.component.common.composer.MessageComposer;
@@ -53,6 +56,7 @@ import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.naming.NamingMixIn;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.metadata.InOnlyService;
+import org.switchyard.metadata.InOutService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
@@ -224,6 +228,41 @@ public class OutboundHandlerTest extends CamelTestSupport {
         verify(producerTemplate).stop();
     }
 
+    @Test
+    public void routeInOutToCamelUsingMessageComposer() throws Exception {
+        bindingModel = mock(CamelBindingModel.class);
+        when(bindingModel.getComponentURI()).thenReturn(URI.create("direct:MessageComposerService"));
+        when(bindingModel.getName()).thenReturn("mockOutputHandler");
+        when(bindingModel.getReference()).thenReturn(referenceModel);
+        MessageComposer<CamelBindingData> myMessageComposer = new CamelMessageComposer() {
+            @Override
+            public CamelBindingData decompose(Exchange exchange, CamelBindingData target) throws Exception {
+                exchange.getContext().setProperty("decomposeInvoked", true, Scope.EXCHANGE);
+                return super.decompose(exchange, target);
+            }
+            @Override
+            public Message compose(CamelBindingData source, Exchange exchange) throws Exception {
+                exchange.getContext().setProperty("composeInvoked", true, Scope.EXCHANGE);
+                return super.compose(source, exchange);
+            }
+        };
+        myMessageComposer.setContextMapper(new CamelContextMapper());
+        QName serviceName = new QName(_serviceDomain.getName().getNamespaceURI(), "MessageComposerService");
+        _serviceDomain.registerService(serviceName,
+            new InOutService(),
+            new OutboundHandler(bindingModel, (SwitchYardCamelContext) context, myMessageComposer, _serviceDomain) {
+            {
+                setState(State.STARTED);
+            }
+        }
+        );
+        _service = _serviceDomain.registerServiceReference(serviceName, new InOutService());
+        Exchange exchange = _service.createExchange();
+        exchange.send(exchange.createMessage().setContent("foo"));
+        assertThat((Boolean)exchange.getContext().getProperty("decomposeInvoked").getValue(), is(true));
+        assertThat((Boolean)exchange.getContext().getProperty("composeInvoked").getValue(), is(true));
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return new SwitchYardCamelContextImpl();
@@ -238,6 +277,7 @@ public class OutboundHandlerTest extends CamelTestSupport {
                 .log("Before Routing to mock:result body: ${body}")
                 .to("mock:result");
                 from("transaction:foo").to("mock:result");
+                from("direct:MessageComposerService").to("mock:result");
             }
         };
     }
