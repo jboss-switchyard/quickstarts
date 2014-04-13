@@ -855,6 +855,17 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-cxf-transport</artifactId>
+                <version>${version.org.apache.camel}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-jaxb</artifactId>
                 <version>${version.org.apache.camel}</version>
                 <exclusions>
@@ -1988,6 +1999,11 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-camel-cxf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
                 <artifactId>switchyard-component-camel-file</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2200,6 +2216,11 @@
             <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
                 <artifactId>switchyard-camel-bus-cdi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-camel-cxf</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
