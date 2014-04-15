@@ -27,6 +27,7 @@ import org.switchyard.security.BaseSecurityLogger;
 import org.switchyard.security.callback.handler.NamePasswordCallbackHandler;
 import org.switchyard.security.callback.handler.SwitchYardCallbackHandler;
 import org.switchyard.security.context.SecurityContext;
+import org.switchyard.security.credential.SubjectCredential;
 import org.switchyard.security.principal.GroupPrincipal;
 import org.switchyard.security.principal.RolePrincipal;
 
@@ -74,8 +75,27 @@ public class JaasSecurityProvider implements SecurityProvider {
      */
     @Override
     public boolean propagate(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
-        // Override in sub-class if desired.
+        String sy_securityDomain = serviceSecurity.getSecurityDomain();
+        Subject toSubject = securityContext.getSubject(sy_securityDomain);
+        Set<SubjectCredential> subjectCredentials = securityContext.getCredentials(SubjectCredential.class);
+        for (SubjectCredential subjectCredential : subjectCredentials) {
+            Subject fromSubject = subjectCredential.getSubject();
+            transfer(fromSubject, toSubject);
+        }
         return true;
+    }
+
+    /**
+     * Transfers Principals, private credentials, and public credentials from one Subject to another.
+     * @param fromSubject the from Subject
+     * @param toSubject the to Subject
+     */
+    protected void transfer(Subject fromSubject, Subject toSubject) {
+        if (toSubject != null && fromSubject != null && toSubject != fromSubject && !toSubject.equals(fromSubject)) {
+            toSubject.getPrincipals().addAll(fromSubject.getPrincipals());
+            toSubject.getPrivateCredentials().addAll(fromSubject.getPrivateCredentials());
+            toSubject.getPublicCredentials().addAll(fromSubject.getPublicCredentials());
+        }
     }
 
     /**

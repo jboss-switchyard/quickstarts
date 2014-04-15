@@ -18,12 +18,13 @@
  */
 package org.switchyard.common.util;
 
-import org.jboss.logging.Logger;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
+
+import org.jboss.logging.Logger;
+import org.switchyard.common.type.Classes;
 
 /**
  * A registry for service providers which allows for service lookup using a
@@ -39,17 +40,29 @@ public final class ProviderRegistry {
     }
 
     /**
-     * Obtain a provider.
+     * Obtain a provider using the Thread Context ClassLoader.
      * 
      * @param clazz the class of the provider to find
      * @param <T> the provider type
      * @return a provider of the specified class or null if none is available
      */
     public static <T> T getProvider(Class<T> clazz) {
+        return getProvider(clazz, Classes.getTCCL());
+    }
+
+    /**
+     * Obtain a provider using a specified ClassLoader.
+     * 
+     * @param clazz the class of the provider to find
+     * @param loader the class loader
+     * @param <T> the provider type
+     * @return a provider of the specified class or null if none is available
+     */
+    public static <T> T getProvider(Class<T> clazz, ClassLoader loader) {
         if (_registry != null) {
             return _registry.getProvider(clazz);
         }
-        ServiceLoader<T> services = ServiceLoader.load(clazz);
+        ServiceLoader<T> services = ServiceLoader.load(clazz, loader);
         Iterator<T> iterator = services.iterator();
         while (iterator.hasNext()) {
             try {
@@ -62,18 +75,30 @@ public final class ProviderRegistry {
     }
 
     /**
-     * Obtain a list of providers.
+     * Obtain a list of providers using the Thread Context ClassLoader.
      * 
      * @param clazz the class of the provider to find
      * @param <T> the provider type
      * @return the list of providers found
      */
     public static <T> List<T> getProviders(Class<T> clazz) {
+        return getProviders(clazz, Classes.getTCCL());
+    }
+
+    /**
+     * Obtain a list of providers using a specified ClassLoader.
+     * 
+     * @param clazz the class of the provider to find
+     * @param loader the class loader
+     * @param <T> the provider type
+     * @return the list of providers found
+     */
+    public static <T> List<T> getProviders(Class<T> clazz, ClassLoader loader) {
         if (_registry != null) {
             return _registry.getProviders(clazz);
         }
         List<T> list = new ArrayList<T>();
-        ServiceLoader<T> services = ServiceLoader.load(clazz);
+        ServiceLoader<T> services = ServiceLoader.load(clazz, loader);
         Iterator<T> iterator = services.iterator();
         while (iterator.hasNext()) {
             try {

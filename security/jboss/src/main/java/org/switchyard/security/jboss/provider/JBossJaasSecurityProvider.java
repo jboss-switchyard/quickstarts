@@ -53,15 +53,11 @@ public class JBossJaasSecurityProvider extends JaasSecurityProvider {
             if (sy_securityDomain.equals(jb_securityDomain)) {
                 Subject sy_subject = securityContext.getSubject(sy_securityDomain);
                 Subject jb_subject = jb_securityContext.getUtil().getSubject();
-                if (jb_subject != null && sy_subject != jb_subject && !sy_subject.equals(jb_subject)) {
-                    sy_subject.getPrincipals().addAll(jb_subject.getPrincipals());
-                    sy_subject.getPrivateCredentials().addAll(jb_subject.getPrivateCredentials());
-                    sy_subject.getPublicCredentials().addAll(jb_subject.getPublicCredentials());
-                }
+                transfer(jb_subject, sy_subject);
                 return true;
             } 
         }
-        return false;
+        return super.propagate(serviceSecurity, securityContext);
     }
 
     /**

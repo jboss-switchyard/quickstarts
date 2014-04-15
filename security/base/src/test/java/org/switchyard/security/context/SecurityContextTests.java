@@ -35,6 +35,7 @@ import org.switchyard.security.credential.Credential;
 import org.switchyard.security.credential.NameCredential;
 import org.switchyard.security.credential.PasswordCredential;
 import org.switchyard.security.credential.PrincipalCredential;
+import org.switchyard.security.credential.SubjectCredential;
 import org.switchyard.security.credential.extractor.SOAPMessageCredentialExtractorTests;
 import org.switchyard.security.crypto.PrivateCrypto;
 import org.switchyard.security.principal.GroupPrincipal;
@@ -105,6 +106,9 @@ public class SecurityContextTests {
         creds.add(new PrincipalCredential(role, false));
         creds.add(new PrincipalCredential(childGroup, true));
         creds.add(new PrincipalCredential(parentGroup, false));
+        Subject childSubject = new Subject();
+        childSubject.getPrincipals().add(new UserPrincipal("childUser"));
+        creds.add(new SubjectCredential(childSubject));
         return creds;
     }
 
