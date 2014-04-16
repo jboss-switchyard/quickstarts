@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:camel="urn:switchyard-component-camel:config:1.0" xmlns:camel_1="urn:switchyard-component-camel-core:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="hl7-example" targetNamespace="urn:com.example.switchyard:hl7-example:1.0">
+  <sca:composite name="hl7-example" targetNamespace="urn:com.example.switchyard:hl7-example:1.0">
+    <sca:component name="CamelServiceRoute">
+      <camel:implementation.camel>
+        <camel:java class="org.switchyard.quickstarts.camel.hl7example.CamelServiceRoute"/>
+      </camel:implementation.camel>
+      <sca:service name="HL7Route">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.hl7example.HL7Route"/>
+      </sca:service>
+    </sca:component>
+    <sca:service name="HL7Route" promote="CamelServiceRoute/HL7Route">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.hl7example.HL7Route"/>
+      <camel_1:binding.uri name="camel1" configURI="file:///tmp?fileName=hl7file.txt">
+        <operationSelector operationName="process"/>
+      </camel_1:binding.uri>
+    </sca:service>
+  </sca:composite>
+</switchyard>
