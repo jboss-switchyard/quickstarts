@@ -76,6 +76,7 @@
         <module>bpm-service</module>
         <module>camel-binding</module>
         <module>camel-jaxb</module>
+        <module>camel-hl7</module>
         <module>camel-amqp-binding</module>
         <module>camel-ftp-binding</module>
         <module>camel-jms-binding</module>
