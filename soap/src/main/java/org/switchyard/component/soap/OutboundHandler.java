@@ -44,7 +44,6 @@ import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
-import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.soap.composer.SOAPBindingData;
 import org.switchyard.component.soap.composer.SOAPComposition;
@@ -95,7 +94,6 @@ public class OutboundHandler extends BaseServiceHandler {
     @Override
     protected void doStart() throws WebServiceConsumeException {
         if (_dispatcher == null) {
-            ClassLoader origLoader = Classes.getTCCL();
             try {
                 Definition definition = WSDLUtil.readWSDL(_config.getWsdl());
                 PortName portName = _config.getPort();
@@ -123,8 +121,6 @@ public class OutboundHandler extends BaseServiceHandler {
 
                 URL wsdlUrl = WSDLUtil.getURL(_config.getWsdl());
                 SOAPLogger.ROOT_LOGGER.creatingDispatchWithWSDL(wsdlUrl.toString());
-                // make sure we don't pollute the class loader used by the WS subsystem
-                Classes.setTCCL(getClass().getClassLoader());
 
                 Service service = Service.create(wsdlUrl, portName.getServiceQName());
 
@@ -206,8 +202,6 @@ public class OutboundHandler extends BaseServiceHandler {
                 throw new WebServiceConsumeException(e);
             } catch (WSDLException wsdle) {
                 throw new WebServiceConsumeException(wsdle);
-            } finally {
-                Classes.setTCCL(origLoader);
             }
         }
     }
