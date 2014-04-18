@@ -19,11 +19,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.ServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.jboss.resteasy.util.CaseInsensitiveMap;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.component.common.composer.SecurityBindingData;
+import org.switchyard.security.SecurityServices;
 import org.switchyard.security.credential.ConfidentialityCredential;
 import org.switchyard.security.credential.Credential;
 import org.switchyard.security.credential.PrincipalCredential;
@@ -39,6 +41,7 @@ public class RESTEasyBindingData implements SecurityBindingData {
     private MultivaluedMap<String, String> _headers;
     private String _operationName;
     private Integer _statusCode;
+    private ServletRequest _servletRequest;
     private Boolean _secured = false;
     private Principal _principal;
 
@@ -154,6 +157,22 @@ public class RESTEasyBindingData implements SecurityBindingData {
     }
 
     /**
+     * Gets the ServletRequest associated with this request.
+     * @return the ServletRequest
+     */
+    public ServletRequest getServletRequest() {
+        return _servletRequest;
+    }
+
+    /**
+     * Sets the ServletRequest associated with this request.
+     * @param servletRequest the ServletRequest to set
+     */
+    public void setServletRequest(ServletRequest servletRequest) {
+        _servletRequest = servletRequest;
+    }
+
+    /**
      * Returns a boolean stating if this request was made using a secure channel.
      * @return the true if secure, false otherwise
      */
@@ -191,33 +210,37 @@ public class RESTEasyBindingData implements SecurityBindingData {
     @Override
     public Set<Credential> extractCredentials() {
         Set<Credential> credentials = new HashSet<Credential>();
-        String charsetName = null;
-        List<String> contentTypes = _headers.get("content-type");
-        String contentType = null;
-        if ((contentTypes != null) && (contentTypes.size() > 0)) {
-            contentType = contentTypes.get(0);
-        }
-        if (contentType != null) {
-            int pos = contentType.lastIndexOf("charset=");
-            if (pos > -1) {
-                charsetName = Strings.trimToNull(contentType.substring(pos+8, contentType.length()));
+        if (_servletRequest != null) {
+            credentials.addAll(SecurityServices.getServletRequestCredentialExtractor().extract(_servletRequest));
+        } else {
+            if (_secured) {
+                credentials.add(new ConfidentialityCredential(true));
             }
-        }
-        List<String> authorizations = _headers.get("authorization");
-        if ((authorizations != null) && (authorizations.size() > 0)) {
-            AuthorizationHeaderCredentialExtractor ahce;
-            if (charsetName != null) {
-                ahce = new AuthorizationHeaderCredentialExtractor(charsetName);
-            } else {
-                ahce = new AuthorizationHeaderCredentialExtractor();
+            if (_principal != null) {
+                credentials.add(new PrincipalCredential(_principal, true));
             }
-            credentials.addAll(ahce.extract(authorizations.get(0)));
-        }
-        if (_principal != null) {
-            credentials.add(new PrincipalCredential(_principal, true));
-        }
-        if (_secured) {
-            credentials.add(new ConfidentialityCredential(true));
+            String charsetName = null;
+            List<String> contentTypes = _headers.get("content-type");
+            String contentType = null;
+            if ((contentTypes != null) && (contentTypes.size() > 0)) {
+                contentType = contentTypes.get(0);
+            }
+            if (contentType != null) {
+                int pos = contentType.lastIndexOf("charset=");
+                if (pos > -1) {
+                    charsetName = Strings.trimToNull(contentType.substring(pos+8, contentType.length()));
+                }
+            }
+            List<String> authorizations = _headers.get("authorization");
+            if ((authorizations != null) && (authorizations.size() > 0)) {
+                AuthorizationHeaderCredentialExtractor ahce;
+                if (charsetName != null) {
+                    ahce = new AuthorizationHeaderCredentialExtractor(charsetName);
+                } else {
+                    ahce = new AuthorizationHeaderCredentialExtractor();
+                }
+                credentials.addAll(ahce.extract(authorizations.get(0)));
+            }
         }
         return credentials;
     }

@@ -23,9 +23,9 @@ import javax.xml.ws.handler.MessageContext;
 
 import org.switchyard.component.common.composer.SecurityBindingData;
 import org.switchyard.component.soap.SOAPLogger;
+import org.switchyard.security.SecurityServices;
 import org.switchyard.security.credential.Credential;
 import org.switchyard.security.credential.extractor.SOAPMessageCredentialExtractor;
-import org.switchyard.security.credential.extractor.ServletRequestCredentialExtractor;
 import org.switchyard.security.credential.extractor.WebServiceContextCredentialExtractor;
 
 /**
@@ -116,7 +116,7 @@ public class SOAPBindingData implements SecurityBindingData {
         credentials.addAll(new SOAPMessageCredentialExtractor().extract(getSOAPMessage()));
         credentials.addAll(new WebServiceContextCredentialExtractor().extract(getWebServiceContext()));
         try {
-            credentials.addAll(new ServletRequestCredentialExtractor().extract(getServletRequest()));
+            credentials.addAll(SecurityServices.getServletRequestCredentialExtractor().extract(getServletRequest()));
         } catch (UnsupportedOperationException uoe) {
             // Ignore. This can happen with JBossWS http transport
             SOAPLogger.ROOT_LOGGER.credentialsAreIgnoredForServletRequest();

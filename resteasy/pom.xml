@@ -22,6 +22,18 @@
     </parent>
     <artifactId>switchyard-component-resteasy</artifactId>
     <name>SwitchYard: RESTEasy Component</name>
+    <packaging>bundle</packaging>
+    <properties>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.component.resteasy.*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.import>
+            org.switchyard.security.jboss.credential.extractor;resolution:=optional;${switchyard.osgi.import.switchyard.version},
+            org.switchyard.*;${switchyard.osgi.import.switchyard.version},
+            org.switchyard.config.model;${switchyard.osgi.import.switchyard.version},
+            *
+        </switchyard.osgi.import>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -39,12 +51,21 @@
     </build>
     <dependencies>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-config</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-security-jboss</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>

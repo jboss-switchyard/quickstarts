@@ -28,6 +28,7 @@
             org.switchyard.component.soap.*
         </switchyard.osgi.export.pkg>
         <switchyard.osgi.import>
+            org.switchyard.security.jboss.credential.extractor;resolution:=optional;${switchyard.osgi.import.switchyard.version},
             org.switchyard.*;${switchyard.osgi.import.switchyard.version},
             org.switchyard.config.model;${switchyard.osgi.import.switchyard.version},
             *
@@ -56,6 +57,10 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-security-jboss</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>

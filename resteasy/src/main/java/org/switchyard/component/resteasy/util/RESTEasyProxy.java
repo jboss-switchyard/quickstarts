@@ -20,12 +20,16 @@ import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.plugins.server.servlet.ServletSecurityContext;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.switchyard.common.type.reflect.Access;
+import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.resteasy.InboundHandler;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 
@@ -37,6 +41,12 @@ import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 public final class RESTEasyProxy implements InvocationHandler {
 
     private static final Logger LOGGER = Logger.getLogger(RESTEasyProxy.class);
+
+    private static final Access<HttpServletRequest> SERVLET_REQUEST_ACCESS;
+    static {
+        final Access<HttpServletRequest> servletRequestAccess = new FieldAccess<HttpServletRequest>(ServletSecurityContext.class, "request");
+        SERVLET_REQUEST_ACCESS = servletRequestAccess.isReadable() ? servletRequestAccess : null;
+    }
 
     private InboundHandler _serviceConsumer;
 
@@ -87,6 +97,10 @@ public final class RESTEasyProxy implements InvocationHandler {
         }
         SecurityContext securityContext = ResteasyProviderFactory.getContextData(SecurityContext.class);
         if (securityContext != null) {
+            if (securityContext instanceof ServletSecurityContext && SERVLET_REQUEST_ACCESS != null) {
+                HttpServletRequest servletRequest = SERVLET_REQUEST_ACCESS.read((ServletSecurityContext)securityContext);
+                requestData.setServletRequest(servletRequest);
+            }
             requestData.setSecured(securityContext.isSecure());
             requestData.setPrincipal(securityContext.getUserPrincipal());
         }

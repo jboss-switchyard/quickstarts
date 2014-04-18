@@ -31,7 +31,7 @@ import org.jboss.logging.Logger;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
 import org.switchyard.component.http.composer.HttpRequestInfo;
 import org.switchyard.component.http.composer.HttpResponseBindingData;
-import org.switchyard.security.credential.extractor.ServletRequestCredentialExtractor;
+import org.switchyard.security.SecurityServices;
 
 /**
  * Hanldes HTTP requests to invoke a SwitchYard service.
@@ -225,7 +225,7 @@ public class HttpGatewayServlet extends HttpServlet {
         }
 
         // Credentials...
-        requestInfo.getCredentials().addAll(new ServletRequestCredentialExtractor().extract(request));
+        requestInfo.getCredentials().addAll(SecurityServices.getServletRequestCredentialExtractor().extract(request));
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(requestInfo);
