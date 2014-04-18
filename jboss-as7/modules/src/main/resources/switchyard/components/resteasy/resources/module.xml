@@ -23,6 +23,7 @@
     <dependencies>
         <module name="javax.api"/>
         <module name="javax.annotation.api"/>
+        <module name="javax.servlet.api"/>
         <module name="javax.ws.rs.api"/>
         <module name="org.apache.httpcomponents"/>
         <module name="org.jboss.logging"/>
@@ -40,6 +41,7 @@
         <module name="org.switchyard.component.common"/>
         <module name="org.switchyard.deploy"/>
         <module name="org.switchyard.jaxb-impl"/>
+        <module name="org.switchyard.security" export="true"/>
         <!-- Remove these when RESTEaay exports them -->
         <module name="org.codehaus.jackson.jackson-core-asl" export="true"/>
         <module name="org.codehaus.jackson.jackson-jaxrs" export="true"/>
