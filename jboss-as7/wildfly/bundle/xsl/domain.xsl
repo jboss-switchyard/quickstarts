@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  - 
  - Licensed under the Apache License, Version 2.0 (the "License");
  - you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@
     xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:as="urn:jboss:domain:1.4"
-    xmlns:inf="urn:jboss:domain:infinispan:1.4"
+    xmlns:inf="urn:jboss:domain:infinispan:2.0"
     xmlns:sy="urn:jboss:domain:switchyard:1.0"
-    xmlns:log="urn:jboss:domain:logging:1.2"
+    xmlns:log="urn:jboss:domain:logging:2.0"
     exclude-result-prefixes="xs xsl xsi fn xdt as inf sy log">
 
 <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>

@@ -39,6 +39,8 @@
         <module>extension</module>
         <module>modules</module>
         <module>bundle</module>
+        <!-- Installer is available even if the dist test fails -->
+        <module>installer</module>
         <module>dist</module>
     </modules>
     <dependencyManagement>
