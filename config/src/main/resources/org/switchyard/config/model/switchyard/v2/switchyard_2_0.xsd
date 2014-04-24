@@ -266,6 +266,7 @@
     <attribute name="targetNamespace" type="string"/>
     <attribute name="clustered" type="boolean"/>
     <attribute name="loadBalance" type="string"/>
+    <attribute name="preferLocal" type="boolean" default="true"/>
     
     <!-- service and reference extensions -->
     <attribute name="security" type="string"/>

@@ -37,6 +37,9 @@ public interface SCABindingModel extends BindingModel {
     /** The "clustered" name. */
     public static final String CLUSTERED = "clustered";
 
+    /** The "clustered" name. */
+    public static final String PREFER_LOCAL = "preferLocal";
+
     /**
      * Indicates whether clustering is enabled.  
      * @return true if clustering is enabled, false otherwise
@@ -50,6 +53,20 @@ public interface SCABindingModel extends BindingModel {
      * @return this config model instance
      */
     SCABindingModel setClustered(boolean clustered);
+ 
+    /**
+     * Indicates whether preferLocal is enabled.  
+     * @return true if preferLocal is enabled, false otherwise
+     */
+    boolean isPreferLocal();
+    
+    /**
+     * Specifies whether preferLocal is enabled for the service binding.  Valid 
+     * reference bindings.
+     * @param preferLocal true for enabled, false for disabled
+     * @return this config model instance
+     */
+    SCABindingModel setPreferLocal(boolean preferLocal);
     
     /**
      * Indicates whether load balancing is enabled.

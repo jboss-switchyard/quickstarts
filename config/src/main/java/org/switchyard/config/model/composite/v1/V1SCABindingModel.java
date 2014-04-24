@@ -59,6 +59,17 @@ public class V1SCABindingModel extends V1BindingModel implements SCABindingModel
     }
 
     @Override
+    public boolean isPreferLocal() {
+        return Boolean.valueOf(getModelAttribute(new QName(_switchyardNamespace, PREFER_LOCAL)));
+    }
+
+    @Override
+    public SCABindingModel setPreferLocal(boolean preferLocal) {
+        setModelAttribute(new QName(_switchyardNamespace, PREFER_LOCAL), String.valueOf(false));
+        return this;
+    }
+
+    @Override
     public boolean isLoadBalanced() {
         return getLoadBalance() != null;
     }
@@ -105,5 +116,4 @@ public class V1SCABindingModel extends V1BindingModel implements SCABindingModel
         setModelAttribute(new QName(_switchyardNamespace, TARGET_NAMESPACE), namespace);
         return this;
     }
-
 }
