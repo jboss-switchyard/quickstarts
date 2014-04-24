@@ -1,6 +1,6 @@
 Introduction
 ============
-This quickstart demonstrates the usage of the Camel SAP and it's binding feature, by retrieving a message from SAP ABAP program invocation and creating a flight booking data into SAP tables. This quickstart needs SAP instance and Flight Data Application to be setup on it. The SAP JCo library is also needed to be setup as a JBoss module.
+This quickstart demonstrates the usage of the Camel SAP and it's binding feature, by retrieving a message from SAP ABAP program invocation and creating a flight booking data into SAP tables. This quickstart needs SAP instance and Flight Data Application to be setup on it (It should be done by just executing SAPBC_DATA_GENERATOR from ABAP editor. See http://help.sap.com/saphelp_erp60_sp/helpdata/en/db/7c623cf568896be10000000a11405a/content.htm for more details). The SAP JCo library is also needed to be setup as a JBoss module.
 This example application is originally created for JBoss Fuse camel-sap, and then imported as a SwitchYard quickstart. You can also see the original README here
     https://github.com/fabric8io/fabric8/blob/6.1.x/fabric/fabric8-karaf/src/main/resources/distro/fabric/import/fabric/configs/versions/1.0/profiles/example-camel-sap/ReadMe.md
 
@@ -67,7 +67,9 @@ Registering ABAP program from SAP GUI
     - Enter "Title' and 'Type' is 'Executable program'
     - Choose again 'Local Object'
     - Now you should see Editor window. Copy content of ZBOOK_FLIGHT.txt from EXAMPLE_HOME/Screenshots
-        - Click on 'Check' in the toolbar and wait for compilation and green box on the bottom
+        -> Click on 'Check' in the toolbar and wait for compilation and green box on the bottom
+        -> Click 'SAVE' button and in new dialog box just click on 'Local Object'
+        -> In ABAP Editor in toolbar there is MatchStick(Activate). Activate the program
 
 Running the quickstart
 ======================
@@ -83,11 +85,16 @@ Running the quickstart
     mvn -Pdeploy install
 
 1. Now 'Execute' the program in the SAP and define there some information
-    - you will probably need look into the table to specify good date of flight and destinations.
+    - you will probably need look into the table to specify good date of flight and destinations with using Data Browser (/nse16).
 
 1. You will see the result of flight booking request on SAP GUI window
+
+1. Undeploy the quickstart
+
+    mvn -Pundeploy clean
 
 ## Further Reading
 
 1. [SAP Binding Documentation](https://docs.jboss.org/author/display/SWITCHYARD/SAP)
 1. [JBoss Fuse SAP Component Documentation] (https://access.redhat.com/site/documentation/en-US/Red_Hat_JBoss_Fuse/6.1/html/Apache_Camel_Component_Reference/files/SAP.html)
+
