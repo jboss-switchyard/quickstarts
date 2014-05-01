@@ -137,6 +137,13 @@
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-quartz/${project.version}</bundle>
     </feature>
 
+    <feature name="switchyard-rss" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-camel</feature>
+        <feature version="${version.org.apache.camel}">camel-rss</feature>
+        <bundle>mvn:org.switchyard.components/switchyard-component-camel-atom/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.components/switchyard-component-camel-rss/${project.version}</bundle>
+    </feature>
+
     <!-- TODO: switchyard-resteasy -->
 
     <feature name="switchyard-rules" version="${project.version}" resolver="(obr)">
@@ -198,11 +205,17 @@
         <feature version="${project.version}">switchyard-soap</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-bean-service/${project.version}</bundle>
     </feature>
-    
+
     <feature name="switchyard-quickstart-camel-amqp-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-amqp</feature>
         <feature version="${project.version}">switchyard-bean</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-amqp-binding/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-camel-atom-binding" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-atom</feature>
+        <feature version="${project.version}">switchyard-bean</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-quickstart-camel-atom-binding/${project.version}</bundle>
     </feature>
 
     <!-- Works -->
@@ -265,6 +278,12 @@
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-quartz</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-quartz-binding/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-camel-rss-binding" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-rss</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-quickstart-camel-rss-binding/${project.version}</bundle>
     </feature>
 
     <!-- Requires SCA binding -->
