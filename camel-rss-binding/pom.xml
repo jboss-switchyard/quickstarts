@@ -23,7 +23,7 @@
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>switchyard-camel-rss-binding</artifactId>
+    <artifactId>switchyard-quickstart-camel-rss-binding</artifactId>
     <name>SwitchYard Quickstart: camel-rss-binding</name>
     <description>Quickstart : Camel RSS Binding</description>
     <packaging>bundle</packaging>
