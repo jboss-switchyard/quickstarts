@@ -49,7 +49,7 @@ public abstract class CamelJpaBindingTest {
         ds.setPassword("sa");
 
         InitialContext initialContext = new InitialContext();
-        bind(initialContext, "java:jboss/datasources/ExampleDS", ds);
+        bind(initialContext, System.getProperty("jpa.persistence.datasource.name"), ds);
 
     }
 

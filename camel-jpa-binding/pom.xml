@@ -47,6 +47,7 @@
             osgi.extender; filter:="(osgi.extender=pax.cdi)"
         </switchyard.osgi.require.capability>
         <switchyard.osgi.provide.capability />
+        <jpa.persistence.datasource.name>java:jboss/datasources/ExampleDS</jpa.persistence.datasource.name>
     </properties>
     <dependencies>
         <dependency>
@@ -60,10 +61,6 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel-quartz</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -97,7 +94,61 @@
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/switchyard.xml</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                        <configuration>
+                            <delimiters>
+                                <delimiter>${*}</delimiter>
+                            </delimiters>
+                            <useDefaultDelimiters>false</useDefaultDelimiters>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-resources</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testResources</goal>
+                        </goals>
+                        <configuration>
+                            <delimiters>
+                                <delimiter>${*}</delimiter>
+                            </delimiters>
+                            <useDefaultDelimiters>false</useDefaultDelimiters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <jpa.persistence.datasource.name>${jpa.persistence.datasource.name}</jpa.persistence.datasource.name>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-plugin</artifactId>
@@ -143,6 +194,16 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Meta-Persistence>META-INF/persistence.xml</Meta-Persistence>
+                    </instructions>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -150,6 +211,12 @@
             <id>deploy</id>
             <properties>
                 <deploy.skip>false</deploy.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>karaf</id>
+            <properties>
+                <jpa.persistence.datasource.name>osgi:service/jboss/datasources/ExampleDS</jpa.persistence.datasource.name>
             </properties>
         </profile>
     </profiles>
