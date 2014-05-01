@@ -13,6 +13,8 @@
  */
 package org.switchyard.component.camel.jpa.deploy;
 
+import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.component.camel.common.deploy.BaseBindingActivator;
 import org.switchyard.component.camel.common.deploy.BaseBindingComponent;
 import org.switchyard.component.camel.jpa.model.v1.V1CamelJpaBindingModel;
 
@@ -28,4 +30,8 @@ public class CamelJpaComponent extends BaseBindingComponent {
         super("CamelJpaComponent", V1CamelJpaBindingModel.JPA);
     }
 
+    @Override
+    protected BaseBindingActivator createActivator(SwitchYardCamelContext context, String... types) {
+        return new CamelJpaActivator(context, types);
+    }
 }

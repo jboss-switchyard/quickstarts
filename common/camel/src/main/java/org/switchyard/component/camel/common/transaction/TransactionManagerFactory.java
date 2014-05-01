@@ -15,6 +15,7 @@ package org.switchyard.component.camel.common.transaction;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.transaction.TransactionManager;
 
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
@@ -43,6 +44,11 @@ public final class TransactionManagerFactory {
     public static final String JBOSS_TRANSACTION_SYNC_REG = "java:jboss/TransactionSynchronizationRegistry";
 
     /**
+     * OSGi specific TransactionManager JNDI name.
+     */
+    public static final String OSGI_TRANSACTION_MANAGER = "osgi:service/javax.transaction.TransactionManager";
+
+    /**
      * Configuration name for the JtaTransactionManager.
      */
     public static final String TM = "jtaTransactionManager";
@@ -67,16 +73,23 @@ public final class TransactionManagerFactory {
      * @return {@link PlatformTransactionManager} the created PlatformTransactionManager.
      */
     public PlatformTransactionManager create() {
-        final JtaTransactionManager transactionManager = new JtaTransactionManager();
+        JtaTransactionManager transactionManager;
 
         if (isBound(JBOSS_USER_TRANSACTION)) {
+            transactionManager = new JtaTransactionManager();
             transactionManager.setUserTransactionName(JBOSS_USER_TRANSACTION);
             transactionManager.setTransactionManagerName(JBOSS_TRANSACTION_MANANGER);
             transactionManager.setTransactionSynchronizationRegistryName(JBOSS_TRANSACTION_SYNC_REG);
+        } else if (isBound(OSGI_TRANSACTION_MANAGER)) {
+            transactionManager = new JtaTransactionManager((TransactionManager)lookupInJndi(OSGI_TRANSACTION_MANAGER));
         } else if (isBound(JtaTransactionManager.DEFAULT_USER_TRANSACTION_NAME)) {
+            transactionManager = new JtaTransactionManager();
             transactionManager.setUserTransactionName(JtaTransactionManager.DEFAULT_USER_TRANSACTION_NAME);
         } else {
-            throw CommonCamelMessages.MESSAGES.couldNotCreateAJtaTransactionManagerAsNoTransactionManagerWasFoundJBOSSUSERTRANSACTION(JBOSS_USER_TRANSACTION, JtaTransactionManager.DEFAULT_USER_TRANSACTION_NAME);
+            throw CommonCamelMessages.MESSAGES.couldNotCreateAJtaTransactionManagerAsNoTransactionManagerWasFoundJBOSSUSERTRANSACTION(
+                    JBOSS_USER_TRANSACTION,
+                    OSGI_TRANSACTION_MANAGER,
+                    JtaTransactionManager.DEFAULT_USER_TRANSACTION_NAME);
         }
 
         // Initialize the transaction manager.

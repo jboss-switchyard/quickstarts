@@ -130,11 +130,12 @@ public interface CommonCamelMessages {
     /**
      * couldNotCreateAJtaTransactionManagerAsNoTransactionManagerWasFoundJBOSSUSERTRANSACTION method definition.
      * @param userTransaction userTransaction
+     * @param osgitm OSGi TransactionManager name
      * @param defaultUserTransaction defaultUserTransaction
      * @return SwitchYardException
      */
-    @Message(id = 34318, value = "Could not create a JtaTransactionManager as no TransactionManager was found in JNDI. Tried [%s, %s]")
-    SwitchYardException couldNotCreateAJtaTransactionManagerAsNoTransactionManagerWasFoundJBOSSUSERTRANSACTION(String userTransaction, String defaultUserTransaction);
+    @Message(id = 34318, value = "Could not create a JtaTransactionManager as no TransactionManager was found in JNDI. Tried [%s, %s, %s]")
+    SwitchYardException couldNotCreateAJtaTransactionManagerAsNoTransactionManagerWasFoundJBOSSUSERTRANSACTION(String userTransaction, String osgitm, String defaultUserTransaction);
 
     /**
      * unexpectedExceptionRetrieving method definition.

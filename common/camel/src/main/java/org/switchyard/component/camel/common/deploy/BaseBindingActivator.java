@@ -42,13 +42,17 @@ public class BaseBindingActivator extends BaseCamelActivator {
         if (binding.isServiceBinding()) {
             return createInboundHandler(serviceName, binding);
         } else {
-            return new OutboundHandler(binding, getCamelContext(), CamelComposition
-                .getMessageComposer(binding), getServiceDomain());
+            return createOutboundHandler(binding);
         }
     }
 
     protected <T extends CamelBindingModel> InboundHandler<T> createInboundHandler(QName serviceName, T binding) {
         return new InboundHandler<T>(binding, getCamelContext(), serviceName, getServiceDomain());
+    }
+
+    protected <T extends CamelBindingModel> OutboundHandler createOutboundHandler(T binding) {
+        return new OutboundHandler(binding, getCamelContext(), CamelComposition
+                .getMessageComposer(binding), getServiceDomain());
     }
 
     @Override
