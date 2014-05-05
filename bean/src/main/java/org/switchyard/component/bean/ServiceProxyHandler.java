@@ -119,7 +119,11 @@ public class ServiceProxyHandler extends BaseServiceHandler implements ServiceHa
         for (Field field : _serviceBean.getClass().getDeclaredFields()) {
             Property propAnno = field.getAnnotation(Property.class);
             if (propAnno != null) {
-                Object property = resolver.resolveProperty(propAnno.name());
+                String propertyName = propAnno.name();
+                if (propertyName.equals("")) {
+                    propertyName = field.getName();
+                }
+                Object property = resolver.resolveProperty(propertyName);
                 if (property != null) {
                     if (field.getType().isAssignableFrom(property.getClass())) {
                         new FieldAccess<Object>(field).write(_serviceBean, property);
