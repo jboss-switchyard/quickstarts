@@ -72,6 +72,7 @@
     
     <feature name="switchyard-common-camel" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-cdi</feature>
+        <feature version="${version.org.apache.camel}">camel-spring</feature>
         <bundle>mvn:org.switchyard/switchyard-common-camel/${project.version}</bundle>
     </feature>
     
@@ -394,6 +395,22 @@
         <feature version="${project.version}">switchyard-camel</feature>
         <feature version="${project.version}">switchyard-sap</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-sap-binding/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-demo-policy-transaction" version="${project.version}" resolver="(obr)">
+        <feature>jndi</feature>
+        <feature>transaction</feature>
+        <config name="org.apache.aries.transaction">
+            aries.transaction.recoverable = true
+            aries.transaction.timeout = 600
+            aries.transaction.howl.maxLogFiles = 2
+            aries.transaction.howl.maxBlocksPerFile = 512
+            aries.transaction.howl.bufferSizeKBytes = 4
+        </config>
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-jms</feature>
+        <feature version="5.9.0">activemq-broker</feature>
+        <bundle>mvn:org.switchyard.quickstarts.demos/switchyard-demo-policy-transaction/${project.version}</bundle>
     </feature>
 
 </features>
