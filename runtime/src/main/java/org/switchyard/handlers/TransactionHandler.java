@@ -14,7 +14,6 @@
 
 package org.switchyard.handlers;
 
-import javax.naming.InitialContext;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -26,12 +25,12 @@ import org.switchyard.ExchangeHandler;
 import org.switchyard.HandlerException;
 import org.switchyard.Property;
 import org.switchyard.Scope;
-import org.switchyard.common.util.ProviderRegistry;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.policy.PolicyUtil;
 import org.switchyard.policy.TransactionPolicy;
 import org.switchyard.runtime.RuntimeLogger;
 import org.switchyard.runtime.RuntimeMessages;
+import org.switchyard.runtime.util.TransactionManagerLocator;
 
 
 /**
@@ -40,7 +39,6 @@ import org.switchyard.runtime.RuntimeMessages;
  */
 public class TransactionHandler implements ExchangeHandler {
     
-    private static final String JNDI_TRANSACTION_MANAGER = "java:jboss/TransactionManager";
     private static final String SUSPENDED_TRANSACTION_PROPERTY = 
             "org.switchyard.exchange.transaction.suspended";
     private static final String INITIATED_TRANSACTION_PROPERTY = 
@@ -56,14 +54,9 @@ public class TransactionHandler implements ExchangeHandler {
      * Create a new TransactionHandler.
      */
     public TransactionHandler() {
-        _transactionManager = ProviderRegistry.getProvider(TransactionManager.class);
+        _transactionManager = TransactionManagerLocator.locateTransactionManager();
         if (_transactionManager == null) {
-            try {
-                _transactionManager = (TransactionManager) new InitialContext().lookup(JNDI_TRANSACTION_MANAGER);
-            } catch (javax.naming.NamingException nmEx) {
-                _log.debug("Unable to find TransactionManager in JNDI at " + TransactionHandler.JNDI_TRANSACTION_MANAGER
-                        + " - Transaction Policy handling will not be available.");
-            }
+            _log.debug("Unable to find TransactionManager - Transaction Policy handling will not be available.");
         }
     }
     
@@ -264,7 +257,7 @@ public class TransactionHandler implements ExchangeHandler {
 
     private void startTransaction(Exchange exchange) throws HandlerException {
         if (_log.isDebugEnabled()) {
-            _log.debug("creating new transaction");
+            printDebugInfo("Creating new transaction");
         }
 
         int txStatus = getCurrentTransactionStatus();
@@ -277,7 +270,13 @@ public class TransactionHandler implements ExchangeHandler {
             } catch (Exception e) {
                 throw RuntimeMessages.MESSAGES.failedCreateNewTransaction(e);
             }
-            exchange.getContext().setProperty(INITIATED_TRANSACTION_PROPERTY, transaction, Scope.EXCHANGE).addLabels(BehaviorLabel.TRANSIENT.label());
+
+            if (transaction != null) {
+                if (_log.isDebugEnabled()) {
+                    printDebugInfo("Created new transaction");
+                }
+                exchange.getContext().setProperty(INITIATED_TRANSACTION_PROPERTY, transaction, Scope.EXCHANGE).addLabels(BehaviorLabel.TRANSIENT.label());
+            }
         } else {
             throw RuntimeMessages.MESSAGES.transactionAlreadyExists();
         }
@@ -285,7 +284,7 @@ public class TransactionHandler implements ExchangeHandler {
     
     private void endTransaction() throws HandlerException {
         if (_log.isDebugEnabled()) {
-            _log.debug("completing transaction");
+            printDebugInfo("Completing transaction");
         }
         
         int txStatus = getCurrentTransactionStatus();
@@ -294,7 +293,7 @@ public class TransactionHandler implements ExchangeHandler {
             try {
                 _transactionManager.rollback();
                 if (_log.isDebugEnabled()) {
-                    _log.debug("Transaction rolled back as it has been marked as RollbackOnly");
+                    printDebugInfo("Transaction rolled back as it has been marked as RollbackOnly");
                 }
             } catch (Exception e) {
                 throw RuntimeMessages.MESSAGES.failedToRollbackTransaction(e);
@@ -303,7 +302,7 @@ public class TransactionHandler implements ExchangeHandler {
             try {
                 _transactionManager.commit();
                 if (_log.isDebugEnabled()) {
-                    _log.debug("Transaction has been committed");
+                    printDebugInfo("Transaction has been committed");
                 }
             } catch (Exception e) {
                 throw RuntimeMessages.MESSAGES.failedToCommitTransaction(e);
@@ -315,7 +314,7 @@ public class TransactionHandler implements ExchangeHandler {
 
     private void suspendTransaction(Exchange exchange) {
         if (_log.isDebugEnabled()) {
-            _log.debug("Suspending active transaction for exchange.");
+            printDebugInfo("Suspending active transaction");
         }
 
         Transaction transaction = null;
@@ -325,6 +324,9 @@ public class TransactionHandler implements ExchangeHandler {
             RuntimeLogger.ROOT_LOGGER.failedToSuspendTransactionOnExchange(sysEx);
         }
         if (transaction != null) {
+            if (_log.isDebugEnabled()) {
+                printDebugInfo("Suspended active transaction");
+            }
             exchange.getContext().setProperty(SUSPENDED_TRANSACTION_PROPERTY, transaction, Scope.EXCHANGE).addLabels(BehaviorLabel.TRANSIENT.label());
         }
     }
@@ -332,9 +334,14 @@ public class TransactionHandler implements ExchangeHandler {
     private void resumeTransaction(Transaction transaction) {
         try {
             if (_log.isDebugEnabled()) {
-                _log.debug("Resuming suspended transaction");
+                printDebugInfo("Resuming suspended transaction");
             }
+
             _transactionManager.resume(transaction);
+
+            if (_log.isDebugEnabled()) {
+                printDebugInfo("Resumed suspended transaction");
+            }
         } catch (Exception ex) {
             RuntimeLogger.ROOT_LOGGER.failedToResumeTransaction(ex);
         }
@@ -354,5 +361,23 @@ public class TransactionHandler implements ExchangeHandler {
         } catch (Exception e) {
             throw RuntimeMessages.MESSAGES.failedToRetrieveStatus(e);
         }
+    }
+
+    private void printDebugInfo(String message) {
+        StringBuilder buf = new StringBuilder(message);
+        buf.append(" - [Thread: ");
+        buf.append(Thread.currentThread().toString());
+        buf.append(", Transaction: ");
+        Transaction currentTx = null;
+        try {
+            currentTx = getCurrentTransaction();
+        } catch (Exception e) { e.getMessage(); } // ignore
+        if (currentTx == null) {
+            buf.append("N/A");
+        } else {
+            buf.append(currentTx.toString());
+        }
+        buf.append(']');
+        _log.debug(buf.toString());
     }
 }
