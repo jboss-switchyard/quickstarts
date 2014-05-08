@@ -19,6 +19,7 @@ package org.switchyard.quickstarts.validate.xml;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
@@ -32,17 +33,22 @@ public class WebServiceTest {
 
     private HTTPMixIn httpMixIn;
 
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "8081");
+    }
+
     @Test
     public void invokeOrderWebService() throws Exception {
         httpMixIn.
-            postResourceAndTestXML("http://localhost:18001/quickstart-validate-xml/OrderService", "/xml/soap-request.xml", "/xml/soap-response.xml");
+            postResourceAndTestXML("http://localhost:8081/quickstart-validate-xml/OrderService", "/xml/soap-request.xml", "/xml/soap-response.xml");
     }
 
     @Test
     public void invokeOrderWebServiceValidationFail() throws Exception {
         String response = httpMixIn.
-            postResource("http://localhost:18001/quickstart-validate-xml/OrderService", "/xml/soap-request-with-invalid-element.xml");
-        Assert.assertTrue(response.contains("Invalid content was found starting with element 'invalid-element'. No child element is expected at this point."));
+            postResource("http://localhost:8081/quickstart-validate-xml/OrderService", "/xml/soap-request-with-invalid-element.xml");
+        Assert.assertTrue("Unexpected response: " + response, response.contains("1 validation error(s)") && response.contains("invalid-element"));
     }
 
     /*
@@ -51,7 +57,7 @@ public class WebServiceTest {
     @Test
     public void invokeOrderWebServiceWithInvalidElement() throws Exception {
         httpMixIn.
-            postResourceAndTestXML("http://localhost:18001/quickstart-validate-xml/OrderService", "/xml/soap-request-with-invalid-element.xml", "/xml/soap-response.xml");
+            postResourceAndTestXML("http://localhost:8081/quickstart-validate-xml/OrderService", "/xml/soap-request-with-invalid-element.xml", "/xml/soap-response.xml");
     }
      */
 }

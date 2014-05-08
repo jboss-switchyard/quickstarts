@@ -20,7 +20,7 @@
             <interface.wsdl interface="wsdl/OrderService.wsdl#wsdl.porttype(OrderService)"/>
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
                 <wsdl>wsdl/OrderService.wsdl</wsdl>
-                <socketAddr>:18001</socketAddr>
+                <socketAddr>:${jettyPort}</socketAddr>
                 <contextPath>quickstart-validate-xml</contextPath>
             </binding.soap>
         </service>
@@ -32,7 +32,7 @@
         </component>
     </composite>
     <transforms>
-        <transform.xslt xmlns="urn:switchyard-config:transform:1.0" from="{urn:switchyard-quickstart:validate-xml:0.1.0}order" to="{urn:switchyard-quickstart:validate-xml:0.1.0}orderAck" xsltFile="xslt/order.xslt"/>
+        <transform.xslt xmlns="urn:switchyard-config:transform:1.0" from="{urn:switchyard-quickstart:validate-xml:0.1.0}order" to="{urn:switchyard-quickstart:validate-xml:0.1.0}orderAck" xsltFile="xslt/order.xslt" failOnWarning="false"/>
     </transforms>
     <validates>
         <validate.xml xmlns="urn:switchyard-config:validate:1.0" name="{urn:switchyard-quickstart:validate-xml:0.1.0}order" schemaType="XML_SCHEMA" namespaceAware="true">
@@ -44,4 +44,9 @@
             </schemaCatalogs>
         </validate.xml>
     </validates>
+    <domain>
+        <properties>
+            <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+        </properties>
+    </domain>
 </switchyard>
