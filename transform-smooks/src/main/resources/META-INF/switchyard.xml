@@ -20,7 +20,7 @@
             <interface.wsdl interface="wsdl/OrderService.wsdl#wsdl.porttype(OrderService)"/>
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
                 <wsdl>wsdl/OrderService.wsdl</wsdl>
-                <socketAddr>:18001</socketAddr>
+                <socketAddr>:${jettyPort}</socketAddr>
                 <contextPath>quickstart-transform-smooks</contextPath>
             </binding.soap>
         </service>
@@ -35,4 +35,9 @@
         <transform.smooks xmlns="urn:switchyard-config:transform:1.0" from="java:org.switchyard.quickstarts.transform.smooks.OrderAck" to="{urn:switchyard-quickstart:transform-smooks:1.0}orderAck" type="JAVA2XML" config="/smooks/OrderAck_XML.xml"/>
         <transform.smooks xmlns="urn:switchyard-config:transform:1.0" from="{urn:switchyard-quickstart:transform-smooks:1.0}order" to="java:org.switchyard.quickstarts.transform.smooks.Order" type="XML2JAVA" config="/smooks/Order_XML.xml"/>
     </transforms>
+    <domain>
+        <properties>
+            <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+        </properties>
+    </domain>
 </switchyard>
