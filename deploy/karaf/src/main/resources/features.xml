@@ -376,4 +376,9 @@
         <bundle>mvn:org.switchyard.quickstarts/switchyard-transform-xslt/${project.version}</bundle>
     </feature>
 
+    <feature name="switchyard-quickstart-validate-xml" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-soap</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-validate-xml/${project.version}</bundle>
+    </feature>
 </features>
