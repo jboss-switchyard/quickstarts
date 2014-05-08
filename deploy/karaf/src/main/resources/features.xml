@@ -225,6 +225,13 @@
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-binding/${project.version}</bundle>
     </feature>
 
+    <feature name="switchyard-quickstart-camel-bindy" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-file</feature>
+        <feature version="${version.org.apache.camel}">camel-bindy</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-quickstart-camel-bindy/${project.version}</bundle>
+    </feature>
+
     <feature name="switchyard-quickstart-camel-bus-cdi" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-soap</feature>
