@@ -6,6 +6,7 @@
     <repository>mvn:org.apache.cxf.karaf/apache-cxf/${version.org.apache.cxf}/xml/features</repository>
     <repository>mvn:org.drools/drools-karaf-features/${version.org.drools}/xml/features</repository>
     <repository>mvn:org.apache.activemq/activemq-karaf/5.9.0/xml/features</repository>
+    <repository>mvn:org.milyn/milyn-smooks-all/${version.org.milyn}/xml/features</repository>
 
     <!-- Switchyard Core -->
 
@@ -32,7 +33,16 @@
         <bundle>mvn:org.jboss.logging/jboss-logging/3.1.2.GA</bundle>
         <bundle>mvn:org.codehaus.jackson/jackson-core-asl/1.9.9</bundle>
         <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.9</bundle>
+        <feature dependency="true" version="${version.net.sf.dozer}">dozer</feature>
+        <feature dependency="true" version="${version.org.milyn}">smooks</feature>
         <bundle>mvn:org.switchyard/switchyard-transform/${project.version}</bundle>
+    </feature>
+
+    <feature name="dozer" version="${version.net.sf.dozer}" resolver="(obr)">
+        <bundle dependency="true">mvn:commons-collections/commons-collections/${version.commons-collections}</bundle>
+        <bundle dependency="true">mvn:commons-beanutils/commons-beanutils/1.8.3</bundle>
+        <bundle dependency="true">mvn:org.apache.commons/commons-lang3/${version.commons-lang3}</bundle>
+        <bundle>wrap:mvn:net.sf.dozer/dozer/${version.net.sf.dozer}</bundle>
     </feature>
 
     <!-- Switchyard Components -->
@@ -334,6 +344,36 @@
         <feature version="${project.version}">switchyard-sql</feature>
         <bundle>mvn:com.h2database/h2/${version.com.h2database}</bundle>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-sql-binding/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-transform-dozer" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-sca</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-transform-dozer/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-transform-jaxb" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-soap</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-transform-jaxb/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-transform-json" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-sca</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-transform-json/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-transform-smooks" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-soap</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-transform-smooks/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-transform-xslt" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-soap</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-transform-xslt/${project.version}</bundle>
     </feature>
 
 </features>
