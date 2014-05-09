@@ -47,7 +47,7 @@ public class JmsBindingTest {
     private static final String QUEUE_FILE = "target/test-classes/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml";
     private static final String USER = "guest";
     private static final String PASSWD = "guestp.1";
-    private static final String JAR_FILE = "target/switchyard-quickstart-demo-policy-transaction.jar";
+    private static final String JAR_FILE = "target/switchyard-demo-policy-transaction.jar";
 
     @Resource(mappedName = "/ConnectionFactory")
     private ConnectionFactory _connectionFactory;

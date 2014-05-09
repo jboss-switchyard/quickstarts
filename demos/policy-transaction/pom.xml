@@ -25,6 +25,7 @@
     </parent>
     <groupId>org.switchyard.quickstarts.demos</groupId>
     <artifactId>switchyard-demo-policy-transaction</artifactId>
+    <packaging>bundle</packaging>
     <name>Quickstart Demo : Transaction Policy</name>
     <description>Quickstart Demo : Transaction Policy</description>
     <licenses>
@@ -39,6 +40,15 @@
         <deploy.skip>true</deploy.skip>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.quickstarts.demo.policy.transaction*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.require.capability>
+            org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
+            org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
+            osgi.extender; filter:="(osgi.extender=pax.cdi)"
+        </switchyard.osgi.require.capability>
+        <switchyard.osgi.provide.capability />
     </properties>
     <dependencies>
         <dependency>
@@ -51,11 +61,11 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-jca</artifactId>
+            <artifactId>switchyard-component-bean</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-bean</artifactId>
+            <artifactId>switchyard-component-camel-jms</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
@@ -119,6 +129,11 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -198,7 +213,7 @@
                 <configuration>
                     <executable>java</executable>
                     <classpathScope>test</classpathScope>
-                    <mainClass>org.switchyard.quickstarts.demo.policy.transaction.HornetQClient</mainClass>
+                    <mainClass>org.switchyard.quickstarts.demo.policy.transaction.JMSClient</mainClass>
                 </configuration>
             </plugin>
             <plugin>

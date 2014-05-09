@@ -33,6 +33,9 @@
     <logger name="org.jboss.interceptor.util.InterceptionTypeRegistry">
         <level value="ERROR"/>
     </logger>
+    <logger name="org.switchyard.handlers.TransactionHandler">
+        <level value="DEBUG"/>
+    </logger>
 
     <root>
         <level value="INFO"/>
