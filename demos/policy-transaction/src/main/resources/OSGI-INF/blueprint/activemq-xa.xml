@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="eager">
+
+    <reference id="transactionManager" interface="javax.transaction.TransactionManager" />
+
+    <bean id="internalJmsXAIn" class="org.apache.activemq.ActiveMQXAConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616" />
+        <property name="userName" value="karaf" />
+        <property name="password" value="karaf" />
+    </bean>
+    <bean id="JmsXAIn" class="org.apache.activemq.jms.pool.JcaPooledConnectionFactory" init-method="start" destroy-method="stop">
+         <property name="connectionFactory" ref="internalJmsXAIn"/>
+         <property name="transactionManager" ref="transactionManager"/>
+         <property name="name" value="activemq.broker.in" />
+    </bean>
+    <bean id="resourceManagerIn" class="org.apache.activemq.jms.pool.GenericResourceManager" init-method="recoverResource">
+         <property name="transactionManager" ref="transactionManager" />
+         <property name="connectionFactory" ref="internalJmsXAIn" />
+         <property name="resourceName" value="activemq.broker.in" />
+    </bean>
+    <service interface="javax.jms.ConnectionFactory" ref="JmsXAIn">
+        <service-properties>
+            <entry key="name" value="JmsXAIn"/>
+            <entry key="osgi.jndi.service.name" value="JmsXAIn"/>
+        </service-properties>
+    </service>
+
+    <bean id="internalJmsXAOutA" class="org.apache.activemq.ActiveMQXAConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616" />
+        <property name="userName" value="karaf" />
+        <property name="password" value="karaf" />
+    </bean>
+    <bean id="JmsXAOutA" class="org.apache.activemq.jms.pool.JcaPooledConnectionFactory" init-method="start" destroy-method="stop">
+         <property name="connectionFactory" ref="internalJmsXAOutA"/>
+         <property name="transactionManager" ref="transactionManager"/>
+         <property name="name" value="activemq.broker.out.a" />
+    </bean>
+    <bean id="resourceManagerOutA" class="org.apache.activemq.jms.pool.GenericResourceManager" init-method="recoverResource">
+         <property name="transactionManager" ref="transactionManager" />
+         <property name="connectionFactory" ref="internalJmsXAOutA" />
+         <property name="resourceName" value="activemq.broker.out.a" />
+    </bean>
+    <service interface="javax.jms.ConnectionFactory" ref="JmsXAOutA">
+        <service-properties>
+            <entry key="name" value="JmsXAOutA"/>
+            <entry key="osgi.jndi.service.name" value="JmsXAOutA"/>
+        </service-properties>
+    </service>
+
+    <bean id="internalJmsXAOutB" class="org.apache.activemq.ActiveMQXAConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616" />
+        <property name="userName" value="karaf" />
+        <property name="password" value="karaf" />
+    </bean>
+    <bean id="JmsXAOutB" class="org.apache.activemq.jms.pool.JcaPooledConnectionFactory" init-method="start" destroy-method="stop">
+         <property name="connectionFactory" ref="internalJmsXAOutB"/>
+         <property name="transactionManager" ref="transactionManager"/>
+         <property name="name" value="activemq.broker.out.b" />
+    </bean>
+    <bean id="resourceManagerOutB" class="org.apache.activemq.jms.pool.GenericResourceManager" init-method="recoverResource">
+         <property name="transactionManager" ref="transactionManager" />
+         <property name="connectionFactory" ref="internalJmsXAOutB" />
+         <property name="resourceName" value="activemq.broker.out.b" />
+    </bean>
+    <service interface="javax.jms.ConnectionFactory" ref="JmsXAOutB">
+        <service-properties>
+            <entry key="name" value="JmsXAOutB"/>
+            <entry key="osgi.jndi.service.name" value="JmsXAOutB"/>
+        </service-properties>
+    </service>
+
+    <bean id="internalJmsXAOutC" class="org.apache.activemq.ActiveMQXAConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616" />
+        <property name="userName" value="karaf" />
+        <property name="password" value="karaf" />
+    </bean>
+    <bean id="JmsXAOutC" class="org.apache.activemq.jms.pool.JcaPooledConnectionFactory" init-method="start" destroy-method="stop">
+         <property name="connectionFactory" ref="internalJmsXAOutC"/>
+         <property name="transactionManager" ref="transactionManager"/>
+         <property name="name" value="activemq.broker.out.c" />
+    </bean>
+    <bean id="resourceManagerOutC" class="org.apache.activemq.jms.pool.GenericResourceManager" init-method="recoverResource">
+         <property name="transactionManager" ref="transactionManager" />
+         <property name="connectionFactory" ref="internalJmsXAOutC" />
+         <property name="resourceName" value="activemq.broker.out.c" />
+    </bean>
+    <service interface="javax.jms.ConnectionFactory" ref="JmsXAOutC">
+        <service-properties>
+            <entry key="name" value="JmsXAOutC"/>
+            <entry key="osgi.jndi.service.name" value="JmsXAOutC"/>
+        </service-properties>
+    </service>
+
+</blueprint>

@@ -17,7 +17,6 @@
 package org.switchyard.quickstarts.demo.policy.transaction;
 
 import javax.inject.Inject;
-import javax.naming.InitialContext;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
@@ -25,6 +24,7 @@ import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.policy.TransactionPolicy;
+import org.switchyard.runtime.util.TransactionManagerLocator;
 
 /**
  *  Transactional service implementation. To trigger a rollback on the 
@@ -36,8 +36,6 @@ public class TaskAServiceBean implements TaskAService {
 
     /** rollback command for this subtask. */
     public static final String ROLLBACK = WorkServiceBean.ROLLBACK + ".A";
-
-    private static final String JNDI_TRANSACTION_MANAGER = "java:jboss/TransactionManager";
 
     // counts the number of times a rollback has occurred
     private int _rollbackCounter = 0;
@@ -79,8 +77,7 @@ public class TaskAServiceBean implements TaskAService {
     }
 
     private Transaction getCurrentTransaction() throws Exception {
-        TransactionManager tm = (TransactionManager)
-            new InitialContext().lookup(JNDI_TRANSACTION_MANAGER);
+        TransactionManager tm = TransactionManagerLocator.locateTransactionManager();
         return tm.getTransaction();
     }
 
