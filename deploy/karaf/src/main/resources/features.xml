@@ -7,6 +7,7 @@
     <repository>mvn:org.drools/drools-karaf-features/${version.org.drools}/xml/features</repository>
     <repository>mvn:org.apache.activemq/activemq-karaf/5.9.0/xml/features</repository>
     <repository>mvn:org.milyn/milyn-smooks-all/${version.org.milyn}/xml/features</repository>
+    <repository>mvn:org.fusesource/camel-sap/${version.camelsap}/xml/features</repository>
 
     <!-- Switchyard Core -->
 
@@ -208,6 +209,12 @@
         <bundle>mvn:org.switchyard.components/switchyard-component-soap/${project.version}</bundle>
     </feature>
 
+    <feature name="switchyard-sap" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-camel</feature>
+        <feature version="${version.camelsap}">camel-sap</feature>
+        <bundle>mvn:org.switchyard.components/switchyard-component-camel-sap/${project.version}</bundle>
+    </feature>
+
     <!-- Switchyard Quickstarts -->
 
     <feature name="switchyard-quickstart-bean-service" version="${project.version}" resolver="(obr)">
@@ -381,4 +388,12 @@
         <feature version="${project.version}">switchyard-soap</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-validate-xml/${project.version}</bundle>
     </feature>
+
+    <feature name="switchyard-quickstart-camel-sap-binding" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-camel</feature>
+        <feature version="${project.version}">switchyard-sap</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-sap-binding/${project.version}</bundle>
+    </feature>
+
 </features>
