@@ -20,7 +20,7 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>switchyard-bpel-jms-binding</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard Quickstart: bpel-jms-binding</name>
     <description>Quickstart : BPEL Service : JMS Binding</description>
     <licenses>
@@ -34,6 +34,9 @@
         <deploy.skip>true</deploy.skip>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <switchyard.osgi.export/>
+        <switchyard.osgi.require.capability/>
+        <switchyard.osgi.provide.capability />
     </properties>
     <dependencies>
         <dependency>
@@ -60,6 +63,11 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-test-mixin-hornetq</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -108,7 +116,7 @@
                 <configuration>
                     <executable>java</executable>
                     <classpathScope>test</classpathScope>
-                    <mainClass>org.switchyard.quickstarts.bpel.service.hello.HornetQClient</mainClass>
+                    <mainClass>org.switchyard.quickstarts.bpel.service.hello.JMSClient</mainClass>
                     <arguments>
                         <argument>Skippy</argument>
                     </arguments>

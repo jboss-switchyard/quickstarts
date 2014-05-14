@@ -18,6 +18,7 @@ package org.switchyard.quickstarts.bpel.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
@@ -32,6 +33,11 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 public class WebServiceTest {
 
     private HTTPMixIn httpMixIn;
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "18001");
+    }
 
     @Test
     public void sayHello() throws Exception {
