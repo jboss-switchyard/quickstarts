@@ -13,12 +13,13 @@
  */
 package org.switchyard.component.bpel.deploy;
 
+import java.util.Properties;
+
 import org.jboss.logging.Logger;
 import org.apache.ode.bpel.evt.BpelEvent;
 import org.riftsaw.engine.BPELEngine;
-import org.riftsaw.engine.BPELEngineFactory;
 import org.riftsaw.engine.BPELEngineListener;
-import org.riftsaw.engine.internal.BPELEngineImpl;
+import org.riftsaw.engine.ServiceLocator;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.bpel.riftsaw.RiftsawServiceLocator;
 import org.switchyard.config.Configuration;
@@ -34,17 +35,22 @@ public class BPELComponent extends BaseComponent {
 
     private static final Logger LOG = Logger.getLogger(BPELComponent.class);
     
-    private static BPELEngine _engine = null;
-    private static java.util.Properties _config=null;
-    private static RiftsawServiceLocator _locator=new RiftsawServiceLocator();
-    private static boolean _initialized=false;
+    private final BPELEngineInstance _bpelEngineInstance;
+    private static java.util.Properties _config;
+    private static BPELEngine _engine;
+    private static boolean _initialized;
     
     /**
      * Default constructor.
      */
     public BPELComponent() {
+        this(new BPELEngineInstanceImpl());
+    }
+
+    protected BPELComponent(BPELEngineInstance bpelEngineInstance) {
         super(BPELActivator.BPEL_TYPE);
         setName("BPELComponent");
+        _bpelEngineInstance = bpelEngineInstance;
     }
 
     /* (non-Javadoc)
@@ -61,80 +67,72 @@ public class BPELComponent extends BaseComponent {
      * This method initializes the configuration information for use
      * by the BPEL engine.
      */
-    protected synchronized void initConfig() {
-        if (_initialized) {
-            return;
-        }
-        
-        BPELLogger.ROOT_LOGGER.initBPELComponent();
-        
-        ClassLoader current=Thread.currentThread().getContextClassLoader();
-        
-        Thread.currentThread().setContextClassLoader(BPELComponent.class.getClassLoader());
-
-        try {
-            // Initialize the BPEL engine service locator
-            BPELEngineFactory.setServiceLocator(_locator);
+    protected void initConfig() {
+        synchronized (BPELComponent.class) {
+            if (_initialized) {
+                return;
+            }
             
-            // Initialize the BPEL engine configuration
-            _config = new java.util.Properties();
-
-            // Load default properties
+            BPELLogger.ROOT_LOGGER.initBPELComponent();
+            
+            ClassLoader current=Thread.currentThread().getContextClassLoader();
+            
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+    
             try {
-                java.io.InputStream is=BPELEngineImpl.class.getClassLoader().getResourceAsStream("bpel.properties");
-        
-                _config.load(is);
-            } catch (Exception e) {
-                throw BPELMessages.MESSAGES.failedToLoadDefaultProperties(e);
-            }
-
-            if (getConfig() != null) {
-                // Overwrite default properties with values from configuration
-                for (Configuration child : getConfig().getChildren()) {
-                    if (LOG.isDebugEnabled()) {
-                        if (_config.containsKey(child.getName())) {
-                            LOG.debug("Overriding BPEL property: "+child.getName()
-                                    +" = "+child.getValue());
-                        } else {
-                            LOG.debug("Setting BPEL property: "+child.getName()
-                                    +" = "+child.getValue());
-                        }
-                    }
-                    _config.put(child.getName(), child.getValue());
+                // Initialize the BPEL engine configuration
+                _config = new java.util.Properties();
+    
+                // Load default properties
+                try {
+                    java.io.InputStream is = getClass().getClassLoader().getResourceAsStream("bpel.properties");
+            
+                    _config.load(is);
+                } catch (Exception e) {
+                    throw BPELMessages.MESSAGES.failedToLoadDefaultProperties(e);
                 }
+    
+                if (getConfig() != null) {
+                    // Overwrite default properties with values from configuration
+                    for (Configuration child : getConfig().getChildren()) {
+                        if (LOG.isDebugEnabled()) {
+                            if (_config.containsKey(child.getName())) {
+                                LOG.debug("Overriding BPEL property: "+child.getName()
+                                        +" = "+child.getValue());
+                            } else {
+                                LOG.debug("Setting BPEL property: "+child.getName()
+                                        +" = "+child.getValue());
+                            }
+                        }
+                        _config.put(child.getName(), child.getValue());
+                    }
+                }
+                _bpelEngineInstance.init(new RiftsawServiceLocator(), _config);
+            } finally {
+                Thread.currentThread().setContextClassLoader(current);
             }
             
-            BPELEngineFactory.setConfig(_config);
-            
-        } finally {
-            Thread.currentThread().setContextClassLoader(current);
+            _initialized = true;
         }
-        
-        _initialized = true;
     }
     
     protected BPELEngine getEngine(final ServiceDomain domain) {
-        
-        synchronized (this) {
+        synchronized (BPELComponent.class) {
             if (_engine == null) {
                 initConfig();
-                
                 try {
-                    _engine = BPELEngineFactory.getEngine();
-                    
-                    _engine.register(new BPELEngineListener() {
-                        public void onEvent(BpelEvent bpelEvent) {
-                            domain.getEventPublisher().publish(bpelEvent);
-                        }
-                    });
-                    
+                    _engine = _bpelEngineInstance.getBPELEngine();
                 } catch (Exception e) {
                     throw BPELMessages.MESSAGES.failedToInitializeTheEngine(e);
                 }
+                _engine.register(new BPELEngineListener() {
+                    public void onEvent(BpelEvent bpelEvent) {
+                        domain.getEventPublisher().publish(bpelEvent);
+                    }
+                });
             }
         }
-        
-        return (_engine);
+        return _engine;
     }
 
     /**
@@ -145,14 +143,16 @@ public class BPELComponent extends BaseComponent {
         super.destroy();
 
         BPELLogger.ROOT_LOGGER.destroyBPELComponent();
-        if (_engine != null) {
-            try {
-                synchronized (_engine) {
-                   _engine.close();
-                    _engine = null;
+        synchronized (BPELComponent.class) {
+            if (_engine != null) {
+                try {
+                    synchronized (_engine) {
+                        _bpelEngineInstance.dispose();
+                        _engine = null;
+                    }
+                } catch (Exception e) {
+                    BPELLogger.ROOT_LOGGER.failedToCloseBPELEngine(e);
                 }
-            } catch (Exception e) {
-                BPELLogger.ROOT_LOGGER.failedToCloseBPELEngine(e);
             }
         }
     }
@@ -162,18 +162,76 @@ public class BPELComponent extends BaseComponent {
      */
     @Override
     public Activator createActivator(ServiceDomain domain) {
-        BPELEngine engine=null;
-        
-        if (domain != null) {
-            engine = getEngine(domain);
+        if (domain == null) {
+            throw new NullPointerException("domain cannot be null");
         }
-        
-        BPELActivator activator=new BPELActivator(engine, _locator,
-                                    _config);
-        
+
+        BPELEngine engine = getEngine(domain);
+        BPELActivator activator = new BPELActivator(engine, (RiftsawServiceLocator) engine.getServiceLocator(), _config);
         activator.setServiceDomain(domain);
-        
+
         return activator;
     }
+
+    /**
+     * Simple interface for managing the BPELEngine.
+     */
+    protected static interface BPELEngineInstance {
+        
+        /**
+         * Initialize the factory.
+         * 
+         * @param serviceLocator the service locator.
+         * @param config the configuration.
+         */
+        public void init(ServiceLocator serviceLocator, java.util.Properties config);
+
+        /**
+         * Returns the BPELEngine instance.
+         * 
+         * @return the BPELEngine.
+         * @throws Exception if something goes awry.
+         */
+        public BPELEngine getBPELEngine() throws Exception;
+        
+        /**
+         * Dispose any resources allocated by the factory.
+         * 
+         * @throws Exception if something goes awry.
+         */
+        public void dispose() throws Exception;
+    }
     
+    private static final class BPELEngineInstanceImpl implements BPELEngineInstance {
+        
+        private BPELEngine _engine;
+        
+        @Override
+        public synchronized void init(ServiceLocator serviceLocator, Properties config) {
+            org.riftsaw.engine.BPELEngineFactory.setConfig(config);
+            org.riftsaw.engine.BPELEngineFactory.setServiceLocator(serviceLocator);
+        }
+
+        @Override
+        public synchronized BPELEngine getBPELEngine() throws Exception {
+            if (_engine == null) {
+                final ClassLoader origTCCL = Thread.currentThread().getContextClassLoader();
+                try {
+                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                    _engine = org.riftsaw.engine.BPELEngineFactory.getEngine();
+                } finally {
+                    Thread.currentThread().setContextClassLoader(origTCCL);
+                }
+            }
+            return _engine;
+        }
+        
+        @Override
+        public synchronized void dispose() throws Exception {
+            if (_engine != null) {
+                _engine.close();
+                _engine = null;
+            }
+        }
+    }
 }

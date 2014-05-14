@@ -13,9 +13,10 @@
  */
 package org.switchyard.component.bpel.exchange;
 
-import java.util.ServiceLoader;
+import java.util.List;
 
 import org.switchyard.ServiceDomain;
+import org.switchyard.common.util.ProviderRegistry;
 
 /**
  * Creates BPELExchangeHandlers via the JDK ServiceLoader mechanism.
@@ -25,7 +26,7 @@ public abstract class BPELExchangeHandlerFactory {
 
     private static final BPELExchangeHandlerFactory INSTANCE;
     static {
-        ServiceLoader<BPELExchangeHandlerFactory> services = ServiceLoader.load(BPELExchangeHandlerFactory.class);
+        List<BPELExchangeHandlerFactory> services = ProviderRegistry.getProviders(BPELExchangeHandlerFactory.class);
         INSTANCE = services.iterator().next();
     }
 

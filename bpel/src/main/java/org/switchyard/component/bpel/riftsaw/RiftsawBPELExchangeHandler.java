@@ -112,7 +112,7 @@ public class RiftsawBPELExchangeHandler extends BaseServiceHandler implements BP
      * @return The deployment name
      * @throws Exception Failed to obtain the deployment name
      */
-    private String getDeploymentName() throws Exception {
+    protected String getDeploymentName() throws Exception {
         String ret=null;
         
         java.net.URL url = Thread.currentThread().
@@ -156,7 +156,7 @@ public class RiftsawBPELExchangeHandler extends BaseServiceHandler implements BP
      * @return The deployment
      * @throws Exception Failed to obtain deployment folder/archive
      */
-    private java.io.File getDeployment() throws Exception {
+    protected java.io.File getDeployment() throws Exception {
         java.io.File ret = null;
 
         java.net.URL url = Thread.currentThread().
