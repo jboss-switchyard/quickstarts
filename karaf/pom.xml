@@ -28,6 +28,7 @@
     <modules>
         <module>deploy</module>
         <module>commands</module>
+        <module>bpel</module>
         <module>features</module>
         <module>tests</module>
     </modules>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0"
+  default-activation="lazy">
+
+  <reference id="UserTransaction" interface="javax.transaction.UserTransaction"/>
+  <reference id="TransactionManager" interface="javax.transaction.TransactionManager"/>
+  <reference id="PersistenceProvider" interface="javax.persistence.spi.PersistenceProvider"/>
+
+  <bean id="RiftsawDS" class="org.h2.jdbcx.JdbcDataSource">
+    <property name="URL" value="jdbc:h2:mem:jpadb;DB_CLOSE_DELAY=-1" />
+    <property name="user" value="sa" />
+  </bean>
+
+  <service ref="RiftsawDS" interface="javax.sql.DataSource">
+    <service-properties>
+      <entry key="osgi.jndi.service.name" value="jdbc/RiftsawDS" />
+    </service-properties>
+  </service>
+
+  <cm:cm-properties id="bpel.properties" persistent-id="org.switchyard.component.bpel"/>
+
+  <bean id="BPELEngineFactory" class="org.switchyard.component.bpel.osgi.BPELEngineFactory">
+    <property name="serviceLocator">
+      <bean class="org.switchyard.component.bpel.riftsaw.RiftsawServiceLocator" />
+    </property>
+    <property name="configuration" ref="bpel.properties"/>
+    <property name="transactionManager" ref="TransactionManager"/>
+  </bean>
+
+  <bean id="BPELEngine" class="org.riftsaw.engine.internal.BPELEngineImpl" factory-ref="BPELEngineFactory"
+    factory-method="createEngine" destroy-method="close" />
+
+  <service ref="BPELEngine" interface="org.riftsaw.engine.BPELEngine" depends-on="TransactionManager PersistenceProvider RiftsawDS"/>
+
+
+  <!-- Hacky way to reference the ODE EMF instance created by the engine. -->
+  <bean id="ODEEntityManagerFactoryService" class="org.switchyard.component.bpel.osgi.ODEEntityManagerFactoryService"
+    destroy-method="dispose" depends-on="BPELEngine" />
+
+  <bean id="management-factory" class="org.jboss.soa.bpel.console.ManagementFactoryImpl">
+    <argument ref="BPELEngine" />
+  </bean>
+  <bean id="svn-plugin" class="org.jboss.soa.bpel.console.SVGPlugin">
+    <argument ref="BPELEngine" />
+    <argument>
+      <bean class="org.jboss.bpm.monitor.model.DefaultBPAFDataSource" depends-on="UserTransaction">
+        <argument>
+          <bean factory-method="getOdeEmf" factory-ref="ODEEntityManagerFactoryService" depends-on="ODEEntityManagerFactoryService" />
+        </argument>
+      </bean>
+    </argument>
+  </bean>
+  <bean id="process-engine" class="org.jboss.soa.bpel.console.ProcessEnginePluginImpl">
+    <argument ref="BPELEngine" />
+  </bean>
+  <bean id="process-history" class="org.jboss.soa.bpel.console.ProcessHistoryPluginImpl">
+    <argument ref="BPELEngine" />
+    <argument>
+      <bean class="org.jboss.bpm.monitor.model.DefaultBPAFDataSource" depends-on="UserTransaction">
+        <argument>
+          <bean factory-method="getOdeEmf" factory-ref="ODEEntityManagerFactoryService" depends-on="ODEEntityManagerFactoryService" />
+        </argument>
+      </bean>
+    </argument>
+  </bean>
+
+  <service interface="org.jboss.bpm.console.server.integration.ManagementFactory" ref="management-factory" />
+  <service interface="org.jboss.bpm.console.server.plugin.GraphViewerPlugin" ref="svn-plugin" />
+  <service interface="org.jboss.bpm.console.server.plugin.ProcessActivityPlugin" ref="svn-plugin" />
+  <service interface="org.jboss.bpm.console.server.plugin.ProcessEnginePlugin" ref="process-engine" />
+  <service interface="org.jboss.bpm.console.server.plugin.ProcessHistoryPlugin" ref="process-history" />
+
+</blueprint>

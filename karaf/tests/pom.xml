@@ -126,6 +126,7 @@
                                 <feature version="${project.version}">switchyard</feature>
                                 <feature version="${project.version}">switchyard-amqp</feature>
                                 <feature version="${project.version}">switchyard-atom</feature>
+                                <feature version="${project.version}">switchyard-bpel</feature>
                                 <feature version="${project.version}">switchyard-bean</feature>
                                 <feature version="${project.version}">switchyard-common-camel</feature>
                                 <feature version="${project.version}">switchyard-cdi</feature>
@@ -194,6 +195,13 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
         </plugins>
     </build>

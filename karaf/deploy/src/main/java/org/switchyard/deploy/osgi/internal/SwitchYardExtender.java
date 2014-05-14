@@ -93,6 +93,7 @@ public class SwitchYardExtender extends AbstractExtender {
             } catch (Exception ex) {
                 // Exceptions here are not fatal and we see a lot of IllegalStateException
                 // if the services have already been unregistered - drop to DEBUG log
+                // probably becuase the contributing bundle stopped
                 _logger.debug("Error while unregistering TransformSource service", ex);
             }
         }

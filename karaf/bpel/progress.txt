@@ -1,0 +1,28 @@
+Progress to date:
+OpenJPA is easiest to configure, but fails because custom sequence
+(bpel_sequence) can't be used for AUTO fields.
+
+Hibernate has all sorts of problems.  Most successful solution is to use
+"unmanaged" mode, looking up the persistence provider and manually creating
+the EMF after injecting the relevant hibernate.* properties from the
+bpel.properties file.  "Managed" mode requires the datasource be defined
+within the persistence.xml file.  The environment also needs to define
+hibernate.dialect or the EMF generation fails.  Hibernate is also very sensitive
+to the install (yes, install) order of the bundles.  hibernate-osgi must be
+installed after the bpel bundle for managed persistence to work at all.
+
+If one of the above "works" initialization fails because
+BPELEngineImpl.RegisterServicesIntoJNDI() requires org.jboss.msc classes (!!!).
+
+Short of it:
+BPELEngineImpl will need to be reconstructed to remove platform dependencies.
+The deploy() methods will also need to be modified to support accessing files
+from bundles (as opposed to file://).
+
+Console hooks need to be reimplemented accordingly, as they all reference
+BPELEngineFactory.getEngine() (static).  This should be rewritten to support
+injecting an engine instance (that might even be created through blueprint).
+
+I'm sure there are other areas where code is looking for things with specific
+JNDI names, which are pretty much guaranteed not to exist in osgi (e.g.
+anything with java:).

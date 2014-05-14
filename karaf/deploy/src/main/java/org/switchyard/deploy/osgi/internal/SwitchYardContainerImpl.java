@@ -80,6 +80,7 @@ import org.w3c.dom.NodeList;
 public class SwitchYardContainerImpl extends SimpleExtension
         implements NamespaceHandlerSet.Listener, ComponentRegistry.Listener, Runnable, SwitchYardContainer {
 
+    public static final String SWITCHYARD_DEPLOYMENT_BUNDLE = "switchyard.deployment.bundle";
     public static final String CONTAINER_SYMBOLIC_NAME_PROPERTY = "switchyard.container.symbolicname";
     public static final String CONTAINER_VERSION_PROPERTY = "switchyard.container.version";
 
@@ -280,6 +281,7 @@ public class SwitchYardContainerImpl extends SimpleExtension
                         try {
                             Thread.currentThread().setContextClassLoader(newTccl);
                             _domain = _extender.getDomainManager().createDomain(getBundleContext(), _model.getQName(), _model);
+                            _domain.setProperty(SWITCHYARD_DEPLOYMENT_BUNDLE, getBundle());
                             
                             registerOOTBTransformers();
                             
@@ -332,6 +334,7 @@ public class SwitchYardContainerImpl extends SimpleExtension
         try {
             if (_registration != null) {
                 _registration.unregister();
+                _registration = null;
             }
         } catch (Throwable t) {
             logger.debug("Error unregistering Switchyard container", t);
