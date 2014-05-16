@@ -13,11 +13,6 @@
  */
 package org.switchyard.test.quickstarts.util;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -73,6 +68,37 @@ public class ResourceDeployer {
 
     public static ModelNode removeQueue(final String queueName) throws IOException {
         return addQueue(DEFAULT_HOST, DEFAULT_PORT, queueName);
+    }
+
+    public static ModelNode addPooledConnectionFactory(final String host, final int port, final String cfName, final boolean xa, final String jndiName) throws IOException {
+        final ModelControllerClient client = createClient(host, port);
+        final ModelNode op = new ModelNode();
+        op.get("operation").set("add");
+        op.get("address").add("subsystem", "messaging");
+        op.get("address").add("hornetq-server", "default");
+        op.get("address").add("pooled-connection-factory", cfName);
+        op.get("transaction").set(xa ? "xa" : "local");
+        op.get("connector").set("in-vm", "");
+        op.get("entries").add(jndiName);
+        return client.execute(op);
+    }
+
+    public static ModelNode addPooledConnectionFactory(final String cfName, final boolean xa, final String jndiName) throws IOException {
+        return addPooledConnectionFactory(DEFAULT_HOST, DEFAULT_PORT, cfName, xa, jndiName);
+    }
+
+    public static ModelNode removePooledConnectionFactory(final String host, final int port, final String cfName) throws IOException {
+        final ModelControllerClient client = createClient(host, port);
+        final ModelNode op = new ModelNode();
+        op.get("operation").set("remove");
+        op.get("address").add("subsystem", "messaging");
+        op.get("address").add("hornetq-server", "default");
+        op.get("address").add("pooled-connection-factory", cfName);
+        return client.execute(op);
+    }
+
+    public static ModelNode removePooledConnectionFactory(final String cfName) throws IOException {
+        return removePooledConnectionFactory(DEFAULT_HOST, DEFAULT_PORT, cfName);
     }
 
     private static ModelControllerClient createClient(final String host, final int port) throws UnknownHostException {

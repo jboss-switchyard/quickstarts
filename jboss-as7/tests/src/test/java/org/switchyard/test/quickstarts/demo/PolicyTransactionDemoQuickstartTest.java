@@ -18,8 +18,8 @@ import java.io.IOException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -50,11 +50,15 @@ public class PolicyTransactionDemoQuickstartTest {
     
     @Deployment(testable = false)
     public static JavaArchive createDeployment() throws IOException {
-        ResourceDeployer.addQueue(QUEUE_IN);
-        ResourceDeployer.addQueue(QUEUE_IN_NOTX);
-        ResourceDeployer.addQueue(QUEUE_OUT_A);
-        ResourceDeployer.addQueue(QUEUE_OUT_B);
-        ResourceDeployer.addQueue(QUEUE_OUT_C);
+        System.out.println(ResourceDeployer.addQueue(QUEUE_IN));
+        System.out.println(ResourceDeployer.addQueue(QUEUE_IN_NOTX));
+        System.out.println(ResourceDeployer.addQueue(QUEUE_OUT_A));
+        System.out.println(ResourceDeployer.addQueue(QUEUE_OUT_B));
+        System.out.println(ResourceDeployer.addQueue(QUEUE_OUT_C));
+        System.out.println(ResourceDeployer.addPooledConnectionFactory("hornetq-ra-in", true, "java:/JmsXAIn"));
+        System.out.println(ResourceDeployer.addPooledConnectionFactory("hornetq-ra-out-a", true, "java:/JmsXAOutA"));
+        System.out.println(ResourceDeployer.addPooledConnectionFactory("hornetq-ra-out-b", true, "java:/JmsXAOutB"));
+        System.out.println(ResourceDeployer.addPooledConnectionFactory("hornetq-ra-out-c", true, "java:/JmsXAOutC"));
         return ArquillianUtil.createJarDemoDeployment("switchyard-demo-policy-transaction");
     }
 
@@ -64,27 +68,53 @@ public class PolicyTransactionDemoQuickstartTest {
                             .setUser(ResourceDeployer.USER)
                             .setPassword(ResourceDeployer.PASSWD);
         _hqMixIn.initialize();
+        cleanupQueues(_hqMixIn);
     }
     
     @After
     public void after() throws Exception {
+        cleanupQueues(_hqMixIn);
         _hqMixIn.uninitialize();
     }
     
+    public void cleanupQueues(HornetQMixIn mixin) {
+        Session session = mixin.createJMSSession();
+        try {
+            MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_IN));
+            while(consumer.receive(1000) != null) {}
+            consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_A));
+            while(consumer.receive(1000) != null) {}
+            consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_B));
+            while(consumer.receive(1000) != null) {}
+            consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_C));
+            while(consumer.receive(1000) != null) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                session.close();
+            } catch (Exception e) { /* ignore */ }
+        }
+    }
+
     @AfterClass
     public static void afterClass() throws Exception {
-        ResourceDeployer.removeQueue(QUEUE_IN);
-        ResourceDeployer.removeQueue(QUEUE_IN_NOTX);
-        ResourceDeployer.removeQueue(QUEUE_OUT_A);
-        ResourceDeployer.removeQueue(QUEUE_OUT_B);
-        ResourceDeployer.removeQueue(QUEUE_OUT_C);
+        System.out.println(ResourceDeployer.removeQueue(QUEUE_IN));
+        System.out.println(ResourceDeployer.removeQueue(QUEUE_IN_NOTX));
+        System.out.println(ResourceDeployer.removeQueue(QUEUE_OUT_A));
+        System.out.println(ResourceDeployer.removeQueue(QUEUE_OUT_B));
+        System.out.println(ResourceDeployer.removeQueue(QUEUE_OUT_C));
+        System.out.println(ResourceDeployer.removePooledConnectionFactory("hornetq-ra-in"));
+        System.out.println(ResourceDeployer.removePooledConnectionFactory("hornetq-ra-out-a"));
+        System.out.println(ResourceDeployer.removePooledConnectionFactory("hornetq-ra-out-b"));
+        System.out.println(ResourceDeployer.removePooledConnectionFactory("hornetq-ra-out-c"));
     }
     
     @Test
     public void testRollbackA() throws Exception {
         String command = "rollback.A";
         
-        Session session = _hqMixIn.getJMSSession();
+        Session session = _hqMixIn.createJMSSession();
         MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(QUEUE_IN));
         Message message = _hqMixIn.createJMSMessage(command);
         producer.send(message);
@@ -92,30 +122,30 @@ public class PolicyTransactionDemoQuickstartTest {
 
         session = _hqMixIn.createJMSSession();
         MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_A));
-        ObjectMessage msg = ObjectMessage.class.cast(consumer.receive(30000));
-        Assert.assertEquals(command, msg.getObject());
+        TextMessage msg = TextMessage.class.cast(consumer.receive(30000));
+        Assert.assertEquals(command, msg.getText());
         Assert.assertNull(consumer.receive(1000));
         
         consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_B));
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
+        msg = TextMessage.class.cast(consumer.receive(10000));
+        Assert.assertEquals(command, msg.getText());
+        msg = TextMessage.class.cast(consumer.receive(10000));
+        Assert.assertEquals(command, msg.getText());
+        msg = TextMessage.class.cast(consumer.receive(10000));
+        Assert.assertEquals(command, msg.getText());
+        msg = TextMessage.class.cast(consumer.receive(10000));
+        Assert.assertEquals(command, msg.getText());
         Assert.assertNull(consumer.receive(1000));
         
         consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_C));
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
+        msg = TextMessage.class.cast(consumer.receive(10000));
+        Assert.assertEquals(command, msg.getText());
+        msg = TextMessage.class.cast(consumer.receive(10000));
+        Assert.assertEquals(command, msg.getText());
+        msg = TextMessage.class.cast(consumer.receive(10000));
+        Assert.assertEquals(command, msg.getText());
+        msg = TextMessage.class.cast(consumer.receive(10000));
+        Assert.assertEquals(command, msg.getText());
         Assert.assertNull(consumer.receive(1000));
         session.close();
     }
@@ -124,7 +154,7 @@ public class PolicyTransactionDemoQuickstartTest {
     public void testRollbackB() throws Exception {
         String command = "rollback.B";
         
-        Session session = _hqMixIn.getJMSSession();
+        Session session = _hqMixIn.createJMSSession();
         MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(QUEUE_IN));
         Message message = _hqMixIn.createJMSMessage(command);
         producer.send(message);
@@ -132,18 +162,18 @@ public class PolicyTransactionDemoQuickstartTest {
 
         session = _hqMixIn.createJMSSession();
         MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_A));
-        ObjectMessage msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
+        TextMessage msg = TextMessage.class.cast(consumer.receive(30000));
+        Assert.assertEquals(command, msg.getText());
         Assert.assertNull(consumer.receive(1000));
         
         consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_B));
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
+        msg = TextMessage.class.cast(consumer.receive(10000));
+        Assert.assertEquals(command, msg.getText());
         Assert.assertNull(consumer.receive(1000));
         
         consumer = session.createConsumer(HornetQMixIn.getJMSQueue(QUEUE_OUT_C));
-        msg = ObjectMessage.class.cast(consumer.receive(1000));
-        Assert.assertEquals(command, msg.getObject());
+        msg = TextMessage.class.cast(consumer.receive(10000));
+        Assert.assertEquals(command, msg.getText());
         Assert.assertNull(consumer.receive(1000));
         session.close();
     }
@@ -152,7 +182,7 @@ public class PolicyTransactionDemoQuickstartTest {
     public void testNonTransacted() throws Exception {
         String command = "rollback.A";
         
-        Session session = _hqMixIn.getJMSSession();
+        Session session = _hqMixIn.createJMSSession();
         MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(QUEUE_IN_NOTX));
         Message message = _hqMixIn.createJMSMessage(command);
         producer.send(message);
