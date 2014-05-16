@@ -13,6 +13,25 @@
  */
 package org.switchyard.deploy.osgi.internal;
 
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.xml.XMLConstants;
+import javax.xml.validation.Schema;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
@@ -36,6 +55,7 @@ import org.switchyard.config.model.composite.ComponentModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
 import org.switchyard.config.model.composite.CompositeServiceModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.Component;
 import org.switchyard.deploy.internal.Deployment;
@@ -44,30 +64,15 @@ import org.switchyard.deploy.osgi.NamespaceHandler;
 import org.switchyard.deploy.osgi.NamespaceHandlerSet;
 import org.switchyard.deploy.osgi.SwitchYardContainer;
 import org.switchyard.deploy.osgi.SwitchYardEvent;
+import org.switchyard.deploy.osgi.TransformSource;
 import org.switchyard.deploy.osgi.base.SimpleExtension;
+import org.switchyard.transform.internal.DuplicateTransformerException;
+import org.switchyard.transform.internal.TransformerRegistryLoader;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import javax.xml.XMLConstants;
-import javax.xml.validation.Schema;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * SwitchYardContainerImpl.
@@ -222,22 +227,7 @@ public class SwitchYardContainerImpl extends SimpleExtension
                             logger.info("Bundle {} is waiting for namespace handlers {}", getBundle().getSymbolicName(), missingURIs);
                             return;
                         }
-                        Descriptor descriptor = new Descriptor() {
-                            @Override
-                            public synchronized Schema getSchema(Set<String> namespaces) {
-                                try {
-                                    return _nhs.getSchema();
-                                } catch (Exception e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-
-                            @Override
-                            public synchronized Marshaller getMarshaller(String namespace) {
-                                return _nhs.getNamespaceHandler(URI.create(namespace)).createMarshaller(namespace, this);
-                            }
-                        };
-                        _model = new ModelPuller<SwitchYardModel>(descriptor).pull(_xml);
+                        _model = new ModelPuller<SwitchYardModel>(new OsgiDescriptor(_nhs)).pull(_xml);
                         _types = new HashSet<String>();
                         for (CompositeReferenceModel reference : _model.getComposite().getReferences()) {
                             for (BindingModel binding : reference.getBindings()) {
@@ -289,8 +279,10 @@ public class SwitchYardContainerImpl extends SimpleExtension
                         }
                         try {
                             Thread.currentThread().setContextClassLoader(newTccl);
-
                             _domain = _extender.getDomainManager().createDomain(getBundleContext(), _model.getQName(), _model);
+                            
+                            registerOOTBTransformers();
+                            
                             List<Activator> activators = new ArrayList<Activator>();
                             for (Component component : components) {
                                 activators.add(component.createActivator(_domain));
@@ -467,5 +459,104 @@ public class SwitchYardContainerImpl extends SimpleExtension
                 || XMLConstants.XML_NS_URI.equals(ns)
                 || XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(ns);
     }
+    
+    /**
+     * OSGi container code needs to register these outside of 
+     * TransformerRegistryLoader.registerOOTBTransformers() due to the fact that 
+     * descriptors cannot be parsed directly from the class path.
+     */
+    private void registerOOTBTransformers() throws Exception {
+        Collection<ServiceReference<TransformSource>> refs = 
+                _bundleContext.getServiceReferences(TransformSource.class, null);
+        
+        // Find all SY bundles which contain transformer definitions
+        for (final ServiceReference<TransformSource> ref : refs) {
+            // Create a customized transformer loader which loads classes via the bundle
+            TransformerRegistryLoader loader = 
+                    new TransformerRegistryLoader(_domain.getTransformerRegistry()) {
+                @Override
+                protected Class<?> getClass(String className) {
+                    Class<?> clazz = null;
+                    try {
+                        clazz = ref.getBundle().loadClass(className);
+                    } catch (ClassNotFoundException ex) {
+                        logger.warn("Failed to load transformer class " + className + 
+                                " from bundle " + ref.getBundle().getSymbolicName());
+                    }
+                    return clazz;
+                }  
+            };
+            TransformSource trs = _bundleContext.getService(ref);
+            InputStream tStream = null;
+            
+            // parse and register the transformer definitions
+            try {
+                tStream = trs.getTransformsURL().openStream();
+                Element tConfig = new ElementPuller().pull(tStream);
+                Set<URI> tNamespaces = findNamespaces(new HashSet<URI>(), tConfig);
+                NamespaceHandlerSet tHandlers = _extender.getNamespaceHandlerRegistry()
+                        .getNamespaceHandlers(tNamespaces, getBundle());
+                TransformsModel tm = new ModelPuller<TransformsModel>(
+                        new OsgiDescriptor(tHandlers)).pull(tConfig);
+                
+                loader.registerTransformers(tm);
+            } catch (final DuplicateTransformerException e) {
+                // duplicate OOTB transformers are not an error - log for visibility
+                logger.debug(e.getMessage());
+            } catch (Exception ex) {
+                logger.warn("Failed to load transformers from bundle: " 
+                        + ref.getBundle().getSymbolicName(), ex);
+            } finally {
+                if (tStream != null) {
+                    tStream.close();
+                }
+                _bundleContext.ungetService(ref);
+            }
+        }
+    }
+    
+    /**
+     * OSGi wrapper for Descriptor which loads marshallers and schema based on 
+     * registered namespace handlers.
+     */
+    private class OsgiDescriptor extends Descriptor {
+        
+        private NamespaceHandlerSet _namespaceHandlers;
+        
+        /**
+         * Create a new OSGi wrapper Descriptor.
+         * @param namespaceHandlers namespace handlers to use in descriptor
+         */
+        OsgiDescriptor(NamespaceHandlerSet namespaceHandlers) {
+            super();
+            _namespaceHandlers = namespaceHandlers;
+        }
+        
+        @Override
+        public synchronized Schema getSchema(Set<String> namespaces) {
+            try {
+                return _namespaceHandlers.getSchema();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
 
+        @Override
+        public synchronized Marshaller getMarshaller(String namespace) {
+            return _namespaceHandlers.getNamespaceHandler(URI.create(namespace)).createMarshaller(namespace, this);
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            return super.equals(obj);
+        }
+        
+        @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
+        
+    };
 }
+
+

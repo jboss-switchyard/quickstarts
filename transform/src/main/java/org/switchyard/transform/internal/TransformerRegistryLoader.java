@@ -139,7 +139,7 @@ public class TransformerRegistryLoader {
      */
     public void loadOOTBTransforms() {
         try {
-            List<URL> resources = Classes.getResources(TRANSFORMS_XML, getClass());
+            List<URL> resources = getResources(TRANSFORMS_XML);
 
             for (URL resource : resources) {
                 InputStream configStream = resource.openStream();
@@ -193,7 +193,7 @@ public class TransformerRegistryLoader {
                 if (className == null) {
                     throw TransformMessages.MESSAGES.beanOrClassMustBeSpecified();
                 }
-                Class<?> transformClass = Classes.forName(className, TransformerUtil.class);
+                Class<?> transformClass = getClass(className);
                 if (transformClass == null) {
                     throw TransformMessages.MESSAGES.unableToLoadTransformerClass(className);
                 }
@@ -211,6 +211,22 @@ public class TransformerRegistryLoader {
         }
 
         return transformers;
+    }
+    
+    /**
+     * Overridable method for resolving a class path resource which allows environments
+     * like OSGi to customize resolution.
+     */
+    protected List<URL> getResources(String path) throws java.io.IOException {
+        return Classes.getResources(path, getClass());
+    }
+    
+    /**
+     * Overridable method for resolving a class which allows environments like OSGi 
+     * to customize resolution.
+     */
+    protected Class<?> getClass(String className) {
+        return Classes.forName(className, TransformerUtil.class);
     }
 
     private String toDescription(Transformer<?, ?> transformer) {

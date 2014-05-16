@@ -15,6 +15,7 @@ package org.switchyard.deploy.osgi.internal;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,6 +34,7 @@ import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.osgi.ComponentRegistry;
 import org.switchyard.deploy.osgi.NamespaceHandlerRegistry;
 import org.switchyard.deploy.osgi.SwitchYardListener;
+import org.switchyard.deploy.osgi.TransformSource;
 import org.switchyard.deploy.osgi.base.AbstractExtender;
 import org.switchyard.deploy.osgi.base.CompoundExtension;
 import org.switchyard.deploy.osgi.base.Extension;
@@ -43,7 +45,7 @@ import org.switchyard.deploy.osgi.base.Extension;
 public class SwitchYardExtender extends AbstractExtender {
 
     public static final String SWITCHYARD_XML = "META-INF/switchyard.xml";
-
+    
     private final Logger _logger = LoggerFactory.getLogger(SwitchYardExtender.class);
 
     private NamespaceHandlerRegistry _namespaceHandlerRegistry;
@@ -57,6 +59,9 @@ public class SwitchYardExtender extends AbstractExtender {
     private SwitchYardEventDispatcher _eventDispatcher;
 
     private Runnable _management;
+    
+    private List<ServiceRegistration<TransformSource>> _transformSources = 
+            new LinkedList<ServiceRegistration<TransformSource>>();
 
     @Override
     protected void doStart() throws Exception {
@@ -79,6 +84,13 @@ public class SwitchYardExtender extends AbstractExtender {
         if (_management != null) {
             _management.run();
         }
+        
+        // remove TransformSource registrations
+        for (ServiceRegistration<?> reg : _transformSources) {
+            reg.unregister();
+        }
+        _transformSources.clear();
+        
         ProviderRegistry.setRegistry(null);
         _providerRegistry.destroy();
         _componentRegistry.destroy();
@@ -125,6 +137,13 @@ public class SwitchYardExtender extends AbstractExtender {
         URL swXml = bundle.getEntry(SWITCHYARD_XML);
         if (swXml != null) {
             extensions.add(new SwitchYardContainerImpl(this, bundle, getExecutors()));
+        }
+        URL tfXml = bundle.getEntry(TransformSource.TRANSFORMS_XML);
+        if (tfXml != null) {
+            TransformSource trs = new TransformSourceImpl(bundle);
+            ServiceRegistration<TransformSource> trsService = bundle.getBundleContext()
+                    .registerService(TransformSource.class, trs, null);
+            _transformSources.add(trsService);
         }
         return extensions.isEmpty() ? null : new CompoundExtension(bundle, extensions);
     }
