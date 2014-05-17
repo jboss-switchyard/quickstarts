@@ -13,10 +13,18 @@
  */
 package org.switchyard.deploy.osgi.internal;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.osgi.framework.Bundle;
+import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.switchyard.ServiceDomain;
+import org.switchyard.admin.SwitchYard;
 import org.switchyard.admin.base.SwitchYardBuilder;
 import org.switchyard.common.util.ProviderRegistry;
 import org.switchyard.config.Configuration;
@@ -28,12 +36,6 @@ import org.switchyard.deploy.osgi.SwitchYardListener;
 import org.switchyard.deploy.osgi.base.AbstractExtender;
 import org.switchyard.deploy.osgi.base.CompoundExtension;
 import org.switchyard.deploy.osgi.base.Extension;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * SwitchYardExtender.
@@ -59,9 +61,9 @@ public class SwitchYardExtender extends AbstractExtender {
     @Override
     protected void doStart() throws Exception {
         try {
-            _management = Management.create(_domainManager);
+            _management = createManagement(_domainManager);
         } catch (NoClassDefFoundError e) {
-            _logger.warn("Management support disabled (package not available)");
+            _logger.warn("Management support disabled (package not available)", e);
         }
         _eventDispatcher = new SwitchYardEventDispatcher(getBundleContext(), getExecutors());
         _namespaceHandlerRegistry = new NamespaceHandlerRegistryImpl(getBundleContext());
@@ -156,16 +158,17 @@ public class SwitchYardExtender extends AbstractExtender {
         _logger.debug("Switchyard extender: " + msg, t);
     }
 
-    static class Management {
-        public static Runnable create(ServiceDomainManager manager) {
-            final SwitchYardBuilder builder = new SwitchYardBuilder();
-            builder.init(manager);
-            return new Runnable() {
-                @Override
-                public void run() {
-                    builder.destroy();
-                }
-            };
-        }
+    private Runnable createManagement(ServiceDomainManager manager) {
+        final SwitchYardBuilder builder = new SwitchYardBuilder();
+        builder.init(manager);
+        final ServiceRegistration<SwitchYard> reg = getBundleContext().registerService(SwitchYard.class,
+                builder.getSwitchYard(), null);
+        return new Runnable() {
+            @Override
+            public void run() {
+                reg.unregister();
+                builder.destroy();
+            }
+        };
     }
 }

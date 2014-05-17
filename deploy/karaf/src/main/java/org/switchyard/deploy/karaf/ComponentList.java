@@ -62,7 +62,7 @@ public class ComponentList extends OsgiCommandSupport {
         } else if (ns instanceof String) {
             return Collections.singletonList((String) ns);
         } else if (ns instanceof Collection) {
-            Collection col = (Collection) ns;
+            Collection<?> col = (Collection<?>) ns;
             List<String> types = new ArrayList<String>(col.size());
             for (Object o : col) {
                 types.add(o.toString());

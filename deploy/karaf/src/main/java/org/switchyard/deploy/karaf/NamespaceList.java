@@ -68,7 +68,7 @@ public class NamespaceList extends OsgiCommandSupport {
             }
             return namespaces;
         } else if (ns instanceof Collection) {
-            Collection col = (Collection) ns;
+            Collection<?> col = (Collection<?>) ns;
             List<URI> namespaces = new ArrayList<URI>(col.size());
             for (Object o : col) {
                 namespaces.add(toURI(o));

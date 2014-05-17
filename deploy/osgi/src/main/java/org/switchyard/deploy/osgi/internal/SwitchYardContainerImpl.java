@@ -165,9 +165,11 @@ public class SwitchYardContainerImpl extends SimpleExtension
                             _cdiContainerTracker = new ServiceTracker(_bundleContext, FrameworkUtil.createFilter(filter), new ServiceTrackerCustomizer() {
                                 @Override
                                 public Object addingService(ServiceReference reference) {
-                                    Object obj = _bundleContext.getService(reference);
+                                    synchronized (_scheduled) {
+                                        _cdiContainer = _bundleContext.getService(reference);
+                                    }
                                     schedule();
-                                    return obj;
+                                    return _cdiContainer;
                                 }
                                 @Override
                                 public void modifiedService(ServiceReference reference, Object service) {
@@ -185,7 +187,6 @@ public class SwitchYardContainerImpl extends SimpleExtension
                     }
                     case WaitForCdi: {
                         if (_cdiContainerTracker != null) {
-                            _cdiContainer = _cdiContainerTracker.getService();
                             if (_cdiContainer == null) {
                                 String filter = "(&(objectClass=org.ops4j.pax.cdi.spi.CdiContainer)(bundleId=" + _bundle.getBundleId() + "))";
                                 dispatch(SwitchYardEvent.GRACE_PERIOD, Collections.singleton(filter));
@@ -430,6 +431,7 @@ public class SwitchYardContainerImpl extends SimpleExtension
             } catch (Exception e) {
                 logger.error("Error while stopping switchyard", e);
             }
+            _cdiContainer = null;
             _state = State.WaitForCdi;
             schedule();
         }

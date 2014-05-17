@@ -38,10 +38,13 @@
         </switchyard.osgi.export>
         <switchyard.osgi.import>
             org.apache.felix.service.command,
+            org.apache.felix.gogo.commands,
             org.apache.karaf.shell.console,
             org.osgi.framework,
             org.switchyard.deploy,
-            org.switchyard.deploy.osgi
+            org.switchyard.deploy.osgi,
+            org.switchyard.admin,
+            *
         </switchyard.osgi.import>
         <switchyard.osgi.private>
             org.switchyard.deploy.karaf

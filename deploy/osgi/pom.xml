@@ -43,7 +43,7 @@
             org.apache.camel.core.osgi*
         </switchyard.osgi.private>
         <switchyard.osgi.import>
-            org.switchyard.admin.*;resolution:=optional;${switchyard.osgi.import.switchyard.version},
+            org.switchyard.admin.*;${switchyard.osgi.import.switchyard.version},
             org.switchyard.*;${switchyard.osgi.import.switchyard.version},
             *
         </switchyard.osgi.import>
