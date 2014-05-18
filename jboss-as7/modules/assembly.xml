@@ -119,6 +119,7 @@
       <componentDescriptor>src/main/resources/external/rhino/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/saaj-impl/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/saxon/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/spring/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/springframework/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/ws-impl/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/xstream/assembly-component.xml</componentDescriptor>
