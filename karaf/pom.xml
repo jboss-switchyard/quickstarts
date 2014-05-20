@@ -29,6 +29,7 @@
         <module>deploy</module>
         <module>commands</module>
         <module>features</module>
+        <module>tests</module>
     </modules>
     <build>
         <plugins>
