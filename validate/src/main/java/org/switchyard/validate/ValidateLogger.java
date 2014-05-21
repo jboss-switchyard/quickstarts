@@ -43,4 +43,13 @@ public interface ValidateLogger {
     @LogMessage(level = WARN)
     @Message(id = 17002, value = "Warning during validation: %s")
     void warningDuringValidation(String warning);
+
+    /**
+     * schemaCatalogNotParsed method definition.
+     * @param file file
+     * @param msg message
+     */
+    @LogMessage(level = WARN)
+    @Message(id = 17003, value = "Schema catalog %s could not be parsed. Ignoring: %s")
+    void schemaCatalogNotParsed(String file, String msg);
 }

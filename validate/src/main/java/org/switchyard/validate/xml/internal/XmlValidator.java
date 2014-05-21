@@ -133,17 +133,16 @@ public class XmlValidator extends BaseValidator<Message> {
         _parserFactory.setNamespaceAware(_isNamespaceAware);
 
         if (_catalogConfig != null) {
-            List<String> foundCatalogs = new ArrayList<String>();
+            List<URL> foundCatalogs = new ArrayList<URL>();
             for (FileEntryModel entry : _catalogConfig) {
                 URL located = locateFile(entry.getFile());
                 if (located != null) {
-                    foundCatalogs.add(located.toString());
+                    foundCatalogs.add(located);
                 } else {
                     ValidateLogger.ROOT_LOGGER.schemaCatalogNotLocated(entry.getFile());
                 }
             }
             if (foundCatalogs.size() > 0) {
-                _catalogFileNames = foundCatalogs;
                 CatalogManager manager = new CatalogManager();
                 manager.setIgnoreMissingProperties(true);
                 manager.setAllowOasisXMLCatalogPI(true);
@@ -151,14 +150,18 @@ public class XmlValidator extends BaseValidator<Message> {
                 manager.setRelativeCatalogs(false);
                 manager.setUseStaticCatalog(false);
                 manager.setVerbosity(0);
-                StringBuilder buf = new StringBuilder();
-                buf.append(foundCatalogs.get(0));
-                for (int i=1; i<foundCatalogs.size(); i++) {
-                    buf.append(";").append(foundCatalogs.get(i));
-                }
-                manager.setCatalogFiles(buf.toString());
                 _catalogResolver = new XmlValidatorCatalogResolver(manager);
                 _catalogResolver.namespaceAware = _isNamespaceAware;
+
+                _catalogFileNames = new ArrayList<String>();
+                for (URL catalog : foundCatalogs) {
+                    try {
+                        _catalogResolver.getCatalog().parseCatalog(catalog);
+                        _catalogFileNames.add(catalog.toString());
+                    } catch (Exception e) {
+                        ValidateLogger.ROOT_LOGGER.schemaCatalogNotParsed(catalog.toString(), e.getMessage());
+                    }
+                }
             }
         }
         
