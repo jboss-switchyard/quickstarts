@@ -123,13 +123,13 @@
         <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Dependencies>org.jboss.as.naming</Dependencies>
-                            <Dependencies>org.hornetq</Dependencies>
+                            <Dependencies>org.hornetq, org.jboss.as.naming</Dependencies>
                         </manifestEntries>
                     </archive>
                 </configuration>
