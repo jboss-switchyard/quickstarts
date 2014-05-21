@@ -29,8 +29,13 @@ JBoss AS 7
       sample requests and the responses that you should see
     - Use the simple bundled SOAP client and the sample request XML e.g.
 <br/>
+Send a valid request using src/test/resources/xml/soap-request.xml
 ```
             mvn exec:java
+```
+Or send an invalid request using src/test/resouces/xml/soap-request-with-invalid-element.xml
+```
+            mvn exec:java -Dexec.args="invalid"
 ```
 <br/>
     - SOAP-UI : Use the wsdl for this project (src/main/resources/wsdl/OrderService.wsdl) to
@@ -61,7 +66,8 @@ Expected Output
    <soap:Body>
       <soap:Fault>
          <faultcode>soap:Server</faultcode>
-         <faultstring>Error during validation with '/xsd/orders.xsd' as 'XML_SCHEMA'.</faultstring>
+         <faultstring>SWITCHYARD014000: Validator 'org.switchyard.validate.xml.internal.XmlValidator' failed: 1 validation error(s): 
+org.xml.sax.SAXParseException: cvc-complex-type.2.4.d: Invalid content was found starting with element 'invalid-element'. No child element is expected at this point.</faultstring>
       </soap:Fault>
    </soap:Body>
 </soap:Envelope>

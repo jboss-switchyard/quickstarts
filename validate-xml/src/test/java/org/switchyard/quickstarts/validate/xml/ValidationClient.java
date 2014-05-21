@@ -25,7 +25,7 @@ public final class ValidationClient {
 
     private static final String URL = "http://localhost:8080/quickstart-validate-xml/OrderService";
     private static final String XML = "src/test/resources/xml/soap-request.xml";
-
+    private static final String XML_INVALID = "src/test/resources/xml/soap-request-with-invalid-element.xml";
     /**
      * Private no-args constructor.
      */
@@ -34,17 +34,20 @@ public final class ValidationClient {
 
     /**
      * Only execution point for this application.
-     * @param ignored not used.
+     * @param send an invalid SOAP request if anything is specified.
      * @throws Exception if something goes wrong.
      */
-    public static void main(final String[] ignored) throws Exception {
+    public static void main(final String[] args) throws Exception {
 
         HTTPMixIn soapMixIn = new HTTPMixIn();
         soapMixIn.initialize();
 
         try {
-            String result = soapMixIn.postFile(URL, XML);
-            System.out.println("SOAP Reply:\n" + result);
+            String request = args.length == 0 ? XML : XML_INVALID;
+            System.out.println("### Sending a SOAP request using " + request + ":");
+            String result = soapMixIn.postFile(URL, request);
+            System.out.println("### SOAP Reply:");
+            System.out.println(result);
         } finally {
             soapMixIn.uninitialize();
         }
