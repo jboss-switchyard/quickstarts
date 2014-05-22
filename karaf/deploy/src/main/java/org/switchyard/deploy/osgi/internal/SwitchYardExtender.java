@@ -83,6 +83,7 @@ public class SwitchYardExtender extends AbstractExtender {
         super.doStop();
         if (_management != null) {
             _management.run();
+            _management = null;
         }
         
         // remove TransformSource registrations

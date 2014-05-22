@@ -47,6 +47,7 @@
             org.switchyard.*;${switchyard.osgi.import.switchyard.version},
             *
         </switchyard.osgi.import>
+        <switchyard.osgi.services.export>org.switchyard.admin.SwitchYard</switchyard.osgi.services.export>
         <checkstyle.skip>true</checkstyle.skip>
     </properties>
     <dependencies>
