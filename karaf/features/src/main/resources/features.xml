@@ -233,7 +233,7 @@
     <feature name="switchyard-quickstart-camel-atom-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-atom</feature>
         <feature version="${project.version}">switchyard-bean</feature>
-        <bundle>mvn:org.switchyard.quickstarts/switchyard-quickstart-camel-atom-binding/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-atom-binding/${project.version}</bundle>
     </feature>
 
     <!-- Works -->
@@ -247,7 +247,7 @@
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-file</feature>
         <feature version="${version.org.apache.camel}">camel-bindy</feature>
-        <bundle>mvn:org.switchyard.quickstarts/switchyard-quickstart-camel-bindy/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-bindy/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-quickstart-camel-bus-cdi" version="${project.version}" resolver="(obr)">
@@ -319,7 +319,7 @@
     <feature name="switchyard-quickstart-camel-rss-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-rss</feature>
-        <bundle>mvn:org.switchyard.quickstarts/switchyard-quickstart-camel-rss-binding/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-rss-binding/${project.version}</bundle>
     </feature>
 
     <!-- Requires SCA binding -->

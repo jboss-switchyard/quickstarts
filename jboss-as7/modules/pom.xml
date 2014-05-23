@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-- Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+- Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
 -
 - Licensed under the Apache License, Version 2.0 (the "License")
 - you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
     <parent>
         <groupId>org.switchyard</groupId>
         <artifactId>switchyard-container-parent</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.0.0.Alpha1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -207,7 +207,7 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel-quartz</artifactId>
         </dependency>
-        <dependency> 
+        <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel-rss</artifactId>
         </dependency>
@@ -507,8 +507,8 @@
         Camel/FuseSource...
         -->
         <dependency>
-             <groupId>org.apache.camel</groupId>
-             <artifactId>camel-bindy</artifactId>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-bindy</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -552,7 +552,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-mina2</artifactId> 
+            <artifactId>camel-mina2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -668,14 +668,14 @@
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
         </dependency>
-	<dependency>
-	    <groupId>rome</groupId>
-	    <artifactId>rome</artifactId>
-	</dependency>
+        <dependency>
+            <groupId>rome</groupId>
+            <artifactId>rome</artifactId>
+        </dependency>
         <dependency>
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
