@@ -86,4 +86,13 @@
             </build>
         </profile>
     </profiles>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.switchyard.quickstarts.demos</groupId>
+                <artifactId>switchyard-demo-security-propagation-ejb</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

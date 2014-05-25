@@ -62,7 +62,6 @@
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
             <artifactId>switchyard-demo-transaction-propagation</artifactId>
-            <version>${project.version}</version>
             <type>pom</type>
         </dependency>
         <dependency>
@@ -186,7 +185,6 @@
             <plugin>
                 <groupId>org.jboss.as.plugins</groupId>
                 <artifactId>jboss-as-maven-plugin</artifactId>
-                <version>7.5.Final</version>
                 <executions>
                     <execution>
                         <id>deploy</id>

@@ -71,4 +71,24 @@
             </properties>
         </profile>
     </profiles>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.switchyard.quickstarts.demos</groupId>
+                <artifactId>switchyard-demo-multiApp-artifacts</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts.demos</groupId>
+                <artifactId>switchyard-demo-multiApp-order-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts.demos</groupId>
+                <artifactId>switchyard-demo-multiApp-web</artifactId> 
+                <type>war</type>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

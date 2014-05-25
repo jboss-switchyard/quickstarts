@@ -109,4 +109,14 @@
             </build>
         </profile>
     </profiles>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.switchyard.quickstarts.demos</groupId>
+                <artifactId>switchyard-demo-transaction-propagation</artifactId>
+                <type>pom</type>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

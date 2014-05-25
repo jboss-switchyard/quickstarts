@@ -41,7 +41,6 @@
             <plugin>
                 <groupId>org.jboss.as.plugins</groupId>
                 <artifactId>jboss-as-maven-plugin</artifactId>
-                <version>7.5.Final</version>
                 <executions>
                     <execution>
                         <id>deploy</id>
@@ -94,7 +93,6 @@
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-bpel-xts-wsat-ws</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>

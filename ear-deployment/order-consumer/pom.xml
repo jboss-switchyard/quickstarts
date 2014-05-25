@@ -62,7 +62,6 @@
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-ear-deployment-artifacts</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>

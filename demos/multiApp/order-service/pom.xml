@@ -55,7 +55,6 @@
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
             <artifactId>switchyard-demo-multiApp-artifacts</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -120,7 +119,6 @@
             <plugin>
                 <groupId>org.jboss.as.plugins</groupId>
                 <artifactId>jboss-as-maven-plugin</artifactId>
-                <version>7.5.Final</version>
                 <executions>
                     <execution>
                         <id>deploy</id>

@@ -39,17 +39,14 @@
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-ear-deployment-artifacts</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-ear-deployment-order-consumer</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-ear-deployment-order-service</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <build>
@@ -87,7 +84,6 @@
             <plugin>
                 <groupId>org.jboss.as.plugins</groupId>
                 <artifactId>jboss-as-maven-plugin</artifactId>
-                <version>7.5.Final</version>
                 <executions>
                     <execution>
                         <id>deploy</id>
