@@ -22,11 +22,11 @@ import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeHandler;
 import org.switchyard.ExchangePattern;
-import org.switchyard.HandlerException;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.handlers.AddressingHandler;
 import org.switchyard.handlers.PolicyHandler;
+import org.switchyard.handlers.ProviderHandler;
 import org.switchyard.handlers.SecurityHandler;
 import org.switchyard.handlers.SecurityHandler.SecurityAction;
 import org.switchyard.handlers.TransactionHandler;
@@ -70,7 +70,7 @@ public class LocalExchangeBus implements ExchangeBus {
         _requestChain.addLast("validation-before-transform", validateHandler);
         _requestChain.addLast("transformation", transformHandler);
         _requestChain.addLast("validation-after-transform", validateHandler);
-        _requestChain.addLast("provider", new ProviderHandler());
+        _requestChain.addLast("provider", new ProviderHandler(_domain));
         _requestChain.addLast("security-cleanup", new SecurityHandler(_domain, SecurityAction.CLEANUP));
         _requestChain.addLast("transaction-post-invoke", transactionHandler);
         
@@ -155,13 +155,4 @@ class LocalDispatcher implements Dispatcher {
         ExchangeImpl exchangeImpl = new ExchangeImpl(_domain, this, handler);
         return exchangeImpl;
     }
-}
-
-class ProviderHandler extends BaseHandler {
-
-    @Override
-    public void handleMessage(Exchange exchange) throws HandlerException {
-        exchange.getProvider().getProviderHandler().handleMessage(exchange);
-    }
-    
 }

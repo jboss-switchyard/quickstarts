@@ -110,7 +110,8 @@ public class V1SecurityModel extends BaseNamedModel implements SecurityModel {
      */
     @Override
     public String getRunAs() {
-        return getModelAttribute(RUN_AS);
+        String runAs = getModelAttribute(RUN_AS);
+        return Strings.trimToNull(runAs);
     }
 
     /**
@@ -148,7 +149,8 @@ public class V1SecurityModel extends BaseNamedModel implements SecurityModel {
      */
     @Override
     public String getSecurityDomain() {
-        return getModelAttribute(SECURITY_DOMAIN);
+        String securityDomain = getModelAttribute(SECURITY_DOMAIN);
+        return Strings.trimToNull(securityDomain);
     }
 
     /**

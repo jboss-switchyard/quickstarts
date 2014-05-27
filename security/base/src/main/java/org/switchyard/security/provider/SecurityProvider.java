@@ -13,6 +13,8 @@
  */
 package org.switchyard.security.provider;
 
+import java.security.PrivilegedExceptionAction;
+
 import org.switchyard.ServiceSecurity;
 import org.switchyard.security.context.SecurityContext;
 
@@ -22,30 +24,21 @@ import org.switchyard.security.context.SecurityContext;
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 public interface SecurityProvider {
-    
+
    /**
-    * Authenticates the SecurityContext for the ServiceSecurity.
+    * Performs a login with the SecurityContext for the ServiceSecurity.
     * @param serviceSecurity the ServiceSecurity
     * @param securityContext the SecurityContext
     * @return whether authentication was successful
     */
-   boolean authenticate(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+   public boolean authenticate(ServiceSecurity serviceSecurity, SecurityContext securityContext);
 
    /**
-    * Propagates any existing container-specific (most likely thread-local) security information into the SecurityContext.
+    * Populates the SecurityContext with any existing (possibly container-specific) security information.
     * @param serviceSecurity the ServiceSecurity
     * @param securityContext the SecurityContext
-    * @return whether propagation was successful
     */
-   boolean propagate(ServiceSecurity serviceSecurity, SecurityContext securityContext);
-
-   /**
-     * Adds the ServiceSecurity's runAs Role to the SecurityContext's Subject.
-     * @param serviceSecurity the ServiceSecurity
-     * @param securityContext the SecurityContext
-     * @return whether adding the runAs Role was successful
-    */
-   boolean addRunAs(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+   public void populate(ServiceSecurity serviceSecurity, SecurityContext securityContext);
 
    /**
     * Checks if the Subject associated in the SecurityContext has at least one of the allowed roles in the ServiceSecurity.
@@ -53,13 +46,24 @@ public interface SecurityProvider {
     * @param securityContext the SecurityContext
     * @return whether the allowed roles check was successful
     */
-   boolean checkRolesAllowed(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+   public boolean checkRolesAllowed(ServiceSecurity serviceSecurity, SecurityContext securityContext);
 
    /**
-    * Clears the SecurityContext and any underlying SecurityContextAssociation.
+    * Runs the PrivilegedExceptionAction with the SecurityContext according to the runAs for the ServiceSecurity.
     * @param serviceSecurity the ServiceSecurity
     * @param securityContext the SecurityContext
-    * @return whether the clear was successful
+    * @param action the PrivilegedExceptionAction
+    * @param <T> the return value type
+    * @return the return value
+    * @throws Exception if a problem occurs
     */
-   boolean clear(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+   public <T> T runAs(ServiceSecurity serviceSecurity, SecurityContext securityContext, PrivilegedExceptionAction<T> action) throws Exception;
+
+   /**
+    * Clears the SecurityContext and any (possibly container-specific) association.
+    * @param serviceSecurity the ServiceSecurity
+    * @param securityContext the SecurityContext
+    */
+   public void clear(ServiceSecurity serviceSecurity, SecurityContext securityContext);
+
 }

@@ -27,10 +27,9 @@ import org.jboss.logging.Logger;
 import org.switchyard.BaseHandler;
 import org.switchyard.Exchange;
 import org.switchyard.HandlerException;
-import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.ServiceReference;
 import org.switchyard.ServiceSecurity;
+import org.switchyard.security.SecurityMetadata;
 import org.switchyard.security.SecurityServices;
 import org.switchyard.security.context.SecurityContext;
 import org.switchyard.security.context.SecurityContextManager;
@@ -78,7 +77,7 @@ public class SecurityHandler extends BaseHandler {
      */
     @Override
     public void handleMessage(Exchange exchange) throws HandlerException {
-        ServiceSecurity serviceSecurity = getServiceSecurity(exchange);
+        ServiceSecurity serviceSecurity = SecurityMetadata.getServiceSecurity(exchange);
         if (serviceSecurity == null) {
             // nothing to do
             return;
@@ -98,7 +97,7 @@ public class SecurityHandler extends BaseHandler {
      */
     @Override
     public void handleFault(Exchange exchange) {
-        ServiceSecurity serviceSecurity = getServiceSecurity(exchange);
+        ServiceSecurity serviceSecurity = SecurityMetadata.getServiceSecurity(exchange);
         if (serviceSecurity == null) {
             // nothing to do
             return;
@@ -134,8 +133,7 @@ public class SecurityHandler extends BaseHandler {
             success = true;
         }
         if (success) {
-            _securityProvider.propagate(serviceSecurity, securityContext);
-            _securityProvider.addRunAs(serviceSecurity, securityContext);
+            _securityProvider.populate(serviceSecurity, securityContext);
         }
         if (isRequired(exchange, AUTHORIZATION) && !isProvided(exchange, AUTHORIZATION)) {
             if (isAuthorizationProvided(serviceSecurity, securityContext)) {
@@ -181,21 +179,6 @@ public class SecurityHandler extends BaseHandler {
 
     private boolean isAuthorizationProvided(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
         return _securityProvider.checkRolesAllowed(serviceSecurity, securityContext);
-    }
-
-    private ServiceSecurity getServiceSecurity(Exchange exchange) {
-        ServiceSecurity serviceSecurity = null;
-        Service service = exchange.getProvider();
-        if (service != null) {
-            serviceSecurity = service.getServiceMetadata().getSecurity();
-        }
-        if (serviceSecurity == null) {
-            ServiceReference serviceReference = exchange.getConsumer();
-            if (serviceReference != null) {
-                serviceSecurity = serviceReference.getServiceMetadata().getSecurity();
-            }
-        }
-        return serviceSecurity;
     }
 
     private static synchronized AtomicInteger processCount() {

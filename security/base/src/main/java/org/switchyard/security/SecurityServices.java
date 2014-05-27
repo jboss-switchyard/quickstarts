@@ -16,7 +16,7 @@ package org.switchyard.security;
 import org.switchyard.common.util.ProviderRegistry;
 import org.switchyard.security.credential.extractor.DefaultServletRequestCredentialExtractor;
 import org.switchyard.security.credential.extractor.ServletRequestCredentialExtractor;
-import org.switchyard.security.provider.JaasSecurityProvider;
+import org.switchyard.security.provider.DefaultSecurityProvider;
 import org.switchyard.security.provider.SecurityProvider;
 
 /**
@@ -34,7 +34,7 @@ public final class SecurityServices {
      */
     public static final SecurityProvider getSecurityProvider() {
         SecurityProvider sp = getProvider(SecurityProvider.class);
-        return sp != null ? sp : new JaasSecurityProvider();
+        return sp != null ? sp : new DefaultSecurityProvider();
     }
 
     /**

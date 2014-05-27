@@ -20,6 +20,7 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.bus.camel.BusMessages;
 import org.switchyard.handlers.AddressingHandler;
 import org.switchyard.handlers.PolicyHandler;
+import org.switchyard.handlers.ProviderHandler;
 import org.switchyard.handlers.SecurityHandler;
 import org.switchyard.handlers.SecurityHandler.SecurityAction;
 import org.switchyard.handlers.TransactionHandler;
@@ -100,7 +101,7 @@ public enum Processors {
     PROVIDER_CALLBACK {
         @Override
         public Processor create(ServiceDomain domain) {
-            return new ProviderProcessor();
+            return wrap(new ProviderHandler(domain));
         }
     },
     /**

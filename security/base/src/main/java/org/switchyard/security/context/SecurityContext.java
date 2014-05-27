@@ -56,11 +56,19 @@ public interface SecurityContext extends Serializable {
     public void clearCredentials();
 
     /**
-     * Gets the Subject for the security domain.
+     * Gets the Subject for the security domain, creating one if one did not already exist.
      * @param securityDomain the security domain
      * @return the Subject for the security domain
      */
     public Subject getSubject(String securityDomain);
+
+    /**
+     * Gets the Subject for the security domain.
+     * @param securityDomain the security domain
+     * @param create create one if one did not already exist
+     * @return the Subject for the security domain, or null if create is false and one didn't already exist
+     */
+    public Subject getSubject(String securityDomain, boolean create);
 
     /**
      * Clears the Subject for the security domain.

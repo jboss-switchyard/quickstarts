@@ -60,7 +60,7 @@ public final class SecurityContextManager {
     }
 
     /**
-     * Gets the security context from the exchange.
+     * Gets the security context from the exchange, creating it if one did not already exist in the exchange or if it was not still valid.
      * @param exchange the exchange
      * @return the security context
      */
@@ -71,7 +71,7 @@ public final class SecurityContextManager {
     /**
      * Gets the security context from the exchange.
      * @param exchange the exchange
-     * @param create create a new security context if one does not already exist in the exchange or it is not still valid
+     * @param create create a new security context if one does not already exist in the exchange or if it is not still valid
      * @return the security context, or null if create is false and one didn't already exist or was not valid
      */
     public SecurityContext getContext(Exchange exchange, boolean create) {

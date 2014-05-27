@@ -23,15 +23,6 @@ import java.security.Principal;
 public interface ExchangeSecurity {
 
     /**
-     * Gets the security domain.
-     * @return the security domain
-     */
-    public String getSecurityDomain();
-
-    // TODO: investigate need and safety of exposing the Subject
-    // public Subject getSubject();
-
-    /**
      * Gets the caller Principal.
      * @return the caller Principal
      */

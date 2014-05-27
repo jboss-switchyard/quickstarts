@@ -14,15 +14,24 @@
 package org.switchyard.security.jboss.provider;
 
 import java.security.Principal;
+import java.security.acl.Group;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.security.auth.Subject;
 
+import org.jboss.security.RunAs;
+import org.jboss.security.RunAsIdentity;
 import org.jboss.security.SecurityContextAssociation;
+import org.jboss.security.SecurityContextFactory;
+import org.jboss.security.identity.Identity;
 import org.jboss.security.identity.Role;
 import org.jboss.security.identity.RoleGroup;
+import org.jboss.security.identity.extensions.CredentialIdentityFactory;
+import org.jboss.security.identity.plugins.SimpleRoleGroup;
 import org.jboss.security.mapping.MappingResult;
 import org.picketlink.identity.federation.bindings.jboss.auth.mapping.STSGroupMappingProvider;
 import org.picketlink.identity.federation.bindings.jboss.auth.mapping.STSPrincipalMappingProvider;
@@ -34,15 +43,15 @@ import org.switchyard.security.jboss.JBossSecurityLogger;
 import org.switchyard.security.principal.GroupPrincipal;
 import org.switchyard.security.principal.RolePrincipal;
 import org.switchyard.security.principal.UserPrincipal;
-import org.switchyard.security.provider.JaasSecurityProvider;
+import org.switchyard.security.provider.DefaultSecurityProvider;
 import org.w3c.dom.Element;
 
 /**
- * JBossJaasSecurityProvider.
+ * JBossSecurityProvider.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public class JBossJaasSecurityProvider extends JaasSecurityProvider {
+public class JBossSecurityProvider extends DefaultSecurityProvider {
 
     static {
         // Here to trigger fallback usage of the JaasSecurityProvider in the static initializer
@@ -51,9 +60,9 @@ public class JBossJaasSecurityProvider extends JaasSecurityProvider {
     }
 
     /**
-     * Constructs a new JBossJaasSecurityProvider.
+     * Constructs a new JBossSecurityProvider.
      */
-    public JBossJaasSecurityProvider() {
+    public JBossSecurityProvider() {
         super();
     }
 
@@ -61,20 +70,19 @@ public class JBossJaasSecurityProvider extends JaasSecurityProvider {
      * {@inheritDoc}
      */
     @Override
-    public boolean propagate(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
+    public void populate(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
         String sy_securityDomain = serviceSecurity.getSecurityDomain();
         Subject sy_subject = securityContext.getSubject(sy_securityDomain);
         org.jboss.security.SecurityContext jb_securityContext = SecurityContextAssociation.getSecurityContext();
         if (jb_securityContext != null) {
-            // propagate from pre-authenticated container context
+            // populate from pre-authenticated container context
             String jb_securityDomain = jb_securityContext.getSecurityDomain();
             if (sy_securityDomain.equals(jb_securityDomain)) {
                 Subject jb_subject = jb_securityContext.getUtil().getSubject();
                 transfer(jb_subject, sy_subject);
-                return true;
             } 
         } else {
-            // propagate from pre-verified federated assertion
+            // populate from pre-verified federated assertion
             Set<AssertionCredential> assertionCredentials = securityContext.getCredentials(AssertionCredential.class);
             for (AssertionCredential assertionCredential : assertionCredentials) {
                 Element assertionElement = assertionCredential.getAssertion();
@@ -114,21 +122,95 @@ public class JBossJaasSecurityProvider extends JaasSecurityProvider {
                     }
                     if (sts_mapped) {
                         transfer(sts_subject, sy_subject);
-                        return true;
                     }
                 }
             }
-
         }
-        return super.propagate(serviceSecurity, securityContext);
+        super.populate(serviceSecurity, securityContext);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean clear(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
-        boolean success = super.clear(serviceSecurity, securityContext);
+    protected Object setContainerContext(String securityDomain, Subject subject, Principal principal, Group rolesGroup, String runAs) throws Exception {
+        Set<String> roles = new HashSet<String>();
+        if (runAs != null) {
+            roles.add(runAs);
+        }
+        if (rolesGroup != null) {
+            for (Principal role : Collections.list(rolesGroup.members())) {
+                if (runAs == null) {
+                    runAs = role.getName();
+                }
+                roles.add(role.getName());
+            }
+        }
+        RunAs new_jb_runAs = runAs != null ? new RunAsIdentity(runAs, principal != null ? principal.getName() : null, roles) : null;
+        org.jboss.security.SecurityContext old_jb_securityContext = SecurityContextAssociation.getSecurityContext();
+        if (old_jb_securityContext == null) {
+            Set<Object> credentials = subject.getPrivateCredentials();
+            Object credential = !credentials.isEmpty() ? credentials.iterator().next() : null;
+            org.jboss.security.SecurityContext new_jb_securityContext = SecurityContextFactory.createSecurityContext(securityDomain);
+            SecurityContextAssociation.setSecurityContext(new_jb_securityContext);
+            if (rolesGroup != null) {
+                RoleGroup roleGroup = new SimpleRoleGroup(rolesGroup);
+                Identity identity = CredentialIdentityFactory.createIdentity(principal, credential, roleGroup);
+                new_jb_securityContext.getUtil().createSubjectInfo(identity, subject);
+                new_jb_securityContext.getSubjectInfo().setRoles(roleGroup);
+            } else {
+                Identity identity = CredentialIdentityFactory.createIdentity(principal, credential);
+                new_jb_securityContext.getUtil().createSubjectInfo(identity, subject);
+            }
+            if (new_jb_runAs != null) {
+                new_jb_securityContext.setOutgoingRunAs(new_jb_runAs);
+            }
+            return new JBossContainerContext(null, null, null);
+        } else {
+            RoleGroup old_jb_roleGroup = old_jb_securityContext.getSubjectInfo().getRoles();
+            if (rolesGroup != null) {
+                old_jb_securityContext.getSubjectInfo().setRoles(new SimpleRoleGroup(rolesGroup));
+            }
+            RunAs old_jb_runAs = old_jb_securityContext.getOutgoingRunAs();
+            if (new_jb_runAs != null) {
+                old_jb_securityContext.setOutgoingRunAs(new_jb_runAs);
+            }
+            return new JBossContainerContext(old_jb_securityContext, old_jb_roleGroup, old_jb_runAs);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void resetContainerContext(Object previous) throws Exception {
+        JBossContainerContext old_jb = (JBossContainerContext)previous;
+        if (old_jb._securityContext == null) {
+            SecurityContextAssociation.clearSecurityContext();
+        } else {
+            SecurityContextAssociation.setSecurityContext(old_jb._securityContext);
+            old_jb._securityContext.getSubjectInfo().setRoles(old_jb._roleGroup);
+            old_jb._securityContext.setOutgoingRunAs(old_jb._runAs);
+        }
+    }
+
+    private static final class JBossContainerContext {
+        private final org.jboss.security.SecurityContext _securityContext;
+        private final RoleGroup _roleGroup;
+        private final RunAs _runAs;
+        private JBossContainerContext(org.jboss.security.SecurityContext securityContext, RoleGroup roleGroup, RunAs runAs) {
+            this._securityContext = securityContext;
+            this._roleGroup = roleGroup;
+            this._runAs = runAs;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clear(ServiceSecurity serviceSecurity, SecurityContext securityContext) {
+        super.clear(serviceSecurity, securityContext);
         try {
             org.jboss.security.SecurityContext jb_securityContext = SecurityContextAssociation.getSecurityContext();
             if (jb_securityContext != null) {
@@ -140,9 +222,7 @@ public class JBossJaasSecurityProvider extends JaasSecurityProvider {
             }
         } catch (Throwable t) {
             JBossSecurityLogger.ROOT_LOGGER.clearSecurityContextAssociation(t);
-            success = false;
         }
-        return success;
     }
 
 }

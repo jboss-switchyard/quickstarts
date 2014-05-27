@@ -116,9 +116,17 @@ public final class DefaultSecurityContext implements SecurityContext {
      * {@inheritDoc}
      */
     @Override
-    public synchronized Subject getSubject(String securityDomain) {
+    public Subject getSubject(String securityDomain) {
+        return getSubject(securityDomain, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized Subject getSubject(String securityDomain, boolean create) {
         Subject subject = _securityDomainsToSubjects.get(securityDomain);
-        if (subject == null) {
+        if (subject == null && create) {
             subject = new Subject();
             _securityDomainsToSubjects.put(securityDomain, subject);
         }
@@ -140,20 +148,22 @@ public final class DefaultSecurityContext implements SecurityContext {
      */
     @Override
     public Principal getCallerPrincipal(String securityDomain) {
-        Subject subject = getSubject(securityDomain);
         Principal callerPrincipal = null;
-        outerLoop : for (Principal principal : subject.getPrincipals()) {
-            if (principal instanceof Group) {
-                Group group = (Group)principal;
-                if (group.getName().equalsIgnoreCase(CALLER_PRINCIPAL)) {
-                    Enumeration<? extends Principal> members = group.members();
-                    while (members.hasMoreElements()) {
-                        callerPrincipal = members.nextElement();
-                        break outerLoop;
+        Subject subject = getSubject(securityDomain, false);
+        if (subject != null) {
+            outerLoop : for (Principal principal : subject.getPrincipals()) {
+                if (principal instanceof Group) {
+                    Group group = (Group)principal;
+                    if (group.getName().equalsIgnoreCase(CALLER_PRINCIPAL)) {
+                        Enumeration<? extends Principal> members = group.members();
+                        while (members.hasMoreElements()) {
+                            callerPrincipal = members.nextElement();
+                            break outerLoop;
+                        }
                     }
+                } else if (callerPrincipal == null && principal instanceof UserPrincipal) {
+                    callerPrincipal = principal;
                 }
-            } else if (callerPrincipal == null && principal instanceof UserPrincipal) {
-                callerPrincipal = principal;
             }
         }
         return callerPrincipal;
@@ -164,16 +174,18 @@ public final class DefaultSecurityContext implements SecurityContext {
      */
     @Override
     public boolean isCallerInRole(String roleName, String securityDomain) {
-        Subject subject = getSubject(securityDomain);
-        for (Principal principal : subject.getPrincipals()) {
-            if (principal instanceof Group) {
-                Group group = (Group)principal;
-                if (group.getName().equalsIgnoreCase(ROLES)) {
-                    Enumeration<? extends Principal> roles = group.members();
-                    while (roles.hasMoreElements()) {
-                        Principal role = roles.nextElement();
-                        if (role.getName().equals(roleName)) {
-                            return true;
+        Subject subject = getSubject(securityDomain, false);
+        if (subject != null) {
+            for (Principal principal : subject.getPrincipals()) {
+                if (principal instanceof Group) {
+                    Group group = (Group)principal;
+                    if (group.getName().equalsIgnoreCase(ROLES)) {
+                        Enumeration<? extends Principal> roles = group.members();
+                        while (roles.hasMoreElements()) {
+                            Principal role = roles.nextElement();
+                            if (role.getName().equals(roleName)) {
+                                return true;
+                            }
                         }
                     }
                 }

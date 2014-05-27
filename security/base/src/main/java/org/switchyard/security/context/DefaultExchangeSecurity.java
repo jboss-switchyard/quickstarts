@@ -15,12 +15,13 @@ package org.switchyard.security.context;
 
 import java.security.Principal;
 
+import javax.security.auth.Subject;
+
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeSecurity;
-import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
-import org.switchyard.ServiceReference;
 import org.switchyard.ServiceSecurity;
+import org.switchyard.security.SecurityMetadata;
 
 /**
  * Default ExchangeSecurity implementation.
@@ -39,40 +40,34 @@ public class DefaultExchangeSecurity implements ExchangeSecurity {
      */
     public DefaultExchangeSecurity(Exchange exchange) {
         _exchange = exchange;
-        ServiceSecurity serviceSecurity = null;
-        ServiceDomain serviceDomain = null;
-        Service service = exchange.getProvider();
-        if (service != null) {
-            serviceSecurity = service.getServiceMetadata().getSecurity();
-            serviceDomain = service.getDomain();
-        }
-        if (serviceSecurity == null) {
-            ServiceReference serviceReference = exchange.getConsumer();
-            if (serviceReference != null) {
-                serviceSecurity = serviceReference.getServiceMetadata().getSecurity();
-                serviceDomain = serviceReference.getDomain();
-            }
-        }
+        SecurityMetadata securityMetadata = SecurityMetadata.getSecurityMetadata(exchange);
+        ServiceSecurity serviceSecurity = securityMetadata.getServiceSecurity();
         _securityDomain = serviceSecurity != null ? serviceSecurity.getSecurityDomain() : null;
+        ServiceDomain serviceDomain = securityMetadata.getServiceDomain();
         _securityContextManager = serviceDomain != null ? new SecurityContextManager(serviceDomain) : null;
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the security context. <i>This method is not exposed in the public API.</i>
+     * @return the security context
      */
-    @Override
-    public String getSecurityDomain() {
-        return _securityDomain;
+    public SecurityContext getSecurityContext() {
+        if (_securityContextManager != null) {
+            return _securityContextManager.getContext(_exchange);
+        }
+        return null;
     }
 
-    /*
+    /**
+     * Gets the subject. <i>This method is not exposed in the public API.</i>
+     * @return the subject
+     */
     public Subject getSubject() {
         if (_securityContextManager != null) {
             return _securityContextManager.getContext(_exchange).getSubject(_securityDomain);
         }
         return null;
     }
-    */
 
     /**
      * {@inheritDoc}
