@@ -116,13 +116,13 @@
         <module>demos/webapp-deploy</module>
         <module>demos/multiApp</module>
         <module>demos/policy-security-basic</module>
-        <module>demos/policy-security-basic-propagate</module>
         <module>demos/policy-security-cert</module>
         <module>demos/policy-security-saml</module>
         <module>demos/policy-security-wss-signencrypt</module>
         <module>demos/policy-security-wss-username</module>
         <module>demos/policy-transaction</module>
         <module>demos/cluster</module>
+        <module>demos/security-propagation</module>
         <module>demos/transaction-propagation</module>
     </modules>
     <dependencies>
