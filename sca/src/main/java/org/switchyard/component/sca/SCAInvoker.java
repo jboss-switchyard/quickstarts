@@ -29,9 +29,11 @@ import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceReference;
 import org.switchyard.SwitchYardException;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.SynchronousInOutHandler;
 import org.switchyard.config.model.composite.SCABindingModel;
 import org.switchyard.deploy.BaseServiceHandler;
+import org.switchyard.deploy.internal.Deployment;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.remote.RemoteMessage;
 import org.switchyard.remote.RemoteRegistry;
@@ -126,7 +128,20 @@ public class SCAInvoker extends BaseServiceHandler {
         Message invokeMsg = exchange.getMessage().copy();
         exchange.getContext().mergeInto(invokeMsg.getContext());
         
-        ex.send(invokeMsg);
+        // Since this invocation may cross application boundaries, we need to set the TCCL 
+        // based on the target service's application class loader
+        ClassLoader origCL = null;
+        try {
+            ClassLoader targetCL = (ClassLoader) 
+                    ref.getDomain().getProperty(Deployment.CLASSLOADER_PROPERTY);
+            origCL = Classes.setTCCL(targetCL);
+            ex.send(invokeMsg);
+        } finally {
+            if (origCL != null) {
+                Classes.setTCCL(origCL);
+            }
+        }
+        
         if (ExchangePattern.IN_OUT.equals(ex.getPattern())) {
             replyHandler.waitForOut();
             if (ex.getMessage() != null) {
