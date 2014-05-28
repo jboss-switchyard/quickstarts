@@ -13,13 +13,13 @@
  */
 package org.switchyard.component.sca.deploy;
 
-import java.util.ServiceLoader;
-
 import org.switchyard.ServiceDomain;
+import org.switchyard.common.util.ProviderRegistry;
+import org.switchyard.component.sca.NOPEndpointPublisher;
 import org.switchyard.component.sca.RemoteEndpointPublisher;
+import org.switchyard.component.sca.SCALogger;
 import org.switchyard.deploy.Activator;
 import org.switchyard.deploy.BaseComponent;
-import org.switchyard.component.sca.SCALogger;
 
 /**
  * The "remote" component used in SwitchYard for providing and consuming clustered endpoints.
@@ -36,8 +36,7 @@ public class SCAComponent extends BaseComponent {
         super(SCAActivator.TYPES);
         setName("RemoteComponent");
         try {
-            _endpointPublisher = ServiceLoader.load(RemoteEndpointPublisher.class).iterator().next();
-            _endpointPublisher.init(CONTEXT_PATH);
+            initEndpointPublisher();
         } catch (Exception ex) {
             SCALogger.ROOT_LOGGER.failedToInitializeRemoteEndpointPublisher(ex);
         }
@@ -58,5 +57,14 @@ public class SCAComponent extends BaseComponent {
         } catch (Exception ex) {
             SCALogger.ROOT_LOGGER.failedToDestroyRemoteEndpointPublisher(ex);
         }
+    }
+    
+    private void initEndpointPublisher() {
+        _endpointPublisher = ProviderRegistry.getProvider(RemoteEndpointPublisher.class);
+        // if we couldn't find a provider, default to NOP implementation
+        if (_endpointPublisher == null) {
+            _endpointPublisher = new NOPEndpointPublisher();
+        }
+        _endpointPublisher.init(CONTEXT_PATH);
     }
 }
