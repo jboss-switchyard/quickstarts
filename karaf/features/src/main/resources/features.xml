@@ -263,6 +263,14 @@
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-ftp-binding/${project.version}</bundle>
     </feature>
 
+    <feature name="switchyard-quickstart-camel-hl7" version="${project.version}" resolver="(obr)">
+	<feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-camel</feature>
+        <feature version="${version.org.apache.camel}">camel-hl7</feature>
+        <feature version="${version.org.apache.camel}">camel-mina2</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-hl7/${project.version}</bundle>
+    </feature>
+
     <feature name="switchyard-quickstart-camel-jaxb" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
         <feature version="${project.version}">switchyard-http</feature>
