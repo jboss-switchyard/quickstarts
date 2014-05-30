@@ -20,10 +20,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.Set;
 
 import org.switchyard.common.type.Classes;
+import org.switchyard.common.util.ProviderRegistry;
 import org.switchyard.serial.FormatType;
 import org.switchyard.serial.Serializer;
 
@@ -37,7 +37,7 @@ public abstract class SerializationProvider {
     private static final Map<FormatType, List<SerializationProvider>> MAP;
     static {
         Map<FormatType, List<SerializationProvider>> map = new LinkedHashMap<FormatType, List<SerializationProvider>>();
-        Iterable<SerializationProvider> providers = ServiceLoader.load(SerializationProvider.class, Classes.getClassLoader(SerializationProvider.class));
+        Iterable<SerializationProvider> providers = ProviderRegistry.getProviders(SerializationProvider.class, Classes.getClassLoader(SerializationProvider.class));
         for (SerializationProvider provider : providers) {
             for (FormatType format : provider.getSupportedFormats()) {
                 List<SerializationProvider> list = map.get(format);
