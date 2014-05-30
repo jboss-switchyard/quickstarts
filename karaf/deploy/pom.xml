@@ -35,7 +35,7 @@
             org.apache.camel.core.osgi*
         </switchyard.osgi.private>
         <switchyard.osgi.import>
-            org.switchyard.admin.*;${switchyard.osgi.import.switchyard.version},
+            !org.osgi.service;org.switchyard.admin.*;${switchyard.osgi.import.switchyard.version},
             org.switchyard.*;${switchyard.osgi.import.switchyard.version},
             *
         </switchyard.osgi.import>
@@ -71,6 +71,10 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-admin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-sca</artifactId>
         </dependency>
         <!-- external dependencies -->
         <dependency>

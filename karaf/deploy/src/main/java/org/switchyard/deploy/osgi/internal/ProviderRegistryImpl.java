@@ -13,13 +13,6 @@
  */
 package org.switchyard.deploy.osgi.internal;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.util.tracker.BundleTracker;
-import org.osgi.util.tracker.BundleTrackerCustomizer;
-import org.switchyard.common.util.ProviderRegistry;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -33,6 +26,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.BundleTracker;
+import org.osgi.util.tracker.BundleTrackerCustomizer;
+import org.switchyard.common.util.ProviderRegistry;
 
 /**
  * ProviderRegistryImpl.
@@ -63,8 +64,19 @@ public class ProviderRegistryImpl implements ProviderRegistry.Registry, BundleTr
     @Override
     public <T> T getProvider(Class<T> clazz) {
         try {
-            Class<? extends T> pvd = locate(clazz);
-            return pvd != null ? pvd.newInstance() : null;
+            T provider = null;
+            // Attempt to resolve via META-INF/services first
+            Class<? extends T> pvdClass = locate(clazz);
+            if (pvdClass != null) {
+                provider = pvdClass.newInstance();
+            } else {
+                // Not found in META-INF/services, try OSGi Service Registry
+                ServiceReference<T> ref = _bundleContext.getServiceReference(clazz);
+                if (ref != null) {
+                    provider = _bundleContext.getService(ref);
+                }
+            }
+            return provider;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

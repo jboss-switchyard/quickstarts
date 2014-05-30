@@ -25,6 +25,16 @@
     <name>SwitchYard: Karaf Features</name>
     <description>Feature descriptions for running Switchyard on Karaf</description>
     <url>http://switchyard.org</url>
+    <properties>
+        <version.org.ops4j.pax.cdi>0.4.0</version.org.ops4j.pax.cdi>
+        <version.org.apache.activemq>5.9.0</version.org.apache.activemq>
+        <version.commons-beanutils>1.8.3</version.commons-beanutils>
+        <version.org.apache.xbean>3.12</version.org.apache.xbean>
+        <version.org.jboss.logging>3.1.2.GA</version.org.jboss.logging>
+        <version.org.apache.deltaspike.core>0.4</version.org.apache.deltaspike.core>
+        <version.org.apache.geronimo.specs.servlet>1.0</version.org.apache.geronimo.specs.servlet>
+        <version.org.apache.servicemix.bundles.saaj-impl>1.3.9_2</version.org.apache.servicemix.bundles.saaj-impl>
+    </properties>
     <build>
         <resources>
             <resource>
