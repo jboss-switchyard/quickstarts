@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.jboss.integration-platform</groupId>
         <artifactId>jboss-integration-platform-parent</artifactId>
-        <version>6.0.0.CR6</version>
+        <version>6.0.0.CR9</version>
     </parent>
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-parent</artifactId>
@@ -53,9 +53,11 @@
           resources, i.e. build is platform dependent! -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.org.apache.camel>2.12.2</version.org.apache.camel>
-        <version.jbossas.bom>7.2.0.Alpha1-redhat-4</version.jbossas.bom>
+
+        <version.jbossas.bom>7.4.0.Final-redhat-11</version.jbossas.bom>
         <version.redhat.eap6.bom>1.0.4.Final-redhat-1</version.redhat.eap6.bom>
-        <version.ip.bom>6.0.0.CR6</version.ip.bom>
+        <version.ip.bom>6.0.0.CR9</version.ip.bom>
+        
         <!-- Versions for local dependencies not eligible for the Integration BOM -->
         <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
         <version.camelsap>1.0.0.redhat-379</version.camelsap>
@@ -67,7 +69,7 @@
         <version.hapi>2.1</version.hapi>
         <version.httpcomponents>4.2.1</version.httpcomponents>
         <version.io.netty>3.8.0.Final</version.io.netty>
-        <version.jbossas>7.2.0.Alpha1-redhat-4</version.jbossas>
+        <version.jbossas>7.4.0.Final-redhat-11</version.jbossas>
         <version.jbossas.console>1.5.4.Final</version.jbossas.console>
         <version.jbossas.maven>7.4.Final</version.jbossas.maven>
         <version.karaf>2.3.3</version.karaf>
@@ -96,10 +98,12 @@
         <version.org.hamcrest>1.1</version.org.hamcrest>
         <version.junit>4.10</version.junit>
         <version.org.hornetq>2.3.0.CR1</version.org.hornetq>
-        <version.jbossws.spi>2.1.2.Final</version.jbossws.spi>
         <version.jbossws.jboss720.server.integration>4.2.0.Final</version.jbossws.jboss720.server.integration>
-        <version.redhat.eap6>6.1</version.redhat.eap6>
-        <version.redhat.eap6.minor>0.Alpha</version.redhat.eap6.minor>
+        <version.redhat.eap6>6.3</version.redhat.eap6>
+        <version.redhat.eap6.minor>0.Beta1</version.redhat.eap6.minor>
+        <version.jboss.jts>4.17.19.Final-redhat-1</version.jboss.jts>
+        <version.cxf>2.7.10</version.cxf>
+        
         <!-- OSGi bundles properties -->
         <switchyard.osgi.import.switchyard.version>version="[$(version;==;${switchyard.osgi.version}),$(version;=+;${switchyard.osgi.version}))"</switchyard.osgi.import.switchyard.version>
         <switchyard.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</switchyard.osgi.import.default.version>
@@ -214,6 +218,15 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>enforce-plugin-versions</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
+                </plugin>
                 <!-- address "quirks" in m2e 1.0 -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -292,6 +305,11 @@
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>xml-maven-plugin</artifactId>
+                    <version>1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jboss.as.plugins</groupId>
@@ -528,6 +546,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.7</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-archetype-plugin</artifactId>
+                <version>2.2</version>
             </plugin>
             <!-- OSGi -->
             <plugin>
@@ -1112,6 +1135,31 @@
       ##                 Local Project Dependencies                    ##
       ################################################################### -->
             <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-transports-http</artifactId>
+                <version>${version.cxf}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-transports-http-jetty</artifactId>
+                <version>${version.cxf}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-bindings-soap</artifactId>
+                <version>${version.cxf}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-jaxws</artifactId>
+                <version>${version.cxf}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-databinding-jaxb</artifactId>
+                <version>${version.cxf}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.github.fungal</groupId>
                 <artifactId>fungal</artifactId>
                 <version>${version.fungal}</version>
@@ -1176,7 +1224,31 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-controller</artifactId>
+                <version>${version.jbossas}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-server</artifactId>
+                <version>${version.jbossas}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-naming</artifactId>
+                <version>${version.jbossas}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.as</groupId>
                 <artifactId>jboss-as-dist</artifactId>
+                <version>${version.jbossas}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.as</groupId>
+                <artifactId>jboss-as-weld</artifactId>
                 <version>${version.jbossas}</version>
                 <type>zip</type>
             </dependency>
@@ -1224,6 +1296,11 @@
                 <groupId>org.jboss.bpm</groupId>
                 <artifactId>gwt-console-server-integration</artifactId>
                 <version>${version.riftsaw.console}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.jbossts.jta</groupId>
+                <artifactId>narayana-jta</artifactId>
+                <version>${version.jboss.jts}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>
@@ -1315,11 +1392,6 @@
                 <groupId>org.jboss.soa.bpel</groupId>
                 <artifactId>riftsaw-utils</artifactId>
                 <version>${version.riftsaw.ode}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.ws</groupId>
-                <artifactId>jbossws-spi</artifactId>
-                <version>${version.jbossws.spi}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.ws</groupId>
@@ -1538,6 +1610,11 @@
                 <artifactId>mina-core</artifactId>
                 <version>${version.mina2}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>${version.org.springframework}</version>
+            </dependency>
             <!--  ###################################################################
       ##                       Project Artifacts                       ##
       ################################################################### -->
@@ -1545,6 +1622,12 @@
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-admin</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-as7-standalone-bundle</artifactId>
+                <version>${project.version}</version>
+                <type>zip</type>
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
@@ -1655,6 +1738,17 @@
             <dependency>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-deploy-osgi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-deploy-wildfly</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-wildfly-bundle</artifactId>
+                <type>zip</type>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -2256,6 +2350,11 @@
                 <groupId>rome</groupId>
                 <artifactId>rome</artifactId>
                 <version>${version.rome}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>${version.org.apache.xmlbeans}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
