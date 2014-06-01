@@ -113,9 +113,7 @@
                             <tasks>
                                 <copy todir="${common.sources.dir}">
                                     <fileset dir="../../extension/src/main/java/" includes="**/*.java">
-                                        <exclude name="org/switchyard/as7/extension/SwitchYardExtensionAdd.java"/>
                                         <exclude name="org/switchyard/as7/extension/SwitchYardModuleAdd.java"/>
-                                        <exclude name="org/switchyard/as7/extension/SwitchYardSubsystemAdd.java"/>
                                         <exclude name="org/switchyard/as7/extension/cluster/RemoteEndpointListener.java"/>
                                         <exclude name="org/switchyard/as7/extension/deployment/SwitchYardCdiIntegrationProcessor.java"/>
                                         <exclude name="org/switchyard/as7/extension/deployment/SwitchYardDeployment.java"/>

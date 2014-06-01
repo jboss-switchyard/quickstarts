@@ -53,34 +53,33 @@ public class JBossWSEndpointPublisher extends AbstractEndpointPublisher {
             initialize(config);
             Map<String,String> map = new HashMap<String, String>();
             map.put("/" + config.getPort().getServiceName(), SEI);
-
-            WebservicesMetaData wsMetadata = new WebservicesMetaData();
-            WebserviceDescriptionMetaData wsDescMetaData = new WebserviceDescriptionMetaData(wsMetadata);
-            wsDescMetaData.setWsdlFile(getWsdlLocation());
-            PortComponentMetaData portComponent = new PortComponentMetaData(wsDescMetaData);
-            portComponent.setPortComponentName(config.getServiceName() 
-                                                + ":" + config.getPort().getServiceQName().getLocalPart() 
-                                                + ":" + config.getPort().getPortQName().getLocalPart()); //unique ID
-            portComponent.setServiceEndpointInterface(SEI);
-            portComponent.setWsdlPort(config.getPort().getPortQName());
-            portComponent.setWsdlService(config.getPort().getServiceQName());
-             // Should be the WSDL's service name and not the SwitchYard config's service name
-            portComponent.setServletLink(config.getPort().getServiceQName().getLocalPart());
+            Boolean addressingEnabled = false;
+            Boolean addressingRequired = false;
+            Boolean mtomEnabled = false;
+            Integer mtomThreshold = -1;
             for (WebServiceFeature feature : features) {
                 if (feature instanceof AddressingFeature) {
                     AddressingFeature addrFeature = (AddressingFeature)feature;
-                    portComponent.setAddressingEnabled(addrFeature.isEnabled());
-                    portComponent.setAddressingRequired(addrFeature.isRequired());
+                    addressingEnabled = addrFeature.isEnabled();
+                    addressingRequired = addrFeature.isRequired();
                     LOGGER.info("Addressing [enabled = " + addrFeature.isEnabled() + ", required = " + addrFeature.isRequired() + "]");
                 } else if (feature instanceof MTOMFeature) {
                     MTOMFeature mtom = (MTOMFeature)feature;
-                    portComponent.setMtomEnabled(mtom.isEnabled());
-                    portComponent.setMtomThreshold(mtom.getThreshold());
+                    mtomEnabled = mtom.isEnabled();
+                    mtomThreshold = mtom.getThreshold();
                     LOGGER.info("MTOM [enabled = " + mtom.isEnabled() + ", threshold = " + mtom.getThreshold() + "]");
                 }
             }
-            wsDescMetaData.addPortComponent(portComponent);
-            wsMetadata.addWebserviceDescription(wsDescMetaData);
+            PortComponentMetaData portComponent = new PortComponentMetaData(config.getServiceName()
+                                                + ":" + config.getPort().getServiceQName().getLocalPart()
+                                                + ":" + config.getPort().getPortQName().getLocalPart(),
+                                                config.getPort().getPortQName(),
+                                                SEI, null, config.getPort().getServiceQName().getLocalPart(),
+                                                null, "/" + config.getPort().getServiceName(),
+                                                addressingEnabled, addressingRequired, "ALL", mtomEnabled, mtomThreshold,
+                                                false, config.getPort().getServiceQName(), null, null);
+            WebserviceDescriptionMetaData wsDescMetaData = new WebserviceDescriptionMetaData(config.getServiceName().getLocalPart(), getWsdlLocation(), null, new PortComponentMetaData[]{portComponent});
+            WebservicesMetaData wsMetadata = new WebservicesMetaData(null, new WebserviceDescriptionMetaData[]{wsDescMetaData});
 
             wsEndpoint = new JBossWSEndpoint();
             if (config.getContextPath() != null) {

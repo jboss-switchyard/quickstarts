@@ -60,6 +60,11 @@ public final class SwitchYardModuleAdd extends AbstractAddStepHandler {
      */
     private static List<String> _componentNames = new ArrayList<String>();
 
+    /**
+     * Global priority.
+     */
+    public static int _priority = 0x4005;
+
     private SwitchYardModuleAdd() {
 
     }
@@ -96,7 +101,7 @@ public final class SwitchYardModuleAdd extends AbstractAddStepHandler {
 
         context.addStep(new AbstractDeploymentChainStep() {
             protected void execute(DeploymentProcessorTarget processorTarget) {
-                processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 0x4002, new SwitchYardModuleDependencyProcessor(moduleId));
+                processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, _priority++, new SwitchYardModuleDependencyProcessor(moduleId));
             }
         }, OperationContext.Stage.RUNTIME);
 

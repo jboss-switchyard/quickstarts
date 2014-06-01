@@ -52,6 +52,12 @@
                 <scope>import</scope>
                 <version>${version.wildfly}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wildfly</groupId>
+                <artifactId>wildfly-dist</artifactId>
+                <type>zip</type>
+                <version>${version.wildfly}</version>
+            </dependency>
             <!--<dependency>
                 <groupId>org.jboss.arquillian.protocol</groupId>
                 <artifactId>arquillian-protocol-servlet</artifactId>

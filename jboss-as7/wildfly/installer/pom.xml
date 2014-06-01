@@ -33,7 +33,6 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-wildfly-bundle</artifactId>
             <type>zip</type>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <build>

@@ -66,22 +66,18 @@
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-controller</artifactId>
-            <version>${version.jbossas}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-server</artifactId>
-            <version>${version.jbossas}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-naming</artifactId>
-            <version>${version.jbossas}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-weld</artifactId>
-            <version>${version.jbossas}</version>
         </dependency>
         <!-- Findbug needs it -->
         <dependency>

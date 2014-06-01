@@ -60,7 +60,10 @@ public final class SwitchYardModuleAdd extends AbstractAddStepHandler {
      */
     private static List<String> _componentNames = new ArrayList<String>();
 
-    private static int _priority = 0x4005;
+    /**
+     * Global priority.
+     */
+    public static int _priority = 0x4005;
 
     private SwitchYardModuleAdd() {
 

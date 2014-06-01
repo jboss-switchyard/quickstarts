@@ -485,7 +485,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
-            <version>${version.org.springframework}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -650,7 +649,6 @@
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
-            <version>${version.org.apache.xmlbeans}</version>
         </dependency>
         <dependency>
             <groupId>org.freemarker</groupId>

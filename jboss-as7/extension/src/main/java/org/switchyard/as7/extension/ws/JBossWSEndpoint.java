@@ -75,25 +75,19 @@ public class JBossWSEndpoint implements Endpoint {
         EndpointConfigModel epcModel = bindingModel.getEndpointConfig();
         JBossWebservicesMetaData jbwsMetadata = null;
         if (epcModel != null) {
+            String configName = epcModel.getConfigName();
             String configFile = epcModel.getConfigFile();
             if (configFile != null) {
                 URL jbwsURL = Classes.getResource(configFile, getClass());
                 try {
-                    jbwsMetadata = JBossWebservicesFactory.load(jbwsURL);
+                    JBossWebservicesFactory factory = new JBossWebservicesFactory(jbwsURL);
+                    jbwsMetadata = factory.load(jbwsURL);
                 } catch (WebServiceException e) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.error("Unable to load jboss-webservices metadata", e);
                     }
-                    jbwsMetadata = new JBossWebservicesMetaData(jbwsURL);
-                    jbwsMetadata.setConfigFile(configFile);
+                    jbwsMetadata = new JBossWebservicesMetaData("/", configName, configFile, jbwsURL, null, null, null);
                 }
-            }
-            String configName = epcModel.getConfigName();
-            if (configName != null) {
-                if (jbwsMetadata == null) {
-                    jbwsMetadata = new JBossWebservicesMetaData(null);
-                }
-                jbwsMetadata.setConfigName(configName);
             }
         }
         ClassLoader tccl = Classes.getTCCL();

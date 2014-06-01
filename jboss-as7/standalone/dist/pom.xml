@@ -29,36 +29,27 @@
         <redhat.eap6.dir>jboss-eap-${version.redhat.eap6}</redhat.eap6.dir>
         <staging.jboss.dir>${staging.dir}/${redhat.eap6.dir}</staging.jboss.dir>
         <staging.configs.dir>${staging.dir}/configs</staging.configs.dir>
-        <distro.file>switchyard-${project.version}-EAP6.1.Alpha</distro.file>
-        <distro.file.final>switchyard-${project.version}-EAP6.1.GA</distro.file.final>
+        <distro.file.final>switchyard-${project.version}-EAP6.3.Beta1</distro.file.final>
         <distro.root.dir>/</distro.root.dir>
         <installer.root.dir>/switchyard-as7-installer-${version.distro}</installer.root.dir>
         <switchyard.jboss.home>${staging.jboss.dir}</switchyard.jboss.home>
-        <zip.file.name>${distro.file}.zip</zip.file.name>
+        <zip.file.name>${distro.file.final}.zip</zip.file.name>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-as7-standalone-bundle</artifactId>
             <type>zip</type>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.as</groupId>
-            <artifactId>jboss-as-dist</artifactId>
-            <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
             <scope>test</scope>
-            <version>1.0.3.Final</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>arquillian-container-test-api</artifactId>
             <scope>test</scope>
-            <version>1.0.3.Final</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.as</groupId>
@@ -148,44 +139,29 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>stage-jboss</id>
-                        <phase>generate-sources</phase>
+                        <id>enforce-property</id>
                         <goals>
-                            <goal>unpack</goal>
+                            <goal>enforce</goal>
                         </goals>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.jboss.as</groupId>
-                                    <artifactId>jboss-as-dist</artifactId>
-                                    <type>zip</type>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${staging.dir}</outputDirectory>
+                            <rules>
+                                <requireProperty>
+                                    <property>jboss.home</property>
+                                    <message>You must set jboss.home property!</message>
+                                </requireProperty>
+                            </rules>
+                            <fail>true</fail>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>stage-jboss-configs</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.jboss.as</groupId>
-                                    <artifactId>jboss-as-dist</artifactId>
-                                    <type>zip</type>
-                                    <overWrite>true</overWrite>
-                                </artifactItem>
-                            </artifactItems>
-                            <includes>${redhat.eap6.dir}/standalone/configuration/standalone.xml, ${redhat.eap6.dir}/standalone/configuration/standalone-full.xml, ${redhat.eap6.dir}/standalone/configuration/standalone.xml, ${redhat.eap6.dir}/standalone/configuration/standalone-ha.xml, ${redhat.eap6.dir}/standalone/configuration/standalone.xml, ${redhat.eap6.dir}/standalone/configuration/standalone-full-ha.xml,${redhat.eap6.dir}/domain/configuration/domain.xml</includes>
-                            <outputDirectory>${staging.configs.dir}</outputDirectory>
-                        </configuration>
-                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
                     <execution>
                         <id>unpack-bundle</id>
                         <phase>generate-sources</phase>
@@ -206,7 +182,7 @@
                     </execution>
                     <execution>
                         <id>unpack-tests</id>
-                        <phase>process-test-classes</phase>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
@@ -219,27 +195,9 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
-                            <excludes>application-roles.properties, application-users.properties</excludes>
+                            <excludes>**/*/CamelSOAPProxyQuickstartTest.class, **/*/EarDeploymentTest.class, **/*/EarDeployQuickstartTest.class,
+                             **/*/HelpDeskDemoQuickstartTest.class</excludes>
                             <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>unpack-users</id>
-                        <phase>process-test-classes</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.switchyard</groupId>
-                                    <artifactId>switchyard-as7-tests</artifactId>
-                                    <type>test-jar</type>
-                                    <version>${project.version}</version>
-                                </artifactItem>
-                            </artifactItems>
-                            <includes>application-roles.properties, application-users.properties</includes>
-                            <outputDirectory>${staging.jboss.dir}/standalone/configuration</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -259,7 +217,7 @@
                     <forceCreation>true</forceCreation>
                     <transformationSets>
                         <transformationSet>
-                            <dir>${staging.configs.dir}/${redhat.eap6.dir}/standalone/configuration</dir>
+                            <dir>src/main/resources</dir>
                             <includes>
                                 <include>standalone.xml</include>
                                 <include>standalone-ha.xml</include>
@@ -270,7 +228,7 @@
                             <stylesheet>${staging.jboss.dir}/xsl/standalone.xsl</stylesheet>
                         </transformationSet>
                         <transformationSet>
-                            <dir>${staging.jboss.dir}/standalone/configuration</dir>
+                            <dir>src/main/resources</dir>
                             <includes>
                                 <include>standalone-ha.xml</include>
                                 <include>standalone-full-ha.xml</include>
@@ -279,28 +237,12 @@
                             <stylesheet>${staging.jboss.dir}/xsl/standalone-ha.xsl</stylesheet>
                         </transformationSet>
                         <transformationSet>
-                            <dir>${staging.configs.dir}/${redhat.eap6.dir}/domain/configuration</dir>
+                            <dir>src/main/resources</dir>
                             <includes>
                                 <include>domain.xml</include>
                             </includes>
                             <outputDir>${staging.jboss.dir}/domain/configuration</outputDir>
                             <stylesheet>${staging.jboss.dir}/xsl/domain.xsl</stylesheet>
-                        </transformationSet>
-                        <transformationSet>
-                            <dir>${staging.jboss.dir}/modules/system/layers/base/org/jboss/ws/spi/main</dir>
-                            <includes>
-                                <include>module.xml</include>
-                            </includes>
-                            <outputDir>${staging.jboss.dir}/modules/system/layers/base/org/jboss/ws/spi/main</outputDir>
-                            <stylesheet>${staging.jboss.dir}/xsl/jbossws-spi_module.xsl</stylesheet>
-                        </transformationSet>
-                        <transformationSet>
-                            <dir>${staging.jboss.dir}/modules/system/layers/base/org/jboss/as/webservices/main</dir>
-                            <includes>
-                                <include>module.xml</include>
-                            </includes>
-                            <outputDir>${staging.jboss.dir}/modules/system/layers/base/org/jboss/as/webservices/main</outputDir>
-                            <stylesheet>${staging.jboss.dir}/xsl/jbossws-jboss720-server-integration_module.xsl</stylesheet>
                         </transformationSet>
                     </transformationSets>
                 </configuration>
@@ -309,20 +251,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
-                    <execution>
-                        <id>assembly-dist</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <finalName>${distro.file}</finalName>
-                            <descriptors>
-                                <descriptor>${basedir}/assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>assembly-full-dist</id>
                         <phase>generate-sources</phase>
@@ -375,31 +303,6 @@
             <id>default</id>
             <activation>
                 <property>
-                    <name>!jboss.home</name>
-                </property>
-            </activation>
-            <properties>
-                <jboss.home>${switchyard.jboss.home}</jboss.home>
-            </properties>
-        </profile>
-        <profile>
-            <id>finalGa</id>
-            <activation>
-                <property>
-                    <name>jboss.home</name>
-                </property>
-                <file>
-                    <exists>${jboss.home}/modules/system/layers/base/org/jboss/ws/spi/main/jbossws-spi-2.1.2.Final-redhat-1.jar</exists>
-                </file>
-            </activation>
-            <properties>
-                <zip.file.name>${distro.file.final}.zip</zip.file.name>
-            </properties>
-        </profile>
-        <profile>
-            <id>manual</id>
-            <activation>
-                <property>
                     <name>jboss.home</name>
                 </property>
             </activation>
@@ -415,8 +318,8 @@
                                 <configuration>
                                     <tasks>
                                         <unzip dest="${jboss.home}" src="${project.build.directory}/${zip.file.name}"/>
-                                        <copy file="${staging.jboss.dir}/standalone/configuration/application-users.properties" todir="${jboss.home}/standalone/configuration"/>
-                                        <copy file="${staging.jboss.dir}/standalone/configuration/application-roles.properties" todir="${jboss.home}/standalone/configuration"/>
+                                        <copy file="${project.build.testOutputDirectory}/application-users.properties" todir="${jboss.home}/standalone/configuration"/>
+                                        <copy file="${project.build.testOutputDirectory}/application-roles.properties" todir="${jboss.home}/standalone/configuration"/>
                                     </tasks>
                                 </configuration>
                                 <goals>
