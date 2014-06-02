@@ -88,7 +88,13 @@ public class SwitchYardExtender extends AbstractExtender {
         
         // remove TransformSource registrations
         for (ServiceRegistration<?> reg : _transformSources) {
-            reg.unregister();
+            try {
+                reg.unregister();
+            } catch (Exception ex) {
+                // Exceptions here are not fatal and we see a lot of IllegalStateException
+                // if the services have already been unregistered - drop to DEBUG log
+                _logger.debug("Error while unregistering TransformSource service", ex);
+            }
         }
         _transformSources.clear();
         
