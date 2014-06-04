@@ -20,7 +20,7 @@
             <interface.wsdl interface="wsdl/OrderService.wsdl#wsdl.porttype(OrderService)"/>
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
                 <wsdl>wsdl/OrderService.wsdl</wsdl>
-                <socketAddr>:18001</socketAddr>
+                <socketAddr>:${jettyPort}</socketAddr>
                 <contextPath>quickstart-cdi-bus</contextPath>
             </binding.soap>
         </service>
@@ -35,4 +35,9 @@
         <xform:transform.jaxb xmlns:xform="urn:switchyard-config:transform:1.0" contextPath="org.switchyard.quickstarts.camel.bus" from="java:org.switchyard.quickstarts.camel.bus.OrderAck" to="{urn:switchyard-quickstart:cdi-bus:1.0}orderAck"/>
         <xform:transform.jaxb xmlns:xform="urn:switchyard-config:transform:1.0" contextPath="org.switchyard.quickstarts.camel.bus" from="{urn:switchyard-quickstart:cdi-bus:1.0}order" to="java:org.switchyard.quickstarts.camel.bus.Order"/>
     </transforms>
+    <domain>
+        <properties>
+            <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+        </properties>
+    </domain>
 </switchyard>
