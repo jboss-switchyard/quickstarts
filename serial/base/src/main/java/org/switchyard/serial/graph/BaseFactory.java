@@ -27,7 +27,7 @@ public abstract class BaseFactory<T> extends Factory<T> {
      */
     @Override
     public boolean supports(Class<?> type) {
-        return true;
+        return type != null;
     }
 
 }

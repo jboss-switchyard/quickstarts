@@ -15,6 +15,7 @@ package org.switchyard.serial.protostuff;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import java.util.UUID;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.switchyard.HandlerException;
 import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.serial.FormatType;
@@ -35,8 +37,10 @@ import org.switchyard.serial.protostuff.ProtostuffSerializationData.Antennae;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Car;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.CustomPart;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.ExpiredPart;
+import org.switchyard.serial.protostuff.ProtostuffSerializationData.FlatTireException;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.FluentTitle;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Name;
+import org.switchyard.serial.protostuff.ProtostuffSerializationData.OutOfGasException;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Part;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.Person;
 import org.switchyard.serial.protostuff.ProtostuffSerializationData.StrictTitle;
@@ -47,7 +51,7 @@ import org.w3c.dom.Element;
 /**
  * Tests more complex de/serialization scenarios.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 public final class ProtostuffComplexSerializationTest {
 
@@ -179,20 +183,38 @@ public final class ProtostuffComplexSerializationTest {
     }
 
     @Test
-    public void testThrowable() throws Exception {
-        final Throwable expectedCause = new IllegalStateException("illegal");
-        expectedCause.fillInStackTrace();
-        final Exception expectedProblem = new Exception("problem", expectedCause);
-        expectedProblem.fillInStackTrace();
+    public void testBasicExceptions() throws Exception {
+        final IllegalStateException expectedIllegalStateException = new IllegalStateException("expectedIllegalStateException");
+        expectedIllegalStateException.fillInStackTrace();
+        final HandlerException expectedHandlerException = new HandlerException(expectedIllegalStateException);
+        expectedHandlerException.fillInStackTrace();
+        final Exception expectedException = new Exception("expectedException", expectedHandlerException);
+        expectedException.fillInStackTrace();
+        final Exception actualException = serDeser(expectedException, Exception.class);
+        final HandlerException actualHandlerException = (HandlerException)actualException.getCause();
+        final IllegalStateException actualIllegalStateException = (IllegalStateException)actualHandlerException.getCause();
+        Assert.assertEquals(expectedException.getMessage(), actualException.getMessage());
+        Assert.assertEquals(expectedHandlerException.getMessage(), actualHandlerException.getMessage());
+        Assert.assertEquals(expectedIllegalStateException.getMessage(), actualIllegalStateException.getMessage());
+        Assert.assertEquals(expectedException.getStackTrace().length, actualException.getStackTrace().length);
+        Assert.assertEquals(expectedHandlerException.getStackTrace().length, actualHandlerException.getStackTrace().length);
+        Assert.assertEquals(expectedIllegalStateException.getStackTrace().length, actualIllegalStateException.getStackTrace().length);
+        Assert.assertEquals(expectedHandlerException.isWrapper(), actualHandlerException.isWrapper());
+    }
+
+    @Test
+    public void testCustomExceptions() throws Exception {
+        final OutOfGasException expectedOutOfGasException = new OutOfGasException("Dagnabit!");
+        final FlatTireException expectedFlatTireException = new FlatTireException(new Wheel(Wheel.Location.BACK_RIGHT));
         Car car = new Car();
-        car.setProblem(expectedProblem);
+        car.setProblems(Arrays.asList(new Exception[]{expectedOutOfGasException, expectedFlatTireException}));
         car = serDeser(car, Car.class);
-        final Exception actualProblem = car.getProblem();
-        final Throwable actualCause = actualProblem.getCause();
-        Assert.assertEquals(expectedProblem.getMessage(), actualProblem.getMessage());
-        Assert.assertEquals(expectedCause.getMessage(), actualCause.getMessage());
-        Assert.assertEquals(expectedProblem.getStackTrace().length, actualProblem.getStackTrace().length);
-        Assert.assertEquals(expectedCause.getStackTrace().length, actualCause.getStackTrace().length);
+        final List<Exception> actualExceptions = car.getProblems();
+        final OutOfGasException actualOutOfGasException = (OutOfGasException)actualExceptions.get(0);
+        final FlatTireException actualFlatTireException = (FlatTireException)actualExceptions.get(1);
+        Assert.assertEquals(expectedOutOfGasException.getExplicitive(), actualOutOfGasException.getExplicitive());
+        Assert.assertSame(expectedFlatTireException.getWheel().getLocation(), actualFlatTireException.getWheel().getLocation());
+        Assert.assertEquals("Really?", actualFlatTireException.getMessage());
     }
 
     @Test

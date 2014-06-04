@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.switchyard.common.type.Classes;
 import org.switchyard.common.type.reflect.Access;
 import org.switchyard.common.type.reflect.BeanAccess;
 import org.switchyard.common.type.reflect.FieldAccess;
@@ -43,50 +45,50 @@ import org.switchyard.serial.graph.Strategy;
 /**
  * Reflection-based node for arbitrary objects.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2014 Red Hat Inc.
  */
 @SuppressWarnings("serial")
-public final class AccessNode implements Node {
+public abstract class AccessNode implements Node {
 
-    private String _type;
-    private Map<String, Integer> _ids;
-
-    /**
-     * Default constructor.
-     */
-    public AccessNode() {}
-
-    /**
-     * Gets the type.
-     * @return the type
-     */
-    public String getType() {
-        return _type;
+    static final Set<String> IGNORED_ACCESS_NAMES;
+    static {
+        Set<String> ignoredAccessNames = new HashSet<String>();
+        ignoredAccessNames.add("class");
+        ignoredAccessNames.add("ignoredAccessNames");
+        IGNORED_ACCESS_NAMES = Collections.unmodifiableSet(ignoredAccessNames);
     }
 
     /**
-     * Sets the type.
-     * @param type the type
+     * Gets the set of ignored access names.
+     * @return the set of ignored access names.
      */
-    public void setType(String type) {
-        _type = type;
+    Set<String> getIgnoredAccessNames() {
+        return IGNORED_ACCESS_NAMES;
     }
+
+    /**
+     * Gets the class.
+     * @return the class.
+     */
+    public abstract Integer getClazz();
+
+    /**
+     * Sets the class.
+     * @param clazz the class
+     */
+    public abstract void setClazz(Integer clazz);
 
     /**
      * Gets the ids.
      * @return the ids
      */
-    public Map<String, Integer> getIds() {
-        return _ids;
-    }
+    public abstract Map<String, Integer> getIds();
 
     /**
      * Sets the ids.
      * @param ids the ids
      */
-    public void setIds(Map<String, Integer> ids) {
-        _ids = ids;
-    }
+    public abstract void setIds(Map<String, Integer> ids);
 
     /**
      * {@inheritDoc}
@@ -95,19 +97,21 @@ public final class AccessNode implements Node {
     public void compose(Object obj, Graph graph) {
         if (obj != null) {
             Class<?> clazz = obj.getClass();
-            setType(clazz.getName());
+            setClazz(NodeBuilder.build(clazz, graph));
             for (Access<?> access : getAccessList(clazz)) {
                 if (!(access instanceof FieldAccess) && !access.isWriteable()) {
                     continue;
                 }
                 Object value = access.read(obj);
                 if (value != null) {
-                    if (_ids == null) {
-                        _ids = new LinkedHashMap<String, Integer>();
+                    Map<String, Integer> ids = getIds();
+                    if (ids == null) {
+                        ids = new LinkedHashMap<String, Integer>();
+                        setIds(ids);
                     }
                     Integer id = NodeBuilder.build(value, graph);
                     if (id != null) {
-                        _ids.put(access.getName(), id);
+                        ids.put(access.getName(), id);
                     }
                 }
             }
@@ -120,15 +124,16 @@ public final class AccessNode implements Node {
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public Object decompose(final Graph graph) {
-        if (_type == null) {
+        if (getClazz() == null) {
             return null;
         }
-        final Class clazz = Classes.forName(_type, getClass());
+        final Class clazz = (Class)graph.decomposeReference(getClazz());
         final Factory factory = Factory.getFactory(clazz);
-        final Object obj = factory.supports(clazz) ? factory.create(clazz) : null;
-        if (obj != null && _ids != null) {
+        final Object obj = factory.supports(clazz) ? factory.create(clazz, this) : null;
+        Map<String, Integer> ids = getIds();
+        if (obj != null && ids != null) {
             for (final Access access : getAccessList(clazz)) {
-                final Integer id = _ids.get(access.getName());
+                final Integer id = ids.get(access.getName());
                 if (id != null) {
                     graph.addResolution(new Runnable() {
                         public void run() {
@@ -190,22 +195,22 @@ public final class AccessNode implements Node {
                         Access access = null;
                         Method writeMethod = desc.getWriteMethod();
                         if (writeMethod == null) {
-                            String name = readMethod.getName();
-                            if (name.startsWith("get") || name.startsWith("is")) {
-                                name = "set" + (name.startsWith("get") ? name.substring(3) : name.substring(2));
-                                Class<?> readClass = readMethod.getDeclaringClass();
+                            String readName = readMethod.getName();
+                            if (readName.startsWith("get") || readName.startsWith("is")) {
+                                String writeName = "set" + (readName.startsWith("get") ? readName.substring(3) : readName.substring(2));
+                                Class<?> declaringClass = readMethod.getDeclaringClass();
                                 try {
-                                    writeMethod = readClass.getDeclaredMethod(name, desc.getPropertyType());
+                                    writeMethod = declaringClass.getDeclaredMethod(writeName, desc.getPropertyType());
                                 } catch (NoSuchMethodException nsme1) {
                                     try {
-                                        writeMethod = readClass.getMethod(name, desc.getPropertyType());
+                                        writeMethod = declaringClass.getMethod(writeName, desc.getPropertyType());
                                     } catch (NoSuchMethodException nsme2) {
                                         writeMethod = null;
                                     }
                                 }
                                 if (writeMethod != null) {
                                     Class<?> returnClass = writeMethod.getReturnType();
-                                    if (returnClass == null || returnClass.isAssignableFrom(readClass)) {
+                                    if (returnClass == null || returnClass.isAssignableFrom(declaringClass)) {
                                         access = new MethodAccess(readMethod, writeMethod);
                                     }
                                 }
@@ -214,7 +219,7 @@ public final class AccessNode implements Node {
                         if (access == null) {
                             access = new BeanAccess(desc);
                         }
-                        if (access.isReadable() && !"class".equals(access.getName())) {
+                        if (access.isReadable() && !getIgnoredAccessNames().contains(access.getName())) {
                             accessList.add(access);
                         }
                     }

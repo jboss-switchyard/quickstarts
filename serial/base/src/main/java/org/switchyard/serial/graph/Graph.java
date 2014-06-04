@@ -29,9 +29,10 @@ import org.switchyard.serial.graph.node.NodeBuilder;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-@SuppressWarnings("serial")
 public final class Graph implements Serializable {
-    private final static long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 1L;
+
     private Integer _root;
     private Map<Integer, Object> _references = new LinkedHashMap<Integer, Object>();
     private transient Map<Object, Integer> _ids;

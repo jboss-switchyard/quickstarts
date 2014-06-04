@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,35 @@
  */
 package org.switchyard.serial.graph.node;
 
-import java.lang.reflect.Constructor;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.switchyard.HandlerException;
-import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.common.type.reflect.FieldAccess;
-import org.switchyard.serial.SerialMessages;
 import org.switchyard.serial.graph.Graph;
 
 /**
  * A node representing a Throwable.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2014 Red Hat Inc.
  */
 @SuppressWarnings("serial")
-public final class ThrowableNode implements Node {
+public final class ThrowableAccessNode extends AccessNode {
 
-    private static final Class<?>[][] PARAMETER_TYPES = new Class<?>[][]{
-        new Class<?>[]{String.class},
-        new Class<?>[0]
-    };
+    static final Set<String> THROWABLE_IGNORED_ACCESS_NAMES;
+    static {
+        Set<String> throwableIgnoredAccessNames = new HashSet<String>();
+        throwableIgnoredAccessNames.addAll(AccessNode.IGNORED_ACCESS_NAMES);
+        throwableIgnoredAccessNames.add("message");
+        throwableIgnoredAccessNames.add("cause");
+        throwableIgnoredAccessNames.add("stackTrace");
+        THROWABLE_IGNORED_ACCESS_NAMES = Collections.unmodifiableSet(throwableIgnoredAccessNames);
+    }
 
     private Integer _clazz;
+    private Map<String, Integer> _ids;
     private String _message;
     private Integer _cause;
     private Integer _stackTrace;
@@ -43,22 +50,46 @@ public final class ThrowableNode implements Node {
     /**
      * Default constructor.
      */
-    public ThrowableNode() {}
+    public ThrowableAccessNode() {}
 
     /**
-     * Gets the class.
-     * @return the class.
+     * {@inheritDoc}
      */
+    @Override
+    Set<String> getIgnoredAccessNames() {
+        return THROWABLE_IGNORED_ACCESS_NAMES;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Integer getClazz() {
         return _clazz;
     }
 
     /**
-     * Sets the class.
-     * @param clazz the class
+     * {@inheritDoc}
      */
+    @Override
     public void setClazz(Integer clazz) {
         _clazz = clazz;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, Integer> getIds() {
+        return _ids;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setIds(Map<String, Integer> ids) {
+        _ids = ids;
     }
 
     /**
@@ -130,8 +161,8 @@ public final class ThrowableNode implements Node {
      */
     @Override
     public void compose(Object obj, Graph graph) {
+        super.compose(obj, graph);
         Throwable throwable = (Throwable)obj;
-        setClazz(NodeBuilder.build(throwable.getClass(), graph));
         setMessage(throwable.getMessage());
         setCause(NodeBuilder.build(throwable.getCause(), graph));
         setStackTrace(NodeBuilder.build(throwable.getStackTrace(), graph));
@@ -144,10 +175,8 @@ public final class ThrowableNode implements Node {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Object decompose(Graph graph) {
-        Class<? extends Throwable> clazz = (Class<? extends Throwable>)graph.decomposeReference(getClazz());
-        Throwable throwable = newThrowable(clazz, getMessage());
+        Throwable throwable = (Throwable)super.decompose(graph);
         Throwable cause = (Throwable)graph.decomposeReference(getCause());
         if (cause != null) {
             throwable.initCause(cause);
@@ -164,38 +193,6 @@ public final class ThrowableNode implements Node {
             new FieldAccess<Boolean>(HandlerException.class, "_wrapper").write(throwable, getWrapper());
         }
         return throwable;
-    }
-
-    private Throwable newThrowable(Class<? extends Throwable> throwableClass, String message) {
-        Throwable throwable = null;
-        Constructor<? extends Throwable> constructor = getConstructor(throwableClass);
-        Class<?>[] parameterTypes = constructor != null ? constructor.getParameterTypes() : new Class<?>[0];
-        try {
-            if (parameterTypes.length == 0) {
-                throwable = Construction.construct(throwableClass);
-            } else if (parameterTypes.length == 1) {
-                throwable = Construction.construct(throwableClass, parameterTypes, new Object[]{message});
-            }
-        } catch (Throwable t) {
-            throw SerialMessages.MESSAGES.couldNotInstantiateThrowable(throwableClass.getName());
-        }
-        return throwable;
-    }
-
-    private Constructor<? extends Throwable> getConstructor(Class<? extends Throwable> throwableClass) {
-        Constructor<? extends Throwable> constructor = null;
-        for (Class<?>[] parameterTypes : PARAMETER_TYPES) {
-            try {
-                constructor = throwableClass.getConstructor(parameterTypes);
-                if (constructor != null) {
-                    break;
-                }
-            } catch (Throwable t) {
-                // keep checkstyle happy ("at least one statement")
-                t.getMessage();
-            }
-        }
-        return constructor;
     }
 
 }

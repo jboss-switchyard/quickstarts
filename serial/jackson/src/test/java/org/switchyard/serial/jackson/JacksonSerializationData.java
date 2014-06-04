@@ -18,18 +18,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import org.switchyard.serial.graph.AccessType;
+import org.switchyard.serial.graph.Strategy;
 import org.w3c.dom.Element;
 
 /**
  * Data for tests.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
+@SuppressWarnings("serial")
 public final class JacksonSerializationData {
 
-    @SuppressWarnings("serial")
     public static final class Name implements Serializable {
         private String _first;
         private String _middle;
@@ -64,7 +67,6 @@ public final class JacksonSerializationData {
         }
     }
 
-    @SuppressWarnings("serial")
     public static final class Person implements Serializable {
         private String _nickName;
         private Name _fullName;
@@ -110,7 +112,6 @@ public final class JacksonSerializationData {
         }
     }
 
-    @SuppressWarnings("serial")
     public static final class Car implements Serializable {
         private Person _driver;
         private Person[] _passengers;
@@ -118,7 +119,7 @@ public final class JacksonSerializationData {
         private Part[] _cheapParts;
         private Collection<Part> _expensiveParts;
         private Element _inspection;
-        private Exception _problem;
+        private List<Exception> _problems;
         private Antennae _antennae;
         public Car() {}
         public Car(Person driver) {
@@ -160,11 +161,11 @@ public final class JacksonSerializationData {
         public void setInspection(Element inspection) {
             _inspection = inspection;
         }
-        public Exception getProblem() {
-            return _problem;
+        public List<Exception> getProblems() {
+            return _problems;
         }
-        public void setProblem(Exception problem) {
-            _problem = problem;
+        public void setProblems(List<Exception> problems) {
+            _problems = problems;
         }
         public Antennae getAntennae() {
             return _antennae;
@@ -173,7 +174,7 @@ public final class JacksonSerializationData {
             _antennae = antennae;
         }
         public String toString() {
-            return "Car@" + System.identityHashCode(this) + "(driver=" + getDriver() + ", passengers=" + Arrays.toString(getPassengers()) + ", cheapParts=" + Arrays.toString(getCheapParts()) + ", expensiveParts=" + getExpensiveParts() + ", inspection=" + getInspection() + ", problem=" + getProblem() + ")";
+            return "Car@" + System.identityHashCode(this) + "(driver=" + getDriver() + ", passengers=" + Arrays.toString(getPassengers()) + ", cheapParts=" + Arrays.toString(getCheapParts()) + ", expensiveParts=" + getExpensiveParts() + ", inspection=" + getInspection() + ", problems=" + getProblems() + ")";
         }
     }
 
@@ -249,12 +250,26 @@ public final class JacksonSerializationData {
         public boolean isReplaceable();
     }
 
+    @Strategy(access=AccessType.FIELD)
     public static final class Wheel implements Part {
+        private Location _location;
+        public Wheel() {
+            this(Location.UNSPECIFIED);
+        }
+        public Wheel(Location location) {
+            _location = location;
+        }
         public boolean isReplaceable() {
             return true;
         }
+        public Location getLocation() {
+            return _location;
+        }
         public String toString() {
-            return "Wheel(replaceable=" + isReplaceable() + ")";
+            return "Wheel(replaceable=" + isReplaceable() + ", location=" + getLocation() + ")";
+        }
+        public static enum Location {
+            UNSPECIFIED, FRONT_LEFT, FRONT_RIGHT, BACK_LEFT, BACK_RIGHT;
         }
     }
 
@@ -291,9 +306,41 @@ public final class JacksonSerializationData {
         }
     }
 
-    public static final class Antennae {
+    public static final class Antennae implements Serializable {
         public String toString() {
             return "Antennae@" + System.identityHashCode(this);
+        }
+    }
+
+    public static final class OutOfGasException extends Exception {
+        private String _explicitive;
+        public OutOfGasException() {
+            super();
+        }
+        public OutOfGasException(String explicitive) {
+            super();
+            setExplicitive(explicitive);
+        }
+        public String getExplicitive() {
+            return _explicitive;
+        }
+        public void setExplicitive(String explicitive) {
+            _explicitive = explicitive;
+        }
+    }
+
+    @Strategy(access=AccessType.FIELD)
+    public static final class FlatTireException extends Exception {
+        private Wheel _wheel;
+        public FlatTireException() {
+            super("Really?");
+        }
+        public FlatTireException(Wheel wheel) {
+            super();
+            _wheel = wheel;
+        }
+        public Wheel getWheel() {
+            return _wheel;
         }
     }
 

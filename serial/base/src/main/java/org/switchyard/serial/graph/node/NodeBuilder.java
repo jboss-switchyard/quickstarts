@@ -96,16 +96,17 @@ public final class NodeBuilder {
             Node node = new UUIDNode();
             graph.putReference(id, node);
             node.compose(obj, graph);
-        } else if (isThrowable(clazz)) {
-            Node node = new ThrowableNode();
-            graph.putReference(id, node);
-            node.compose(obj, graph);
         } else if (isStackTraceElement(clazz)) {
             Node node = new StackTraceElementNode();
             graph.putReference(id, node);
             node.compose(obj, graph);
         } else if (isAccessible(clazz)) {
-            Node node = new AccessNode();
+            Node node;
+            if (isThrowable(clazz)) {
+                node = new ThrowableAccessNode();
+            } else {
+                node = new DefaultAccessNode();
+            }
             graph.putReference(id, node);
             node.compose(obj, graph);
         } else {

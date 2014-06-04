@@ -46,6 +46,7 @@ public final class SERObjectSerializer extends BaseSerializer {
     public <T> int serialize(T obj, Class<T> type, OutputStream out) throws IOException {
         out = new CountingOutputStream(new BufferedOutputStream(out, getBufferSize()));
         try {
+            @SuppressWarnings("resource")
             ObjectOutputStream oos = new ObjectOutputStream(out);
             oos.writeObject(obj);
             oos.flush();

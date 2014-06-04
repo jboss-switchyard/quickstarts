@@ -26,6 +26,7 @@ import org.switchyard.runtime.RuntimeMessages;
 import org.switchyard.serial.graph.AccessType;
 import org.switchyard.serial.graph.BaseFactory;
 import org.switchyard.serial.graph.Strategy;
+import org.switchyard.serial.graph.node.Node;
 
 /**
  * Serializable implementation of <code>Context</code>.
@@ -183,7 +184,7 @@ public class ContextProperty implements Property {
          * {@inheritDoc}
          */
         @Override
-        public ContextProperty create(Class<ContextProperty> type) {
+        public ContextProperty create(Class<ContextProperty> type, Node node) {
             return new ContextProperty();
         }
     }

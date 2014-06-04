@@ -14,6 +14,7 @@
 package org.switchyard.serial.graph;
 
 import org.switchyard.common.type.reflect.Construction;
+import org.switchyard.serial.graph.node.Node;
 
 /**
  * The default factory the AccessNode will use.
@@ -28,32 +29,37 @@ public class DefaultFactory<T> extends BaseFactory<T> {
      * {@inheritDoc}
      */
     @Override
-    public T create(Class<T> type) {
-        return Construction.construct(type);
+    public boolean supports(Class<?> type) {
+        if (type != null) {
+            try {
+                if (type.getDeclaredConstructor() != null) {
+                    return true;
+                }
+            } catch (NoSuchMethodException nsme) {
+                // keep checkstyle happy (at least one statement)
+                nsme.getMessage();
+            }
+            try {
+                if (type.getConstructor() != null) {
+                    return true;
+                }
+            } catch (NoSuchMethodException nsme) {
+                // keep checkstyle happy (at least one statement)
+                nsme.getMessage();
+            }
+        }
+        return false;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean supports(Class<?> type) {
-        try {
-            if (type.getDeclaredConstructor() != null) {
-                return true;
-            }
-        } catch (NoSuchMethodException nsme1) {
-            // keep checkstyle happy (at least one statement)
-            nsme1.getMessage();
+    public T create(Class<T> type, Node node) {
+        if (type != null) {
+            return Construction.construct(type);
         }
-        try {
-            if (type.getConstructor() != null) {
-                return true;
-            }
-        } catch (NoSuchMethodException nsme2) {
-            // keep checkstyle happy (at least one statement)
-            nsme2.getMessage();
-        }
-        return false;
+        return null;
     }
 
 }

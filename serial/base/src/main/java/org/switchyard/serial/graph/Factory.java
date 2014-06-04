@@ -14,6 +14,7 @@
 package org.switchyard.serial.graph;
 
 import org.switchyard.common.type.reflect.Construction;
+import org.switchyard.serial.graph.node.Node;
 
 /**
  * The factory the AccessNode will use.
@@ -25,13 +26,6 @@ import org.switchyard.common.type.reflect.Construction;
 public abstract class Factory<T> {
 
     /**
-     * Creates a new object of the specified type.
-     * @param type the type
-     * @return the object
-     */
-    public abstract T create(Class<T> type);
-
-    /**
      * Whether this factory supports the specified type.
      * @param type the type
      * @return if the type is supported
@@ -39,18 +33,53 @@ public abstract class Factory<T> {
     public abstract boolean supports(Class<?> type);
 
     /**
+     * Creates a new object of the specified type.
+     * @param type the type
+     * @param node the graph node for implementations that need extra information
+     * @return the object
+     */
+    public abstract T create(Class<T> type, Node node);
+
+    /**
      * Gets the factory for the specified type.
      * @param <T> the factory type
      * @param type the type
      * @return the factory
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static final <T> Factory<T> getFactory(Class<T> type) {
         Strategy strategy = type.getAnnotation(Strategy.class);
         if (strategy != null) {
-            return Construction.construct(strategy.factory());
+            Class<? extends Factory> factoryClass = strategy.factory();
+            if (!UndefinedFactory.class.equals(factoryClass)) {
+                return Construction.construct(factoryClass);
+            }
+        }
+        if (Throwable.class.isAssignableFrom(type)) {
+            return new ThrowableFactory();
         }
         return new DefaultFactory<T>();
+    }
+
+    /**
+     * Used as the default value for the {@link Strategy#factory()} annotation attribute.
+     * @param <T> the factory type
+     */
+    static final class UndefinedFactory<T> extends Factory<T> {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean supports(Class<?> type) {
+            return false;
+        }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public T create(Class<T> type, Node node) {
+            return null;
+        }
     }
 
 }

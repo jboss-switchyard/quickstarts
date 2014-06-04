@@ -38,6 +38,6 @@ public @interface Strategy {
 
     /** The factory to create new objects. */
     @SuppressWarnings("rawtypes")
-    Class<? extends Factory> factory() default DefaultFactory.class;
+    Class<? extends Factory> factory() default Factory.UndefinedFactory.class;
 
 }
