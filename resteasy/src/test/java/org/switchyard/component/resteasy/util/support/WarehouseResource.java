@@ -56,4 +56,8 @@ public interface WarehouseResource {
     public Integer getItemCount();
 
     public void testVoid();
+
+    @GET
+    @Path("/error/")
+    public void getError();
 }

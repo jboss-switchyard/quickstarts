@@ -72,15 +72,15 @@ public class HttpMessageComposer extends BaseMessageComposer<HttpBindingData> {
                 Property responseCode = exchange.getContext().getProperty(HttpContextMapper.HTTP_RESPONSE_STATUS);
                 if (!((responseCode != null) && responseCode.hasLabel(EndpointLabel.HTTP.label()))) {
                     int status = HttpServletResponse.SC_ACCEPTED;
-                    if (content == null) {
+                    if (exchange.getState() == ExchangeState.FAULT) {
+                        status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+                    } else if (content == null) {
                         status = HttpServletResponse.SC_NO_CONTENT;
                     } else if (content instanceof HttpResponseBindingData) {
                         status = ((HttpResponseBindingData) content).getStatus();
                     } else if ((content instanceof String) || (content instanceof byte[]) 
                                 || (content instanceof InputStream) || (content instanceof Reader)) {
                         status = HttpServletResponse.SC_OK;
-                    } else if (exchange.getState() == ExchangeState.FAULT) {
-                        status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
                     } else {
                         status = HttpServletResponse.SC_BAD_GATEWAY;
                     }

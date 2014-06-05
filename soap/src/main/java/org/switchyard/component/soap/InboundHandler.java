@@ -318,7 +318,11 @@ public class InboundHandler extends BaseServiceHandler {
 
             if (oneWay) {
                 exchange.send(message);
-                return null;
+                if (exchange.getState().equals(ExchangeState.FAULT)) {
+                    return composeResponse(exchange, msgContext, operation, true);
+                } else {
+                    return null;
+                }
             } else {
                 exchange.send(message);
                 try {
@@ -335,32 +339,7 @@ public class InboundHandler extends BaseServiceHandler {
                 if (msgContext != null) {
                     msgContext.put(SOAPUtil.SWITCHYARD_CONTEXT, exchange.getContext());
                 }
-                SOAPMessage soapResponse;
-                try {
-                    SOAPBindingData bindingData = new SOAPBindingData(SOAPUtil.createMessage(_bindingId));
-                    soapResponse = _messageComposer.decompose(exchange, bindingData).getSOAPMessage();
-                    if ((msgContext != null) && (bindingData.getStatus() != null)) {
-                        msgContext.put(MessageContext.HTTP_RESPONSE_CODE, bindingData.getStatus());
-                    }
-                } catch (SOAPException soapEx) {
-                    throw soapEx;
-                } catch (Exception ex) {
-                    // The map will contain the exception name only if WS-A is enabled, so no need to check if WS-A is enabled
-                    String faultAction = _faultsMap.get(ex.getClass().getSimpleName());
-                    if ((faultAction != null) && (msgContext != null)) {
-                        msgContext.put(SOAPUtil.WSA_ACTION_STR, faultAction);
-                    }
-                    throw new SOAPFaultException(SOAPUtil.createFault(ex, _bindingId, WSDLUtil.getFaultQName(operation, ex.getClass().getSimpleName())));
-                }
-                if (exchange.getState() == ExchangeState.FAULT && soapResponse.getSOAPBody().getFault() == null) {
-                    return handleException(oneWay, 
-                            SOAPMessages.MESSAGES.invalidResponseConstruction(_messageComposer.getClass().getName()));
-                }
-                
-                if (LOGGER.isTraceEnabled()) {
-                    LOGGER.trace("Inbound --> Response:[" + _service.getName() + "][" + SOAPUtil.soapMessageToString(soapResponse) + "]");
-                }
-                return soapResponse;
+                return composeResponse(exchange, msgContext, operation, false);
             }
         } catch (SOAPException se) {
             if (msgContext != null) {
@@ -368,6 +347,35 @@ public class InboundHandler extends BaseServiceHandler {
             }
             return handleException(oneWay, se);
         }
+    }
+
+    private SOAPMessage composeResponse(Exchange exchange, MessageContext msgContext, Operation operation, Boolean oneWay) throws SOAPException {
+        SOAPBindingData bindingData = new SOAPBindingData(SOAPUtil.createMessage(_bindingId));
+        SOAPMessage soapResponse;
+        try {
+            soapResponse = _messageComposer.decompose(exchange, bindingData).getSOAPMessage();
+            if ((msgContext != null) && (bindingData.getStatus() != null)) {
+                msgContext.put(MessageContext.HTTP_RESPONSE_CODE, bindingData.getStatus());
+            }
+        } catch (SOAPException soapEx) {
+            throw soapEx;
+        } catch (Exception ex) {
+            // The map will contain the exception name only if WS-A is enabled, so no need to check if WS-A is enabled
+            String faultAction = _faultsMap.get(ex.getClass().getSimpleName());
+            if ((faultAction != null) && (msgContext != null)) {
+                msgContext.put(SOAPUtil.WSA_ACTION_STR, faultAction);
+            }
+            throw new SOAPFaultException(SOAPUtil.createFault(ex, _bindingId, WSDLUtil.getFaultQName(operation, ex.getClass().getSimpleName())));
+        }
+        if (exchange.getState() == ExchangeState.FAULT && soapResponse.getSOAPBody().getFault() == null) {
+            return handleException(oneWay, 
+                    SOAPMessages.MESSAGES.invalidResponseConstruction(_messageComposer.getClass().getName()));
+        }
+        
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Inbound --> Response:[" + _service.getName() + "][" + SOAPUtil.soapMessageToString(soapResponse) + "]");
+        }
+        return soapResponse;
     }
 
     private void assertComposedMessageOK(Message soapMessage, Operation operation) throws SOAPException {

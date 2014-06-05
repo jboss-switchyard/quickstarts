@@ -118,7 +118,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
     public int sendStringAndGetStatus(String endpointURL, String request, String method) {
         HttpResponse httpResponse = sendStringAndGetMethod(endpointURL, request, method);
         int status = httpResponse.getStatusLine().getStatusCode();
-        if (httpResponse.getEntity().getContentLength() == -1) {
+        if ((httpResponse.getEntity() != null) && (httpResponse.getEntity().getContentLength() == -1)) {
             _httpClient.getConnectionManager().closeIdleConnections(0, TimeUnit.SECONDS);
         } else {
             EntityUtils.consumeQuietly(httpResponse.getEntity());
@@ -349,7 +349,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
     public int postResourceAndGetStatus(String endpointURL, String requestResource) {
         HttpResponse httpResponse = postResourceAndGetMethod(endpointURL, requestResource);
         int status = httpResponse.getStatusLine().getStatusCode();
-        if (httpResponse.getEntity().getContentLength() == -1) {
+        if ((httpResponse.getEntity() != null) && (httpResponse.getEntity().getContentLength() == -1)) {
             _httpClient.getConnectionManager().closeIdleConnections(0, TimeUnit.SECONDS);
         } else {
             EntityUtils.consumeQuietly(httpResponse.getEntity());

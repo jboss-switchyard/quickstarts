@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
+import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
@@ -114,7 +115,11 @@ public class InboundHandler extends BaseServiceHandler {
             _securityContextManager.addCredentials(exchange, input.extractCredentials());
             if (exchange.getContract().getConsumerOperation().getExchangePattern() == ExchangePattern.IN_ONLY) {
                 exchange.send(message);
-                response = new HttpResponseBindingData();
+                if (exchange.getState().equals(ExchangeState.FAULT)) {
+                    response = (HttpResponseBindingData) _messageComposer.decompose(exchange, new HttpResponseBindingData());
+                } else {
+                    response = new HttpResponseBindingData();
+                }
             } else {
                 exchange.send(message);
                 exchange = inOutHandler.waitForOut();

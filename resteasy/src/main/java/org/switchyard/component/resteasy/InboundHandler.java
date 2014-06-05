@@ -19,6 +19,7 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 
 import org.switchyard.Exchange;
+import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.Scope;
@@ -126,19 +127,22 @@ public class InboundHandler extends BaseServiceHandler {
             RestEasyLogger.ROOT_LOGGER.unexpectedExceptionComposingInboundMessage(e);
             throw new WebApplicationException(e);
         }
-        if (oneWay) {
-            exchange.send(message);
-        } else {
-            exchange.send(message);
-            exchange = inOutHandler.waitForOut();
-            try {
+        try {
+            if (oneWay) {
+                exchange.send(message);
+                if (exchange.getState().equals(ExchangeState.FAULT)) {
+                    output = _messageComposer.decompose(exchange, output);
+                }
+            } else {
+                exchange.send(message);
+                exchange = inOutHandler.waitForOut();
                 output = _messageComposer.decompose(exchange, output);
-            } catch (WebApplicationException wae) {
-                throw wae;
-            } catch (Exception e) {
-                RestEasyLogger.ROOT_LOGGER.unexpectedExceptionComposingOutboundRESTResponse(e);
-                throw new WebApplicationException(e);
             }
+        } catch (WebApplicationException wae) {
+            throw wae;
+        } catch (Exception e) {
+            RestEasyLogger.ROOT_LOGGER.unexpectedExceptionComposingOutboundRESTResponse(e);
+            throw new WebApplicationException(e);
         }
         return output;
     }
