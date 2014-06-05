@@ -51,5 +51,6 @@
                 <include path="META-INF/services" />
             </exports>
         </module>
+        <module name="org.apache.abdera.abdera-parser" export="true"/>
     </dependencies>
 </module>
