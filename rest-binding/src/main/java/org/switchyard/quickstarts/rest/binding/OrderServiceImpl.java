@@ -134,4 +134,8 @@ public class OrderServiceImpl implements OrderService {
         _warehouse.removeItem(4);
         return SUCCESS;
     }
+
+    public void throwError() {
+        throw new RuntimeException();
+    }
 }

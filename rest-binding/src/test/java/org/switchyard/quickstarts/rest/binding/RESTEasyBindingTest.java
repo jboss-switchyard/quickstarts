@@ -55,6 +55,11 @@ public class RESTEasyBindingTest {
      */
     @Test
     public void orderServiceRESTEndpoint() throws Exception {
+
+        // Runtime error
+        int status = http.sendStringAndGetStatus(BASE_URL + "/order/error", "", HTTPMixIn.HTTP_GET);
+        Assert.assertEquals(500, status);
+
         // Create our inventory
         String response = null;
         response = http.sendString(BASE_URL + "/inventory/create", "", HTTPMixIn.HTTP_OPTIONS);
@@ -99,7 +104,7 @@ public class RESTEasyBindingTest {
         SwitchYardTestKit.compareXMLToString(response, ORDER5);
 
         // Get item
-        int status = http.sendStringAndGetStatus(BASE_URL + "/warehouse/26", "", HTTPMixIn.HTTP_GET);
+        status = http.sendStringAndGetStatus(BASE_URL + "/warehouse/26", "", HTTPMixIn.HTTP_GET);
         Assert.assertEquals(404, status);
 
         // Destroy our inventory

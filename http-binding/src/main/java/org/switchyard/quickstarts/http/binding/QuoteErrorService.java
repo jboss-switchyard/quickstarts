@@ -14,30 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.quickstarts.rest.binding;
+package org.switchyard.quickstarts.http.binding;
 
-/**
- * Interface for OrderService.
- * 
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
- */
-public interface OrderService {
+public interface QuoteErrorService {
 
-    public Order newOrder();
-
-    public Order getOrder(Integer orderId) throws Exception;
-
-    public String addItems(Order order) throws Exception;
-
-    public String removeItem(String orderItemId) throws Exception;
-
-    public String createInventory() throws Exception;
-
-    public String updateInventory() throws Exception;
-
-    public String removeInventory() throws Exception;
-
-    public Boolean isInventorySetup();
-
-    public void throwError();
+    public void getError();
 }
