@@ -52,4 +52,8 @@ public interface OrderResource {
     @Path("{itemId}")
     public String removeItem(@PathParam("itemId") String orderItemId);
 
+    @GET
+    @Path("/error")
+    public void throwError();
+
 }
