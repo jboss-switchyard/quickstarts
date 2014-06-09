@@ -36,6 +36,7 @@
         <feature dependency="true" version="${version.net.sf.dozer}">dozer</feature>
         <feature dependency="true" version="${version.org.milyn}">smooks</feature>
         <feature>switchyard-sca</feature>
+        <feature>switchyard-http</feature>
         <bundle>mvn:org.switchyard/switchyard-transform/${project.version}</bundle>
     </feature>
 
@@ -109,17 +110,12 @@
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-ftp/${project.version}</bundle>
     </feature>
 
-    <!-- 
     <feature name="switchyard-http" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">switchyard</feature>
+        <feature version="[7,9)">jetty</feature>
         <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/4.2.4</bundle>
         <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/4.2.5</bundle>
-        <bundle dependency='true'>wrap:mvn:org.jboss.com.sun.httpserver/httpserver/1.0.0.Final</bundle>
-        <bundle dependency='true'>mvn:org.switchyard/switchyard-security-jboss/${project.version}</bundle>
-        <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-http/${project.version}</bundle>
     </feature>
-     -->
 
     <feature name="switchyard-jms" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
@@ -406,6 +402,12 @@
         <feature version="${project.version}">switchyard-camel</feature>
         <feature version="${project.version}">switchyard-sap</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-sap-binding/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-http-binding" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-http</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-http-binding/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-demo-policy-transaction" version="${project.version}" resolver="(obr)">

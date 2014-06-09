@@ -76,6 +76,10 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-sca</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-http</artifactId>
+        </dependency>
         <!-- external dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
