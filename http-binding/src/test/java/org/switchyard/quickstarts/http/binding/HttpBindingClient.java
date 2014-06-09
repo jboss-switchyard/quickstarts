@@ -16,8 +16,6 @@
  */
 package org.switchyard.quickstarts.http.binding;
 
-import java.io.IOException;
-
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
@@ -27,17 +25,22 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 public class HttpBindingClient {
 
-    private static final String BASE_URL = "http://localhost:8080/http-binding";
+    private static final int DEFAULT_PORT = 8080;
+    private static final String KEY_PORT = "org.switchyard.component.http.standalone.port";
 
     public static void main(String[] args) throws Exception {
-        String command = null;
         if (args.length == 0) {
             System.out.println("Usage: HttpBindingClient stock-quote-symbol");
             return;
         } else {
+            int port = DEFAULT_PORT;
+            String portstr = System.getProperty(KEY_PORT);
+            if (portstr != null) {
+                port = Integer.parseInt(portstr);
+            }
             HTTPMixIn http = new HTTPMixIn();
             http.initialize();
-            System.out.println(http.sendString(BASE_URL + "/quote", args[0], HTTPMixIn.HTTP_POST));
+            System.out.println(http.sendString("http://localhost:" + port + "/http-binding/quote", args[0], HTTPMixIn.HTTP_POST));
         }
     }
 }

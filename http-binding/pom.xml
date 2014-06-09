@@ -21,7 +21,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-http-binding</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard Quickstart: http-binding</name>
     <description>Quickstart : HTTP Binding</description>
     <licenses>
@@ -35,6 +35,15 @@
         <deploy.skip>true</deploy.skip>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.quickstarts.http.binding*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.require.capability>
+            org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
+            org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
+            osgi.extender; filter:="(osgi.extender=pax.cdi)"
+        </switchyard.osgi.require.capability>
+        <switchyard.osgi.provide.capability/>
     </properties>
     <dependencies>
         <dependency>
