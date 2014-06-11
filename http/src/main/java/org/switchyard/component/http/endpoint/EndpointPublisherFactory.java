@@ -14,8 +14,7 @@
  
 package org.switchyard.component.http.endpoint;
 
-import java.util.ServiceLoader;
-
+import org.switchyard.common.util.ProviderRegistry;
 import org.switchyard.component.http.HttpMessages;
 
 /**
@@ -25,7 +24,7 @@ import org.switchyard.component.http.HttpMessages;
  */
 public final class EndpointPublisherFactory {
 
-    private static final EndpointPublisher PUBLISHER;
+    private static EndpointPublisher PUBLISHER;
 
 
     private EndpointPublisherFactory() {
@@ -41,7 +40,10 @@ public final class EndpointPublisherFactory {
 
     static {
         try {
-            PUBLISHER = ServiceLoader.load(EndpointPublisher.class).iterator().next();
+            PUBLISHER = ProviderRegistry.getProvider(EndpointPublisher.class);
+            if (PUBLISHER == null) {
+                PUBLISHER = new StandaloneEndpointPublisher();
+            }
         } catch (Exception e) {
             throw HttpMessages.MESSAGES.unableToFindPublisher(e);
         }

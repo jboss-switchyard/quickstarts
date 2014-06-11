@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.http.composer.HttpRequestBindingData;
 import org.switchyard.component.http.composer.HttpRequestInfo;
 import org.switchyard.component.http.composer.HttpResponseBindingData;
@@ -45,6 +46,7 @@ public class HttpGatewayServlet extends HttpServlet {
     private static final Map<String,String> LOCALNAMEMAP = new ConcurrentHashMap<String,String>();
 
     private transient InboundHandler _handler;
+    private transient ClassLoader _classLoader;
 
     // request.getLocalName() has proven expensive, so cache it
     private static final String getLocalName(HttpServletRequest request) {
@@ -63,6 +65,14 @@ public class HttpGatewayServlet extends HttpServlet {
      */
     public void setHandler(InboundHandler handler) {
         _handler = handler;
+    }
+
+    /**
+     * Set the ClassLoader to use as a TCCL on execution.
+     * @param loader ClassLoader
+     */
+    public void setClassLoader(ClassLoader loader) {
+        _classLoader = loader;
     }
 
     /**
@@ -139,7 +149,13 @@ public class HttpGatewayServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 HttpLogger.ROOT_LOGGER.unexpectedExceptionWhileReadingRequest(e);
             }
+            ClassLoader origCl = null;
             try {
+                if (_classLoader != null) {
+                    origCl = Classes.setTCCL(_classLoader);
+                    
+                }
+
                 HttpResponseBindingData httpResponse = _handler.invoke(httpRequest);
                 if (httpResponse != null) {
                     Iterator<Map.Entry<String, List<String>>> entries = httpResponse.getHeaders().entrySet().iterator();
@@ -169,6 +185,10 @@ public class HttpGatewayServlet extends HttpServlet {
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 HttpLogger.ROOT_LOGGER.unexpectedExceptionWhileWritingResponse(e);
+            } finally {
+                if (origCl != null) {
+                    Classes.setTCCL(origCl);
+                }
             }
     }
 
