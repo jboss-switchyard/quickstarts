@@ -320,7 +320,6 @@
                     <redirectTestOutputToFile>false</redirectTestOutputToFile>
                     <excludes>
                         <exclude>**/*$*</exclude>
-                        <exclude>**/CamelHL7QuickstartTest*</exclude>
                         <exclude>**/BPMServiceQuickstartTest*</exclude>
                         <exclude>**/RulesInterviewQuickstartTest*</exclude>
                         <exclude>**/RemoteInvokerQuickstartTest*</exclude>
