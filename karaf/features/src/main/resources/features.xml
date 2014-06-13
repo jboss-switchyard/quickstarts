@@ -443,6 +443,14 @@
         <bundle>mvn:org.switchyard.quickstarts/switchyard-remote-invoker/${project.version}</bundle>
     </feature>
 
+    <feature name="switchyard-quickstart-camel-saxon" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-camel</feature>
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${version.org.apache.camel}">camel-saxon</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-saxon/${project.version}</bundle>
+    </feature>
+
     <!-- Requires SOAP binding -->
     <!--feature name="switchyard-quickstart-camel-soap-proxy" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>

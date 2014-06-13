@@ -590,6 +590,10 @@
             <artifactId>camel-cxf</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-saxon</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.fusesource</groupId>
             <artifactId>camel-sap</artifactId>
         </dependency>
@@ -645,6 +649,10 @@
         <dependency>
             <groupId>net.sourceforge.saxon</groupId>
             <artifactId>saxonhe</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>

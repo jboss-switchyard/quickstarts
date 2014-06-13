@@ -293,12 +293,13 @@
                 <module identifier="org.switchyard.component.sca" implClass="org.switchyard.component.sca.deploy.SCAComponent"/>
             </modules>
             <extensions>
-                <extension identifier-"org.apache.camel.bindy"/>
+                <extension identifier="org.apache.camel.bindy"/>
                 <extension identifier="org.apache.camel.hl7"/>
                 <extension identifier="org.apache.camel.mina"/>
                 <extension identifier="org.apache.camel.mvel"/>
                 <extension identifier="org.apache.camel.ognl"/>
                 <extension identifier="org.apache.camel.jaxb"/>
+                <extension identifier="org.apache.camel.saxon"/>
                 <extension identifier="org.apache.camel.soap"/>
             </extensions>
         </subsystem>

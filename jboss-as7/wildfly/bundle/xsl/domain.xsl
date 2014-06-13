@@ -92,6 +92,7 @@
                 <extension identifier="org.apache.camel.mvel"/>
                 <extension identifier="org.apache.camel.ognl"/>
                 <extension identifier="org.apache.camel.jaxb"/>
+                <extension identifier="org.apache.camel.saxon"/>
                 <extension identifier="org.apache.camel.soap"/>
             </extensions>
         </subsystem>
@@ -143,6 +144,7 @@
                 <extension identifier="org.apache.camel.mvel"/>
                 <extension identifier="org.apache.camel.ognl"/>
                 <extension identifier="org.apache.camel.jaxb"/>
+                <extension identifier="org.apache.camel.saxon"/>
                 <extension identifier="org.apache.camel.soap"/>
             </extensions>
         </subsystem>

@@ -103,6 +103,7 @@
       <componentDescriptor>src/main/resources/external/camel/soap/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/spring/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/sap/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/saxon/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/camel/sql/assembly-component.xml</componentDescriptor>
 
       <componentDescriptor>src/main/resources/external/dozer/assembly-component.xml</componentDescriptor>
@@ -119,6 +120,7 @@
       <componentDescriptor>src/main/resources/external/rhino/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/saaj-impl/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/saxon/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/saxonhe95/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/spring/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/springframework/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/ws-impl/assembly-component.xml</componentDescriptor>
