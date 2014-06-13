@@ -19,10 +19,11 @@ import java.util.List;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
+import org.jboss.as.console.spi.AccessControl;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
+import org.switchyard.console.client.Messages;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.Singleton;
-import org.switchyard.console.client.gin.SwitchYardGinjector;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.ArtifactReference;
 import org.switchyard.console.client.model.Reference;
@@ -62,12 +63,13 @@ public class ApplicationPresenter extends Presenter<ApplicationPresenter.MyView,
      */
     @ProxyCodeSplit
     @NameToken(NameTokens.APPLICATIONS_PRESENTER)
+    @AccessControl(resources = {"/{selected.host}/{selected.server}/subsystem=switchyard" })
     public interface MyProxy extends TabContentProxyPlace<ApplicationPresenter> {
     }
 
     @TabInfo(container = RuntimePresenter.class, priority = 1)
-    static String getLabel(SwitchYardGinjector ginjector) {
-        return ginjector.getMessages().label_applications();
+    static String getLabel(Messages messages) {
+        return messages.label_applications();
     }
 
     /**

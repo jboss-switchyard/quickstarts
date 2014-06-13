@@ -32,9 +32,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.jboss.as.console.client.shared.dispatch.DispatchAsync;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRAction;
-import org.jboss.as.console.client.shared.dispatch.impl.DMRResponse;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
 import org.jboss.as.console.client.shared.runtime.RuntimeBaseAddress;
 import org.jboss.as.console.client.shared.subsys.Baseadress;
@@ -43,6 +40,9 @@ import org.jboss.as.console.client.widgets.forms.EntityAdapter;
 import org.jboss.as.console.client.widgets.forms.Mutator;
 import org.jboss.as.console.client.widgets.forms.PropertyBinding;
 import org.jboss.dmr.client.ModelNode;
+import org.jboss.dmr.client.dispatch.DispatchAsync;
+import org.jboss.dmr.client.dispatch.impl.DMRAction;
+import org.jboss.dmr.client.dispatch.impl.DMRResponse;
 import org.switchyard.console.client.BeanFactory;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.Singleton;

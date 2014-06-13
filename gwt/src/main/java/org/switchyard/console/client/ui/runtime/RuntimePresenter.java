@@ -17,6 +17,7 @@ package org.switchyard.console.client.ui.runtime;
 import org.jboss.as.console.client.plugins.RuntimeGroup;
 import org.jboss.as.console.client.shared.state.ServerSelectionChanged;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.spi.AccessControl;
 import org.jboss.as.console.spi.RuntimeExtension;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
@@ -53,6 +54,7 @@ public class RuntimePresenter extends TabContainerPresenter<RuntimePresenter.MyV
     @ProxyCodeSplit
     @NameToken(NameTokens.RUNTIME_OPERATIONS_PRESENTER)
     @RuntimeExtension(name = NameTokens.RUNTIME_TEXT, group = RuntimeGroup.OPERATiONS, key = NameTokens.SUBSYSTEM)
+    @AccessControl(resources = {"/{selected.host}/{selected.server}/subsystem=switchyard" })
     public interface MyProxy extends Proxy<RuntimePresenter> {
     }
 

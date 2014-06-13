@@ -18,12 +18,13 @@ import java.util.List;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.as.console.client.layout.SimpleLayout;
 import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.SystemDetails;
 import org.switchyard.console.components.client.extension.ComponentProviders;
 import org.switchyard.console.components.client.model.Component;
 
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -72,9 +73,9 @@ public class ConfigView extends DisposableViewImpl implements ConfigPresenter.My
     }
 
     @Override
-    public void setInSlot(Object slot, Widget content) {
+    public void setInSlot(Object slot, IsWidget content) {
         if (slot == ConfigPresenter.TYPE_COMPONENT_CONTENT) {
-            _configEditor.setComponentContent(content);
+            _configEditor.setComponentContent(content == null ? null : content.asWidget());
         } else {
             Console.error("Unknown slot requested: " + slot); //$NON-NLS-1$
         }

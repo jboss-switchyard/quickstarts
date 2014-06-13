@@ -18,10 +18,11 @@ import java.util.List;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.spi.AccessControl;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
+import org.switchyard.console.client.Messages;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.Singleton;
-import org.switchyard.console.client.gin.SwitchYardGinjector;
 import org.switchyard.console.client.model.Application;
 import org.switchyard.console.client.model.ArtifactReference;
 import org.switchyard.console.client.model.SwitchYardStore;
@@ -58,12 +59,13 @@ public class ArtifactPresenter extends Presenter<ArtifactPresenter.MyView, Artif
      */
     @ProxyCodeSplit
     @NameToken(NameTokens.ARTIFACTS_PRESENTER)
+    @AccessControl(resources = {"/{selected.host}/{selected.server}/subsystem=switchyard" })
     public interface MyProxy extends TabContentProxyPlace<ArtifactPresenter> {
     }
 
     @TabInfo(container = RuntimePresenter.class, priority = 4)
-    static String getLabel(SwitchYardGinjector ginjector) {
-        return ginjector.getMessages().label_artifacts();
+    static String getLabel(Messages messages) {
+        return messages.label_artifacts();
     }
 
     /**

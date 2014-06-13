@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.spi.AccessControl;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.Singleton;
@@ -41,6 +42,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest.Builder;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
@@ -60,6 +62,7 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
      */
     @ProxyCodeSplit
     @NameToken(NameTokens.SYSTEM_CONFIG_PRESENTER)
+    @AccessControl(resources = {"/{selected.host}/{selected.server}/subsystem=switchyard" })
     public interface MyProxy extends Proxy<ConfigPresenter>, Place {
     }
 
@@ -128,11 +131,11 @@ public class ConfigPresenter extends Presenter<ConfigPresenter.MyView, ConfigPre
     public void onComponentSelected(Component component) {
         clearComponentContent();
 
-        PlaceRequest request = new PlaceRequest(NameTokens.SYSTEM_CONFIG_PRESENTER);
+        Builder requestBuilder = new Builder().nameToken(NameTokens.SYSTEM_CONFIG_PRESENTER);
         if (component != null) {
-            request = request.with(NameTokens.COMPONENT_NAME_PARAM, URL.encode(component.getName()));
+            requestBuilder.with(NameTokens.COMPONENT_NAME_PARAM, URL.encode(component.getName()));
         }
-        _placeManager.revealRelativePlace(request, -1);
+        _placeManager.revealRelativePlace(requestBuilder.build(), -1);
     }
 
     @Override

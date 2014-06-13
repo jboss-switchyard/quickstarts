@@ -15,6 +15,7 @@
 package org.switchyard.console.client.ui.component;
 
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.spi.AccessControl;
 import org.jboss.as.console.spi.SubsystemExtension;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.Singleton;
@@ -56,6 +57,7 @@ public class ComponentPresenter extends Presenter<ComponentPresenter.MyView, Com
     @ProxyCodeSplit
     @NameToken(NameTokens.SYSTEM_CONFIG_PRESENTER)
     @SubsystemExtension(name = "Runtime Details", group = "SwitchYard", key = "switchyard")
+    @AccessControl(resources = {"{selected.profile}/subsystem=switchyard"})
     public interface MyProxy extends Proxy<ComponentPresenter>, Place {
     }
 

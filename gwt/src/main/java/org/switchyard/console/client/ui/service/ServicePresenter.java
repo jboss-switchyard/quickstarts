@@ -18,10 +18,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.as.console.client.Console;
+import org.jboss.as.console.spi.AccessControl;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
+import org.switchyard.console.client.Messages;
 import org.switchyard.console.client.NameTokens;
 import org.switchyard.console.client.Singleton;
-import org.switchyard.console.client.gin.SwitchYardGinjector;
 import org.switchyard.console.client.model.Binding;
 import org.switchyard.console.client.model.Service;
 import org.switchyard.console.client.model.SwitchYardStore;
@@ -61,12 +62,13 @@ public class ServicePresenter extends Presenter<ServicePresenter.MyView, Service
      */
     @ProxyCodeSplit
     @NameToken(NameTokens.SERVICES_PRESENTER)
+    @AccessControl(resources = {"/{selected.host}/{selected.server}/subsystem=switchyard" })
     public interface MyProxy extends TabContentProxyPlace<ServicePresenter> {
     }
 
     @TabInfo(container = RuntimePresenter.class, priority = 2)
-    static String getLabel(SwitchYardGinjector ginjector) {
-        return ginjector.getMessages().label_services();
+    static String getLabel(Messages messages) {
+        return messages.label_services();
     }
 
     /**

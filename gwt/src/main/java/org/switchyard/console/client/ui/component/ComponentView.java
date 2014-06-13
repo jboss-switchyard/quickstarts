@@ -17,6 +17,7 @@ package org.switchyard.console.client.ui.component;
 import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.core.DisposableViewImpl;
 
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -50,9 +51,9 @@ public class ComponentView extends DisposableViewImpl implements ComponentPresen
     }
 
     @Override
-    public void setInSlot(Object slot, Widget content) {
+    public void setInSlot(Object slot, IsWidget content) {
         if (slot == ComponentPresenter.TYPE_MAIN_CONTENT) {
-            setMainContent(content);
+            setMainContent(content == null ? null : content.asWidget());
         } else {
             Console.error("Unknown slot requested:" + slot); //$NON-NLS-1$
         }

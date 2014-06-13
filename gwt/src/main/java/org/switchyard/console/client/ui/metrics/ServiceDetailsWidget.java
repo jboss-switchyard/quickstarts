@@ -13,7 +13,7 @@
  */
 package org.switchyard.console.client.ui.metrics;
 
-import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
+import org.jboss.as.console.client.layout.OneToOneLayout;
 import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.MessageMetrics;
 import org.switchyard.console.client.model.ServiceMetrics;

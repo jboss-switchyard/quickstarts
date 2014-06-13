@@ -18,10 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.as.console.client.core.DisposableViewImpl;
+import org.jboss.as.console.client.layout.OneToOneLayout;
+import org.jboss.as.console.client.layout.SimpleLayout;
 import org.jboss.as.console.client.shared.properties.PropertyEditor;
+import org.jboss.as.console.client.shared.properties.PropertyManagement;
 import org.jboss.as.console.client.shared.properties.PropertyRecord;
-import org.jboss.as.console.client.shared.viewframework.builder.OneToOneLayout;
-import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
 import org.jboss.ballroom.client.widgets.forms.Form;
 import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Application;
@@ -82,7 +83,27 @@ public class ApplicationView extends DisposableViewImpl implements ApplicationPr
         _servicesEditor = new ApplicationServicesEditor(_presenter);
         _referencesEditor = new ApplicationReferencesList(_presenter);
         // read only for now
-        _propertiesEditor = new PropertyEditor();
+        _propertiesEditor = new PropertyEditor(new PropertyManagement() {
+            @Override
+            public void onDeleteProperty(String reference, PropertyRecord prop) {
+            }
+            
+            @Override
+            public void onCreateProperty(String reference, PropertyRecord prop) {
+            }
+            
+            @Override
+            public void onChangeProperty(String reference, PropertyRecord prop) {
+            }
+            
+            @Override
+            public void launchNewPropertyDialoge(String reference) {
+            }
+            
+            @Override
+            public void closePropertyDialoge() {
+            }
+        }, true);
         _artifactReferencesList = new ArtifactReferencesList();
         _transformationsEditor = new ApplicationTransformationsEditor(_presenter);
         _validatorsList = new ValidatorsList();

@@ -17,6 +17,7 @@ import org.jboss.as.console.client.core.DisposableViewImpl;
 import org.switchyard.console.client.ui.common.GWTPTabPanel;
 import org.switchyard.console.client.ui.runtime.RuntimePresenter.MyView;
 
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.Tab;
@@ -81,9 +82,9 @@ public class RuntimeView extends DisposableViewImpl implements MyView {
     }
 
     @Override
-    public void setInSlot(Object slot, Widget content) {
+    public void setInSlot(Object slot, IsWidget content) {
         if (slot == RuntimePresenter.TYPE_SET_TAB_CONTENT) {
-            _tabPanel.setContent(content);
+            _tabPanel.setContent(content == null ? null : content.asWidget());
         } else {
             super.setInSlot(slot, content);
         }

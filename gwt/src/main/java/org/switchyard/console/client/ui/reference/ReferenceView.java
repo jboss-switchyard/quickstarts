@@ -17,7 +17,7 @@ package org.switchyard.console.client.ui.reference;
 import java.util.List;
 
 import org.jboss.as.console.client.core.DisposableViewImpl;
-import org.jboss.as.console.client.shared.viewframework.builder.SimpleLayout;
+import org.jboss.as.console.client.layout.SimpleLayout;
 import org.switchyard.console.client.Singleton;
 import org.switchyard.console.client.model.Reference;
 

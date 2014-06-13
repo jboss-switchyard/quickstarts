@@ -30,6 +30,10 @@
         <developerConnection>scm:git:ssh://git@github.com:jboss-switchyard/console.git</developerConnection>
         <url>http://github.com/jboss-switchyard/console</url>
     </scm>
+    <properties>
+        <version.com.google.gwt>2.5.1</version.com.google.gwt>
+        <version.jbossas.console>2.2.8.Final</version.jbossas.console>
+    </properties>
     <modules>
         <module>component</module>
         <module>gwt</module>
@@ -52,4 +56,56 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <version>${version.com.google.gwt}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>1.7</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <!-- Required by HAL build (app module) -->
+                                    <version>3.1.0</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <repositories>
+        <repository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

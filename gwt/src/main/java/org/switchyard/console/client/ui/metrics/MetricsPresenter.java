@@ -20,6 +20,7 @@ import org.jboss.as.console.client.Console;
 import org.jboss.as.console.client.plugins.RuntimeGroup;
 import org.jboss.as.console.client.shared.state.ServerSelectionChanged;
 import org.jboss.as.console.client.shared.subsys.RevealStrategy;
+import org.jboss.as.console.spi.AccessControl;
 import org.jboss.as.console.spi.RuntimeExtension;
 import org.jboss.ballroom.client.layout.LHSHighlightEvent;
 import org.switchyard.console.client.NameTokens;
@@ -59,6 +60,7 @@ public class MetricsPresenter extends Presenter<MetricsPresenter.MyView, Metrics
     @ProxyCodeSplit
     @NameToken(NameTokens.METRICS_PRESENTER)
     @RuntimeExtension(name = NameTokens.RUNTIME_TEXT, group = RuntimeGroup.METRICS, key = NameTokens.SUBSYSTEM)
+    @AccessControl(resources = {"/{selected.host}/{selected.server}/subsystem=switchyard" })
     public interface MyProxy extends Proxy<MetricsPresenter>, Place {
     }
 
