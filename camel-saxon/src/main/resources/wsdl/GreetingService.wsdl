@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="GreetingService" targetNamespace="urn:switchyard-quickstart:camel-saxon:0.1.0" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:switchyard-quickstart:camel-saxon:0.1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:switchyard-quickstart:camel-saxon:0.1.0" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:switchyard-quickstart:camel-saxon:0.1.0">
+  <xsd:element name="greet" type="tns:greet"/>
+  <xsd:complexType name="greet">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="string" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="greet">
+    <wsdl:part name="parameters" element="tns:greet">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="GreetingServicePortType">
+    <wsdl:operation name="greet">
+      <wsdl:input name="greet" message="tns:greet">
+    </wsdl:input>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="GreetingServiceSoapBinding" type="tns:GreetingServicePortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="greet">
+      <soap:operation soapAction="greet" style="document"/>
+      <wsdl:input name="greet">
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="GreetingService">
+    <wsdl:port name="GreetingServicePort" binding="tns:GreetingServiceSoapBinding">
+      <soap:address location="http://localhost:8080/camel-saxon/GreetingService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
