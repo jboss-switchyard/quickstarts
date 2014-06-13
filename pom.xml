@@ -131,6 +131,7 @@
         <switchyard.osgi.fragment.host/>
         <switchyard.osgi.provide.capability/>
         <switchyard.osgi.require.capability/>
+        <version.net.sf.saxon>9.5.1-2</version.net.sf.saxon>
     </properties>
     <scm>
         <connection>scm:git:https://github.com/jboss-switchyard/parent.git</connection>
@@ -977,6 +978,22 @@
                         <artifactId>jaxb-impl</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-saxon</artifactId>
+                <version>${version.org.apache.camel}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.saxon</groupId>
+                <artifactId>Saxon-HE</artifactId>
+                <version>${version.net.sf.saxon}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.abdera</groupId>
