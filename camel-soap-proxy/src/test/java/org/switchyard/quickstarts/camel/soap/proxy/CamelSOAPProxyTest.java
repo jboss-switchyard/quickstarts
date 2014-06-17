@@ -70,4 +70,9 @@ public class CamelSOAPProxyTest {
         _http.postResourceAndTestXML(PROXY_SERVICE, "/xml/soap-request.xml", "/xml/soap-proxy-response.xml");
     }
 
+    @Test
+    public void testFaultDetail() throws Exception {
+        _http.postResourceAndTestXML(PROXY_SERVICE, "/xml/soap-fault-request.xml", "/xml/soap-fault-response.xml");
+    }
+
 }

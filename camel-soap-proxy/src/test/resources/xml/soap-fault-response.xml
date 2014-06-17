@@ -1,0 +1,14 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"/>
+    <soap:Body>
+        <SOAP-ENV:Fault xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+            <faultcode>SOAP-ENV:Fault</faultcode>
+            <faultstring>SWITCHYARD035448: Send Failed</faultstring>
+            <detail>
+                <PO:order xmlns:PO="urn:switchyard-quickstart:camel-soap-proxy:1.0">
+                    <symbol xmlns="urn:switchyard-quickstart:camel-soap-proxy:1.0">SUNW</symbol>
+                </PO:order>
+            </detail>
+        </SOAP-ENV:Fault>
+    </soap:Body>
+</soap:Envelope>
