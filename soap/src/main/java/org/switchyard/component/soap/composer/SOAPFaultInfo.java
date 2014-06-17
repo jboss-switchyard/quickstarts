@@ -27,6 +27,7 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 
 import org.switchyard.component.soap.util.SOAPUtil;
+import org.w3c.dom.Node;
 
 /**
  * Wrapper for SOAPFault details.
@@ -48,6 +49,7 @@ public class SOAPFaultInfo implements Serializable {
     private String _string;
     private Locale _stringLocale;
     private List<QName> _subcodes = new ArrayList<QName>();
+    private Node _detail;
 
     /**
      * @return the Fault actor
@@ -243,12 +245,29 @@ public class SOAPFaultInfo implements Serializable {
         }
     }
 
+    /**
+     * @return the Fault detail
+     */
+    public Node getDetail() {
+        return _detail;
+    }
+
+    /**
+     * @param detail the Fault detail to set
+     */
+    public void setDetail(Node detail) {
+        if (detail != null) {
+            _detail = detail.cloneNode(true);
+        }
+    }
+
     @Override
     public String toString() {
         return "SOAPFaultInfo [_actor=" + _actor + ", _codeAsQName="
                 + _codeAsQName + ", _reasonTexts=" + _reasonTexts + ", _role="
                 + _role + ", _string=" + _string + ", _stringLocale="
-                + _stringLocale + ", _subcodes=" + _subcodes + "]";
+                + _stringLocale + ", _subcodes=" + _subcodes
+                + ", _detail=" + _detail + "]";
     }
 
     /**
@@ -263,6 +282,9 @@ public class SOAPFaultInfo implements Serializable {
         setCodeAsQName(fault.getFaultCodeAsQName());
         setString(fault.getFaultString());
         setStringLocale(fault.getFaultStringLocale());
+        if (fault.hasDetail()) {
+            setDetail(fault.getDetail());
+        }
 
         // SOAP 1.2 specifics
         if (SOAPUtil.isSOAP12(soapMessage)) {

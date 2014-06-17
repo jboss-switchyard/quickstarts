@@ -35,6 +35,7 @@ import org.switchyard.component.camel.common.CamelConstants;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.SwitchYardException;
 import org.switchyard.metadata.ServiceOperation;
+import org.w3c.dom.Node;
 
 /**
  * A SwitchYardConsumer is both a Camel Consumer and an SwitchYard ExchangeHandler.
@@ -95,39 +96,32 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
         invokeCamelProcessor(camelExchange);
         Exception camelException = camelExchange.getException();
         
-        if (isInOut(switchyardExchange)) {
-            if (!camelExchange.isFailed()) {
-                sendResponse(camelExchange, switchyardExchange);
-            } else {
-                QName faultName = switchyardExchange.getContract().getProviderOperation().getFaultType();
-                Class<?> declaredFault = faultName != null && QNameUtil.isJavaMessageType(faultName) ? QNameUtil.toJavaMessageType(faultName) : null;
+        if (camelExchange.isFailed()) {
+            QName faultName = switchyardExchange.getContract().getProviderOperation().getFaultType();
+            Class<?> declaredFault = faultName != null && QNameUtil.isJavaMessageType(faultName) ? QNameUtil.toJavaMessageType(faultName) : null;
 
-                Object camelFault = camelException;
-                if (camelFault == null) {
-                    if (camelExchange.hasOut() && camelExchange.getOut().isFault()) {
-                        // Use Out body as a fault content if camelExchange.getException() returns null
-                        camelFault = camelExchange.getOut().getBody();
-                    }
-                }
-                
-                if (camelFault != null && declaredFault != null && declaredFault.isAssignableFrom(camelFault.getClass())) {
-                    Message msg = switchyardExchange.createMessage().setContent(camelFault);
-                    switchyardExchange.sendFault(msg);
-                } else if (camelFault instanceof Throwable) {
-                    throw new HandlerException(Throwable.class.cast(camelFault));
-                } else {
-                    String faultMessage = (camelFault == null) ? null : camelFault.toString();
-                    throw SwitchYardCamelComponentMessages.MESSAGES.camelExchangeFailedWithoutException(faultMessage);
+            Object camelFault = camelException;
+            if (camelFault == null) {
+                if (camelExchange.hasOut() && camelExchange.getOut().isFault()) {
+                    // Use Out body as a fault content if camelExchange.getException() returns null
+                    camelFault = camelExchange.getOut().getBody();
                 }
             }
-        } else {
-            // IN_ONLY
-            if (camelExchange.isFailed()) {
-                if (camelException == null) {
-                    throw SwitchYardCamelComponentMessages.MESSAGES.camelExchangeFailed();
-                }
-                throw new HandlerException(camelException);
+
+            if (camelFault != null && declaredFault != null && declaredFault.isAssignableFrom(camelFault.getClass())) {
+                Message msg = switchyardExchange.createMessage().setContent(camelFault);
+                switchyardExchange.sendFault(msg);
+            } else if (camelFault instanceof Throwable) {
+                throw new HandlerException(Throwable.class.cast(camelFault));
+            } else if (camelFault instanceof Node) {
+                Message msg = switchyardExchange.createMessage().setContent((Node)camelFault);
+                switchyardExchange.sendFault(msg);
+            } else {
+                String faultMessage = (camelFault == null) ? null : camelFault.toString();
+                throw SwitchYardCamelComponentMessages.MESSAGES.camelExchangeFailedWithoutException(camelFault.toString());
             }
+        } else if (isInOut(switchyardExchange)) {
+            sendResponse(camelExchange, switchyardExchange);
         }
     }
 

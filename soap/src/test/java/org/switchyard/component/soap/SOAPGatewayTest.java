@@ -421,7 +421,7 @@ public class SOAPGatewayTest {
                        + "</test:sayHello>";
 
         String faultStr = "SOAPFaultInfo [_actor=null, _codeAsQName={http://schemas.xmlsoap.org/soap/envelope/}Server.AppError, "
-                            + "_reasonTexts={}, _role=null, _string=Invalid name, _stringLocale=null, _subcodes=[]]";
+                            + "_reasonTexts={}, _role=null, _string=Invalid name, _stringLocale=null, _subcodes=[], _detail=[detail: null]]";
 
         MockHandler handler = new MockHandler();
         Exchange ex = _consumerService11.operation("sayHello").createExchange(handler);

@@ -25,6 +25,7 @@ import javax.xml.soap.SOAPMessage;
 
 import org.switchyard.Context;
 import org.switchyard.Property;
+import org.switchyard.Scope;
 import org.switchyard.common.io.pull.ElementPuller;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.xml.XMLHelper;
@@ -79,7 +80,7 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
     public void mapFrom(SOAPBindingData source, Context context) throws Exception {
         SOAPMessage soapMessage = source.getSOAPMessage();
         if (soapMessage.getSOAPBody().hasFault() && (source.getSOAPFaultInfo() != null)) {
-            context.setProperty(SOAPComposition.SOAP_FAULT_INFO, source.getSOAPFaultInfo()).addLabels(SOAP_HEADER_LABELS);
+            context.setProperty(SOAPComposition.SOAP_FAULT_INFO, source.getSOAPFaultInfo(), Scope.EXCHANGE).addLabels(SOAP_HEADER_LABELS);
         }
         if (source.getStatus() != null) {
             context.setProperty(HTTP_RESPONSE_STATUS, source.getStatus()).addLabels(SOAP_MIME_LABELS);
