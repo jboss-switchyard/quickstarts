@@ -24,6 +24,14 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.namespace.QName;
+import javax.xml.soap.Detail;
+import javax.xml.soap.DetailEntry;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPFault;
+import javax.xml.ws.soap.SOAPFaultException;
 
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
@@ -34,7 +42,19 @@ public class ReverseService {
 
     @WebMethod(action = "urn:switchyard-quickstart:camel-soap-proxy:1.0")
     @WebResult(name = "text")
-    public String reverse(@WebParam(name = "text") String text) {
+    public String reverse(@WebParam(name = "text") String text) throws Exception {
+        if (text.equals("fault")) {
+            SOAPFactory factory = SOAPFactory.newInstance();
+            SOAPFault sf = factory.createFault("myfaultstring",  new QName(SOAPConstants.URI_NS_SOAP_ENVELOPE, "Server"));
+            sf.setFaultActor("myFaultActor");
+            Detail d = sf.addDetail();
+            QName entryName = new QName("urn:switchyard-quickstart:camel-soap-proxy:1.0", "order", "PO");
+            DetailEntry entry = d.addDetailEntry(entryName);
+            QName name = new QName("urn:switchyard-quickstart:camel-soap-proxy:1.0", "symbol");
+            SOAPElement symbol = entry.addChildElement(name);
+            symbol.addTextNode("SUNW");
+            throw new SOAPFaultException(sf);
+        }
         return new StringBuilder(text).reverse().toString();
     }
 
