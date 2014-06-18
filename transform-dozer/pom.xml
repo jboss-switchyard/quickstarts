@@ -46,7 +46,10 @@
             org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
             osgi.extender; filter:="(osgi.extender=pax.cdi)"
         </switchyard.osgi.require.capability>
-        <switchyard.osgi.provide.capability/>
+        <switchyard.osgi.provide.capability />
+        <switchyard.osgi.dynamic>
+            org.switchyard,org.switchyard.*
+        </switchyard.osgi.dynamic>
     </properties>
     <dependencies>
         <dependency>

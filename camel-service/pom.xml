@@ -38,6 +38,9 @@
         <switchyard.osgi.export.pkg>
             org.switchyard.quickstarts.camel.service*
         </switchyard.osgi.export.pkg>
+        <switchyard.osgi.dynamic>
+            org.switchyard,org.switchyard.*
+        </switchyard.osgi.dynamic>
     </properties>
     <dependencies>
         <dependency>
