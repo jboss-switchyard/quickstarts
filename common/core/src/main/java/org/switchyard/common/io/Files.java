@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.switchyard.common.CommonCoreLogger;
 import org.switchyard.common.CommonCoreMessages;
 
 /**
@@ -47,6 +48,12 @@ public final class Files {
      * @throws IOException something went wanky
      */
     public static final void copy(File source, File target, int bufferSize) throws IOException {
+        File targetParent = target.getParentFile();
+        if (targetParent != null && !targetParent.exists()) {
+            if (!targetParent.mkdirs()) {
+                CommonCoreLogger.ROOT_LOGGER.problemCreatingDirectory(targetParent);
+            }
+        }
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(source));
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(target));
         byte[] buff = new byte[bufferSize];

@@ -10,12 +10,12 @@ import org.jboss.logging.annotations.MessageLogger;
 
 /**
  * <p/>
- * This file is using the subset 14600-14799 for logger messages.
+ * This file is using the subset 14600-14699 for logger messages.
  * <p/>
- *
  */
 @MessageLogger(projectCode = "SWITCHYARD")
 public interface JBossSecurityLogger {
+
     /**
      * Default root logger.
      */
@@ -37,5 +37,5 @@ public interface JBossSecurityLogger {
     @LogMessage(level = ERROR)
     @Message(id = 14601, value = "Problem clearing SecurityContextAssociation : %s")
     void clearSecurityContextAssociation(Throwable throwable);
-    
+
 }

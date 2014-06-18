@@ -1,4 +1,4 @@
-package org.switchyard.security.jboss;
+package org.switchyard.security.karaf;
 
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Message;
@@ -6,22 +6,22 @@ import org.jboss.logging.annotations.MessageBundle;
 
 /**
  * <p/>
- * This file is using the subset 14700-14799 for logger messages.
+ * This file is using the subset 14900-14999 for logger messages.
  * <p/>
  */
 @MessageBundle(projectCode = "SWITCHYARD")
-public interface JBossSecurityMessages {
+public interface KarafSecurityMessages {
 
     /**
      * Default messages.
      */
-    JBossSecurityMessages MESSAGES = Messages.getBundle(JBossSecurityMessages.class);
+    KarafSecurityMessages MESSAGES = Messages.getBundle(KarafSecurityMessages.class);
 
     /**
      * credentialsNotSet method definition.
      * @return IllegalStateException
      */
-    @Message(id = 14700, value = "Credentials not set")
+    @Message(id = 14900, value = "Credentials not set")
     IllegalStateException credentialsNotSet();
 
 }

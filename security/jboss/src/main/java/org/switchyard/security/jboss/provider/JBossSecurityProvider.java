@@ -54,8 +54,8 @@ import org.w3c.dom.Element;
 public class JBossSecurityProvider extends DefaultSecurityProvider {
 
     static {
-        // Here to trigger fallback usage of the JaasSecurityProvider in the static initializer
-        // block of SecurityProvider, if the org.picketbox:picketbox dependency is not available.
+        // Here to trigger fallback usage of a different SecurityProvider (or DefaultSecurityProvider),
+        // if the org.picketbox:picketbox dependency is not available.
         SecurityContextAssociation.getSecurityContext();
     }
 

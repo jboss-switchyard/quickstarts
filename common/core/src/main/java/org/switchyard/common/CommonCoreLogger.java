@@ -3,12 +3,13 @@ package org.switchyard.common;
 import static org.jboss.logging.Logger.Level.ERROR;
 import static org.jboss.logging.Logger.Level.WARN;
 
-import org.jboss.logging.Logger;
+import java.io.File;
 
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
+import org.jboss.logging.Logger;
 
 /**
  * <p/>
@@ -56,4 +57,12 @@ public interface CommonCoreLogger {
     @LogMessage(level = WARN)
     @Message(id = 11203, value="problem closing %s stream: %s")
     void problemClosingStream(String url, String message);
+
+    /**
+     * problemCreatingDirectory method definition.
+     * @param directory directory
+     */
+    @LogMessage(level = WARN)
+    @Message(id = 11204, value="problem creating directory: %s")
+    void problemCreatingDirectory(File directory);
 }

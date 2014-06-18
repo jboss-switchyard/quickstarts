@@ -46,7 +46,7 @@ public class JBossServletRequestCredentialExtractor extends DefaultServletReques
     }
 
     /**
-     * Constructs a new CatalinaRequestCredentialExtractor.
+     * Constructs a new JBossServletRequestCredentialExtractor.
      */
     public JBossServletRequestCredentialExtractor() {}
 

@@ -42,6 +42,7 @@
         <module>serial/jackson</module>
         <module>security/base</module>
         <module>security/jboss</module>
+        <module>security/karaf</module>
         <module>transform</module>
         <module>validate</module>
         <module>runtime</module>

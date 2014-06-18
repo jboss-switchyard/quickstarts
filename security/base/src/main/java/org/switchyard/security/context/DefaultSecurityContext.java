@@ -161,8 +161,11 @@ public final class DefaultSecurityContext implements SecurityContext {
                             break outerLoop;
                         }
                     }
-                } else if (callerPrincipal == null && principal instanceof UserPrincipal) {
-                    callerPrincipal = principal;
+                } else if (callerPrincipal == null && principal != null) {
+                    // the second case (the simple name comparison) is here to support Karaf
+                    if (principal instanceof UserPrincipal || principal.getClass().getSimpleName().equals("UserPrincipal")) {
+                        callerPrincipal = principal;
+                    }
                 }
             }
         }
