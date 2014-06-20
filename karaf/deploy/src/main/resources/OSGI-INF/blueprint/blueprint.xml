@@ -13,4 +13,12 @@
     </bean>
     <service interface="org.switchyard.component.http.endpoint.EndpointPublisher" ref="HttpEndpointPublisher"/>
 
+    <bean id="RESTEasyResourcePublisher" class="org.switchyard.deploy.osgi.internal.resteasy.OsgiRESTEasyResourcePublisher">
+        <property name="httpService" ref="httpService"/>
+    </bean>
+    <service interface="org.switchyard.component.resteasy.resource.ResourcePublisher" ref="RESTEasyResourcePublisher"/>
+
+    <bean id="RESTEasyMethodInvokerFactory" class="org.switchyard.deploy.osgi.internal.resteasy.OsgiMethodInvokerFactory"/>
+    <service interface="org.switchyard.component.resteasy.util.MethodInvokerFactory" ref="RESTEasyMethodInvokerFactory"/>
+
 </blueprint>

@@ -35,6 +35,11 @@
             org.apache.camel.core.osgi*
         </switchyard.osgi.private>
         <switchyard.osgi.import>
+            org.jboss.resteasy.plugins.providers,
+            org.jboss.resteasy.plugins.providers.jaxb,
+            org.jboss.resteasy.plugins.interceptors,
+            org.jboss.resteasy.plugins.interceptors.encoding,
+            org.switchyard.admin.*;${switchyard.osgi.import.switchyard.version},
             !org.osgi.service;org.switchyard.admin.*;${switchyard.osgi.import.switchyard.version},
             org.switchyard.*;${switchyard.osgi.import.switchyard.version},
             *
@@ -80,7 +85,16 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-http</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-resteasy</artifactId>
+        </dependency>
         <!-- external dependencies -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-osgi</artifactId>
