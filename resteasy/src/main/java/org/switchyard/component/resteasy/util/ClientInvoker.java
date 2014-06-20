@@ -253,6 +253,14 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
         }
     }
 
+    /**
+     * Gets a ResteasyProviderFactory instance.
+     * @return ResteasyProviderFactory
+     */
+    public ResteasyProviderFactory getResteasyProviderFactory() {
+        return _providerFactory;
+    }
+
     private AuthScope createAuthScope(String host, String portStr, String realm) throws RuntimeException {
         if (realm == null) {
             realm = AuthScope.ANY_REALM;

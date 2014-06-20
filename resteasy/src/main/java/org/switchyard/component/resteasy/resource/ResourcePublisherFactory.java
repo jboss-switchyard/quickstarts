@@ -14,8 +14,7 @@
  
 package org.switchyard.component.resteasy.resource;
 
-import java.util.ServiceLoader;
-
+import org.switchyard.common.util.ProviderRegistry;
 import org.switchyard.component.resteasy.RESTEasyPublishException;
 
 /**
@@ -25,13 +24,16 @@ import org.switchyard.component.resteasy.RESTEasyPublishException;
  */
 public final class ResourcePublisherFactory {
 
-    private static final ResourcePublisher PUBLISHER;
+    private static ResourcePublisher PUBLISHER;
 
     private static Boolean IGNORE_CONTEXT = false;
 
     static {
         try {
-            PUBLISHER = ServiceLoader.load(ResourcePublisher.class).iterator().next();
+            PUBLISHER = ProviderRegistry.getProvider(ResourcePublisher.class);
+            if (PUBLISHER == null) {
+                PUBLISHER = new StandaloneResourcePublisher();
+            }
         } catch (Exception e) {
             throw new RESTEasyPublishException(e);
         }

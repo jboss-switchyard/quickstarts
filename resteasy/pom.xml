@@ -28,6 +28,12 @@
             org.switchyard.component.resteasy.*
         </switchyard.osgi.export.pkg>
         <switchyard.osgi.import>
+            com.sun.net.httpserver;resolution:=optional,
+            org.apache.http*;resolution:=optional,
+            org.jboss.netty*;resolution:=optional,
+            org.jboss.resteasy.plugins.server.netty;resolution:=optional,
+            org.jboss.resteasy.plugins.server.sun.http;resolution:=optional,
+            org.jboss.resteasy.specimpl,
             org.switchyard.security.jboss.credential.extractor;resolution:=optional;${switchyard.osgi.import.switchyard.version},
             org.switchyard.*;${switchyard.osgi.import.switchyard.version},
             org.switchyard.config.model;${switchyard.osgi.import.switchyard.version},

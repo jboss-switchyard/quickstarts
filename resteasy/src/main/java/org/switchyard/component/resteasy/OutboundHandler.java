@@ -27,13 +27,15 @@ import org.switchyard.Message;
 import org.switchyard.Scope;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
+import org.switchyard.common.util.ProviderRegistry;
 import org.switchyard.component.common.composer.MessageComposer;
 import org.switchyard.component.resteasy.composer.RESTEasyComposition;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
 import org.switchyard.component.resteasy.resource.ResourcePublisherFactory;
-import org.switchyard.component.resteasy.util.ClientInvoker;
+import org.switchyard.component.resteasy.util.DefaultMethodInvokerFactory;
 import org.switchyard.component.resteasy.util.MethodInvoker;
+import org.switchyard.component.resteasy.util.MethodInvokerFactory;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
@@ -85,6 +87,10 @@ public class OutboundHandler extends BaseServiceHandler {
             if ((contextPath != null) && !ResourcePublisherFactory.ignoreContext()) {
                 path = path + "/" + contextPath;
             }
+            MethodInvokerFactory invokerFactory = ProviderRegistry.getProvider(MethodInvokerFactory.class);
+            if (invokerFactory == null) {
+                invokerFactory = new DefaultMethodInvokerFactory();
+            }
             StringTokenizer st = new StringTokenizer(resourceIntfs, ",");
             while (st.hasMoreTokens()) {
                 String className = st.nextToken().trim();
@@ -92,7 +98,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 for (Method method : clazz.getMethods()) {
                     // ignore the as method to allow declaration in client interfaces
                     if (!("as".equals(method.getName()) && Arrays.equals(method.getParameterTypes(), CLASS_ARG_ARRAY))) {
-                        _methodMap.put(method.getName(), new ClientInvoker(path, clazz, method, _config));
+                        _methodMap.put(method.getName(), invokerFactory.createInvoker(path, clazz, method, _config));
                     }
                 }
             }
