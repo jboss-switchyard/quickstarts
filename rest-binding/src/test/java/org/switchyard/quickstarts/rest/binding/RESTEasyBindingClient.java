@@ -25,9 +25,17 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 public class RESTEasyBindingClient {
 
-    private static final String BASE_URL = "http://localhost:8080/rest-binding";
+    private static final int DEFAULT_PORT = 8080;
+    private static final String KEY_PORT = "org.switchyard.component.resteasy.standalone.port";
 
     public static void main(String[] args) throws Exception {
+        int port = DEFAULT_PORT;
+        String portstr = System.getProperty(KEY_PORT);
+        if (portstr != null) {
+            port = Integer.parseInt(portstr);
+        }
+        String baseUrl = "http://localhost:" + port + "/rest-binding";
+
         String command = null;
         if (args.length == 0) {
             System.out.println("Usage: RESTEasyBindingClient new|get|add|del [orderId] [itemId]");
@@ -45,17 +53,17 @@ public class RESTEasyBindingClient {
             HTTPMixIn http = new HTTPMixIn();
             http.initialize();
             if (command.equals("new")) {
-                String response = http.sendString(BASE_URL + "/inventory", "", HTTPMixIn.HTTP_GET);
+                String response = http.sendString(baseUrl + "/inventory", "", HTTPMixIn.HTTP_GET);
                 if (response.equals("false")) {
-                    http.sendString(BASE_URL + "/inventory/create", "", HTTPMixIn.HTTP_OPTIONS);
+                    http.sendString(baseUrl + "/inventory/create", "", HTTPMixIn.HTTP_OPTIONS);
                 }
-                System.out.println(http.sendString(BASE_URL + "/order", "", HTTPMixIn.HTTP_POST));
+                System.out.println(http.sendString(baseUrl + "/order", "", HTTPMixIn.HTTP_POST));
             } else if (command.equals("get")) {
                 if (args.length != 2) {
                     System.out.println("No orderId found!");
                     System.out.println("Usage: get <orderId>");
                 }
-                System.out.println(http.sendString(BASE_URL + "/order/" + args[1], "", HTTPMixIn.HTTP_GET));
+                System.out.println(http.sendString(baseUrl + "/order/" + args[1], "", HTTPMixIn.HTTP_GET));
             } else if (command.equals("add")) {
                 if (args.length < 2) {
                     System.out.println("No orderId found!");
@@ -78,7 +86,7 @@ public class RESTEasyBindingClient {
                     + "         <quantity>" + args[3] + "</quantity>"
                     + "     </orderItem>"
                     + "</order>";
-                System.out.println(http.sendString(BASE_URL + "/order/item", order, HTTPMixIn.HTTP_PUT));
+                System.out.println(http.sendString(baseUrl + "/order/item", order, HTTPMixIn.HTTP_PUT));
             } else if (command.equals("del")) {
                 if (args.length < 2) {
                     System.out.println("No orderId found!");
@@ -88,7 +96,7 @@ public class RESTEasyBindingClient {
                     System.out.println("No itemId found!");
                     System.out.println("Usage: get <orderId> <itemId>");
                 }
-                System.out.println(http.sendString(BASE_URL + "/order/" + args[1] + ":" + args[2], "", HTTPMixIn.HTTP_DELETE));
+                System.out.println(http.sendString(baseUrl + "/order/" + args[1] + ":" + args[2], "", HTTPMixIn.HTTP_DELETE));
             }
         }
     }

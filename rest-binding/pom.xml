@@ -21,7 +21,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-rest-binding</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard Quickstart: rest-binding</name>
     <description>Quickstart : RESTEasy Binding</description>
     <licenses>
@@ -35,6 +35,15 @@
         <deploy.skip>true</deploy.skip>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.quickstarts.rest.binding*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.require.capability>
+            org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
+            org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
+            osgi.extender; filter:="(osgi.extender=pax.cdi)"
+        </switchyard.osgi.require.capability>
+        <switchyard.osgi.provide.capability/>
     </properties>
     <dependencies>
         <dependency>
@@ -158,6 +167,20 @@
                     <executable>java</executable>
                     <classpathScope>test</classpathScope>
                     <mainClass>org.switchyard.quickstarts.rest.binding.RESTEasyBindingClient</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${version.felix.maven}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Include-Resource>
+                            {maven-resources},
+                            META-INF/switchyard.xml=target/classes/META-INF/switchyard.xml
+                        </Include-Resource>
+                    </instructions>
                 </configuration>
             </plugin>
         </plugins>
