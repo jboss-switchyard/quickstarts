@@ -82,6 +82,16 @@ public class JavaServiceTest {
     }
     
     @Test
+    public void testInterfaceExtension() throws Exception {
+        JavaService js = JavaService.fromClass(InheritsInterface.class);
+        // There should be three operations
+        Assert.assertEquals(3, js.getOperations().size());
+        // Check direct and one inherited method
+        Assert.assertNotNull(js.getOperation("oneMore"));
+        Assert.assertNotNull(js.getOperation("method1"));
+    }
+    
+    @Test
     public void testInterfaceWithBadSignature() throws Exception {
         Exception error = null;
         
@@ -151,6 +161,10 @@ public class JavaServiceTest {
 interface JavaInterface {
     void method1(MyStuff param);
     MyStuff method2(Object param);
+}
+
+interface InheritsInterface extends JavaInterface {
+    void oneMore(String foo);
 }
 
 // Method with no parameter

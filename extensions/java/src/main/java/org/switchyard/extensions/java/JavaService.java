@@ -34,8 +34,8 @@ import org.switchyard.metadata.ServiceOperation;
  * An implementation of ServiceInterface for Java classes.  The 
  * <code>fromClass()</code> method can be used to create a ServiceInterface
  * representation from a Java class or interface.  A ServiceOperation will be 
- * created for each public methods declared directly on the Java class or 
- * interface.  Inherited superclass methods are not included to avoid polluting
+ * created for each public methods on the Java interface.  Inherited 
+ * superclass methods are not included to avoid polluting
  * the ServiceInterface with methods from java.lang.Object, java.io.Serializable,
  * etc.
  * <br><br>
@@ -75,7 +75,12 @@ public final class JavaService extends BaseService {
      */
     public static JavaService fromClass(Class<?> serviceInterface) {
         HashSet<ServiceOperation> ops = new HashSet<ServiceOperation>();
-        for (Method m : serviceInterface.getDeclaredMethods()) {
+        // Use all methods in type hierarchy for interfaces, but avoid this
+        // for classes which can drag in garbage from java.lang.Object, etc.
+        Method[] methods = serviceInterface.isInterface()
+                ? serviceInterface.getMethods()
+                : serviceInterface.getDeclaredMethods();
+        for (Method m : methods) {
             // We only consider public methods
             if (Modifier.isPublic(m.getModifiers())) {
                 // At this point, we only accept methods with a single 
