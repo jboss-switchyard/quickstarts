@@ -246,10 +246,11 @@
     <feature name="switchyard-rules" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard</feature>
         <feature version="${version.org.drools}">drools-common</feature>
-        <bundle>mvn:org.kie/kie-api/${version.org.drools}</bundle>
         <bundle>mvn:org.drools/drools-core/${version.org.drools}</bundle>
-        <bundle>mvn:org.kie/kie-internal/${version.org.drools}</bundle>
         <bundle>mvn:org.drools/drools-compiler/${version.org.drools}</bundle>
+        <bundle>mvn:org.kie/kie-api/${version.org.drools}</bundle>
+        <feature version="${version.org.drools}">drools-decisiontable</feature>
+        <bundle>mvn:org.kie/kie-internal/${version.org.drools}</bundle>
         <bundle>mvn:org.drools/drools-osgi-integration/${version.org.drools}</bundle>
         <feature version="${version.org.apache.camel}">camel-jpa</feature>
         <bundle dependency="true">mvn:org.drools/drools-persistence-jpa/${version.org.drools}</bundle>
@@ -464,6 +465,35 @@
         <feature version="${project.version}">switchyard-soap</feature>
         <feature version="${version.org.apache.camel}">camel-saxon</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-saxon/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-rules-camel-cbr" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-camel</feature>
+        <feature version="${project.version}">switchyard-rules</feature>
+        <feature version="${project.version}">switchyard-sca</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-rules-camel-cbr/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-rules-interview" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-rules</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-rules-interview/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-rules-interview-container" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-rules</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-rules-interview-container/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-rules-interview-dtable" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-rules</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-rules-interview-dtable/${project.version}</bundle>
     </feature>
 
     <!-- Requires SOAP binding -->

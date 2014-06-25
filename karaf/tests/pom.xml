@@ -160,6 +160,7 @@
                                 <feature version="${project.version}">switchyard-mail</feature>
                                 <feature version="${project.version}">switchyard-netty</feature>
                                 <feature version="${project.version}">switchyard-quartz</feature>
+                                <feature version="${project.version}">switchyard-rules</feature>
                                 <feature version="${project.version}">switchyard-rss</feature>
                                 <feature version="${project.version}">switchyard-sql</feature>
                                 <feature version="${project.version}">switchyard-soap</feature>

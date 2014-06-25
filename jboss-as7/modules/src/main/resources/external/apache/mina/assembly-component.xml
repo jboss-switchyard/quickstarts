@@ -18,13 +18,13 @@
   <files>
     <file>
       <source>src/main/resources/external/apache/mina/module.xml</source>
-      <outputDirectory>/modules/system/layers/soa/org/apache/mina/${version.mina2}</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/mina/main</outputDirectory>
       <filtered>true</filtered>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/modules/system/layers/soa/org/apache/mina/${artifact.baseVersion}</outputDirectory>
+      <outputDirectory>/modules/system/layers/soa/org/apache/mina/main</outputDirectory>
       <includes>
         <include>org.apache.mina:mina-core</include>
       </includes>

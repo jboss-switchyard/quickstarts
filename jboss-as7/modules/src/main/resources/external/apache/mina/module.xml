@@ -12,7 +12,7 @@
  - See the License for the specific language governing permissions and
  - limitations under the License.
  -->
-<module xmlns="urn:jboss:module:1.0" name="org.apache.mina" slot="${version.mina2}">
+<module xmlns="urn:jboss:module:1.0" name="org.apache.mina">
 
     <resources>
         <resource-root path="mina-core-${version.mina2}.jar"/>
