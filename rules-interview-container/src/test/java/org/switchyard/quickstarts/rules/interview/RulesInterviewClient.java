@@ -23,7 +23,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 public final class RulesInterviewClient {
 
-    private static final String URL = "http://localhost:8080/rules-interview-container/Interview";
+    private static final String URL = "http://localhost:PORT/rules-interview-container/Interview";
     private static final String XML = "src/test/resources/xml/soap-request-pass.xml";
 
     /**
@@ -37,13 +37,20 @@ public final class RulesInterviewClient {
      * @param ignored not used.
      * @throws Exception if something goes wrong.
      */
-    public static void main(final String[] ignored) throws Exception {
+    public static void main(final String[] ports) throws Exception {
 
         HTTPMixIn soapMixIn = new HTTPMixIn();
         soapMixIn.initialize();
 
         try {
-            String result = soapMixIn.postFile(URL, XML);
+	    String urlChanged = new String();
+	    String port = "8080";
+	    if (ports.length >= 1) {
+                port = ports[0];
+	    }	
+	    urlChanged = URL.replace("PORT", port);
+            String result = soapMixIn.postFile(urlChanged, XML);
+	    System.out.println("URL : " + urlChanged);
             System.out.println("SOAP Reply:\n" + result);
         } finally {
             soapMixIn.uninitialize();
