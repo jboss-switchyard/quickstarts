@@ -24,7 +24,7 @@
       <sca:interface.wsdl interface="META-INF/Interview.wsdl#wsdl.porttype(InterviewPortType)"/>
       <soap:binding.soap>
         <soap:wsdl>META-INF/Interview.wsdl</soap:wsdl>
-        <soap:socketAddr>:18001</soap:socketAddr>
+        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
         <soap:contextPath>rules-interview-dtable</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
@@ -63,6 +63,7 @@
   <domain>
     <properties>
       <property name="userName" value="${user.name}"/>
+      <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
     </properties>
   </domain>
 </switchyard>
