@@ -13,6 +13,8 @@
  */
 package org.switchyard.component.camel.switchyard;
 
+import java.util.List;
+
 import javax.activation.DataHandler;
 
 import org.apache.camel.impl.DefaultMessage;
@@ -36,6 +38,13 @@ import org.switchyard.label.BehaviorLabel;
  * switchyard:// endpoint invocations.
  */
 public final class ExchangeMapper {
+    
+    /**
+     * Name of List<String> exchange property with names of properties to include in mapping.  By
+     * default, all Camel* exchange properties are excluded.
+     */
+    public static final String CAMEL_PROPERTY_INCLUDES = "org.switchyard.includedCamelProperties";
+    private static final String CAMEL_PROPERTY_PREFIX = "Camel";
     
     private ExchangeMapper() {
         
@@ -70,6 +79,12 @@ public final class ExchangeMapper {
             }
             // skip the implementation route property as we don't want that propagated
             if (SwitchYardConsumer.IMPLEMENTATION_ROUTE.equals(property)) {
+                continue;
+            }
+            // skip Camel* properties unless they have been explicitly included
+            List<?> propertyIncludes = camelExchange.getProperty(CAMEL_PROPERTY_INCLUDES, List.class);
+            if (property.startsWith(CAMEL_PROPERTY_PREFIX) 
+                    && (propertyIncludes == null || !propertyIncludes.contains(property))) {
                 continue;
             }
             

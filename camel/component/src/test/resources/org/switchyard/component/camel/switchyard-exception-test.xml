@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sy:switchyard xmlns:camel="urn:switchyard-component-camel:config:2.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:sy="urn:switchyard-config:switchyard:2.0" name="camel-exception-test" targetNamespace="urn:switchyard-camel-test:1.0">
+  <sca:composite name="camel-exception-test" targetNamespace="urn:switchyard-camel-test:1.0">
+    <sca:component name="OnExceptionRoute">
+      <camel:implementation.camel>
+        <camel:java class="org.switchyard.component.camel.OnExceptionRoute"/>
+      </camel:implementation.camel>
+      <sca:service name="OnExceptionService">
+        <sca:interface.java interface="org.switchyard.component.camel.Process"/>
+      </sca:service>
+      <sca:reference name="Service1">
+        <sca:interface.java interface="org.switchyard.component.camel.Process"/>
+      </sca:reference>
+    </sca:component>
+    <sca:component name="TryCatchRoute">
+      <camel:implementation.camel>
+        <camel:java class="org.switchyard.component.camel.TryCatchRoute"/>
+      </camel:implementation.camel>
+      <sca:service name="TryCatchService">
+        <sca:interface.java interface="org.switchyard.component.camel.Process"/>
+      </sca:service>
+      <sca:reference name="Service1">
+        <sca:interface.java interface="org.switchyard.component.camel.Process"/>
+      </sca:reference>
+    </sca:component>
+    <sca:component name="UnhandledExceptionRoute">
+      <camel:implementation.camel>
+        <camel:java class="org.switchyard.component.camel.UnhandledExceptionRoute"/>
+      </camel:implementation.camel>
+      <sca:service name="UnhandledExceptionService">
+        <sca:interface.java interface="org.switchyard.component.camel.Process"/>
+      </sca:service>
+      <sca:reference name="Service1">
+        <sca:interface.java interface="org.switchyard.component.camel.Process"/>
+      </sca:reference>
+    </sca:component>
+  </sca:composite>
+</sy:switchyard>
