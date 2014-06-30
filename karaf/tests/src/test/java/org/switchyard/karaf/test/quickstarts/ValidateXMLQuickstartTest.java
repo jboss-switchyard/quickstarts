@@ -14,7 +14,7 @@
 package org.switchyard.karaf.test.quickstarts;
 
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
@@ -22,8 +22,8 @@ public class ValidateXMLQuickstartTest extends AbstractQuickstartTest {
     private static String bundleName = "org.switchyard.quickstarts.switchyard-validate-xml";
     private static String featureName = "switchyard-quickstart-validate-xml";
 
-    @Before
-    public void before() throws Exception {
+    @BeforeClass
+    public static void before() throws Exception {
         startTestContainer(featureName, bundleName);
     }
 

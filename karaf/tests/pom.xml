@@ -19,15 +19,10 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.switchyard.karaf</groupId>
     <artifactId>switchyard-karaf-tests</artifactId>
     <packaging>jar</packaging>
     <name>SwitchYard: Karaf Tests</name>
     <description>SwitchYard Karaf Tests</description>
-    <properties>
-        <version.org.ops4j.pax.exam>3.4.0</version.org.ops4j.pax.exam>
-        <version.org.apache.karaf>2.3.3</version.org.apache.karaf>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.switchyard.karaf</groupId>
@@ -37,31 +32,32 @@
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam</artifactId>
-            <version>${version.org.ops4j.pax.exam}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-junit4</artifactId>
-            <version>${version.org.ops4j.pax.exam}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
             <artifactId>pax-exam-container-karaf</artifactId>
-            <version>${version.org.ops4j.pax.exam}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf</groupId>
             <artifactId>apache-karaf</artifactId>
-            <version>${version.org.apache.karaf}</version>
             <type>tar.gz</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-test-mixin-hornetq</artifactId>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -82,13 +78,6 @@
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-transform-dozer</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-as7-tests</artifactId>
-            <version>${project.version}</version>
-            <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -117,6 +106,126 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>features-maven-plugin</artifactId>
+                <version>2.3.3</version>
+                <executions>
+                    <execution>
+                        <id>add-features-to-repo</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-features-to-repo</goal>
+                        </goals>
+                        <configuration>
+                            <karafVersion>${version.karaf}</karafVersion>
+                            <descriptors>
+                                <descriptor>mvn:org.switchyard.karaf/switchyard/${project.version}/xml/features</descriptor>
+                            </descriptors>
+                            <features>
+                                <feature version="${project.version}">switchyard</feature>
+                                <feature version="${project.version}">switchyard-amqp</feature>
+                                <feature version="${project.version}">switchyard-atom</feature>
+                                <feature version="${project.version}">switchyard-bean</feature>
+                                <feature version="${project.version}">switchyard-common-camel</feature>
+                                <feature version="${project.version}">switchyard-cdi</feature>
+                                <feature version="${project.version}">switchyard-camel</feature>
+                                <feature version="${project.version}">switchyard-file</feature>
+                                <feature version="${project.version}">switchyard-ftp</feature>
+                                <feature version="${project.version}">switchyard-jms</feature>
+                                <feature version="${project.version}">switchyard-jpa</feature>
+                                <feature version="${project.version}">switchyard-mail</feature>
+                                <feature version="${project.version}">switchyard-netty</feature>
+                                <feature version="${project.version}">switchyard-quartz</feature>
+                                <feature version="${project.version}">switchyard-rss</feature>
+                                <feature version="${project.version}">switchyard-sql</feature>
+                                <feature version="${project.version}">switchyard-soap</feature>
+                                <feature version="${project.version}">switchyard-sap</feature>
+                                <feature version="${version.org.apache.camel}">camel-bindy</feature>
+                                <feature version="${version.org.apache.camel}">camel-hl7</feature>
+                                <feature version="${version.org.apache.camel}">camel-mina2</feature>
+                                <feature version="${version.org.apache.camel}">camel-jaxb</feature>
+                                <feature version="5.9.0">activemq-broker</feature>
+                            </features>
+                            <repository>target/dependencies/apache-karaf-${version.karaf}/system</repository>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.karaf</groupId>
+                                    <artifactId>apache-karaf</artifactId>
+                                    <type>tar.gz</type>
+                                    <outputDirectory>target/dependencies</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                          </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bin</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/bin.xml</descriptor>
+                            </descriptors>
+                            <finalName>${project.artifactId}</finalName>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+    <repositories>
+        <!-- Required to resolve feature bundles. -->
+        <repository>
+            <id>springsource.release</id>
+            <name>Spring Release Repository</name>
+            <url>https://repository.jboss.org/nexus/content/repositories/springsource-obr-releases/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>springsource.external</id>
+            <name>Spring External Repository</name>
+            <url>https://repository.jboss.org/nexus/content/repositories/springsource-obr-external/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

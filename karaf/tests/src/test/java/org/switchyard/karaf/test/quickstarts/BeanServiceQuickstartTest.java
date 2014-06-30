@@ -18,7 +18,7 @@ import java.io.StringReader;
 
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
@@ -27,8 +27,8 @@ public class BeanServiceQuickstartTest extends AbstractQuickstartTest {
     private static String bundleName = "org.switchyard.quickstarts.switchyard-bean-service";
     private static String featureName = "switchyard-quickstart-bean-service";
 
-    @Before
-    public void before() throws Exception {
+    @BeforeClass
+    public static void before() throws Exception {
         startTestContainer(featureName, bundleName);
     }
 

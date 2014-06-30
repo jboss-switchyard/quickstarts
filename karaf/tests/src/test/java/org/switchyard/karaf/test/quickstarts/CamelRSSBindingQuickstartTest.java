@@ -13,14 +13,14 @@
  */
 package org.switchyard.karaf.test.quickstarts;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 
 public class CamelRSSBindingQuickstartTest extends AbstractQuickstartTest {
     private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-rss-binding";
     private static String featureName = "switchyard-quickstart-camel-rss-binding";
 
-    @Before
-    public void before() throws Exception {
+    @BeforeClass
+    public static void before() throws Exception {
         startTestContainer(featureName, bundleName);
     }
 }

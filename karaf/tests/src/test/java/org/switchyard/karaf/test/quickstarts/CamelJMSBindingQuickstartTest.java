@@ -1,42 +1,51 @@
 package org.switchyard.karaf.test.quickstarts;
 
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
+
+import java.io.File;
+
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
-import org.junit.Before;
-import org.junit.Ignore;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.switchyard.component.test.mixins.hornetq.HornetQMixIn;
-import org.switchyard.test.quickstarts.util.ResourceDeployer;
+import org.ops4j.pax.exam.CoreOptions;
 
 public class CamelJMSBindingQuickstartTest extends AbstractQuickstartTest {
     private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-jms-binding";
     private static String featureName = "switchyard-quickstart-camel-jms-binding";
 
-    private static final String QUEUE = "GreetingServiceQueue";
+    private static final String AMQ_USER = "karaf";
+    private static final String AMQ_PASSWD = "karaf";
+    private static final String AMQ_BROKER_URL = "tcp://localhost:61616";
 
-    @Before
-    public void before() throws Exception {
-        startTestContainer(featureName, bundleName);
+    private static final String QUEUE_NAME = "GreetingServiceQueue";
+
+    @BeforeClass
+    public static void before() throws Exception {
+        startTestContainer(featureName, bundleName,
+                CoreOptions.options(
+                        editConfigurationFilePut("etc/org.ops4j.pax.logging.cfg", "log4j.logger.org.apache.activemq",
+                                "DEBUG")), DeploymentProbe.class);
     }
 
-    //Quickstart requires hornetq standalone to be running
-    @Ignore @Test
+    @Test
     public void testDeployment() throws Exception {
-        HornetQMixIn hqMixIn = new HornetQMixIn(false)
-                                    .setUser(ResourceDeployer.USER)
-                                    .setPassword(ResourceDeployer.PASSWD);
-        hqMixIn.initialize();
+        ConnectionFactory cf = new ActiveMQConnectionFactory(AMQ_USER, AMQ_PASSWD, AMQ_BROKER_URL);
+        Connection conn = cf.createConnection();
 
         try {
-            Session session = hqMixIn.getJMSSession();
-            MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(QUEUE));
-            Message message = hqMixIn.createJMSMessage("Tomo");
+            Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            final MessageProducer producer = session.createProducer(session.createQueue(QUEUE_NAME));
+            Message message = session.createTextMessage("Captain Crunch");
             producer.send(message);
         } finally {
-            hqMixIn.uninitialize();
-            ResourceDeployer.removeQueue(QUEUE);
+            conn.close();
         }
     }
 }

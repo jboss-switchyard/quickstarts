@@ -39,7 +39,6 @@
         <feature>switchyard-http</feature>
         <feature>switchyard-rest</feature>
         <bundle>mvn:org.switchyard/switchyard-transform/${project.version}</bundle>
-        <bundle>mvn:org.osgi/org.osgi.compendium/4.3.1</bundle>
     </feature>
 
     <feature name="dozer" version="${version.net.sf.dozer}" resolver="(obr)">

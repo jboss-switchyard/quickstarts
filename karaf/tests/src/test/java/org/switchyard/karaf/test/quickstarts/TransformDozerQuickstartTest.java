@@ -16,8 +16,7 @@ package org.switchyard.karaf.test.quickstarts;
 import javax.xml.namespace.QName;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.switchyard.quickstarts.transform.dozer.Order;
 import org.switchyard.quickstarts.transform.dozer.OrderAck;
@@ -30,15 +29,15 @@ public class TransformDozerQuickstartTest extends AbstractQuickstartTest {
     private static String featureName = "switchyard-quickstart-transform-dozer";
 
     private static final QName SERVICE = new QName( "urn:switchyard-quickstart:transform-dozer:0.1.0", "OrderService");
-    private static final String URL = "http://localhost:8080/switchyard-remote";
+    private static final String URL = "http://localhost:8181/switchyard-remote";
 
-    @Before
-    public void before() throws Exception {
+    @BeforeClass
+    public static void before() throws Exception {
         startTestContainer(featureName, bundleName);
     }
 
     //Require RemoteInvoker
-    @Ignore @Test
+    @Test
     public void testDeployment() throws Exception {
         RemoteInvoker invoker = new HttpInvoker(URL);
 

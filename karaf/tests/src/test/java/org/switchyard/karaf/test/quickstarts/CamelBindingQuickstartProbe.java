@@ -7,12 +7,13 @@ import java.io.File;
 
 import org.junit.Test;
 
-public class CamelBindingQuickstartProbe
-{
+public class CamelBindingQuickstartProbe extends DeploymentProbe {
+
     private static String SOURCE_FILE = "../../../test-classes/test.txt";
     private static String DEST_FILE = "target/input/test.txt";
 
-    public CamelBindingQuickstartProbe(){}
+    public CamelBindingQuickstartProbe() {
+    }
     
     @Test
     public void testFeatures() throws Exception {

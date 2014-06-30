@@ -13,14 +13,14 @@
  */
 package org.switchyard.karaf.test.quickstarts;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 
 public class TransformXSLTQuickstartTest extends AbstractQuickstartTest {
     private static String bundleName = "org.switchyard.quickstarts.switchyard-transform-xslt";
     private static String featureName = "switchyard-quickstart-transform-xslt";
 
-    @Before
-    public void before() throws Exception {
+    @BeforeClass
+    public static void before() throws Exception {
         startTestContainer(featureName, bundleName);
     }
 }

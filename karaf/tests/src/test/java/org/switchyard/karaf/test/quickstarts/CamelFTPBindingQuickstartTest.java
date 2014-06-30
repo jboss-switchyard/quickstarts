@@ -1,13 +1,13 @@
 package org.switchyard.karaf.test.quickstarts;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 
 public class CamelFTPBindingQuickstartTest extends AbstractQuickstartTest {
     private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-ftp-binding";
     private static String featureName = "switchyard-quickstart-camel-ftp-binding";
 
-    @Before
-    public void before() throws Exception {
+    @BeforeClass
+    public static void before() throws Exception {
         startTestContainer(featureName, bundleName);
     }
 }

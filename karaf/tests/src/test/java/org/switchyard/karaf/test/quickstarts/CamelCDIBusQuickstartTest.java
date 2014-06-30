@@ -19,7 +19,7 @@ import java.util.Map;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
@@ -30,8 +30,8 @@ public class CamelCDIBusQuickstartTest extends AbstractQuickstartTest {
     private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-bus-cdi";
     private static String featureName = "switchyard-quickstart-camel-bus-cdi";
 
-    @Before
-    public void before() throws Exception {
+    @BeforeClass
+    public static void before() throws Exception {
         startTestContainer(featureName, bundleName);
     }
 
