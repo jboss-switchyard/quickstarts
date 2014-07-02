@@ -78,6 +78,8 @@
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
         <version.mock.javamail>1.9</version.mock.javamail>
         <version.net.sf.dozer>5.4.0</version.net.sf.dozer>
+        <!-- consider moving to integration platform bom -->
+        <version.org.ops4j.pax.exam>3.4.0</version.org.ops4j.pax.exam>
         <version.osgi.core>4.3.1</version.osgi.core>
         <version.osgi.compendium>4.3.1</version.osgi.compendium>
         <version.riftsaw.ode>3.1.0.Final</version.riftsaw.ode>
@@ -357,6 +359,11 @@
                             </manifestEntries>
                         </archive>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.servicemix.tooling</groupId>
+                    <artifactId>depends-maven-plugin</artifactId>
+                    <version>1.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -2345,6 +2352,27 @@
                 <groupId>org.apache.karaf</groupId>
                 <artifactId>org.apache.karaf.util</artifactId>
                 <version>${version.karaf}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.karaf</groupId>
+                <artifactId>apache-karaf</artifactId>
+                <version>${version.karaf}</version>
+                <type>tar.gz</type>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.exam</groupId>
+                <artifactId>pax-exam</artifactId>
+                <version>${version.org.ops4j.pax.exam}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.exam</groupId>
+                <artifactId>pax-exam-junit4</artifactId>
+                <version>${version.org.ops4j.pax.exam}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ops4j.pax.exam</groupId>
+                <artifactId>pax-exam-container-karaf</artifactId>
+                <version>${version.org.ops4j.pax.exam}</version>
             </dependency>
             <dependency>
                 <groupId>rome</groupId>
