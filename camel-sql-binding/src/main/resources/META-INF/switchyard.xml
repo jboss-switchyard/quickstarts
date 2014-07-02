@@ -21,7 +21,7 @@
       <sql:binding.sql initialDelay="1000" period="1s">
         <operationSelector operationName="consume"/>
         <sql:query>SELECT * FROM greetings</sql:query>
-        <sql:dataSourceRef>java:jboss/myDS</sql:dataSourceRef>
+        <sql:dataSourceRef>${datasourceName}</sql:dataSourceRef>
       </sql:binding.sql>
       <quartz:binding.quartz>
         <operationSelector operationName="generate"/>
@@ -54,4 +54,9 @@
       </sca:reference>
     </sca:component>
   </sca:composite>
+  <domain>
+    <properties>
+      <property name="datasourceName" value="${org.switchyard.quickstarts.camel.sql.datasourceName:java:jboss/myDS}"/>
+    </properties>
+  </domain>
 </switchyard>
