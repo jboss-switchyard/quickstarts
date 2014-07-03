@@ -86,6 +86,9 @@
         <version.riftsaw.ode>3.2.0-SNAPSHOT</version.riftsaw.ode>
         <version.riftsaw.engine>3.2.0-SNAPSHOT</version.riftsaw.engine>
         <version.riftsaw.console>2.4.6-SNAPSHOT</version.riftsaw.console>
+        <version.org.fusesource.mqtt-client>1.6</version.org.fusesource.mqtt-client>
+        <version.org.fusesource.hawtdispatch>1.18</version.org.fusesource.hawtdispatch>
+        <version.org.fusesource.hawtbuf>1.9</version.org.fusesource.hawtbuf>
         <!-- KIE/Drools/jBPM -->
         <version.org.kie>${version.kiedroolsjbpm}</version.org.kie>
         <version.org.drools>${version.kiedroolsjbpm}</version.org.drools>
@@ -903,6 +906,17 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-mqtt</artifactId>
+                <version>${version.org.apache.camel}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+        </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-jpa</artifactId>
@@ -1160,6 +1174,11 @@
       ##                 Local Project Dependencies                    ##
       ################################################################### -->
             <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-mqtt</artifactId>
+                <version>${version.org.apache.activemq}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http</artifactId>
                 <version>${version.cxf}</version>
@@ -1246,6 +1265,11 @@
                 <groupId>org.fusesource</groupId>
                 <artifactId>camel-sap</artifactId>
                 <version>${version.camelsap}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fusesource.mqtt-client</groupId>
+                <artifactId>mqtt-client</artifactId>
+                <version>${version.org.fusesource.mqtt-client}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.as</groupId>
@@ -1950,6 +1974,11 @@
             <dependency>
                 <groupId>org.switchyard.components</groupId>
                 <artifactId>switchyard-component-camel-mail</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.components</groupId>
+                <artifactId>switchyard-component-camel-mqtt</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
