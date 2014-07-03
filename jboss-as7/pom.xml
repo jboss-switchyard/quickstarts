@@ -84,7 +84,15 @@
             <artifactId>commons-codec</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Quickstart dependencies -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-mqtt</artifactId>
+        </dependency>
+         <!-- Quickstart dependencies -->
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-transform-json</artifactId>

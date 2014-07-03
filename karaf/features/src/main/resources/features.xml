@@ -206,6 +206,12 @@
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-mail/${project.version}</bundle>
     </feature>
 
+    <feature name="switchyard-mqtt" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-camel</feature>
+        <feature version="${version.org.apache.camel}">camel-mqtt</feature>
+        <bundle>mvn:org.switchyard.components/switchyard-component-camel-mqtt/${project.version}</bundle>
+    </feature>
+
     <feature name="switchyard-netty" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
         <feature version="${version.org.apache.camel}">camel-netty</feature>
@@ -409,6 +415,13 @@
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-mail</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-mail-binding/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-camel-mqtt-binding" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-mqtt</feature>
+        <feature version="${version.org.apache.activemq}">activemq-broker</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-mqtt-binding/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-quickstart-camel-netty-binding" version="${project.version}" resolver="(obr)">
