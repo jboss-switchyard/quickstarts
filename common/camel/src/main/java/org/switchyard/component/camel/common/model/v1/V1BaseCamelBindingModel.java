@@ -197,6 +197,11 @@ public abstract class V1BaseCamelBindingModel extends V1BindingModel
         return value != null ? Integer.parseInt(value) : null;
     }
 
+    protected final Double getDoubleConfig(String configName) {
+        String value = getConfig(configName);
+        return value != null ? Double.parseDouble(value) : null;
+    }
+
     protected final Boolean getBooleanConfig(String configName) {
         String value = getConfig(configName);
         return value != null ? Boolean.valueOf(value) : null;

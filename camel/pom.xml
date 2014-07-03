@@ -35,6 +35,7 @@
         <module>camel-jms</module>
         <module>camel-jpa</module>
         <module>camel-mail</module>
+        <module>camel-mqtt</module>
         <module>camel-netty</module>
         <module>camel-quartz</module>
         <module>camel-rss</module>
