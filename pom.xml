@@ -63,7 +63,7 @@
         <version.camelsap>1.0.0.redhat-379</version.camelsap>
         <version.commons-lang3>3.1</version.commons-lang3>
         <!-- This version is only used as a prefix for a jar included in release modules -->
-        <version.deltaspike>0.3-incubating</version.deltaspike>
+        <version.deltaspike>0.5</version.deltaspike>
         <version.felix.maven>2.4.0</version.felix.maven>
         <version.fungal>0.10.2.Final</version.fungal>
         <version.hapi>2.1</version.hapi>
@@ -805,6 +805,14 @@
                         <groupId>com.sun.xml.bind</groupId>
                         <artifactId>jaxb-impl</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.deltaspike.core</groupId>
+                        <artifactId>deltaspike-core-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.deltaspike.cdictrl</groupId>
+                        <artifactId>deltaspike-cdictrl-api</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -815,6 +823,14 @@
                     <exclusion>
                         <groupId>com.sun.xml.bind</groupId>
                         <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.deltaspike.core</groupId>
+                        <artifactId>deltaspike-core-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.deltaspike.cdictrl</groupId>
+                        <artifactId>deltaspike-cdictrl-api</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1103,6 +1119,21 @@
                         <artifactId>jaxb-impl</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.deltaspike.core</groupId>
+                <artifactId>deltaspike-core-api</artifactId>
+                <version>${version.deltaspike}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.deltaspike.core</groupId>
+                <artifactId>deltaspike-core-impl</artifactId>
+                <version>${version.deltaspike}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.deltaspike.cdictrl</groupId>
+                <artifactId>deltaspike-cdictrl-api</artifactId>
+                <version>${version.deltaspike}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
