@@ -24,6 +24,26 @@ Running the quickstart
 
         mvn clean -Pdeploy
 
+Karaf
+-----
+Instead of steps 1,2,5 above for JBoss AS 7...
+
+1. Create a ${KARAF}/quickstarts/demos/policy-security-cert/ directory, and copy users.jks, roles.properties, and connector.jks into it.
+
+2. Create a ${KARAF}/etc/org.ops4j.pax.web.cfg file, with the following contents:
+
+org.osgi.service.http.enabled=true
+org.osgi.service.http.port=8181
+org.osgi.service.http.secure.enabled=true
+org.osgi.service.http.port.secure=8183
+org.ops4j.pax.web.ssl.keystore=quickstarts/demos/policy-security-cert/connector.jks
+org.ops4j.pax.web.ssl.keystore.type=JKS
+org.ops4j.pax.web.ssl.password=changeit
+org.ops4j.pax.web.ssl.keypassword=changeit
+org.ops4j.pax.web.ssl.clientauthwanted=false
+org.ops4j.pax.web.ssl.clientauthneeded=false
+
+3. When executing the test (as directed below), add the following system property: -Dorg.switchyard.component.soap.client.port=8183
 
 Options
 =======

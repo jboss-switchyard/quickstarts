@@ -40,7 +40,10 @@ public class HttpBindingClient {
             }
             HTTPMixIn http = new HTTPMixIn();
             http.initialize();
-            System.out.println(http.sendString("http://localhost:" + port + "/http-binding/quote", args[0], HTTPMixIn.HTTP_POST));
+            String endpointURL = "http://localhost:" + port + "/http-binding/quote";
+            System.out.println(" Request: " + endpointURL + " -> " + args[0]);
+            String response = http.sendString(endpointURL, args[0], HTTPMixIn.HTTP_POST);
+            System.out.println("Response: " + response);
         }
     }
 }

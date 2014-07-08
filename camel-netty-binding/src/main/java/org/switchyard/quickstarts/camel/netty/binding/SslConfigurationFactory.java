@@ -29,6 +29,7 @@ import javax.inject.Named;
 public class SslConfigurationFactory {
 
     private static final String JBOSS_HOME = System.getenv("JBOSS_HOME");
+    private static final String KARAF_HOME = System.getProperty("karaf.home");
 
     /**
      * Creates password bean.
@@ -67,8 +68,14 @@ public class SslConfigurationFactory {
      * Utility method to determine location of configuration files.
      */
     private String getPath(String fileName) {
+        String fileHome = null;
         if (JBOSS_HOME != null) {
-            return JBOSS_HOME + "/quickstarts/camel-netty-binding/" + fileName;
+            fileHome = JBOSS_HOME;
+        } else if (KARAF_HOME != null) {
+            fileHome = KARAF_HOME;
+        }
+        if (fileHome != null) {
+            return fileHome + "/quickstarts/camel-netty-binding/" + fileName;
         }
         return fileName;
     }

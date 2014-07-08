@@ -32,7 +32,8 @@ JBoss AS 7
 
 4. You should see the following output
 
-    136.5
+      Request: http://localhost:8080/http-binding/quote -> vineyard
+     Response: 136.5
 
 5. Undeploy the quickstart:
 

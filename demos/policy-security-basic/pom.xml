@@ -22,6 +22,7 @@
     </parent>
     <groupId>org.switchyard.quickstarts.demos</groupId>
     <artifactId>switchyard-demo-policy-security-basic</artifactId>
+    <packaging>bundle</packaging>
     <name>Quickstart Demo : Security Policy : Basic Authentication (+SSL)</name>
     <description>Quickstart Demo : Security Policy : Basic Authentication (+SSL)</description>
     <licenses>
@@ -35,6 +36,18 @@
         <deploy.skip>true</deploy.skip>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.quickstarts.demo.policy.security.basic*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.require.capability>
+            org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
+            org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
+            osgi.extender; filter:="(osgi.extender=pax.cdi)"
+        </switchyard.osgi.require.capability>
+        <switchyard.osgi.provide.capability/>
+        <switchyard.osgi.dynamic>
+            org.apache.karaf.jaas.config,org.switchyard,org.switchyard.*
+        </switchyard.osgi.dynamic>
     </properties>
     <dependencies>
         <dependency>
@@ -63,6 +76,11 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-bean</artifactId>
+        </dependency>
+        <!-- Karaf tested with http until soap is supported: -->
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-http</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>

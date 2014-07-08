@@ -50,7 +50,7 @@ public final class WorkServiceMain {
 
     private static final String MAVEN_USAGE = String.format("Maven Usage: mvn exec:java -Dexec.args=\"%s %s %s\"", CONFIDENTIALITY, CLIENT_AUTHENTICATION, HELP);
 
-    private static void invokeWorkService(String scheme, int port, Element assertion) throws Exception {
+    private static void invokeWorkService(String scheme, int port, String context, Element assertion) throws Exception {
         String soapRequest = new StringPuller().pull("/xml/soap-request.xml").replaceAll("WORK_CMD", "CMD-" + System.currentTimeMillis());
         if (assertion != null) {
             soapRequest = soapRequest.replaceFirst("<!-- Assertion -->", XMLHelper.toString(assertion));
@@ -58,7 +58,7 @@ public final class WorkServiceMain {
         HTTPMixIn http = new HTTPMixIn();
         http.initialize();
         try {
-            String endpoint = String.format("%s://localhost:%s/policy-security-saml/WorkService", scheme, port);
+            String endpoint = String.format("%s://localhost:%s/%s/WorkService", scheme, port, context);
             //LOGGER.info(String.format("Invoking work service at endpoint: %s with request: %s", endpoint, soapRequest));
             LOGGER.info(String.format("Invoking work service at endpoint: %s", endpoint));
             String soapResponse = http.postString(endpoint, soapRequest);
@@ -107,7 +107,7 @@ public final class WorkServiceMain {
             final int port;
             if (policies.contains(CONFIDENTIALITY)) {
                 scheme = "https";
-                port = 8443;
+                port = getPort(8443);
                 SSLContext sslcontext = SSLContext.getInstance("TLS");
                 sslcontext.init(null, null, null);
                 SSLSocketFactory sf = new SSLSocketFactory(sslcontext, SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
@@ -116,11 +116,26 @@ public final class WorkServiceMain {
                 sr.register(https);
             } else {
                 scheme = "http";
-                port = 8080;
+                port = getPort(8080);
             }
             Element assertion = policies.contains(CLIENT_AUTHENTICATION) ? getAssertion() : null;
-            invokeWorkService(scheme, port, assertion);
+            invokeWorkService(scheme, port, getContext(), assertion);
         }
     }
+
+    private static String getContext() {
+        String context = "policy-security-saml";
+        if (System.getProperty(PORT) != null) {
+            // setting the port is only necessary for Karaf, so we prefix the context if defined
+            context = "cxf/" + context;
+        }
+        return context;
+    }
+
+    private static int getPort(int defaultPort) {
+        return Integer.getInteger(PORT, defaultPort);
+    }
+
+    private static final String PORT = "org.switchyard.component.soap.client.port";
 
 }

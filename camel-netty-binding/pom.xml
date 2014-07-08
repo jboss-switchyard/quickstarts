@@ -45,6 +45,9 @@
             osgi.extender; filter:="(osgi.extender=pax.cdi)"
         </switchyard.osgi.require.capability>
         <switchyard.osgi.provide.capability/>
+        <switchyard.osgi.dynamic>
+            org.apache.karaf.jaas.config,org.switchyard,org.switchyard.*
+        </switchyard.osgi.dynamic>
     </properties>
     <dependencies>
         <dependency>

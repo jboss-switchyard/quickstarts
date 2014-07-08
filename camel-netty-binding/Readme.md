@@ -8,6 +8,7 @@ Running the quickstart
 
 JBoss AS 7
 ----------
+
 1. Start JBoss AS 7 in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
@@ -41,6 +42,12 @@ To test TCP:
 7. Undeploy the quickstart:
 
         mvn clean -Pdeploy
+
+Karaf
+-----
+Instead of steps 1-2,7 above for JBoss AS 7...
+
+1. Create a ${KARAF}/quickstarts/camel-netty-binding/ directory, and copy users.jks and roles.properties into it.
 
 ## Further Reading
 
