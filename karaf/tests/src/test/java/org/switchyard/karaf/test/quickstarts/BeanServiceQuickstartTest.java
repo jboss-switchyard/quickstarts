@@ -41,7 +41,7 @@ public class BeanServiceQuickstartTest extends AbstractQuickstartTest {
             XMLUnit.setIgnoreWhitespace(true);
             String port = getSoapClientPort();
             String wsdl = httpMixIn.sendString("http://localhost:" + port + "/quickstart-bean/OrderService?wsdl", "", HTTPMixIn.HTTP_GET);
-            XMLAssert.assertXMLEqual(new InputStreamReader(Classes.getResourceAsStream("OrderService.wsdl")), new StringReader(wsdl));
+            XMLAssert.assertXMLEqual(new InputStreamReader(Classes.getResourceAsStream("quickstarts/bean-service/OrderService.wsdl")), new StringReader(wsdl));
             String response = httpMixIn.postString("http://localhost:" + port + "/quickstart-bean/OrderService", SOAP_REQUEST);
             XMLAssert.assertXpathEvaluatesTo("PO-19838-XYZ", "//orderAck/orderId", response);
             XMLAssert.assertXpathEvaluatesTo("true", "//orderAck/accepted", response);

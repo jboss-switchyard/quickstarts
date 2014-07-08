@@ -99,9 +99,16 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <systemPropertyVariables>
+                        <java.awt.headless>true</java.awt.headless>
+                    </systemPropertyVariables>
+                    <includes>
+                        <include>**/*Test*.java</include>
+                    </includes>
                     <excludes>
+                        <exclude>**/Abstract*.java</exclude>
+                        <exclude>**/*$*</exclude>
                         <exclude>**/RemoteInvokerQuickstartTest.java</exclude><!-- RemoteInvoker hasn't been converted to a bundle yet -->
-                        <exclude>**/CamelJAXBQuickstartTest.java</exclude><!-- Requires switchyard-http feature -->
                         <exclude>**/CamelSAPBindingQuickstartTest.java</exclude><!-- Requires local SAP installation -->
                     </excludes>
                 </configuration>

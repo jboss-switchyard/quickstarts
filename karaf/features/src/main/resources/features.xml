@@ -19,6 +19,7 @@
         <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/1.2_5</bundle>
         <bundle>mvn:org.switchyard/switchyard-common/${project.version}</bundle>
         <bundle>mvn:org.switchyard/switchyard-security/${project.version}</bundle>
+        <bundle>mvn:org.switchyard/switchyard-security-karaf/${project.version}</bundle>
         <bundle>mvn:org.switchyard/switchyard-config/${project.version}</bundle>
         <bundle>mvn:org.switchyard/switchyard-serial/${project.version}</bundle>
         <bundle>mvn:org.switchyard/switchyard-serial-jackson/${project.version}</bundle>
@@ -336,7 +337,6 @@
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-atom-binding/${project.version}</bundle>
     </feature>
 
-    <!-- Works -->
     <feature name="switchyard-quickstart-camel-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-file</feature>
@@ -356,7 +356,6 @@
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-bus-cdi/${project.version}</bundle>
     </feature>
 
-    <!-- Works -->
     <feature name="switchyard-quickstart-camel-ftp-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-ftp</feature>
         <feature version="${project.version}">switchyard-bean</feature>
@@ -364,7 +363,7 @@
     </feature>
 
     <feature name="switchyard-quickstart-camel-hl7" version="${project.version}" resolver="(obr)">
-	<feature version="${project.version}">switchyard-bean</feature>
+    <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-camel</feature>
         <feature version="${version.org.apache.camel}">camel-hl7</feature>
         <feature version="${version.org.apache.camel}">camel-mina2</feature>
@@ -410,14 +409,12 @@
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-mail-binding/${project.version}</bundle>
     </feature>
 
-    <!-- Works for UDP and unsecure TCP but fails to authenticate secure TCP -->
     <feature name="switchyard-quickstart-camel-netty-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-netty</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-netty-binding/${project.version}</bundle>
     </feature>
 
-    <!-- Works -->
     <feature name="switchyard-quickstart-camel-quartz-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-quartz</feature>
@@ -453,7 +450,6 @@
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-soap-proxy/${project.version}</bundle>
     </feature-->
 
-    <!-- Works -->
     <feature name="switchyard-quickstart-camel-sql-binding" version="${project.version}" resolver="(obr)">
         <feature>jndi</feature>
         <feature version="${project.version}">switchyard-bean</feature>
@@ -547,6 +543,29 @@
         <feature version="${project.version}">switchyard-http</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-http-binding/${project.version}</bundle>
     </feature>
+
+    <feature name="switchyard-demo-policy-security-basic" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-camel</feature>
+        <bundle>mvn:org.switchyard.quickstarts.demos/switchyard-demo-policy-security-basic/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-demo-policy-security-cert" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-camel</feature>
+        <bundle>mvn:org.switchyard.quickstarts.demos/switchyard-demo-policy-security-cert/${project.version}</bundle>
+    </feature>
+
+    <!-- Need an alternative for org.jboss.wsf.stack.cxf.security.authentication.SubjectCreatingPolicyInterceptor
+    <feature name="switchyard-demo-policy-security-wss-username" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-camel</feature>
+        <bundle>mvn:org.switchyard.quickstarts.demos/switchyard-demo-policy-security-wss-username/${project.version}</bundle>
+    </feature>
+    -->
 
     <feature name="switchyard-demo-policy-transaction" version="${project.version}" resolver="(obr)">
         <feature>jndi</feature>

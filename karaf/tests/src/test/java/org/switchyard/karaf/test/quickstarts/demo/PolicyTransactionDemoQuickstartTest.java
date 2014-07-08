@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.test.quickstarts.demo;
+package org.switchyard.karaf.test.quickstarts.demo;
 
 import org.junit.BeforeClass;
 import org.switchyard.karaf.test.quickstarts.AbstractQuickstartTest;

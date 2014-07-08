@@ -1,7 +1,26 @@
 package org.switchyard.karaf.test.quickstarts;
 
-import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.ops4j.pax.exam.CoreOptions.composite;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
+import static org.switchyard.karaf.test.quickstarts.PhaseListener.Phase.ADD_TESTS;
+import static org.switchyard.karaf.test.quickstarts.PhaseListener.Phase.BUILD_PROBE;
+import static org.switchyard.karaf.test.quickstarts.PhaseListener.Phase.CREATE_CONTAINER;
+import static org.switchyard.karaf.test.quickstarts.PhaseListener.Phase.CREATE_PROBE;
+import static org.switchyard.karaf.test.quickstarts.PhaseListener.Phase.CREATE_SYSTEM;
+import static org.switchyard.karaf.test.quickstarts.PhaseListener.Phase.EXECUTE_PROBE;
+import static org.switchyard.karaf.test.quickstarts.PhaseListener.Phase.INSTALL_PROBE;
+import static org.switchyard.karaf.test.quickstarts.PhaseListener.Phase.START_CONTAINER;
 
 import java.io.File;
 
@@ -16,6 +35,7 @@ import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.TestProbeProvider;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
+import org.switchyard.karaf.test.quickstarts.PhaseListener.Phase;
 
 public abstract class AbstractQuickstartTest {
     protected static ExamSystem system;
@@ -41,26 +61,62 @@ public abstract class AbstractQuickstartTest {
     }
 
     protected static void startTestContainer(String featureName, String bundleName) throws Exception {
-        startTestContainer(featureName, bundleName, null, DeploymentProbe.class);
+        startTestContainer(featureName, bundleName, null);
+    }
+
+    protected static void startTestContainer(String featureName, String bundleName, Option[] additionalOptions) throws Exception {
+        startTestContainer(featureName, bundleName, additionalOptions, null);
     }
 
     protected static void startTestContainer(String featureName, String bundleName, Option[] additionalOptions, Class<? extends DeploymentProbe> probeClass) throws Exception {
+        startTestContainer(featureName, bundleName, additionalOptions, probeClass, null);
+    }
+
+    protected static void startTestContainer(String featureName, String bundleName, Option[] additionalOptions, Class<? extends DeploymentProbe> probeClass, PhaseListener phaseListener) throws Exception {
+        if (probeClass == null) {
+            probeClass = DeploymentProbe.class;
+        }
+        long time = System.currentTimeMillis();
         system = PaxExamRuntime.createTestSystem(mergeOptions(config(featureName, bundleName), additionalOptions));
+        time = post(phaseListener, CREATE_SYSTEM, time);
         testContainer = PaxExamRuntime.createContainer(system);
+        time = post(phaseListener, CREATE_CONTAINER, time);
         testContainer.start();
+        time = post(phaseListener, START_CONTAINER, time);
         try {
             // install the probe
             TestProbeBuilder probeBuilder = system.createProbe();
+            time = post(phaseListener, CREATE_PROBE, time);
             probeBuilder.addTests(probeClass, probeClass.getMethods());
+            time = post(phaseListener, ADD_TESTS, time);
             testProbe = probeBuilder.build();
+            time = post(phaseListener, BUILD_PROBE, time);
             testContainer.installProbe(testProbe.getStream());
+            time = post(phaseListener, INSTALL_PROBE, time);
             // wait for SwitchYard application activation
             executeProbe("testBundleActivation");
+            time = post(phaseListener, EXECUTE_PROBE, time);
         } catch (Exception e) {
             // cleanup
             after();
             throw e;
         }
+    }
+
+    private static long post(PhaseListener phaseListener, Phase phase, long time) throws Exception {
+        long duration = System.currentTimeMillis() - time;
+        System.out.println(String.format("Phase %s took %sh:%sm:%ss:%sms", phase.name(),
+                MILLISECONDS.toHours(duration),
+                MILLISECONDS.toMinutes(duration) - HOURS.toMinutes(MILLISECONDS.toHours(duration)),
+                MILLISECONDS.toSeconds(duration) - MINUTES.toSeconds(MILLISECONDS.toMinutes(duration)),
+                MILLISECONDS.toMillis(duration) - SECONDS.toMillis(MILLISECONDS.toSeconds(duration))));
+        if (phaseListener != null) {
+            String plp = phaseListener.getClass().getName() + ".post(" + phase.name() + ")";
+            System.out.println(plp + " executing...");
+            phaseListener.post(phase);
+            System.out.println(plp + " done.");
+        }
+        return System.currentTimeMillis();
     }
 
     protected static void executeProbe(String operation) throws Exception {
