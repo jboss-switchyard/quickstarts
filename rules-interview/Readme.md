@@ -31,6 +31,7 @@ JBoss AS 7
 
         mvn install -Pdeploy
 
+
 3. Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
     - Submit a request with your preferred SOAP client - src/test/resources/xml contains 
       sample requests and the responses that you should see
@@ -38,6 +39,10 @@ JBoss AS 7
 <br/>
 ```
             mvn exec:java
+```
+or if running in Karaf or Fuse :
+```
+	    mvn exec:java -Dexec.args="18001"
 ```
 <br/>
     - SOAP-UI : Use the wsdl for this project (src/main/resources/wsdl/OrderService.wsdl) to 

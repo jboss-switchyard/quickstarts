@@ -42,6 +42,11 @@ JBoss AS 7
 ```
             mvn exec:java
 ```
+or if running in Karaf or Fuse :
+```
+            mvn exec:java -Dexec.args="18001"
+```
+
 <br/>
     - SOAP-UI : Use the wsdl for this project (src/main/resources/wsdl/OrderService.wsdl) to 
       create a soap-ui project. Use the sample request (src/test/resources/xml/soap-request-pass.xml) 
