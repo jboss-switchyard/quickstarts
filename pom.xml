@@ -595,7 +595,7 @@
                 </property>
             </activation>
             <properties>
-                <version.kiedroolsjbpm>6.0.2-SNAPSHOT</version.kiedroolsjbpm>
+                <version.kiedroolsjbpm>6.0.2-redhat-7</version.kiedroolsjbpm>
             </properties>
         </profile>
         <profile>
@@ -606,7 +606,7 @@
                 </property>
             </activation>
             <properties>
-                <version.kiedroolsjbpm>6.1.0.Beta1</version.kiedroolsjbpm>
+                <version.kiedroolsjbpm>6.1.0.Beta2</version.kiedroolsjbpm>
             </properties>
         </profile>
         <profile>
