@@ -45,6 +45,7 @@ import org.switchyard.deploy.osgi.base.Extension;
 public class SwitchYardExtender extends AbstractExtender {
 
     public static final String SWITCHYARD_XML = "META-INF/switchyard.xml";
+    public static final String WEBINF_SWITCHYARD_XML = "WEB-INF/switchyard.xml";
     
     private final Logger _logger = LoggerFactory.getLogger(SwitchYardExtender.class);
 
@@ -143,6 +144,9 @@ public class SwitchYardExtender extends AbstractExtender {
             extensions.add(new ComponentExtension(this, bundle));
         }
         URL swXml = bundle.getEntry(SWITCHYARD_XML);
+        if (swXml == null) {
+            swXml = bundle.getEntry(WEBINF_SWITCHYARD_XML);
+        }
         if (swXml != null) {
             extensions.add(new SwitchYardContainerImpl(this, bundle, getExecutors()));
         }

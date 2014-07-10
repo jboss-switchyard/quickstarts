@@ -7,7 +7,6 @@
     <repository>mvn:org.drools/drools-karaf-features/${version.org.drools}/xml/features</repository>
     <repository>mvn:org.apache.activemq/activemq-karaf/${version.org.apache.activemq}/xml/features</repository>
     <repository>mvn:org.milyn/milyn-smooks-all/${version.org.milyn}/xml/features</repository>
-    <repository>mvn:org.fusesource/camel-sap/${version.camelsap}/xml/features</repository>
 
     <!-- Switchyard Core -->
 
@@ -151,6 +150,14 @@
         <bundle>mvn:org.switchyard/switchyard-common-camel/${project.version}</bundle>
     </feature>
     
+    <feature name="switchyard-common-knowledge" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard</feature>
+        <feature version="${version.org.drools}">kie</feature>
+        <bundle>mvn:org.switchyard/switchyard-common/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.components/switchyard-component-common-knowledge/${project.version}</bundle>
+    </feature>
+
     <feature name="switchyard-cdi" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bean-xbean-hack</feature>
         <feature version="${version.org.ops4j.pax.cdi}">pax-cdi-weld</feature>
@@ -159,7 +166,18 @@
         <bundle>mvn:org.switchyard/switchyard-common-cdi/${project.version}</bundle>
     </feature>
 
-    <!-- TODO: switchyard-bpm -->
+    <feature name="switchyard-bpm" version="${project.version}" resolver="(obr)">
+        <feature>jndi</feature>
+        <feature>transaction</feature>
+        <feature>jpa</feature>
+        <feature version="${project.version}">switchyard-common-knowledge</feature>
+        <feature version="${version.org.drools}">jbpm</feature>
+        <bundle>wrap:mvn:org.jbpm/jbpm-executor/${version.org.drools}$DynamicImport-Package=org.hibernate.*,javassist.*</bundle>
+        <bundle>mvn:org.jbpm/jbpm-human-task-audit/${version.org.drools}</bundle>
+        <bundle>wrap:mvn:org.jbpm/jbpm-kie-services/${version.org.drools}</bundle>
+        <bundle>wrap:mvn:org.jbpm/jbpm-workitems/${version.org.drools}</bundle>
+        <bundle>mvn:org.switchyard.components/switchyard-component-bpm/${project.version}</bundle>
+    </feature>
 
     <feature name="switchyard-camel" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard</feature>
@@ -244,19 +262,11 @@
      </feature>
 
     <feature name="switchyard-rules" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">switchyard</feature>
+        <feature version="${project.version}">switchyard-common-knowledge</feature>
         <feature version="${version.org.drools}">drools-common</feature>
-        <bundle>mvn:org.drools/drools-core/${version.org.drools}</bundle>
-        <bundle>mvn:org.drools/drools-compiler/${version.org.drools}</bundle>
-        <bundle>mvn:org.kie/kie-api/${version.org.drools}</bundle>
+        <feature version="${version.org.drools}">drools-module</feature>
         <feature version="${version.org.drools}">drools-decisiontable</feature>
-        <bundle>mvn:org.kie/kie-internal/${version.org.drools}</bundle>
-        <bundle>mvn:org.drools/drools-osgi-integration/${version.org.drools}</bundle>
-        <feature version="${version.org.apache.camel}">camel-jpa</feature>
-        <bundle dependency="true">mvn:org.drools/drools-persistence-jpa/${version.org.drools}</bundle>
-        <bundle>mvn:org.switchyard/switchyard-common/${project.version}</bundle>
-        <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
-        <bundle>mvn:org.switchyard.components/switchyard-component-common-knowledge/${project.version}</bundle>
+        <feature version="${version.org.drools}">drools-jpa</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-rules/${project.version}</bundle>
     </feature>
 
@@ -297,7 +307,7 @@
 
     <feature name="switchyard-sap" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.camelsap}">camel-sap</feature>
+        <bundle>mvn:org.fusesource/camel-sap/${version.camelsap}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-sap/${project.version}</bundle>
     </feature>
 
@@ -332,6 +342,13 @@
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-soap</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-bean-service/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-bpm-service" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-bpm</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-bpm-service/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-quickstart-camel-amqp-binding" version="${project.version}" resolver="(obr)">
@@ -634,6 +651,33 @@
         <feature version="${project.version}">switchyard-jms</feature>
         <feature version="${version.org.apache.activemq}">activemq-broker</feature>
         <bundle>mvn:org.switchyard.quickstarts.demos/switchyard-demo-policy-transaction/${project.version}</bundle>
+    </feature>
+
+    <!-- XXX: this needs some love -->
+    <feature name="switchyard-demo-helpdesk" version="${project.version}" resolver="(obr)">
+        <feature>war</feature>
+        <!-- hibernate must be before bpm -->
+        <feature version="${project.version}">switchyard-hibernate</feature>
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-bpm</feature>
+
+        <!-- Database support -->        
+        <bundle>mvn:com.h2database/h2/${version.com.h2database}</bundle>
+
+        <!-- JSF Dependencies -->
+        <bundle dependency="true">mvn:org.ops4j.pax.web/pax-web-jsp/1.1.14</bundle>
+        <bundle dependency="true">mvn:commons-collections/commons-collections/${version.commons-collections}</bundle>
+        <bundle dependency="true">mvn:commons-codec/commons-codec/${version.commons-codec}</bundle>
+        <bundle dependency="true">mvn:commons-beanutils/commons-beanutils/${version.commons-beanutils}</bundle>
+        <bundle dependency="true">mvn:commons-digester/commons-digester/1.8.1</bundle>
+        <bundle dependency="true">mvn:org.apache.myfaces.core/myfaces-bundle/2.1.15</bundle>
+        <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-validation_1.0_spec/1.1</bundle>
+        
+        <!-- Hibernate; note hibernate-osgi must be after app bundle. -->
+        <bundle>mvn:org.switchyard.quickstarts.demos/switchyard-demo-helpdesk/${project.version}/war</bundle>
+        <!-- must be after bundle using persistence -->
+        <bundle>mvn:org.hibernate/hibernate-osgi/${version.org.hibernate}</bundle>
     </feature>
 
 </features>

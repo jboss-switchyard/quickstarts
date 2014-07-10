@@ -200,7 +200,10 @@ public class SwitchYardContainerImpl extends SimpleExtension
                             }
                         }
                         if (_nhs == null) {
-                            URL configUrl = getBundle().getResource(SwitchYardExtender.SWITCHYARD_XML);
+                            URL configUrl = getBundle().getEntry(SwitchYardExtender.SWITCHYARD_XML);
+                            if (configUrl == null) {
+                                configUrl = getBundle().getEntry(SwitchYardExtender.WEBINF_SWITCHYARD_XML);
+                            }
                             InputStream configStream = configUrl.openStream();
                             try {
                                 _xml = new ElementPuller().pull(configStream);
