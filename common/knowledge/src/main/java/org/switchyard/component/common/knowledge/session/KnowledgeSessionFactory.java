@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.switchyard.ServiceDomain;
+import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.config.model.ManifestModel;
 import org.switchyard.config.model.resource.ResourcesModel;
@@ -109,16 +110,23 @@ public abstract class KnowledgeSessionFactory extends KnowledgeDisposer {
      * @return the session factory
      */
     public static KnowledgeSessionFactory newSessionFactory(KnowledgeComponentImplementationModel model, ClassLoader loader, ServiceDomain domain, Properties propertyOverrides) {
-        ManifestModel manifestModel = model.getManifest();
-        if (manifestModel != null) {
-            if (manifestModel.getContainer() == null) {
-                ResourcesModel resourcesModel = manifestModel.getResources();
-                if (resourcesModel != null) {
-                    return new KnowledgeBuilderSessionFactory(model, loader, domain, propertyOverrides);
+        // XXX: how bad is this???
+        // make sure we can load jbpm classes in osgi environment
+        final ClassLoader origTCCL = Classes.setTCCL(loader);
+        try {
+            ManifestModel manifestModel = model.getManifest();
+            if (manifestModel != null) {
+                if (manifestModel.getContainer() == null) {
+                    ResourcesModel resourcesModel = manifestModel.getResources();
+                    if (resourcesModel != null) {
+                        return new KnowledgeBuilderSessionFactory(model, loader, domain, propertyOverrides);
+                    }
                 }
             }
+            return new KnowledgeContainerSessionFactory(model, loader, domain, propertyOverrides);
+        } finally {
+            Classes.setTCCL(origTCCL);
         }
-        return new KnowledgeContainerSessionFactory(model, loader, domain, propertyOverrides);
     }
 
 }

@@ -21,9 +21,29 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-component-bpm</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard: BPM Component</name>
     <url>http://switchyard.org</url>
+    <properties>
+        <switchyard.osgi.activator>org.switchyard.component.bpm.Activator</switchyard.osgi.activator>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.component.bpm.*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.import>
+            org.switchyard.*;${switchyard.osgi.import.switchyard.version},
+            org.switchyard.config.model;${switchyard.osgi.import.switchyard.version},
+            org.hibernate.*;resolution:=optional,
+            *
+        </switchyard.osgi.import>
+        <switchyard.osgi.require.bundle>
+            org.jbpm.bpmn2,
+            org.jbpm.flow.core,
+            org.jbpm.persistence.jpa,
+            ${bundleId.jbpm-human-task-orm},
+            org.kie.api,
+            org.kie.internalapi
+        </switchyard.osgi.require.bundle>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -146,6 +166,17 @@
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-workitems</artifactId>
         </dependency>
+        <!-- OSGi dependencies (build) -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -157,6 +188,7 @@
             </activation>
             <properties>
                 <artifactId.jbpm-human-task-orm>jbpm-human-task-core</artifactId.jbpm-human-task-orm>
+                <bundleId.jbpm-human-task-orm>org.jbpm.services.task</bundleId.jbpm-human-task-orm>
             </properties>
         </profile>
         <profile>
@@ -168,6 +200,7 @@
             </activation>
             <properties>
                 <artifactId.jbpm-human-task-orm>jbpm-human-task-jpa</artifactId.jbpm-human-task-orm>
+                <bundleId.jbpm-human-task-orm>org.jbpm.services.task.jpa</bundleId.jbpm-human-task-orm>
             </properties>
             <dependencies>
                 <dependency>

@@ -28,7 +28,6 @@ import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
 import org.jboss.logging.Logger;
-import org.hibernate.HibernateException;
 import org.switchyard.HandlerException;
 import org.switchyard.component.bpm.BPMMessages;
 
@@ -65,7 +64,7 @@ public class AS7TransactionHelper {
     public void begin() throws HandlerException {
         if (_enabled) {
             try {
-                _userTx = getUserTransaction();
+                _userTx = TransactionManagerLocator.INSTANCE.getUserTransaction();
                 if (_userTx.getStatus() == Status.STATUS_NO_TRANSACTION) {
                     _userTx.begin();
                     _isInitiator = true;
@@ -150,7 +149,7 @@ public class AS7TransactionHelper {
             return ctx.lookup(name);
         } catch (NamingException ne) {
             LOGGER.error(ne.getMessage());
-            throw new HibernateException(ne);
+            throw new RuntimeException(ne);
         } finally {
             if (ctx != null) {
                 try {

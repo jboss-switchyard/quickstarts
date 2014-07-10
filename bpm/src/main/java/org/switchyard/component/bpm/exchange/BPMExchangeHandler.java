@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 import javax.xml.namespace.QName;
@@ -62,6 +61,9 @@ import org.switchyard.component.bpm.runtime.BPMRuntimeManager;
 import org.switchyard.component.bpm.runtime.BPMTaskService;
 import org.switchyard.component.bpm.runtime.BPMTaskServiceRegistry;
 import org.switchyard.component.bpm.transaction.AS7TransactionHelper;
+import org.switchyard.component.bpm.transaction.TransactionManagerLocator;
+import org.switchyard.component.bpm.util.EntityManagerFactoryLoader;
+import org.switchyard.component.bpm.util.OsgiEntityManagerFactoryLoader;
 import org.switchyard.component.bpm.util.UserGroupCallbacks;
 import org.switchyard.component.bpm.util.WorkItemHandlers;
 import org.switchyard.component.common.knowledge.exchange.KnowledgeExchangeHandler;
@@ -81,6 +83,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
 
     private static final KnowledgeOperation DEFAULT_OPERATION = new KnowledgeOperation(BPMOperationType.START_PROCESS);
 
+    private static final EntityManagerFactoryLoader EMF_LOADER;
     private final boolean _persistent;
     private final String _processId;
     private BPMProcessEventListener _processEventListener;
@@ -111,7 +114,8 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
         _userGroupCallback = UserGroupCallbacks.newUserGroupCallback(getModel(), getLoader());
         _correlationKeyFactory = KieInternalServices.Factory.get().newCorrelationKeyFactory();
         if (_persistent) {
-            _entityManagerFactory = Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa");
+            // XXX: this is contributed by the application
+            _entityManagerFactory = EMF_LOADER.getEntityManagerFactory(getServiceDomain());
         }
         _taskService = BPMTaskService.Factory.newTaskService(Environments.getEnvironment(getEnvironmentOverrides()), _entityManagerFactory, _userGroupCallback, getLoader());
         BPMTaskServiceRegistry.putTaskService(getServiceDomain().getName(), getServiceName(), _taskService);
@@ -154,8 +158,8 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
     protected Map<String, Object> getEnvironmentOverrides() {
         Map<String, Object> env = super.getEnvironmentOverrides();
         if (_persistent) {
-            UserTransaction ut = AS7TransactionHelper.getUserTransaction();
-            TransactionManager tm = AS7TransactionHelper.getTransactionManager();
+            UserTransaction ut = TransactionManagerLocator.INSTANCE.getUserTransaction();
+            TransactionManager tm = TransactionManagerLocator.INSTANCE.getTransactionManager();
             env.put(EnvironmentName.ENTITY_MANAGER_FACTORY, _entityManagerFactory);
             env.put(EnvironmentName.TRANSACTION, ut);
             env.put(EnvironmentName.TRANSACTION_MANAGER, new JtaTransactionManager(ut, null, tm));
@@ -370,4 +374,15 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
         return processInstanceVariables;
     }
 
+    static {
+        // hacky way to integrate with OSGi.
+        EntityManagerFactoryLoader loader = new EntityManagerFactoryLoader();
+        try {
+            loader = new OsgiEntityManagerFactoryLoader();
+        } catch (Exception e) {
+            // above fails if osgi types are not available.
+            e.fillInStackTrace();
+        }
+        EMF_LOADER = loader;
+    }
 }

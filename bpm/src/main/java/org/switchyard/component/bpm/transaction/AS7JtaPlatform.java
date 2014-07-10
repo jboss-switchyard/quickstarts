@@ -16,6 +16,7 @@ package org.switchyard.component.bpm.transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
+import org.hibernate.HibernateException;
 import org.hibernate.service.jta.platform.internal.AbstractJtaPlatform;
 
 /**
@@ -31,7 +32,11 @@ public class AS7JtaPlatform extends AbstractJtaPlatform {
      */
     @Override
     protected TransactionManager locateTransactionManager() {
-        return (TransactionManager)AS7TransactionHelper.getTransactionManager();
+        try {
+            return TransactionManagerLocator.INSTANCE.getTransactionManager();
+        } catch (Exception e) {
+            throw new HibernateException(e);
+        }
     }
 
     /**
@@ -39,7 +44,11 @@ public class AS7JtaPlatform extends AbstractJtaPlatform {
      */
     @Override
     protected UserTransaction locateUserTransaction() {
-        return (UserTransaction)AS7TransactionHelper.getUserTransaction();
+        try {
+            return TransactionManagerLocator.INSTANCE.getUserTransaction();
+        } catch (Exception e) {
+            throw new HibernateException(e);
+        }
     }
 
 }
