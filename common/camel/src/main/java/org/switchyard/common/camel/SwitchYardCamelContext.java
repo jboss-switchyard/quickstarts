@@ -29,11 +29,6 @@ public interface SwitchYardCamelContext extends ModelCamelContext {
     public static final String CAMEL_CONTEXT_PROPERTY = "CamelContextProperty";
     
     /**
-     * Domain property used to configure the timeout value for ShutdownStrategy.
-     */
-    public static final String SHUTDOWN_TIMEOUT = "org.switchyard.camel.ShutdownTimeout";
-    
-    /**
      * Gets SwitchYard domain associated with this context.
      * 
      * @return SwitchYard domain.

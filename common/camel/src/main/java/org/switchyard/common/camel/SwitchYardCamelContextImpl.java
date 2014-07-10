@@ -1,25 +1,22 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat, Inc., and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,  
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.switchyard.common.camel;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.cdi.CdiBeanRegistry;
 import org.apache.camel.cdi.CdiInjector;
@@ -33,11 +30,6 @@ import org.apache.camel.spi.Registry;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.camel.event.CamelEventBridge;
 import org.switchyard.common.cdi.CDIUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Extension of default camel context. Supports access to mutable registry and
@@ -84,7 +76,7 @@ public class SwitchYardCamelContextImpl extends DefaultCamelContext implements S
      * @param domain Domain to associate.
      */
     public void setServiceDomain(ServiceDomain domain) {
-        this._domain = domain;
+        _domain = domain;
 
         for (EventNotifier notifier : getManagementStrategy().getEventNotifiers()) {
             if (notifier instanceof CamelEventBridge) {
@@ -195,15 +187,11 @@ public class SwitchYardCamelContextImpl extends DefaultCamelContext implements S
             return;
         }
         
-        // set shutdown timeout
-        Object timeoutProp = _domain.getProperty(SHUTDOWN_TIMEOUT);
-        int timeout;
-        if (timeoutProp != null) {
-            timeout = Integer.parseInt(timeoutProp.toString());
-        } else {
-            timeout = DEFAULT_TIMEOUT;
-        }
-        getShutdownStrategy().setTimeout(timeout);
+        // set shutdown timeout default - this can still be overriden by domain props
+        getShutdownStrategy().setTimeout(DEFAULT_TIMEOUT);
+        
+        // configure context with domain properties
+        CamelContextConfigurator.configure(this, _domain);
     }
 
     static class CDISupport {

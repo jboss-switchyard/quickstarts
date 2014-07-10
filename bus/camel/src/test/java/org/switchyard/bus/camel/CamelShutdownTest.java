@@ -26,7 +26,7 @@ import org.switchyard.HandlerException;
 import org.switchyard.MockDomain;
 import org.switchyard.MockHandler;
 import org.switchyard.ServiceReference;
-import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.common.camel.CamelContextConfigurator;
 import org.switchyard.common.camel.SwitchYardCamelContextImpl;
 import org.switchyard.internal.ServiceReferenceImpl;
 import org.switchyard.metadata.InOutService;
@@ -49,7 +49,7 @@ public class CamelShutdownTest {
     @Test
     public void testShutdownTimeout() throws Exception {
         // set the timeout value to 5 seconds and start the camel context
-        _domain.setProperty(SwitchYardCamelContext.SHUTDOWN_TIMEOUT, "5");
+        _domain.setProperty(CamelContextConfigurator.SHUTDOWN_TIMEOUT, "5");
         _camelContext.start();
         
         // register a service and send a message

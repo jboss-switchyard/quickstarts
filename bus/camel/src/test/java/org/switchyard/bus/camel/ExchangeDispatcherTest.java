@@ -37,7 +37,7 @@ import org.switchyard.Property;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
-import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.common.camel.CamelContextConfigurator;
 import org.switchyard.common.camel.SwitchYardCamelContextImpl;
 import org.switchyard.internal.ServiceReferenceImpl;
 import org.switchyard.metadata.InOnlyService;
@@ -118,7 +118,7 @@ public class ExchangeDispatcherTest {
     @Test
     public void throttleWithTimePeriod() throws Exception {
         ServiceDomain domain = new MockDomain();
-        domain.setProperty(SwitchYardCamelContext.SHUTDOWN_TIMEOUT, "5");
+        domain.setProperty(CamelContextConfigurator.SHUTDOWN_TIMEOUT, "5");
         initDomain(domain);
         
         QName name = new QName("testThrottleTimePeriod");

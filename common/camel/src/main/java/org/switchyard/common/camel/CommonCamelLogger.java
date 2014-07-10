@@ -26,5 +26,15 @@ public interface CommonCamelLogger {
     @LogMessage(level = WARN) 
     @Message(id = 13200, value="CDI environment not detected, disabling Camel CDI integration")
     void cdiNotDetected();
+    
+    /**
+     * camelContextConfigurationError method definition.
+     * @param propertyName name of the property
+     * @param propertyValue value of the property
+     * @param error error when configuring property
+     */
+    @LogMessage(level = WARN) 
+    @Message(id = 13201, value="Unable to set camel context configuration [name = %s, value = %s] : %s")
+    void camelContextConfigurationError(String propertyName, Object propertyValue, Exception error);
 
 }
