@@ -36,6 +36,44 @@
         <deploy.skip>true</deploy.skip>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.quickstarts.demos.helpdesk*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.import>
+            org.switchyard.*;${switchyard.osgi.import.switchyard.version},
+            org.switchyard.annotations;${switchyard.osgi.import.switchyard.version},
+            org.switchyard.component.bean;${switchyard.osgi.import.switchyard.version},
+            org.switchyard.component.bpm.runtime;${switchyard.osgi.import.switchyard.version},
+            javax.faces.event,
+            javax.servlet,
+            javax.servlet.http,
+            javax.xml.transform,
+            javax.xml.transform.dom,
+            javax.xml.transform.stream,
+            org.apache.log4j,
+            org.drools.persistence.info,
+            org.jbpm.executor.entities,
+            org.jbpm.kie.services.impl.model,
+            org.jbpm.persistence.correlation,
+            org.jbpm.persistence.processinstance,
+            org.jbpm.process.audit,
+            org.jbpm.runtime.manager.impl.jpa,
+            org.jbpm.services.task.audit.impl.model,
+            org.jbpm.services.task.impl.model,
+            org.jbpm.services.task.internals.lifecycle,
+            org.jbpm.services.task.persistence,
+            org.jbpm.services.task.query,
+            org.kie.api.task.model,
+            org.kie.internal.executor.api,
+            org.kie.internal.task.api.model,
+            org.w3c.dom,
+            *
+        </switchyard.osgi.import>
+        <switchyard.osgi.require.capability>
+            org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
+            org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
+            osgi.extender; filter:="(osgi.extender=pax.cdi)"
+        </switchyard.osgi.require.capability>
     </properties>
     <dependencies>
         <dependency>
@@ -146,13 +184,40 @@
                 </executions>
             </plugin>
             <plugin>
+                <!-- Generate bundle manifest for OSGi -->
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <supportedProjectTypes>
+                        <supportedProjectType>war</supportedProjectType>
+                    </supportedProjectTypes>
+                    <instructions>
+                        <Bundle-ClassPath>/WEB-INF/classes/</Bundle-ClassPath>
+                        <Meta-Persistence>WEB-INF/classes/META-INF/persistence-osgi.xml</Meta-Persistence>
+                    </instructions>
+                    <rebuildBundle>true</rebuildBundle>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <packagingExcludes>
                         WEB-INF/lib/*.jar,
-                        WEB-INF/classes/META-INF/switchyard.xml
-                     </packagingExcludes>
+                        WEB-INF/classes/META-INF/switchyard.xml,
+                        WEB-INF/classes/META-INF/MANIFEST.MF,
+                        WEB-INF/classes/META-INF/beans.xml,
+                        WEB-INF/classes/OSGI-INF/**
+                    </packagingExcludes>
                     <webResources>
                         <resource>
                             <directory>target/classes/META-INF</directory>
@@ -161,8 +226,68 @@
                                 <include>switchyard.xml</include>
                             </includes>
                         </resource>
+                        <resource>
+                            <directory>target/classes/META-INF</directory>
+                            <targetPath>META-INF</targetPath>
+                            <includes>
+                                <include>beans.xml</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>target/classes/OSGI-INF</directory>
+                            <targetPath>OSGI-INF</targetPath>
+                        </resource>
                     </webResources>
+                    <archive>
+                        <!-- add the generated manifest to the war -->
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-jbpm-orm-files</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                           <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-human-task-audit</artifactId>
+                                    <version>${version.org.drools}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>${artifactId.jbpm-human-task-orm}</artifactId>
+                                    <version>${version.org.drools}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-persistence-jpa</artifactId>
+                                    <version>${version.org.drools}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-executor</artifactId>
+                                    <version>${version.org.drools}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jbpm</groupId>
+                                    <artifactId>jbpm-kie-services</artifactId>
+                                    <version>${version.org.drools}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>META-INF/*orm.xml</includes>
+                            <outputDirectory>${project.build.outputDirectory}/META-INF/jbpm</outputDirectory>
+                            <outputAbsoluteArtifactFilename>true</outputAbsoluteArtifactFilename>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jboss.as.plugins</groupId>
@@ -208,6 +333,28 @@
             <id>deploy</id>
             <properties>
                 <deploy.skip>false</deploy.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>helpdesk-profile-product</id>
+            <activation>
+                <property>
+                    <name>switchyard.product</name>
+                </property>
+            </activation>
+            <properties>
+                <artifactId.jbpm-human-task-orm>jbpm-human-task-core</artifactId.jbpm-human-task-orm>
+            </properties>
+        </profile>
+        <profile>
+            <id>helpdesk-profile-community</id>
+            <activation>
+                <property>
+                    <name>!switchyard.product</name>
+                </property>
+            </activation>
+            <properties>
+                <artifactId.jbpm-human-task-orm>jbpm-human-task-jpa</artifactId.jbpm-human-task-orm>
             </properties>
         </profile>
     </profiles>

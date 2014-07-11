@@ -21,7 +21,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-bpm-service</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard Quickstart: bpm-service</name>
     <description>Quickstart : BPM Service</description>
     <licenses>
@@ -35,6 +35,14 @@
         <deploy.skip>true</deploy.skip>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.quickstarts.bpm.service*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.require.capability>
+            org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
+            org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
+            osgi.extender; filter:="(osgi.extender=pax.cdi)"
+        </switchyard.osgi.require.capability>
     </properties>
     <dependencies>
         <dependency>

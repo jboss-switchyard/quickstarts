@@ -21,7 +21,7 @@
       <sca:interface.wsdl interface="wsdl/ProcessOrder.wsdl#wsdl.porttype(ProcessOrder)"/>
       <soap:binding.soap>
         <soap:wsdl>wsdl/ProcessOrder.wsdl</soap:wsdl>
-        <soap:socketAddr>localhost:${soapPort:18001}</soap:socketAddr>
+        <soap:socketAddr>localhost:${jettyPort}</soap:socketAddr>
         <soap:contextPath>swydws</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
@@ -84,6 +84,7 @@
   <domain>
     <properties>
       <property name="userName" value="${user.name}"/>
+      <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
     </properties>
   </domain>
 </switchyard>

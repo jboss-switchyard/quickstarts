@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
 import org.switchyard.transform.config.model.TransformSwitchYardScanner;
@@ -38,10 +39,10 @@ public class WebServiceTest {
     //private PropertyMixIn propMixIn;
     private HTTPMixIn httpMixIn;
 
-    //@BeforeDeploy
-    //public void setTestProperties() {
-    //    propMixIn.set("soapPort", Integer.valueOf(18002));
-    //}
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "18001");
+    }
 
     @Test
     public void webServiceShipped() throws Exception {
