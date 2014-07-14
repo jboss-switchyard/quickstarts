@@ -20,7 +20,6 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 public final class BPELClient {
 
-    private static final String URL = "http://localhost:8080/xts_subordinate_wsba/BusinessTravelService";
     private static final String XML = "/soap-order-request.xml";
     private static final String XML_COMPLETE = "/soap-complete-request.xml";
 
@@ -42,9 +41,11 @@ public final class BPELClient {
 
         String xmldir = args[0];
         try {
-            String result = soapMixIn.postFile(URL, xmldir + XML);
+            String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+            String url = "http://localhost:" + port + "/xts_subordinate_wsba/BusinessTravelService";
+            String result = soapMixIn.postFile(url, xmldir + XML);
             System.out.println("SOAP Reply:\n" + result);
-            result = soapMixIn.postFile(URL, xmldir + XML_COMPLETE);
+            result = soapMixIn.postFile(url, xmldir + XML_COMPLETE);
             System.out.println("SOAP Reply:\n" + result);
         } finally {
             soapMixIn.uninitialize();

@@ -30,8 +30,6 @@ import org.switchyard.component.soap.util.SOAPUtil;
  */
 public class SoapAddressingClient {
 
-    private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8080/soap-addressing/order/OrderService";
-
     private static String SOAP_TEMPLATE =
         "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\""
             + "    xmlns:urn=\"urn:switchyard-quickstart:soap-addressing:1.0\""
@@ -53,7 +51,8 @@ public class SoapAddressingClient {
             System.out.println("Usage: SoapAddressingClient <item> <quantity>");
             return;
         } else {
-            SOAPUtil.prettyPrint(sendMessage(args[0], args[1], SWITCHYARD_WEB_SERVICE), System.out);
+            String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+            SOAPUtil.prettyPrint(sendMessage(args[0], args[1], "http://localhost:" + port + "/soap-addressing/order/OrderService"), System.out);
             System.out.println();
             System.out.println(getFileMessage());
         }

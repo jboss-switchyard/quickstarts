@@ -35,7 +35,7 @@ public class WebServiceTest {
 
     @BeforeDeploy
     public void setProperties() {
-        System.setProperty("org.switchyard.component.http.standalone.port", "18001");
+        System.setProperty("org.switchyard.component.soap.standalone.port", "18001");
     }
 
     @Test

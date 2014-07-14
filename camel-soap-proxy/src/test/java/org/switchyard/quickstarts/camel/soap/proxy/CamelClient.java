@@ -23,7 +23,6 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 public final class CamelClient {
 
-    private static final String URL = "http://localhost:8080/proxy/ReverseService";
     private static final String XML = "src/test/resources/xml/soap-request.xml";
 
     /**
@@ -43,7 +42,9 @@ public final class CamelClient {
         soapMixIn.initialize();
 
         try {
-            String result = soapMixIn.postFile(URL, XML);
+            String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+            String url = "http://localhost:" + port + "/proxy/ReverseService";
+            String result = soapMixIn.postFile(url, XML);
             System.out.println("SOAP Reply:\n" + result);
         } finally {
             soapMixIn.uninitialize();

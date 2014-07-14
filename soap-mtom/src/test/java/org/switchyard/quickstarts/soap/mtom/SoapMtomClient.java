@@ -36,10 +36,9 @@ import org.switchyard.common.type.Classes;
  */
 public class SoapMtomClient {
 
-    private static String WSDL = "http://localhost:8080/soap-mtom/ImageServiceService?wsdl";
-
     public static void main(String[] args) throws Exception {
-        Image image = sendMessage(WSDL);
+        String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+        Image image = sendMessage("http://localhost:" + port + "/soap-mtom/ImageServiceService?wsdl");
         System.out.println(image);
     }
 

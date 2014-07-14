@@ -28,7 +28,7 @@
         <sca:service name="simpleCorrelationService" promote="simpleCorrelationService">
             <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
                 <wsdl>HelloGoodbye.wsdl</wsdl>
-                <socketAddr>:${jettyPort}</socketAddr>
+                <socketAddr>:${soapPort}</socketAddr>
             </binding.soap>
          </sca:service>
 
@@ -42,7 +42,7 @@
      </sca:composite>
     <domain>
         <properties>
-            <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+            <property name="soapPort" value="${org.switchyard.component.soap.standalone.port:8080}"/>
         </properties>
     </domain>
 </switchyard>

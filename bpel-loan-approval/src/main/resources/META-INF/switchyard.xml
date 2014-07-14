@@ -31,7 +31,7 @@
             <soap:binding.soap>
             <soap:contextMapper includes=".*" soapHeadersType="DOM"/>
                 <soap:wsdl>loanServicePT.wsdl</soap:wsdl>
-                <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+                <soap:socketAddr>:${soapPort}</soap:socketAddr>
             </soap:binding.soap>
          </sca:service>
 
@@ -55,7 +55,7 @@
      </sca:composite>
     <domain>
         <properties>
-            <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+            <property name="soapPort" value="${org.switchyard.component.soap.standalone.port:8080}"/>
         </properties>
     </domain>
 </switchyard>

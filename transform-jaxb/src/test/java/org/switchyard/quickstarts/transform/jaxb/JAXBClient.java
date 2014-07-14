@@ -23,7 +23,6 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 public final class JAXBClient {
 
-    private static final String URL = "http://localhost:8080/quickstart-transform-jaxb/OrderService";
     private static final String XML = "src/test/resources/xml/soap-request.xml";
 
     /**
@@ -43,7 +42,9 @@ public final class JAXBClient {
         soapMixIn.initialize();
 
         try {
-            String result = soapMixIn.postFile(URL, XML);
+            String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+            String url = "http://localhost:" + port + "/quickstart-transform-jaxb/OrderService";
+            String result = soapMixIn.postFile(url, XML);
             System.out.println("SOAP Reply:\n" + result);
         } finally {
             soapMixIn.uninitialize();

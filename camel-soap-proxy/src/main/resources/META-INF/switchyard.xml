@@ -21,7 +21,7 @@
       <soap:binding.soap>
         <soap:contextMapper/>
         <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
-        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:socketAddr>:${soapPort}</soap:socketAddr>
         <soap:contextPath>proxy</soap:contextPath>
       </soap:binding.soap>
     </sca:service>
@@ -29,7 +29,7 @@
       <soap:binding.soap>
         <soap:contextMapper/>
         <soap:wsdl>META-INF/ReverseService.wsdl</soap:wsdl>
-        <soap:endpointAddress>http://localhost:${jettyPort}/ReverseService</soap:endpointAddress>
+        <soap:endpointAddress>http://localhost:${soapClientPort}/ReverseService</soap:endpointAddress>
       </soap:binding.soap>
     </sca:reference>
     <sca:component name="ProxyService">
@@ -46,7 +46,8 @@
   </sca:composite>
   <domain>
     <properties>
-      <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+      <property name="soapPort" value="${org.switchyard.component.soap.standalone.port:8080}"/>
+      <property name="soapClientPort" value="${org.switchyard.component.soap.client.port:8080}"/>
     </properties>
   </domain>
 </switchyard>

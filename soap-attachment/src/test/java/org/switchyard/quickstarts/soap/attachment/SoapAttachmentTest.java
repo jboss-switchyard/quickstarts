@@ -39,7 +39,8 @@ public class SoapAttachmentTest {
 
     @BeforeDeploy
     public void setProperties() {
-        System.setProperty("org.switchyard.component.http.standalone.port", "8081");
+        System.setProperty("org.switchyard.component.soap.standalone.port", "8081");
+        System.setProperty("org.switchyard.component.soap.client.port", "8081");
     }
 
     @Test

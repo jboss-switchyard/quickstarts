@@ -23,7 +23,6 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 public final class BPELLoanClient {
 
-    private static final String URL = "http://localhost:8080/loanService/loanService";
     private static final String XML = "src/test/resources/xml/soap-loanreq1.xml";
 
     /**
@@ -43,7 +42,8 @@ public final class BPELLoanClient {
         soapMixIn.initialize();
 
         try {
-            String result = soapMixIn.postFile(URL, XML);
+            String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+            String result = soapMixIn.postFile("http://localhost:" + port + "/loanService/loanService", XML);
             System.out.println("SOAP Reply:\n" + result);
         } finally {
             soapMixIn.uninitialize();

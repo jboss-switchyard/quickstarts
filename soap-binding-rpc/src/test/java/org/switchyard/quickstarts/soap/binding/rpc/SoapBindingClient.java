@@ -28,7 +28,6 @@ import org.switchyard.component.soap.util.SOAPUtil;
  */
 public class SoapBindingClient {
 
-    private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8080/soap-binding-rpc/HelloWorldWSService";
     private static String SOAP_TEMPLATE =
         "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns2=\"urn:switchyard-quickstart:soap-binding-rpc:1.0\">"
             + "    <soap:Body>"
@@ -47,7 +46,8 @@ public class SoapBindingClient {
         } else {
             HTTPMixIn http = new HTTPMixIn();
             http.initialize();
-            SOAPUtil.prettyPrint(http.postString(SWITCHYARD_WEB_SERVICE, String.format(SOAP_TEMPLATE, args[0], "English")), System.out);
+            String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+            SOAPUtil.prettyPrint(http.postString("http://localhost:" + port + "/soap-binding-rpc/HelloWorldWSService", String.format(SOAP_TEMPLATE, args[0], "English")), System.out);
         }
     }
 }

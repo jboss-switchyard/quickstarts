@@ -23,7 +23,6 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 public final class BeanClient {
 
-    private static final String URL = "http://localhost:8080/quickstart-bean/OrderService";
     private static final String XML = "src/test/resources/xml/soap-request.xml";
 
     /**
@@ -43,7 +42,8 @@ public final class BeanClient {
         soapMixIn.initialize();
 
         try {
-            String result = soapMixIn.postFile(URL, XML);
+            String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+            String result = soapMixIn.postFile("http://localhost:" + port + "/quickstart-bean/OrderService", XML);
             System.out.println("SOAP Reply:\n" + result);
         } finally {
             soapMixIn.uninitialize();

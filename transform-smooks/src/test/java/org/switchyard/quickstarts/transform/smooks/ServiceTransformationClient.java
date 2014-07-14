@@ -20,7 +20,6 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 public class ServiceTransformationClient {
 
-    private static final String URL = "http://localhost:8080/quickstart-transform-smooks/OrderService";
     private static final String XML = "src/test/resources/xml/soap-request.xml";
 
     /**
@@ -40,7 +39,9 @@ public class ServiceTransformationClient {
         soapMixIn.initialize();
 
         try {
-            String result = soapMixIn.postFile(URL, XML);
+            String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+            String url = "http://localhost:" + port + "/quickstart-transform-smooks/OrderService";
+            String result = soapMixIn.postFile(url, XML);
             System.out.println("SOAP Reply:\n" + result);
         } finally {
             soapMixIn.uninitialize();

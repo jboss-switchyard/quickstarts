@@ -35,7 +35,8 @@ public final class HelpDeskMain {
         final HTTPMixIn http = new HTTPMixIn();
         http.initialize();
         try {
-            http.postString("http://localhost:8080/HelpDeskService/HelpDeskService", soapRequest);
+            String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+            http.postString("http://localhost:" + port + "/HelpDeskService/HelpDeskService", soapRequest);
             LOGGER.info("Started helpdesk process with ticket id: " + ticketId);
         } finally {
             http.uninitialize();

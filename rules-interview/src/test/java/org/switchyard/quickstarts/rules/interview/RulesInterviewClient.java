@@ -23,7 +23,6 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 public final class RulesInterviewClient {
 
-    private static final String URL = "http://localhost:8080/rules-interview/Interview";
     private static final String XML = "src/test/resources/xml/soap-request-pass.xml";
 
     /**
@@ -43,7 +42,9 @@ public final class RulesInterviewClient {
         soapMixIn.initialize();
 
         try {
-            String result = soapMixIn.postFile(URL, XML);
+            String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+            String url = "http://localhost:" + port + "/rules-interview/Interview";
+            String result = soapMixIn.postFile(url, XML);
             System.out.println("SOAP Reply:\n" + result);
         } finally {
             soapMixIn.uninitialize();

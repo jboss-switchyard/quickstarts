@@ -30,7 +30,7 @@
       <sca:interface.wsdl interface="WarehouseService.wsdl#wsdl.porttype(WarehouseService)"/>
       <soap:binding.soap>
         <soap:wsdl>WarehouseService.wsdl</soap:wsdl>
-        <soap:endpointAddress>http://localhost:${soapPort}/soap-addressing/warehouse/WarehouseService</soap:endpointAddress>
+        <soap:endpointAddress>http://localhost:${soapClientPort}/soap-addressing/warehouse/WarehouseService</soap:endpointAddress>
       </soap:binding.soap>
     </sca:reference>
     <sca:component name="Route">
@@ -130,6 +130,7 @@
   <domain>
     <properties>
       <property name="soapPort" value="${org.switchyard.component.soap.standalone.port:8080}"/>
+      <property name="soapClientPort" value="${org.switchyard.component.soap.client.port:8080}"/>
       <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
     </properties>
   </domain>

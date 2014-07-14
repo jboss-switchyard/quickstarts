@@ -40,10 +40,9 @@ import org.switchyard.component.soap.util.SOAPUtil;
  */
 public class SoapAttachmentClient {
 
-    private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8080/soap-attachment/ImageServiceService";
-
     public static void main(String[] args) throws Exception {
-        SOAPMessage response = sendMessage(SWITCHYARD_WEB_SERVICE);
+        String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+        SOAPMessage response = sendMessage("http://localhost:" + port + "/soap-attachment/ImageServiceService");
         SOAPUtil.prettyPrint(response, System.out);
         Iterator<AttachmentPart> iterator = response.getAttachments();
         AttachmentPart ap = iterator.next();

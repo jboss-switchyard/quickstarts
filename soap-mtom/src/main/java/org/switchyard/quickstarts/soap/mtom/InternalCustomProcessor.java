@@ -20,6 +20,7 @@ import java.awt.Image;
 
 import javax.activation.DataHandler;
 import javax.inject.Named;
+import javax.mail.internet.ContentType;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -40,7 +41,8 @@ public class InternalCustomProcessor implements Processor {
         if (input == null) {
             throw new RuntimeException("Image for resize not found!");
         }
-        exchange.getOut().addAttachment(newFileName, new DataHandler(input, "image/jpeg"));
+        ContentType type = new ContentType("image/jpeg");
+        exchange.getOut().addAttachment(newFileName, new DataHandler(input, type.getBaseType()));
         exchange.getOut().setBody(newFileName);
     }
 

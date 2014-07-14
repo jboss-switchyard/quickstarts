@@ -23,7 +23,6 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 public final class ValidationClient {
 
-    private static final String URL = "http://localhost:8080/quickstart-validate-xml/OrderService";
     private static final String XML = "src/test/resources/xml/soap-request.xml";
     private static final String XML_INVALID = "src/test/resources/xml/soap-request-with-invalid-element.xml";
     /**
@@ -43,9 +42,11 @@ public final class ValidationClient {
         soapMixIn.initialize();
 
         try {
+            String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
+            String url = "http://localhost:" + port + "/quickstart-validate-xml/OrderService";
             String request = args.length == 0 ? XML : XML_INVALID;
             System.out.println("### Sending a SOAP request using " + request + ":");
-            String result = soapMixIn.postFile(URL, request);
+            String result = soapMixIn.postFile(url, request);
             System.out.println("### SOAP Reply:");
             System.out.println(result);
         } finally {
