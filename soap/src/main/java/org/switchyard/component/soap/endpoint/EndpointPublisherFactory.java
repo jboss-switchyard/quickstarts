@@ -24,11 +24,14 @@ import org.switchyard.component.soap.WebServicePublishException;
  */
 public final class EndpointPublisherFactory {
 
-    private static final EndpointPublisher PUBLISHER;
+    private static EndpointPublisher PUBLISHER;
 
     static {
         try {
             PUBLISHER = ProviderRegistry.getProvider(EndpointPublisher.class);
+            if (PUBLISHER == null) {
+                PUBLISHER = new CXFJettyEndpointPublisher();
+            }
         } catch (Exception e) {
             throw new WebServicePublishException(e);
         }
