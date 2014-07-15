@@ -21,6 +21,13 @@
         <format>zip</format>
     </formats>
 
+	<fileSets>
+		<fileSet>
+			<directory>src/main/resources</directory>
+            <outputDirectory>${tools.root.dir}</outputDirectory>
+		</fileSet>
+    </fileSets>
+
     <dependencySets>
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>

@@ -231,6 +231,15 @@
             <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
             </outputFileNameMapping>
         </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.overlord:overlord-commons-services</include>
+            </includes>
+            <outputDirectory>/modules/system/layers/soa/org/switchyard/component/bpel/main</outputDirectory>
+            <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}
+            </outputFileNameMapping>
+        </dependencySet>
 
         <dependencySet>
             <useTransitiveDependencies>false</useTransitiveDependencies>

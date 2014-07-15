@@ -42,6 +42,7 @@
 		<resource-root path="riftsaw-bpaf-${version.riftsaw.engine}.jar"/>
 		<resource-root path="riftsaw-bpel2svg-${version.riftsaw.engine}.jar"/>
 		<resource-root path="riftsaw-console-integration-${version.riftsaw.engine}.jar"/>
+		<resource-root path="overlord-commons-services-${version.overlord-commons}.jar"/>
         <!-- END of RiftSaw console components -->
         
 		<!-- Keep this as a local dependency, as it is an older version that ODE requires -->        
