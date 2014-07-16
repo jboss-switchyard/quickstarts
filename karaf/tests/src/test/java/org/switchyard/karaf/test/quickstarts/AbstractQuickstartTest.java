@@ -86,6 +86,12 @@ public abstract class AbstractQuickstartTest {
                 configureConsole().ignoreLocalConsole().ignoreRemoteShell(),
                 editConfigurationFileExtend("etc/config.properties", "org.osgi.framework.system.packages.extra",
                         "sun.misc"),
+                editConfigurationFilePut("etc/system.properties", "org.switchyard.component.http.standalone.port",
+                        "8181"),
+                editConfigurationFilePut("etc/system.properties", "org.switchyard.component.soap.client.port",
+                        "8181/cxf"),
+                editConfigurationFilePut("etc/system.properties", "org.switchyard.component.soap.standalone.port",
+                        "8181"),
                 editConfigurationFilePut(
                         "etc/org.ops4j.pax.url.mvn.cfg",
                         "org.ops4j.pax.url.mvn.repositories",
@@ -103,5 +109,9 @@ public abstract class AbstractQuickstartTest {
             return options(composite(defaultOptions), composite(additionalOptions));
         }
         return defaultOptions;
+    }
+
+    protected String getSoapClientPort() {
+         return System.getProperty("org.switchyard.component.soap.client.port", "8181/cxf");
     }
 }

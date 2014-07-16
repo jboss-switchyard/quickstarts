@@ -61,7 +61,7 @@
   </binding>
   <service name="OrderService">
     <port binding="tns:OrderServiceBinding" name="OrderServicePort">
-      <soap:address location="http://localhost:8080/quickstart-bean/OrderService"/>
+      <soap:address location="http://localhost:8181/cxf/quickstart-bean/OrderService"/>
     </port>
   </service>
 </definitions>

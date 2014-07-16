@@ -89,6 +89,10 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-resteasy</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-soap</artifactId>
+        </dependency>
         <!-- external dependencies -->
         <dependency>
             <groupId>javax.servlet</groupId>

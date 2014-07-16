@@ -21,4 +21,7 @@
     <bean id="RESTEasyMethodInvokerFactory" class="org.switchyard.deploy.osgi.internal.resteasy.OsgiMethodInvokerFactory"/>
     <service interface="org.switchyard.component.resteasy.util.MethodInvokerFactory" ref="RESTEasyMethodInvokerFactory"/>
 
+    <bean id="SoapEndpointPublisher" class="org.switchyard.deploy.osgi.internal.soap.OsgiEndpointPublisher"/>
+    <service interface="org.switchyard.component.soap.endpoint.EndpointPublisher" ref="SoapEndpointPublisher"/>
+
 </blueprint>

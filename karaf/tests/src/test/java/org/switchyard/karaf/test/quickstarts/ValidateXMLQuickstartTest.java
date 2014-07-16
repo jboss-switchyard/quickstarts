@@ -33,7 +33,7 @@ public class ValidateXMLQuickstartTest extends AbstractQuickstartTest {
 
         httpMixIn.initialize();
         try {
-            String response = httpMixIn.postString("http://localhost:8080/quickstart-validate-xml/OrderService", SOAP_REQUEST);
+            String response = httpMixIn.postString("http://localhost:" + getSoapClientPort() + "/quickstart-validate-xml/OrderService", SOAP_REQUEST);
             Assert.assertTrue(response.contains("Invalid content was found starting with element 'invalid-element'. No child element is expected at this point."));
         } finally {
             httpMixIn.uninitialize();

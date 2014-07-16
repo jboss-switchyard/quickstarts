@@ -29,8 +29,6 @@ public class BpelSimpleCorrelationQuickstartTest extends AbstractQuickstartTest 
     private static String bundleName = "org.switchyard.quickstarts.switchyard-bpel-simple-correlation";
     private static String featureName = "switchyard-quickstart-bpel-simple-correlation";
 
-    private static final String URL = "http://localhost:8080/HelloGoodbyeService/HelloGoodbyeService";
-
     @BeforeClass
     public static void before() throws Exception {
         startTestContainer(featureName, bundleName);
@@ -43,12 +41,13 @@ public class BpelSimpleCorrelationQuickstartTest extends AbstractQuickstartTest 
         soapMixIn.initialize();
 
         try {
-            String response = soapMixIn.postString(URL, HELLO_REQUEST);
+            String url = "http://localhost:" + getSoapClientPort() + "/HelloGoodbyeService/HelloGoodbyeService";
+            String response = soapMixIn.postString(url, HELLO_REQUEST);
             XMLUnit.setXpathNamespaceContext(new SimpleNamespaceContext(Collections.singletonMap("ns", "http://www.jboss.org/bpel/examples/simple_correlation/")));
             XMLAssert.assertXpathEvaluatesTo("1", "//ns:sessionId/ns:id", response);
             XMLAssert.assertXpathEvaluatesTo("BPEL, Hello World!", "//ns:parameter", response);
 
-            response = soapMixIn.postString(URL, GOODBYE_REQUEST);
+            response = soapMixIn.postString(url, GOODBYE_REQUEST);
             XMLAssert.assertXpathEvaluatesTo("1", "//ns:sessionId/ns:id", response);
             XMLAssert.assertXpathEvaluatesTo("BPEL, Goodbye World!", "//ns:parameter", response);
         } finally {

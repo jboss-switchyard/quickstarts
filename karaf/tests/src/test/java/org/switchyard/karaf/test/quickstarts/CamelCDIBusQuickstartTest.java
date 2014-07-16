@@ -42,7 +42,7 @@ public class CamelCDIBusQuickstartTest extends AbstractQuickstartTest {
         httpMixIn.initialize();
         try {
             XMLUnit.setIgnoreWhitespace(true);
-            String response = httpMixIn.postString("http://localhost:8080/quickstart-cdi-bus/OrderService", SOAP_REQUEST);
+            String response = httpMixIn.postString("http://localhost:" + getSoapClientPort() + "/quickstart-cdi-bus/OrderService", SOAP_REQUEST);
 
             Map<String, String> namespaces = new HashMap<String, String>();
             namespaces.put("ns", "urn:switchyard-quickstart:cdi-bus:1.0");

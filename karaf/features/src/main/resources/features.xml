@@ -38,6 +38,7 @@
         <feature>switchyard-sca</feature>
         <feature>switchyard-http</feature>
         <feature>switchyard-rest</feature>
+        <feature>switchyard-soap</feature>
         <bundle>mvn:org.switchyard/switchyard-transform/${project.version}</bundle>
     </feature>
 
@@ -271,7 +272,6 @@
     </feature>
 
     <feature name="switchyard-soap" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">switchyard</feature>
         <feature version="${version.org.apache.cxf}">cxf-jaxws</feature>
         <feature version="${version.org.apache.cxf}">cxf-http</feature>
         <feature version="${version.org.apache.cxf}">cxf-ws-addr</feature>
@@ -461,6 +461,36 @@
         <feature version="${project.version}">switchyard-sql</feature>
         <bundle>mvn:com.h2database/h2/${version.com.h2database}</bundle>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-sql-binding/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-soap-addressing" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-camel</feature>
+        <feature version="${project.version}">switchyard-file</feature>
+        <feature version="${project.version}">switchyard-http</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-soap-addressing/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-soap-attachment" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-camel</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-soap-attachment/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-soap-binding-rpc" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-camel</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-soap-binding-rpc/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-soap-mtom" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-camel</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-soap-mtom/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-quickstart-rest-binding" version="${project.version}" resolver="(obr)">
