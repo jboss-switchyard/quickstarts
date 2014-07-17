@@ -13,11 +13,15 @@
  */
 package org.switchyard.component.sca.deploy;
 
+import java.io.InputStream;
+
 import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 
 import org.infinispan.Cache;
+import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
+import org.jboss.logging.Logger;
 import org.switchyard.component.sca.RemoteEndpointPublisher;
 import org.switchyard.component.sca.SCAEndpoint;
 import org.switchyard.component.sca.SCAInvoker;
@@ -39,8 +43,11 @@ public class SCAActivator extends BaseActivator {
     
     private static final String CACHE_CONTAINER_ROOT = "java:jboss/infinispan/container/";
     private static final String CACHE_NAME_PROPERTY = "cache-name";
+    private static final String CACHE_CONFIG_PROPERTY = "cache-config";
     static final String[] TYPES = new String[] {"sca"};
 
+    private static Logger _log = Logger.getLogger(SCAActivator.class);
+    private Cache<String, String> _cache;
     private RemoteRegistry _registry;
     private RemoteEndpointPublisher _endpointPublisher;
     
@@ -50,23 +57,28 @@ public class SCAActivator extends BaseActivator {
      */
     public SCAActivator(Configuration environment) {
         super(TYPES);
-        String cacheName = "cluster";
         
-        // Initialize the registry
-        try {
-            // Attempt to resolve the cache container to use for the distributed registry
-            Configuration cacheConfig = environment.getFirstChild(CACHE_NAME_PROPERTY);
-            if (cacheConfig != null) {
-                cacheName = cacheConfig.getValue();
-            }
-            // Now lookup the cache container in JNDI
-            EmbeddedCacheManager cm = (EmbeddedCacheManager)
-                    new InitialContext().lookup(CACHE_CONTAINER_ROOT + cacheName);
-            Cache<String, String> cache = cm.getCache();
-            
-            // Configure a registry client to use the specified cache
-            _registry = new InfinispanRegistry(cache);
-        } catch (javax.naming.NamingException nEx) {
+        // Determine the cache name
+        String cacheName = "cluster";
+        Configuration cacheNameConfig = environment.getFirstChild(CACHE_NAME_PROPERTY);
+        if (cacheNameConfig != null) {
+            cacheName = cacheNameConfig.getValue();
+        }
+        
+        // If a cache config is specified in the component configuration, then we 
+        // are managing the creation of the cache.  If not, then we look up a 
+        // cache manager and try to resolve the cache.
+        Configuration cacheFileConfig = environment.getFirstChild(CACHE_CONFIG_PROPERTY);
+        if (cacheFileConfig != null && cacheFileConfig.getValue() != null) {
+            createCache(cacheFileConfig.getValue(), cacheName);
+        } else {
+            lookupCache(cacheName);
+        }
+        
+        // Configure a registry client to use the specified cache
+        if (_cache != null) {
+            _registry = new InfinispanRegistry(_cache);
+        } else {
             SCALogger.ROOT_LOGGER.unableToResolveCacheContainer(cacheName);
         }
     }
@@ -111,5 +123,29 @@ public class SCAActivator extends BaseActivator {
      */
     public RemoteEndpointPublisher getEndpointPublisher() {
         return _endpointPublisher;
+    }
+    
+    private void createCache(String cacheConfig, String cacheName) {
+        ClassLoader origCl = Thread.currentThread().getContextClassLoader();
+        try {
+            InputStream configStream = SCAActivator.class.getClassLoader().getResourceAsStream(cacheConfig);
+            Thread.currentThread().setContextClassLoader(DefaultCacheManager.class.getClassLoader());
+            _cache = new DefaultCacheManager(configStream).getCache(cacheName);
+        } catch (Exception ex) {
+            _log.debug("Failed to create cache for distributed registry", ex);
+        } finally {
+            Thread.currentThread().setContextClassLoader(origCl);
+        }
+    }
+    
+    private void lookupCache(String cacheName) {
+        // Attempt to resolve the cache container to use for the distributed registry through JNDI
+        try {
+            EmbeddedCacheManager cm = (EmbeddedCacheManager)
+                    new InitialContext().lookup(CACHE_CONTAINER_ROOT + cacheName);
+            _cache = cm.getCache();
+        } catch (Exception ex) {
+            _log.debug("Failed to lookup cache container for distributed registry", ex);
+        }
     }
 }

@@ -13,13 +13,13 @@
  */
 package org.switchyard.component.sca;
 
-import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.xml.namespace.QName;
 
-import org.jboss.logging.Logger;
 import org.jboss.jbossts.txbridge.outbound.OutboundBridge;
 import org.jboss.jbossts.txbridge.outbound.OutboundBridgeManager;
+import org.jboss.logging.Logger;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
@@ -46,8 +46,6 @@ import org.switchyard.runtime.event.ExchangeCompletionEvent;
 
 import com.arjuna.mw.wst11.TransactionManagerFactory;
 import com.arjuna.mwlabs.wst11.at.context.TxContextImple;
-
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContextType;
 
 /**
  * Handles outbound communication to an SCA service endpoint.
@@ -216,9 +214,9 @@ public class SCAInvoker extends BaseServiceHandler {
         Transaction currentTransaction = null;
         try {
             currentTransaction = com.arjuna.ats.jta.TransactionManager.transactionManager().getTransaction();
-        } catch (SystemException e) {
+        } catch (Throwable t) {
             // avoiding checkstyle error
-            e.getMessage();
+            t.getMessage();
         }
         if (currentTransaction == null) {
             return false;
