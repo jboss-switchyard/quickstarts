@@ -273,6 +273,7 @@
     <feature name="switchyard-sca" version="${project.version}" resolver="(obr)">
         <bundle dependency="true">wrap:mvn:org.jboss.marshalling/jboss-marshalling/${version.org.jboss.marshalling}</bundle>
         <bundle dependency="true">wrap:mvn:org.jboss.marshalling/jboss-marshalling-river/${version.org.jboss.marshalling}</bundle>
+        <bundle>mvn:org.jboss.marshalling/jboss-marshalling-osgi/1.4.5.Final</bundle>
         <bundle dependency="true">wrap:mvn:org.jboss/staxmapper/${version.org.jboss.staxmapper}</bundle>
         <bundle dependency="true">mvn:org.jgroups/jgroups/${version.org.jgroups}</bundle>
         <bundle dependency="true">mvn:org.infinispan/infinispan-core/${version.org.infinispan}</bundle>
@@ -283,6 +284,7 @@
         <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${version.org.apache.geronimo.specs.servlet}</bundle>
         <bundle>mvn:org.switchyard/switchyard-remote/${project.version}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-sca/${project.version}</bundle>
+        <configfile finalname="/etc/org.switchyard.component.sca.cfg">mvn:org.switchyard.components/switchyard-component-sca/${project.version}/properties/sca</configfile>
     </feature>
 
     <feature name="switchyard-sql" version="${project.version}" resolver="(obr)">
@@ -474,6 +476,18 @@
         <feature version="${project.version}">switchyard-rules</feature>
         <feature version="${project.version}">switchyard-sca</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-remote-invoker/${project.version}</bundle>
+    </feature>
+    
+    <feature name="switchyard-demo-cluster-dealer" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-sca</feature>
+        <bundle>mvn:org.switchyard.quickstarts.demos/switchyard-demo-cluster-dealer/${project.version}</bundle>
+    </feature>
+    
+    <feature name="switchyard-demo-cluster-credit" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-rules</feature>
+        <feature version="${project.version}">switchyard-sca</feature>
+        <bundle>mvn:org.switchyard.quickstarts.demos/switchyard-demo-cluster-credit/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-quickstart-camel-saxon" version="${project.version}" resolver="(obr)">

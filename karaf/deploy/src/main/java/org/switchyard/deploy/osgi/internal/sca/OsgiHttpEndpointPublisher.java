@@ -13,11 +13,14 @@
  */
 package org.switchyard.deploy.osgi.internal.sca;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.namespace.QName;
 
+import org.jboss.logging.Logger;
 import org.osgi.service.http.HttpService;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.sca.RemoteEndpointPublisher;
@@ -32,7 +35,11 @@ public class OsgiHttpEndpointPublisher implements RemoteEndpointPublisher {
     private HttpService _httpService;
     private boolean _started;
     private String _contextName;
+    private String _address;
+    private int _port;
     private Map<QName, ServiceDomain> _services = new ConcurrentHashMap<QName, ServiceDomain>();
+
+    private static Logger _log = Logger.getLogger(OsgiHttpEndpointPublisher.class);
     
     /**
      * Used by blueprint to set the HttpService reference.
@@ -52,6 +59,10 @@ public class OsgiHttpEndpointPublisher implements RemoteEndpointPublisher {
         // If the remote listener is already started, just return.
         if (_started) {
             return;
+        }
+        
+        if (_address == null || _address.trim().length() == 0) {
+            _address = createEndpointURL();
         }
         
         SwitchYardRemotingServlet servlet = new SwitchYardRemotingServlet();
@@ -82,8 +93,44 @@ public class OsgiHttpEndpointPublisher implements RemoteEndpointPublisher {
 
     @Override
     public String getAddress() {
-        // TODO Auto-generated method stub
-        return null;
+        return _address;
+    }
+    
+    /**
+     * Set the endpoint URL for the remote listener.  Setting the endpoint
+     * address URL overrides any value set for port.
+     * @param address endpoint URL address
+     */
+    public void setAddress(String address) {
+        _address = address;
+    }
+    
+    /**
+     * Returns the port for the remote endpoint listener.
+     * @return HTTP port for the remote endpoint listener
+     */
+    public int getPort() {
+        return _port;
+    }
+    
+    /**
+     * Sets the port for the remote endpoint listener.
+     * @param port HTTP port for the remote endpoint listener
+     */
+    public void setPort(int port) {
+        _port = port;
+    }
+    
+    private String createEndpointURL() {
+        String host;
+        try {
+            host = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException hostEx) {
+            _log.debug("Unable to determine host IP for remote endpoint URL", hostEx);
+            host = "localhost";
+        }
+        
+        return "http://" + host + ":" + _port + "/" + _contextName;
     }
 
 }

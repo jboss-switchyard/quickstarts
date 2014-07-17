@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0">
   
     <reference id="httpService" interface="org.osgi.service.http.HttpService"/>
-
+    
+    <cm:property-placeholder 
+        persistent-id="org.switchyard.component.sca"
+        placeholder-prefix="{sca." placeholder-suffix="}">
+        <cm:default-properties>
+            <cm:property name="endpoint-url" value=""/>
+        </cm:default-properties>
+    </cm:property-placeholder>
+    
+    <cm:property-placeholder persistent-id="org.ops4j.pax.web"
+        placeholder-prefix="{pax.web." placeholder-suffix="}"/>
+    
     <bean id="ScaHttpEndpointPublisher" class="org.switchyard.deploy.osgi.internal.sca.OsgiHttpEndpointPublisher">
        <property name="httpService" ref="httpService"/>
+       <property name="port" value="{pax.web.org.osgi.service.http.port}"/>
+       <property name="address" value="{sca.endpoint-url}"/>
     </bean>
     <service interface="org.switchyard.component.sca.RemoteEndpointPublisher" ref="ScaHttpEndpointPublisher"/>
 

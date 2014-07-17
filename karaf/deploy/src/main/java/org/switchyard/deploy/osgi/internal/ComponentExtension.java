@@ -13,13 +13,6 @@
  */
 package org.switchyard.deploy.osgi.internal;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceRegistration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.switchyard.deploy.Component;
-import org.switchyard.deploy.osgi.base.SimpleExtension;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,8 +20,20 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.cm.ConfigurationAdmin;
+import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.switchyard.config.Configuration;
+import org.switchyard.config.Configurations;
+import org.switchyard.deploy.Component;
+import org.switchyard.deploy.osgi.base.SimpleExtension;
 
 /**
  * ComponentExtension.
@@ -48,7 +53,8 @@ public class ComponentExtension extends SimpleExtension {
 
     private final SwitchYardExtender _extender;
     private List<ServiceRegistration<Component>> _registrations = new ArrayList<ServiceRegistration<Component>>();
-
+    private final ServiceTracker<ConfigurationAdmin, ConfigurationAdmin> _configTracker;
+    private ConfigurationAdmin _configAdmin;
     /**
      * Create a new instance of ComponentExtension.
      * @param extender extender
@@ -57,15 +63,18 @@ public class ComponentExtension extends SimpleExtension {
     public ComponentExtension(SwitchYardExtender extender, Bundle bundle) {
         super(bundle);
         _extender = extender;
+        _configTracker = new ServiceTracker<ConfigurationAdmin, ConfigurationAdmin>(
+                bundle.getBundleContext(), ConfigurationAdmin.class, null);
+        _configTracker.open();
     }
 
     @Override
     protected void doStart() throws Exception {
+        _configAdmin = _configTracker.waitForService(0);
         URL url = getBundle().getEntry(META_INF_COMPONENT);
         List<String> classNames = parse(Component.class, url);
         for (String className : classNames) {
-            Class<Component> clazz = (Class<Component>) getBundle().loadClass(className);
-            Component component = clazz.newInstance();
+            Component component = initializeComponent(className);
             Dictionary<String, Object> props = new Hashtable<String, Object>();
             props.put(SWITCHYARD_TYPES, component.getActivationTypes());
             ServiceRegistration<Component> reg = getBundleContext().registerService(Component.class, component, props);
@@ -78,6 +87,42 @@ public class ComponentExtension extends SimpleExtension {
         for (ServiceRegistration<Component> reg : _registrations) {
             reg.unregister();
         }
+        _configTracker.close();
+    }
+    
+    private Component initializeComponent(String className) throws Exception {
+        Class<Component> clazz = (Class<Component>) getBundle().loadClass(className);
+        Component component = clazz.newInstance();
+        
+        // load configuration for a component - SY components all use the same package
+        // naming conventions so grab the config name from the package name.  For custom
+        // components (non-SY), use the name of the component returned from Component.getName().
+        String configName = className.contains("org.switchyard.component") && className.indexOf(".deploy") > 0
+                ? className.substring(0, className.indexOf(".deploy"))
+                : component.getName();
+        Configuration config = loadConfiguration(configName);
+        
+        // invoke the component's init method with config loaded from config admin - the 
+        // destroy() method is called in ComponentRegistryImpl.unregisterComponent()
+        component.init(config);
+        return component;
+    }
+    
+    private Configuration loadConfiguration(String configName) throws Exception {
+        Configuration syConfig = Configurations.newConfiguration();
+        org.osgi.service.cm.Configuration osgiConfig = _configAdmin.getConfiguration(configName, null);
+        
+        Dictionary<String, Object> props = osgiConfig.getProperties();
+        if (props != null) {
+            Enumeration<String> keys = props.keys();
+            while (keys.hasMoreElements()) {
+                String key = keys.nextElement();
+                Configuration config = Configurations.newConfiguration(key);
+                config.setValue((String)props.get(key));
+                syConfig.addChild(config);
+            }
+        }
+        return syConfig;
     }
 
     // Parse a single line from the given configuration file, adding the name

@@ -112,6 +112,7 @@ public class ComponentRegistryImpl implements ComponentRegistry, ServiceTrackerC
                 listener.componentUnregistered(type);
             }
         }
+        component.destroy();
         _components.remove(component);
     }
 
