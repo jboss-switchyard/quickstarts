@@ -278,6 +278,14 @@
         <union memberTypes="long swyd:propertyValue"/>
     </simpleType>
     
+    <simpleType name="propFloat">
+        <union memberTypes="float swyd:propertyValue"/>
+    </simpleType>
+
+    <simpleType name="propDouble">
+        <union memberTypes="double swyd:propertyValue"/>
+    </simpleType>
+
     <simpleType name="propBoolean">
         <union memberTypes="boolean swyd:propertyValue"/>
     </simpleType>
