@@ -59,7 +59,7 @@
         <version.ip.bom>6.0.0.CR9</version.ip.bom>
         
         <!-- Versions for local dependencies not eligible for the Integration BOM -->
-        <version.activity.monitor.model>1.2.1.Final</version.activity.monitor.model>
+        <version.activity.monitor.model>1.2.2.Final</version.activity.monitor.model>
         <version.camelsap>1.0.0.redhat-379</version.camelsap>
         <version.commons-lang3>3.1</version.commons-lang3>
         <!-- This version is only used as a prefix for a jar included in release modules -->
@@ -83,9 +83,9 @@
         <version.osgi.core>4.3.1</version.osgi.core>
         <version.osgi.compendium>4.3.1</version.osgi.compendium>
         <version.overlord-commons>2.0.2.Final</version.overlord-commons>
-        <version.riftsaw.ode>3.2.0-SNAPSHOT</version.riftsaw.ode>
-        <version.riftsaw.engine>3.2.0-SNAPSHOT</version.riftsaw.engine>
-        <version.riftsaw.console>2.4.6-SNAPSHOT</version.riftsaw.console>
+        <version.riftsaw.ode>3.2.0.Final</version.riftsaw.ode>
+        <version.riftsaw.engine>3.2.0.Final</version.riftsaw.engine>
+        <version.riftsaw.console>2.4.6.Final</version.riftsaw.console>
         <version.org.fusesource.mqtt-client>1.6</version.org.fusesource.mqtt-client>
         <version.org.fusesource.hawtdispatch>1.18</version.org.fusesource.hawtdispatch>
         <version.org.fusesource.hawtbuf>1.9</version.org.fusesource.hawtbuf>
