@@ -160,6 +160,7 @@
                                 <feature version="${project.version}">switchyard-jms</feature>
                                 <feature version="${project.version}">switchyard-jpa</feature>
                                 <feature version="${project.version}">switchyard-mail</feature>
+                                <feature version="${project.version}">switchyard-mqtt</feature>
                                 <feature version="${project.version}">switchyard-netty</feature>
                                 <feature version="${project.version}">switchyard-quartz</feature>
                                 <feature version="${project.version}">switchyard-rules</feature>
@@ -171,6 +172,7 @@
                                 <feature version="${version.org.apache.camel}">camel-hl7</feature>
                                 <feature version="${version.org.apache.camel}">camel-mina2</feature>
                                 <feature version="${version.org.apache.camel}">camel-jaxb</feature>
+                                <feature version="${version.org.apache.camel}">camel-saxon</feature>
                                 <feature version="5.9.0">activemq-broker</feature>
                             </features>
                             <repository>target/dependencies/apache-karaf-${version.karaf}/system</repository>

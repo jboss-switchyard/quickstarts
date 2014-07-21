@@ -232,6 +232,17 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-camel-mqtt-binding</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-camel-netty-binding</artifactId>
             <scope>test</scope>
             <exclusions>
@@ -261,6 +272,17 @@
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-camel-sap-binding</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-camel-saxon</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
