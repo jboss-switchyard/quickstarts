@@ -119,7 +119,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Dependencies>deployment.OrderService.jar</Dependencies>
+                            <Dependencies>deployment.switchyard-demo-multiApp-artifacts.jar</Dependencies>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -187,6 +187,8 @@
                     <arguments>
                         <argument>${project.build.directory}/test-classes/order.xml</argument>
                     </arguments>
+	            <classpathScope>test</classpathScope>	
+                    <skip>false</skip>
                 </configuration>
             </plugin>
         </plugins>
