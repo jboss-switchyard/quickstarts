@@ -95,7 +95,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Dependencies>deployment.OrderService.jar</Dependencies>
+                            <Dependencies>deployment.switchyard-demo-multiApp-artifacts.jar</Dependencies>
                         </manifestEntries>
                     </archive>
                 </configuration>
