@@ -20,7 +20,7 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>switchyard-rules-camel-cbr</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard Quickstart: rules-camel-cbr</name>
     <description>Quickstart : Rules+Camel Content-Based Router</description>
     <licenses>
@@ -31,9 +31,24 @@
         </license>
     </licenses>
     <properties>
+        <deploy.skip>true</deploy.skip>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
-        <deploy.skip>true</deploy.skip>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.quickstarts.rules.camel.cbr*
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.dynamic>
+             org.switchyard,org.switchyard.*
+        </switchyard.osgi.dynamic>
+        <switchyard.osgi.require.capability>
+            org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
+            org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
+            osgi.extender; filter:="(osgi.extender=pax.cdi)"
+        </switchyard.osgi.require.capability>
+        <switchyard.osgi.provide.capability/>
+	<switchyard.osgi.dynamic>
+            org.switchyard,org.switchyard.*
+        </switchyard.osgi.dynamic>
     </properties>
     <dependencies>
         <dependency>
