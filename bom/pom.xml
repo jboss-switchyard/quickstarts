@@ -30,6 +30,7 @@
         <version.ip.bom>6.0.0.CR12</version.ip.bom>
         <version.org.jboss.as>7.4.0.Final-redhat-19</version.org.jboss.as>
         <version.redhat.eap6.bom>6.3.0.GA</version.redhat.eap6.bom>
+        <version.org.mvel>2.2.1.Final</version.org.mvel>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -340,6 +341,11 @@
                 <groupId>org.jboss.as</groupId>
                 <artifactId>jboss-as-naming</artifactId>
                 <version>${version.org.jboss.as}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mvel</groupId>
+                <artifactId>mvel2</artifactId>
+                <version>${version.org.mvel}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
