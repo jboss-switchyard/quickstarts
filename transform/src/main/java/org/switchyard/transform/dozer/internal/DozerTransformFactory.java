@@ -17,6 +17,7 @@ package org.switchyard.transform.dozer.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.switchyard.ServiceDomain;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.DozerFileEntryModel;
@@ -34,10 +35,11 @@ public class DozerTransformFactory implements TransformerFactory<DozerTransformM
 
     /**
      * Create a {@link Transformer} instance from the supplied {@link DozerTransformModel}.
+     * @param domain ServiceDomain instance.
      * @param model The model.
      * @return The Transformer instance.
      */
-    public Transformer<?,?> newTransformer(DozerTransformModel model) {
+    public Transformer<?,?> newTransformer(ServiceDomain domain, DozerTransformModel model) {
         QName from = model.getFrom();
         QName to = model.getTo();
         if (from == null || !QNameUtil.isJavaMessageType(from)) {

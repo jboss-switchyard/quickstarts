@@ -60,7 +60,7 @@ public class XMLBindingTransformerTest extends AbstractTransformerTestCase {
         V1SmooksTransformModel model = (V1SmooksTransformModel)new V1SmooksTransformModel(TransformNamespace.DEFAULT.uri()).setTransformType("XML2JAVA").setFrom(new QName("a")).setTo(new QName("b"));
         model.setConfig("/org/switchyard/transform/internal/smooks/smooks-config-01.xml");
         try {
-            new SmooksTransformFactory().newTransformer(model);
+            new SmooksTransformFactory().newTransformer(null, model);
         } catch (RuntimeException e) {
         	boolean exceptionMatch = e.getMessage().contains("SWITCHYARD016812");
             Assert.assertTrue(exceptionMatch);
@@ -72,7 +72,7 @@ public class XMLBindingTransformerTest extends AbstractTransformerTestCase {
         V1SmooksTransformModel model = (V1SmooksTransformModel)new V1SmooksTransformModel(TransformNamespace.DEFAULT.uri()).setTransformType("JAVA2XML").setFrom(new QName("a")).setTo(new QName("b"));
         model.setConfig("/org/switchyard/transform/internal/smooks/smooks-config-01.xml");
         try {
-            new SmooksTransformFactory().newTransformer(model);
+            new SmooksTransformFactory().newTransformer(null, model);
         } catch (RuntimeException e) {
         	boolean exceptionMatch = e.getMessage().contains("SWITCHYARD016812");
         	Assert.assertTrue(exceptionMatch);

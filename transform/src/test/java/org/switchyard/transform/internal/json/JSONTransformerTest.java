@@ -173,7 +173,7 @@ public class JSONTransformerTest {
 			Assert.fail("No json config.");
 		}
 
-		Transformer transformer = new JSONTransformFactory().newTransformer(jsonTransformModel);
+		Transformer transformer = new JSONTransformFactory().newTransformer(null, jsonTransformModel);
 
 		if (!(transformer instanceof JSON2JavaTransformer ||transformer instanceof Java2JSONTransformer)) {
 			Assert.fail("Not an instance of a JSONTransformer.");

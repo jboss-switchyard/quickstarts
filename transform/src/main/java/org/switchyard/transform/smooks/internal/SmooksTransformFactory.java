@@ -16,6 +16,8 @@ package org.switchyard.transform.smooks.internal;
 
 import org.milyn.Smooks;
 import org.milyn.javabean.binding.model.ModelSet;
+import org.switchyard.ServiceDomain;
+import org.switchyard.common.util.ProviderRegistry;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.SmooksTransformModel;
 import org.switchyard.transform.config.model.SmooksTransformType;
@@ -33,10 +35,11 @@ public class SmooksTransformFactory implements TransformerFactory<SmooksTransfor
 
     /**
      * Create a {@link Transformer} instance from the supplied {@link SmooksTransformModel}.
+     * @param domain ServiceDomain instance.
      * @param model The model.
      * @return The Transformer instance.
      */
-    public Transformer newTransformer(SmooksTransformModel model) {
+    public Transformer newTransformer(ServiceDomain domain, SmooksTransformModel model) {
         String transformType = model.getTransformType();
         String config = model.getConfig();
         QName from = model.getFrom();
@@ -57,9 +60,15 @@ public class SmooksTransformFactory implements TransformerFactory<SmooksTransfor
 
         SmooksTransformType transformationType = SmooksTransformType.valueOf(transformType);
 
-        Smooks smooks;
+        Smooks smooks = null;
         try {
-            smooks = new Smooks(config);
+            SmooksProducer producer = ProviderRegistry.getProvider(SmooksProducer.class);
+            if (producer != null) {
+                smooks = producer.createSmooks(domain, config);
+            }
+            if (smooks == null) {
+                smooks = new Smooks(config);
+            }
             smooks.createExecutionContext();
         } catch (Exception e) {
             throw TransformMessages.MESSAGES.failedToCreateSmooksInstance(config, e);

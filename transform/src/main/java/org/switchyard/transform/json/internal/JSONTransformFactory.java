@@ -17,6 +17,7 @@ package org.switchyard.transform.json.internal;
 import javax.xml.namespace.QName;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.switchyard.ServiceDomain;
 import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.JSONTransformModel;
@@ -32,10 +33,11 @@ public final class JSONTransformFactory implements TransformerFactory<JSONTransf
 
     /**
      * Create a {@link Transformer} instance from the supplied {@link JSONTransformModel}.
+     * @param domain ServiceDomain instance.
      * @param model the JSON transformer model. 
      * @return the Transformer instance.
      */
-    public Transformer newTransformer(JSONTransformModel model) {
+    public Transformer newTransformer(ServiceDomain domain, JSONTransformModel model) {
 
         QName from = model.getFrom();
         QName to = model.getTo();

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
 import org.jboss.logging.Logger;
+import org.switchyard.ServiceDomain;
 import org.switchyard.SwitchYardException;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.QNameUtil;
@@ -48,7 +49,7 @@ public class JAXBTransformerFactory implements TransformerFactory<JAXBTransformM
     private static Logger _log = Logger.getLogger(JAXBTransformerFactory.class);
 
     @Override
-    public Transformer<?, ?> newTransformer(JAXBTransformModel model) {
+    public Transformer<?, ?> newTransformer(ServiceDomain domain, JAXBTransformModel model) {
         QName fromType = model.getFrom();
         QName toType = model.getTo();
 

@@ -11,27 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.switchyard.transform.smooks.internal;
 
-package org.switchyard.transform.internal;
-
+import org.milyn.Smooks;
 import org.switchyard.ServiceDomain;
-import org.switchyard.config.model.transform.TransformModel;
-import org.switchyard.transform.Transformer;
 
 /**
- * Transformer Factory.
- *
- * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
- *
- * @param <T> TransformerModel type.
+ * Smooks producer interface to be used for creating Smooks instance.
  */
-public interface TransformerFactory<T extends TransformModel> {
+public interface SmooksProducer {
 
     /**
-     * Create a new {@link Transformer} instance.
-     * @param domain ServiceDomain instance.
-     * @param model The Transformer config model.
-     * @return The Transformer instance.
+     * Creates Smooks instance.
+     * @param domain SwitchYard ServiceDomain
+     * @param config Smooks config
+     * @return Smooks instance
      */
-    Transformer<?, ?> newTransformer(ServiceDomain domain, T model);
+    Smooks createSmooks(ServiceDomain domain, String config);
 }

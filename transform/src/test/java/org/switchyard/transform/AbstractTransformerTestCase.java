@@ -55,4 +55,5 @@ public abstract class AbstractTransformerTestCase {
         TransformerRegistryLoader trl = new TransformerRegistryLoader(new BaseTransformerRegistry());
         return trl.newTransformer(transformModel);
     }
+
 }

@@ -39,7 +39,6 @@
         <switchyard.osgi.import>
             org.dozer.*;resolution:=optional,
             org.milyn.*;resolution:=optional,
-            META-INF.xsd.smooks.*;resolution:=optional,
             org.mvel2.*;resolution:=optional,
             javax.enterprise.inject.spi;resolution:=optional,
             org.switchyard.common.cdi;resolution:=optional;${switchyard.osgi.import.switchyard.version},

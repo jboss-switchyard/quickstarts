@@ -130,7 +130,7 @@ public abstract class AbstractDeployment {
         
         _serviceDomain = appServiceDomain;
         _serviceDomain.setProperty(CLASSLOADER_PROPERTY, Classes.getTCCL());
-        _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain.getTransformerRegistry());
+        _transformerRegistryLoader = new TransformerRegistryLoader(appServiceDomain);
         _transformerRegistryLoader.loadOOTBTransforms();
         
         _validatorRegistryLoader = new ValidatorRegistryLoader(appServiceDomain.getValidatorRegistry());

@@ -23,6 +23,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
+import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.property.PropertyModel;
@@ -49,10 +50,11 @@ public final class XsltTransformFactory implements TransformerFactory<XsltTransf
     
     /**
      * Create a {@link Transformer} instance from the supplied {@link XsltTransformModel}.
+     * @param domain ServiceDomain instance.
      * @param model the JSON transformer model. 
      * @return the Transformer instance.
      */
-    public Transformer newTransformer(XsltTransformModel model) {
+    public Transformer newTransformer(ServiceDomain domain, XsltTransformModel model) {
 
         String xsltFileUri = model.getXsltFile();
         boolean failOnWarning = model.failOnWarning();

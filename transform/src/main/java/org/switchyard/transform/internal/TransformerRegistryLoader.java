@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.logging.Logger;
+import org.switchyard.ServiceDomain;
 import org.switchyard.common.cdi.CDIUtil;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.ModelPuller;
@@ -62,6 +63,23 @@ public class TransformerRegistryLoader {
     private Map<Class<?>, TransformerFactory<?>> _transformerFactories = 
             new HashMap<Class<?>, TransformerFactory<?>>();
 
+    private ServiceDomain _serviceDomain;
+
+    /**
+     * Public constructor.
+     * @param domain ServiceDomain instance.
+     */
+    public TransformerRegistryLoader(ServiceDomain domain) {
+        if (domain == null) {
+            throw TransformMessages.MESSAGES.nullServiceDomainArgument();
+        }
+        this._serviceDomain = domain;
+        if (_serviceDomain.getTransformerRegistry() == null) {
+            throw TransformMessages.MESSAGES.nullTransformerRegistryArgument();
+        }
+       this._transformerRegistry = _serviceDomain.getTransformerRegistry();
+    }
+
     /**
      * Public constructor.
      * @param transformerRegistry The registry instance.
@@ -71,6 +89,7 @@ public class TransformerRegistryLoader {
             throw TransformMessages.MESSAGES.nullTransformerRegistryArgument();
         }
         this._transformerRegistry = transformerRegistry;
+        this._serviceDomain = null;
     }
 
     /**
@@ -203,7 +222,7 @@ public class TransformerRegistryLoader {
             TransformerFactory factory = getTransformerFactory(transformModel);
 
             transformers = new ArrayList<Transformer<?, ?>>();
-            transformers.add(factory.newTransformer(transformModel));
+            transformers.add(factory.newTransformer(_serviceDomain, transformModel));
         }
 
         if (transformers == null || transformers.isEmpty()) {

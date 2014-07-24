@@ -553,4 +553,10 @@ public interface TransformMessages {
     @Message(id=16861, value = "Failed to marshall for type '%s'.")
     SwitchYardException failedToMarshallForType(String type, @Cause JAXBException e);
 
+    /**
+     * nullServiceDomainArgument method definition.
+     * @return IllegalArgumentException
+     */
+    @Message(id=16862, value = "null 'domain' argument")
+    IllegalArgumentException nullServiceDomainArgument();
 }
