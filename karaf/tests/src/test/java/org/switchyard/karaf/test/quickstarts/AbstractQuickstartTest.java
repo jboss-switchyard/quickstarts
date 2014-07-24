@@ -7,6 +7,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.CoreOptions.when;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
@@ -130,6 +131,7 @@ public abstract class AbstractQuickstartTest {
     }
 
     private static Option[] config(String featureName, String bundleName) throws Exception {
+        final String localMavenRepo = System.getProperty("maven.repo.local", "");
         return options(
                 // karafDistributionConfiguration().frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
                 karafDistributionConfiguration()
@@ -157,7 +159,8 @@ public abstract class AbstractQuickstartTest {
                 editConfigurationFilePut("etc/org.ops4j.pax.logging.cfg", "log4j.appender.out.file",
                         "${karaf.home}/../test.log"),
                 features("mvn:org.switchyard.karaf/switchyard/2.0.0-SNAPSHOT/xml/features", featureName),
-                systemProperty(DeploymentProbe.BUNDLE_NAME_KEY).value(bundleName));
+                systemProperty(DeploymentProbe.BUNDLE_NAME_KEY).value(bundleName),
+                when(localMavenRepo.length() > 0).useOptions(systemProperty("org.ops4j.pax.url.mvn.localRepository").value(localMavenRepo)));
     }
     
     private static Option[] mergeOptions(Option[] defaultOptions, Option[] additionalOptions) {
