@@ -43,9 +43,6 @@ public class EarDeploymentTest {
                                             + "        <java>switchyard-camel-binding-" + VERSION + ".jar</java>\n"
                                             + "    </module>\n"
                                             + "    <module>\n"
-                                            + "        <java>switchyard-camel-soap-proxy-" + VERSION + ".jar</java>\n"
-                                            + "    </module>\n"
-                                            + "    <module>\n"
                                             + "        <java>switchyard-transform-jaxb-" + VERSION + ".jar</java>\n"
                                             + "    </module>\n"
                                             + "    <module>\n"
@@ -66,7 +63,6 @@ public class EarDeploymentTest {
                 .setApplicationXML(new StringAsset(APPLICATION_XML))
                 .addAsModule(ArquillianUtil.createJarQSDeployment("switchyard-bean-service"))
                 .addAsModule(ArquillianUtil.createJarQSDeployment("switchyard-camel-binding"))
-                .addAsModule(ArquillianUtil.createJarQSDeployment("switchyard-camel-soap-proxy"))
                 .addAsModule(ArquillianUtil.createJarQSDeployment("switchyard-transform-jaxb"))
                 .addAsModule(ArquillianUtil.createJarQSDeployment("switchyard-transform-json"))
                 .addAsModule(ArquillianUtil.createJarQSDeployment("switchyard-transform-smooks"))

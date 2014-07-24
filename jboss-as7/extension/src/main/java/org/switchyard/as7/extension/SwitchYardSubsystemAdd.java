@@ -40,7 +40,6 @@ import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.switchyard.admin.SwitchYard;
-import org.switchyard.as7.extension.deployment.SwitchYardCdiIntegrationProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardConfigDeploymentProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardConfigProcessor;
 import org.switchyard.as7.extension.deployment.SwitchYardDependencyProcessor;
@@ -94,7 +93,6 @@ public final class SwitchYardSubsystemAdd extends AbstractBoottimeAddStepHandler
                 int priority = 0x4000;
                 processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.PARSE, priority++, new SwitchYardConfigDeploymentProcessor());
                 processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, priority++, new SwitchYardDependencyProcessor());
-                processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, priority++, new SwitchYardCdiIntegrationProcessor());
                 processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, priority++, new SwitchYardConfigProcessor());
                 processorTarget.addDeploymentProcessor(SwitchYardExtension.SUBSYSTEM_NAME, Phase.INSTALL, priority++, new SwitchYardDeploymentProcessor());
             }

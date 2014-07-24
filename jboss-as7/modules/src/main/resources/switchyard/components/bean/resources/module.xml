@@ -31,5 +31,13 @@
         <module name="org.switchyard.component.common"/>
         <module name="org.switchyard.config"/>
         <module name="org.switchyard.deploy"/>
+        <module name="org.apache.deltaspike.core-api" export="true">
+            <imports>
+                <include path="META-INF/services"/>
+            </imports>
+            <exports>
+                <include path="META-INF/services"/>
+            </exports>
+        </module>
     </dependencies>
 </module>

@@ -195,8 +195,7 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
-                            <excludes>**/*/CamelSOAPProxyQuickstartTest.class, **/*/EarDeploymentTest.class, **/*/EarDeployQuickstartTest.class,
-                             **/*/HelpDeskDemoQuickstartTest.class</excludes>
+                            <excludes>**/*/CamelSOAPProxyQuickstartTest.class, **/*/HelpDeskDemoQuickstartTest.class</excludes>
                             <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>
                         </configuration>
                     </execution>

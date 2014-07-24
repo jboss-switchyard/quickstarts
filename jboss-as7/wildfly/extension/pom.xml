@@ -118,6 +118,7 @@
                                         <exclude name="org/switchyard/as7/extension/deployment/SwitchYardCdiIntegrationProcessor.java"/>
                                         <exclude name="org/switchyard/as7/extension/deployment/SwitchYardDeployment.java"/>
                                         <exclude name="org/switchyard/as7/extension/deployment/SwitchYardDeploymentProcessor.java"/>
+                                        <exclude name="org/switchyard/as7/extension/deployment/SwitchYardModuleDependencyProcessor.java"/>
                                         <exclude name="org/switchyard/as7/extension/http/JBossWebEndpoint.java"/>
                                         <exclude name="org/switchyard/as7/extension/http/JBossWebEndpointPublisher.java"/>
                                         <exclude name="org/switchyard/as7/extension/resteasy/RESTEasyResource.java"/>
