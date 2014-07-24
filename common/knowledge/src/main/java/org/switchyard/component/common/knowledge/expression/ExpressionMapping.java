@@ -16,6 +16,7 @@ package org.switchyard.component.common.knowledge.expression;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.property.SystemAndTestPropertyResolver;
+import org.switchyard.component.common.knowledge.config.model.InputModel;
 import org.switchyard.component.common.knowledge.config.model.MappingModel;
 
 /**
@@ -28,6 +29,7 @@ public final class ExpressionMapping {
     private final PropertyResolver _propertyResolver;
     private final String _from;
     private final String _to;
+    private final String _output;
     private Expression _fromExpression = null;
     private Expression _toExpression = null;
 
@@ -40,6 +42,7 @@ public final class ExpressionMapping {
         _propertyResolver = propertyResolver != null ? propertyResolver : SystemAndTestPropertyResolver.INSTANCE;
         _from = Strings.trimToNull(mappingModel.getFrom());
         _to = Strings.trimToNull(mappingModel.getTo());
+        _output = mappingModel instanceof InputModel ? Strings.trimToNull(((InputModel)mappingModel).getOutput()) : null;
     }
 
     /**
@@ -86,6 +89,14 @@ public final class ExpressionMapping {
             _toExpression = ExpressionFactory.INSTANCE.create(_to, null, _propertyResolver);
         }
         return _toExpression;
+    }
+
+    /**
+     * Gets the output.
+     * @return the output
+     */
+    public String getOutput() {
+        return _output;
     }
 
 }

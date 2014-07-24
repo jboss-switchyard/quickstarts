@@ -20,6 +20,7 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.config.model.ManifestModel;
+import org.switchyard.component.common.knowledge.config.model.RemoteModel;
 import org.switchyard.config.model.resource.ResourcesModel;
 
 /**
@@ -120,6 +121,10 @@ public abstract class KnowledgeSessionFactory extends KnowledgeDisposer {
                     ResourcesModel resourcesModel = manifestModel.getResources();
                     if (resourcesModel != null) {
                         return new KnowledgeBuilderSessionFactory(model, loader, domain, propertyOverrides);
+                    }
+                    RemoteModel remoteModel = manifestModel.getRemote();
+                    if (remoteModel != null) {
+                        return new KnowledgeRemoteSessionFactory(model, loader, domain, propertyOverrides);
                     }
                 }
             }

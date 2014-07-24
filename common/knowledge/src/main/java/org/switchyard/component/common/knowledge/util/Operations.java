@@ -22,11 +22,15 @@ import static org.switchyard.component.common.knowledge.KnowledgeConstants.PARAM
 import static org.switchyard.component.common.knowledge.KnowledgeConstants.RESULT;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.xml.bind.annotation.XmlType;
 
 import org.kie.api.runtime.Globals;
 import org.switchyard.Message;
@@ -129,14 +133,16 @@ public final class Operations {
      */
     public static void setGlobals(Message message, KnowledgeOperation operation, KnowledgeSession session) {
         Globals globals = session.getGlobals();
-        Map<String, Object> globalsMap = new HashMap<String, Object>();
-        globalsMap.put(GLOBALS, new ConcurrentHashMap<String, Object>());
-        Map<String, Object> expressionMap = getMap(message, operation.getGlobalExpressionMappings(), null);
-        if (expressionMap != null) {
-            globalsMap.putAll(expressionMap);
-        }
-        for (Entry<String, Object> globalsEntry : globalsMap.entrySet()) {
-            globals.set(globalsEntry.getKey(), globalsEntry.getValue());
+        if (globals != null) {
+            Map<String, Object> globalsMap = new HashMap<String, Object>();
+            globalsMap.put(GLOBALS, new ConcurrentHashMap<String, Object>());
+            Map<String, Object> expressionMap = getMap(message, operation.getGlobalExpressionMappings(), null);
+            if (expressionMap != null) {
+                globalsMap.putAll(expressionMap);
+            }
+            for (Entry<String, Object> globalsEntry : globalsMap.entrySet()) {
+                globals.set(globalsEntry.getKey(), globalsEntry.getValue());
+            }
         }
     }
 
@@ -144,13 +150,14 @@ public final class Operations {
      * Gets the input.
      * @param message the message
      * @param operation the operation
+     * @param session the session
      * @return the input
      */
-    public static Object getInput(Message message, KnowledgeOperation operation) {
+    public static Object getInput(Message message, KnowledgeOperation operation, KnowledgeSession session) {
         List<Object> list = getList(message, operation.getInputExpressionMappings());
         switch (list.size()) {
             case 0:
-                return message.getContent();
+                return filterRemoteDefaultInputContent(message.getContent(), session);
             case 1:
                 return list.get(0);
             default:
@@ -159,40 +166,91 @@ public final class Operations {
     }
 
     /**
-     * Gets an input list.
+     * Gets an input (all) list.
      * @param message the message
      * @param operation the operation
-     * @return the input list
+     * @param session the session
+     * @return the input (all) list
      */
-    public static List<Object> getInputList(Message message, KnowledgeOperation operation) {
+    public static List<Object> getInputList(Message message, KnowledgeOperation operation, KnowledgeSession session) {
+        return getInputList(message, operation.getInputExpressionMappings(), session);
+    }
+
+    /**
+     * Gets an input-only list.
+     * @param message the message
+     * @param operation the operation
+     * @param session the session
+     * @return the input-only list
+     */
+    public static List<Object> getInputOnlyList(Message message, KnowledgeOperation operation, KnowledgeSession session) {
+        return getInputList(message, operation.getInputOnlyExpressionMappings(), session);
+    }
+
+    private static List<Object> getInputList(Message message, List<ExpressionMapping> inputs, KnowledgeSession session) {
         List<Object> list = new ArrayList<Object>();
-        List<ExpressionMapping> inputs = operation.getInputExpressionMappings();
         if (inputs.size() > 0) {
             list.addAll(getList(message, inputs));
         } else {
-            expand(message.getContent(), list);
+            expand(filterRemoteDefaultInputContent(message.getContent(), session), list);
         }
         return list;
+    }
+
+    /**
+     * Gets an input-output map.
+     * @param message the message
+     * @param operation the operation
+     * @param session the session
+     * @return the input-output map
+     */
+    public static Map<String, Object> getInputOutputMap(Message message, KnowledgeOperation operation, KnowledgeSession session) {
+        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Map<String, ExpressionMapping> inputs = operation.getInputOutputExpressionMappings();
+        for (Entry<String, ExpressionMapping> entry : inputs.entrySet()) {
+            List<Object> list = getList(message, Collections.singletonList(entry.getValue()));
+            final Object output;
+            switch (list.size()) {
+                case 0:
+                    output = null;
+                    break;
+                case 1:
+                    output = list.get(0);
+                    break;
+                default:
+                    output = list;
+            }
+            map.put(entry.getKey(), output);
+        }
+        return map;
     }
 
     /**
      * Gets an input map.
      * @param message the message
      * @param operation the operation
+     * @param session the session
      * @return the input map
      */
-    public static Map<String, Object> getInputMap(Message message, KnowledgeOperation operation) {
+    public static Map<String, Object> getInputMap(Message message, KnowledgeOperation operation, KnowledgeSession session) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<ExpressionMapping> inputs = operation.getInputExpressionMappings();
         if (inputs.size() > 0) {
             map.putAll(getMap(message, inputs, null));
         } else {
-            Object content = message.getContent();
+            Object content = filterRemoteDefaultInputContent(message.getContent(), session);
             if (content != null) {
                 map.put(PARAMETER, content);
             }
         }
         return map;
+    }
+
+    private static Object filterRemoteDefaultInputContent(Object content, KnowledgeSession session) {
+        if (session.isRemote() && content != null && content.getClass().getAnnotation(XmlType.class) == null) {
+            content = null;
+        }
+        return content;
     }
 
     /**
@@ -215,7 +273,7 @@ public final class Operations {
         setOutputsOrFaults(message, operation.getFaultExpressionMappings(), contextOverrides, FAULT);
     }
 
-    private static void setOutputsOrFaults(Message message, List<ExpressionMapping> expressionMappings, Map<String, Object> expressionContext, String defaultReturnVariable) {
+    private static void setOutputsOrFaults(Message message, List<ExpressionMapping> expressionMappings, Map<String, Object> expressionVariables, String defaultReturnVariable) {
         Map<String, List<ExpressionMapping>> toListMap = new HashMap<String, List<ExpressionMapping>>();
         for (ExpressionMapping expressionMapping : expressionMappings) {
             String to = expressionMapping.getTo();
@@ -229,11 +287,14 @@ public final class Operations {
             }
         }
         if (toListMap.size() == 0) {
-            Object output = getValue(expressionContext, defaultReturnVariable);
+            Object output = getValue(expressionVariables, defaultReturnVariable);
             if (output != null) {
                 message.setContent(output);
             }
         } else {
+            if (!expressionVariables.containsKey(defaultReturnVariable)) {
+                expressionVariables.put(defaultReturnVariable, null);
+            }
             for (Entry<String, List<ExpressionMapping>> toListEntry : toListMap.entrySet()) {
                 List<Object> from_list = new ArrayList<Object>();
                 ExpressionMapping to_em = null;
@@ -241,11 +302,11 @@ public final class Operations {
                     if (to_em == null) {
                         to_em = from_em;
                     }
-                    Object from_value = run(message, from_em.getFromExpression(), expressionContext);
+                    Object from_value = run(message, from_em.getFromExpression(), expressionVariables);
                     if (from_value != null) {
                         from_list.add(from_value);
                     } else {
-                        from_value = getValue(expressionContext, from_em.getFrom());
+                        from_value = getValue(expressionVariables, from_em.getFrom());
                         if (from_value != null) {
                             from_list.add(from_value);
                         }
@@ -264,21 +325,21 @@ public final class Operations {
                         break;
                 }
                 String output_var = toVariable(output);
-                expressionContext.put(output_var, output);
+                expressionVariables.put(output_var, output);
                 String output_to = to_em.getTo() + " = " + output_var;
                 Expression output_to_expr = ExpressionFactory.INSTANCE.create(output_to, null, to_em.getPropertyResolver());
-                run(message, output_to_expr, expressionContext);
+                run(message, output_to_expr, expressionVariables);
             }
         }
     }
 
     @SuppressWarnings("unchecked")
-    private static Object getValue(Map<String, Object> expressionContext, String name) {
+    private static Object getValue(Map<String, Object> expressionVariables, String name) {
         Object output = null;
-        if (expressionContext != null) {
-            output = expressionContext.get(name);
+        if (expressionVariables != null) {
+            output = expressionVariables.get(name);
             if (output == null) {
-                Object globals = expressionContext.get(GLOBALS);
+                Object globals = expressionVariables.get(GLOBALS);
                 if (globals instanceof Map) {
                     output = ((Map<String, Object>)globals).get(name);
                 }
@@ -322,7 +383,7 @@ public final class Operations {
         return getListMap(message, expressionMappings, expand, undefinedVariable, null);
     }
 
-    private static Map<String, List<Object>> getListMap(Message message, List<ExpressionMapping> expressionMappings, boolean expand, String undefinedVariable, Map<String, Object> expressionContext) {
+    private static Map<String, List<Object>> getListMap(Message message, List<ExpressionMapping> expressionMappings, boolean expand, String undefinedVariable, Map<String, Object> expressionVariables) {
         Map<String, List<Object>> map = new HashMap<String, List<Object>>();
         if (expressionMappings != null) {
             for (ExpressionMapping em : expressionMappings) {
@@ -336,7 +397,7 @@ public final class Operations {
                         list = new ArrayList<Object>();
                         map.put(variable, list);
                     }
-                    Object value = run(message, em.getFromExpression(), expressionContext);
+                    Object value = run(message, em.getFromExpression(), expressionVariables);
                     if (expand) {
                         expand(value, list);
                     } else if (value != null) {
@@ -348,15 +409,15 @@ public final class Operations {
         return map;
     }
 
-    private static Object run(Message message, Expression expression, Map<String, Object> expressionContext) {
-        Map<String, Object> context = new HashMap<String, Object>();
-        if (expressionContext != null) {
-            context.putAll(expressionContext);
+    private static Object run(Message message, Expression expression, Map<String, Object> expressionVariables) {
+        Map<String, Object> variables = new HashMap<String, Object>();
+        if (expressionVariables != null) {
+            variables.putAll(expressionVariables);
         }
         // these always take precedence!
-        context.put(CONTEXT, new ContextMap(message.getContext(), Scope.MESSAGE));
-        context.put(MESSAGE, message);
-        return expression.run(context);
+        variables.put(CONTEXT, new ContextMap(message.getContext(), Scope.MESSAGE));
+        variables.put(MESSAGE, message);
+        return expression.run(variables);
     }
 
     private static void expand(Object value, List<Object> list) {

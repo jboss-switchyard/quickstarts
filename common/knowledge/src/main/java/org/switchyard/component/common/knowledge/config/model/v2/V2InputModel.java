@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ * Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,25 +11,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.component.common.knowledge.config.model.v1;
+package org.switchyard.component.common.knowledge.config.model.v2;
 
 import org.switchyard.component.common.knowledge.config.model.InputModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1InputModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
 /**
- * The 1st version InputModel.
+ * The 2nd version InputModel.
  *
- * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2014 Red Hat Inc.
  */
-public class V1InputModel extends V1MappingModel implements InputModel {
+public class V2InputModel extends V1InputModel {
 
     /**
      * Creates a new InputModel in the specified namespace and localName.
      * @param namespace the specified namespace
      */
-    public V1InputModel(String namespace) {
-        super(namespace, INPUT);
+    public V2InputModel(String namespace) {
+        super(namespace);
     }
 
     /**
@@ -37,7 +38,7 @@ public class V1InputModel extends V1MappingModel implements InputModel {
      * @param config the configuration
      * @param desc the descriptor
      */
-    public V1InputModel(Configuration config, Descriptor desc) {
+    public V2InputModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -46,8 +47,7 @@ public class V1InputModel extends V1MappingModel implements InputModel {
      */
     @Override
     public String getOutput() {
-        // unsupported until v2
-        return null;
+        return getModelAttribute("output");
     }
 
     /**
@@ -55,7 +55,7 @@ public class V1InputModel extends V1MappingModel implements InputModel {
      */
     @Override
     public InputModel setOutput(String output) {
-        // unsupported until v2
+        setModelAttribute("output", output);
         return this;
     }
 

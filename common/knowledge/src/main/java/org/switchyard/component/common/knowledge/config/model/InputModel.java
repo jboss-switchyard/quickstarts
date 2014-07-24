@@ -23,4 +23,17 @@ public interface InputModel extends MappingModel {
     /** The "input" name. */
     public static final String INPUT = "input";
 
+    /**
+     * Gets the output.
+     * @return the output
+     */
+    public String getOutput();
+
+    /**
+     * Sets the output.
+     * @param output the output
+     * @return this MappingModel (useful for chaining)
+     */
+    public InputModel setOutput(String output);
+
 }

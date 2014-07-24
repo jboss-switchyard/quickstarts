@@ -25,6 +25,7 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.api.builder.ReleaseId;
 import org.kie.api.event.rule.DebugRuleRuntimeEventListener;
@@ -36,6 +37,8 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.knowledge.LoggerType;
 import org.switchyard.component.common.knowledge.config.model.ChannelModel;
 import org.switchyard.component.common.knowledge.config.model.ContainerModel;
+import org.switchyard.component.common.knowledge.config.model.ExtraJaxbClassModel;
+import org.switchyard.component.common.knowledge.config.model.ExtraJaxbClassesModel;
 import org.switchyard.component.common.knowledge.config.model.FaultModel;
 import org.switchyard.component.common.knowledge.config.model.GlobalModel;
 import org.switchyard.component.common.knowledge.config.model.InputModel;
@@ -44,6 +47,9 @@ import org.switchyard.component.common.knowledge.config.model.LoggerModel;
 import org.switchyard.component.common.knowledge.config.model.ManifestModel;
 import org.switchyard.component.common.knowledge.config.model.OperationModel;
 import org.switchyard.component.common.knowledge.config.model.OutputModel;
+import org.switchyard.component.common.knowledge.config.model.RemoteJmsModel;
+import org.switchyard.component.common.knowledge.config.model.RemoteModel;
+import org.switchyard.component.common.knowledge.config.model.RemoteRestModel;
 import org.switchyard.component.common.knowledge.util.Containers;
 import org.switchyard.component.rules.RulesOperationType;
 import org.switchyard.config.model.ModelPuller;
@@ -67,6 +73,8 @@ public class RulesModelTests {
 
     private static final String CONTAINER_XML = "/org/switchyard/component/rules/config/model/RulesModelTests-Container.xml";
     private static final String RESOURCES_XML = "/org/switchyard/component/rules/config/model/RulesModelTests-Resources.xml";
+    private static final String REMOTEJMS_XML = "/org/switchyard/component/rules/config/model/RulesModelTests-RemoteJms.xml";
+    private static final String REMOTEREST_XML = "/org/switchyard/component/rules/config/model/RulesModelTests-RemoteRest.xml";
 
     private ModelPuller<SwitchYardModel> _puller;
 
@@ -88,6 +96,16 @@ public class RulesModelTests {
     @Test
     public void testReadResources() throws Exception {
         doTestRead(RESOURCES_XML);
+    }
+
+    @Test
+    public void testReadRemoteJms() throws Exception {
+        doTestRead(REMOTEJMS_XML);
+    }
+
+    @Test
+    public void testReadRemoteRest() throws Exception {
+        doTestRead(REMOTEREST_XML);
     }
 
     private void doTestRead(String xml) throws Exception {
@@ -138,7 +156,7 @@ public class RulesModelTests {
         ManifestModel manifest = rules.getManifest();
         ContainerModel container = manifest.getContainer();
         ResourcesModel resources = manifest.getResources();
-        Assert.assertTrue((container != null && resources == null) || (container == null && resources != null));
+        RemoteModel remote = manifest.getRemote();
         if (CONTAINER_XML.equals(xml)) {
             ReleaseId rid = Containers.toReleaseId(container.getReleaseId());
             Assert.assertEquals("theGroupId", rid.getGroupId());
@@ -166,6 +184,36 @@ public class RulesModelTests {
             /* SWITCHYARD-1662
             Assert.assertEquals(true, dtableDetail.isUsingExternalTypes());
             */
+        } else if (REMOTEJMS_XML.equals(xml) || REMOTEREST_XML.equals(xml)) {
+            Assert.assertNull(container);
+            Assert.assertNull(resources);
+            Assert.assertEquals("groupId:artifactId:0.0.1", remote.getDeploymentId());
+            Assert.assertEquals("kermit", remote.getUserName());
+            Assert.assertEquals("the-frog-1", remote.getPassword());
+            Assert.assertEquals(5, remote.getTimeout().intValue());
+            ExtraJaxbClassesModel extraJaxbClasses = remote.getExtraJaxbClasses();
+            Assert.assertNotNull(extraJaxbClasses);
+            List<ExtraJaxbClassModel> extraJaxbClassList = extraJaxbClasses.getExtraJaxbClasses();
+            Assert.assertEquals(2, extraJaxbClassList.size());
+            Assert.assertEquals(Object.class, extraJaxbClassList.get(0).getClazz(loader));
+            Assert.assertEquals(String.class, extraJaxbClassList.get(1).getClazz(loader));
+            if (REMOTEJMS_XML.equals(xml)) {
+                RemoteJmsModel remoteJms = (RemoteJmsModel)remote;
+                Assert.assertEquals("remotehost", remoteJms.getHostName());
+                Assert.assertEquals(4447, remoteJms.getRemotingPort().intValue());
+                Assert.assertEquals(5455, remoteJms.getMessagingPort().intValue());
+                Assert.assertEquals(true, remoteJms.isUseSsl());
+                Assert.assertEquals("ksp", remoteJms.getKeystorePassword());
+                Assert.assertEquals("/ksl", remoteJms.getKeystoreLocation());
+                Assert.assertEquals("tsp", remoteJms.getTruststorePassword());
+                Assert.assertEquals("/tsl", remoteJms.getTruststoreLocation());
+            } else if (REMOTEREST_XML.equals(xml)) {
+                RemoteRestModel remoteRest = (RemoteRestModel)remote;
+                Assert.assertEquals("http://localhost:8080/kie-wb/", remoteRest.getUrl());
+                Assert.assertEquals(true, remoteRest.isUseFormBasedAuth());
+            }
+        } else {
+            Assert.fail("couldn't find container, resources, remoteJms, or remoteRest");
         }
         PropertyModel property = rules.getProperties().getProperties().get(0);
         Assert.assertEquals("foo", property.getName());
@@ -180,6 +228,16 @@ public class RulesModelTests {
     @Test
     public void testWriteResources() throws Exception {
         doTestWrite(RESOURCES_XML);
+    }
+
+    @Test
+    public void testWriteRemoteJms() throws Exception {
+        doTestWrite(REMOTEJMS_XML);
+    }
+
+    @Test
+    public void testWriteRemoteRest() throws Exception {
+        doTestWrite(REMOTEREST_XML);
     }
 
     private void doTestWrite(String xml) throws Exception {
@@ -201,21 +259,42 @@ public class RulesModelTests {
         doTestValidate(RESOURCES_XML);
     }
 
+    @Test
+    public void testValidateRemoteJms() throws Exception {
+        doTestValidate(REMOTEJMS_XML);
+    }
+
+    @Test
+    public void testValidateRemoteRest() throws Exception {
+        doTestValidate(REMOTEREST_XML);
+    }
+
     private void doTestValidate(String xml) throws Exception {
         SwitchYardModel switchyard = _puller.pull(xml, getClass());
         switchyard.assertModelValid();
     }
 
-    /*
     @Test
+    @Ignore
     public void testScanContainer() throws Exception {
         doTestScan(CONTAINER_XML);
     }
-    */
 
     @Test
     public void testScanResources() throws Exception {
         doTestScan(RESOURCES_XML);
+    }
+
+    @Test
+    @Ignore
+    public void testScanRemoteJms() throws Exception {
+        doTestScan(REMOTEJMS_XML);
+    }
+
+    @Test
+    @Ignore
+    public void testScanRemoteRest() throws Exception {
+        doTestScan(REMOTEREST_XML);
     }
 
     private void doTestScan(String xml) throws Exception {

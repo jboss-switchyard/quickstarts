@@ -39,67 +39,13 @@
     <dependencies>
         <!-- internal dependencies -->
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-serial-jackson</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common</artifactId>
         </dependency>
         <!-- external dependencies -->
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml-schemas</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-compiler</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-decisiontables</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-persistence-jpa</artifactId>
-        </dependency>
-        <!-- SWITCHYARD-1662
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-scorecards</artifactId>
-        </dependency>
-        -->
-        <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-templates</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jdt.core.compiler</groupId>
-            <artifactId>ecj</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie</groupId>
-            <artifactId>kie-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie</groupId>
-            <artifactId>kie-internal</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mvel</groupId>
-            <artifactId>mvel2</artifactId>
+            <groupId>org.kie.remote</groupId>
+            <artifactId>kie-services-client</artifactId>
         </dependency>
     </dependencies>
 </project>

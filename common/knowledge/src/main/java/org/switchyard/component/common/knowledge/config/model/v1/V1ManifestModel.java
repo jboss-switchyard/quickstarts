@@ -19,6 +19,7 @@ import static org.switchyard.config.model.resource.ResourcesModel.RESOURCES;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.common.knowledge.config.model.ContainerModel;
 import org.switchyard.component.common.knowledge.config.model.ManifestModel;
+import org.switchyard.component.common.knowledge.config.model.RemoteModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.BaseModel;
 import org.switchyard.config.model.Descriptor;
@@ -92,6 +93,22 @@ public class V1ManifestModel extends BaseModel implements ManifestModel {
     public ManifestModel setResources(ResourcesModel resources) {
         setChildModel(resources);
         _resources = resources;
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RemoteModel getRemote() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ManifestModel setRemote(RemoteModel remote) {
         return this;
     }
 

@@ -13,6 +13,8 @@
  */
 package org.switchyard.component.common.knowledge.expression;
 
+import java.util.Map;
+
 /**
  * Expression.
  *
@@ -46,9 +48,9 @@ public interface Expression {
 
     /**
      * Runs the expression.
-     * @param context the context to run with
+     * @param variables the variables to run with
      * @return the result of running the expression
      */
-    public Object run(Object context);
+    public Object run(Map<String, Object> variables);
 
 }

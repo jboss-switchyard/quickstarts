@@ -33,15 +33,20 @@ import org.drools.persistence.jta.JtaTransactionManager;
 import org.jbpm.persistence.JpaProcessPersistenceContextManager;
 import org.jbpm.persistence.processinstance.JPAProcessInstanceManagerFactory;
 import org.jbpm.persistence.processinstance.JPASignalManagerFactory;
+import org.jbpm.runtime.manager.impl.AbstractRuntimeManager;
+import org.jbpm.runtime.manager.impl.RuntimeEngineImpl;
 import org.jbpm.services.task.persistence.JPATaskPersistenceContextManager;
 import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
 import org.kie.api.runtime.EnvironmentName;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.process.ProcessInstance;
 // SWITCHYARD-1755: internal api usage still required (public APIs insufficient)
 import org.kie.internal.KieInternalServices;
 import org.kie.internal.process.CorrelationAwareProcessRuntime;
 import org.kie.internal.process.CorrelationKey;
 import org.kie.internal.process.CorrelationKeyFactory;
+import org.kie.internal.runtime.manager.RuntimeEnvironment;
 import org.kie.internal.runtime.manager.RuntimeManagerRegistry;
 import org.kie.internal.task.api.UserGroupCallback;
 import org.switchyard.Context;
@@ -57,7 +62,6 @@ import org.switchyard.component.bpm.BPMOperationType;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.runtime.BPMProcessEventListener;
 import org.switchyard.component.bpm.runtime.BPMRuntimeEnvironment;
-import org.switchyard.component.bpm.runtime.BPMRuntimeManager;
 import org.switchyard.component.bpm.runtime.BPMTaskService;
 import org.switchyard.component.bpm.runtime.BPMTaskServiceRegistry;
 import org.switchyard.component.bpm.transaction.AS7TransactionHelper;
@@ -186,7 +190,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
         Long processInstanceId = null;
         Message inputMessage = exchange.getMessage();
         ExchangePattern exchangePattern = exchange.getContract().getProviderOperation().getExchangePattern();
-        Map<String, Object> expressionContext = new HashMap<String, Object>();
+        Map<String, Object> expressionVariables = new HashMap<String, Object>();
         AS7TransactionHelper utx = new AS7TransactionHelper(_persistent);
         BPMOperationType operationType = (BPMOperationType)operation.getType();
         switch (operationType) {
@@ -196,7 +200,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                     KnowledgeSession session = getBPMSession(exchange, inputMessage);
                     sessionId = session.getId();
                     setGlobals(inputMessage, operation, session);
-                    Map<String, Object> inputMap = getInputMap(inputMessage, operation);
+                    Map<String, Object> inputMap = getInputMap(inputMessage, operation, session);
                     ProcessInstance processInstance;
                     CorrelationKey correlationKey = getCorrelationKey(exchange, inputMessage);
                     if (correlationKey != null) {
@@ -206,8 +210,8 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                     }
                     processInstanceId = Long.valueOf(processInstance.getId());
                     if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                        expressionContext.putAll(getGlobalVariables(session));
-                        expressionContext.putAll(getProcessInstanceVariables(processInstance));
+                        expressionVariables.putAll(getGlobalVariables(session));
+                        expressionVariables.putAll(getProcessInstanceVariables(processInstance));
                     }
                     utx.commit();
                 } catch (RuntimeException re) {
@@ -223,7 +227,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                     KnowledgeSession session = getBPMSession(exchange, inputMessage);
                     sessionId = session.getId();
                     setGlobals(inputMessage, operation, session);
-                    Object eventObject = getInput(inputMessage, operation);
+                    Object eventObject = getInput(inputMessage, operation, session);
                     String eventId = operation.getEventId();
                     if (BPMOperationType.SIGNAL_EVENT.equals(operationType)) {
                         processInstanceId = getProcessInstanceId(exchange, inputMessage, session);
@@ -233,15 +237,15 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                         if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
                             ProcessInstance processInstance = session.getStateful().getProcessInstance(processInstanceId);
                             processInstance.signalEvent(eventId, eventObject);
-                            expressionContext.putAll(getGlobalVariables(session));
-                            expressionContext.putAll(getProcessInstanceVariables(processInstance));
+                            expressionVariables.putAll(getGlobalVariables(session));
+                            expressionVariables.putAll(getProcessInstanceVariables(processInstance));
                         } else {
                             session.getStateful().signalEvent(eventId, eventObject, processInstanceId);
                         }
                     } else if (BPMOperationType.SIGNAL_EVENT_ALL.equals(operationType)) {
                         session.getStateful().signalEvent(eventId, eventObject);
                         if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                            expressionContext.putAll(getGlobalVariables(session));
+                            expressionVariables.putAll(getGlobalVariables(session));
                         }
                     }
                     utx.commit();
@@ -261,9 +265,9 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
                         throw BPMMessages.MESSAGES.cannotAbortProcessInstance();
                     }
                     if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                        expressionContext.putAll(getGlobalVariables(session));
+                        expressionVariables.putAll(getGlobalVariables(session));
                         ProcessInstance processInstance = session.getStateful().getProcessInstance(processInstanceId);
-                        expressionContext.putAll(getProcessInstanceVariables(processInstance));
+                        expressionVariables.putAll(getProcessInstanceVariables(processInstance));
                     }
                     session.getStateful().abortProcessInstance(processInstanceId);
                     utx.commit();
@@ -286,11 +290,11 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
             if (processInstanceId != null && processInstanceId.longValue() > 0) {
                 outputContext.setProperty(BPMConstants.PROCESSS_INSTANCE_ID_PROPERTY, processInstanceId);
             }
-            setFaults(outputMessage, operation, expressionContext);
+            setFaults(outputMessage, operation, expressionVariables);
             if (outputMessage.getContent() != null) {
                 exchange.sendFault(outputMessage);
             } else {
-                setOutputs(outputMessage, operation, expressionContext);
+                setOutputs(outputMessage, operation, expressionVariables);
                 exchange.send(outputMessage);
             }
         }
@@ -303,23 +307,59 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler<BPMComponentImp
         } else {
             session = getStatefulSession();
         }
-        Listeners.registerListener(_processEventListener, session.getStateful());
-        // TODO: the use of BPMRuntimeEnvironment/Manager should be removed after SWITCHYARD-1584
-        // TODO: along with the above, use the RuntimeEnvironmentBuilderFactory
-        final String deploymentId = getDeploymentId();
-        BPMRuntimeEnvironment runtimeEnvironment = new BPMRuntimeEnvironment(session.getStateful(), _entityManagerFactory, _userGroupCallback, getLoader());
-        BPMRuntimeManager runtimeManager = new BPMRuntimeManager(session.getStateful(), _taskService, deploymentId, runtimeEnvironment);
-        final RuntimeManagerRegistry runtimeManagerRegistry = RuntimeManagerRegistry.get();
-        if (!runtimeManagerRegistry.isRegistered(deploymentId)) {
-            runtimeManagerRegistry.register(runtimeManager);
-            session.addDisposals(new KnowledgeDisposal() {
+        if (!session.isRemote()) {
+            // none of the below is supported by the kie remote api
+            Listeners.registerListener(_processEventListener, session.getStateful());
+            // TODO: the use of BPMRuntimeEnvironment should be removed after SWITCHYARD-1584,
+            // and the RuntimeEnvironmentBuilderFactory and RuntimeManagerFactory should be used
+            final KieSession kieSession = session.getStateful();
+            final String deploymentId = getDeploymentId();
+            final RuntimeManagerRegistry runtimeManagerRegistry = RuntimeManagerRegistry.get();
+            if (runtimeManagerRegistry.isRegistered(deploymentId)) {
+                runtimeManagerRegistry.remove(deploymentId);
+            }
+            RuntimeEnvironment runtimeEnvironment = new BPMRuntimeEnvironment(session.getStateful(), _entityManagerFactory, _userGroupCallback, getLoader());
+            AbstractRuntimeManager runtimeManager = new AbstractRuntimeManager(runtimeEnvironment, deploymentId) {
+                private RuntimeEngineImpl _runtimeEngine = null;
                 @Override
-                public void dispose() {
+                public void init() {
+                    _runtimeEngine = new RuntimeEngineImpl(kieSession, _taskService) {
+                        @Override
+                        public void dispose() {
+                            // no-op
+                        }
+                    };
+                    _runtimeEngine.setManager(this);
+                }
+                @Override
+                public void validate(KieSession ksession, org.kie.api.runtime.manager.Context<?> context) throws IllegalStateException {
+                    // no-op
+                }
+                @Override
+                public RuntimeEngine getRuntimeEngine(org.kie.api.runtime.manager.Context<?> context) {
+                    return _runtimeEngine;
+                }
+                @Override
+                public void disposeRuntimeEngine(RuntimeEngine runtime) {
+                    // no-op
+                }
+                @Override
+                public void close() {
                     runtimeManagerRegistry.remove(deploymentId);
                 }
-            });
+            };
+            runtimeManager.init();
+            if (!runtimeManagerRegistry.isRegistered(deploymentId)) {
+                runtimeManagerRegistry.register(runtimeManager);
+                session.addDisposals(new KnowledgeDisposal() {
+                    @Override
+                    public void dispose() {
+                        runtimeManagerRegistry.remove(deploymentId);
+                    }
+                });
+            }
+            WorkItemHandlers.registerWorkItemHandlers(getModel(), getLoader(), session.getStateful(), runtimeManager, getServiceDomain());
         }
-        WorkItemHandlers.registerWorkItemHandlers(getModel(), getLoader(), session.getStateful(), runtimeManager, getServiceDomain());
         return session;
     }
 

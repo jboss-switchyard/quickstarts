@@ -27,16 +27,19 @@ public class KnowledgeSession extends KnowledgeDisposer {
 
     private final StatelessKieSession _stateless;
     private final KieSession _stateful;
+    private final boolean _remote;
     private final boolean _persistent;
 
     /**
      * Constructs a new stateless knowledge session.
      * @param stateless the wrapped session
+     * @param remote if remote
      * @param disposals any disposals
      */
-    public KnowledgeSession(StatelessKieSession stateless, KnowledgeDisposal... disposals) {
+    public KnowledgeSession(StatelessKieSession stateless, boolean remote, KnowledgeDisposal... disposals) {
         _stateless = stateless;
         _stateful = null;
+        _remote = remote;
         _persistent = false;
         addDisposals(disposals);
     }
@@ -44,12 +47,14 @@ public class KnowledgeSession extends KnowledgeDisposer {
     /**
      * Constructs a new stateful knowledge session.
      * @param stateful the wrapped session
+     * @param remote if remote
      * @param persistent if persistent
      * @param disposals any disposals
      */
-    public KnowledgeSession(KieSession stateful, boolean persistent, KnowledgeDisposal... disposals) {
+    public KnowledgeSession(KieSession stateful, boolean remote, boolean persistent, KnowledgeDisposal... disposals) {
         _stateless = null;
         _stateful = stateful;
+        _remote = remote;
         _persistent = persistent;
         addDisposals(disposals);
         addDisposals(Disposals.newDisposal(_stateful));
@@ -69,6 +74,14 @@ public class KnowledgeSession extends KnowledgeDisposer {
      */
     public boolean isStateful() {
         return _stateful != null;
+    }
+
+    /**
+     * If the wrapped session is remote.
+     * @return if so
+     */
+    public boolean isRemote() {
+        return _remote;
     }
 
     /**
@@ -111,11 +124,13 @@ public class KnowledgeSession extends KnowledgeDisposer {
      * @return the globals
      */
     public Globals getGlobals() {
-        if (isStateless()) {
-            return getStateless().getGlobals();
-        }
-        if (isStateful()) {
-            return getStateful().getGlobals();
+        if (!isRemote()) {
+            if (isStateless()) {
+                return getStateless().getGlobals();
+            }
+            if (isStateful()) {
+                return getStateful().getGlobals();
+            }
         }
         return null;
     }

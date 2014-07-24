@@ -41,7 +41,6 @@ import org.switchyard.component.bpm.BPMMessages;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.WorkItemHandlerModel;
 import org.switchyard.component.bpm.config.model.WorkItemHandlersModel;
-import org.switchyard.component.bpm.runtime.BPMRuntimeManager;
 import org.switchyard.component.bpm.service.StandardSwitchYardServiceTaskHandler;
 import org.switchyard.component.bpm.service.SwitchYardServiceTaskHandler;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
@@ -80,7 +79,7 @@ public final class WorkItemHandlers {
      * @param serviceDomain the service domain
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void registerWorkItemHandlers(BPMComponentImplementationModel model, ClassLoader loader, ProcessRuntime processRuntime, BPMRuntimeManager runtimeManager, ServiceDomain serviceDomain) {
+    public static void registerWorkItemHandlers(BPMComponentImplementationModel model, ClassLoader loader, ProcessRuntime processRuntime, RuntimeManager runtimeManager, ServiceDomain serviceDomain) {
         ComponentModel componentModel = model.getComponent();
         QName componentName =  componentModel.getQName();
         String componentTNS =  componentModel.getTargetNamespace();
@@ -132,7 +131,7 @@ public final class WorkItemHandlers {
         }
         // TODO: this whole block can be removed after SWITCHYARD-1584
         if (!registeredNames.contains(HUMAN_TASK) && runtimeManager != null) {
-            RuntimeEngine runtimeEngine = runtimeManager.getRuntimeEngine();
+            RuntimeEngine runtimeEngine = runtimeManager.getRuntimeEngine(null);
             ExternalTaskEventListener listener = new ExternalTaskEventListener();
             LocalHTWorkItemHandler htwih = new LocalHTWorkItemHandler();
             htwih.setRuntimeManager(runtimeManager);
@@ -162,7 +161,7 @@ public final class WorkItemHandlers {
      * @param runtimeManager the runtime manager
      * @return the work item handler
      */
-    public static WorkItemHandler newWorkItemHandler(Class<? extends WorkItemHandler> workItemHandlerClass, ProcessRuntime processRuntime, BPMRuntimeManager runtimeManager) {
+    public static WorkItemHandler newWorkItemHandler(Class<? extends WorkItemHandler> workItemHandlerClass, ProcessRuntime processRuntime, RuntimeManager runtimeManager) {
         WorkItemHandler workItemHandler = null;
         Constructor<? extends WorkItemHandler> constructor = getConstructor(workItemHandlerClass);
         Class<?>[] parameterTypes = constructor != null ? constructor.getParameterTypes() : new Class<?>[0];

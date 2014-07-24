@@ -14,7 +14,10 @@
 package org.switchyard.component.common.knowledge.exchange;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.switchyard.component.common.knowledge.OperationType;
 import org.switchyard.component.common.knowledge.expression.ExpressionMapping;
@@ -82,6 +85,39 @@ public class KnowledgeOperation {
      */
     public List<ExpressionMapping> getInputExpressionMappings() {
         return _inputExpressionMappings;
+    }
+
+    /**
+     * Gets the input-only expression mappings.
+     * @return the input-only expression mappings
+     */
+    public List<ExpressionMapping> getInputOnlyExpressionMappings() {
+        List<ExpressionMapping> list = new LinkedList<ExpressionMapping>();
+        for (ExpressionMapping em : _inputExpressionMappings) {
+            if (em.getOutput() == null) {
+                list.add(em);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Gets the input-output expression mappings.
+     * @return the input-output expression mappings
+     */
+    public Map<String, ExpressionMapping> getInputOutputExpressionMappings() {
+        Map<String, ExpressionMapping> map = new LinkedHashMap<String, ExpressionMapping>();
+        for (ExpressionMapping em : _inputExpressionMappings) {
+            String output = em.getOutput();
+            if (output != null) {
+                if (map.containsKey(output)) {
+                    throw new IllegalArgumentException("duplicate input/output variable [" + output + "] not allowed");
+                } else {
+                    map.put(output, em);
+                }
+            }
+        }
+        return map;
     }
 
     /**

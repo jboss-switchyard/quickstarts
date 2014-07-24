@@ -81,7 +81,7 @@ class KnowledgeBuilderSessionFactory extends KnowledgeSessionFactory {
         KnowledgeDisposal loggersDisposal = Loggers.registerLoggersForDisposal(getModel(), getLoader(), stateless);
         Listeners.registerListeners(getModel(), getLoader(), stateless);
         Channels.registerChannels(getModel(), getLoader(), getDomain(), stateless);
-        return new KnowledgeSession(stateless, loggersDisposal);
+        return new KnowledgeSession(stateless, false, loggersDisposal);
     }
 
     /**
@@ -94,7 +94,7 @@ class KnowledgeBuilderSessionFactory extends KnowledgeSessionFactory {
         KnowledgeDisposal loggersDisposal = Loggers.registerLoggersForDisposal(getModel(), getLoader(), stateful);
         Listeners.registerListeners(getModel(), getLoader(), stateful);
         Channels.registerChannels(getModel(), getLoader(), getDomain(), stateful);
-        return new KnowledgeSession(stateful, false, loggersDisposal);
+        return new KnowledgeSession(stateful, false, false, loggersDisposal);
     }
 
     /**
@@ -114,7 +114,7 @@ class KnowledgeBuilderSessionFactory extends KnowledgeSessionFactory {
         KnowledgeDisposal loggersDisposal = Loggers.registerLoggersForDisposal(getModel(), getLoader(), stateful);
         Listeners.registerListeners(getModel(), getLoader(), stateful);
         Channels.registerChannels(getModel(), getLoader(), getDomain(), stateful);
-        return new KnowledgeSession(stateful, true, loggersDisposal);
+        return new KnowledgeSession(stateful, false, true, loggersDisposal);
     }
 
     private KieBase newBase() {

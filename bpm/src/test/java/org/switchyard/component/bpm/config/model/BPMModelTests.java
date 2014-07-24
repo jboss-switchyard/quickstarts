@@ -27,6 +27,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.drools.core.event.DebugProcessEventListener;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.api.builder.ReleaseId;
 import org.kie.api.runtime.Channel;
@@ -42,6 +43,8 @@ import org.switchyard.component.bpm.BPMOperationType;
 import org.switchyard.component.common.knowledge.LoggerType;
 import org.switchyard.component.common.knowledge.config.model.ChannelModel;
 import org.switchyard.component.common.knowledge.config.model.ContainerModel;
+import org.switchyard.component.common.knowledge.config.model.ExtraJaxbClassModel;
+import org.switchyard.component.common.knowledge.config.model.ExtraJaxbClassesModel;
 import org.switchyard.component.common.knowledge.config.model.FaultModel;
 import org.switchyard.component.common.knowledge.config.model.GlobalModel;
 import org.switchyard.component.common.knowledge.config.model.InputModel;
@@ -50,6 +53,9 @@ import org.switchyard.component.common.knowledge.config.model.LoggerModel;
 import org.switchyard.component.common.knowledge.config.model.ManifestModel;
 import org.switchyard.component.common.knowledge.config.model.OperationModel;
 import org.switchyard.component.common.knowledge.config.model.OutputModel;
+import org.switchyard.component.common.knowledge.config.model.RemoteJmsModel;
+import org.switchyard.component.common.knowledge.config.model.RemoteModel;
+import org.switchyard.component.common.knowledge.config.model.RemoteRestModel;
 import org.switchyard.component.common.knowledge.util.Containers;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Scanner;
@@ -72,6 +78,8 @@ public class BPMModelTests {
 
     private static final String CONTAINER_XML = "/org/switchyard/component/bpm/config/model/BPMModelTests-Container.xml";
     private static final String RESOURCES_XML = "/org/switchyard/component/bpm/config/model/BPMModelTests-Resources.xml";
+    private static final String REMOTEJMS_XML = "/org/switchyard/component/bpm/config/model/BPMModelTests-RemoteJms.xml";
+    private static final String REMOTEREST_XML = "/org/switchyard/component/bpm/config/model/BPMModelTests-RemoteRest.xml";
 
     private ModelPuller<SwitchYardModel> _puller;
 
@@ -93,6 +101,16 @@ public class BPMModelTests {
     @Test
     public void testReadResources() throws Exception {
         doTestRead(RESOURCES_XML);
+    }
+
+    @Test
+    public void testReadRemoteJms() throws Exception {
+        doTestRead(REMOTEJMS_XML);
+    }
+
+    @Test
+    public void testReadRemoteRest() throws Exception {
+        doTestRead(REMOTEREST_XML);
     }
 
     private void doTestRead(String xml) throws Exception {
@@ -145,8 +163,10 @@ public class BPMModelTests {
         ManifestModel manifest = bpm.getManifest();
         ContainerModel container = manifest.getContainer();
         ResourcesModel resources = manifest.getResources();
-        Assert.assertTrue((container != null && resources == null) || (container == null && resources != null));
+        RemoteModel remote = manifest.getRemote();
         if (CONTAINER_XML.equals(xml)) {
+            Assert.assertNull(resources);
+            Assert.assertNull(remote);
             ReleaseId rid = Containers.toReleaseId(container.getReleaseId());
             Assert.assertEquals("theGroupId", rid.getGroupId());
             Assert.assertEquals("theArtifactId", rid.getArtifactId());
@@ -155,9 +175,9 @@ public class BPMModelTests {
             Assert.assertEquals("theSession", container.getSessionName());
             Assert.assertTrue(container.isScan());
             Assert.assertEquals(Long.valueOf(1000), container.getScanInterval());
-            Assert.assertNull(resources);
         } else if (RESOURCES_XML.equals(xml)) {
             Assert.assertNull(container);
+            Assert.assertNull(remote);
             ResourceModel bpmn2Resource = resources.getResources().get(0);
             Assert.assertEquals("foobar.bpmn", bpmn2Resource.getLocation());
             Assert.assertEquals(ResourceType.valueOf("BPMN2"), bpmn2Resource.getType());
@@ -170,6 +190,36 @@ public class BPMModelTests {
             /* SWITCHYARD-1662
             Assert.assertEquals(true, dtableDetail.isUsingExternalTypes());
             */
+        } else if (REMOTEJMS_XML.equals(xml) || REMOTEREST_XML.equals(xml)) {
+            Assert.assertNull(container);
+            Assert.assertNull(resources);
+            Assert.assertEquals("groupId:artifactId:0.0.1", remote.getDeploymentId());
+            Assert.assertEquals("kermit", remote.getUserName());
+            Assert.assertEquals("the-frog-1", remote.getPassword());
+            Assert.assertEquals(5, remote.getTimeout().intValue());
+            ExtraJaxbClassesModel extraJaxbClasses = remote.getExtraJaxbClasses();
+            Assert.assertNotNull(extraJaxbClasses);
+            List<ExtraJaxbClassModel> extraJaxbClassList = extraJaxbClasses.getExtraJaxbClasses();
+            Assert.assertEquals(2, extraJaxbClassList.size());
+            Assert.assertEquals(Object.class, extraJaxbClassList.get(0).getClazz(loader));
+            Assert.assertEquals(String.class, extraJaxbClassList.get(1).getClazz(loader));
+            if (REMOTEJMS_XML.equals(xml)) {
+                RemoteJmsModel remoteJms = (RemoteJmsModel)remote;
+                Assert.assertEquals("remotehost", remoteJms.getHostName());
+                Assert.assertEquals(4447, remoteJms.getRemotingPort().intValue());
+                Assert.assertEquals(5455, remoteJms.getMessagingPort().intValue());
+                Assert.assertEquals(true, remoteJms.isUseSsl());
+                Assert.assertEquals("ksp", remoteJms.getKeystorePassword());
+                Assert.assertEquals("/ksl", remoteJms.getKeystoreLocation());
+                Assert.assertEquals("tsp", remoteJms.getTruststorePassword());
+                Assert.assertEquals("/tsl", remoteJms.getTruststoreLocation());
+            } else if (REMOTEREST_XML.equals(xml)) {
+                RemoteRestModel remoteRest = (RemoteRestModel)remote;
+                Assert.assertEquals("http://localhost:8080/kie-wb/", remoteRest.getUrl());
+                Assert.assertEquals(true, remoteRest.isUseFormBasedAuth());
+            }
+        } else {
+            Assert.fail("couldn't find container, resources, remoteJms, or remoteRest");
         }
         PropertyModel bpm_property = bpm.getProperties().getProperties().get(0);
         Assert.assertEquals("foo", bpm_property.getName());
@@ -194,6 +244,16 @@ public class BPMModelTests {
         doTestWrite(RESOURCES_XML);
     }
 
+    @Test
+    public void testWriteRemoteJms() throws Exception {
+        doTestWrite(REMOTEJMS_XML);
+    }
+
+    @Test
+    public void testWriteRemoteRest() throws Exception {
+        doTestWrite(REMOTEREST_XML);
+    }
+
     private void doTestWrite(String xml) throws Exception {
         String old_xml = new StringPuller().pull(xml, getClass());
         SwitchYardModel switchyard = _puller.pull(new StringReader(old_xml));
@@ -213,21 +273,42 @@ public class BPMModelTests {
         doTestValidate(RESOURCES_XML);
     }
 
+    @Test
+    public void testValidateRemoteJms() throws Exception {
+        doTestValidate(REMOTEJMS_XML);
+    }
+
+    @Test
+    public void testValidateRemoteRest() throws Exception {
+        doTestValidate(REMOTEREST_XML);
+    }
+
     private void doTestValidate(String xml) throws Exception {
         SwitchYardModel switchyard = _puller.pull(xml, getClass());
         switchyard.assertModelValid();
     }
 
-    /*
     @Test
+    @Ignore
     public void testScanContainer() throws Exception {
         doTestScan(CONTAINER_XML);
     }
-    */
 
     @Test
     public void testScanResources() throws Exception {
         doTestScan(RESOURCES_XML);
+    }
+
+    @Test
+    @Ignore
+    public void testScanRemoteJms() throws Exception {
+        doTestScan(REMOTEJMS_XML);
+    }
+
+    @Test
+    @Ignore
+    public void testScanRemoteRest() throws Exception {
+        doTestScan(REMOTEREST_XML);
     }
 
     private void doTestScan(String xml) throws Exception {

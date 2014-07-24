@@ -16,6 +16,7 @@ package org.switchyard.component.bpm.runtime;
 import javax.persistence.EntityManagerFactory;
 
 import org.jbpm.runtime.manager.impl.SimpleRegisterableItemsFactory;
+import org.jbpm.runtime.manager.impl.SimpleRuntimeEnvironment;
 import org.jbpm.runtime.manager.impl.mapper.InMemoryMapper;
 import org.jbpm.runtime.manager.impl.mapper.JPAMapper;
 import org.kie.api.KieBase;
@@ -25,7 +26,6 @@ import org.kie.api.runtime.KieSessionConfiguration;
 import org.kie.api.runtime.manager.RegisterableItemsFactory;
 //SWITCHYARD-1755: internal api usage still required (until jbpm services usage is resolved)
 import org.kie.internal.runtime.manager.Mapper;
-import org.kie.internal.runtime.manager.RuntimeEnvironment;
 import org.kie.internal.task.api.UserGroupCallback;
 
 /**
@@ -33,7 +33,7 @@ import org.kie.internal.task.api.UserGroupCallback;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public final class BPMRuntimeEnvironment implements RuntimeEnvironment {
+public final class BPMRuntimeEnvironment extends SimpleRuntimeEnvironment {
 
     private final KieBase _kieBase;
     private final Environment _environment;

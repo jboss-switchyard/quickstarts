@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<switchyard xmlns="urn:switchyard-config:switchyard:2.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="BPMModelTests" targetNamespace="urn:bpm:test:2.0">
+        <component name="DoStuffProcess">
+            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:2.0" persistent="true" processId="theProcessId">
+                <channels>
+                    <channel class="org.switchyard.component.bpm.config.model.BPMModelTests$TestChannel" name="theName" operation="theOperation" reference="theReference"/>
+                </channels>
+                <listeners>
+                    <listener class="org.drools.core.event.DebugProcessEventListener"/>
+                </listeners>
+                <loggers>
+                    <logger interval="2000" log="theLog" type="CONSOLE"/>
+                </loggers>
+                <manifest>
+                    <remoteRest deploymentId="groupId:artifactId:0.0.1" userName="kermit" password="the-frog-1" timeout="5" url="http://localhost:8080/kie-wb/" useFormBasedAuth="true">
+                        <extraJaxbClasses>
+                            <extraJaxbClass>java.lang.Object</extraJaxbClass>
+                            <extraJaxbClass>java.lang.String</extraJaxbClass>
+                        </extraJaxbClasses>
+                    </remoteRest>
+                </manifest>
+                <operations>
+                    <operation eventId="theEventId" name="process" type="SIGNAL_EVENT">
+                        <globals>
+                            <global from="context['foobar']" to="globalVar"/>
+                        </globals>
+                        <inputs>
+                            <input from="message.content.nested" to="inputVar"/>
+                        </inputs>
+                        <outputs>
+                            <output from="outputVar" to="message.content"/>
+                        </outputs>
+                        <faults>
+                            <fault from="faultVar" to="message.content"/>
+                        </faults>
+                    </operation>
+                </operations>
+                <properties>
+                    <property name="foo" value="bar"/>
+                </properties>
+                <userGroupCallback class="org.switchyard.component.bpm.config.model.BPMModelTests$TestUserGroupCallback">
+                    <properties>
+                        <property name="rab" value="oof"/>
+                    </properties>
+                </userGroupCallback>
+                <workItemHandlers>
+                    <workItemHandler class="org.switchyard.component.bpm.config.model.BPMModelTests$TestWorkItemHandler" name="MyWIH"/>
+                </workItemHandlers>
+            </implementation.bpm>
+            <service name="DoStuffProcess">
+                <interface.java interface="org.switchyard.component.bpm.config.model.DoStuffProcess"/>
+            </service>
+        </component>
+    </composite>
+</switchyard>

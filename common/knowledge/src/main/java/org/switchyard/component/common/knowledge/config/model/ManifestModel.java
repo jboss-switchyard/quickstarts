@@ -52,4 +52,17 @@ public interface ManifestModel extends Model {
      */
     public ManifestModel setResources(ResourcesModel resources);
 
+    /**
+     * Gets the child remote model.
+     * @return the child remote model
+     */
+    public RemoteModel getRemote();
+
+    /**
+     * Sets the child remote model.
+     * @param remote the child remote model
+     * @return this ManifestModel (useful for chaining)
+     */
+    public ManifestModel setRemote(RemoteModel remote);
+
 }
