@@ -7,6 +7,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.CoreOptions.vmOptions;
 import static org.ops4j.pax.exam.CoreOptions.when;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
@@ -160,6 +161,7 @@ public abstract class AbstractQuickstartTest {
                         "${karaf.home}/../test.log"),
                 features("mvn:org.switchyard.karaf/switchyard/2.0.0-SNAPSHOT/xml/features", featureName),
                 systemProperty(DeploymentProbe.BUNDLE_NAME_KEY).value(bundleName),
+                vmOptions("-Xmx1G", "-XX:MaxPermSize=256M"),
                 when(localMavenRepo.length() > 0).useOptions(systemProperty("org.ops4j.pax.url.mvn.localRepository").value(localMavenRepo)));
     }
     
