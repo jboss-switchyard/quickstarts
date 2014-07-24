@@ -16,14 +16,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
-        <artifactId>switchyard-quickstart-parent</artifactId>
+        <artifactId>switchyard-camel-soap-proxy-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>switchyard-camel-soap-proxy-parent</artifactId>
-    <packaging>pom</packaging>
-    <name>SwitchYard Quickstart: camel-soap-proxy parent</name>
-    <description>Quickstart : Camel SOAP Proxy Parent</description>
+    <artifactId>switchyard-camel-soap-proxy</artifactId>
+    <packaging>jar</packaging>
+    <name>SwitchYard Quickstart: camel-soap-proxy</name>
+    <description>Quickstart : Camel SOAP Proxy</description>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -36,11 +36,6 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
     </properties>
-    <modules>
-        <module>reverse</module>
-        <module>reverse-service</module>
-	<module>soap-proxy</module>
-    </modules>
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -54,6 +49,10 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel</artifactId>
+        </dependency>
+        <dependency> 
+            <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-camel-soap-proxy-reverse</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -72,21 +71,59 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-plugin</artifactId>
+                <configuration>
+                    <scannerClassNames>
+                        <param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>
+                    </scannerClassNames>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>configure</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.jboss.as.plugins</groupId>
                 <artifactId>jboss-as-maven-plugin</artifactId>
-                <inherited>false</inherited>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
+                <version>7.5.Final</version>
+                <executions>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                        <configuration>
+                            <filename>${project.build.finalName}.jar</filename>
+                            <skip>${deploy.skip}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>undeploy</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>undeploy</goal>
+                        </goals>
+                        <configuration>
+                            <filename>${project.build.finalName}.jar</filename>
+                            <skip>${deploy.skip}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>dummy</mainClass>
-                    <skip>true</skip>
+                    <mainClass>org.switchyard.quickstarts.camel.soap.proxy.CamelClient</mainClass>
+                    <skip>false</skip>
                 </configuration>
             </plugin>
         </plugins>
@@ -99,23 +136,4 @@
             </properties>
         </profile>
     </profiles>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.switchyard.quickstarts</groupId>
-                <artifactId>reverse</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.quickstarts</groupId>
-                <artifactId>reverse-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.quickstarts</groupId>
-                <artifactId>switchyard-camel-soap-proxy</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>

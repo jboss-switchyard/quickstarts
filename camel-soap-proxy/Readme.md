@@ -28,8 +28,9 @@ JBoss AS 7
 3. Using http://localhost:8080/proxy/ReverseService as the endpoint url, submit a request
    with your preferred SOAP client - src/test/resources/xml contains sample requests and
    the responses that you should see. Alternatively use the simple bundled SOAP client and
-   the sample request XML e.g.
+   the sample request XML found in the soap-proxy subdirectory e.g.
 
+        cd soap-proxy
         mvn exec:java
 
 Expected Output:
