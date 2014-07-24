@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
         <artifactId>switchyard-quickstart-parent</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.0.0.Alpha2</version>
     </parent>
     <artifactId>switchyard-rules-camel-cbr</artifactId>
     <packaging>bundle</packaging>
@@ -46,7 +46,7 @@
             osgi.extender; filter:="(osgi.extender=pax.cdi)"
         </switchyard.osgi.require.capability>
         <switchyard.osgi.provide.capability/>
-	<switchyard.osgi.dynamic>
+        <switchyard.osgi.dynamic>
             org.switchyard,org.switchyard.*
         </switchyard.osgi.dynamic>
     </properties>
