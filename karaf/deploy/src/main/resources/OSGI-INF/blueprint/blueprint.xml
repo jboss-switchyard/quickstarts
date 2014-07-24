@@ -38,4 +38,7 @@
     <bean id="SoapEndpointPublisher" class="org.switchyard.deploy.osgi.internal.soap.OsgiEndpointPublisher"/>
     <service interface="org.switchyard.component.soap.endpoint.EndpointPublisher" ref="SoapEndpointPublisher"/>
 
+    <bean id="OsgiSmooksProducer" class="org.switchyard.deploy.osgi.internal.smooks.OsgiSmooksProducer"/>
+    <service interface="org.switchyard.transform.smooks.internal.SmooksProducer" ref="OsgiSmooksProducer"/>
+
 </blueprint>

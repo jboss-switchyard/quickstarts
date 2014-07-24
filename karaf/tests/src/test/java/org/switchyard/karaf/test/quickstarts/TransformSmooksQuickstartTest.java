@@ -13,8 +13,11 @@
  */
 package org.switchyard.karaf.test.quickstarts;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Test;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
  * Smooks integration needs to be patched up.
@@ -28,4 +31,41 @@ public class TransformSmooksQuickstartTest extends AbstractQuickstartTest {
     public static void before() throws Exception {
         startTestContainer(featureName, bundleName);
     }
+
+    @Test
+    public void testGreeting() throws Exception {
+        HTTPMixIn soapMixIn = new HTTPMixIn();
+        soapMixIn.initialize();
+
+        try {
+            String url = "http://localhost:" + getSoapClientPort() + "/quickstart-transform-smooks/OrderService";
+            soapMixIn.postStringAndTestXML(url, SOAP_REQUEST, SOAP_RESPONSE);
+        } finally {
+            soapMixIn.uninitialize();
+        }
+    }
+
+    private static final String SOAP_REQUEST = 
+"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+"   <soapenv:Header/>" +
+"   <soapenv:Body>" +
+"      <orders:order xmlns:orders=\"urn:switchyard-quickstart:transform-smooks:1.0\">" +
+"         <orderId>PO-19838-XYZ</orderId>" +
+"         <itemId>BUTTER</itemId>" +
+"         <quantity>200</quantity>" +
+"      </orders:order>" +
+"   </soapenv:Body>" +
+"</soapenv:Envelope>";
+
+    private static final String SOAP_RESPONSE =
+"<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+"   <SOAP-ENV:Header/>" +
+"   <SOAP-ENV:Body>" +
+"      <orders:orderAck xmlns:orders=\"urn:switchyard-quickstart:transform-smooks:1.0\">" +
+"         <orderId>PO-19838-XYZ</orderId>" +
+"         <accepted>true</accepted>" +
+"         <status>Order Accepted</status>" +
+"      </orders:orderAck>" +
+"   </SOAP-ENV:Body>" +
+"</SOAP-ENV:Envelope>";
 }
