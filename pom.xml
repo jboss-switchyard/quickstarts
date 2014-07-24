@@ -21,7 +21,7 @@
     </parent>
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0.Alpha2</version>
     <packaging>pom</packaging>
     <name>SwitchYard</name>
     <description>The parent for SwitchYard modules</description>
@@ -53,11 +53,9 @@
           resources, i.e. build is platform dependent! -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.org.apache.camel>2.12.2</version.org.apache.camel>
-
         <version.jbossas.bom>7.4.0.Final-redhat-11</version.jbossas.bom>
         <version.redhat.eap6.bom>1.0.4.Final-redhat-1</version.redhat.eap6.bom>
         <version.ip.bom>6.0.0.CR9</version.ip.bom>
-        
         <!-- Versions for local dependencies not eligible for the Integration BOM -->
         <version.activity.monitor.model>1.2.2.Final</version.activity.monitor.model>
         <version.camelsap>1.0.0.redhat-379</version.camelsap>
@@ -109,7 +107,6 @@
         <version.redhat.eap6.minor>0.Beta1</version.redhat.eap6.minor>
         <version.jboss.jts>4.17.19.Final-redhat-1</version.jboss.jts>
         <version.cxf>2.7.10</version.cxf>
-        
         <!-- OSGi bundles properties -->
         <switchyard.osgi.import.switchyard.version>version="[$(version;==;${switchyard.osgi.version}),$(version;=+;${switchyard.osgi.version}))"</switchyard.osgi.import.switchyard.version>
         <switchyard.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</switchyard.osgi.import.default.version>
@@ -922,9 +919,9 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-mqtt</artifactId>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-mqtt</artifactId>
                 <version>${version.org.apache.camel}</version>
                 <exclusions>
                     <exclusion>
@@ -932,7 +929,7 @@
                         <artifactId>jaxb-impl</artifactId>
                     </exclusion>
                 </exclusions>
-        </dependency>
+            </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-jpa</artifactId>
@@ -1842,6 +1839,13 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.switchyard.karaf</groupId>
+                <artifactId>switchyard</artifactId>
+                <type>xml</type>
+                <classifier>features</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-deploy-webapp</artifactId>
                 <version>${project.version}</version>
@@ -2403,11 +2407,6 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.quickstarts.demos</groupId>
-                <artifactId>switchyard-demo-policy-security-basic-propagate</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.switchyard.quickstarts.demos</groupId>
                 <artifactId>switchyard-demo-policy-security-cert</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2429,6 +2428,11 @@
             <dependency>
                 <groupId>org.switchyard.quickstarts.demos</groupId>
                 <artifactId>switchyard-demo-policy-transaction</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts.demos</groupId>
+                <artifactId>switchyard-demo-security-propagation-basic</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
