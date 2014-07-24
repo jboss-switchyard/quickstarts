@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.switchyard.components</groupId>
         <artifactId>switchyard-components-parent</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.0.0.Alpha2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-component-sca</artifactId>
@@ -76,29 +76,29 @@
         </dependency>
     </dependencies>
     <build>
-       <plugins>
-	      <plugin>
-	          <groupId>org.codehaus.mojo</groupId>
-		      <artifactId>build-helper-maven-plugin</artifactId>
-		      <executions>
-                 <execution>
-                    <id>attach-artifacts</id>
-                    <phase>package</phase>
-                    <goals>
-                       <goal>attach-artifact</goal>
-                    </goals>
-                    <configuration>
-                       <artifacts>
-                          <artifact>
-                             <file>target/classes/sca.properties</file>
-                             <type>properties</type>
-                             <classifier>sca</classifier>
-                          </artifact>
-                       </artifacts>
-                    </configuration>
-                 </execution>
-              </executions>
-           </plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>target/classes/sca.properties</file>
+                                    <type>properties</type>
+                                    <classifier>sca</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
