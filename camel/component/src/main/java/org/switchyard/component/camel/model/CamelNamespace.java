@@ -32,7 +32,7 @@ public enum CamelNamespace implements Namespace {
     /** The default namespace. */
     DEFAULT(null);
 
-    private final Util _util;
+    private final transient Util _util;
 
     /**
      * Constructs a new CamelNamespace with the specified version.

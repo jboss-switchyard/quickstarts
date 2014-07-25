@@ -118,7 +118,7 @@ public class SwitchYardConsumer extends DefaultConsumer implements ServiceHandle
                 switchyardExchange.sendFault(msg);
             } else {
                 String faultMessage = (camelFault == null) ? null : camelFault.toString();
-                throw SwitchYardCamelComponentMessages.MESSAGES.camelExchangeFailedWithoutException(camelFault.toString());
+                throw SwitchYardCamelComponentMessages.MESSAGES.camelExchangeFailedWithoutException(faultMessage);
             }
         } else if (isInOut(switchyardExchange)) {
             sendResponse(camelExchange, switchyardExchange);
