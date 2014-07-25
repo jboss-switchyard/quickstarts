@@ -133,6 +133,11 @@
        <Bug pattern="SE_BAD_FIELD"/>
      </Match>
 
+     <Match>
+       <Class name="org.switchyard.component.soap.composer.SOAPFaultInfo"/>
+       <Bug pattern="SE_BAD_FIELD"/> 
+     </Match>
+
      <!-- In this instance, findbugs is just plain wrong.   It complains that
           Exception is not thrown within the try/catch, but it is clearly thrown
           by MessageComposer.compose().  --> 
