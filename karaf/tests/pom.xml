@@ -162,7 +162,6 @@
                                 <feature version="${project.version}">switchyard-bpel</feature>
                                 <feature version="${project.version}">switchyard-bean</feature>
                                 <feature version="${project.version}">switchyard-bpm</feature>
-                                <feature version="${project.version}">switchyard-common-camel</feature>
                                 <feature version="${project.version}">switchyard-cdi</feature>
                                 <feature version="${project.version}">switchyard-camel</feature>
                                 <feature version="${project.version}">switchyard-file</feature>

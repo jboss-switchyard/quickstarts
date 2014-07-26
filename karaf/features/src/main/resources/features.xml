@@ -1,22 +1,34 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <features name="switchyard-${project.version}">
 
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${version.org.apache.camel}/xml/features</repository>
     <repository>mvn:org.ops4j.pax.cdi/pax-cdi-features/${version.org.ops4j.pax.cdi}/xml/features</repository>
-    <repository>mvn:org.apache.cxf.karaf/apache-cxf/${version.org.apache.cxf}/xml/features</repository>
     <repository>mvn:org.drools/drools-karaf-features/${version.org.drools}/xml/features</repository>
-    <repository>mvn:org.apache.activemq/activemq-karaf/${version.org.apache.activemq}/xml/features</repository>
     <repository>mvn:org.milyn/milyn-smooks-all/${version.org.milyn}/xml/features</repository>
 
     <!-- Switchyard Core -->
 
     <feature name="switchyard" version="${project.version}" resolver="(obr)">
         <feature>eventadmin</feature>
-        <feature version="${version.org.apache.camel}">camel-core</feature>
         <feature>http</feature>
-        <feature>switchyard-common-camel</feature>
+        <feature version="${version.org.apache.camel.features}">camel-core</feature>
+        <feature version="${version.org.apache.camel.features}">camel-spring</feature>
+        <feature>switchyard-internal-core</feature>
+        <feature>switchyard-internal-sca</feature>
+        <feature>switchyard-internal-http</feature>
+        <feature>switchyard-internal-rest</feature>
+        <feature>switchyard-internal-soap</feature>
+        <bundle>mvn:org.switchyard.karaf/switchyard-karaf-deploy/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.karaf/switchyard-karaf-commands/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-internal-core" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-cdi</feature>
         <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/1.2_5</bundle>
+        <bundle>mvn:org.jboss.logging/jboss-logging/${version.org.jboss.logging}</bundle>
+        <bundle>mvn:org.switchyard/switchyard-api/${project.version}</bundle>
         <bundle>mvn:org.switchyard/switchyard-common/${project.version}</bundle>
+        <bundle>mvn:org.switchyard/switchyard-common-camel/${project.version}</bundle>
+        <bundle>mvn:org.switchyard/switchyard-common-cdi/${project.version}</bundle>
         <bundle>mvn:org.switchyard/switchyard-security/${project.version}</bundle>
         <bundle>mvn:org.switchyard/switchyard-security-karaf/${project.version}</bundle>
         <bundle>mvn:org.switchyard/switchyard-config/${project.version}</bundle>
@@ -29,16 +41,10 @@
         <bundle>mvn:org.switchyard/switchyard-validate/${project.version}</bundle>
         <bundle>mvn:org.switchyard/switchyard-admin/${project.version}</bundle>
         <bundle>mvn:org.switchyard/switchyard-deploy/${project.version}</bundle>
-        <bundle>mvn:org.switchyard.karaf/switchyard-karaf-deploy/${project.version}</bundle>
-        <bundle>mvn:org.switchyard.karaf/switchyard-karaf-commands/${project.version}</bundle>
         <bundle>mvn:org.codehaus.jackson/jackson-core-asl/${version.org.codehaus.jackson}</bundle>
         <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/${version.org.codehaus.jackson}</bundle>
         <feature dependency="true" version="${version.net.sf.dozer}">dozer</feature>
         <feature dependency="true" version="${version.org.milyn}">smooks</feature>
-        <feature>switchyard-sca</feature>
-        <feature>switchyard-http</feature>
-        <feature>switchyard-rest</feature>
-        <feature>switchyard-soap</feature>
         <bundle>mvn:org.switchyard/switchyard-transform/${project.version}</bundle>
     </feature>
 
@@ -79,19 +85,18 @@
 
     <feature name="switchyard-amqp" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-jms</feature>
-        <feature version="${version.org.apache.camel}">camel-amqp</feature>
+        <feature version="${version.org.apache.camel.features}">camel-amqp</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-amqp/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-atom" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.org.apache.camel}">camel-atom</feature>
+        <feature version="${version.org.apache.camel.features}">camel-atom</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-atom/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-bean" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard</feature>
-        <feature version="${project.version}">switchyard-cdi</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-bean/${project.version}</bundle>
     </feature>
@@ -108,7 +113,7 @@
         <bundle start-level="50">mvn:com.h2database/h2/${version.com.h2database}</bundle>
 
         <!-- spring dependencies -->
-        <feature version="${version.org.apache.camel}">camel-spring</feature>
+        <feature version="${version.org.apache.camel.features}">camel-spring</feature>
         <!-- transactions support -->
         <bundle dependency="true">wrap:mvn:org.jboss.jbossts.jts/jbossjts-jacorb/${version.org.jboss.jbossts.jbossxts}</bundle>
         <bundle dependency="true">wrap:mvn:org.jboss.jbossts.xts/jbossxts/${version.org.jboss.jbossts.jbossxts}</bundle>
@@ -142,40 +147,25 @@
         <bundle>mvn:org.hibernate/hibernate-osgi/${version.org.hibernate}</bundle>
     </feature>
 
-    <feature name="switchyard-common-camel" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">switchyard-cdi</feature>
-        <feature version="${version.org.apache.camel}">camel-spring</feature>
-        <bundle>mvn:org.switchyard/switchyard-api/${project.version}</bundle>
-        <bundle>mvn:org.jboss.logging/jboss-logging/${version.org.jboss.logging}</bundle>
-        <bundle>mvn:org.switchyard/switchyard-common-camel/${project.version}</bundle>
-    </feature>
-    
-    <feature name="switchyard-common-knowledge" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">switchyard</feature>
-        <feature version="${version.org.drools}">kie</feature>
-        <bundle>mvn:org.switchyard/switchyard-common/${project.version}</bundle>
-        <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
-        <bundle>mvn:org.switchyard.components/switchyard-component-common-knowledge/${project.version}</bundle>
-    </feature>
-
     <feature name="switchyard-cdi" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bean-xbean-hack</feature>
         <feature version="${version.org.ops4j.pax.cdi}">pax-cdi-weld</feature>
         <bundle dependency="true">mvn:org.apache.deltaspike.core/deltaspike-core-api/${version.org.apache.deltaspike.core}</bundle>
         <bundle>mvn:org.apache.camel/camel-cdi/${version.org.apache.camel}</bundle>
-        <bundle>mvn:org.switchyard/switchyard-common-cdi/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-bpm" version="${project.version}" resolver="(obr)">
         <feature>jndi</feature>
         <feature>transaction</feature>
         <feature>jpa</feature>
-        <feature version="${project.version}">switchyard-common-knowledge</feature>
         <feature version="${version.org.drools}">jbpm</feature>
         <bundle>wrap:mvn:org.jbpm/jbpm-executor/${version.org.drools}$DynamicImport-Package=org.hibernate.*,javassist.*</bundle>
         <bundle>mvn:org.jbpm/jbpm-human-task-audit/${version.org.drools}</bundle>
         <bundle>wrap:mvn:org.jbpm/jbpm-kie-services/${version.org.drools}</bundle>
         <bundle>wrap:mvn:org.jbpm/jbpm-workitems/${version.org.drools}</bundle>
+        <bundle>mvn:org.switchyard/switchyard-common/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.components/switchyard-component-common-knowledge/${project.version}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-bpm/${project.version}</bundle>
     </feature>
 
@@ -195,11 +185,15 @@
 
     <feature name="switchyard-ftp" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.org.apache.camel}">camel-ftp</feature>
+        <feature version="${version.org.apache.camel.features}">camel-ftp</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-ftp/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-http" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard</feature>
+    </feature>
+
+    <feature name="switchyard-internal-http" version="${project.version}" resolver="(obr)">
         <feature version="[7,9)">jetty</feature>
         <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/4.2.4</bundle>
         <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/4.2.5</bundle>
@@ -208,51 +202,55 @@
 
     <feature name="switchyard-jms" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.org.apache.camel}">camel-jms</feature>
+        <feature version="${version.org.apache.camel.features}">camel-jms</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-jms/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-jpa" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.org.apache.camel}">camel-jpa</feature>
+        <feature version="${version.org.apache.camel.features}">camel-jpa</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-jpa/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-mail" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.org.apache.camel}">camel-mail</feature>
+        <feature version="${version.org.apache.camel.features}">camel-mail</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-mail/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-mqtt" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.org.apache.camel}">camel-mqtt</feature>
+        <feature version="${version.org.apache.camel.features}">camel-mqtt</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-mqtt/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-netty" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.org.apache.camel}">camel-netty</feature>
+        <feature version="${version.org.apache.camel.features}">camel-netty</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-netty/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-quartz" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.org.apache.camel}">camel-quartz</feature>
+        <feature version="${version.org.apache.camel.features}">camel-quartz</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-quartz/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-rss" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.org.apache.camel}">camel-rss</feature>
+        <feature version="${version.org.apache.camel.features}">camel-rss</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-atom/${project.version}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-rss/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-rest" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard</feature>
+     </feature>
+
+    <feature name="switchyard-internal-rest" version="${project.version}" resolver="(obr)">
         <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/1.9.0</bundle>
         <bundle dependency='true'>wrap:mvn:org.jboss.resteasy/resteasy-jaxrs/${version.org.jboss.resteasy}</bundle>
-        <bundle dependency='true'>wrap:mvn:org.jboss.resteasy/resteasy-jaxb-provider/${version.org.jboss.resteasy}</bundle>
+        <bundle>wrap:mvn:org.jboss.resteasy/resteasy-jaxb-provider/${version.org.jboss.resteasy}</bundle>
         <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/4.2.4</bundle>
         <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/4.2.5</bundle>
         <bundle dependency='true'>mvn:commons-io/commons-io/2.1</bundle>
@@ -262,15 +260,21 @@
      </feature>
 
     <feature name="switchyard-rules" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">switchyard-common-knowledge</feature>
+        <feature version="${project.version}">switchyard</feature>
         <feature version="${version.org.drools}">drools-common</feature>
         <feature version="${version.org.drools}">drools-module</feature>
         <feature version="${version.org.drools}">drools-decisiontable</feature>
         <feature version="${version.org.drools}">drools-jpa</feature>
+        <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.components/switchyard-component-common-knowledge/${project.version}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-rules/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-sca" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard</feature>
+    </feature>
+
+    <feature name="switchyard-internal-sca" version="${project.version}" resolver="(obr)">
         <bundle dependency="true">wrap:mvn:org.jboss.marshalling/jboss-marshalling/${version.org.jboss.marshalling}</bundle>
         <bundle dependency="true">wrap:mvn:org.jboss.marshalling/jboss-marshalling-river/${version.org.jboss.marshalling}</bundle>
         <bundle>mvn:org.jboss.marshalling/jboss-marshalling-osgi/1.4.5.Final</bundle>
@@ -289,18 +293,20 @@
 
     <feature name="switchyard-sql" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.org.apache.camel}">camel-sql</feature>
+        <feature version="${version.org.apache.camel.features}">camel-sql</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-sql/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-soap" version="${project.version}" resolver="(obr)">
-        <feature version="${version.org.apache.cxf}">cxf-jaxws</feature>
-        <feature version="${version.org.apache.cxf}">cxf-http</feature>
-        <feature version="${version.org.apache.cxf}">cxf-ws-addr</feature>
-        <feature version="${version.org.apache.cxf}">cxf-specs</feature>
-        <feature version="[7,9)">jetty</feature>
-        <!-- the cxf-http-jetty feature is a bit broken and can install a different version of cxf-rt-transports-http-jetty -->
-        <bundle>mvn:org.apache.cxf/cxf-rt-transports-http-jetty/${version.org.apache.cxf}</bundle>
+        <feature version="${project.version}">switchyard</feature>
+    </feature>
+
+    <feature name="switchyard-internal-soap" version="${project.version}" resolver="(obr)">
+        <feature version="${version.org.apache.cxf.features}">cxf-jaxws</feature>
+        <feature version="${version.org.apache.cxf.features}">cxf-http</feature>
+        <feature version="${version.org.apache.cxf.features}">cxf-ws-addr</feature>
+        <feature version="${version.org.apache.cxf.features}">cxf-specs</feature>
+        <feature version="${version.org.apache.cxf.features}">cxf-http-jetty</feature>
         <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.wsdl4j/1.6.2_6</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saaj-impl/${version.org.apache.servicemix.bundles.saaj-impl}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
@@ -318,7 +324,7 @@
     <feature name="switchyard-quickstart-bpel-jms-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bpel</feature>
         <feature version="${project.version}">switchyard-jms</feature>
-        <feature version="${version.org.apache.activemq}">activemq-broker</feature>
+        <feature version="${version.org.apache.activemq.features}">activemq-broker-noweb</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-bpel-jms-binding/${project.version}</bundle>
     </feature>
     
@@ -374,7 +380,7 @@
     <feature name="switchyard-quickstart-camel-bindy" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-file</feature>
-        <feature version="${version.org.apache.camel}">camel-bindy</feature>
+        <feature version="${version.org.apache.camel.features}">camel-bindy</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-bindy/${project.version}</bundle>
     </feature>
 
@@ -393,22 +399,22 @@
     <feature name="switchyard-quickstart-camel-hl7" version="${project.version}" resolver="(obr)">
     <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.org.apache.camel}">camel-hl7</feature>
-        <feature version="${version.org.apache.camel}">camel-mina2</feature>
+        <feature version="${version.org.apache.camel.features}">camel-hl7</feature>
+        <feature version="${version.org.apache.camel.features}">camel-mina2</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-hl7/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-quickstart-camel-jaxb" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
         <feature version="${project.version}">switchyard-http</feature>
-        <feature version="${version.org.apache.camel}">camel-jaxb</feature>
+        <feature version="${version.org.apache.camel.features}">camel-jaxb</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-jaxb/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-quickstart-camel-jms-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-jms</feature>
-        <feature version="${version.org.apache.activemq}">activemq-broker</feature>
+        <feature version="${version.org.apache.activemq.features}">activemq-broker-noweb</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-jms-binding/${project.version}</bundle>
     </feature>
 
@@ -440,7 +446,7 @@
     <feature name="switchyard-quickstart-camel-mqtt-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-mqtt</feature>
-        <feature version="${version.org.apache.activemq}">activemq-broker</feature>
+        <feature version="${version.org.apache.activemq.features}">activemq-broker-noweb</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-mqtt-binding/${project.version}</bundle>
     </feature>
 
@@ -464,10 +470,10 @@
 
     <feature name="switchyard-quickstart-camel-service" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
-        <feature version="${version.org.apache.camel}">camel-script</feature>
-        <feature version="${version.org.apache.camel}">camel-script-javascript</feature>
-        <feature version="${version.org.apache.camel}">camel-ognl</feature>
-        <feature version="${version.org.apache.camel}">camel-mvel</feature>
+        <feature version="${version.org.apache.camel.features}">camel-script</feature>
+        <feature version="${version.org.apache.camel.features}">camel-script-javascript</feature>
+        <feature version="${version.org.apache.camel.features}">camel-ognl</feature>
+        <feature version="${version.org.apache.camel.features}">camel-mvel</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-service/${project.version}</bundle>
     </feature>
     
@@ -494,7 +500,7 @@
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-camel</feature>
         <feature version="${project.version}">switchyard-soap</feature>
-        <feature version="${version.org.apache.camel}">camel-saxon</feature>
+        <feature version="${version.org.apache.camel.features}">camel-saxon</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-saxon/${project.version}</bundle>
     </feature>
 
@@ -663,7 +669,7 @@
         </config>
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-jms</feature>
-        <feature version="${version.org.apache.activemq}">activemq-broker</feature>
+        <feature version="${version.org.apache.activemq.features}">activemq-broker-noweb</feature>
         <bundle>mvn:org.switchyard.quickstarts.demos/switchyard-demo-policy-transaction/${project.version}</bundle>
     </feature>
 

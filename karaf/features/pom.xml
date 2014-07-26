@@ -28,12 +28,15 @@
     <properties>
         <version.org.ops4j.pax.cdi>0.4.0</version.org.ops4j.pax.cdi>
         <version.org.apache.activemq>5.9.0</version.org.apache.activemq>
+        <version.org.apache.activemq.features>[5.9,6.0)</version.org.apache.activemq.features>
         <version.commons-beanutils>1.8.3</version.commons-beanutils>
         <version.org.apache.xbean>3.12</version.org.apache.xbean>
         <version.org.jboss.logging>3.1.2.GA</version.org.jboss.logging>
         <version.org.apache.deltaspike.core>0.4</version.org.apache.deltaspike.core>
         <version.org.apache.geronimo.specs.servlet>1.0</version.org.apache.geronimo.specs.servlet>
         <version.org.apache.servicemix.bundles.saaj-impl>1.3.9_2</version.org.apache.servicemix.bundles.saaj-impl>
+        <version.org.apache.camel.features>[2.12,2.13)</version.org.apache.camel.features>
+        <version.org.apache.cxf.features>[2.7,3)</version.org.apache.cxf.features>
     </properties>
     <build>
         <resources>
@@ -69,9 +72,14 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>target/classes/features.xml</file>
+                                    <file>target/classes/features-karaf.xml</file>
                                     <type>xml</type>
                                     <classifier>features</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>target/classes/features.xml</file>
+                                    <type>xml</type>
+                                    <classifier>core-features</classifier>
                                 </artifact>
                             </artifacts>
                         </configuration>
