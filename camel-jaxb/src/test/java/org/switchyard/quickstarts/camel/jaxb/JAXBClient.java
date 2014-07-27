@@ -26,8 +26,6 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 public class JAXBClient {
 
-    private static final String BASE_URL = "http://localhost:8080/camel-binding";
-
     public static void main(String[] args) throws Exception {
         System.out.print("Give name for greeting: ");
 
@@ -38,7 +36,8 @@ public class JAXBClient {
 
         String request = JAXBUtil.marshal(new GreetingRequest(reader.readLine()));
         System.out.println("Sending request\n" + request);
-        String reply = http.sendString(BASE_URL, request, HTTPMixIn.HTTP_POST);
+        String port = System.getProperty("org.switchyard.component.http.client.port", "8080");
+        String reply = http.sendString("http://localhost:" + port + "/camel-binding", request, HTTPMixIn.HTTP_POST);
         System.out.println("Received response\n" + reply);
     }
 

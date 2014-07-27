@@ -25,7 +25,6 @@ import org.switchyard.remote.http.HttpInvoker;
 public final class RulesCamelCBRClient {
 
     private static final QName SERVICE = new QName( "urn:switchyard-quickstart:rules-camel-cbr:0.1.0", "RoutingService");
-    private static final String URL = "http://localhost:8080/switchyard-remote";
 
     /**
      * Private no-args constructor.
@@ -40,7 +39,8 @@ public final class RulesCamelCBRClient {
      */
     public static void main(final String[] ignored) throws Exception {
         // Create a new remote client invoker
-        RemoteInvoker invoker = new HttpInvoker(URL);
+        String port = System.getProperty("org.switchyard.component.sca.client.port", "8080");
+        RemoteInvoker invoker = new HttpInvoker("http://localhost:" + port + "/switchyard-remote");
 
         // Create request payload
         Box box = new Box(new Widget("FF0000-ABC-123"));

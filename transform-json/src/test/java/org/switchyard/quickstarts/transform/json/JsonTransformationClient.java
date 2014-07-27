@@ -26,7 +26,6 @@ import org.switchyard.remote.http.HttpInvoker;
 public final class JsonTransformationClient {
 
     private static final QName SERVICE = new QName( "urn:switchyard-quickstart:transform-json:0.1.0", "OrderService");
-    private static final String URL = "http://localhost:8080/switchyard-remote";
 
     /**
      * Private no-args constructor.
@@ -41,7 +40,8 @@ public final class JsonTransformationClient {
      */
     public static void main(final String[] ignored) throws Exception {
         // Create a new remote client invoker
-        RemoteInvoker invoker = new HttpInvoker(URL);
+        String port = System.getProperty("org.switchyard.component.sca.client.port", "8080");
+        RemoteInvoker invoker = new HttpInvoker("http://localhost:" + port + "/switchyard-remote");
 
         // Create request payload
         Order order = new Order();

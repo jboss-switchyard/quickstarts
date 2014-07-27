@@ -25,7 +25,6 @@ import org.switchyard.remote.http.HttpInvoker;
 public final class CamelServiceClient {
 
     private static final QName SERVICE = new QName( "urn:switchyard-quickstart:camel-service:0.1.0", "JavaDSL");
-    private static final String URL = "http://localhost:8080/switchyard-remote";
 
     private static final String TEST_MESSAGE = "\n"
     	      + "bob: Hello there!\n"
@@ -49,7 +48,8 @@ public final class CamelServiceClient {
      */
     public static void main(final String[] ignored) throws Exception {
         // Create a new remote client invoker
-        RemoteInvoker invoker = new HttpInvoker(URL);
+        String port = System.getProperty("org.switchyard.component.sca.client.port", "8080");
+        RemoteInvoker invoker = new HttpInvoker("http://localhost:" + port + "/switchyard-remote");
 
         // Create the request message
         RemoteMessage message = new RemoteMessage();
