@@ -15,11 +15,15 @@
 package org.switchyard.as7.extension.ws;
 
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Map;
 import java.util.ServiceLoader;
 
 import javax.xml.ws.WebServiceException;
 
+import org.jboss.as.security.plugins.SecurityDomainContext;
+import org.jboss.as.webservices.security.SecurityDomainContextAdaptor;
 import org.jboss.logging.Logger;
 import org.jboss.wsf.spi.classloading.ClassLoaderProvider;
 import org.jboss.wsf.spi.metadata.webservices.JBossWebservicesFactory;
@@ -28,6 +32,7 @@ import org.jboss.wsf.spi.metadata.webservices.WebservicesMetaData;
 import org.jboss.wsf.spi.publish.Context;
 import org.jboss.wsf.spi.publish.EndpointPublisher;
 import org.jboss.wsf.spi.publish.EndpointPublisherFactory;
+import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.soap.InboundHandler;
@@ -71,7 +76,7 @@ public class JBossWSEndpoint implements Endpoint {
     /**
      * {@inheritDoc}
      */
-    public void publish(String contextRoot, Map<String, String> urlPatternToClassNameMap, WebservicesMetaData wsMetadata, SOAPBindingModel bindingModel, InboundHandler handler) throws Exception {
+    public void publish(ServiceDomain domain, String contextRoot, Map<String, String> urlPatternToClassNameMap, WebservicesMetaData wsMetadata, SOAPBindingModel bindingModel, InboundHandler handler) throws Exception {
         EndpointConfigModel epcModel = bindingModel.getEndpointConfig();
         JBossWebservicesMetaData jbwsMetadata = null;
         if (epcModel != null) {
@@ -99,6 +104,10 @@ public class JBossWSEndpoint implements Endpoint {
             wsProvider.setConsumer(handler);
             // Hook the interceptors
             Interceptors.addInterceptors(ep, bindingModel, tccl);
+            // Set the security domain
+            ep.setSecurityDomainContext(new SwitchYardSecurityDomainContext(
+                            domain.getServiceSecurity(bindingModel.getService().getComponentService().getSecurity()).getSecurityDomain(),
+                            ep.getSecurityDomainContext()));
         }
     }
 

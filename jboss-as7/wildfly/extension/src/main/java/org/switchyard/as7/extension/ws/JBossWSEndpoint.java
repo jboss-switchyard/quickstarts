@@ -20,6 +20,8 @@ import java.util.ServiceLoader;
 
 import javax.xml.ws.WebServiceException;
 
+import org.jboss.as.security.plugins.SecurityDomainContext;
+import org.jboss.as.webservices.security.SecurityDomainContextAdaptor;
 import org.jboss.logging.Logger;
 import org.jboss.as.web.host.ServletBuilder;
 import org.jboss.as.web.host.WebDeploymentBuilder;
@@ -115,6 +117,10 @@ public class JBossWSEndpoint implements Endpoint {
             wsProvider.setConsumer(handler);
             // Hook the interceptors
             Interceptors.addInterceptors(ep, bindingModel, tccl);
+            // Set the security domain
+            ep.setSecurityDomainContext(new SwitchYardSecurityDomainContext(
+                            domain.getServiceSecurity(bindingModel.getService().getComponentService().getSecurity()).getSecurityDomain(),
+                            ep.getSecurityDomainContext()));
         }
         WebResource resource = SwitchYardDeployment.getResource(domain, contextRoot);
         if (resource == null) {

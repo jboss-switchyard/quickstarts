@@ -83,9 +83,9 @@ public class JBossWSEndpointPublisher extends AbstractEndpointPublisher {
 
             wsEndpoint = new JBossWSEndpoint();
             if (config.getContextPath() != null) {
-                wsEndpoint.publish(getContextRoot(), map, wsMetadata, config, handler);
+                wsEndpoint.publish(domain, getContextRoot(), map, wsMetadata, config, handler);
             } else {
-                wsEndpoint.publish(getContextPath(), map, wsMetadata, config, handler);
+                wsEndpoint.publish(domain, getContextPath(), map, wsMetadata, config, handler);
             }
         } catch (Exception e) {
             throw new WebServicePublishException(e);
