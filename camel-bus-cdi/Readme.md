@@ -13,7 +13,7 @@ JBoss AS 7
 
 2. Build and deploy the quickstart
 
-        mvn install -Pdeploy
+        mvn -Dmaven.test.skip=true install -Pdeploy
 
 3. Submit two webservice requests to invoke the SOAP gateway.  There are a number of ways to do this :
     - Submit the requests with your preferred SOAP client - src/test/resources/xml contains 
@@ -21,7 +21,6 @@ JBoss AS 7
     - Use the simple bundled SOAP client and the sample request XML e.g.
 <br/>
 ```
-            mvn exec:java
             mvn exec:java
 ```
 <br/>
