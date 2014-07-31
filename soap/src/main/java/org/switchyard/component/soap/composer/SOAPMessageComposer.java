@@ -27,8 +27,6 @@ import javax.wsdl.Operation;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.Detail;
-import javax.xml.soap.DetailEntry;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
@@ -96,20 +94,9 @@ public class SOAPMessageComposer extends BaseMessageComposer<SOAPBindingData> {
             if (soapBody.hasFault()) {
                 // peel off the Fault element
                 SOAPFault fault = soapBody.getFault();
-                if (fault.hasDetail()) {
-                    Detail detail = fault.getDetail();
-                    // We only support one entry at this moment
-                    DetailEntry entry = null;
-                    Iterator<DetailEntry> entries = detail.getDetailEntries();
-                    if (entries.hasNext()) {
-                        entry = entries.next();
-                    }
-                    if (entry != null) {
-                        Node detailNode = entry.getParentNode().removeChild(entry);
-                        message.setContent(detailNode);
-                        return message;
-                    }
-                }
+                Node faultNode = fault.getParentNode().removeChild(fault);
+                message.setContent(faultNode);
+                return message;
             }
 
             List<Element> bodyChildren = getChildElements(soapBody);
