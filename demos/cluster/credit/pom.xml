@@ -134,7 +134,7 @@
                         <id>deploy</id>
                         <phase>install</phase>
                         <goals>
-                            <goal>deploy</goal>
+                            <goal>deploy-only</goal>
                         </goals>
                         <configuration>
                             <port>10999</port>
@@ -146,7 +146,7 @@
                         <id>deploy2</id>
                         <phase>install</phase>
                         <goals>
-                            <goal>deploy</goal>
+                            <goal>deploy-only</goal>
                         </goals>
                         <configuration>
                             <port>11999</port>

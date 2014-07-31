@@ -22,6 +22,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
@@ -50,6 +51,11 @@ public class ServiceTransformationTest {
     // Paths to XML test files
     final String ORDER_XML = "/xml/order.xml";
     final String ORDER_ACK_XML = "/xml/orderAck.xml";
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.soap.standalone.port", "18001");
+    }
 
     @Test
     public void testTransformXMLtoJava() throws Exception {

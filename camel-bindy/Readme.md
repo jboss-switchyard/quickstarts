@@ -24,7 +24,7 @@ JBoss AS 7
 3. 
 <br/>
 ```
-           Copy src/main/resources/file.txt to /tmp/inbox/file.txt  
+           Copy src/test/resources/file.txt to /tmp/inbox/file.txt  
 ```
 <br/>
 * (If on Windows, change the file binding in switchyard.xml to a Windows directory path)

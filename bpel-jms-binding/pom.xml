@@ -82,7 +82,7 @@
                         <id>deploy</id>
                         <phase>install</phase>
                         <goals>
-                            <goal>deploy</goal>
+                            <goal>deploy-only</goal>
                         </goals>
                         <configuration>
                             <beforeDeployment>
@@ -90,6 +90,7 @@
                                     <script>config.cli</script>
                                 </scripts>
                             </beforeDeployment>
+                            <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
@@ -105,6 +106,7 @@
                                     <script>unconfig.cli</script>
                                 </scripts>
                             </afterDeployment>
+                            <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
