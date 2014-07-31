@@ -136,9 +136,10 @@
                         <id>deploy</id>
                         <phase>install</phase>
                         <goals>
-                            <goal>deploy</goal>
+                            <goal>deploy-only</goal>
                         </goals>
                         <configuration>
+                            <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
@@ -149,6 +150,7 @@
                             <goal>undeploy</goal>
                         </goals>
                         <configuration>
+                            <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>

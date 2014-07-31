@@ -89,7 +89,7 @@
                         <id>deploy</id>
                         <phase>install</phase>
                         <goals>
-                            <goal>deploy</goal>
+                            <goal>deploy-only</goal>
                         </goals>
                         <configuration>
                             <skip>${deploy.skip}</skip>

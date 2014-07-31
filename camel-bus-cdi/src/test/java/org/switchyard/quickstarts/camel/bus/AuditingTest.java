@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Message;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
@@ -37,6 +38,11 @@ public class AuditingTest {
 
     @ServiceOperation("OrderService.submitOrder")
     private Invoker invoker;
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "18001");
+    }
 
     @Test
     public void testCamelRoute() {
