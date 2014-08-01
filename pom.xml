@@ -69,7 +69,7 @@
         <version.io.netty>3.8.0.Final</version.io.netty>
         <version.jbossas>7.4.0.Final-redhat-11</version.jbossas>
         <version.jbossas.console>1.5.4.Final</version.jbossas.console>
-        <version.jbossas.maven>7.4.Final</version.jbossas.maven>
+        <version.jbossas.maven>7.5.Final</version.jbossas.maven>
         <version.karaf>2.3.3</version.karaf>
         <version.littleproxy>0.5.3</version.littleproxy>
         <version.maven.clean.plugin>2.5</version.maven.clean.plugin>
