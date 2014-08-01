@@ -13,7 +13,10 @@
  */
 package org.switchyard.security.jboss.provider;
 
+
+import java.security.AccessController;
 import java.security.Principal;
+import java.security.PrivilegedAction;
 import java.security.acl.Group;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.security.auth.Subject;
+
 
 import org.jboss.security.RunAs;
 import org.jboss.security.RunAsIdentity;
@@ -77,10 +81,11 @@ public class JBossSecurityProvider extends DefaultSecurityProvider {
         if (jb_securityContext != null) {
             // populate from pre-authenticated container context
             String jb_securityDomain = jb_securityContext.getSecurityDomain();
-            if (sy_securityDomain.equals(jb_securityDomain)) {
-                Subject jb_subject = jb_securityContext.getUtil().getSubject();
-                transfer(jb_subject, sy_subject);
-            } 
+            if (!sy_securityDomain.equals(jb_securityDomain)) {
+                    pushSubjectContext(sy_securityDomain);
+            }
+            Subject jb_subject = jb_securityContext.getUtil().getSubject();
+            transfer(jb_subject, sy_subject);
         } else {
             // populate from pre-verified federated assertion
             Set<AssertionCredential> assertionCredentials = securityContext.getCredentials(AssertionCredential.class);
@@ -127,6 +132,61 @@ public class JBossSecurityProvider extends DefaultSecurityProvider {
             }
         }
         super.populate(serviceSecurity, securityContext);
+    }
+
+    /**
+    * Create new security context for the specified domain, transferring the
+    * current subject, principal and credentials into the new domain.
+    *
+    * @param domain the domain
+    */ 
+    public void pushSubjectContext(final String domain) {
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+
+            public Void run() {
+                org.jboss.security.SecurityContext oldSecurityContext = SecurityContextAssociation.getSecurityContext();
+                org.jboss.security.SecurityContext securityContext = createSecurityContext(domain);
+                setSecurityContextOnAssociation(securityContext);
+                securityContext.getUtil().createSubjectInfo(oldSecurityContext.getUtil().getUserPrincipal(), oldSecurityContext.getUtil().getCredential(), oldSecurityContext.getUtil().getSubject());
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Create a JBoss Security Context with the given security domain name
+     *
+     * @param domain the security domain name (such as "other" )
+     * @return an instanceof {@code SecurityContext}
+     */
+    private static org.jboss.security.SecurityContext createSecurityContext(final String domain) {
+        return AccessController.doPrivileged(new PrivilegedAction<org.jboss.security.SecurityContext>() {
+
+            @Override
+            public org.jboss.security.SecurityContext run() {
+                try {
+                    return SecurityContextFactory.createSecurityContext(domain);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
+
+    /**
+     * Set the {@code SecurityContext} on the {@code SecurityContextAssociation}
+     *
+     * @param sc the security context
+     */
+    private static void setSecurityContextOnAssociation(final org.jboss.security.SecurityContext sc) {
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+
+            @Override
+            public Void run() {
+                SecurityContextAssociation.setSecurityContext(sc);
+                return null;
+            }
+        });
     }
 
     /**
