@@ -34,6 +34,7 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
         <deploy.skip>true</deploy.skip>
+        <wildfly.port>9999</wildfly.port>
         <switchyard.osgi.export.pkg>
             org.switchyard.quickstarts.transform.json*
         </switchyard.osgi.export.pkg>
@@ -125,8 +126,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.jboss.as.plugins</groupId>
-                <artifactId>jboss-as-maven-plugin</artifactId>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>deploy</id>
@@ -167,6 +168,12 @@
             <id>deploy</id>
             <properties>
                 <deploy.skip>false</deploy.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>wildfly</id>
+            <properties>
+                <wildfly.port>9990</wildfly.port>
             </properties>
         </profile>
     </profiles>
