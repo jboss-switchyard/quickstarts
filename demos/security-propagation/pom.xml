@@ -36,6 +36,7 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
         <deploy.skip>true</deploy.skip>
+        <wildfly.port>9999</wildfly.port>
     </properties>
     <modules>
         <module>ejb</module>
@@ -44,8 +45,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.jboss.as.plugins</groupId>
-                <artifactId>jboss-as-maven-plugin</artifactId>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
                 <inherited>false</inherited>
                 <configuration>
                     <skip>true</skip>
@@ -81,6 +82,12 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>wildfly</id>
+            <properties>
+                <wildfly.port>9990</wildfly.port>
+            </properties>
         </profile>
     </profiles>
     <dependencyManagement>
