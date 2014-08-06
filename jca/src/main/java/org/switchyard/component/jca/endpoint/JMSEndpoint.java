@@ -161,7 +161,11 @@ public class JMSEndpoint extends AbstractInflowEndpoint implements MessageListen
     protected void sendJMSMessage(Destination destination, Exchange exchange, MessageType type) {
         Connection connection = null;
         try {
-            connection = _connectionFactory.createConnection(_userName, _password);
+            if (_userName != null) {
+                connection = _connectionFactory.createConnection(_userName, _password);
+            } else {
+                connection = _connectionFactory.createConnection();
+            }
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageProducer producer = session.createProducer(destination);
 
@@ -187,13 +191,13 @@ public class JMSEndpoint extends AbstractInflowEndpoint implements MessageListen
             }
             producer.send(_composer.decompose(exchange, new JMSBindingData(msg)).getMessage());
         } catch (Exception e) {
-            JCALogger.ROOT_LOGGER.failedToSendMessage(destination.toString());
+            JCALogger.ROOT_LOGGER.failedToSendMessage(destination.toString(), e.getMessage());
         } finally {
             if (connection != null) {
                 try {
                     connection.close();
                 } catch (Exception e) {
-                    e.getMessage();
+                    JCALogger.ROOT_LOGGER.failedToCloseJMSSessionconnection(e.getMessage());
                 }
             }
         }
