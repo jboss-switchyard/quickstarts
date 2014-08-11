@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions targetNamespace="urn:switchyard-quickstart:camel-cxf:2.0" name="WarehouseService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:tns="urn:switchyard-quickstart:camel-cxf:2.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+
+  <types>
+    <xs:schema version="1.0" targetNamespace="urn:switchyard-quickstart:camel-cxf:2.0"
+      xmlns:tns="urn:switchyard-quickstart:camel-cxf:2.0">
+
+      <xs:element name="ItemNotAvailable" type="tns:ItemNotAvailable"/>
+
+      <xs:element name="order" type="tns:order"/>
+
+      <xs:element name="orderResponse" type="tns:orderResponse"/>
+
+      <xs:complexType name="ItemNotAvailable">
+        <xs:sequence>
+          <xs:element name="message" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="order">
+        <xs:sequence>
+          <xs:element name="item" type="xs:string" minOccurs="0"/>
+          <xs:element name="quantity" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="orderResponse">
+        <xs:sequence>
+          <xs:element name="return" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </types>
+  <message name="ItemNotAvailable">
+    <part name="fault" element="tns:ItemNotAvailable"/>
+  </message>
+  <message name="order">
+    <part name="parameters" element="tns:order"/>
+  </message>
+  <message name="orderResponse">
+    <part name="parameters" element="tns:orderResponse"/>
+  </message>
+  <portType name="WarehouseService">
+    <operation name="order">
+      <input message="tns:order"/>
+      <output message="tns:orderResponse"/>
+      <fault message="tns:ItemNotAvailable" name="ItemNotAvailable"/>
+    </operation>
+  </portType>
+  <binding name="WarehouseServicePortBinding" type="tns:WarehouseService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="order">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="ItemNotAvailable">
+        <soap:fault name="ItemNotAvailable" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="WarehouseService">
+    <port name="WarehouseServicePort" binding="tns:WarehouseServicePortBinding">
+      <soap:address location="REPLACE_WITH_ACTUAL_URL"/>
+    </port>
+  </service>
+</definitions>
+
