@@ -73,6 +73,7 @@
         <module>bpm-service</module>
         <module>camel-atom-binding</module>
         <module>camel-binding</module>
+        <module>camel-cxf</module>
         <module>camel-jaxb</module>
         <module>camel-hl7</module>
         <module>camel-amqp-binding</module>
