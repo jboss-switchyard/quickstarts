@@ -27,6 +27,7 @@
       <outputDirectory>/modules/system/layers/soa/org/apache/camel/cxf/main</outputDirectory>
       <includes>
         <include>org.apache.camel:camel-cxf</include>
+        <include>org.apache.camel:camel-cxf-transport</include>
       </includes>
       <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <useTransitiveDependencies>false</useTransitiveDependencies>

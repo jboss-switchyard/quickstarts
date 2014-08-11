@@ -41,6 +41,7 @@
       <componentDescriptor>src/main/resources/switchyard/components/camel/amqp/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/atom/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/core/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/cxf/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/file/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/ftp/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/camel/jms/assembly-component.xml</componentDescriptor>

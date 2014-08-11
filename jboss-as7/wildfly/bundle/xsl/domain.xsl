@@ -64,6 +64,7 @@
                 </module>
                 <module identifier="org.switchyard.component.camel.atom" implClass="org.switchyard.component.camel.atom.deploy.CamelAtomComponent"/>
                 <module identifier="org.switchyard.component.camel.core" implClass="org.switchyard.component.camel.core.deploy.CamelCoreComponent"/>
+                <module identifier="org.switchyard.component.camel.cxf" implClass="org.switchyard.component.camel.cxf.deploy.CamelCxfComponent"/>
                 <module identifier="org.switchyard.component.camel.file" implClass="org.switchyard.component.camel.file.deploy.CamelFileComponent"/>
                 <module identifier="org.switchyard.component.camel.ftp" implClass="org.switchyard.component.camel.ftp.deploy.CamelFtpComponent"/>
                 <module identifier="org.switchyard.component.camel.jms" implClass="org.switchyard.component.camel.jms.deploy.CamelJmsComponent"/>
@@ -118,6 +119,7 @@
                 </module>
                 <module identifier="org.switchyard.component.camel.atom" implClass="org.switchyard.component.camel.atom.deploy.CamelAtomComponent"/>
                 <module identifier="org.switchyard.component.camel.core" implClass="org.switchyard.component.camel.core.deploy.CamelCoreComponent"/>
+		<module identifier="org.switchyard.component.camel.cxf" implClass="org.switchyard.component.camel.cxf.deploy.CamelCxfComponent"/>
                 <module identifier="org.switchyard.component.camel.file" implClass="org.switchyard.component.camel.file.deploy.CamelFileComponent"/>
                 <module identifier="org.switchyard.component.camel.ftp" implClass="org.switchyard.component.camel.ftp.deploy.CamelFtpComponent"/>
                 <module identifier="org.switchyard.component.camel.jms" implClass="org.switchyard.component.camel.jms.deploy.CamelJmsComponent"/>

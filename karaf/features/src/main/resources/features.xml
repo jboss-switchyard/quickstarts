@@ -178,6 +178,12 @@
         <bundle>mvn:org.switchyard.components/switchyard-component-camel/${project.version}</bundle>
     </feature>
 
+    <feature name="switchyard-camel-cxf" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-camel</feature>
+        <feature version="${version.org.apache.camel.features}">camel-cxf</feature>
+        <bundle>mvn:org.switchyard.components/switchyard-component-camel-cxf/${project.version}</bundle>
+    </feature>
+
     <feature name="switchyard-file" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-camel</feature>
         <bundle>mvn:org.switchyard.components/switchyard-component-camel-file/${project.version}</bundle>
@@ -382,6 +388,12 @@
         <feature version="${project.version}">switchyard-file</feature>
         <feature version="${version.org.apache.camel.features}">camel-bindy</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-bindy/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-quickstart-camel-cxf" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-bean</feature>
+        <feature version="${project.version}">switchyard-camel-cxf</feature>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-cxf/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-quickstart-camel-bus-cdi" version="${project.version}" resolver="(obr)">
