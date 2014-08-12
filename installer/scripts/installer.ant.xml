@@ -18,6 +18,18 @@
      -->
      
     <property file="installer.properties"/>
+
+    <target name="check-java-version">
+        <condition property="xsltFactoryClass" value="com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl">
+          <or>
+            <equals arg1="1.6" arg2="${ant.java.version}"/>
+            <equals arg1="1.7" arg2="${ant.java.version}"/>
+            <equals arg1="1.8" arg2="${ant.java.version}"/>
+          </or>
+        </condition>
+
+	<fail unless="xsltFactoryClass" message="Please use either Java 6 or 7 to install."/>
+    </target>
     
     <target name="get-jboss-path-question" unless="EAP_PATH">
         <input message="Enter the path to the root of your JBoss EAP installation: " 
@@ -43,7 +55,7 @@
     
     <target name="install" 
         description="Install SwitchYard into JBoss (optionally specified by EAP_PATH)" 
-        depends="get-jboss-path">
+        depends="get-jboss-path,check-java-version">
         
         <property name="EAP_PATH" value="${basedir}/jboss-${server}-${as.version.major}"/>
         <property name="QUICKSTART_PATH" value="${EAP_PATH}"/>
@@ -87,11 +99,15 @@
         <xslt style="res/standalone.xsl" 
             basedir="${EAP_PATH}/standalone/configuration" 
             destdir="${EAP_PATH}/standalone/configuration"
-            includes="standalone.xml,standalone-full.xml,standalone-full-ha.xml,standalone-ha.xml"/>
+            includes="standalone.xml,standalone-full.xml,standalone-full-ha.xml,standalone-ha.xml">
+            <factory name="${xsltFactoryClass}"/>
+        </xslt>
         <xslt style="res/domain.xsl" 
             basedir="${EAP_PATH}/domain/configuration" 
             destdir="${EAP_PATH}/domain/configuration" 
-            includes="domain.xml"/>
+            includes="domain.xml">
+            <factory name="${xsltFactoryClass}"/>
+        </xslt>
         <move overwrite="true" todir="${INSTALL_PATH}/domain/configuration">
             <filelist dir="${EAP_PATH}/domain/configuration">
                 <file name="domain.html"/>
@@ -124,7 +140,9 @@
             <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
         </move>
         <!-- Apply second style sheet to add cache-container -->
-        <xslt style="res/standalone-ha.xsl" force="true" basedir="${EAP_PATH}/standalone/configuration" destdir="${EAP_PATH}/standalone/configuration" includes="standalone-full-ha.xml,standalone-ha.xml"/>
+        <xslt style="res/standalone-ha.xsl" force="true" basedir="${EAP_PATH}/standalone/configuration" destdir="${EAP_PATH}/standalone/configuration" includes="standalone-full-ha.xml,standalone-ha.xml">
+            <factory name="${xsltFactoryClass}"/>
+        </xslt>
         <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
             <filelist dir="${EAP_PATH}/standalone/configuration">
                 <file name="standalone-ha.html"/>
