@@ -1,0 +1,8 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/'><SOAP-ENV:Header><bpm:processInstanceId xmlns:bpm='urn:switchyard-component-bpm:bpm:1.0'>4</bpm:processInstanceId></SOAP-ENV:Header><SOAP-ENV:Body><ns2:returnRequest xmlns:ns2="urn:switchyard-quickstart-demo:library:1.0">
+    <ns2:loan>
+        <id>4</id>
+        <ns2:book>
+            <isbn>978-1-4000-5-80-2</isbn>
+        </ns2:book>
+    </ns2:loan>
+</ns2:returnRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>

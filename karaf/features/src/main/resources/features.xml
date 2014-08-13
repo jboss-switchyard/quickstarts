@@ -173,18 +173,26 @@
         <bundle>mvn:org.apache.camel/camel-cdi/${version.org.apache.camel}</bundle>
     </feature>
 
+    <feature name="switchyard-rules" version="${project.version}" resolver="(obr)">
+        <feature>jpa</feature>
+        <feature version="${project.version}">switchyard</feature>
+        <feature version="${version.org.drools}">drools-decisiontable</feature>
+        <bundle>wrap:mvn:org.kie.remote/kie-services-client/${version.org.kie}</bundle>
+        <bundle>wrap:mvn:org.kie.remote/kie-services-jaxb/${version.org.kie}</bundle>
+        <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.components/switchyard-component-common-knowledge/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.components/switchyard-component-rules/${project.version}</bundle>
+    </feature>
+
     <feature name="switchyard-bpm" version="${project.version}" resolver="(obr)">
         <feature>jndi</feature>
         <feature>transaction</feature>
-        <feature>jpa</feature>
-        <feature version="${version.org.drools}">jbpm</feature>
-        <bundle>wrap:mvn:org.jbpm/jbpm-executor/${version.org.drools}$DynamicImport-Package=org.hibernate.*,javassist.*</bundle>
-        <bundle>mvn:org.jbpm/jbpm-human-task-audit/${version.org.drools}</bundle>
-        <bundle>wrap:mvn:org.jbpm/jbpm-kie-services/${version.org.drools}</bundle>
-        <bundle>wrap:mvn:org.jbpm/jbpm-workitems/${version.org.drools}</bundle>
-        <bundle>mvn:org.switchyard/switchyard-common/${project.version}</bundle>
-        <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
-        <bundle>mvn:org.switchyard.components/switchyard-component-common-knowledge/${project.version}</bundle>
+        <feature version="${project.version}">switchyard-rules</feature>
+        <feature version="${version.org.jbpm}">jbpm</feature>
+        <bundle>wrap:mvn:org.jbpm/jbpm-executor/${version.org.jbpm}$DynamicImport-Package=org.hibernate.*,javassist.*</bundle>
+        <bundle>wrap:mvn:org.jbpm/jbpm-human-task-audit/${version.org.jbpm}</bundle>
+        <bundle>wrap:mvn:org.jbpm/jbpm-kie-services/${version.org.jbpm}</bundle>
+        <bundle>wrap:mvn:org.jbpm/jbpm-workitems/${version.org.jbpm}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-bpm/${project.version}</bundle>
     </feature>
 
@@ -285,17 +293,6 @@
         <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-resteasy/${project.version}</bundle>
      </feature>
-
-    <feature name="switchyard-rules" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">switchyard</feature>
-        <feature version="${version.org.drools}">drools-common</feature>
-        <feature version="${version.org.drools}">drools-module</feature>
-        <feature version="${version.org.drools}">drools-decisiontable</feature>
-        <feature version="${version.org.drools}">drools-jpa</feature>
-        <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
-        <bundle>mvn:org.switchyard.components/switchyard-component-common-knowledge/${project.version}</bundle>
-        <bundle>mvn:org.switchyard.components/switchyard-component-rules/${project.version}</bundle>
-    </feature>
 
     <feature name="switchyard-sca" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard</feature>
@@ -669,6 +666,12 @@
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-http</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-http-binding/${project.version}</bundle>
+    </feature>
+
+    <feature name="switchyard-demo-library" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">switchyard-soap</feature>
+        <feature version="${project.version}">switchyard-bpm</feature>
+        <bundle>mvn:org.switchyard.quickstarts.demos/switchyard-demo-library/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-demo-policy-security-basic" version="${project.version}" resolver="(obr)">

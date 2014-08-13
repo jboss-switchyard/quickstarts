@@ -723,6 +723,17 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <!--
+        temporary KIE...
+        -->
+        <dependency>
+            <groupId>org.kie.remote</groupId>
+            <artifactId>kie-services-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.remote</groupId>
+            <artifactId>kie-services-jaxb</artifactId>
+        </dependency>
+        <!--
         JBossWS-CXF...
         -->
         <dependency>

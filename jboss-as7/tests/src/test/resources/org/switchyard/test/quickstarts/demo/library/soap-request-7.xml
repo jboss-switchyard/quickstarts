@@ -1,0 +1,3 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/'><SOAP-ENV:Header></SOAP-ENV:Header><SOAP-ENV:Body><ns2:loanRequest xmlns:ns2="urn:switchyard-quickstart-demo:library:1.0">
+    <isbn>978-1-4000-5-80-2</isbn>
+</ns2:loanRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>

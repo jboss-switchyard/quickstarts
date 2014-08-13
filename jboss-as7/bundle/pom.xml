@@ -51,9 +51,8 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.kie</groupId>
-                                    <artifactId>${artifactId.kie-eap-bpms-layer}</artifactId>
+                                    <artifactId>kie-eap-distributions-bpms-layer</artifactId>
                                     <version>${version.org.kie}</version>
-                                    <classifier>${classifier.kie-eap-bpms-layer}</classifier>
                                     <type>zip</type>
                                 </artifactItem>
                             </artifactItems>
@@ -146,30 +145,4 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>release-jboss-as7-bundle-profile-product</id>
-            <activation>
-                <property>
-                    <name>switchyard.product</name>
-                </property>
-            </activation>
-            <properties>
-                <artifactId.kie-eap-bpms-layer>kie-eap-integration-bpms</artifactId.kie-eap-bpms-layer>
-                <classifier.kie-eap-bpms-layer>bpms-layer</classifier.kie-eap-bpms-layer>
-            </properties>
-        </profile>
-        <profile>
-            <id>release-jboss-as7-bundle-profile-community</id>
-            <activation>
-                <property>
-                    <name>!switchyard.product</name>
-                </property>
-            </activation>
-            <properties>
-                <artifactId.kie-eap-bpms-layer>kie-eap-distributions-bpms-layer</artifactId.kie-eap-bpms-layer>
-                <classifier.kie-eap-bpms-layer/>
-            </properties>
-        </profile>
-    </profiles>
 </project>

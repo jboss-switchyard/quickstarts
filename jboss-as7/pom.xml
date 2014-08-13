@@ -575,6 +575,17 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts.demos</groupId>
+            <artifactId>switchyard-demo-library</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.quickstarts.demos</groupId>
             <artifactId>switchyard-demo-policy-security-basic</artifactId>
             <scope>test</scope>
             <exclusions>

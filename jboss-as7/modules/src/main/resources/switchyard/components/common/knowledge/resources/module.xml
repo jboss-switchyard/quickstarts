@@ -18,9 +18,11 @@
     </resources>
     <dependencies>
         <module name="javax.api"/>
+        <module name="javax.xml.bind.api"/>
         <module name="org.jboss.logging"/>
         <module name="org.drools"/>
         <module name="org.kie"/>
+        <module name="org.kie.remote" services="import"/>
         <module name="org.mvel"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>

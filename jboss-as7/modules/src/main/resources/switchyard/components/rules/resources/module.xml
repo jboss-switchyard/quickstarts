@@ -21,6 +21,7 @@
         <module name="org.jboss.logging"/>
         <module name="org.drools" export="true"/>
         <module name="org.kie" export="true"/>
+        <module name="org.kie.remote" services="import"/>
         <module name="org.switchyard.api"/>
         <module name="org.switchyard.common"/>
         <module name="org.switchyard.component.common.knowledge"/>
