@@ -74,7 +74,7 @@
 
         <version.felix.maven>2.4.0</version.felix.maven>
         <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
-        <version.org.drools>6.1.0.Beta2</version.org.drools>
+        <version.org.jbpm>6.1.0.Final</version.org.jbpm>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -274,27 +274,32 @@
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-human-task-audit</artifactId>
-                                    <version>${version.org.drools}</version>
+                                    <version>${version.org.jbpm}</version>
+                                    <type>jar</type>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
-                                    <artifactId>${artifactId.jbpm-human-task-orm}</artifactId>
-                                    <version>${version.org.drools}</version>
+                                    <artifactId>jbpm-human-task-jpa</artifactId>
+                                    <version>${version.org.jbpm}</version>
+                                    <type>jar</type>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-persistence-jpa</artifactId>
-                                    <version>${version.org.drools}</version>
+                                    <version>${version.org.jbpm}</version>
+                                    <type>jar</type>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-executor</artifactId>
-                                    <version>${version.org.drools}</version>
+                                    <version>${version.org.jbpm}</version>
+                                    <type>jar</type>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-kie-services</artifactId>
-                                    <version>${version.org.drools}</version>
+                                    <version>${version.org.jbpm}</version>
+                                    <type>jar</type>
                                 </artifactItem>
                             </artifactItems>
                             <includes>META-INF/*orm.xml</includes>
@@ -355,28 +360,6 @@
             <id>wildfly</id>
             <properties>
                 <wildfly.port>9990</wildfly.port>
-            </properties>
-        </profile>
-        <profile>
-            <id>helpdesk-profile-product</id>
-            <activation>
-                <property>
-                    <name>switchyard.product</name>
-                </property>
-            </activation>
-            <properties>
-                <artifactId.jbpm-human-task-orm>jbpm-human-task-core</artifactId.jbpm-human-task-orm>
-            </properties>
-        </profile>
-        <profile>
-            <id>helpdesk-profile-community</id>
-            <activation>
-                <property>
-                    <name>!switchyard.product</name>
-                </property>
-            </activation>
-            <properties>
-                <artifactId.jbpm-human-task-orm>jbpm-human-task-jpa</artifactId.jbpm-human-task-orm>
             </properties>
         </profile>
     </profiles>

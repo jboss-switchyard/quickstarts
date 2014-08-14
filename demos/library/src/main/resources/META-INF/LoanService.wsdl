@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:urn="urn:switchyard-quickstart-demo:library:1.0"
+    targetNamespace="urn:switchyard-quickstart-demo:library:1.0"
+    name="LoanService">
+  <wsdl:types>
+    <xsd:schema>
+      <xsd:import namespace="urn:switchyard-quickstart-demo:library:1.0" schemaLocation="LibraryTypes.xsd"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="loanRequest">
+    <wsdl:part element="urn:loanRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="loanResponse">
+    <wsdl:part element="urn:loanResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="returnRequest">
+    <wsdl:part element="urn:returnRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="returnResponse">
+    <wsdl:part element="urn:returnResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:portType name="LoanService">
+    <wsdl:operation name="loanRequest">
+      <wsdl:input message="urn:loanRequest"/>
+      <wsdl:output message="urn:loanResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="returnRequest">
+      <wsdl:input message="urn:returnRequest"/>
+      <wsdl:output message="urn:returnResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="LoanBinding" type="urn:LoanService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="loanRequest">
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="returnRequest">
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="LoanService">
+    <wsdl:port binding="urn:LoanBinding" name="LoanBinding">
+      <soap:address location="http://switchyard.org/library/loan"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

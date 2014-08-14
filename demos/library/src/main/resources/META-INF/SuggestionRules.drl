@@ -1,0 +1,25 @@
+package org.switchyard.quickstarts.demos.library
+
+import java.util.LinkedList
+import java.util.Map
+import org.switchyard.quickstarts.demos.library.types.Book
+import org.switchyard.quickstarts.demos.library.types.Suggestion
+import org.switchyard.quickstarts.demos.library.types.SuggestionRequest
+import org.switchyard.quickstarts.demos.library.types.SuggestionResponse
+
+import function org.switchyard.quickstarts.demos.library.Library.library
+
+rule "SuggestionRules"
+    when
+        results : Map()
+        suggestionRequest   : SuggestionRequest(keyword : keyword)
+        books : LinkedList() from collect( Book(title contains keyword || synopsis contains keyword) from library().getAvailableBooks() )
+    then
+        Suggestion suggestion = new Suggestion();
+        if (books.size() > 0) {
+            suggestion.setBook((Book)books.iterator().next());
+        }
+        SuggestionResponse suggestionResponse = new SuggestionResponse();
+        suggestionResponse.setSuggestion(suggestion);
+        results.put("suggestionResponse", suggestionResponse);
+end
