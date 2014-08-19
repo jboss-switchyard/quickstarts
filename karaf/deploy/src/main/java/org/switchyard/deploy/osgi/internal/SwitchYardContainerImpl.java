@@ -233,22 +233,26 @@ public class SwitchYardContainerImpl extends SimpleExtension
                         }
                         _model = new ModelPuller<SwitchYardModel>(new OsgiDescriptor(_nhs)).pull(_xml);
                         _types = new HashSet<String>();
-                        for (CompositeReferenceModel reference : _model.getComposite().getReferences()) {
-                            for (BindingModel binding : reference.getBindings()) {
-                                _types.add(binding.getType());
+                        if (_model.getComposite() != null) {
+                            for (CompositeReferenceModel reference : _model.getComposite().getReferences()) {
+                                for (BindingModel binding : reference.getBindings()) {
+                                    _types.add(binding.getType());
+                                }
                             }
-                        }
-                        for (ComponentModel component : _model.getComposite().getComponents()) {
-                            ComponentImplementationModel impl = component.getImplementation();
-                            if (impl == null) {
-                                throw new IllegalStateException("Component implementation should not be null");
+                            for (ComponentModel component : _model.getComposite().getComponents()) {
+                                ComponentImplementationModel impl = component.getImplementation();
+                                if (impl == null) {
+                                    throw new IllegalStateException("Component implementation should not be null");
+                                }
+                                _types.add(impl.getType());
                             }
-                            _types.add(impl.getType());
-                        }
-                        for (CompositeServiceModel service : _model.getComposite().getServices()) {
-                            for (BindingModel binding : service.getBindings()) {
-                                _types.add(binding.getType());
+                            for (CompositeServiceModel service : _model.getComposite().getServices()) {
+                                for (BindingModel binding : service.getBindings()) {
+                                    _types.add(binding.getType());
+                                }
                             }
+                        } else {
+                            logger.info("A composite element is missing from the switchyard.xml");
                         }
                         _extender.getComponentRegistry().addListener(this);
                         _state = State.WaitForComponents;

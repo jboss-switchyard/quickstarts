@@ -133,33 +133,37 @@ public class SwitchYardDeploymentProcessor implements DeploymentUnitProcessor {
             final Module module = deploymentUnit.getAttachment(Attachments.MODULE);
             Thread.currentThread().setContextClassLoader(module.getClassLoader());
             CompositeModel composite = metaData.getSwitchYardModel().getComposite();
-            for (CompositeServiceModel service : composite.getServices()) {
-                for (BindingModel binding : service.getBindings()) {
-                    if (binding instanceof JCABindingModel) {
-                        JCABindingModel jcabinding = JCABindingModel.class.cast(binding);
-                        InboundConnectionModel ic = jcabinding.getInboundConnection();
-                        if (ic != null) {
-                            ResourceAdapterModel ra = ic.getResourceAdapter();
-                            if (ra != null && ra.getName() != null && !ra.getName().isEmpty()) {
-                                resourceAdapters.add(ra.getName());
+            if (composite != null) {
+                for (CompositeServiceModel service : composite.getServices()) {
+                    for (BindingModel binding : service.getBindings()) {
+                        if (binding instanceof JCABindingModel) {
+                            JCABindingModel jcabinding = JCABindingModel.class.cast(binding);
+                            InboundConnectionModel ic = jcabinding.getInboundConnection();
+                            if (ic != null) {
+                                ResourceAdapterModel ra = ic.getResourceAdapter();
+                                if (ra != null && ra.getName() != null && !ra.getName().isEmpty()) {
+                                    resourceAdapters.add(ra.getName());
+                                }
                             }
                         }
                     }
                 }
-            }
-            for (CompositeReferenceModel reference : composite.getReferences()) {
-                for (BindingModel binding : reference.getBindings()) {
-                    if (binding instanceof JCABindingModel) {
-                        JCABindingModel jcabinding = JCABindingModel.class.cast(binding);
-                        OutboundConnectionModel oc = jcabinding.getOutboundConnection();
-                        if (oc != null) {
-                            ResourceAdapterModel ra = oc.getResourceAdapter();
-                            if (ra != null && ra.getName() != null && !ra.getName().isEmpty()) {
-                                resourceAdapters.add(ra.getName());
+                for (CompositeReferenceModel reference : composite.getReferences()) {
+                    for (BindingModel binding : reference.getBindings()) {
+                        if (binding instanceof JCABindingModel) {
+                            JCABindingModel jcabinding = JCABindingModel.class.cast(binding);
+                            OutboundConnectionModel oc = jcabinding.getOutboundConnection();
+                            if (oc != null) {
+                                ResourceAdapterModel ra = oc.getResourceAdapter();
+                                if (ra != null && ra.getName() != null && !ra.getName().isEmpty()) {
+                                    resourceAdapters.add(ra.getName());
+                                }
                             }
                         }
                     }
                 }
+            } else {
+                LOG.info("A composite element is missing from the switchyard.xml");
             }
         } finally {
                 Thread.currentThread().setContextClassLoader(origCl);
