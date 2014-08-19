@@ -229,23 +229,24 @@ public class Deployment extends AbstractDeployment {
     public List<String> getActivationTypes() {
         HashSet<String> types = new HashSet<String>();
         CompositeModel composite = getConfig().getComposite();
-        
-        // reference bindings
-        for (CompositeReferenceModel reference : composite.getReferences()) {
-            for (BindingModel binding : reference.getBindings()) {
-                types.add(binding.getType());
+        if (composite != null) {
+            // reference bindings
+            for (CompositeReferenceModel reference : composite.getReferences()) {
+                for (BindingModel binding : reference.getBindings()) {
+                    types.add(binding.getType());
+                }
             }
-        }
-        // service bindings
-        for (CompositeServiceModel service : composite.getServices()) {
-            for (BindingModel binding : service.getBindings()) {
-                types.add(binding.getType());
+            // service bindings
+            for (CompositeServiceModel service : composite.getServices()) {
+                for (BindingModel binding : service.getBindings()) {
+                    types.add(binding.getType());
+                }
             }
-        }
-        // implementations
-        for (ComponentModel component : composite.getComponents()) {
-            if (component.getImplementation() != null) {
-                types.add(component.getImplementation().getType());
+            // implementations
+            for (ComponentModel component : composite.getComponents()) {
+                if (component.getImplementation() != null) {
+                    types.add(component.getImplementation().getType());
+                }
             }
         }
         
@@ -279,7 +280,11 @@ public class Deployment extends AbstractDeployment {
     private void deployReferenceBindings() {
         _log.debug("Deploying reference bindings for deployment " + getName());
         // activate bindings for each service
-        for (CompositeReferenceModel reference : getConfig().getComposite().getReferences()) {
+        CompositeModel composite = getConfig().getComposite();
+        if (composite == null) {
+            return;
+        }
+        for (CompositeReferenceModel reference : composite.getReferences()) {
             int bindingCount = 0;
             for (BindingModel binding : reference.getBindings()) {
                 QName refQName = reference.getQName();
@@ -447,7 +452,9 @@ public class Deployment extends AbstractDeployment {
     }
     
     private void deployImplementations() {
-        
+        if (getConfig().getComposite() == null) {
+            return;
+        }
         for (ComponentModel component : getConfig().getComposite().getComponents()) {
             Activator activator = findActivator(component);
             if (activator == null) {
@@ -589,6 +596,9 @@ public class Deployment extends AbstractDeployment {
 
     private void deployServiceBindings() {
         _log.debug("Deploying service bindings for deployment " + getName());
+        if (getConfig().getComposite() == null) {
+            return;
+        }
         // activate bindings for each service
         for (CompositeServiceModel service : getConfig().getComposite().getServices()) {
             // Create the reference for the composite service
@@ -791,6 +801,9 @@ public class Deployment extends AbstractDeployment {
     }
 
     private void validateServiceRegistration(QName name) {
+        if (getConfig().getComposite() == null) {
+            return;
+        }
         for (ComponentModel component : getConfig().getComposite().getComponents()) {
             for (ComponentServiceModel service : component.getServices()) {
                 if (service.getQName().equals(name)) {
