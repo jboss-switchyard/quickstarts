@@ -16,14 +16,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
-        <artifactId>switchyard-quickstart-parent</artifactId>
+        <artifactId>switchyard-camel-soap-proxy-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>switchyard-camel-soap-proxy-parent</artifactId>
-    <packaging>pom</packaging>
-    <name>SwitchYard Quickstart: camel-soap-proxy parent</name>
-    <description>Quickstart : Camel SOAP Proxy Parent</description>
+    <artifactId>switchyard-camel-soap-proxy-reverse</artifactId>
+    <packaging>bundle</packaging>
+    <name>SwitchYard Quickstart: camel-soap-proxy reverse</name>
+    <description>Quickstart : Camel SOAP Proxy Reverse</description>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -32,45 +32,29 @@
         </license>
     </licenses>
     <properties>
-        <deploy.skip>true</deploy.skip>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <switchyard.osgi.export.pkg>
+                org.switchyard.quickstarts.camel.soap.proxy
+        </switchyard.osgi.export.pkg>
+        <switchyard.osgi.import>
+		javax.xml.ws.soap,
+                javax.ws.rs.*;version="[1.1,3)",
+                org.apache.cxf.*;version="[2,4)",
+                org.switchyard.quickstarts.camel.soap.proxy
+        </switchyard.osgi.import>
+        <switchyard.osgi.require.capability>
+        </switchyard.osgi.require.capability>
     </properties>
-    <modules>
-        <module>reverse</module>
-        <module>reverse-service</module>
-        <module>soap-proxy</module>
-        <module>karaf-proxy</module>
-    </modules>
     <dependencies>
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-plugin</artifactId>
-            <scope>compile</scope>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-soap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-camel</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-test-mixin-cdi</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-test-mixin-http</artifactId>
-            <scope>test</scope>
-        </dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+        </dependency> 
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
@@ -85,12 +69,4 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <profile>
-            <id>deploy</id>
-            <properties>
-                <deploy.skip>false</deploy.skip>
-            </properties>
-        </profile>
-    </profiles>
 </project>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <ns2:reverse xmlns:ns2="urn:switchyard-quickstart:camel-soap-proxy:1.0">
+            <text>foobar</text>
+        </ns2:reverse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
