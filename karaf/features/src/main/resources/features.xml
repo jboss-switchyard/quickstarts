@@ -568,11 +568,14 @@
     </feature>
 
     <!-- Requires SOAP binding -->
-    <!--feature name="switchyard-quickstart-camel-soap-proxy" version="${project.version}" resolver="(obr)">
+    <feature name="switchyard-quickstart-camel-soap-proxy" version="${project.version}" resolver="(obr)">
+        <feature>cxf</feature>
+        <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-camel</feature>
         <feature version="${project.version}">switchyard-soap</feature>
-        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-soap-proxy/${project.version}</bundle>
-    </feature-->
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-soap-proxy-reverse/${project.version}</bundle>
+	<bundle>mvn:org.switchyard.quickstarts/switchyard-camel-soap-proxy/${project.version}</bundle>
+    </feature>
 
     <feature name="switchyard-quickstart-camel-sql-binding" version="${project.version}" resolver="(obr)">
         <feature>jndi</feature>
