@@ -72,4 +72,17 @@ public interface RemoteEndpointPublisher {
      * @return endpoint URL as a string
      */
     String getAddress();
+    
+    /**
+     * Set if remote transaction bridging should be disabled.
+     * @param _disableRemoteTransaction true if it disables remote transaction
+     * @return this RemoteEndpointPublisher instance (useful for method chaining)
+     */
+    RemoteEndpointPublisher setDisableRemoteTransaction(boolean _disableRemoteTransaction);
+    
+    /**
+     * Get if remote transaction bridging should be disabled.
+     * @return true if it disables remote transaction
+     */
+    boolean isDisableRemoteTransaction();
 }

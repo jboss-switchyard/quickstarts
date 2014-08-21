@@ -58,6 +58,7 @@ public class SCAInvoker extends BaseServiceHandler {
     private final String _bindingName;
     private final String _referenceName;
     private ClusteredInvoker _invoker;
+    private boolean _disableRemoteTransaction = false;
     private TransactionContextSerializer _txSerializer = new TransactionContextSerializer();
     
     /**
@@ -103,6 +104,16 @@ public class SCAInvoker extends BaseServiceHandler {
         } catch (SwitchYardException syEx) {
             throw new HandlerException(syEx.getMessage());
         }
+    }
+    
+    /**
+     * Set if remote transaction bridging should be disabled.
+     * @param disable true if it disables remote transaction
+     * @return this SCAInvoker instance (useful for method chaining)
+     */
+    public SCAInvoker setDisableRemoteTransaction(boolean disable) {
+        _disableRemoteTransaction = disable;
+        return this;
     }
     
     // This method exists for test purposes and should not be used at runtime.  Initialization
@@ -211,12 +222,17 @@ public class SCAInvoker extends BaseServiceHandler {
     }
     
     private boolean bridgeOutgoingTransaction(RemoteMessage request) throws HandlerException {
+        if (_disableRemoteTransaction) {
+            return false;
+        }
+        
         Transaction currentTransaction = null;
         try {
             currentTransaction = com.arjuna.ats.jta.TransactionManager.transactionManager().getTransaction();
         } catch (Throwable t) {
-            // avoiding checkstyle error
-            t.getMessage();
+            if (_log.isDebugEnabled()) {
+                _log.debug(t);
+            }
         }
         if (currentTransaction == null) {
             return false;

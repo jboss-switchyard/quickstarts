@@ -66,5 +66,12 @@ public interface SCALogger {
     @Message(id = 39205, value = "No endpoint publisher service registered.  Defaulting to NO-OP publisher.")
     void noEndpointPublisherRegistered();
 
+    /**
+     * ignoringReceivedTransactionContext method definition.
+     */
+    @LogMessage(level = Level.WARN)
+    @Message(id = 39206, value = "Transaction context was received through remote SCA invocation, but remote transaction bridging is disabled on this node. Ignoring.")
+    void ignoringReceivedTransactionContext();
+
 }
 

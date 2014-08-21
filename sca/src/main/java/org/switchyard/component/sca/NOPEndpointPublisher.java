@@ -53,4 +53,15 @@ public class NOPEndpointPublisher implements RemoteEndpointPublisher {
         return null;
     }
 
+    @Override
+    public RemoteEndpointPublisher setDisableRemoteTransaction(
+            boolean _bridgeRemoteTransaction) {
+        return this;
+    }
+
+    @Override
+    public boolean isDisableRemoteTransaction() {
+        return false;
+    }
+
 }

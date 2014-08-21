@@ -44,13 +44,15 @@ public class SCAActivator extends BaseActivator {
     private static final String CACHE_CONTAINER_ROOT = "java:jboss/infinispan/container/";
     private static final String CACHE_NAME_PROPERTY = "cache-name";
     private static final String CACHE_CONFIG_PROPERTY = "cache-config";
+    private static final String DISABLE_REMOTE_TRANSACTION_PROPERTY = "disable-remote-transaction";
     static final String[] TYPES = new String[] {"sca"};
 
     private static Logger _log = Logger.getLogger(SCAActivator.class);
     private Cache<String, String> _cache;
     private RemoteRegistry _registry;
     private RemoteEndpointPublisher _endpointPublisher;
-    
+    private boolean _disableRemoteTransaction = false;
+
     /**
      * Create a new RemoteActivator.
      * @param environment component configuration used by the activator
@@ -81,10 +83,17 @@ public class SCAActivator extends BaseActivator {
         } else {
             SCALogger.ROOT_LOGGER.unableToResolveCacheContainer(cacheName);
         }
+
+        Configuration bridgeRemoteTxConfig = environment.getFirstChild(DISABLE_REMOTE_TRANSACTION_PROPERTY);
+        if (bridgeRemoteTxConfig != null) {
+            _disableRemoteTransaction = Boolean.parseBoolean(bridgeRemoteTxConfig.getValue());
+        }
     }
     
     @Override
     public ServiceHandler activateBinding(QName name, BindingModel config) {
+        _endpointPublisher.setDisableRemoteTransaction(_disableRemoteTransaction);
+
         // Signal the remote endpoint publisher to start. Multiple calls to start are harmless.
         try {
             // Note that stop() occurs as part of the SCAComponent lifecycle.
@@ -100,7 +109,8 @@ public class SCAActivator extends BaseActivator {
             if ((scab.getTarget() == null) && (scab.getTargetNamespace() == null)) {
                 throw SCAMessages.MESSAGES.invalidSCABindingForReferenceTargetServiceOrNamespaceMustBeSpecified();
             }
-            return new SCAInvoker(scab, _registry);
+            return new SCAInvoker(scab, _registry)
+                        .setDisableRemoteTransaction(_disableRemoteTransaction);
         }
     }
 

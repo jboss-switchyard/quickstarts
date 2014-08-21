@@ -36,6 +36,7 @@ public class OsgiRemoteEndpointPublisher implements RemoteEndpointPublisher {
     private String _address;
     private int _port;
     private Map<QName, ServiceDomain> _services = new ConcurrentHashMap<QName, ServiceDomain>();
+    private boolean _disableRemoteTransaction = false;
 
     private static Logger _log = Logger.getLogger(OsgiRemoteEndpointPublisher.class);
     
@@ -94,6 +95,17 @@ public class OsgiRemoteEndpointPublisher implements RemoteEndpointPublisher {
         return _address;
     }
     
+    @Override
+    public RemoteEndpointPublisher setDisableRemoteTransaction(boolean disable) {
+        _disableRemoteTransaction = disable;
+        return this;
+    }
+
+    @Override
+    public boolean isDisableRemoteTransaction() {
+        return _disableRemoteTransaction;
+    }
+
     /**
      * Set the endpoint URL for the remote listener.  Setting the endpoint
      * address URL overrides any value set for port.
@@ -102,7 +114,7 @@ public class OsgiRemoteEndpointPublisher implements RemoteEndpointPublisher {
     public void setAddress(String address) {
         _address = address;
     }
-    
+
     /**
      * Returns the port for the remote endpoint listener.
      * @return HTTP port for the remote endpoint listener

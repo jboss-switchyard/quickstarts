@@ -156,6 +156,11 @@ public class SwitchYardRemotingServlet extends HttpServlet {
                     _log.debug("Transaction context is found in request message: " + txContextHeader);
                 }
                 
+                if (_endpointPublisher.isDisableRemoteTransaction()) {
+                    SCALogger.ROOT_LOGGER.ignoringReceivedTransactionContext();
+                    return false;
+                }
+                
                 ClassLoader origCl = Thread.currentThread().getContextClassLoader();
                 CoordinationContextType cc = null;
                 try {
