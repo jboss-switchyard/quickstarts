@@ -48,6 +48,7 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
     private String _contextName;
     private WebDeploymentController _handle;
     private Map<QName, ServiceDomain> _services = new ConcurrentHashMap<QName, ServiceDomain>();
+    private boolean _disableRemoteTransaction = false;
     
     private boolean _started;
 
@@ -155,6 +156,17 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
     @Override
     public ServiceDomain getDomain(QName serviceName) {
         return _services.get(serviceName);
+    }
+
+    @Override
+    public RemoteEndpointPublisher setDisableRemoteTransaction(boolean disable) {
+        _disableRemoteTransaction = disable;
+        return this;
+    }
+
+    @Override
+    public boolean isDisableRemoteTransaction() {
+        return _disableRemoteTransaction;
     }
 
 }
