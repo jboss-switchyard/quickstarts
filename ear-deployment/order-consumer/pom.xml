@@ -18,7 +18,6 @@
         <groupId>org.switchyard.quickstarts</groupId>
         <artifactId>switchyard-ear-deployment</artifactId>
         <version>2.0.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-ear-deployment-order-consumer</artifactId>
     <name>SwitchYard Quickstart: ear-deployment - order-consumer</name>
@@ -33,15 +32,12 @@
     <properties>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-plugin</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
@@ -112,16 +108,9 @@
         <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <debug>true</debug>
-                    <showWarnings>true</showWarnings>
-                    <showDeprecation>true</showDeprecation>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-plugin</artifactId>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -139,6 +128,7 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.felix.maven}</version>
                 <inherited>false</inherited>
                 <configuration>
                     <skip>true</skip>

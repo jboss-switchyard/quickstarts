@@ -18,7 +18,6 @@
         <groupId>org.switchyard.quickstarts.demos</groupId>
         <artifactId>switchyard-demo-multiApp</artifactId>
         <version>2.0.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-demo-multiApp-artifacts</artifactId>
     <packaging>jar</packaging>
@@ -31,10 +30,6 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
         </license>
     </licenses>
-    <properties>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
-    </properties>
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
@@ -71,6 +66,7 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven}</version>
                 <executions>
                     <execution>
                         <id>deploy</id>

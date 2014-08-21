@@ -14,13 +14,9 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.switchyard.quickstarts</groupId>
-        <artifactId>switchyard-quickstart-parent</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+    <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-remote-invoker</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>SwitchYard Quickstart: remote-invoker</name>
     <description>Quickstart : Remote Invoker</description>
@@ -36,7 +32,20 @@
         <wildfly.port>9999</wildfly.port>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+
+        <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-bom</artifactId>
+                <version>${project.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -49,10 +58,6 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-validate</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-plugin</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -73,11 +78,6 @@
             <artifactId>switchyard-component-rules</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-remote</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-sca</artifactId>
         </dependency>
@@ -86,17 +86,9 @@
         <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <debug>true</debug>
-                    <showWarnings>true</showWarnings>
-                    <showDeprecation>true</showDeprecation>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-plugin</artifactId>
+                <version>${project.version}</version>
                 <configuration>
                     <scannerClassNames>
                         <param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>
@@ -114,6 +106,7 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven}</version>
                 <executions>
                     <execution>
                         <id>deploy</id>
@@ -143,6 +136,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
+                    <classpathScope>test</classpathScope>
                     <mainClass>org.switchyard.quickstarts.remoteinvoker.RemoteClient</mainClass>
                 </configuration>
             </plugin>

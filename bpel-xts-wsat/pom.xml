@@ -14,12 +14,9 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>switchyard-quickstart-parent</artifactId>
-        <groupId>org.switchyard.quickstarts</groupId>
-        <version>2.0.0-SNAPSHOT</version>
-    </parent>
+    <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-bpel-xts-wsat</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>SwitchYard Quickstart: bpel-xts-wsat</name>
     <description>Quickstart : BPEL Service : XTS WSAT</description>
@@ -31,20 +28,34 @@
         </license>
     </licenses>
     <properties>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
         <deploy.skip>true</deploy.skip>
         <wildfly.port>9999</wildfly.port>
+        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.6</maven.compiler.source>
+
+        <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
     </properties>
     <modules>
         <module>bpel</module>
         <module>ws</module>
     </modules>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-bom</artifactId>
+                <version>${project.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven}</version>
                 <inherited>false</inherited>
                 <configuration>
                     <skip>true</skip>
@@ -74,13 +85,4 @@
             </properties>
         </profile>
     </profiles>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.switchyard.quickstarts</groupId>
-                <artifactId>switchyard-bpel-xts-wsat-ws</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>

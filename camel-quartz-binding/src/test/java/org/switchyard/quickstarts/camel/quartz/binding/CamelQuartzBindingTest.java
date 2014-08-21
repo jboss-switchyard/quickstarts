@@ -19,7 +19,7 @@ package org.switchyard.quickstarts.camel.quartz.binding;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.number.OrderingComparisons.greaterThanOrEqualTo;
+import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 
 import java.util.concurrent.LinkedBlockingQueue;
 

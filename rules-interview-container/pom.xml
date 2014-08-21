@@ -14,12 +14,9 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.switchyard.quickstarts</groupId>
-        <artifactId>switchyard-quickstart-parent</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
-    </parent>
+    <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-rules-interview-container</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>SwitchYard Quickstart: rules-interview-container</name>
     <description>Quickstart : Rules Interview (Container)</description>
@@ -49,24 +46,35 @@
         <wildfly.port>9999</wildfly.port>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
-        <switchyard.osgi.export.pkg>
-            org.switchyard.quickstarts.rules.interview*
-        </switchyard.osgi.export.pkg>
+
+        <switchyard.osgi.import>*</switchyard.osgi.import>
         <switchyard.osgi.require.capability>
             org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
             org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
             osgi.extender; filter:="(osgi.extender=pax.cdi)"
         </switchyard.osgi.require.capability>
-        <switchyard.osgi.provide.capability/>
+        <switchyard.osgi.dynamic>
+            org.switchyard,org.switchyard.*
+        </switchyard.osgi.dynamic>
+
+        <version.felix.maven>2.4.0</version.felix.maven>
+        <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-bom</artifactId>
+                <version>${project.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-plugin</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
@@ -106,6 +114,7 @@
             <plugin>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-plugin</artifactId>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -120,8 +129,35 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${version.felix.maven}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <excludeDependencies>false</excludeDependencies>
+                    <instructions>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Import-Package>${switchyard.osgi.import}</Import-Package>
+                        <Include-Resource>{maven-resources}, META-INF/switchyard.xml=target/classes/META-INF/switchyard.xml</Include-Resource>
+                        <DynamicImport-Package>${switchyard.osgi.dynamic}</DynamicImport-Package>
+                        <_failok>true</_failok>
+                        <Embed-Dependency>!*</Embed-Dependency>
+                        <Require-Capability>${switchyard.osgi.require.capability}</Require-Capability>
+                    </instructions>
+                    <archive>
+                        <manifestEntries>
+                            <Project-Artifact-Id>${project.artifactId}</Project-Artifact-Id>
+                            <Project-Group-Id>${project.groupId}</Project-Group-Id>
+                            <Project-Version>${project.version}</Project-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven}</version>
                 <executions>
                     <execution>
                         <id>deploy</id>
@@ -151,6 +187,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
+                    <classpathScope>test</classpathScope>
                     <mainClass>org.switchyard.quickstarts.rules.interview.RulesInterviewClient</mainClass>
                 </configuration>
             </plugin>
