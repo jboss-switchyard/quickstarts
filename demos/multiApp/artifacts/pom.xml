@@ -69,8 +69,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.jboss.as.plugins</groupId>
-                <artifactId>jboss-as-maven-plugin</artifactId>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>deploy</id>
