@@ -16,3 +16,4 @@ transaction.log
 .metadata/
 .idea
 .fbExcludeFilterFile
+.factorypath
