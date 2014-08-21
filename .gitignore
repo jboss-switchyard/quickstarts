@@ -9,3 +9,4 @@ target/
 .DS_Store
 transaction.log
 .fbExcludeFilterFile
+.factorypath
