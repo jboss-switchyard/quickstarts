@@ -14,13 +14,9 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.switchyard.quickstarts</groupId>
-        <artifactId>switchyard-quickstart-parent</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+    <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-camel-mqtt-binding</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>SwitchYard Quickstart: camel-mqtt-binding</name>
     <description>Quickstart : Camel MQTT Binding</description>
@@ -36,24 +32,38 @@
         <wildfly.port>9999</wildfly.port>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
-        <switchyard.osgi.export.pkg>
-            org.switchyard.quickstarts.camel.mqtt.binding*
-        </switchyard.osgi.export.pkg>
+
+        <switchyard.osgi.import>*</switchyard.osgi.import>
+
         <switchyard.osgi.require.capability>
             org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
             org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
             osgi.extender; filter:="(osgi.extender=pax.cdi)"
         </switchyard.osgi.require.capability>
-        <switchyard.osgi.provide.capability/>
+        <switchyard.osgi.dynamic>
+            org.switchyard,org.switchyard.*
+        </switchyard.osgi.dynamic>
+
+        <version.felix.maven>2.4.0</version.felix.maven>
+        <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
+        <version.org.apache.activemq>5.8.0</version.org.apache.activemq>
+        <version.org.fusesource.mqtt-client>1.6</version.org.fusesource.mqtt-client>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-bom</artifactId>
+                <version>${project.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-plugin</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
@@ -81,6 +91,7 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-mqtt</artifactId>
+            <version>${version.org.apache.activemq}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -91,6 +102,7 @@
         <dependency>
             <groupId>org.fusesource.mqtt-client</groupId>
             <artifactId>mqtt-client</artifactId>
+            <version>${version.org.fusesource.mqtt-client}</version>
         </dependency>
     </dependencies>
     <build>
@@ -99,6 +111,7 @@
             <plugin>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-plugin</artifactId>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -115,6 +128,7 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven}</version>
                 <executions>
                     <execution>
                         <id>deploy</id>
@@ -139,6 +153,32 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${version.felix.maven}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <excludeDependencies>false</excludeDependencies>
+                    <instructions>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Import-Package>${switchyard.osgi.import}</Import-Package>
+                        <Include-Resource>{maven-resources}, META-INF/switchyard.xml=target/classes/META-INF/switchyard.xml</Include-Resource>
+                        <DynamicImport-Package>${switchyard.osgi.dynamic}</DynamicImport-Package>
+                        <_failok>true</_failok>
+                        <Embed-Dependency>!*</Embed-Dependency>
+                        <Require-Capability>${switchyard.osgi.require.capability}</Require-Capability>
+                    </instructions>
+                    <archive>
+                        <manifestEntries>
+                            <Project-Artifact-Id>${project.artifactId}</Project-Artifact-Id>
+                            <Project-Group-Id>${project.groupId}</Project-Group-Id>
+                            <Project-Version>${project.version}</Project-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

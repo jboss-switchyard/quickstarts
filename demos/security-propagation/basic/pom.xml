@@ -18,9 +18,7 @@
         <groupId>org.switchyard.quickstarts.demos</groupId>
         <artifactId>switchyard-demo-security-propagation</artifactId>
         <version>2.0.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>org.switchyard.quickstarts.demos</groupId>
     <artifactId>switchyard-demo-security-propagation-basic</artifactId>
     <name>Quickstart Demo : Security Propagation : Basic Authentication (+SSL) to Bean + EJB</name>
     <description>Quickstart Demo : Security Propagation : Basic Authentication (+SSL) to Bean + EJB</description>
@@ -36,15 +34,13 @@
         <wildfly.port>9999</wildfly.port>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        
+        <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-plugin</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -85,6 +81,7 @@
             <plugin>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-plugin</artifactId>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -101,6 +98,7 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven}</version>
                 <executions>
                     <execution>
                         <id>deploy</id>
