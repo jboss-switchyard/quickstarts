@@ -33,7 +33,10 @@
     <logger name="org.jboss.interceptor.util.InterceptionTypeRegistry">
         <level value="ERROR"/>
     </logger>
-    <logger name="org.apache.ftpserver">
+    <logger name="org.apache">
+       <level value="WARN" />
+    </logger>
+    <logger name="org.apache.sshd">
        <level value="WARN" />
     </logger>
 
