@@ -227,7 +227,7 @@
                             <stylesheet>${staging.jboss.dir}/xsl/standalone.xsl</stylesheet>
                         </transformationSet>
                         <transformationSet>
-                            <dir>src/main/resources</dir>
+                            <dir>${staging.jboss.dir}/standalone/configuration</dir>
                             <includes>
                                 <include>standalone-ha.xml</include>
                                 <include>standalone-full-ha.xml</include>
