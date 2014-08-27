@@ -67,9 +67,11 @@ public final class MQTTClient {
             publishConnection.publish(TOPIC_INPUT, payload.getBytes(), QoS.AT_LEAST_ONCE, false);
             System.out.println("Published a message to " + TOPIC_INPUT + ": " + payload);
 
-            Message msg = null;
-            while((msg = subscribeConnection.receive(3000, TimeUnit.MILLISECONDS)) != null) {
+            Message msg = subscribeConnection.receive(60000, TimeUnit.MILLISECONDS);
+            if (msg != null) {
                 System.out.println("Received a message from " + TOPIC_OUTPUT + ": " + new String(msg.getPayload()));
+            } else {
+                System.out.println("No message was received from " + TOPIC_OUTPUT);
             }
         } finally {
             if (publishConnection != null && publishConnection.isConnected()) {
