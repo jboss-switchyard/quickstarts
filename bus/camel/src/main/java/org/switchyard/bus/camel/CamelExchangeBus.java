@@ -60,6 +60,12 @@ public class CamelExchangeBus implements ExchangeBus {
         for (Processors processor : Processors.values()) {
             registry.put(processor.name(), processor.create(domain));
         }
+
+        // CAMEL-7728 introduces an issue on finding BeanManager due to the fact that default
+        // applicationContextClassLoader in the CamelContext is not a bundle deployment class loader.
+        // We need to ensure the applicationContextClassLoader is the bundle deployment class loader
+        // for now. This will be unnecessary once CAMEL-7759 is merged.
+        _camelContext.setApplicationContextClassLoader(Thread.currentThread().getContextClassLoader());
     }
 
     /**
