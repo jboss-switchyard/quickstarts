@@ -13,25 +13,33 @@
  */
 package org.switchyard.component.camel.mqtt.deploy;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.deploy.BaseBindingActivator;
-import org.switchyard.component.camel.common.deploy.BaseBindingComponent;
-import org.switchyard.component.camel.mqtt.model.v1.V1CamelMqttBindingModel;
+import org.switchyard.component.camel.common.handler.InboundHandler;
+import org.switchyard.component.camel.common.model.CamelBindingModel;
+import org.switchyard.component.camel.mqtt.model.CamelMqttBindingModel;
 
 /**
- * MQTT binding component.
+ * Camel mqtt activator.
  */
-public class CamelMqttComponent extends BaseBindingComponent {
+public class CamelMqttActivator extends BaseBindingActivator {
 
     /**
-     * Creates new component.
+     * Creates new activator instance.
+     * 
+     * @param context Camel context.
+     * @param types Activation types.
      */
-    public CamelMqttComponent() {
-        super("CamelMqttComponent", V1CamelMqttBindingModel.MQTT);
+    public CamelMqttActivator(SwitchYardCamelContext context, String[] types) {
+        super(context, types);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    protected BaseBindingActivator createActivator(SwitchYardCamelContext context, String... types) {
-        return new CamelMqttActivator(context, types);
+    protected InboundHandler<CamelMqttBindingModel> createInboundHandler(QName serviceName, CamelBindingModel binding) {
+        return new CamelMqttInboundHandler((CamelMqttBindingModel)binding, getCamelContext(), serviceName, getServiceDomain());
     }
+
 }
