@@ -445,6 +445,12 @@ public final class SOAPUtil {
                     detail.appendChild(entryImport);
                 }
             }
+            if (!SOAP11_SERVER_FAULT_TYPE.equals(faultQname) && exFault.getFaultSubcodes() != null) {
+                Iterator<QName> faultSubcodes = exFault.getFaultSubcodes();
+                while (faultSubcodes.hasNext()) {
+                    fault.appendFaultSubcode(faultSubcodes.next());
+                }
+            }
         } else {
             if (RETURN_STACK_TRACES) {
                 final StringWriter sw = new StringWriter();
