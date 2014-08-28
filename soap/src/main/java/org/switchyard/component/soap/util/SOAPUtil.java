@@ -422,7 +422,8 @@ public final class SOAPUtil {
             SOAPFault exFault = ((SOAPFaultException) th).getFault();
             SOAPFault fault = faultMsg.getSOAPBody().addFault();
             fault.setFaultCode(exFault.getFaultCodeAsQName());
-            fault.setFaultString(exFault.getFaultString());
+            final String faultString = exFault.getFaultString();
+            fault.setFaultString(faultString == null ? "" : faultString);
             if (SOAP11_SERVER_FAULT_TYPE.equals(faultQname)) {
                 if (exFault.getFaultActor() != null) {
                     fault.setFaultActor(exFault.getFaultActor());
