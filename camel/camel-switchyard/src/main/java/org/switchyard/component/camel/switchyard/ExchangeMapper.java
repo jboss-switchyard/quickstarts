@@ -13,7 +13,10 @@
  */
 package org.switchyard.component.camel.switchyard;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.activation.DataHandler;
 
@@ -90,7 +93,11 @@ public final class ExchangeMapper {
             
             message.getContext().setProperty(property, camelExchange.getProperty(property), Scope.EXCHANGE);
         }
-        for (String header : camelMessage.getHeaders().keySet()) {
+        
+        Set<Map.Entry<String, Object>> entrySet = camelMessage.getHeaders().entrySet();  
+        Iterator<Map.Entry<String, Object>> iter = entrySet.iterator();  
+        while (iter.hasNext()) {  
+            String header = iter.next().getKey();
             if (ContextPropertyUtil.isReservedProperty(header, Scope.MESSAGE)) {
                 continue;
             }
