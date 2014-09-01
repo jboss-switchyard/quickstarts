@@ -35,7 +35,7 @@ public class OrderProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String socketAddr = System.getProperty("org.switchyard.component.soap.standalone.port");
+        String socketAddr = System.getProperty("org.switchyard.component.soap.client.port");
         String socketAddrFault = System.getProperty("org.switchyard.component.http.standalone.port");
         if (socketAddr==null) {
             socketAddr = "8080";
