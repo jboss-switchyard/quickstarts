@@ -104,6 +104,11 @@
                                     <type>properties</type>
                                     <classifier>sca</classifier>
                                 </artifact>
+                                <artifact>
+                                    <file>target/classes/infinispan-switchyard.xml</file>
+                                    <type>xml</type>
+                                    <classifier>infinispan-switchyard</classifier>
+                                </artifact>
                             </artifacts>
                         </configuration>
                     </execution>

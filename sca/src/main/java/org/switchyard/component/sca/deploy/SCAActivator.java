@@ -13,12 +13,16 @@
  */
 package org.switchyard.component.sca.deploy;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import javax.naming.InitialContext;
 import javax.xml.namespace.QName;
 
 import org.infinispan.Cache;
+import org.infinispan.configuration.parsing.ConfigurationBuilderHolder;
+import org.infinispan.configuration.parsing.ParserRegistry;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.jboss.logging.Logger;
@@ -45,6 +49,7 @@ public class SCAActivator extends BaseActivator {
     private static final String CACHE_NAME_PROPERTY = "cache-name";
     private static final String CACHE_CONFIG_PROPERTY = "cache-config";
     private static final String DISABLE_REMOTE_TRANSACTION_PROPERTY = "disable-remote-transaction";
+    private static final String JGROUPS_CONFIG_PROPERTY = "jgroups-config";
     static final String[] TYPES = new String[] {"sca"};
 
     private static Logger _log = Logger.getLogger(SCAActivator.class);
@@ -72,7 +77,8 @@ public class SCAActivator extends BaseActivator {
         // cache manager and try to resolve the cache.
         Configuration cacheFileConfig = environment.getFirstChild(CACHE_CONFIG_PROPERTY);
         if (cacheFileConfig != null && cacheFileConfig.getValue() != null) {
-            createCache(cacheFileConfig.getValue(), cacheName);
+            Configuration jgroupsConfig = environment.getFirstChild(JGROUPS_CONFIG_PROPERTY);
+            createCache(cacheFileConfig.getValue(), cacheName, jgroupsConfig != null ? jgroupsConfig.getValue() : null);
         } else {
             lookupCache(cacheName);
         }
@@ -135,12 +141,37 @@ public class SCAActivator extends BaseActivator {
         return _endpointPublisher;
     }
     
-    private void createCache(String cacheConfig, String cacheName) {
+    private void createCache(String cacheConfig, String cacheName, String jgroupsConfig) {
         ClassLoader origCl = Thread.currentThread().getContextClassLoader();
         try {
-            InputStream configStream = SCAActivator.class.getClassLoader().getResourceAsStream(cacheConfig);
-            Thread.currentThread().setContextClassLoader(DefaultCacheManager.class.getClassLoader());
-            _cache = new DefaultCacheManager(configStream).getCache(cacheName);
+            InputStream configStream = null;
+            try {
+                File f = new File(cacheConfig);
+                if (f.exists() && f.isFile()) {
+                    configStream = new FileInputStream(f);
+                } else {
+                    configStream = SCAActivator.class.getClassLoader().getResourceAsStream(cacheConfig);
+                }
+
+                ClassLoader cacheClassLoader = DefaultCacheManager.class.getClassLoader();
+                Thread.currentThread().setContextClassLoader(cacheClassLoader);
+                ConfigurationBuilderHolder holder = new ParserRegistry(cacheClassLoader).parse(configStream);
+                if (jgroupsConfig != null) {
+                    holder.getGlobalConfigurationBuilder()
+                          .transport()
+                          .defaultTransport()
+                          .addProperty("configurationFile", jgroupsConfig);
+                }
+                _cache = new DefaultCacheManager(holder, true).getCache(cacheName);
+            } finally {
+                if (configStream != null) {
+                    try {
+                        configStream.close();
+                    } catch (Exception e) {
+                        e.fillInStackTrace();
+                    }
+                }
+           }
         } catch (Exception ex) {
             _log.debug("Failed to create cache for distributed registry", ex);
         } finally {
