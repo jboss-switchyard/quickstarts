@@ -294,6 +294,7 @@
         <bundle>mvn:org.switchyard/switchyard-remote/${project.version}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-sca/${project.version}</bundle>
         <configfile finalname="/etc/org.switchyard.component.sca.cfg">mvn:org.switchyard.components/switchyard-component-sca/${project.version}/properties/sca</configfile>
+        <configfile finalname="/etc/infinispan-switchyard.xml">mvn:org.switchyard.components/switchyard-component-sca/${project.version}/xml/infinispan-switchyard</configfile>
     </feature>
 
     <feature name="switchyard-sql" version="${project.version}" resolver="(obr)">
