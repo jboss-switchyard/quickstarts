@@ -22,17 +22,24 @@ import javax.xml.namespace.QName;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
+import org.switchyard.Message;
 import org.switchyard.MockDomain;
+import org.switchyard.MockHandler;
 import org.switchyard.Service;
 import org.switchyard.ServiceDomain;
 import org.switchyard.ServiceReference;
 import org.switchyard.SwitchYardException;
+import org.switchyard.bus.camel.CamelExchangeBus;
+import org.switchyard.common.camel.CamelContextConfigurator;
+import org.switchyard.common.camel.SwitchYardCamelContextImpl;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.composite.BindingModel;
 import org.switchyard.config.model.composite.ComponentImplementationModel;
 import org.switchyard.config.model.switchyard.EsbInterfaceModel;
 import org.switchyard.deploy.ActivatorLoader;
+import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.components.MockActivator;
 import org.switchyard.deploy.components.config.MockBindingModel;
 import org.switchyard.deploy.internal.transformers.ABTransformer;
@@ -41,6 +48,7 @@ import org.switchyard.deploy.internal.validators.AValidator;
 import org.switchyard.deploy.internal.validators.BValidator;
 import org.switchyard.extensions.wsdl.WSDLService;
 import org.switchyard.internal.DomainImpl;
+import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.policy.TransactionPolicy;
@@ -383,6 +391,50 @@ public class DeploymentTest {
     @Test
     public void testPromotedService() throws Exception {
         deployWithoutFail("/naming/promoted-service.xml");
+    }
+    
+    /**
+     * This test is similar to a version in the bus-camel module, but has one important
+     * difference: the config is loaded from switchyard.xml and throttling is set via 
+     * the deployer vs. setting it directly on the bus as in the ExchangeDispatcherTest.
+     * This test confirms the fix for SWITCHYARD-2306.
+     */
+    @Test
+    public void throttleWithTimePeriod() throws Exception {
+        final QName svcName = new QName("urn:test:config-throttling:1.0", "TestService");
+        // read the app config with throttling
+        InputStream syConfigStream = Classes.getResourceAsStream("/switchyard-config-throttling-01.xml", getClass());
+        Deployment deployment = new Deployment(syConfigStream);
+        syConfigStream.close();
+
+
+        // initialize the deployment
+        ServiceDomain domain = new ServiceDomainManager().createDomain();
+        domain.setProperty(CamelContextConfigurator.SHUTDOWN_TIMEOUT, "10");
+        deployment.init(domain, ActivatorLoader.createActivators(domain));
+        deployment.start();
+        
+        // we want to invoke a mock so we can check for messages received 
+        final ServiceReference reference = domain.getServiceReference(svcName);
+        domain.getServices(svcName).get(0).unregister();
+        final MockHandler service = new MockHandler();
+        domain.registerService(svcName, new InOnlyService(), service);
+        
+                
+        final int NUM_SENDS = 5;
+        for (int i = 0; i < NUM_SENDS; i++) {
+            new Thread(new Runnable() {
+                public void run() {
+                    Exchange exchange = reference.createExchange();
+                    Message message = exchange.createMessage();
+                    exchange.send(message);
+                }
+            }).start();
+        }
+        
+        Thread.sleep(4000);
+        Assert.assertEquals("Received more than one message per minute - throttling policy violated!", 
+                1, service.getMessages().size());
     }
 
     // helper methods

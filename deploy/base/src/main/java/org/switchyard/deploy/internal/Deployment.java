@@ -602,12 +602,12 @@ public class Deployment extends AbstractDeployment {
         // activate bindings for each service
         for (CompositeServiceModel service : getConfig().getComposite().getServices()) {
             // Create the reference for the composite service
+            ServiceMetadata metadata = ServiceMetadataBuilder.create()
+                    .throttling(getCompositeServiceThrottling(service))
+                    .registrant(new Binding(service.getBindings()))
+                    .build();
             ServiceReference reference = getDomain().registerServiceReference(
-                    service.getQName(), getCompositeServiceInterface(service));
-            Binding bindingMetadata = new Binding(service.getBindings());
-            ServiceMetadataBuilder.update(reference.getServiceMetadata())
-                .throttling(getCompositeServiceThrottling(service))
-                .registrant(bindingMetadata);
+                    service.getQName(), getCompositeServiceInterface(service), null, metadata);
             
             int bindingCount = 0;
             for (BindingModel binding : service.getBindings()) {
