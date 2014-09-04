@@ -138,6 +138,7 @@
                         </goals>
                         <configuration>
                             <port>10999</port>
+                            <protocol>remote</protocol>
                             <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
@@ -150,6 +151,7 @@
                         </goals>
                         <configuration>
                             <port>11999</port>
+                            <protocol>remote</protocol>
                             <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
@@ -162,6 +164,7 @@
                         </goals>
                         <configuration>
                             <port>10999</port>
+                            <protocol>remote</protocol>
                             <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
@@ -174,6 +177,7 @@
                         </goals>
                         <configuration>
                             <port>11999</port>
+                            <protocol>remote</protocol>
                             <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
