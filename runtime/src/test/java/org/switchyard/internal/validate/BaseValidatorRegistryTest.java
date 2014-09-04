@@ -40,6 +40,14 @@ public class BaseValidatorRegistryTest {
     }
     
     @Test
+    public void testNullValidator() {
+        final QName name = new QName("notfound");
+        
+         Validator<?> validator = _registry.getValidator(name);
+         Assert.assertTrue(validator == null);
+    }
+    
+    @Test
     public void testAddGetValidator() {
         final QName name = new QName("a");
         

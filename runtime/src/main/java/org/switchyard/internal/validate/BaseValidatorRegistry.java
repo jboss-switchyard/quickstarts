@@ -32,6 +32,7 @@ import org.switchyard.event.EventPublisher;
 import org.switchyard.event.ValidatorAddedEvent;
 import org.switchyard.event.ValidatorRemovedEvent;
 import org.switchyard.runtime.RuntimeMessages;
+import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.ValidatorRegistry;
 
@@ -49,7 +50,7 @@ public class BaseValidatorRegistry implements ValidatorRegistry {
             new ConcurrentHashMap<QName, Validator<?>>();
 
     private EventPublisher _eventPublisher;
-    
+        
     /**
      * Constructor.
      */
@@ -101,7 +102,7 @@ public class BaseValidatorRegistry implements ValidatorRegistry {
             _log.debug("Selecting validator: name '" + validator.getName() + "'. Type: " + validator.getClass().getName());
         }
         
-        return validator;
+        return validator == NULL_VALIDATOR ? null : validator;
     }
 
     @Override
@@ -157,8 +158,8 @@ public class BaseValidatorRegistry implements ValidatorRegistry {
         }
 
         if (fallbackValidates.size() == 0) {
-            // No fallback...
-            return null;
+            addFallbackValidator(NULL_VALIDATOR, name);
+            return NULL_VALIDATOR;
         }
         if (fallbackValidates.size() == 1) {
             Validator<?> fallbackValidator = fallbackValidates.get(0).getValidator();
@@ -247,4 +248,34 @@ public class BaseValidatorRegistry implements ValidatorRegistry {
             }
         }
     }
+    
+    /**
+     * NULL_VALIDATOR is a default validator used to prevent searching for 
+     * fallback validators multiple times. Searching for fallback validators is
+     * expensive because of Class.forName() usage.
+     */
+    private static final Validator NULL_VALIDATOR = new Validator() {
+
+        @Override
+        public ValidationResult validate(Object content) {
+            return null;
+        }
+
+        @Override
+        public Validator setName(QName name) {
+            return null;
+        }
+
+        @Override
+        public QName getName() {
+            return null;
+        }
+
+        @Override
+        public Class getType() {
+            return null;
+        }
+        
+    };
+
 }
