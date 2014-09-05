@@ -98,6 +98,16 @@ public class TransformerRegistryLoader {
      * @throws DuplicateTransformerException an existing transformer has already been registered for the from and to types
      */
     public void registerTransformers(TransformsModel transforms) throws DuplicateTransformerException {
+        registerTransformers(transforms, true);
+    }
+
+    /**
+     * Register a set of transformers in the transform registry associated with this deployment.
+     * @param transforms The transforms model.
+     * @param failOnError false to eat duplicate exceptions
+     * @throws DuplicateTransformerException an existing transformer has already been registered for the from and to types
+     */
+    public void registerTransformers(TransformsModel transforms, boolean failOnError) throws DuplicateTransformerException {
         if (transforms == null) {
             return;
         }
@@ -120,10 +130,12 @@ public class TransformerRegistryLoader {
                                 + toDescription(registeredTransformer) + "'.";
                         if (test) {
                             _log.trace(msg);
-                            continue transformerLoop;
-                        } else {
+                        } else if (failOnError) {
                             throw new DuplicateTransformerException(msg);
+                        } else {
+                            _log.debug(msg);
                         }
+                        continue transformerLoop;
                     }
                     _log.debug("Adding transformer =>"
                             + " From: " + transformer.getFrom()
@@ -165,7 +177,7 @@ public class TransformerRegistryLoader {
 
                 try {
                     TransformsModel transformsModel = new ModelPuller<TransformsModel>().pull(configStream);
-                    registerTransformers(transformsModel);
+                    registerTransformers(transformsModel, false);
                 } catch (final DuplicateTransformerException e) {
                     _log.debug(e.getMessage());
                 } finally {
