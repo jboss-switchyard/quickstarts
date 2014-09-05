@@ -35,16 +35,20 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 public class CamelCxfTest {
 
     private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8081/camel-cxf/order/OrderService";
+    private static final String SWITCHYARD_REFERENCE_SERVICE = "http://localhost:8083/camel-cxf/warehouse/WarehouseService";
 
     private HTTPMixIn _httpMixIn;
 
     @BeforeDeploy
     public void setProperties() {
         System.setProperty("org.switchyard.component.camel.cxf.port", "8081");
+        System.setProperty("org.switchyard.component.camel.cxf.port2", "8083");
     }
 
     @Test
     public void testSwitchYardWebService() throws Exception {
+        // goose the reference to ensure it is initialed before the test service is invoked to prevent a deadlock
+        _httpMixIn.postResource(SWITCHYARD_REFERENCE_SERVICE, "/xml/soap-request.xml");
         _httpMixIn.postResourceAndTestXML(SWITCHYARD_WEB_SERVICE, "/xml/soap-request.xml", "/xml/soap-response.xml");
     }
 
