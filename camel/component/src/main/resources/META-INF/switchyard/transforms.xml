@@ -37,15 +37,15 @@
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.io.OutputStream" to="java:java.io.Writer"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.io.OutputStream" to="java:java.io.ObjectOutput"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.String" to="java:org.apache.camel.converter.jaxp.StringSource"/>
-    <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.String" to="java:long"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.String" to="java:javax.xml.transform.Source"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.String" to="java:java.nio.ByteBuffer"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.String" to="java:org.apache.camel.model.DescriptionDefinition"/>
-    <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.String" to="java:char"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.String" to="java:java.io.StringReader"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.String" to="java:java.io.File"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.String" to="java:javax.xml.transform.sax.SAXSource"/>
+    <!-- Included in switchyard-transform OOTB transformers 
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.String" to="java:javax.xml.transform.dom.DOMSource"/>
+     -->
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.io.Reader" to="java:javax.xml.stream.XMLEventReader"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.io.Reader" to="java:javax.xml.transform.stream.StreamSource"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.io.Reader" to="java:org.apache.camel.StreamCache"/>
@@ -107,7 +107,6 @@
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.Object" to="java:java.lang.Byte"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.Object" to="java:org.milyn.payload.JavaSource"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.Object" to="java:java.lang.Float"/>
-    <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.Object" to="java:boolean"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.Object" to="java:java.util.Iterator"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.Object" to="java:java.lang.Short"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:java.lang.Object" to="java:java.lang.Boolean"/>
@@ -131,7 +130,9 @@
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:byte[]" to="java:java.io.InputStream"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:byte[]" to="java:org.apache.camel.converter.jaxp.BytesSource"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:byte[]" to="java:javax.xml.transform.stream.StreamSource"/>
+    <!-- Included in switchyard-transform OOTB transformers 
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:byte[]" to="java:java.lang.String"/>
+    -->
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:byte[]" to="java:java.nio.ByteBuffer"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:javax.xml.transform.Result" to="java:javax.xml.stream.XMLStreamWriter"/>
     <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.transformer.CamelTransformer" from="java:javax.xml.transform.Result" to="java:javax.xml.stream.XMLEventWriter"/>
