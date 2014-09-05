@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+  
+    <reference id="httpService" interface="org.osgi.service.http.HttpService"/>
+    
+    <bean id="HttpEndpointPublisher" class="org.switchyard.component.http.endpoint.OsgiHttpEndpointPublisher">
+       <property name="httpService" ref="httpService"/>
+    </bean>
+    <service interface="org.switchyard.component.http.endpoint.EndpointPublisher" ref="HttpEndpointPublisher"/>
+
+</blueprint>

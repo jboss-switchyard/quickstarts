@@ -59,5 +59,12 @@ public interface SCALogger {
     @Message(id = 39204, value = "Cannot enable clustered SCA binding for %s.  No distributed cache is avaialble.")
     void cannotEnableClusteredSCABindingFor(String serviceName);
 
+    /**
+     * noEndpointPublisherRegistered method definition.
+     */
+    @LogMessage(level = Level.WARN)
+    @Message(id = 39205, value = "No endpoint publisher service registered.  Defaulting to NO-OP publisher.")
+    void noEndpointPublisherRegistered();
+
 }
 

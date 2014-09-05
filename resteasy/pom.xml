@@ -31,6 +31,10 @@
             com.sun.net.httpserver;resolution:=optional,
             org.apache.http*;resolution:=optional,
             org.jboss.netty*;resolution:=optional,
+            org.jboss.resteasy.plugins.providers,
+            org.jboss.resteasy.plugins.providers.jaxb,
+            org.jboss.resteasy.plugins.interceptors,
+            org.jboss.resteasy.plugins.interceptors.encoding,
             org.jboss.resteasy.plugins.server.netty;resolution:=optional,
             org.jboss.resteasy.plugins.server.sun.http;resolution:=optional,
             org.jboss.resteasy.specimpl,
@@ -122,6 +126,16 @@
             <groupId>org.littleshoot</groupId>
             <artifactId>littleproxy</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

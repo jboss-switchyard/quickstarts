@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+  
+    <bean id="SoapEndpointPublisher" class="org.switchyard.component.soap.endpoint.OsgiEndpointPublisher"/>
+    <service interface="org.switchyard.component.soap.endpoint.EndpointPublisher" ref="SoapEndpointPublisher"/>
+
+</blueprint>

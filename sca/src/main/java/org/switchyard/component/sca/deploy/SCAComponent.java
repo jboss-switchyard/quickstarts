@@ -64,6 +64,7 @@ public class SCAComponent extends BaseComponent {
         // if we couldn't find a provider, default to NOP implementation
         if (_endpointPublisher == null) {
             _endpointPublisher = new NOPEndpointPublisher();
+            SCALogger.ROOT_LOGGER.noEndpointPublisherRegistered();
         }
         _endpointPublisher.init(CONTEXT_PATH);
     }
