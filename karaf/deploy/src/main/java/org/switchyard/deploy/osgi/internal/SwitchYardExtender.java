@@ -15,7 +15,6 @@ package org.switchyard.deploy.osgi.internal;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,7 +33,6 @@ import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.deploy.osgi.ComponentRegistry;
 import org.switchyard.deploy.osgi.NamespaceHandlerRegistry;
 import org.switchyard.deploy.osgi.SwitchYardListener;
-import org.switchyard.deploy.osgi.TransformSource;
 import org.switchyard.deploy.osgi.base.AbstractExtender;
 import org.switchyard.deploy.osgi.base.CompoundExtension;
 import org.switchyard.deploy.osgi.base.Extension;
@@ -61,9 +59,6 @@ public class SwitchYardExtender extends AbstractExtender {
 
     private Runnable _management;
     
-    private List<ServiceRegistration<TransformSource>> _transformSources = 
-            new LinkedList<ServiceRegistration<TransformSource>>();
-
     @Override
     protected void doStart() throws Exception {
         try {
@@ -86,19 +81,6 @@ public class SwitchYardExtender extends AbstractExtender {
             _management.run();
             _management = null;
         }
-        
-        // remove TransformSource registrations
-        for (ServiceRegistration<?> reg : _transformSources) {
-            try {
-                reg.unregister();
-            } catch (Exception ex) {
-                // Exceptions here are not fatal and we see a lot of IllegalStateException
-                // if the services have already been unregistered - drop to DEBUG log
-                // probably becuase the contributing bundle stopped
-                _logger.debug("Error while unregistering TransformSource service", ex);
-            }
-        }
-        _transformSources.clear();
         
         ProviderRegistry.setRegistry(null);
         _providerRegistry.destroy();
@@ -150,20 +132,13 @@ public class SwitchYardExtender extends AbstractExtender {
         if (swXml != null) {
             extensions.add(new SwitchYardContainerImpl(this, bundle, getExecutors()));
         }
-        URL tfXml = bundle.getEntry(TransformSource.TRANSFORMS_XML);
-        if (tfXml != null) {
-            TransformSource trs = new TransformSourceImpl(bundle);
-            ServiceRegistration<TransformSource> trsService = bundle.getBundleContext()
-                    .registerService(TransformSource.class, trs, null);
-            _transformSources.add(trsService);
-        }
         return extensions.isEmpty() ? null : new CompoundExtension(bundle, extensions);
     }
 
-    private boolean checkCompatible(Bundle bundle, Class... classes) {
-        for (Class clazz : classes) {
+    private boolean checkCompatible(Bundle bundle, Class<?>... classes) {
+        for (Class<?> clazz : classes) {
             try {
-                Class loaded = bundle.loadClass(clazz.getName());
+                Class<?> loaded = bundle.loadClass(clazz.getName());
                 if (loaded != null && loaded != clazz) {
                     return false;
                 }

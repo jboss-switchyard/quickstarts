@@ -13,16 +13,13 @@
         <feature version="${version.org.apache.camel.features}">camel-core</feature>
         <feature version="${version.org.apache.camel.features}">camel-spring</feature>
         <feature>switchyard-internal-core</feature>
-        <feature>switchyard-internal-sca</feature>
-        <feature>switchyard-internal-http</feature>
-        <feature>switchyard-internal-rest</feature>
-        <feature>switchyard-internal-soap</feature>
         <bundle>mvn:org.switchyard.karaf/switchyard-karaf-deploy/${project.version}</bundle>
         <bundle>mvn:org.switchyard.karaf/switchyard-karaf-commands/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-internal-core" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-cdi</feature>
+        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${version.org.apache.geronimo.specs.servlet}</bundle>
         <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/1.2_5</bundle>
         <bundle>mvn:org.jboss.logging/jboss-logging/${version.org.jboss.logging}</bundle>
         <bundle>mvn:org.switchyard/switchyard-api/${project.version}</bundle>
@@ -197,6 +194,7 @@
 
     <feature name="switchyard-http" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard</feature>
+        <feature version="${project.version}">switchyard-internal-http</feature>
     </feature>
 
     <feature name="switchyard-internal-http" version="${project.version}" resolver="(obr)">
@@ -251,6 +249,7 @@
 
     <feature name="switchyard-rest" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard</feature>
+        <feature version="${project.version}">switchyard-internal-rest</feature>
      </feature>
 
     <feature name="switchyard-internal-rest" version="${project.version}" resolver="(obr)">
@@ -278,6 +277,7 @@
 
     <feature name="switchyard-sca" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard</feature>
+        <feature version="${project.version}">switchyard-internal-sca</feature>
     </feature>
 
     <feature name="switchyard-internal-sca" version="${project.version}" resolver="(obr)">
@@ -291,7 +291,6 @@
         <bundle dependency="true">wrap:mvn:org.jboss.jbossts.xts/jbossxts/${version.org.jboss.jbossts.jbossxts}</bundle>
         <bundle dependency="true">wrap:mvn:org.jboss.jbossts/jbosstxbridge/${version.org.jboss.jbossts.jbossxts}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
-        <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${version.org.apache.geronimo.specs.servlet}</bundle>
         <bundle>mvn:org.switchyard/switchyard-remote/${project.version}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-sca/${project.version}</bundle>
         <configfile finalname="/etc/org.switchyard.component.sca.cfg">mvn:org.switchyard.components/switchyard-component-sca/${project.version}/properties/sca</configfile>
@@ -305,6 +304,7 @@
 
     <feature name="switchyard-soap" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard</feature>
+        <feature version="${project.version}">switchyard-internal-soap</feature>
     </feature>
 
     <feature name="switchyard-internal-soap" version="${project.version}" resolver="(obr)">

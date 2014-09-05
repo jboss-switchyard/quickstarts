@@ -19,7 +19,6 @@
         <artifactId>switchyard-karaf-parent</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
-    <groupId>org.switchyard.karaf</groupId>
     <artifactId>switchyard-karaf-deploy</artifactId>
     <packaging>bundle</packaging>
     <name>SwitchYard: Karaf Deployer</name>
@@ -35,10 +34,6 @@
             org.apache.camel.core.osgi*
         </switchyard.osgi.private>
         <switchyard.osgi.import>
-            org.jboss.resteasy.plugins.providers,
-            org.jboss.resteasy.plugins.providers.jaxb,
-            org.jboss.resteasy.plugins.interceptors,
-            org.jboss.resteasy.plugins.interceptors.encoding,
             org.switchyard.admin.*;${switchyard.osgi.import.switchyard.version},
             !org.osgi.service;org.switchyard.admin.*;${switchyard.osgi.import.switchyard.version},
             org.switchyard.*;${switchyard.osgi.import.switchyard.version},
@@ -77,53 +72,10 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-admin</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-sca</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-http</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-resteasy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-soap</artifactId>
-        </dependency>
         <!-- external dependencies -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-osgi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.milyn</groupId>
-            <artifactId>milyn-smooks-all</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xmlParserAPIs</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.mvel</groupId>
-                    <artifactId>mvel2</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 </project>
