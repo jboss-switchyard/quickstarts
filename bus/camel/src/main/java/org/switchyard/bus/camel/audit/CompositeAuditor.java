@@ -24,7 +24,7 @@ import org.switchyard.bus.camel.processors.Processors;
  */
 public class CompositeAuditor implements Auditor {
 
-	private Logger _logger = Logger.getLogger(CompositeAuditor.class);
+    private Logger _logger = Logger.getLogger(CompositeAuditor.class);
     private final List<Auditor> _auditors;
 
     /**
@@ -38,24 +38,24 @@ public class CompositeAuditor implements Auditor {
 
     @Override
     public void beforeCall(Processors processor, Exchange exchange) {
-		for (Auditor auditor : _auditors) {
-			try {
-				auditor.beforeCall(processor, exchange);
-			} catch (Exception e) {
-				_logger.error(e);
-			}
-		}
+        for (Auditor auditor : _auditors) {
+            try {
+                auditor.beforeCall(processor, exchange);
+            } catch (Exception e) {
+                _logger.error(e);
+            }
+        }
     }
 
     @Override
     public void afterCall(Processors processor, Exchange exchange) {
-		for (Auditor auditor : _auditors) {
-			try {
-				auditor.afterCall(processor, exchange);
-			} catch (Exception e) {
-				_logger.error(e);
-			}
-		}
+        for (Auditor auditor : _auditors) {
+            try {
+                auditor.afterCall(processor, exchange);
+            } catch (Exception e) {
+                _logger.error(e);
+            }
+        }
     }
 
 }
