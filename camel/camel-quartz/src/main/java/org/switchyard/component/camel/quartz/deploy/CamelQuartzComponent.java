@@ -14,7 +14,7 @@
 package org.switchyard.component.camel.quartz.deploy;
 
 import org.switchyard.component.camel.common.deploy.BaseBindingComponent;
-import org.switchyard.component.camel.quartz.model.v1.V1CamelQuartzBindingModel;
+import org.switchyard.component.camel.quartz.model.v2.V2CamelQuartzBindingModel;
 
 /**
  * Quartz binding component.
@@ -25,7 +25,7 @@ public class CamelQuartzComponent extends BaseBindingComponent {
      * Creates new component.
      */
     public CamelQuartzComponent() {
-        super("CamelQuartzComponent", V1CamelQuartzBindingModel.QUARTZ);
+        super("CamelQuartzComponent", V2CamelQuartzBindingModel.QUARTZ);
     }
 
 }

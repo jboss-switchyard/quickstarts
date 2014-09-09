@@ -6,12 +6,12 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.component.camel.quartz.model.v1;
+package org.switchyard.component.camel.quartz.model.v2;
 
 import java.net.URI;
 import java.text.DateFormat;
@@ -28,10 +28,10 @@ import org.switchyard.config.model.Descriptor;
 
 /**
  * Configuration binding for quartz.
- * 
+ *
  * @author Lukasz Dywicki
  */
-public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
+public class V2CamelQuartzBindingModel extends V1BaseCamelBindingModel
     implements CamelQuartzBindingModel {
 
     private static final String NAME = "name";
@@ -41,7 +41,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     private static final String END_TIME = "trigger.endTime";
     private static final String TIMEZONE = "trigger.timeZone";
     private static final String REPEAT_COUNT = "trigger.repeatCount";
-    private static final String REPEAT_INTERVAL = "trigger.repeartInterval";
+    private static final String REPEAT_INTERVAL = "trigger.repeatInterval";
 
     // Used for dateTime fields
     private static final String DATE_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ss";
@@ -50,19 +50,19 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
      * Create a new CamelQuartzBindingModel.
      * @param namespace namespace
      */
-    public V1CamelQuartzBindingModel(String namespace) {
+    public V2CamelQuartzBindingModel(String namespace) {
         super(QUARTZ, namespace);
 
-        setModelChildrenOrder(NAME, CRON, STATEFUL, START_TIME, END_TIME, TIMEZONE);
+        setModelChildrenOrder(NAME, CRON, REPEAT_COUNT, REPEAT_INTERVAL, STATEFUL, START_TIME, END_TIME, TIMEZONE);
     }
 
     /**
      * Create a V1CamelQuartzBindingModel from the specified configuration and descriptor.
-     * 
+     *
      * @param config The switchyard configuration instance.
      * @param desc The switchyard descriptor instance.
      */
-    public V1CamelQuartzBindingModel(Configuration config, Descriptor desc) {
+    public V2CamelQuartzBindingModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -72,7 +72,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     }
 
     @Override
-    public V1CamelQuartzBindingModel setTimerName(String name) {
+    public V2CamelQuartzBindingModel setTimerName(String name) {
         return setConfig(NAME, name);
     }
 
@@ -82,7 +82,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     }
 
     @Override
-    public V1CamelQuartzBindingModel setCron(String cron) {
+    public V2CamelQuartzBindingModel setCron(String cron) {
         return setConfig(CRON, cron);
     }
 
@@ -92,7 +92,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     }
 
     @Override
-    public V1CamelQuartzBindingModel setStateful(Boolean stateful) {
+    public V2CamelQuartzBindingModel setStateful(Boolean stateful) {
         return setConfig(STATEFUL, stateful);
     }
 
@@ -103,7 +103,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     }
 
     @Override
-    public V1CamelQuartzBindingModel setStartTime(Date startTime) {
+    public V2CamelQuartzBindingModel setStartTime(Date startTime) {
         DateFormat startTimeForamt = new SimpleDateFormat(DATE_FORMAT_STRING);
         return setConfig(START_TIME, startTimeForamt.format(startTime));
     }
@@ -115,7 +115,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     }
 
     @Override
-    public V1CamelQuartzBindingModel setEndTime(Date endTime) {
+    public V2CamelQuartzBindingModel setEndTime(Date endTime) {
         DateFormat endTimeFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
         return setConfig(END_TIME, endTimeFormat.format(endTime));
     }
@@ -126,7 +126,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     }
 
     @Override
-    public V1CamelQuartzBindingModel setTimeZone(String timeZone) {
+    public V2CamelQuartzBindingModel setTimeZone(String timeZone) {
         return setConfig(TIMEZONE, timeZone);
     }
 
@@ -136,7 +136,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     }
 
     @Override
-    public V1CamelQuartzBindingModel setRepeatCount(Integer repeatCount) {
+    public V2CamelQuartzBindingModel setRepeatCount(Integer repeatCount) {
         return setConfig(REPEAT_COUNT, repeatCount);
     }
 
@@ -146,7 +146,7 @@ public class V1CamelQuartzBindingModel extends V1BaseCamelBindingModel
     }
 
     @Override
-    public V1CamelQuartzBindingModel setRepeatInterval(Long repeatInterval) {
+    public V2CamelQuartzBindingModel setRepeatInterval(Long repeatInterval) {
         return setConfig(REPEAT_INTERVAL, repeatInterval);
     }
 

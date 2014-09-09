@@ -102,14 +102,6 @@ public abstract class V1BaseCamelServiceBindingModelTest<T extends V1BaseCamelBi
     }
 
     /**
-     * Verify if model after re-ordering elements is still correct.
-     */
-    @Test
-    public void testModelChildrenOrder() {
-        validModel((T) createTestModel().orderModelChildren());
-    }
-
-    /**
      * Verify if model from file is similar to model created by test.
      * 
      * @throws Exception If model from file can not be read.

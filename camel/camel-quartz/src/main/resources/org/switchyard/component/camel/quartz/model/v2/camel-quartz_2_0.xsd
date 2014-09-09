@@ -22,13 +22,29 @@
     <import namespace="urn:switchyard-config:switchyard:2.0"/>
     <include schemaLocation="camel-common_2_0.xsd" />
 
+    <group name="crongroup">
+        <sequence>
+        <element name="cron" type="string" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+    </group>
+
+    <group name="triggergroup">
+        <sequence>
+        <element name="trigger.repeatCount" type="switchyard:propInteger" minOccurs="0" maxOccurs="1" />
+        <element name="trigger.repeatInterval" type="switchyard:propLong" minOccurs="0" maxOccurs="1" />
+        </sequence>
+    </group>
+
     <element name="binding.quartz" type="tns:CamelQuartzBindingType" substitutionGroup="switchyard:binding.switchyard"/>
     <complexType name="CamelQuartzBindingType">
         <complexContent>
             <extension base="tns:BaseCamelBinding">
                 <sequence>
                     <element name="name" type="string" />
-                    <element name="cron" type="string" />
+                    <choice minOccurs="1" maxOccurs="1">
+			<group ref="tns:crongroup"/>
+                        <group ref="tns:triggergroup"/>
+                    </choice>
                     <element name="stateful" type="boolean" minOccurs="0" maxOccurs="1" />
                     <element name="trigger.startTime" type="dateTime" minOccurs="0" maxOccurs="1" />
                     <element name="trigger.endTime" type="dateTime" minOccurs="0" maxOccurs="1" />
@@ -37,5 +53,4 @@
             </extension>
         </complexContent>
     </complexType>
-
 </schema>

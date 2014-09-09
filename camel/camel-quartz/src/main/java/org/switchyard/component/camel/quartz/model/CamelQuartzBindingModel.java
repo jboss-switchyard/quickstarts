@@ -106,4 +106,30 @@ public interface CamelQuartzBindingModel extends CamelBindingModel {
      * @return a reference to this config model
      */
     CamelQuartzBindingModel setTimeZone(String timeZone);
+
+    /**
+     * Returns the schedule repeat count.
+     * @return repeatCount Integer corresponding to the schedule repeat count.
+     */
+    Integer getRepeatCount();
+
+    /**
+     * Sets the schedule repeat interval.
+     * @param repeatCount Integer corresponding to the schedule repeat count.
+     * @return a reference to this config model
+     */
+    CamelQuartzBindingModel setRepeatCount(Integer repeatCount);
+
+    /**
+     * Returns the schedule repeat interval.
+     * @return repeatInterval Long corresponding to the schedule repeat interval.
+     */
+    Long getRepeatInterval();
+
+    /**
+     * Sets the repeat interval.
+     * @param repeatInterval Long corresponding to the schedule repeat interval.
+     * @return a reference to this config model
+     */
+    CamelQuartzBindingModel setRepeatInterval(Long repeatInterval);
 }
