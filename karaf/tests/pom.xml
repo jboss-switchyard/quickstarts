@@ -151,7 +151,7 @@
                             <goal>add-features-to-repo</goal>
                         </goals>
                         <configuration>
-                            <karafVersion>${version.karaf}</karafVersion>
+                            <karafVersion>${version.org.apache.karaf}</karafVersion>
                             <descriptors>
                                 <descriptor>mvn:org.switchyard.karaf/switchyard/${project.version}/xml/features</descriptor>
                             </descriptors>
@@ -184,7 +184,7 @@
                                 <feature version="${version.org.apache.camel}">camel-saxon</feature>
                                 <feature version="5.9.0">activemq-broker</feature>
                             </features>
-                            <repository>target/dependencies/apache-karaf-${version.karaf}/system</repository>
+                            <repository>target/dependencies/apache-karaf-${version.org.apache.karaf}/system</repository>
                         </configuration>
                     </execution>
                 </executions>

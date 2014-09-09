@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.apache.mina">
 
     <resources>
-        <resource-root path="mina-core-${version.mina2}.jar"/>
+        <resource-root path="mina-core-${version.org.apache.mina}.jar"/>
     </resources>
 
     <dependencies>

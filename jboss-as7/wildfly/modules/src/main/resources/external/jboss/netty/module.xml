@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.jboss.netty">
 
     <resources>
-        <resource-root path="netty-${version.jboss.netty}.jar"/>
+        <resource-root path="netty-${version.io.netty}.jar"/>
     </resources>
 
     <dependencies>

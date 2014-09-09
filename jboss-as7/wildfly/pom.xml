@@ -30,7 +30,7 @@
         <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
         <version.shrinkwrap.descriptors>2.0.0-alpha-3</version.shrinkwrap.descriptors>
         <!-- Required for the module.xml file generation. -->
-        <version.jboss.netty>3.6.6.Final</version.jboss.netty>
+        <version.io.netty>3.6.6.Final</version.io.netty>
         <!-- Overridden version settings. -->
         <version.arquillian.container>1.1.2.Final-wildfly-1</version.arquillian.container>
         <version.jbossws.spi>2.2.2.Final</version.jbossws.spi>
@@ -94,7 +94,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty</artifactId>
-                <version>${version.jboss.netty}</version>
+                <version>${version.io.netty}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

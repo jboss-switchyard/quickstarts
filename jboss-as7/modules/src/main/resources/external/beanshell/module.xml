@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.beanshell">
 
     <resources>
-        <resource-root path="bsh-${version.beanshell}.jar"/>
+        <resource-root path="bsh-${version.org.beanshell}.jar"/>
     </resources>
 
     <dependencies>

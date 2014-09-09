@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="org.apache.deltaspike.core-api">
 
     <resources>
-        <resource-root path="deltaspike-core-api-${version.deltaspike}.jar"/>
+        <resource-root path="deltaspike-core-api-${version.org.apache.deltaspike.core}.jar"/>
     </resources>
 
     <dependencies>
