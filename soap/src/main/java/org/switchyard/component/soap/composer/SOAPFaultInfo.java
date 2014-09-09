@@ -181,6 +181,15 @@ public class SOAPFaultInfo implements Serializable {
 
     /**
      * @return the Fault role
+     * @deprecated use {@link #getRole()} instead
+     */
+    @Deprecated
+    public String geRole() {
+        return _role;
+    }
+
+    /**
+     * @return the Fault role
      */
     public String getRole() {
         return _role;
