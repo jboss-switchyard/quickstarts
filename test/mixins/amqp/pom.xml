@@ -41,8 +41,8 @@
             <artifactId>qpid-broker</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>jms</artifactId>
+            <groupId>org.jboss.spec.javax.jms</groupId>
+            <artifactId>jboss-jms-api_1.1_spec</artifactId>
         </dependency>
     </dependencies>
 </project>
