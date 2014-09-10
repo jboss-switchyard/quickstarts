@@ -29,10 +29,7 @@
     <properties>
         <version.ip.bom>6.0.0.CR12</version.ip.bom>
         <version.org.jboss.as>7.4.0.Final-redhat-19</version.org.jboss.as>
-        <version.org.jboss.as.bom>7.4.0.Final-redhat-19</version.org.jboss.as.bom>
-        <version.redhat.eap6.bom>1.0.4.Final-redhat-1</version.redhat.eap6.bom>
-        <!-- Older than IP BOM -->
-        <version.org.jboss.as.arquillian>7.1.3.Final</version.org.jboss.as.arquillian>
+        <version.redhat.eap6.bom>6.3.0.GA</version.redhat.eap6.bom>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -45,7 +42,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.bom</groupId>
-                <artifactId>jboss-javaee-6.0-with-all</artifactId>
+                <artifactId>eap6-supported-artifacts</artifactId>
                 <version>${version.redhat.eap6.bom}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -312,7 +309,7 @@
             <!--############################################################-->
             <dependency>
                 <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-arquillian-container-managed</artifactId>
+                <artifactId>jboss-as-arquillian-container-remote</artifactId>
                 <scope>test</scope>
                 <version>${version.org.jboss.as.arquillian}</version>
             </dependency>

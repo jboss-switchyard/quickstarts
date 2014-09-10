@@ -54,38 +54,34 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <version.org.jboss.as>7.4.0.Final-redhat-19</version.org.jboss.as>
-        <version.org.jboss.as.bom>7.4.0.Final-redhat-19</version.org.jboss.as.bom>
         <version.org.jboss.as.console>1.5.4.Final</version.org.jboss.as.console>
-        <version.redhat.eap6.bom>1.0.4.Final-redhat-1</version.redhat.eap6.bom>
+        <version.redhat.eap6.bom>6.3.0.GA</version.redhat.eap6.bom>
         <version.ip.bom>6.0.0.CR12</version.ip.bom>
-        <!-- Versions for local dependencies not eligible for the Integration BOM -->
-        <version.activity.monitor.model>1.2.2.Final</version.activity.monitor.model>
-        <version.camelsap>1.0.0.redhat-379</version.camelsap>
-        <version.commons-lang3>3.1</version.commons-lang3>
         <!-- This version is only used as a prefix for a jar included in release modules -->
         <version.redhat.eap6>6.3</version.redhat.eap6>
         <version.redhat.eap6.minor>0.GA</version.redhat.eap6.minor>
+        <version.org.fusesource.hawtdispatch>1.18</version.org.fusesource.hawtdispatch>
+        <version.org.fusesource.hawtbuf>1.9</version.org.fusesource.hawtbuf>
         <!-- consider moving to integration platform bom -->
-        <version.fungal>0.10.2.Final</version.fungal>
-        <version.hapi>2.1</version.hapi>
-        <version.littleproxy>0.5.3</version.littleproxy>
-        <version.mock.javamail>1.9</version.mock.javamail>
+        <version.camelsap>1.0.0.redhat-379</version.camelsap>
+        <version.commons-lang3>3.1</version.commons-lang3>
+        <version.ca.uhn.hapi>2.1</version.ca.uhn.hapi>
+        <version.org.littleshoot.littleproxy>0.5.3</version.org.littleshoot.littleproxy>
+        <version.org.jvnet.mock-javamail>1.9</version.org.jvnet.mock-javamail>
         <version.net.sf.dozer>5.4.0</version.net.sf.dozer>
         <version.overlord-commons>2.0.2.Final</version.overlord-commons>
+        <version.org.fusesource.mqtt-client>1.6</version.org.fusesource.mqtt-client>
+        <!--  RiftSaw -->
+        <version.activity.monitor.model>1.2.2.Final</version.activity.monitor.model>
         <version.riftsaw.ode>3.2.0.Final</version.riftsaw.ode>
         <version.riftsaw.engine>3.2.0.Final</version.riftsaw.engine>
         <version.riftsaw.console>2.4.6.Final</version.riftsaw.console>
-        <version.org.fusesource.mqtt-client>1.6</version.org.fusesource.mqtt-client>
-        <version.org.fusesource.hawtdispatch>1.18</version.org.fusesource.hawtdispatch>
-        <version.org.fusesource.hawtbuf>1.9</version.org.fusesource.hawtbuf>
         <!-- KIE/Drools/jBPM -->
         <version.org.kie>${version.kiedroolsjbpm}</version.org.kie>
         <version.org.drools>${version.kiedroolsjbpm}</version.org.drools>
         <version.org.jbpm>${version.kiedroolsjbpm}</version.org.jbpm>
         <!-- Require investigation and/or will be removed  -->
         <version.jbossws.jboss720.server.integration>4.2.0.Final</version.jbossws.jboss720.server.integration>
-        <version.jboss.jts>4.17.19.Final-redhat-1</version.jboss.jts>
-        <version.servlet.api>2.5</version.servlet.api>
 
         <!-- BOM overrides -->
         <!-- Newer than BOM -->
@@ -94,8 +90,6 @@
         <version.org.beanshell>2.0b5</version.org.beanshell> <!-- 1.3.0 -->
         <version.org.ops4j.pax.exam>3.5.0</version.org.ops4j.pax.exam> <!-- 3.4.0 -->
         <version.org.osgi>4.3.1</version.org.osgi> <!-- 4.2.0 -->
-        <!-- Older than BOM -->
-        <version.org.jboss.as.arquillian>7.1.3.Final</version.org.jboss.as.arquillian>
 
         <!-- Plugin versions -->
         <version.felix.maven>2.4.0</version.felix.maven>
@@ -150,36 +144,10 @@
             </snapshots>
         </repository>
         <repository>
-            <id>jboss-enterprise-earlyaccess-group</id>
-            <name>JBoss Enterprise Early Access Maven Repository Group</name>
-            <url>http://maven.repository.redhat.com/earlyaccess/all/</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </repository>
-        <repository>
             <id>jboss-public-repository-group</id>
             <name>JBoss Public Maven Repository Group</name>
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
             <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>codehaus.m2.snapshots</id>
-            <url>http://snapshots.repository.codehaus.org</url>
             <releases>
                 <enabled>true</enabled>
                 <updatePolicy>never</updatePolicy>
@@ -203,32 +171,6 @@
         </repository>
     </repositories>
     <pluginRepositories>
-        <pluginRepository>
-            <id>jboss-enterprise-techpreview-group</id>
-            <name>JBoss Enterprise Technology Preview  Maven Repository Group</name>
-            <url>http://maven.repository.redhat.com/techpreview/all/</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>jboss-enterprise-earlyaccess-group</id>
-            <name>JBoss Enterprise Early Access Maven Repository Group</name>
-            <url>http://maven.repository.redhat.com/earlyaccess/all/</url>
-            <layout>default</layout>
-            <releases>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-            <snapshots>
-                <updatePolicy>never</updatePolicy>
-            </snapshots>
-        </pluginRepository>
         <pluginRepository>
             <id>jboss-public-repository-group</id>
             <name>JBoss Public Maven Repository Group</name>
@@ -738,7 +680,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.bom</groupId>
-                <artifactId>jboss-javaee-6.0-with-all</artifactId>
+                <artifactId>eap6-supported-artifacts</artifactId>
                 <version>${version.redhat.eap6.bom}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -756,15 +698,9 @@
                 <version>${version.org.jboss.as.console}</version>
                 <type>pom</type>
                 <scope>import</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.bsc.maven</groupId>
-                        <artifactId>maven-processor-plugin</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 <!--  ###################################################################
-      ##           Dependencies Not Present in Integration BOM         ##
+      ##      Dependencies coming in Integration BOM 6.0.0.CR13        ##
       ################################################################### -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
@@ -862,75 +798,6 @@
                 <version>${version.org.jboss.resteasy}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.fungal</groupId>
-                <artifactId>fungal</artifactId>
-                <version>${version.fungal}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.dozer</groupId>
-                <artifactId>dozer</artifactId>
-                <version>${version.net.sf.dozer}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${version.commons-lang3}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-plugin-plugin</artifactId>
-                <version>${version.maven.plugin.plugin}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jvnet.mock-javamail</groupId>
-                <artifactId>mock-javamail</artifactId>
-                <version>${version.mock.javamail}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.littleshoot</groupId>
-                <artifactId>littleproxy</artifactId>
-                <version>${version.littleproxy}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>${version.servlet.api}</version>
-            </dependency>
-            <dependency>
-                <groupId>ca.uhn.hapi</groupId>
-                <artifactId>hapi-osgi-base</artifactId>
-                <version>${version.hapi}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-                <version>${version.org.springframework}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.fusesource</groupId>
-                <artifactId>camel-sap</artifactId>
-                <version>${version.camelsap}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.fusesource.mqtt-client</groupId>
-                <artifactId>mqtt-client</artifactId>
-                <version>${version.org.fusesource.mqtt-client}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.jbossts.jta</groupId>
-                <artifactId>narayana-jta</artifactId>
-                <version>${version.jboss.jts}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.ws</groupId>
-                <artifactId>jbossws-jboss720-server-integration</artifactId>
-                <version>${version.jbossws.jboss720.server.integration}</version>
-            </dependency>
-<!--  ###################################################################
-      ##                  Dependency overrides                         ##
-      ################################################################### -->
-            <dependency>
                 <groupId>net.sf.saxon</groupId>
                 <artifactId>Saxon-HE</artifactId>
                 <version>${version.net.sf.saxon}</version>
@@ -962,12 +829,6 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-arquillian-container-managed</artifactId>
-                <scope>test</scope>
-                <version>${version.org.jboss.as.arquillian}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
                 <artifactId>jboss-as-arquillian-common</artifactId>
                 <version>${version.org.jboss.as.arquillian}</version>
                 <scope>test</scope>
@@ -984,6 +845,78 @@
                 <version>${version.org.jboss.as.arquillian}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${version.commons-lang3}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>${version.org.springframework}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.dozer</groupId>
+                <artifactId>dozer</artifactId>
+                <version>${version.net.sf.dozer}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jvnet.mock-javamail</groupId>
+                <artifactId>mock-javamail</artifactId>
+                <version>${version.org.jvnet.mock-javamail}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.littleshoot</groupId>
+                <artifactId>littleproxy</artifactId>
+                <version>${version.org.littleshoot.littleproxy}</version>
+            </dependency>
+            <dependency>
+                <groupId>ca.uhn.hapi</groupId>
+                <artifactId>hapi-osgi-base</artifactId>
+                <version>${version.ca.uhn.hapi}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.jbossts.jta</groupId>
+                <artifactId>narayana-jta</artifactId>
+                <version>${version.org.jboss.jbossts.jbossxts}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>${version.org.osgi}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.compendium</artifactId>
+                <version>${version.org.osgi}</version>
+            </dependency>
+<!--  ###################################################################
+      ##           Dependencies Not Present in Integration BOM         ##
+      ################################################################### -->
+            <dependency>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>${version.maven.plugin.plugin}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.fusesource</groupId>
+                <artifactId>camel-sap</artifactId>
+                <version>${version.camelsap}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fusesource.mqtt-client</groupId>
+                <artifactId>mqtt-client</artifactId>
+                <version>${version.org.fusesource.mqtt-client}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.ws</groupId>
+                <artifactId>jbossws-jboss720-server-integration</artifactId>
+                <version>${version.jbossws.jboss720.server.integration}</version>
+            </dependency>
+<!--  ###################################################################
+      ##                  Dependency overrides                         ##
+      ################################################################### -->
             <dependency>
                 <groupId>org.jboss.as</groupId>
                 <artifactId>jboss-as-controller</artifactId>
@@ -1011,16 +944,6 @@
                 <artifactId>jboss-as-weld</artifactId>
                 <version>${version.org.jboss.as}</version>
                 <type>zip</type>
-            </dependency>
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.core</artifactId>
-                <version>${version.org.osgi}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.compendium</artifactId>
-                <version>${version.org.osgi}</version>
             </dependency>
 <!--  ###################################################################
       ##                 Local Project Dependencies                    ##
