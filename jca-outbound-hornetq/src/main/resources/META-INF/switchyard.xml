@@ -41,6 +41,7 @@
                 </outboundConnection>
                 <outboundInteraction>
                     <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                        <property name="destinationType" value="javax.jms.Queue"/>
                         <property name="destination" value="ShippingQueue"/>
                         <property name="messageType" value="Text"/>
                     </processor>
@@ -55,6 +56,7 @@
                 </outboundConnection>
                 <outboundInteraction>
                     <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                        <property name="destinationType" value="javax.jms.Queue"/>
                         <property name="destination" value="FillingStockQueue"/>
                         <property name="messageType" value="Text"/>
                     </processor>
