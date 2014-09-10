@@ -1,6 +1,25 @@
 Welcome to the SwitchYard Quickstart Repository!
 ================================================
 
+In order to use any of these quickstarts you will need to the following repository to your maven settings file (~/.m2/settings.xml by default):
+
+        <repository>
+            <id>jboss-enterprise-repository-group</id>
+            <name>JBoss Enterprise Maven Repository Group</name>
+            <url>http://maven.repository.redhat.com/techpreview/all/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+
+Alternatively, you can use the settings.xml file provided
+
 Quickstarts
 -----------
 * __bean-service__ : CDI-based bean services, Java transformations, and a SOAP binding.
