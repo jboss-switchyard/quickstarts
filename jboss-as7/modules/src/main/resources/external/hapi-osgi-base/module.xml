@@ -15,7 +15,7 @@
 <module xmlns="urn:jboss:module:1.0" name="ca.uhn.hapi-osgi-base">
 
     <resources>
-        <resource-root path="hapi-osgi-base-${version.hapi}.jar"/>
+        <resource-root path="hapi-osgi-base-${version.ca.uhn.hapi}.jar"/>
     </resources>
 
     <dependencies>
