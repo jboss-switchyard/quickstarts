@@ -509,7 +509,7 @@ public class SwitchYardContainerImpl extends SimpleExtension
                 TransformsModel tm = new ModelPuller<TransformsModel>(
                         new OsgiDescriptor(tHandlers)).pull(tConfig);
                 
-                loader.registerTransformers(tm);
+                loader.registerTransformers(tm, false);
             } catch (final DuplicateTransformerException e) {
                 // duplicate OOTB transformers are not an error - log for visibility
                 logger.debug(e.getMessage());
