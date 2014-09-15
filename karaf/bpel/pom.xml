@@ -34,6 +34,7 @@
             org.apache.ode.*;version="${version.riftsaw.ode}";-noimport:=true,
             org.jboss.bpm.monitor.*;version="${version.activity.monitor.model}";-noimport:=true
         </switchyard.osgi.export>
+        <switchyard.osgi.import.bpel.saxon.version>version="[$(version;==;${version.net.sourceforge.saxon}),$(version;=+;${version.net.sourceforge.saxon}))"</switchyard.osgi.import.bpel.saxon.version>
         <switchyard.osgi.import>
             org.switchyard.*;${switchyard.osgi.import.switchyard.version},
             javax.persistence,
@@ -52,6 +53,7 @@
             com.ibm.wsdl.extensions.soap12,
             com.ibm.wsdl.factory,
             com.ibm.wsdl.util,
+            net.sf.saxon.*;${switchyard.osgi.import.bpel.saxon.version},
             !org.jboss.vfs.*,
             !org.jboss.as.*,
             !org.jboss.msc.*,

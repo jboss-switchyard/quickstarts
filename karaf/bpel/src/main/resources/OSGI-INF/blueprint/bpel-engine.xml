@@ -4,7 +4,10 @@
 
   <reference id="UserTransaction" interface="javax.transaction.UserTransaction"/>
   <reference id="TransactionManager" interface="javax.transaction.TransactionManager"/>
-  <reference id="PersistenceProvider" interface="javax.persistence.spi.PersistenceProvider"/>
+  <!-- Hibernate dynamically registers this service, which causes problems on
+       Fuse. Setting the availability to "optional" works around the problem.
+   -->
+  <reference id="PersistenceProvider" interface="javax.persistence.spi.PersistenceProvider" availability="optional"/>
 
   <bean id="RiftsawDS" class="org.h2.jdbcx.JdbcDataSource">
     <property name="URL" value="jdbc:h2:mem:jpadb;DB_CLOSE_DELAY=-1" />
