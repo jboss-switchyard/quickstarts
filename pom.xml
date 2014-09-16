@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.jboss.integration-platform</groupId>
         <artifactId>jboss-integration-platform-parent</artifactId>
-        <version>6.0.0.CR12</version>
+        <version>6.0.0.CR14</version>
     </parent>
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-parent</artifactId>
@@ -52,10 +52,10 @@
         <!-- [WARNING] Using platform encoding (UTF-8 actually) to copy filtered
           resources, i.e. build is platform dependent! -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.org.jboss.as>7.4.0.Final-redhat-19</version.org.jboss.as>
+
         <version.org.jboss.as.console>1.5.4.Final</version.org.jboss.as.console>
         <version.redhat.eap6.bom>6.3.0.GA</version.redhat.eap6.bom>
-        <version.ip.bom>6.0.0.CR12</version.ip.bom>
+        <version.ip.bom>6.0.0.CR14</version.ip.bom>
         <!-- This version is only used as a prefix for a jar included in release modules -->
         <version.redhat.eap6>6.3</version.redhat.eap6>
         <version.redhat.eap6.minor>0.GA</version.redhat.eap6.minor>
@@ -63,11 +63,6 @@
         <version.org.fusesource.hawtbuf>1.9</version.org.fusesource.hawtbuf>
         <!-- consider moving to integration platform bom -->
         <version.camelsap>1.0.0.redhat-379</version.camelsap>
-        <version.commons-lang3>3.1</version.commons-lang3>
-        <version.ca.uhn.hapi>2.1</version.ca.uhn.hapi>
-        <version.org.littleshoot.littleproxy>0.5.3</version.org.littleshoot.littleproxy>
-        <version.org.jvnet.mock-javamail>1.9</version.org.jvnet.mock-javamail>
-        <version.net.sf.dozer>5.4.0</version.net.sf.dozer>
         <version.org.fusesource.mqtt-client>1.6</version.org.fusesource.mqtt-client>
         <!--  RiftSaw -->
         <version.activity.monitor.model>1.2.2.Final</version.activity.monitor.model>
@@ -75,36 +70,23 @@
         <version.riftsaw.ode>3.2.0.Final</version.riftsaw.ode>
         <version.riftsaw.engine>3.2.0.Final</version.riftsaw.engine>
         <version.riftsaw.console>2.4.6.Final</version.riftsaw.console>
-        <!-- Require investigation and/or will be removed  -->
-        <version.jbossws.jboss720.server.integration>4.2.0.Final</version.jbossws.jboss720.server.integration>
+        <!-- Remove when RiftSaw upgrades to net.sf.saxon:Saxon-HE:9.5.1-2  -->
+        <version.net.sourceforge.saxon>9.2.1.5</version.net.sourceforge.saxon>
+
         <!-- KIE/Drools/jBPM -->
         <version.kiedroolsjbpm>6.1.0.Final</version.kiedroolsjbpm>
-        <!-- new-style property names (our standard based on groupId) -->
         <version.org.kie>${version.kiedroolsjbpm}</version.org.kie>
         <version.org.drools>${version.kiedroolsjbpm}</version.org.drools>
         <version.org.jbpm>${version.kiedroolsjbpm}</version.org.jbpm>
-        <!-- old-style property names (found in drools and jbpm boms) -->
-        <kie.version>${version.kiedroolsjbpm}</kie.version>
-        <drools.version>${version.kiedroolsjbpm}</drools.version>
-        <jbpm.version>${version.kiedroolsjbpm}</jbpm.version>
-        <!-- BOM overrides -->
-        <!-- Newer than BOM -->
-        <version.net.sf.saxon>9.5.1-2</version.net.sf.saxon>
-        <!-- 9.2.1.5 and diff GAV -->
-        <version.org.apache.mina>2.0.7</version.org.apache.mina>
-        <!-- 2.0.4 -->
-        <version.org.beanshell>2.0b5</version.org.beanshell>
-        <!-- 1.3.0 -->
-        <version.org.ops4j.pax.exam>3.5.0</version.org.ops4j.pax.exam>
-        <!-- 3.4.0 -->
-        <version.org.osgi>4.3.1</version.org.osgi>
-        <!-- 4.2.0 -->
-        <version.org.mvel>2.2.1.Final</version.org.mvel>
+
+        <!-- Require investigation and/or will be removed  -->
+        <version.jbossws.jboss720.server.integration>4.2.0.Final</version.jbossws.jboss720.server.integration>
+
         <!-- Plugin versions -->
         <version.felix.maven>2.4.0</version.felix.maven>
         <version.maven.clean.plugin>2.5</version.maven.clean.plugin>
         <version.maven.plugin.plugin>3.1</version.maven.plugin.plugin>
-        <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
+
         <!-- OSGi bundles properties -->
         <switchyard.osgi.import.switchyard.version>version="[$(version;==;${switchyard.osgi.version}),$(version;=+;${switchyard.osgi.version}))"</switchyard.osgi.import.switchyard.version>
         <switchyard.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</switchyard.osgi.import.default.version>
@@ -287,11 +269,6 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>xml-maven-plugin</artifactId>
                     <version>1.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.wildfly.plugins</groupId>
-                    <artifactId>wildfly-maven-plugin</artifactId>
-                    <version>${version.wildfly.maven}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.switchyard</groupId>
@@ -673,7 +650,7 @@
     </reporting>
     <dependencyManagement>
         <dependencies>
-            <!--  ###################################################################
+<!--  ###################################################################
       ##                         Imported BOMs                         ##
       ################################################################### -->
             <dependency>
@@ -725,213 +702,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!--  ###################################################################
-      ##      Dependencies coming in Integration BOM 6.0.0.CR13        ##
-      ################################################################### -->
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-mqtt</artifactId>
-                <version>${version.org.apache.activemq}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-rss</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bindy</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-core-osgi</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-cxf-transport</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-hl7</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-mina2</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-mqtt</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-saxon</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.karaf</groupId>
-                <artifactId>org.apache.karaf.util</artifactId>
-                <version>${version.org.apache.karaf}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.karaf.jaas</groupId>
-                <artifactId>org.apache.karaf.jaas.modules</artifactId>
-                <version>${version.org.apache.karaf}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.karaf.shell</groupId>
-                <artifactId>org.apache.karaf.shell.console</artifactId>
-                <version>${version.org.apache.karaf}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.abdera</groupId>
-                <artifactId>abdera-core</artifactId>
-                <version>${version.org.apache.abdera}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.abdera</groupId>
-                <artifactId>abdera-parser</artifactId>
-                <version>${version.org.apache.abdera}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.deltaspike.core</groupId>
-                <artifactId>deltaspike-core-api</artifactId>
-                <version>${version.org.apache.deltaspike.core}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.deltaspike.core</groupId>
-                <artifactId>deltaspike-core-impl</artifactId>
-                <version>${version.org.apache.deltaspike.core}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.deltaspike.cdictrl</groupId>
-                <artifactId>deltaspike-cdictrl-api</artifactId>
-                <version>${version.org.apache.deltaspike.core}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-jdk-http</artifactId>
-                <version>${version.org.jboss.resteasy}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-netty</artifactId>
-                <version>${version.org.jboss.resteasy}</version>
-	    </dependency>
-            <dependency>
-               <groupId>org.apache.cxf</groupId>
-               <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-              <version>${version.org.apache.cxf}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-databinding-jaxb</artifactId>
-                <version>${version.org.apache.cxf}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.saxon</groupId>
-                <artifactId>Saxon-HE</artifactId>
-                <version>${version.net.sf.saxon}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>pax-exam</artifactId>
-                <version>${version.org.ops4j.pax.exam}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>pax-exam-junit4</artifactId>
-                <version>${version.org.ops4j.pax.exam}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>pax-exam-container-karaf</artifactId>
-                <version>${version.org.ops4j.pax.exam}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.mina</groupId>
-                <artifactId>mina-core</artifactId>
-                <version>${version.org.apache.mina}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.beanshell</groupId>
-                <artifactId>bsh</artifactId>
-                <version>${version.org.beanshell}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-arquillian-common</artifactId>
-                <version>${version.org.jboss.as.arquillian}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-arquillian-testenricher-msc</artifactId>
-                <version>${version.org.jboss.as.arquillian}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-arquillian-protocol-jmx</artifactId>
-                <version>${version.org.jboss.as.arquillian}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${version.commons-lang3}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-                <version>${version.org.springframework}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.dozer</groupId>
-                <artifactId>dozer</artifactId>
-                <version>${version.net.sf.dozer}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jvnet.mock-javamail</groupId>
-                <artifactId>mock-javamail</artifactId>
-                <version>${version.org.jvnet.mock-javamail}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.littleshoot</groupId>
-                <artifactId>littleproxy</artifactId>
-                <version>${version.org.littleshoot.littleproxy}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mvel</groupId>
-                <artifactId>mvel2</artifactId>
-                <version>${version.org.mvel}</version>
-            </dependency>
-            <dependency>
-                <groupId>ca.uhn.hapi</groupId>
-                <artifactId>hapi-osgi-base</artifactId>
-                <version>${version.ca.uhn.hapi}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.jbossts.jta</groupId>
-                <artifactId>narayana-jta</artifactId>
-                <version>${version.org.jboss.jbossts.jbossxts}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.core</artifactId>
-                <version>${version.org.osgi}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.compendium</artifactId>
-                <version>${version.org.osgi}</version>
-            </dependency>
-            <!--  ###################################################################
+<!--  ###################################################################
       ##           Dependencies Not Present in Integration BOM         ##
       ################################################################### -->
             <dependency>
@@ -939,6 +710,11 @@
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>${version.maven.plugin.plugin}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugin-tools</groupId>
+                <artifactId>maven-plugin-annotations</artifactId>
+                <version>${version.maven.plugin.plugin}</version>
             </dependency>
             <dependency>
                 <groupId>org.fusesource</groupId>
@@ -955,38 +731,12 @@
                 <artifactId>jbossws-jboss720-server-integration</artifactId>
                 <version>${version.jbossws.jboss720.server.integration}</version>
             </dependency>
-            <!--  ###################################################################
-      ##                  Dependency overrides                         ##
-      ################################################################### -->
             <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-controller</artifactId>
-                <version>${version.org.jboss.as}</version>
-                <type>zip</type>
+                <groupId>net.sourceforge.saxon</groupId>
+                <artifactId>saxonhe</artifactId>
+                <version>${version.net.sourceforge.saxon}</version>
             </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-server</artifactId>
-                <version>${version.org.jboss.as}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-naming</artifactId>
-                <version>${version.org.jboss.as}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-dist</artifactId>
-                <version>${version.org.jboss.as}</version>
-                <type>zip</type>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-weld</artifactId>
-                <version>${version.org.jboss.as}</version>
-                <type>zip</type>
-            </dependency>
-            <!--  ###################################################################
+<!--  ###################################################################
       ##                    Riftsaw Dependencies                       ##
       ################################################################### -->
             <dependency>
@@ -1134,7 +884,7 @@
                 <version>${version.riftsaw.engine}</version>
                 <type>war</type>
             </dependency>
-            <!--  ###################################################################
+<!--  ###################################################################
       ##                       Project Artifacts                       ##
       ################################################################### -->
             <dependency>

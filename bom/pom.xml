@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.jboss.integration-platform</groupId>
         <artifactId>jboss-integration-platform-parent</artifactId>
-        <version>6.0.0.CR12</version>
+        <version>6.0.0.CR14</version>
     </parent>
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-bom</artifactId>
@@ -27,7 +27,7 @@
     <description>The BOM for SwitchYard application development</description>
     <url>http://switchyard.org</url>
     <properties>
-        <version.ip.bom>6.0.0.CR12</version.ip.bom>
+        <version.ip.bom>6.0.0.CR14</version.ip.bom>
         <version.org.jboss.as>7.4.0.Final-redhat-19</version.org.jboss.as>
         <version.redhat.eap6.bom>6.3.0.GA</version.redhat.eap6.bom>
         <version.org.mvel>2.2.1.Final</version.org.mvel>
@@ -61,6 +61,11 @@
             <dependency>
                 <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-deploy-webapp</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -255,94 +260,6 @@
                 <groupId>org.switchyard.components</groupId>
                 <artifactId>switchyard-component-test-mixin-smooks</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <!--############################################################-->
-            <!--# Camel Dependencies                                       #-->
-            <!--############################################################-->
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bindy</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-hl7</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-jaxb</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-mina2</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-saxon</artifactId>
-                <version>${version.org.apache.camel}</version>
-            </dependency>
-            <!--############################################################-->
-            <!--# Other dependencies                                       #-->
-            <!--############################################################-->
-            <dependency>
-                <groupId>org.apache.deltaspike.core</groupId>
-                <artifactId>deltaspike-core-api</artifactId>
-                <version>${version.org.apache.deltaspike.core}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.deltaspike.core</groupId>
-                <artifactId>deltaspike-core-impl</artifactId>
-                <version>${version.org.apache.deltaspike.core}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.deltaspike.cdictrl</groupId>
-                <artifactId>deltaspike-cdictrl-api</artifactId>
-                <version>${version.org.apache.deltaspike.core}</version>
-            </dependency>
-            <!--############################################################-->
-            <!--# IP BOM overrides                                         #-->
-            <!--############################################################-->
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-arquillian-container-remote</artifactId>
-                <scope>test</scope>
-                <version>${version.org.jboss.as.arquillian}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-arquillian-common</artifactId>
-                <version>${version.org.jboss.as.arquillian}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-arquillian-testenricher-msc</artifactId>
-                <version>${version.org.jboss.as.arquillian}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-arquillian-protocol-jmx</artifactId>
-                <version>${version.org.jboss.as.arquillian}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-server</artifactId>
-                <version>${version.org.jboss.as}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.as</groupId>
-                <artifactId>jboss-as-naming</artifactId>
-                <version>${version.org.jboss.as}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mvel</groupId>
-                <artifactId>mvel2</artifactId>
-                <version>${version.org.mvel}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
