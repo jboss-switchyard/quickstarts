@@ -64,12 +64,6 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-            <dependency>
-                <groupId>org.switchyard.quickstarts.demos</groupId>
-                <artifactId>switchyard-demo-transaction-propagation</artifactId>
-                <type>pom</type>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>

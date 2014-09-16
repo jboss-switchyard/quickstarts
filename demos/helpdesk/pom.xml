@@ -102,6 +102,13 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>org.jbpm</groupId>
+                <artifactId>jbpm-bom</artifactId>
+                <version>${version.org.jbpm}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -289,31 +296,26 @@
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-human-task-audit</artifactId>
-                                    <version>${version.org.jbpm}</version>
                                     <type>jar</type>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-human-task-jpa</artifactId>
-                                    <version>${version.org.jbpm}</version>
                                     <type>jar</type>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-persistence-jpa</artifactId>
-                                    <version>${version.org.jbpm}</version>
                                     <type>jar</type>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-executor</artifactId>
-                                    <version>${version.org.jbpm}</version>
                                     <type>jar</type>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jbpm</groupId>
                                     <artifactId>jbpm-kie-services</artifactId>
-                                    <version>${version.org.jbpm}</version>
                                     <type>jar</type>
                                 </artifactItem>
                             </artifactItems>

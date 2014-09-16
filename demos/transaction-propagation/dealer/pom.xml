@@ -48,11 +48,6 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.switchyard.quickstarts.demos</groupId>
-            <artifactId>switchyard-demo-transaction-propagation</artifactId>
-            <type>pom</type>
-        </dependency>
-        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-api</artifactId>
         </dependency>
