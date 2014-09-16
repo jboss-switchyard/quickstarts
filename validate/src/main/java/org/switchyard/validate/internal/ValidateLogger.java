@@ -1,4 +1,4 @@
-package org.switchyard.validate;
+package org.switchyard.validate.internal;
 
 import static org.jboss.logging.Logger.Level.WARN;
 

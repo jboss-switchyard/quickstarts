@@ -33,7 +33,6 @@ import org.switchyard.common.xml.QNameUtil;
 import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.metadata.JavaTypes;
 import org.switchyard.validate.BaseValidator;
-import org.switchyard.validate.ValidateMessages;
 import org.switchyard.validate.ValidationResult;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.config.model.JavaValidateModel;

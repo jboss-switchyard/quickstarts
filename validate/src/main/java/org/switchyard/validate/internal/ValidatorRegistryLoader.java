@@ -28,7 +28,6 @@ import org.switchyard.config.model.validate.ValidateModel;
 import org.switchyard.config.model.validate.ValidatesModel;
 import org.switchyard.validate.Validator;
 import org.switchyard.validate.ValidatorRegistry;
-import org.switchyard.validate.ValidateMessages;
 
 /**
  * {@link ValidatorRegistry} loader class.

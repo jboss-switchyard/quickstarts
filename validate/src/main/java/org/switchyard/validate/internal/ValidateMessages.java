@@ -1,13 +1,13 @@
-package org.switchyard.validate;
+package org.switchyard.validate.internal;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageBundle;
 import org.switchyard.SwitchYardException;
-import org.switchyard.validate.internal.DuplicateValidatorException;
 
 /**
  * <p/>

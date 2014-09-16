@@ -36,6 +36,18 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-common-camel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-extensions-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-extensions-wsdl</artifactId>
         </dependency>
         <dependency>
@@ -45,6 +57,10 @@
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-security</artifactId>
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>

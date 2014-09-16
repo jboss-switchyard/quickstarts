@@ -38,6 +38,10 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-common-camel</artifactId>
         </dependency>
         <dependency>
@@ -50,10 +54,18 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-security</artifactId>
+        </dependency>
         <!-- external dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

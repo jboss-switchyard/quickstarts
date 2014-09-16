@@ -30,7 +30,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.1</version>
                 <configuration>
                     <goalPrefix>switchyard</goalPrefix>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
@@ -57,11 +56,31 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-config</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-plugin-plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
         </dependency>
     </dependencies>
 </project>

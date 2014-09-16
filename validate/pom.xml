@@ -29,7 +29,7 @@
         <switchyard.osgi.export.pkg>
             org.switchyard.validate.config.*;
             org.switchyard.validate.internal.*;
-            org.switchyard.validate.xml.*;
+            org.switchyard.validate.xml.*
         </switchyard.osgi.export.pkg>
         <switchyard.osgi.import>
             javax.enterprise.inject.spi;resolution:=optional,
@@ -42,6 +42,14 @@
         <!-- internal dependencies -->
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-common-cdi</artifactId>
         </dependency>
         <dependency>
@@ -50,40 +58,13 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-extensions-java</artifactId>
-        </dependency>
-        <!-- TODO: Maybe scope this as "provided" ? -->
-        <dependency>
-            <groupId>org.milyn</groupId>
-            <artifactId>milyn-smooks-all</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xmlParserAPIs</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>switchyard-runtime</artifactId>
+            <scope>test</scope>
         </dependency>
         <!-- external dependencies -->
         <dependency>
             <groupId>xml-resolver</groupId>
             <artifactId>xml-resolver</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-runtime</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

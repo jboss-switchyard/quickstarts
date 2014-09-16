@@ -34,9 +34,18 @@
         <!-- internal dependencies -->
         <dependency>
             <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
             <artifactId>switchyard-security</artifactId>
         </dependency>
         <!-- external dependencies -->
+        <dependency>
+            <groupId>org.apache.karaf.jaas</groupId>
+            <artifactId>org.apache.karaf.jaas.boot</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.karaf.jaas</groupId>
             <artifactId>org.apache.karaf.jaas.modules</artifactId>
