@@ -54,6 +54,7 @@
             com.ibm.wsdl.factory,
             com.ibm.wsdl.util,
             net.sf.saxon.*;${switchyard.osgi.import.bpel.saxon.version},
+            !org.jboss.logmanager.*,
             !org.jboss.vfs.*,
             !org.jboss.as.*,
             !org.jboss.msc.*,
@@ -69,6 +70,11 @@
         <switchyard.osgi.embed.dependency>*;inline=**.xml;groupId=!org.osgi;scope=compile,*;groupId=!org.osgi;scope=compile</switchyard.osgi.embed.dependency>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-bpel</artifactId>
@@ -172,6 +178,10 @@
             <groupId>org.switchyard.karaf</groupId>
             <artifactId>switchyard-karaf-deploy</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
         </dependency>
         <!-- OSGi dependencies (build) -->
         <dependency>

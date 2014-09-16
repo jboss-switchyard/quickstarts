@@ -74,7 +74,7 @@
     <feature name="dozer" version="${version.net.sf.dozer}" resolver="(obr)">
         <bundle dependency="true">mvn:commons-collections/commons-collections/${version.commons-collections}</bundle>
         <bundle dependency="true">mvn:commons-beanutils/commons-beanutils/${version.commons-beanutils}</bundle>
-        <bundle dependency="true">mvn:org.apache.commons/commons-lang3/${version.commons-lang3}</bundle>
+        <bundle dependency="true">mvn:org.apache.commons/commons-lang3/${version.org.apache.commons.lang3}</bundle>
         <bundle>wrap:mvn:net.sf.dozer/dozer/${version.net.sf.dozer}</bundle>
     </feature>
 
@@ -134,9 +134,9 @@
         <!-- spring dependencies -->
         <feature version="${version.org.apache.camel.features}">camel-spring</feature>
         <!-- transactions support -->
-        <bundle dependency="true">wrap:mvn:org.jboss.jbossts.jts/jbossjts-jacorb/${version.org.jboss.jbossts.jbossxts}</bundle>
-        <bundle dependency="true">wrap:mvn:org.jboss.jbossts.xts/jbossxts/${version.org.jboss.jbossts.jbossxts}</bundle>
-        <bundle dependency="true">wrap:mvn:org.jboss.jbossts/jbosstxbridge/${version.org.jboss.jbossts.jbossxts}</bundle>
+        <bundle dependency="true">wrap:mvn:org.jboss.jbossts.jts/jbossjts-jacorb/${version.org.jboss.jbossts.xts}</bundle>
+        <bundle dependency="true">wrap:mvn:org.jboss.jbossts.xts/jbossxts/${version.org.jboss.jbossts.xts}</bundle>
+        <bundle dependency="true">wrap:mvn:org.jboss.jbossts/jbosstxbridge/${version.org.jboss.jbossts.xts}</bundle>
         <!-- infinispan support -->
         <bundle dependency="true">wrap:mvn:org.jboss.marshalling/jboss-marshalling/${version.org.jboss.marshalling}</bundle>
         <bundle dependency="true">wrap:mvn:org.jboss.marshalling/jboss-marshalling-river/${version.org.jboss.marshalling}</bundle>
@@ -306,9 +306,9 @@
         <bundle dependency="true">wrap:mvn:org.jboss/staxmapper/${version.org.jboss.staxmapper}</bundle>
         <bundle dependency="true">mvn:org.jgroups/jgroups/${version.org.jgroups}</bundle>
         <bundle dependency="true">mvn:org.infinispan/infinispan-core/${version.org.infinispan}</bundle>
-        <bundle dependency="true">wrap:mvn:org.jboss.jbossts.jts/jbossjts-jacorb/${version.org.jboss.jbossts.jbossxts}</bundle>
-        <bundle dependency="true">wrap:mvn:org.jboss.jbossts.xts/jbossxts/${version.org.jboss.jbossts.jbossxts}</bundle>
-        <bundle dependency="true">wrap:mvn:org.jboss.jbossts/jbosstxbridge/${version.org.jboss.jbossts.jbossxts}</bundle>
+        <bundle dependency="true">wrap:mvn:org.jboss.jbossts.jts/jbossjts-jacorb/${version.org.jboss.jbossts.xts}</bundle>
+        <bundle dependency="true">wrap:mvn:org.jboss.jbossts.xts/jbossxts/${version.org.jboss.jbossts.xts}</bundle>
+        <bundle dependency="true">wrap:mvn:org.jboss.jbossts/jbosstxbridge/${version.org.jboss.jbossts.xts}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
         <bundle>mvn:org.switchyard/switchyard-remote/${project.version}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-sca/${project.version}</bundle>
