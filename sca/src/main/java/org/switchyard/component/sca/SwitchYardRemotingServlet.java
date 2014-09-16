@@ -87,7 +87,7 @@ public class SwitchYardRemotingServlet extends HttpServlet {
                     : service.createExchange(msg.getOperation(), replyHandler);
             Message m = ex.createMessage();
             if (msg.getContext() != null) {
-                ex.getContext().setProperties(msg.getContext().getProperties());
+                m.getContext().setProperties(msg.getContext().getProperties());
             }
             m.setContent(msg.getContent());
             
