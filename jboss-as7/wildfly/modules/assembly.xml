@@ -30,6 +30,7 @@
                 <exclude>system/layers/soa/org/switchyard/main/*.*</exclude>
                 <exclude>system/layers/soa/org/switchyard/component/bpel/main/module.xml</exclude>
                 <exclude>system/layers/soa/org/switchyard/component/bpm/main/module.xml</exclude>
+                <exclude>system/layers/soa/org/jboss/as/console/eap/*.*</exclude>
             </excludes>
         </fileSet>
     </fileSets>
@@ -41,6 +42,7 @@
       <componentDescriptor>src/main/resources/switchyard/core/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/bpel/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/switchyard/components/bpm/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/console/assembly-component.xml</componentDescriptor>
       <componentDescriptor>src/main/resources/external/jboss/netty/assembly-component.xml</componentDescriptor>
     </componentDescriptors>
 
