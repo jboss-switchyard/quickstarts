@@ -28,6 +28,10 @@
     <dependencies>
         <!-- internal dependencies -->
         <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-test-mixin-naming</artifactId>
         </dependency>
@@ -39,6 +43,14 @@
         <dependency>
             <groupId>org.jboss.as</groupId>
             <artifactId>jboss-as-transactions</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.jbossts.jts</groupId>
+            <artifactId>jbossjts-jacorb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-spi</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

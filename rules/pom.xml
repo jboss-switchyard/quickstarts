@@ -52,6 +52,18 @@
     <dependencies>
         <!-- internal dependencies -->
         <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-extensions-java</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common-knowledge</artifactId>
         </dependency>
@@ -59,6 +71,10 @@
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-decisiontables</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
         </dependency>
     </dependencies>
 </project>

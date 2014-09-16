@@ -38,6 +38,18 @@
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-ra</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hornetq</groupId>
+            <artifactId>hornetq-core-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hornetq</groupId>
             <artifactId>hornetq-jms-client</artifactId>
         </dependency>
         <dependency>

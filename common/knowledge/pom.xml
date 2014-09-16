@@ -39,13 +39,41 @@
     <dependencies>
         <!-- internal dependencies -->
         <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-serial</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-serial-jackson</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common</artifactId>
         </dependency>
         <!-- external dependencies -->
         <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-internal</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.kie.remote</groupId>
             <artifactId>kie-services-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.remote</groupId>
+            <artifactId>kie-services-jaxb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mvel</groupId>
+            <artifactId>mvel2</artifactId>
         </dependency>
     </dependencies>
 </project>

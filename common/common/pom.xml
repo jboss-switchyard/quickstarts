@@ -31,6 +31,10 @@
         </switchyard.osgi.export.pkg>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-security</artifactId>
+        </dependency>
         <!-- external dependencies -->
     </dependencies>
 </project>

@@ -26,6 +26,18 @@
     <description>Smooks Test MixIn classes</description>
     <url>http://switchyard.org</url>
     <dependencies>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-transform</artifactId>
+        </dependency>
         <!-- external dependencies -->
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+        </dependency>
     </dependencies>
 </project>

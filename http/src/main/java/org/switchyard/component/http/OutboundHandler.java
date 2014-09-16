@@ -33,6 +33,7 @@ import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.auth.params.AuthPNames;
 import org.apache.http.client.AuthCache;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -198,7 +199,7 @@ public class OutboundHandler extends BaseServiceHandler {
             throw HttpMessages.MESSAGES.bindingNotStarted(_referenceName, _bindingName);
         }
 
-        DefaultHttpClient httpclient = new DefaultHttpClient();
+        HttpClient httpclient = new DefaultHttpClient();
         if (_timeout != null) {
             HttpParams httpParams = httpclient.getParams();
             HttpConnectionParams.setConnectionTimeout(httpParams, _timeout);
@@ -206,7 +207,7 @@ public class OutboundHandler extends BaseServiceHandler {
         }
         try {
             if (_credentials != null) {
-                httpclient.getCredentialsProvider().setCredentials(_authScope, _credentials);
+                ((DefaultHttpClient)httpclient).getCredentialsProvider().setCredentials(_authScope, _credentials);
                 List<String> authpref = new ArrayList<String>();
                 authpref.add(AuthPolicy.NTLM);
                 authpref.add(AuthPolicy.BASIC);
