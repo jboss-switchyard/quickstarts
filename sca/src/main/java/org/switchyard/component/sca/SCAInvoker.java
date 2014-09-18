@@ -54,9 +54,11 @@ public class SCAInvoker extends BaseServiceHandler {
     
     private static Logger _log = Logger.getLogger(SCAInvoker.class);
     
-    private final SCABindingModel _config;
     private final String _bindingName;
     private final String _referenceName;
+    private final String _targetService;
+    private final String _targetNamespace;
+    private final boolean _clustered;
     private ClusteredInvoker _invoker;
     private boolean _disableRemoteTransaction = false;
     private TransactionContextSerializer _txSerializer = new TransactionContextSerializer();
@@ -66,9 +68,11 @@ public class SCAInvoker extends BaseServiceHandler {
      * @param config binding configuration model
      */
     public SCAInvoker(SCABindingModel config) {
-        _config = config;
         _bindingName = config.getName();
         _referenceName = config.getReference().getName();
+        _targetService = config.getTarget();
+        _targetNamespace = config.getTargetNamespace();
+        _clustered = config.isClustered();
     }
     
     /**
@@ -96,7 +100,7 @@ public class SCAInvoker extends BaseServiceHandler {
             throw SCAMessages.MESSAGES.referenceBindingNotStarted(_referenceName, _bindingName);
         }
         try {
-            if (_config.isClustered()) {
+            if (_clustered) {
                 invokeRemote(exchange);
             } else {
                 invokeLocal(exchange);
@@ -216,8 +220,8 @@ public class SCAInvoker extends BaseServiceHandler {
     private QName getTargetServiceName(Exchange exchange) {
         // Figure out the QName for the service were invoking
         QName service = exchange.getProvider().getName();
-        String targetName = _config.hasTarget() ? _config.getTarget() : service.getLocalPart();
-        String targetNS = _config.hasTargetNamespace() ? _config.getTargetNamespace() : service.getNamespaceURI();
+        String targetName = _targetService != null ? _targetService : service.getLocalPart();
+        String targetNS = _targetNamespace != null ? _targetNamespace : service.getNamespaceURI();
         return new QName(targetNS, targetName);
     }
     
