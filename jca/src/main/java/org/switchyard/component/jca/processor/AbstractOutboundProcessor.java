@@ -171,6 +171,14 @@ public abstract class AbstractOutboundProcessor {
     }
     
     /**
+     * get JNDI properties file name.
+     * @return file name
+     */
+    public String getJndiPropertiesFileName() {
+        return _jndiPropertiesFileName;
+    }
+    
+    /**
      * get JNDI properties.
      * @return JNDI properties
      */

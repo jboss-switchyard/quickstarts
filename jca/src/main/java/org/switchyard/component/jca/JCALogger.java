@@ -131,5 +131,14 @@ public interface JCALogger {
     @Message(id = 36812, value = "Failed to send a message to '%s': %s")
     void failedToSendMessage(String destination, String eMessage);
 
+    /**
+     * invalidDestinationType method definition.
+     * @param type specified destination type
+     * @param alternative alternative destination type
+     */
+    @LogMessage(level = Level.WARN)
+    @Message(id = 36813, value = "Invalid destination type '%s' - using '%s' instead")
+    void invalidDestinationType(String type, String alternative);
+
 }
 

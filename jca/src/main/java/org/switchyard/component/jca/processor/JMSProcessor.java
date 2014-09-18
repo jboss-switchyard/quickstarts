@@ -24,7 +24,6 @@ import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import org.jboss.logging.Logger;
 import org.switchyard.Context;
@@ -53,6 +52,8 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     public static final String KEY_TRANSACTED = "transacted";
     /** key for acknowledge mode property. */
     public static final String KEY_ACKNOWLEDGE_MODE = "acknowledgeMode";
+    /** key for destination type property. */
+    public static final String KEY_DESTINATION_TYPE = "destinationType";
     /** key for destination property. */
     public static final String KEY_DESTINATION = "destination";
     /** key for message type property. */
@@ -65,7 +66,8 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     private String _password;
     private String _transacted;
     private boolean _defaultTxEnabled;
-    private String _destination;
+    private DestinationType _defaultDestinationType = DestinationType.JNDI;
+    private String _defaultDestination;
     private String _acknowledgeMode;
     private int _defaultAckMode;
     private ConnectionFactory _connectionFactory;
@@ -74,6 +76,10 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     private MessageType _defaultOutMessageType = MessageType.Object;
     private String _destinationJndiPropertiesFileName;
     private Properties _destinationJndiProperties;
+    
+    private enum DestinationType {
+        Queue, Topic, JNDI
+    }
     
     private enum MessageType {
         Stream, Map, Text, Object, Bytes, Plain 
@@ -101,7 +107,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             _defaultAckMode = Integer.parseInt(_acknowledgeMode);
         }
 
-        if (_destination == null) {
+        if (_defaultDestination == null) {
             throw JCAMessages.MESSAGES.destinationPropertyMustBeSpecifiedInProcessorProperties();
         }
         
@@ -116,18 +122,36 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             }
             _connectionFactory = (ConnectionFactory) cfic.lookup(getConnectionFactoryJNDIName());
             
-            InitialContext destic = null;
-            if (getDestinationJndiProperties() != null) {
-                cfic.close();
-                destic = new InitialContext(getDestinationJndiProperties());
-            } else {
-                destic = cfic;
+            // caching destination if its type is JNDI
+            if (_defaultDestinationType == DestinationType.JNDI) {
+                InitialContext destic = null;
+                if (getDestinationJndiProperties() != null) {
+                    cfic.close();
+                    destic = new InitialContext(getDestinationJndiProperties());
+                } else {
+                    destic = cfic;
+                }
+                _defaultJmsDestination = (Destination) destic.lookup(_defaultDestination);
+                destic.close();
             }
-            _defaultJmsDestination = (Destination) destic.lookup(_destination);
-            destic.close();
         } catch (Exception e) {
             throw JCAMessages.MESSAGES.failedToInitialize(this.getClass().getName(), e);
         }
+        
+        if (_logger.isDebugEnabled()) {
+            StringBuilder msg = new StringBuilder()
+                .append("Initialized with: {")
+                .append("Connection Factory:").append(getConnectionFactoryJNDIName())
+                .append(", Destination Type:").append(_defaultDestinationType)
+                .append(", Destination Name:").append(_defaultDestination)
+                .append(", User Name:").append(_userName)
+                .append(", Output Message Type:").append(_defaultOutMessageType)
+                .append(", JNDI Properties File:").append(getJndiPropertiesFileName())
+                .append(", Destination JNDI Properties File:").append(_destinationJndiPropertiesFileName)
+                .append("}");
+            _logger.debug(msg.toString());
+        }
+
     }
 
     @Override
@@ -149,7 +173,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
             
             Context context = exchange.getContext();
             session = connection.createSession(getTxEnabledFromContext(context), getAcknowledgeModeFromContext(context));
-            MessageProducer producer = session.createProducer(getDestinationFromContext(context));
+            MessageProducer producer = session.createProducer(getDestinationFromContext(session, context));
             
             Message msg;
             switch (getOutputMessageTypeFromContext(context)) {
@@ -217,7 +241,11 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     protected boolean getTxEnabledFromContext(Context ctx) {
         String key = CONTEXT_PROPERTY_PREFIX + KEY_TRANSACTED;
         if (ctx.getProperty(key) != null) {
-            return Boolean.parseBoolean(ctx.getProperty(key).getValue().toString());
+            boolean transacted = Boolean.parseBoolean(ctx.getPropertyValue(key).toString());
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("transacted is set to '" + transacted + "'");
+            }
+            return transacted;
         }
         return _defaultTxEnabled;
     }
@@ -225,48 +253,138 @@ public class JMSProcessor extends AbstractOutboundProcessor {
     protected int getAcknowledgeModeFromContext(Context ctx) {
         String key = CONTEXT_PROPERTY_PREFIX + KEY_ACKNOWLEDGE_MODE;
         if (ctx.getProperty(key) != null) {
-            return Integer.parseInt(ctx.getProperty(key).getValue().toString());
+            int ackMode = Integer.parseInt(ctx.getPropertyValue(key).toString());
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Acknowledge Mode is set to '" + ackMode + "'");
+            }
+            return ackMode;
         }
         return _defaultAckMode;
     }
 
-    protected Destination getDestinationFromContext(Context ctx) {
+    protected Destination getDestinationFromContext(Session session, Context ctx) throws Exception {
+        Destination destination = null;
+
         String key = CONTEXT_PROPERTY_PREFIX + KEY_DESTINATION;
         if (ctx.getProperty(key) != null) {
-            String destName = ctx.getProperty(key).getValue().toString();
-            InitialContext ic = null;
+            String destName = ctx.getPropertyValue(key);
+            DestinationType destType = getDestinationTypeFromContext(ctx);
+            
             try {
-                if (getDestinationJndiProperties() != null) {
-                    ic = new InitialContext(getDestinationJndiProperties());
-                } else if (getJndiProperties() != null) {
-                    ic = new InitialContext(getJndiProperties());
-                } else {
-                    ic = new InitialContext();
+                switch (destType) {
+                case JNDI:
+                    destination = lookupDestinationFromJNDI(destName);
+                    break;
+                case Queue:
+                    destination = session.createQueue(destName);
+                    break;
+                case Topic:
+                    destination = session.createTopic(destName);
+                    break;
                 }
-                return (Destination) ic.lookup(destName);
-            } catch (NamingException e) {
-                JCALogger.ROOT_LOGGER.contextDestinationNotFound(destName, _destination);
-            } finally {
-                if (ic != null) {
-                    try {
-                        ic.close();
-                    } catch (Exception e) {
-                        // avoid checkstype error
-                        e.getMessage();
-                        }
+                if (_logger.isDebugEnabled()) {
+                    _logger.debug("Destination is set to '" + destName + "'");
+                }
+            } catch (Exception e) {
+                JCALogger.ROOT_LOGGER.contextDestinationNotFound(destName, _defaultDestination);
+                if (_logger.isDebugEnabled()) {
+                    _logger.debug(e);
                 }
             }
         }
-        return _defaultJmsDestination;
         
+        // No valid destination is specified in a context property - use default
+        if (destination == null) {
+            switch (_defaultDestinationType) {
+            case JNDI:
+                destination = _defaultJmsDestination;
+                break;
+            case Queue:
+                destination = session.createQueue(_defaultDestination);
+                break;
+            case Topic:
+                destination = session.createTopic(_defaultDestination);
+                break;
+            }
+        }
+        return destination;
     }
-    
+
+    protected Destination lookupDestinationFromJNDI(String destName) throws Exception {
+        InitialContext ic = null;
+        try {
+            if (getDestinationJndiProperties() != null) {
+                ic = new InitialContext(getDestinationJndiProperties());
+            } else if (getJndiProperties() != null) {
+                ic = new InitialContext(getJndiProperties());
+            } else {
+                ic = new InitialContext();
+            }
+            return (Destination) ic.lookup(destName);
+        } finally {
+            if (ic != null) {
+                try {
+                    ic.close();
+                } catch (Exception e) {
+                    if (_logger.isDebugEnabled()) {
+                        _logger.debug(e);
+                    }
+                }
+            }
+        }
+    }
+
+    protected DestinationType getDestinationTypeFromContext(Context ctx) {
+        DestinationType destType = _defaultDestinationType;
+        String key = CONTEXT_PROPERTY_PREFIX + KEY_DESTINATION_TYPE;
+        if (ctx.getProperty(key) != null) {
+            String type = ctx.getPropertyValue(key);
+            DestinationType ctxType = parseDestinationType(type);
+            if (ctxType != null) {
+                destType = ctxType;
+                if (_logger.isDebugEnabled()) {
+                    _logger.debug("Destination type is set to '" + destType.toString() + "'");
+                }
+            }
+        }
+        return destType;
+    }
+
     protected MessageType getOutputMessageTypeFromContext(Context ctx) {
         String key = CONTEXT_PROPERTY_PREFIX + KEY_MESSAGE_TYPE;
         if (ctx.getProperty(key) != null) {
-            return MessageType.valueOf(ctx.getProperty(key).getValue().toString());
+            MessageType msgType = MessageType.valueOf(ctx.getPropertyValue(key).toString());
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Output message type is set to '" + msgType.toString() + "'");
+            }
+            return msgType;
         }
         return _defaultOutMessageType;
+    }
+
+    /**
+     * Set destination type.
+     * @param type destination type
+     */
+    public void setDestinationType(String type) {
+        DestinationType destType = parseDestinationType(type);
+        if (destType == null) {
+            JCALogger.ROOT_LOGGER.invalidDestinationType(type, DestinationType.JNDI.toString());
+            destType = DestinationType.JNDI;
+        }
+        _defaultDestinationType = destType;
+    }
+
+    protected DestinationType parseDestinationType(String type) {
+        DestinationType destType = null;
+        if (type.equals(javax.jms.Queue.class.getName()) || type.equalsIgnoreCase("queue")) {
+            destType = DestinationType.Queue;
+        } else if (type.equals(javax.jms.Topic.class.getName()) || type.equalsIgnoreCase("Topic")) {
+            destType = DestinationType.Topic;
+        } else if (type.equalsIgnoreCase("JNDI")) {
+            destType = DestinationType.JNDI;
+        }
+        return destType;
     }
 
     /**
@@ -274,7 +392,7 @@ public class JMSProcessor extends AbstractOutboundProcessor {
      * @param name destination name
      */
     public void setDestination(String name) {
-        _destination = name;
+        _defaultDestination = name;
     }
 
     /**
