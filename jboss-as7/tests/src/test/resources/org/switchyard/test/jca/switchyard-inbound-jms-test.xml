@@ -59,6 +59,27 @@
                    <transacted>true</transacted>
                </inboundInteraction>
             </binding.jca>
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <operationSelector.regex xmlns="urn:switchyard-config:switchyard:1.0" expression="onMessage.*"/>
+               <inboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <activationSpec>
+                       <property name="destinationType" value="javax.jms.Queue"/>
+                       <property name="destination" value="queue/InOutPhysicalNameTestQueue_physical"/>
+                   </activationSpec>
+               </inboundConnection>
+               <inboundInteraction>
+                   <listener>javax.jms.MessageListener</listener>
+                   <endpoint type="org.switchyard.component.jca.endpoint.JMSEndpoint">
+                       <property name="destinationType" value="javax.jms.Queue"/>
+                       <property name="replyTo" value="InOutPhysicalNameTestQueue_replyTo_physical"/>
+                       <property name="faultTo" value="InOutPhysicalNameTestQueue_faultTo_physical"/>
+                       <property name="messageType" value="Text"/>
+                       <property name="connectionFactoryJNDIName" value="java:/JmsXA"/>
+                   </endpoint>
+                   <transacted>true</transacted>
+               </inboundInteraction>
+            </binding.jca>
         </sca:service>
         <sca:reference name="JCAJMSStoreResult" promote="ComponentName/JCAJMSStoreResult" multiplicity="1..1">
             <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">

@@ -10,4 +10,6 @@ public interface JCAJMSTransactionService {
     public void onMessageCamel(String body);
 
     public void onMessageContextProperty(String name) throws Exception;
+
+    public void onMessagePhysicalName(String name);
 }

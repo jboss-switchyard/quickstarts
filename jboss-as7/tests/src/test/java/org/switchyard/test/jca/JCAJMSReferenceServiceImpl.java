@@ -19,6 +19,9 @@ public class JCAJMSReferenceServiceImpl implements JCAJMSReferenceService {
     @Inject @Reference("JCAJMSReference")
     private ReferenceInvoker referenceInvoker;
 
+    @Inject @Reference
+    private JCAJMSReferencePhysicalName servicePhysicalName;
+
     @Override
     public void onMessage(String name) {
         service.onMessage(name);
@@ -35,5 +38,10 @@ public class JCAJMSReferenceServiceImpl implements JCAJMSReferenceService {
                         .setProperty(JMSProcessor.CONTEXT_PROPERTY_PREFIX + JMSProcessor.KEY_DESTINATION, "ResultPropQueue")
                         .setProperty(JMSProcessor.CONTEXT_PROPERTY_PREFIX + JMSProcessor.KEY_MESSAGE_TYPE, "Bytes")
                         .invoke(name);
+    }
+
+    @Override
+    public void onMessagePhysicalName(String name) {
+        servicePhysicalName.onMessagePhysicalName(name);
     }
 }

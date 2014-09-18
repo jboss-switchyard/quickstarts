@@ -38,22 +38,30 @@ public class ResourceDeployer {
     private ResourceDeployer() {
     }
     
-    public static ModelNode addQueue(final String host, final int port, final String queueName) throws IOException {
+    public static ModelNode addQueue(final String host, final int port, final String queueName, final String jndiName) throws IOException {
         final ModelControllerClient client = createClient(host, port);
         final ModelNode op = new ModelNode();
         op.get("operation").set("add");
         op.get("address").add("subsystem", "messaging");
         op.get("address").add("hornetq-server", "default");
         op.get("address").add("jms-queue", queueName);
-        op.get("entries").add(queueName)
-                         .add("java:jboss/exported/jms/" + queueName);
+        op.get("entries").add(jndiName)
+                         .add("java:jboss/exported/jms/" + jndiName);
         op.get("durable").set(false);
 
         return client.execute(op);
     }
 
+    public static ModelNode addQueue(final String host, final int port, final String queueName) throws IOException {
+        return addQueue(host, port, queueName, queueName);
+    }
+
     public static ModelNode addQueue(final String queueName) throws IOException {
-        return addQueue(DEFAULT_HOST, DEFAULT_PORT, queueName);
+        return addQueue(DEFAULT_HOST, DEFAULT_PORT, queueName, queueName);
+    }
+
+    public static ModelNode addQueue(final String queueName, final String jndiName) throws IOException {
+        return addQueue(DEFAULT_HOST, DEFAULT_PORT, queueName, jndiName);
     }
 
     public static ModelNode removeQueue(final String host, final int port, final String queueName) throws IOException {

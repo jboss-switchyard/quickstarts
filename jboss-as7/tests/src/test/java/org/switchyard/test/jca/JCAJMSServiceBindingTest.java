@@ -49,8 +49,11 @@ public class JCAJMSServiceBindingTest  {
     private static final String TEST_CONFIG = "org/switchyard/test/jca/switchyard-inbound-jms-test.xml";
     private static final String INPUT_QUEUE = "TestQueue";
     private static final String INPUT_INOUT_QUEUE = "InOutTestQueue";
+    private static final String INPUT_INOUT_PHYSICAL_NAME_QUEUE = "InOutPhysicalNameTestQueue";
     private static final String INOUT_REPLY_TO_QUEUE = "InOutTestQueue_replyTo";
+    private static final String INOUT_REPLY_TO_PHYSICAL_NAME_QUEUE = "InOutPhysicalNameTestQueue_replyTo";
     private static final String INOUT_FAULT_TO_QUEUE = "InOutTestQueue_faultTo";
+    private static final String INOUT_FAULT_TO_PHYSICAL_NAME_QUEUE = "InOutPhysicalNameTestQueue_faultTo";
     private static final String RESULT_QUEUE = "StoreResultQueue";
     private static final String FAULT_QUEUE = "StoreFaultQueue";
 
@@ -61,8 +64,11 @@ public class JCAJMSServiceBindingTest  {
     public static JavaArchive createDeployment() throws Exception {
         ResourceDeployer.addQueue(INPUT_QUEUE);
         ResourceDeployer.addQueue(INPUT_INOUT_QUEUE);
+        ResourceDeployer.addQueue(INPUT_INOUT_PHYSICAL_NAME_QUEUE + "_physical", INPUT_INOUT_PHYSICAL_NAME_QUEUE + "_jndi");
         ResourceDeployer.addQueue(INOUT_REPLY_TO_QUEUE);
+        ResourceDeployer.addQueue(INOUT_REPLY_TO_PHYSICAL_NAME_QUEUE + "_physical", INOUT_REPLY_TO_PHYSICAL_NAME_QUEUE + "_jndi");
         ResourceDeployer.addQueue(INOUT_FAULT_TO_QUEUE);
+        ResourceDeployer.addQueue(INOUT_FAULT_TO_PHYSICAL_NAME_QUEUE + "_physical", INOUT_FAULT_TO_PHYSICAL_NAME_QUEUE + "_jndi");
         ResourceDeployer.addQueue(RESULT_QUEUE);
         ResourceDeployer.addQueue(FAULT_QUEUE);
 
@@ -91,8 +97,11 @@ public class JCAJMSServiceBindingTest  {
             _hqMixIn.uninitialize();
             ResourceDeployer.removeQueue(INPUT_QUEUE);
             ResourceDeployer.removeQueue(INPUT_INOUT_QUEUE);
+            ResourceDeployer.removeQueue(INPUT_INOUT_PHYSICAL_NAME_QUEUE + "_physical");
             ResourceDeployer.removeQueue(INOUT_REPLY_TO_QUEUE);
+            ResourceDeployer.removeQueue(INOUT_REPLY_TO_PHYSICAL_NAME_QUEUE + "_physical");
             ResourceDeployer.removeQueue(INOUT_FAULT_TO_QUEUE);
+            ResourceDeployer.removeQueue(INOUT_FAULT_TO_PHYSICAL_NAME_QUEUE + "_physical");
             ResourceDeployer.removeQueue(RESULT_QUEUE);
             ResourceDeployer.removeQueue(FAULT_QUEUE);
         } catch (Exception e) {
@@ -235,6 +244,48 @@ public class JCAJMSServiceBindingTest  {
             session = _hqMixIn.createJMSSession();
             MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(RESULT_QUEUE));
             assertMessage(consumer.receive(3000), BytesMessage.class, payload + "_replyTo");
+            consumer.close();
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    public void testInflowJMS_inout_physical_name() throws Exception {
+        String payload = "onMessage_inout_physical_name";
+        Session session = _hqMixIn.createJMSSession();
+        try {
+            MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(INPUT_INOUT_PHYSICAL_NAME_QUEUE + "_physical"));
+            TextMessage inMsg = session.createTextMessage();
+            inMsg.setText(payload);
+            producer.send(inMsg);
+            producer.close();
+            session.close();
+
+            session = _hqMixIn.createJMSSession();
+            MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(INOUT_REPLY_TO_PHYSICAL_NAME_QUEUE + "_physical"));
+            assertMessage(consumer.receive(3000), TextMessage.class, payload + "_replyTo");
+            consumer.close();
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    public void testInflowJMS_inout_physical_name_fault() throws Exception {
+        String payload = "onMessage_inout_physical_name_fault";
+        Session session = _hqMixIn.createJMSSession();
+        try {
+            MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(INPUT_INOUT_PHYSICAL_NAME_QUEUE + "_physical"));
+            TextMessage inMsg = session.createTextMessage();
+            inMsg.setText(payload);
+            producer.send(inMsg);
+            producer.close();
+            session.close();
+
+            session = _hqMixIn.createJMSSession();
+            MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(INOUT_FAULT_TO_PHYSICAL_NAME_QUEUE + "_physical"));
+            assertMessage(consumer.receive(3000), TextMessage.class, "org.switchyard.test.jca.JCAJMSFault: " + payload + "_faultTo");
             consumer.close();
         } finally {
             session.close();

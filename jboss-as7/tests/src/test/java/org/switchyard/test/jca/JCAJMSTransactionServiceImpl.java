@@ -64,6 +64,15 @@ public class JCAJMSTransactionServiceImpl implements JCAJMSTransactionService {
         service.onMessageContextProperty(name);
     }
 
+    @Override
+    public void onMessagePhysicalName(String name) {
+        int txStatus = getTransactionStatus();
+        if (txStatus != Status.STATUS_ACTIVE) {
+            throw new RuntimeException("Unexpected Transaction Status: " + txStatus);
+        }
+        service.onMessagePhysicalName(name);
+    }
+
     private int getTransactionStatus() {
         try {
             InitialContext ic = new InitialContext();

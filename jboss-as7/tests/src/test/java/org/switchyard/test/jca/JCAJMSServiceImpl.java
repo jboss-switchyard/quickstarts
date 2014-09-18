@@ -88,4 +88,14 @@ public class JCAJMSServiceImpl implements JCAJMSService {
         _context.setProperty(JMSEndpoint.CONTEXT_PROPERTY_PREFIX + JMSEndpoint.KEY_MESSAGE_TYPE, "Bytes", Scope.EXCHANGE);
         return name + "_replyTo";
     }
+
+    @Override
+    public String onMessage_inout_physical_name(String name) {
+        return name + "_replyTo";
+    }
+
+    @Override
+    public String onMessage_inout_physical_name_fault(String name) throws JCAJMSFault {
+        throw new JCAJMSFault(name + "_faultTo");
+    }
 }

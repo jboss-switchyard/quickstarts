@@ -54,7 +54,7 @@ public class JCAJMSReferenceBindingTest  {
     private static final String INPUT_NOTX_QUEUE = "NonTransactedTestQueue";
     private static final String OUTPUT_QUEUE = "ResultQueue";
     private static final String OUTPUT_PROP_QUEUE = "ResultPropQueue";
-
+    private static final String OUTPUT_PHYSICAL_NAME_QUEUE = "ResultPhysicalNameQueue";
     private Logger _logger = Logger.getLogger(JCAJMSReferenceBindingTest.class);
     private HornetQMixIn _hqMixIn;
     
@@ -64,7 +64,8 @@ public class JCAJMSReferenceBindingTest  {
         ResourceDeployer.addQueue(INPUT_NOTX_QUEUE);
         ResourceDeployer.addQueue(OUTPUT_QUEUE);
         ResourceDeployer.addQueue(OUTPUT_PROP_QUEUE);
-
+        ResourceDeployer.addQueue(OUTPUT_PHYSICAL_NAME_QUEUE + "_physical", OUTPUT_PHYSICAL_NAME_QUEUE + "_jndi");
+        
         URL testConfigUrl = Classes.getResource(TEST_CONFIG);
         URL camelRouteUrl = Classes.getResource(CAMEL_ROUTE);
         URL jndiProperties = Classes.getResource(JNDI_PROPERTIES);
@@ -75,6 +76,7 @@ public class JCAJMSReferenceBindingTest  {
                          .addClass(JCAJMSTransactionServiceImpl.class)
                          .addClass(JCAJMSReference.class)
                          .addClass(JCAJMSReferenceText.class)
+                         .addClass(JCAJMSReferencePhysicalName.class)
                          .addClass(JCAJMSReferenceService.class)
                          .addClass(JCAJMSReferenceServiceImpl.class)
                          .addClass(JCAJMSFault.class)
@@ -102,6 +104,7 @@ public class JCAJMSReferenceBindingTest  {
             ResourceDeployer.removeQueue(INPUT_NOTX_QUEUE);
             ResourceDeployer.removeQueue(OUTPUT_QUEUE);
             ResourceDeployer.removeQueue(OUTPUT_PROP_QUEUE);
+            ResourceDeployer.removeQueue(OUTPUT_PHYSICAL_NAME_QUEUE + "_physical");
         } catch (Exception e) {
             _logger.warn(e);
         }
@@ -234,6 +237,32 @@ public class JCAJMSReferenceBindingTest  {
             byte[] bytes = new byte[(int)bmsg.getBodyLength()];
             bmsg.readBytes(bytes);
             Assert.assertEquals(payload + "test", new String(bytes));
+        } finally {
+            session.close();
+        }
+    }
+
+    @Test
+    public void testManagedOutboundJMSWithPhysicalDestinationName() throws Exception {
+        String payload = "onMessagePhysicalName";
+        Session session = _hqMixIn.createJMSSession();
+        
+        try {
+            MessageProducer producer = session.createProducer(HornetQMixIn.getJMSQueue(INPUT_TX_QUEUE));
+            TextMessage inMsg = session.createTextMessage();
+            inMsg.setText(payload);
+            producer.send(inMsg);
+            producer.close();
+            session.close();
+
+            session = _hqMixIn.createJMSSession();
+            MessageConsumer consumer = session.createConsumer(HornetQMixIn.getJMSQueue(OUTPUT_PHYSICAL_NAME_QUEUE + "_physical"));
+            javax.jms.Message msg = consumer.receive(3000);
+            consumer.close();
+            Assert.assertNotNull(msg);
+            Assert.assertTrue(msg instanceof TextMessage);
+            Assert.assertEquals(payload+"test", TextMessage.class.cast(msg).getText());
+            Assert.assertEquals("testVal", msg.getStringProperty("testProp"));
         } finally {
             session.close();
         }

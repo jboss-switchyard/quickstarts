@@ -87,6 +87,23 @@
                </outboundInteraction>
             </binding.jca>
         </sca:reference>
+        <sca:reference name="JCAJMSReferencePhysicalName" promote="JCAReferenceComponent/JCAJMSReferencePhysicalName" multiplicity="1..1">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <jca:contextMapper class="org.switchyard.test.jca.MyJMSContextMapper"/>
+               <jca:messageComposer class="org.switchyard.test.jca.MyJMSMessageComposer"/>
+               <outboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <connection jndiName="java:/JmsXA"/>
+               </outboundConnection>
+               <outboundInteraction>
+                   <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                       <property name="destinationType" value="javax.jms.Queue"/>
+                       <property name="destination" value="ResultPhysicalNameQueue_physical"/>
+                       <property name="messageType" value="Text"/>
+                   </processor>
+               </outboundInteraction>
+            </binding.jca>
+        </sca:reference>
         <sca:reference name="CamelJCAJMSReference" promote="CamelComponent/CamelJCAJMSReference" multiplicity="1..1">
             <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
                <contextMapper includes=".*"/>
@@ -125,6 +142,9 @@
             </sca:reference>
             <sca:reference name="JCAJMSReferenceText">
                 <sca:interface.java interface="org.switchyard.test.jca.JCAJMSReferenceText"/>
+            </sca:reference>
+            <sca:reference name="JCAJMSReferencePhysicalName">
+                <sca:interface.java interface="org.switchyard.test.jca.JCAJMSReferencePhysicalName"/>
             </sca:reference>
         </sca:component>
         

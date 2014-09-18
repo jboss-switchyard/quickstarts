@@ -12,4 +12,8 @@ public interface JCAJMSService {
     public String onMessage_inout_fault(String name) throws JCAJMSFault;
 
     public String onMessage_inout_context_property(String name);
+
+    public String onMessage_inout_physical_name(String name);
+
+    public String onMessage_inout_physical_name_fault(String name) throws JCAJMSFault;
 }
