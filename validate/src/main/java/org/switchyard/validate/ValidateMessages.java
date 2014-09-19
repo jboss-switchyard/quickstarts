@@ -218,4 +218,13 @@ public interface ValidateMessages {
     @Message(id=17222, value = "No valid schema file was found.")
     SwitchYardException noValidSchemaFileFound();
     
+    /**
+     * nullValidatorRegistryArgument method definition.
+     * @param fileEntryModel fileEntryModel
+     * @return IllegalArgumentException
+     */
+    @Message(id=17223, value = "Please check the switchyard validator configuration.  No DTD file is specified : %s")
+    IOException noDTDFile(String fileEntryModel);
+
+
 }

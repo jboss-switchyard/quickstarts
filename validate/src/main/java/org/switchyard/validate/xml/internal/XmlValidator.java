@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,6 +74,7 @@ public class XmlValidator extends BaseValidator<Message> {
     private List<FileEntryModel> _catalogConfig;
     private SAXParserFactory _parserFactory;
     private XmlValidatorCatalogResolver _catalogResolver;
+    private XmlValidatorDTDResolver _dtdResolver;
     private List<String> _schemaFileNames = new ArrayList<String>();
     private List<String> _catalogFileNames = new ArrayList<String>();
     
@@ -164,11 +166,20 @@ public class XmlValidator extends BaseValidator<Message> {
                 }
             }
         }
-        
+
         if (XMLConstants.XML_DTD_NS_URI.equals(_schemaTypeUri)) {
             // set up for DTD validation - DTD file is located by DOCTYPE element in the Document itself
             _parserFactory.setValidating(true);
             
+            if (_schemaConfig != null) {
+                for (FileEntryModel entry : _schemaConfig) {
+                    if (entry.getFile() != null) {
+                        _schemaFileNames.add(entry.getFile());
+                    }
+                }
+            }
+            
+            _dtdResolver = new XmlValidatorDTDResolver(_schemaFileNames);
         } else {
             // setup for XML Schema or Relax NG validation
             if (_schemaConfig == null) {
@@ -191,6 +202,8 @@ public class XmlValidator extends BaseValidator<Message> {
                 }
             }
 
+            _dtdResolver = new XmlValidatorDTDResolver(_schemaFileNames);
+
             if (foundSchemas.size() == 0) {
                 throw ValidateMessages.MESSAGES.noValidSchemaFileFound();
             }
@@ -210,12 +223,17 @@ public class XmlValidator extends BaseValidator<Message> {
             LOGGER.debug(new StringBuffer("Entering XML validation:[")
                         .append(formatUnparsedConfigs()).append(" / ").append(formatParsedConfigs()).append("]"));
         }
-        
+
         try {
             XMLReader validatingParser = createValidatingParser();
             XmlValidationErrorHandler errorHandler = new XmlValidationErrorHandler(_failOnWarning);
             validatingParser.setErrorHandler(errorHandler);
             String input = msg.getContent(String.class);
+
+            if ((_schemaFileNames != null) && (_schemaFileNames.size() > 0)) {
+                validatingParser.setEntityResolver(_dtdResolver);
+            }
+
             if (InputStream.class.isAssignableFrom(msg.getContent().getClass())) {
                 msg.setContent(new ByteArrayInputStream(input.getBytes()));
             } else if (Reader.class.isAssignableFrom(msg.getContent().getClass())) {
@@ -352,12 +370,48 @@ public class XmlValidator extends BaseValidator<Message> {
             return Collections.unmodifiableList(_errors);
         }
     }
-    
+
     private class XmlValidatorCatalogResolver extends CatalogResolver implements LSResourceResolver {
         public XmlValidatorCatalogResolver(CatalogManager manager) {
             super(manager);
         }
-        
+
+        @Override
+        public InputSource resolveEntity(String publicId, String systemId) {
+            String resolved = this.getResolvedEntity(publicId, systemId);
+            URL fileUrl = null;
+            File testFile = null;
+
+            if (resolved != null) {
+                try {
+                    fileUrl = new URL(resolved);
+                    testFile = new File(fileUrl.getPath());
+                } catch (MalformedURLException mue) {
+                    ValidateLogger.ROOT_LOGGER.malformedURLDuringResolution(resolved);
+                }
+            }
+            if ((fileUrl == null) || (!testFile.exists())) {
+                // Check to see if the systemId has been resolved to the user directory
+                // If it has, strip it to the filename and attempt to resolve.
+                String userDir = System.getProperty("user.dir");
+                if (systemId.contains(userDir)) {
+                    File systemFile = new File(systemId);
+
+                    String systemFileName = systemFile.getName();
+                    fileUrl = locateFile(systemFileName);
+                }
+            }
+
+            if (fileUrl != null) {
+                try {
+                    return new InputSource(fileUrl.openStream());
+                } catch (IOException ioe) {
+                    ValidateLogger.ROOT_LOGGER.openStreamIssue(fileUrl.toString());
+                    }
+            }
+            return null;
+        }
+
         @Override
         public LSInput resolveResource(String type, String namespaceURI,
                 String publicId, String systemId, String baseURI) {

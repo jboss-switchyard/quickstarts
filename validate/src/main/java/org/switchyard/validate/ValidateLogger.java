@@ -52,4 +52,23 @@ public interface ValidateLogger {
     @LogMessage(level = WARN)
     @Message(id = 17003, value = "Schema catalog %s could not be parsed. Ignoring: %s")
     void schemaCatalogNotParsed(String file, String msg);
+
+    /**
+     * malformedURLDuringResolution method definition.
+     * @param resolved file
+     */
+    @LogMessage(level = WARN)
+    @Message(id = 17004, value = "Could not create URL for file : %s")
+    void malformedURLDuringResolution(String resolved);
+
+    /**
+     * openStreamIssue method definition.
+     * @param file file
+     */
+    @LogMessage(level = WARN)
+    @Message(id = 17005, value = "Schema catalog %s could not be parsed.")
+    void openStreamIssue(String file);
+
+
+
 }

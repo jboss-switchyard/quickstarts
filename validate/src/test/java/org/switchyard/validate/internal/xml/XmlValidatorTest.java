@@ -14,6 +14,9 @@
 
 package org.switchyard.validate.internal.xml;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
 import org.jboss.logging.Logger;
@@ -38,8 +41,8 @@ public class XmlValidatorTest extends AbstractValidatorTestCase {
         try {
             getValidator("sw-config-no-schematype.xml");
         } catch(RuntimeException e) {
-        	boolean exceptionText = e.getMessage().contains("SWITCHYARD017219");
-        	Assert.assertTrue(exceptionText);
+            boolean exceptionText = e.getMessage().contains("SWITCHYARD017219");
+            Assert.assertTrue(exceptionText);
         }
     }
 
@@ -48,8 +51,8 @@ public class XmlValidatorTest extends AbstractValidatorTestCase {
         try {
             getValidator("sw-config-no-schemafile.xml");
         } catch(RuntimeException e) {
-        	boolean exceptionText = e.getMessage().contains("SWITCHYARD017221");
-        	Assert.assertTrue(exceptionText);
+            boolean exceptionText = e.getMessage().contains("SWITCHYARD017221");
+            Assert.assertTrue(exceptionText);
         }
     }
 
@@ -117,7 +120,101 @@ public class XmlValidatorTest extends AbstractValidatorTestCase {
         }
         Assert.assertNull(result.getDetail());
     }
-    
+
+    @Test
+    public void test_dtd_valid_xml_two() throws Exception {
+        Validator validator = getValidator("sw-config-xmlv-dtd-two.xml");
+        String source = "<!DOCTYPE nn:memo SYSTEM \"src/test/resources/org/switchyard/validate/internal/xml/memo.dtd\">"
+                + "<nn:memo xmlns:nn=\"urn:switchyard-quickstart:dtd-example:0.1.0\">"
+                + "<nn:to>Garfield</nn:to>"
+                + "<nn:from>Odie</nn:from>"
+                + "<nn:body>I love lasagna!</nn:body>"
+                + "</nn:memo>";
+        ValidationResult result = validator.validate(new DefaultMessage().setContent(source));
+        if (!result.isValid()) {
+            Assert.fail(result.getDetail());
+        }
+        Assert.assertNull(result.getDetail());
+    }
+
+    /**
+     * Tests included DTD.
+     * @throws Exception exception
+     */
+    @Test
+    public void test_dtd_valid_xml_three() throws Exception {
+        Validator validator = getValidator("sw-config-xmlv-dtd-two.xml");
+        String source = "<!DOCTYPE nn:memo ["
+                + "<!ELEMENT nn:memo (nn:to,nn:from,nn:body)>"
+                + "<!ATTLIST nn:memo xmlns:nn CDATA #FIXED \"urn:switchyard-quickstart:dtd-example:0.1.0\">"
+                + "<!ELEMENT nn:to (#PCDATA)>"
+                + "<!ELEMENT nn:from (#PCDATA)>"
+                + "<!ELEMENT nn:heading (#PCDATA)>"
+                + "<!ELEMENT nn:body (#PCDATA)>"
+                + "]>"
+                + "<nn:memo xmlns:nn=\"urn:switchyard-quickstart:dtd-example:0.1.0\">"
+                + "<nn:to>Garfield</nn:to>"
+                + "<nn:from>Odie</nn:from>"
+                + "<nn:body>I love lasagna!</nn:body>"
+                + "</nn:memo>";
+        ValidationResult result = validator.validate(new DefaultMessage().setContent(source));
+        if (!result.isValid()) {
+            Assert.fail(result.getDetail());
+        }
+        Assert.assertNull(result.getDetail());
+    }
+
+    /**
+     * Negative test, tests invalid DTD.
+     * @throws Exception exception
+     */
+    @Test
+    public void test_dtd_valid_xml_four() throws Exception {
+        Validator validator = getValidator("sw-config-xmlv-dtd-two.xml");
+        String source = "<!DOCTYPE nn:memo ["
+                + "<!ELEMENT nn:memo (to,from,body)>"
+                + "<!ATTLIST nn:memo xmlns:nn CDATA #FIXED \"urn:switchyard-quickstart:dtd-example:0.1.0\">"
+                + "<!ELEMENT nn:to (#PCDATA)>"
+                + "<!ELEMENT nn:from (#PCDATA)>"
+                + "<!ELEMENT nn:body (#PCDATA)>"
+                + "]>"
+                + "<nn:memo xmlns:nn=\"urn:switchyard-quickstart:dtd-example:0.1.0\">"
+                + "<nn:to>Garfield</nn:to>"
+                + "<nn:from>Odie</nn:from>"
+                + "<nn:body>I love lasagna!</nn:body>"
+                + "</nn:memo>";
+        ValidationResult result = validator.validate(new DefaultMessage().setContent(source));
+        if (result.isValid()) {
+            Assert.fail(result.getDetail());
+        }
+    }
+
+
+    /**
+     * Negative test, tests invalid schema name.
+     * @throws Exception exception
+     */
+    @Test
+    public void test_dtd_valid_xml_five() throws Exception {
+        Validator validator = getValidator("sw-config-xmlv-dtd-two.xml");
+        String source = "<!DOCTYPE nn:memo SYSTEM \"failmemo.dtd\">"
+                + "<nn:memo xmlns:nn=\"urn:switchyard-quickstart:dtd-example:0.1.0\">"
+                + "<nn:to>Garfield</nn:to>"
+                + "<nn:from>Odie</nn:from>"
+                + "<nn:body>I love lasagna!</nn:body>"
+                + "</nn:memo>";
+
+        boolean flag = false;
+        try {
+            ValidationResult result = validator.validate(new DefaultMessage().setContent(source));
+        } catch (Exception fnfe) {
+            flag = true;
+        }
+        if (!flag) {
+            Assert.fail("Somehow found DTD that we should not have.");
+        }
+    }
+
     protected Validator getValidator(String config) throws IOException {
         Validator validator = super.getValidator(config);
 
