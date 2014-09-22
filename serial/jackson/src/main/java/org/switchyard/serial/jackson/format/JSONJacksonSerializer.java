@@ -35,21 +35,19 @@ import org.switchyard.serial.FormatType;
  */
 public final class JSONJacksonSerializer extends BaseSerializer {
 
-    private static final ObjectMapper OBJECT_MAPPER;
-    static {
-        JsonFactory jsonFactory = new JsonFactory();
-        jsonFactory.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
-        jsonFactory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-        OBJECT_MAPPER = new ObjectMapper(jsonFactory);
-        OBJECT_MAPPER.enableDefaultTyping();
-        OBJECT_MAPPER.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
-    }
+    private final ObjectMapper _objectMapper;
 
     /**
      * Default constructor.
      */
     public JSONJacksonSerializer() {
         super(FormatType.JSON);
+        JsonFactory jsonFactory = new JsonFactory();
+        jsonFactory.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
+        jsonFactory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+        _objectMapper = new ObjectMapper(jsonFactory);
+        _objectMapper.enableDefaultTyping();
+        _objectMapper.disable(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
     }
 
     /**
@@ -59,7 +57,7 @@ public final class JSONJacksonSerializer extends BaseSerializer {
     public <T> int serialize(T obj, Class<T> type, OutputStream out) throws IOException {
         out = new CountingOutputStream(new BufferedOutputStream(out, getBufferSize()));
         try {
-            ObjectWriter writer = OBJECT_MAPPER.writerWithType(type);
+            ObjectWriter writer = _objectMapper.writerWithType(type);
             if (isPrettyPrint()) {
                 writer = writer.withDefaultPrettyPrinter();
             }
@@ -79,7 +77,7 @@ public final class JSONJacksonSerializer extends BaseSerializer {
     public <T> T deserialize(InputStream in, Class<T> type) throws IOException {
         T obj;
         try {
-            obj = OBJECT_MAPPER.readValue(in, type);
+            obj = _objectMapper.readValue(in, type);
         } finally {
             if (isCloseEnabled()) {
                 in.close();
