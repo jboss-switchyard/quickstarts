@@ -33,6 +33,7 @@
         <deploy.skip>true</deploy.skip>
         <wildfly.port>9999</wildfly.port>
 
+        <version.enforcer.maven>1.0-alpha-4-sonatype</version.enforcer.maven>
         <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
     </properties>
     <modules>
@@ -57,6 +58,27 @@
     </dependencyManagement>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${version.enforcer.maven}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <phase>clean</phase>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>1.7</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
