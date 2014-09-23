@@ -172,7 +172,7 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
-            <artifactId>switchyard-camel-binding</artifactId>
+            <artifactId>switchyard-camel-file-binding</artifactId>
             <scope>test</scope>
             <exclusions>
                 <exclusion>

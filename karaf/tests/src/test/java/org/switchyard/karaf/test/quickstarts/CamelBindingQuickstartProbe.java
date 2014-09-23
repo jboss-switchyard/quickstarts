@@ -10,7 +10,7 @@ import org.switchyard.common.io.Files;
 
 public class CamelBindingQuickstartProbe extends DeploymentProbe {
 
-    private static String SOURCE_FILE = "../../../test-classes/quickstarts/camel-binding/test.txt";
+    private static String SOURCE_FILE = "../../../test-classes/quickstarts/camel-file-binding/test.txt";
     private static String DEST_FILE = "target/input/test.txt";
 
     public CamelBindingQuickstartProbe() {

@@ -398,10 +398,10 @@
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-atom-binding/${project.version}</bundle>
     </feature>
 
-    <feature name="switchyard-quickstart-camel-binding" version="${project.version}" resolver="(obr)">
+    <feature name="switchyard-quickstart-camel-file-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-file</feature>
-        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-binding/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-file-binding/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-quickstart-camel-bindy" version="${project.version}" resolver="(obr)">
