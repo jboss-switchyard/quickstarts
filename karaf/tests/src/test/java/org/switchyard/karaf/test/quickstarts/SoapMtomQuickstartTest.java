@@ -28,11 +28,13 @@ import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.BeforeClass;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.switchyard.common.type.Classes;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
+@Ignore
 public class SoapMtomQuickstartTest extends AbstractQuickstartTest {
     private static String bundleName = "org.switchyard.quickstarts.switchyard-mtom";
     private static String featureName = "switchyard-quickstart-soap-mtom";
