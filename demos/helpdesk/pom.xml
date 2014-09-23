@@ -85,6 +85,7 @@
         <switchyard.osgi.dynamic>
             org.switchyard,org.switchyard.*
         </switchyard.osgi.dynamic>
+        <version.enforcer.maven>1.0-alpha-4-sonatype</version.enforcer.maven>
         <version.felix.maven>2.4.0</version.felix.maven>
         <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
         <version.org.jbpm>6.1.0.Final</version.org.jbpm>
@@ -318,6 +319,27 @@
                             <includes>META-INF/*orm.xml</includes>
                             <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <outputAbsoluteArtifactFilename>true</outputAbsoluteArtifactFilename>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${version.enforcer.maven}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <phase>clean</phase>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>1.7</version>
+                                </requireJavaVersion>
+                            </rules>
                         </configuration>
                     </execution>
                 </executions>

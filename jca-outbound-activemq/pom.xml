@@ -47,6 +47,7 @@
         <wildfly.port>9999</wildfly.port>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <version.enforcer.maven>1.0-alpha-4-sonatype</version.enforcer.maven>
         <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
     </properties>
     <dependencyManagement>
