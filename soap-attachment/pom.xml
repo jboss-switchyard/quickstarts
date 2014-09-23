@@ -43,6 +43,7 @@
             org.switchyard,org.switchyard.*
         </switchyard.osgi.dynamic>
 
+        <version.enforcer.maven>1.0-alpha-4-sonatype</version.enforcer.maven>
         <version.felix.maven>2.4.0</version.felix.maven>
         <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
     </properties>
