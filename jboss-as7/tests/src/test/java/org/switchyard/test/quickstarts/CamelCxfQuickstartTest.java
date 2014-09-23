@@ -29,6 +29,7 @@ import org.switchyard.test.ArquillianUtil;
 public class CamelCxfQuickstartTest {
 
     private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8082/camel-cxf/order/OrderService";
+    private static final String SWITCHYARD_REFERENCE_SERVICE = "http://localhost:8083/camel-cxf/warehouse/WarehouseService";
 
     private HTTPMixIn _httpMixIn = new HTTPMixIn();
 
@@ -41,6 +42,8 @@ public class CamelCxfQuickstartTest {
     public void cxfBinding() throws Exception {
         _httpMixIn.initialize();
         try {
+            // goose the reference to workaround deadlock in initialization
+            _httpMixIn.postString(SWITCHYARD_REFERENCE_SERVICE, REQUEST);
             String response = _httpMixIn.postString(SWITCHYARD_WEB_SERVICE, REQUEST);
             Assert.assertTrue(response.contains("Order Boeing with quantity 10 accepted."));
         } finally {
