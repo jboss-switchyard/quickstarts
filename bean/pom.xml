@@ -33,6 +33,12 @@
             org.switchyard.config.model;${switchyard.osgi.import.switchyard.version},
             *
         </switchyard.osgi.import>
+        <switchyard.osgi.provide.capability>
+            org.ops4j.pax.cdi.extension; extension=switchyard-component-bean; version:Version=${switchyard.osgi.version}
+        </switchyard.osgi.provide.capability>
+        <switchyard.osgi.require.capability>
+            osgi.extender; filter:="(osgi.extender=pax.cdi)"
+        </switchyard.osgi.require.capability>
     </properties>
     <build>
         <plugins>
@@ -45,20 +51,6 @@
                     <delimiters>
                         <delimiter>${*}</delimiter>
                     </delimiters>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Provide-Capability>
-                            org.ops4j.pax.cdi.extension; extension=switchyard-component-bean; version:Version=${version;====;${replace;${project.version};-;.}}
-                        </Provide-Capability>
-                        <Require-Capability>
-                            osgi.extender; filter:="(osgi.extender=pax.cdi)"
-                        </Require-Capability>
-                    </instructions>
                 </configuration>
             </plugin>
         </plugins>
