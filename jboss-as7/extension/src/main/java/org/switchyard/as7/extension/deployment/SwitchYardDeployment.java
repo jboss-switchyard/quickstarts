@@ -32,6 +32,7 @@ import org.switchyard.as7.extension.SwitchYardExtension;
 import org.switchyard.as7.extension.SwitchYardModelConstants;
 import org.switchyard.as7.extension.admin.ModelNodeCreationUtil;
 import org.switchyard.as7.extension.camel.JBossThreadPoolFactory;
+import org.switchyard.as7.extension.camel.NamespaceContextPolicy;
 import org.switchyard.as7.extension.services.SwitchYardAdminService;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
@@ -113,7 +114,12 @@ public class SwitchYardDeployment {
                     _appServiceDomain.getProperty(SwitchYardCamelContext.CAMEL_CONTEXT_PROPERTY);
             camelCtx.getExecutorServiceManager().setThreadPoolFactory(
                     new JBossThreadPoolFactory(_contextSelector));
-            
+
+            // Configure policy ref which can be used for Camel routes which may
+            // not execute on camel threads (e.g. quartz)
+            camelCtx.getWritebleRegistry().put(
+                    NamespaceContextPolicy.POLICY_REF, new NamespaceContextPolicy(_contextSelector));
+
             List<Activator> activators = ActivatorLoader.createActivators(
                     _appServiceDomain, components, _deployment.getActivationTypes());
             _deployment.init(_appServiceDomain, activators);
