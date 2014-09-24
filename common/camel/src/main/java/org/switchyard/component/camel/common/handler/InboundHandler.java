@@ -45,6 +45,8 @@ import org.switchyard.runtime.event.ExchangeCompletionEvent;
  */
 public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHandler {
 
+    private static final String NAMESPACE_POLICY_REF = "org.switchyard.namespaceContextPolicy";
+
     private final T _camelBindingModel;
     private final SwitchYardCamelContext _camelContext;
     private final QName _serviceName;
@@ -79,12 +81,16 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
         final RouteDefinition route = new RouteDefinition();
 
         route.routeId(getRouteId()).from(getComponentUri().toString());
-        return addTransactionPolicy(route)
-            .setProperty(ExchangeCompletionEvent.GATEWAY_NAME).simple(getBindingModel().getName(), String.class)
+        addTransactionPolicy(route);
+        addNamespacePolicy(route);
+        
+        route.setProperty(ExchangeCompletionEvent.GATEWAY_NAME).simple(getBindingModel().getName(), String.class)
             .setProperty(CamelConstants.APPLICATION_NAMESPACE).constant(_serviceName.getNamespaceURI())
             .process(new MessageComposerProcessor(getBindingModel()))
             .process(new OperationSelectorProcessor(getServiceName(), getBindingModel()))
             .to(getSwitchyardEndpointUri());
+        
+        return route;
     }
 
     /**
@@ -116,6 +122,17 @@ public class InboundHandler<T extends CamelBindingModel> extends BaseServiceHand
             route.transacted(CamelConstants.TRANSACTED_REF);
         }
         
+        return route;
+    }
+    
+    /**
+     * Only add a namespace policy if the policy ref can be resolved, which will
+     * be the case on EAP but not on Karaf.
+     */
+    protected RouteDefinition addNamespacePolicy(final RouteDefinition route) {
+        if (_camelContext.getRegistry().lookupByName(NAMESPACE_POLICY_REF) != null) {
+            route.routePolicyRef(NAMESPACE_POLICY_REF);
+        }
         return route;
     }
 
