@@ -59,6 +59,7 @@
                 <configuration>
                     <classpathScope>test</classpathScope>
                     <mainClass>org.switchyard.quickstarts.demo.txpropagation.RemoteClient</mainClass>
+                    <skip>false</skip>
                 </configuration>
             </plugin>
         </plugins>

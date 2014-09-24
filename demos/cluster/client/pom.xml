@@ -55,6 +55,7 @@
                 <configuration>
                     <classpathScope>test</classpathScope>
                     <mainClass>org.switchyard.quickstarts.demo.cluster.RemoteClient</mainClass>
+                    <skip>false</skip>
                 </configuration>
             </plugin>
         </plugins>
