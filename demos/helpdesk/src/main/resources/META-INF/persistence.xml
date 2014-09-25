@@ -40,9 +40,10 @@
         <class>org.jbpm.process.audit.ProcessInstanceLog</class>
         <class>org.jbpm.process.audit.VariableInstanceLog</class>
         <class>org.jbpm.runtime.manager.impl.jpa.ContextMappingInfo</class>
-        <class>org.jbpm.services.task.audit.TaskEventImpl</class>
+        <class>org.jbpm.services.task.audit.impl.model.AuditTaskImpl</class>
+        <class>org.jbpm.services.task.audit.impl.model.TaskEventImpl</class>
+        <class>org.jbpm.services.task.audit.impl.model.BAMTaskSummaryImpl</class>
         <class>org.jbpm.services.task.impl.model.AttachmentImpl</class>
-        <class>org.jbpm.services.task.impl.model.BAMTaskSummaryImpl</class>
         <class>org.jbpm.services.task.impl.model.BooleanExpressionImpl</class>
         <class>org.jbpm.services.task.impl.model.CommentImpl</class>
         <class>org.jbpm.services.task.impl.model.CompletionBehaviorImpl</class>

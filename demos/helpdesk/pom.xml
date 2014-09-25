@@ -301,7 +301,7 @@
                                 </artifactItem>
                             </artifactItems>
                             <includes>META-INF/*orm.xml</includes>
-                            <outputDirectory>${project.build.outputDirectory}/META-INF/jbpm</outputDirectory>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                             <outputAbsoluteArtifactFilename>true</outputAbsoluteArtifactFilename>
                         </configuration>
                     </execution>
@@ -319,7 +319,7 @@
                             <goal>deploy-only</goal>
                         </goals>
                         <configuration>
-                            <filename>${project.build.finalName}.jar</filename>
+                            <filename>${project.build.finalName}.war</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
@@ -330,7 +330,7 @@
                             <goal>undeploy</goal>
                         </goals>
                         <configuration>
-                            <filename>${project.build.finalName}.jar</filename>
+                            <filename>${project.build.finalName}.war</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>
