@@ -26,6 +26,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
@@ -52,6 +53,11 @@ public class JaxbTransformationTest {
     // Paths to XML test files
     final String ORDER_XML = "/xml/order.xml";
     final String ORDER_ACK_XML = "/xml/orderAck.xml";
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "18001");
+    }
 
     @Test
     public void testJaxbOrderToXML() throws Exception {

@@ -17,6 +17,10 @@ JBoss AS 7
 
         mvn install -Pdeploy
 
+3. Submit a request with test client.
+
+        mvn exec:java
+
 Expected Output
 ===============
 ```

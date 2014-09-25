@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.quickstarts.bpm.service.data.Order;
 import org.switchyard.quickstarts.bpm.service.data.OrderAck;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
@@ -34,6 +35,11 @@ public class ProcessOrderTest {
 
     @ServiceOperation("ProcessOrder.submitOrder")
     private Invoker service;
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "18001");
+    }
 
     @Test
     public void orderShipped() {

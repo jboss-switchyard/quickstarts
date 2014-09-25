@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.ServiceOperation;
@@ -41,6 +42,11 @@ public class CamelServiceTest {
 
     @ServiceOperation("RoutingService.greet")
     private Invoker greet;
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "18001");
+    }
 
     @Test
     public void testXQueryRouting() throws Exception {
