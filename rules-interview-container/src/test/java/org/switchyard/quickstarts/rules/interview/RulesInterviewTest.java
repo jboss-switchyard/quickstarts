@@ -19,6 +19,7 @@ package org.switchyard.quickstarts.rules.interview;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
@@ -33,6 +34,11 @@ public class RulesInterviewTest {
 
     @ServiceOperation("Interview.verify")
     private Invoker verify;
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.http.standalone.port", "18001");
+    }
 
     @Test
     public void testRulesInterview() {

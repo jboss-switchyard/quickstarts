@@ -19,6 +19,7 @@ package org.switchyard.quickstarts.bpel.service;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
@@ -35,6 +36,11 @@ public class RiskAssessmentTest {
     private Invoker riskAssessor;
 
     private SwitchYardTestKit testKit;
+
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.soap.standalone.port", "18001");
+    }
 
     @Test
     public void testRiskAssessment1() throws Exception {

@@ -19,6 +19,7 @@ package org.switchyard.quickstarts.bpel.service;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
+import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.ServiceOperation;
 import org.switchyard.test.SwitchYardRunner;
@@ -28,7 +29,7 @@ import org.switchyard.test.SwitchYardTestKit;
 @RunWith(SwitchYardRunner.class)
 @SwitchYardTestCaseConfig(
     config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-    mixins = CDIMixIn.class)
+    mixins = { CDIMixIn.class })
 public class SayHelloTest {
 
     @ServiceOperation("SayHelloService")
@@ -36,6 +37,10 @@ public class SayHelloTest {
 
     private SwitchYardTestKit testKit;
 
+    @BeforeDeploy
+    public void setProperties() {
+        System.setProperty("org.switchyard.component.soap.standalone.port", "18001");
+    }
     @Test
     public void testHello() throws Exception {
         String requestTxt = testKit.readResourceString("xml/xml-request.xml");

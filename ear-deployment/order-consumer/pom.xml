@@ -29,10 +29,6 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
         </license>
     </licenses>
-    <properties>
-        <maven.compiler.target>1.6</maven.compiler.target>
-        <maven.compiler.source>1.6</maven.compiler.source>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.switchyard</groupId>
@@ -127,7 +123,7 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
-                <version>${version.felix.maven}</version>
+                <version>${version.wildfly.maven}</version>
                 <inherited>false</inherited>
                 <configuration>
                     <skip>true</skip>
@@ -139,6 +135,7 @@
                 <configuration>
                     <mainClass>org.switchyard.quickstarts.eardeploy.OrderIntakeClient</mainClass>
                     <classpathScope>test</classpathScope>
+                    <skip>false</skip>
                     <arguments>
                         <argument>${project.build.directory}/test-classes/order.xml</argument>
                     </arguments>
