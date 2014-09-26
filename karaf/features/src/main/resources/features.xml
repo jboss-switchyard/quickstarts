@@ -145,7 +145,7 @@
         <bundle dependency="true">mvn:org.infinispan/infinispan-core/${version.org.infinispan}</bundle>
         
         <feature version="${project.version}">switchyard-hibernate</feature>
-        <bundle>wrap:mvn:net.sourceforge.saxon/saxonhe/${version.net.sourceforge.saxon}$Export-Package=*;version="${version.net.sourceforge.saxon}"</bundle>
+        <bundle>wrap:mvn:net.sourceforge.saxon/saxonhe/${version.net.sourceforge.saxon}$Export-Package=*;-noimport:=true;version="${version.net.sourceforge.saxon}"</bundle>
         <bundle>mvn:commons-collections/commons-collections/${version.commons-collections}</bundle>
         <bundle>mvn:commons-lang/commons-lang/${version.commons-lang}</bundle>
         <bundle>wrap:mvn:xalan/xalan/${version.xalan}</bundle>
