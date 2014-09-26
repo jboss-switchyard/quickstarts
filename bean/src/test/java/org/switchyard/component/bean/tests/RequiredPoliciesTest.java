@@ -19,8 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
@@ -66,34 +65,34 @@ public class RequiredPoliciesTest {
         for(ComponentModel component : components) {
             if(component.getName().equals("SecureService")) {
                 ComponentImplementationModel impl = component.getImplementation();
-                Assert.assertTrue(impl.hasPolicyRequirement(SecurityPolicy.AUTHORIZATION.getName()));
+                Assert.assertTrue(impl.hasPolicyRequirement(SecurityPolicy.AUTHORIZATION.getQName()));
                 ComponentServiceModel svc = component.getServices().get(0);
-                Assert.assertTrue(svc.hasPolicyRequirement(SecurityPolicy.CLIENT_AUTHENTICATION.getName()));
-                Assert.assertTrue(svc.hasPolicyRequirement(SecurityPolicy.CONFIDENTIALITY.getName()));
+                Assert.assertTrue(svc.hasPolicyRequirement(SecurityPolicy.CLIENT_AUTHENTICATION.getQName()));
+                Assert.assertTrue(svc.hasPolicyRequirement(SecurityPolicy.CONFIDENTIALITY.getQName()));
                 ComponentReferenceModel ref = component.getReferences().get(0);
-                Assert.assertTrue(ref.hasPolicyRequirement(SecurityPolicy.AUTHORIZATION.getName()));
-                Assert.assertTrue(ref.hasPolicyRequirement(SecurityPolicy.CLIENT_AUTHENTICATION.getName()));
-                Assert.assertTrue(ref.hasPolicyRequirement(SecurityPolicy.CONFIDENTIALITY.getName()));
+                Assert.assertTrue(ref.hasPolicyRequirement(SecurityPolicy.AUTHORIZATION.getQName()));
+                Assert.assertTrue(ref.hasPolicyRequirement(SecurityPolicy.CLIENT_AUTHENTICATION.getQName()));
+                Assert.assertTrue(ref.hasPolicyRequirement(SecurityPolicy.CONFIDENTIALITY.getQName()));
                 ssFound = true;
                 continue;
             }
             
             if(component.getName().equals("LocalTransactionService")) {
-            	ComponentServiceModel svc = component.getServices().get(0);
-            	Assert.assertTrue(svc.hasPolicyRequirement(TransactionPolicy.SUSPENDS_TRANSACTION.getName()));
-            	ComponentReferenceModel ref = component.getReferences().get(0);
-            	Assert.assertTrue(ref.hasPolicyRequirement(TransactionPolicy.SUSPENDS_TRANSACTION.getName()));
-            	ltsFound = true;
-            	continue;
+                ComponentServiceModel svc = component.getServices().get(0);
+                Assert.assertTrue(svc.hasPolicyRequirement(TransactionPolicy.SUSPENDS_TRANSACTION.getQName()));
+                ComponentReferenceModel ref = component.getReferences().get(0);
+                Assert.assertTrue(ref.hasPolicyRequirement(TransactionPolicy.SUSPENDS_TRANSACTION.getQName()));
+                ltsFound = true;
+                continue;
             }
             
             if(component.getName().equals("SharedTransactionService")) {
-            	ComponentServiceModel svc = component.getServices().get(0);
-            	Assert.assertTrue(svc.hasPolicyRequirement(TransactionPolicy.PROPAGATES_TRANSACTION.getName()));
-            	ComponentReferenceModel ref = component.getReferences().get(0);
-            	Assert.assertTrue(ref.hasPolicyRequirement(TransactionPolicy.PROPAGATES_TRANSACTION.getName()));
-            	stsFound = true;
-            	continue;
+                ComponentServiceModel svc = component.getServices().get(0);
+                Assert.assertTrue(svc.hasPolicyRequirement(TransactionPolicy.PROPAGATES_TRANSACTION.getQName()));
+                ComponentReferenceModel ref = component.getReferences().get(0);
+                Assert.assertTrue(ref.hasPolicyRequirement(TransactionPolicy.PROPAGATES_TRANSACTION.getQName()));
+                stsFound = true;
+                continue;
             }
         }
         

@@ -1,8 +1,11 @@
 package org.switchyard.component.bean;
 
 import java.io.IOException;
+
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
+import javax.xml.namespace.QName;
+
 import org.jboss.logging.Cause;
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Message;
@@ -80,7 +83,7 @@ public interface BeanMessages {
      * @return IOException
      */
     @Message(id = 30407, value = "TransactionPolicies %s and %s cannot co-exist on service %s")
-    IOException transactionPoliciesCannotCoexistService(String ptx, String stx, String name);
+    IOException transactionPoliciesCannotCoexistService(QName ptx, QName stx, String name);
 
     /**
      * null method definition.
@@ -91,7 +94,7 @@ public interface BeanMessages {
      * @return IOException
      */
     @Message(id = 30408, value = "TransactionPolicies %s, %s and %s cannot co-exist on implementation %s")
-    IOException transactionPoliciesCannotCoexistImplementation(String gtx, String ltx, String ntx, String name);
+    IOException transactionPoliciesCannotCoexistImplementation(QName gtx, QName ltx, QName ntx, String name);
 
     /**
      * stringFormatReferenceOnlyCouldBeMarkedWithInteractionPolicyBut%sIsNotTheOne method definition.
