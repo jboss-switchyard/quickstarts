@@ -17,7 +17,7 @@
     <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-remote-invoker</artifactId>
     <version>2.0.0.Alpha3</version>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard Quickstart: remote-invoker</name>
     <description>Quickstart : Remote Invoker</description>
     <licenses>
@@ -32,6 +32,16 @@
         <wildfly.port>9999</wildfly.port>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <switchyard.osgi.import>*</switchyard.osgi.import>
+        <switchyard.osgi.require.capability>
+            org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
+            org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
+            osgi.extender; filter:="(osgi.extender=pax.cdi)"
+        </switchyard.osgi.require.capability>
+        <switchyard.osgi.dynamic>
+            org.switchyard,org.switchyard.*
+        </switchyard.osgi.dynamic>
+        <version.felix.maven>2.4.0</version.felix.maven>
         <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
     </properties>
     <dependencyManagement>
@@ -101,6 +111,32 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${version.felix.maven}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <excludeDependencies>false</excludeDependencies>
+                    <instructions>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Import-Package>${switchyard.osgi.import}</Import-Package>
+                        <Include-Resource>{maven-resources}, META-INF/switchyard.xml=target/classes/META-INF/switchyard.xml</Include-Resource>
+                        <DynamicImport-Package>${switchyard.osgi.dynamic}</DynamicImport-Package>
+                        <_failok>true</_failok>
+                        <Embed-Dependency>!*</Embed-Dependency>
+                        <Require-Capability>${switchyard.osgi.require.capability}</Require-Capability>
+                    </instructions>
+                    <archive>
+                        <manifestEntries>
+                            <Project-Artifact-Id>${project.artifactId}</Project-Artifact-Id>
+                            <Project-Group-Id>${project.groupId}</Project-Group-Id>
+                            <Project-Version>${project.version}</Project-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
