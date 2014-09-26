@@ -18,11 +18,13 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.StringTokenizer;
+import java.nio.charset.Charset;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.jboss.logging.Logger;
 import org.jboss.com.sun.net.httpserver.BasicAuthenticator;
 import org.jboss.com.sun.net.httpserver.HttpContext;
@@ -185,11 +187,16 @@ public class StandaloneEndpointPublisher implements EndpointPublisher {
 
         // Http Query params...
         if (requestInfo.getQueryString() != null) {
-            StringTokenizer params = new StringTokenizer(requestInfo.getQueryString(), "&");
-            while (params.hasMoreTokens()) {
-                String param = params.nextToken();
-                String[] nameValue = param.split("=");
-                requestInfo.addQueryParam(nameValue[0], nameValue[1]);
+            Charset charset = null;
+            if (type.getCharset() != null) {
+                try {
+                    charset = Charset.forName(type.getCharset());
+                } catch (Exception exception) {
+                    LOGGER.debug(exception);
+                }
+            }
+            for (NameValuePair nameValuePair : URLEncodedUtils.parse(requestInfo.getQueryString(), charset)) {
+                requestInfo.addQueryParam(nameValuePair.getName(), nameValuePair.getValue());
             }
         }
 
