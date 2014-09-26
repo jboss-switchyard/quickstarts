@@ -102,11 +102,11 @@ public class SwitchYardModelTests {
         ComponentModel component = port.getBinding().getService().getComposite().getComponents().get(0);
         ComponentServiceModel componentService = component.getServices().get(0);
         Assert.assertEquals("SimpleService", componentService.getName());
-        Assert.assertTrue(componentService.hasPolicyRequirement("clientAuthentication"));
+        Assert.assertTrue(componentService.hasPolicyRequirement(new QName("clientAuthentication")));
         Assert.assertEquals("theSecurityName", componentService.getSecurity());
         ComponentReferenceModel componentReference = component.getReferences().get(0);
         Assert.assertEquals("anotherService", componentReference.getName());
-        Assert.assertTrue(componentReference.hasPolicyRequirement("clientAuthentication"));
+        Assert.assertTrue(componentReference.hasPolicyRequirement(new QName("clientAuthentication")));
         Assert.assertEquals("theSecurityName", componentReference.getSecurity());
         String name = component.getName();
         Assert.assertEquals("SimpleService", name);

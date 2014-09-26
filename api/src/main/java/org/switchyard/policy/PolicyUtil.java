@@ -17,6 +17,9 @@ package org.switchyard.policy;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+
 import org.switchyard.Exchange;
 import org.switchyard.Property;
 import org.switchyard.Scope;
@@ -40,10 +43,8 @@ public final class PolicyUtil {
      */
     public final static String REQUIRED_PROPERTY = "org.switchyard.policy.required";
 
-    private PolicyUtil() {
-        
-    }
-    
+    private PolicyUtil() {}
+
     /**
      * Indicate that a given policy is satisfied for the exchange.
      * @param exchange assert policy on this exchange
@@ -54,7 +55,7 @@ public final class PolicyUtil {
         provided.add(policy);
         exchange.getContext().setProperty(PROVIDED_PROPERTY, provided, Scope.EXCHANGE).addLabels(BehaviorLabel.TRANSIENT.label());
     }
-    
+
     /**
      * Returns the set of policies provided for this exchange.
      * @param exchange check policy on this exchange
@@ -63,7 +64,7 @@ public final class PolicyUtil {
     public static Set<Policy> getProvided(Exchange exchange) {
         return getPolicies(exchange, PROVIDED_PROPERTY);
     }
-    
+
     /**
      * Indicates whether a given policy is provided on the exchange.
      * @param exchange check policy on this exchange
@@ -73,7 +74,7 @@ public final class PolicyUtil {
     public static boolean isProvided(Exchange exchange, Policy policy) {
         return containsPolicy(getProvided(exchange), policy);
     }
-    
+
     /**
      * Indicate that a given policy is required for the exchange.
      * @param exchange require policy on this exchange
@@ -84,7 +85,7 @@ public final class PolicyUtil {
         required.add(policy);
         exchange.getContext().setProperty(REQUIRED_PROPERTY, required, Scope.EXCHANGE).addLabels(BehaviorLabel.TRANSIENT.label());
     }
-    
+
     /**
      * Returns the set of policies required for this exchange.
      * @param exchange check policy on this exchange
@@ -93,7 +94,7 @@ public final class PolicyUtil {
     public static Set<Policy> getRequired(Exchange exchange) {
         return getPolicies(exchange, REQUIRED_PROPERTY);
     }
-    
+
     /**
      * Indicates whether a given policy is required on the exchange.
      * @param exchange check policy on this exchange
@@ -103,7 +104,7 @@ public final class PolicyUtil {
     public static boolean isRequired(Exchange exchange, Policy policy) {
         return containsPolicy(getRequired(exchange), policy);
     }
-    
+
     @SuppressWarnings("unchecked")
     private static Set<Policy> getPolicies(Exchange exchange, String propertyName) {
         Property intentsProperty = exchange.getContext().getProperty(propertyName, Scope.EXCHANGE);
@@ -111,20 +112,27 @@ public final class PolicyUtil {
         if (intentsProperty != null) {
             intents.addAll((Set<Policy>)intentsProperty.getValue());
         }
-        
         return intents;
     }
-    
-    // Compares policies by name vs. object identity/hashCode
+
+    // Compares policies by qualified name vs. object identity/hashCode
     private static boolean containsPolicy(Set<Policy> list, Policy target) {
-        boolean contains = false;
+        QName qname = target.getQName();
         for (Policy p : list) {
-            if (p.getName().equals(target.getName())) {
-                contains = true;
-                break;
+            // 1. look for an exact match first
+            if (p.getQName().equals(qname)) {
+                return true;
+            }
+            // 2. look for a localName match second for backwards compatibility
+            // NOTE: similar logic found in:
+            // -    core/api: org.switchyard.policy.PolicyFactory.getPolicy(QName):Policy
+            // - core/config: org.switchyard.config.model.composite.v1.PolicyConfig.hasRequirement(Model, QName):boolean
+            // NOTE: NULL_NS_URI works because of no default namespace assumption from parent element made in:
+            // - core/config: org.switchyard.config.BaseConfiguration.createAttributeQName(String value):QName
+            if (XMLConstants.NULL_NS_URI.equals(qname.getNamespaceURI()) && qname.getLocalPart().equals(p.getQName().getLocalPart())) {
+                return true;
             }
         }
-        
-        return contains;
+        return false;
     }
 }

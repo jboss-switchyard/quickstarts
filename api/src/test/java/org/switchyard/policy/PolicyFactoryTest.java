@@ -21,6 +21,7 @@ import org.switchyard.policy.Policy.PolicyType;
 public class PolicyFactoryTest {
 
     @Test
+    @SuppressWarnings("deprecation")
     public void testFactory() throws Exception {
         // TransactionPolicy
         Policy p = PolicyFactory.getPolicy("managedTransaction.Global");

@@ -13,6 +13,8 @@
  */
 package org.switchyard.policy;
 
+import javax.xml.namespace.QName;
+
 /**
  * Supported types for <a href="http://docs.oasis-open.org/opencsa/sca-policy/sca-policy-1.1-spec-csprd03.html#_Toc311121490">Transaction Policy</a>.
  * 
@@ -120,10 +122,18 @@ public enum TransactionPolicy implements Policy {
         }
     };
 
-    private String _name;
+    private final QName _qname;
 
     private TransactionPolicy(String name) {
-        _name = name;
+        _qname = new QName("http://docs.oasis-open.org/ns/opencsa/sca/200912", name, "sca");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public QName getQName() {
+        return _qname;
     }
 
     /**
@@ -131,7 +141,7 @@ public enum TransactionPolicy implements Policy {
      */
     @Override
     public String getName() {
-        return _name;
+        return getQName().getLocalPart();
     }
 
     /**
@@ -139,7 +149,7 @@ public enum TransactionPolicy implements Policy {
      */
     @Override
     public String toString() {
-        return getName();
+        return getQName().toString();
     }
 
     @Override

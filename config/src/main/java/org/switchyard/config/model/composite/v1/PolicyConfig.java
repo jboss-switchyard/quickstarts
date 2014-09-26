@@ -14,10 +14,12 @@
 
 package org.switchyard.config.model.composite.v1;
 
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+
+import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Model;
 
 /**
@@ -27,42 +29,83 @@ public final class PolicyConfig {
 
     /** The "requires" name. */
     public static final String REQUIRES = "requires";
-    
-    private PolicyConfig() {
-        
-    }
-    
+
+    private PolicyConfig() {}
+
     /**
      * Get the content of the requires attribute as a set of strings.
      * @param model the model to query for required policy
      * @return set of policy requirements; empty set if nothing found
      */
-    public static Set<String> getRequires(Model model) {
-        Set<String> requiredSet = new HashSet<String>();
-        String requires = model.getModelConfiguration().getAttribute(REQUIRES);
-        if (requires != null) {
-            for (String policy : requires.split(" ")) {
-                requiredSet.add(policy);
-            }
-        }
-        return requiredSet;
+    public static Set<QName> getRequirements(Model model) {
+        return model.getModelConfiguration().getAttributeAsQNames(REQUIRES, " ");
     }
-    
+
     /**
      * Set the content of the requires attribute for a given config model.
      * @param model the model to set policy requirements on.
-     * @param requiredSet the set of policy requirements.
+     * @param requirements the set of policy requirements.
      */
-    public static void setRequires(Model model, Set<String> requiredSet) {
-        if (requiredSet == null || requiredSet.isEmpty()) {
+    public static void setRequirements(Model model, Set<QName> requirements) {
+        Configuration config = model.getModelConfiguration();
+        if (requirements == null || requirements.isEmpty()) {
+            config.setAttribute(REQUIRES, null);
             return;
         }
-        Iterator<String> it = requiredSet.iterator();
-        StringBuilder requires = new StringBuilder(it.next());
-        while (it.hasNext()) {
-            requires.append(" " + it.next());
+        StringBuilder requires = new StringBuilder();
+        for (QName req : requirements) {
+            requires.append(" ");
+            String ns = req.getNamespaceURI();
+            if (XMLConstants.DEFAULT_NS_PREFIX.equals(ns)) {
+                requires.append(req.getLocalPart());
+            } else {
+                String pfx = config.lookupPrefix(ns);
+                if (pfx != null) {
+                    requires.append(pfx + ":" + req.getLocalPart());
+                } else {
+                    // SCA cvc-datatype-valid.1.2.1 XSD doesn't allow for {namespaceURI}localPart format
+                    //requires.append(req.toString());
+                    requires.append(req.getLocalPart());
+                }
+            }
         }
-        
-        model.getModelConfiguration().setAttribute(REQUIRES, requires.toString());
+        config.setAttribute(REQUIRES, requires.toString().trim());
+    }
+
+    /**
+     * Adds a policy requirement to the existing list of requirements for a given config model.
+     * @param model the model to set policy requirements on.
+     * @param qname the policy requirement to add
+     */
+    public static void addRequirement(Model model, QName qname) {
+        Set<QName> requires = getRequirements(model);
+        requires.add(qname);
+        setRequirements(model, requires);
+    }
+
+    /**
+     * If a config model contains the given policy requirement.
+     * @param model the model to check for the policy requirement
+     * @param qname the policy requirement to check for
+     * @return whether the policy requirement exists on the config model
+     */
+    public static boolean hasRequirement(Model model, QName qname) {
+        Set<QName> requirements = getRequirements(model);
+        for (QName requirement : requirements) {
+            // 1. look for an exact match first
+            if (requirement.equals(qname)) {
+                return true;
+            }
+            // 2. look for a localName match second for backwards compatibility
+            // NOTE: similar logic found in:
+            // -   core/api: org.switchyard.policy.PolicyFactory.getPolicy(QName):Policy
+            // -   core/api: org.switchyard.policy.PolicyUtil.containsPolicy(Set<Policy>, Policy):boolean
+            // NOTE: NULL_NS_URI works because of no default namespace assumption from parent element made in:
+            // - core/config: org.switchyard.config.BaseConfiguration.createAttributeQName(String value):QName
+            if (XMLConstants.NULL_NS_URI.equals(requirement.getNamespaceURI()) && requirement.getLocalPart().equals(qname.getLocalPart())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

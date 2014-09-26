@@ -54,9 +54,9 @@ public class PolicyHandler extends BaseHandler {
             if (!required.isEmpty()) {
                 // Required policies are missing.  Format the list for fault message.
                 Iterator<Policy> missing = required.iterator();
-                StringBuilder requires = new StringBuilder(missing.next().getName());
+                StringBuilder requires = new StringBuilder(missing.next().getQName().toString());
                 while (missing.hasNext()) {
-                    requires.append(" " + missing.next().getName());
+                    requires.append(" " + missing.next().getQName().toString());
                 }
                 throw RuntimeMessages.MESSAGES.requiredPolicesNeeded(requires.toString());
             }

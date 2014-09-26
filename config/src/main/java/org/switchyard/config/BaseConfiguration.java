@@ -24,6 +24,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -156,8 +157,24 @@ public abstract class BaseConfiguration implements Configuration {
      * {@inheritDoc}
      */
     @Override
+    public Set<QName> getAttributeAsQNames(String name, String splitRegex) {
+        return createAttributeQNames(getAttribute(name), splitRegex);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public QName getAttributeAsQName(QName qname) {
         return createAttributeQName(getAttribute(qname));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<QName> getAttributeAsQNames(QName qname, String splitRegex) {
+        return createAttributeQNames(getAttribute(qname), splitRegex);
     }
 
     private QName createAttributeQName(String value) {
@@ -182,9 +199,30 @@ public abstract class BaseConfiguration implements Configuration {
                 } else {
                     lp = value;
                 }
+                /* NOTE: we cannot assume that the default namespace of the attribute value is that of the containing element; see:
+                 *  -    core/api: org.switchyard.policy.PolicyFactory.getPolicy(QName):Policy
+                 *  -    core/api: org.switchyard.policy.PolicyUtil.containsPolicy(Set<Policy>, Policy):boolean
+                 *  - core/config: org.switchyard.config.model.composite.v1.PolicyConfig.hasRequirement(Model, QName):boolean
+                if (ns == null || ns.length() == 0) {
+                    ns = getQName().getNamespaceURI();
+                }
+                */
             }
         }
         return XMLHelper.createQName(ns, lp, pfx);
+    }
+
+    private Set<QName> createAttributeQNames(String values, String splitRegex) {
+        Set<QName> qnames = new LinkedHashSet<QName>();
+        if (values != null) {
+            for (String value : values.split(splitRegex)) {
+                QName qname = createAttributeQName(value);
+                if (qname != null) {
+                    qnames.add(qname);
+                }
+            }
+        }
+        return qnames;
     }
 
     /**

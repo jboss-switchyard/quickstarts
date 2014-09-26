@@ -13,6 +13,8 @@
  */
 package org.switchyard.policy;
 
+import javax.xml.namespace.QName;
+
 /**
  * Base contract for all policy types.  Every policy has a string literal 
  * representation which is used to identify the policy in application 
@@ -24,11 +26,19 @@ public interface Policy {
 
     /** policy type. */
     public enum PolicyType {INTERACTION, IMPLEMENTATION};
-    
+
+    /**
+     * Returns the qualified identifier for the policy.
+     * @return policy qualified name
+     */
+    public QName getQName();
+
     /**
      * Returns the string identifier for the policy.
      * @return policy name
+     * @deprecated use {@link #getQName()} instead
      */
+    @Deprecated
     public String getName();
 
     /**

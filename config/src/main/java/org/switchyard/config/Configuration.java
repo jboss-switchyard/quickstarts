@@ -136,11 +136,29 @@ public interface Configuration {
     public QName getAttributeAsQName(String name);
 
     /**
+     * Gets the specified attribute set by name, as qualified names.
+     * @param name the name of the attribute
+     * @param splitRegex the regular expression to split the attribute value with
+     * @return the attribute set, as qualified names, or empty if it not present
+     * @see {@link String#split(String)}
+     */
+    public Set<QName> getAttributeAsQNames(String name, String splitRegex);
+
+    /**
      * Gets the specified attribute by qualified name.
      * @param qname the qualified name of the attribute
      * @return the attribute, or null if it not present
      */
     public String getAttribute(QName qname);
+
+    /**
+     * Gets the specified attribute set by qualified name, as qualified names.
+     * @param qname the qualified name of the attribute
+     * @param splitRegex the regular expression to split the attribute value with
+     * @return the attribute set, as qualified names, or empty if it not present
+     * @see {@link String#split(String)}
+     */
+    public Set<QName> getAttributeAsQNames(QName qname, String splitRegex);
 
     /**
      * Gets the specified attribute by qualified name, as a qualified name.

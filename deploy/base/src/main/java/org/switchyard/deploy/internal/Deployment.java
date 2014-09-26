@@ -727,24 +727,24 @@ public class Deployment extends AbstractDeployment {
     
     private List<Policy> getPolicyRequirements(ComponentServiceModel serviceModel) throws Exception {
         LinkedList<Policy> requires = new LinkedList<Policy>();
-        for (final String policyName : serviceModel.getPolicyRequirements()) {
-            requires.add(PolicyFactory.getPolicy(policyName));
+        for (QName policyQName : serviceModel.getPolicyRequirements()) {
+            requires.add(PolicyFactory.getPolicy(policyQName));
         }
         return requires;
     }
 
     private List<Policy> getPolicyRequirements(ComponentImplementationModel implModel) throws Exception {
         LinkedList<Policy> requires = new LinkedList<Policy>();
-        for (final String policyName : implModel.getPolicyRequirements()) {
-            requires.add(PolicyFactory.getPolicy(policyName));
+        for (QName policyQName : implModel.getPolicyRequirements()) {
+            requires.add(PolicyFactory.getPolicy(policyQName));
         }
         return requires;
     }
     
     private List<Policy> getPolicyRequirements(ComponentReferenceModel referenceModel) throws Exception {
         LinkedList<Policy> requires = new LinkedList<Policy>();
-        for (final String policyName : referenceModel.getPolicyRequirements()) {
-            requires.add(PolicyFactory.getPolicy(policyName));
+        for (QName policyQName : referenceModel.getPolicyRequirements()) {
+            requires.add(PolicyFactory.getPolicy(policyQName));
         }
         return requires;
     }

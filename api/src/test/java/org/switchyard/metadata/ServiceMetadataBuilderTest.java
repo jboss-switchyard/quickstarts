@@ -17,8 +17,7 @@ package org.switchyard.metadata;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.ServiceMetadata;
 import org.switchyard.metadata.qos.Throttling;

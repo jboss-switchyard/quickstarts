@@ -18,6 +18,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+
 import org.switchyard.policy.Policy.PolicyType;
 
 /**
@@ -34,24 +37,52 @@ public final class PolicyFactory {
         _policies.addAll(Arrays.asList(TransactionPolicy.values()));
         _policies.addAll(Arrays.asList(SecurityPolicy.values()));
     }
-    
+
     /**
      * Returns policy object from name.
      * @param name policy name to get
      * @return Policy object
      * @throws Exception failed to create Policy object
+     * @deprecated use {@link #getPolicy(QName)} instead
      */
-    public static Policy getPolicy(final String name) throws Exception {
+    @Deprecated
+    public static Policy getPolicy(String name) throws Exception {
+        return getPolicy(new QName(name));
+    }
+
+    /**
+     * Returns policy object from qualified name.
+     * @param qname policy qualified name to get
+     * @return Policy object
+     * @throws Exception failed to create Policy object
+     */
+    public static Policy getPolicy(final QName qname) throws Exception {
         for (Policy p : _policies) {
-            if (p.getName().equals(name)) {
+            // 1. look for an exact match first
+            if (p.getQName().equals(qname)) {
+                return p;
+            }
+            // 2. look for a localName match second for backwards compatibility
+            // NOTE: similar logic found in:
+            // -    core/api: org.switchyard.policy.PolicyUtil.containsPolicy(Set<Policy>, Policy):boolean
+            // - core/config: org.switchyard.config.model.composite.v1.PolicyConfig.hasRequirement(Model, QName):boolean
+            // NOTE: NULL_NS_URI works because of no default namespace assumption from parent element made in:
+            // - core/config: org.switchyard.config.BaseConfiguration.createAttributeQName(String value):QName
+            if (XMLConstants.NULL_NS_URI.equals(qname.getNamespaceURI()) && qname.getLocalPart().equals(p.getQName().getLocalPart())) {
                 return p;
             }
         }
 
         // return Generic Policy instance for the non-built-in policy
         return new Policy() {
+            public QName getQName() {
+                return qname;
+            }
             public String getName() {
-                return name;
+                return getQName().getLocalPart();
+            }
+            public String toString() {
+                return getQName().toString();
             }
             public boolean supports(PolicyType type) {
                 return true;

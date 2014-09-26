@@ -122,26 +122,24 @@ public class V1ComponentReferenceModel extends BaseNamedModel implements Compone
      * {@inheritDoc}
      */
     @Override
-    public void addPolicyRequirement(String policyName) {
-        Set<String> requires = PolicyConfig.getRequires(this);
-        requires.add(policyName);
-        PolicyConfig.setRequires(this, requires);
+    public void addPolicyRequirement(QName policyQName) {
+        PolicyConfig.addRequirement(this, policyQName);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Set<String> getPolicyRequirements() {
-        return PolicyConfig.getRequires(this);
+    public Set<QName> getPolicyRequirements() {
+        return PolicyConfig.getRequirements(this);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean hasPolicyRequirement(String policyName) {
-        return PolicyConfig.getRequires(this).contains(policyName);
+    public boolean hasPolicyRequirement(QName policyQName) {
+        return PolicyConfig.hasRequirement(this, policyQName);
     }
 
 }

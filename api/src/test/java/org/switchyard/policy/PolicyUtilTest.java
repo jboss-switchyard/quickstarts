@@ -14,6 +14,8 @@
 
 package org.switchyard.policy;
 
+import javax.xml.namespace.QName;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.Exchange;
@@ -31,7 +33,7 @@ public class PolicyUtilTest {
         Assert.assertFalse(PolicyUtil.isRequired(ex, DummyPolicy.B));
         Assert.assertEquals(1, PolicyUtil.getProvided(ex).size());
     }
-    
+
     @Test
     public void testRequirePolicy() {
         Exchange ex = new MockExchange().setContext(new MockContext());
@@ -44,12 +46,28 @@ public class PolicyUtilTest {
 }
 
 enum DummyPolicy implements Policy {
-    
-    A, B;
-    
+
+    A("A"), B("B");
+
+    private final QName _qname;
+
+    private DummyPolicy(String name) {
+        _qname = new QName(name);
+    }
+
+    @Override
+    public QName getQName() {
+        return _qname;
+    }
+
     @Override
     public String getName() {
-        return toString();
+        return getQName().getLocalPart();
+    }
+
+    @Override
+    public String toString() {
+        return getQName().toString();
     }
 
     @Override
@@ -61,7 +79,7 @@ enum DummyPolicy implements Policy {
     public boolean isCompatibleWith(Policy target) {
         return true;
     }
-    
+
     @Override
     public Policy getPolicyDependency() {
         return null;
