@@ -19,6 +19,7 @@
     <version>2.0.0.Alpha3</version>
     <packaging>bundle</packaging>
     <name>org.switchyard.quickstarts:switchyard-camel-saxon</name>
+    <description>Quickstart : Camel Saxon</description>
     <url>http://switchyard.org</url>
     <organization>
         <name>JBoss by Red Hat</name>
