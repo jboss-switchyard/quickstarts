@@ -29,19 +29,7 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
         </license>
     </licenses>
-    <repositories>
-        <repository>
-            <id>jboss-public-repository</id>
-            <name>JBoss Public Maven Repository</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public</url>
-        </repository>
-    </repositories>
     <pluginRepositories>
-        <pluginRepository>
-            <id>jboss-public-repository</id>
-            <name>JBoss Public Maven Repository</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public</url>
-        </pluginRepository>
         <pluginRepository>
             <id>hibernate4.ddl</id>
             <url>http://www.smartics.eu/nexus/content/groups/public-group</url>

@@ -30,20 +30,6 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
         </license>
     </licenses>
-    <repositories>
-        <repository>
-            <id>jboss-public-repository</id>
-            <name>JBoss Public Maven Repository</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>jboss-public-repository</id>
-            <name>JBoss Public Maven Repository</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public</url>
-        </pluginRepository>
-    </pluginRepositories>
     <properties>
         <deploy.skip>true</deploy.skip>
         <switchyard.osgi.import>*</switchyard.osgi.import>

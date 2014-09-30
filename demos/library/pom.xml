@@ -20,6 +20,21 @@
     <packaging>bundle</packaging>
     <name>Quickstart Demo : Library</name>
     <description>Quickstart Demo : Library</description>
+    <url>http://switchyard.org</url>
+    <organization>
+        <name>JBoss by Red Hat</name>
+        <url>http://jboss.org</url>
+    </organization>
+    <developers>
+        <developer>
+            <name>SwitchYard committers</name>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https://github.com/jboss-switchyard/quickstarts.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:jboss-switchyard/quickstarts.git</developerConnection>
+        <url>http://github.com/jboss-switchyard/quickstarts</url>
+    </scm>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -169,6 +184,21 @@
                     <classpathScope>test</classpathScope>
                     <mainClass>org.switchyard.quickstarts.demos.library.LibraryClient</mainClass>
                 </configuration>
+            </plugin>
+            <!-- Attach sources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
