@@ -4,7 +4,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CamelBindingQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-binding";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.camel.binding";
     private static String featureName = "switchyard-quickstart-camel-binding";
 
     @BeforeClass

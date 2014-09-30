@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 import org.switchyard.karaf.test.quickstarts.AbstractQuickstartTest;
 
 public class PolicyTransactionDemoQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.demos.switchyard-demo-policy-transaction";
+    private static String bundleName = "org.switchyard.quickstarts.demos.switchyard.demo.policy.transaction";
     private static String featureName = "switchyard-demo-policy-transaction";
 
     @BeforeClass

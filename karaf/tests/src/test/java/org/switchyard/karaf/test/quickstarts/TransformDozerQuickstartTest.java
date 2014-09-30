@@ -25,7 +25,7 @@ import org.switchyard.remote.RemoteMessage;
 import org.switchyard.remote.http.HttpInvoker;
 
 public class TransformDozerQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-transform-dozer";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.transform.dozer";
     private static String featureName = "switchyard-quickstart-transform-dozer";
 
     private static final QName SERVICE = new QName( "urn:switchyard-quickstart:transform-dozer:0.1.0", "OrderService");

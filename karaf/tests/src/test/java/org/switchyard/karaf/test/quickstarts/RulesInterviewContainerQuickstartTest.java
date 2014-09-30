@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class RulesInterviewContainerQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-rules-interview-container";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.rules.interview.container";
     private static String featureName = "switchyard-quickstart-rules-interview-container";
 
     @BeforeClass

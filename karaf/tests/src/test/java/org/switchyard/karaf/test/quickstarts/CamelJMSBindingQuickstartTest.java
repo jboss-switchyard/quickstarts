@@ -1,9 +1,6 @@
 package org.switchyard.karaf.test.quickstarts;
 
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFileExtend;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
-
-import java.io.File;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -17,7 +14,7 @@ import org.junit.Test;
 import org.ops4j.pax.exam.CoreOptions;
 
 public class CamelJMSBindingQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-jms-binding";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.camel.jms.binding";
     private static String featureName = "switchyard-quickstart-camel-jms-binding";
 
     private static final String AMQ_USER = "karaf";

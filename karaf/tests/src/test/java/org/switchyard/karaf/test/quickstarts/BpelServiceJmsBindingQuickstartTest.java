@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.switchyard.test.SwitchYardTestKit;
 
 public class BpelServiceJmsBindingQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-bpel-jms-binding";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.bpel.jms.binding";
     private static String featureName = "switchyard-quickstart-bpel-jms-binding";
 
     private static final String AMQ_USER = "karaf";

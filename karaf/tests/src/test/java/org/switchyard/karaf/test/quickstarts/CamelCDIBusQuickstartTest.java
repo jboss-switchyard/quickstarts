@@ -27,7 +27,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  * Test deployment of bus extension done by custom cdi beans.
  */
 public class CamelCDIBusQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-bus-cdi";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.camel.bus.cdi";
     private static String featureName = "switchyard-quickstart-camel-bus-cdi";
 
     @BeforeClass

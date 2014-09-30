@@ -31,7 +31,7 @@ import org.switchyard.remote.RemoteMessage;
 import org.switchyard.remote.http.HttpInvoker;
 
 public class ClusterDemoQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.demos.switchyard-demo-cluster-dealer";
+    private static String bundleName = "org.switchyard.quickstarts.demos.switchyard.demo.cluster.dealer";
     private static String featureName = "switchyard-demo-cluster-dealer";
     private static String[] extraFeatures = {"switchyard-demo-cluster-credit"};
 

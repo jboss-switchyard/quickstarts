@@ -9,7 +9,7 @@ import org.junit.Ignore;
  */
 @Ignore
 public class CamelJPABindingQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-jpa-binding";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.camel.jpa.binding";
     private static String featureName = "switchyard-quickstart-camel-jpa-binding";
 
     @BeforeClass

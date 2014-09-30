@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 public class ValidateXMLQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-validate-xml";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.validate.xml";
     private static String featureName = "switchyard-quickstart-validate-xml";
 
     @BeforeClass

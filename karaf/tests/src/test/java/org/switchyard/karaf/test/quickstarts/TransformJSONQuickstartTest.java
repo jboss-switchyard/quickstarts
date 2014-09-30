@@ -16,7 +16,7 @@ package org.switchyard.karaf.test.quickstarts;
 import org.junit.BeforeClass;
 
 public class TransformJSONQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-transform-json";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.transform.json";
     private static String featureName = "switchyard-quickstart-transform-json";
 
     @BeforeClass

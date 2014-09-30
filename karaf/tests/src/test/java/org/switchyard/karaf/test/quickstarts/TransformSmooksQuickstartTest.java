@@ -24,7 +24,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  */
 @Ignore
 public class TransformSmooksQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-transform-smooks";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.transform.smooks";
     private static String featureName = "switchyard-quickstart-transform-smooks";
 
     @BeforeClass

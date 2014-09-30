@@ -24,7 +24,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 public class BeanServiceQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-bean-service";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.bean.service";
     private static String featureName = "switchyard-quickstart-bean-service";
 
     @BeforeClass

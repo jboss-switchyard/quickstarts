@@ -29,7 +29,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.w3c.dom.NodeList;
 
 public class BpelServiceSayHelloQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-bpel-say-hello";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.bpel.say.hello";
     private static String featureName = "switchyard-quickstart-bpel-say-hello";
 
     @BeforeClass

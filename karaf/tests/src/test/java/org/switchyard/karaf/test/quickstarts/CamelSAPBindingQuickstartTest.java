@@ -16,7 +16,7 @@ package org.switchyard.karaf.test.quickstarts;
 import org.junit.BeforeClass;
 
 public class CamelSAPBindingQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-sap-binding";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.camel.sap.binding";
     private static String featureName = "switchyard-quickstart-camel-sap-binding";
 
     @BeforeClass

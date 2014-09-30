@@ -44,7 +44,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 public class SoapAttachmentQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-soap-attachment";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.soap.attachment";
     private static String featureName = "switchyard-quickstart-soap-attachment";
     private static String SWITCHYARD_WEB_SERVICE = "http://localhost:8181/cxf/soap-attachment/ImageServiceService";
 

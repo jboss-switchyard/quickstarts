@@ -40,12 +40,16 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.wiring.BundleWire;
 import org.osgi.framework.wiring.BundleWiring;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.io.pull.ElementPuller;
+import org.switchyard.common.property.CompoundPropertyResolver;
+import org.switchyard.common.property.PropertyResolver;
+import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Marshaller;
 import org.switchyard.config.model.ModelPuller;
@@ -232,6 +236,7 @@ public class SwitchYardContainerImpl extends SimpleExtension
                             return;
                         }
                         _model = new ModelPuller<SwitchYardModel>(new OsgiDescriptor(_nhs)).pull(_xml);
+                        OsgiPropertyResolver.set(_model, _bundle);
                         _types = new HashSet<String>();
                         if (_model.getComposite() != null) {
                             for (CompositeReferenceModel reference : _model.getComposite().getReferences()) {
@@ -567,6 +572,34 @@ public class SwitchYardContainerImpl extends SimpleExtension
         }
         
     };
+
+    private static final class OsgiPropertyResolver implements PropertyResolver {
+
+        private org.osgi.service.cm.Configuration _wrapped;
+
+        private OsgiPropertyResolver(org.osgi.service.cm.Configuration wrapped) {
+            _wrapped = wrapped;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Object resolveProperty(String key) {
+            return _wrapped.getProperties() != null ? _wrapped.getProperties().get(key) : null;
+        }
+
+        private static void set(SwitchYardModel switchyardModel, Bundle bundle) throws Exception {
+            ServiceReference configurationAdminReference = bundle.getBundleContext().getServiceReference(ConfigurationAdmin.class.getName());
+            ConfigurationAdmin configAdmin = (ConfigurationAdmin) bundle.getBundleContext().getService(configurationAdminReference);
+            org.osgi.service.cm.Configuration osgiConfig = configAdmin.getConfiguration(bundle.getSymbolicName());
+            if(osgiConfig != null) {
+                Configuration config = switchyardModel.getModelConfiguration();
+                config.setPropertyResolver(CompoundPropertyResolver.compact(config.getPropertyResolver(), new OsgiPropertyResolver(osgiConfig)));
+            }
+        }
+    }
+
 }
 
 

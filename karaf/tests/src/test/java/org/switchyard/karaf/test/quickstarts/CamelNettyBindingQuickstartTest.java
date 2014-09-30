@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.switchyard.common.io.Files;
 
 public class CamelNettyBindingQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-netty-binding";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.camel.netty.binding";
     private static String featureName = "switchyard-quickstart-camel-netty-binding";
 
     private static String SRC_DIR = "target/test-classes/quickstarts/camel-netty-binding";

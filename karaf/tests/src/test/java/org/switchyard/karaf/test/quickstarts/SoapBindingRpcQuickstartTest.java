@@ -22,7 +22,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 public class SoapBindingRpcQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-soap-binding-rpc";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.soap.binding.rpc";
     private static String featureName = "switchyard-quickstart-soap-binding-rpc";
     private static String SWITCHYARD_WEB_SERVICE = "http://localhost:8181/cxf/soap-binding-rpc/HelloWorldWSService";
 

@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 public class BpelSimpleCorrelationQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-bpel-simple-correlation";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.bpel.simple.correlation";
     private static String featureName = "switchyard-quickstart-bpel-simple-correlation";
 
     @BeforeClass

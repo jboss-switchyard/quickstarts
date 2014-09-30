@@ -26,7 +26,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 public class SoapAddressingQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-soap-addressing";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.soap.addressing";
     private static String featureName = "switchyard-quickstart-soap-addressing";
     private static String SWITCHYARD_WEB_SERVICE = "http://localhost:8181/cxf/soap-addressing/order/OrderService";
 

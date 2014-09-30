@@ -29,7 +29,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.w3c.dom.NodeList;
 
 public class BpelServiceLoanApprovalQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-bpel-loan-approval";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.bpel.loan.approval";
     private static String featureName = "switchyard-quickstart-bpel-loan-approval";
 
     @BeforeClass

@@ -27,11 +27,11 @@ import org.switchyard.remote.RemoteMessage;
 import org.switchyard.remote.http.HttpInvoker;
 
 public class RemoteInvokerQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-remote-invoker";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.remote.invoker";
     private static String featureName = "switchyard-quickstart-remote-invoker";
 
     private static final QName SERVICE = new QName("urn:com.example.switchyard:switchyard-quickstart-remote-invoker:1.0", "Dealer");
-    private static final String URL = "http://localhost:8080/switchyard-remote";
+    private static final String URL = "http://localhost:8181/switchyard-remote";
     
     @BeforeClass
     public static void before() throws Exception {

@@ -4,7 +4,7 @@ import org.junit.BeforeClass;
 import org.ops4j.pax.exam.CoreOptions;
 
 public class CamelSQLBindingQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-sql-binding";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.camel.sql.binding";
     private static String featureName = "switchyard-quickstart-camel-sql-binding";
 
     @BeforeClass

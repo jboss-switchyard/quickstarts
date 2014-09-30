@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 public class CamelSaxonQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-saxon";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.camel.saxon";
     private static String featureName = "switchyard-quickstart-camel-saxon";
 
     @BeforeClass

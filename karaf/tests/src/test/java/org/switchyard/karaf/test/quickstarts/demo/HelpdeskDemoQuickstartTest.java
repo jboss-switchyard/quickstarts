@@ -25,7 +25,7 @@ import org.switchyard.karaf.test.quickstarts.AbstractQuickstartTest;
  */
 @Ignore
 public class HelpdeskDemoQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.demos.switchyard-demo-helpdesk";
+    private static String bundleName = "org.switchyard.quickstarts.demos.switchyard.demo.helpdesk";
     private static String featureName = "switchyard-demo-helpdesk";
 
     @BeforeClass

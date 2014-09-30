@@ -21,7 +21,7 @@ import org.switchyard.common.type.Classes;
 
 @Ignore("Disable for now due to https://issues.jboss.org/browse/SWITCHYARD-2220")
 public class CamelMQTTBindingQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-camel-mqtt-binding";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.camel.mqtt.binding";
     private static String featureName = "switchyard-quickstart-camel-mqtt-binding";
 
     private static final String TOPIC_INPUT = "camel/mqtt/test/input";

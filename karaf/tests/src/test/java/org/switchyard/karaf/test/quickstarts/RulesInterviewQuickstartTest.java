@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 public class RulesInterviewQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-rules-interview";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.rules.interview";
     private static String featureName = "switchyard-quickstart-rules-interview";
 
     @BeforeClass

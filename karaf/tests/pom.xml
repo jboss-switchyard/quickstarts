@@ -137,8 +137,6 @@
                         <exclude>**/*$*</exclude>
                         <exclude>**/ClusterDemoQuickstartTest.java</exclude>
                         <!-- Fails in test kit, but not standalone -->
-                        <exclude>**/RemoteInvokerQuickstartTest.java</exclude>
-                        <!-- RemoteInvoker hasn't been converted to a bundle yet -->
                         <exclude>**/CamelSAPBindingQuickstartTest.java</exclude>
                         <!-- Requires local SAP installation -->
                     </excludes>

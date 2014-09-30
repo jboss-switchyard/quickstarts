@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 public class BPMServiceQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-bpm-service";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.bpm.service";
     private static String featureName = "switchyard-quickstart-bpm-service";
 
     @BeforeClass

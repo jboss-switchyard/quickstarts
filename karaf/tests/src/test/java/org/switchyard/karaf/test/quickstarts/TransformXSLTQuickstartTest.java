@@ -16,7 +16,7 @@ package org.switchyard.karaf.test.quickstarts;
 import org.junit.BeforeClass;
 
 public class TransformXSLTQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard-transform-xslt";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.transform.xslt";
     private static String featureName = "switchyard-quickstart-transform-xslt";
 
     @BeforeClass

@@ -21,7 +21,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.switchyard.karaf.test.quickstarts.AbstractQuickstartTest;
 
 public class LibraryDemoQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.demos.switchyard-demo-library";
+    private static String bundleName = "org.switchyard.quickstarts.demos.switchyard.demo.library";
     private static String featureName = "switchyard-demo-library";
 
     @BeforeClass
