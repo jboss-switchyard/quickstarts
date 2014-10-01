@@ -19,11 +19,13 @@ import static org.switchyard.component.common.knowledge.config.model.InputModel.
 import static org.switchyard.component.common.knowledge.config.model.ManifestModel.MANIFEST;
 import static org.switchyard.component.common.knowledge.config.model.RemoteJmsModel.REMOTE_JMS;
 import static org.switchyard.component.common.knowledge.config.model.RemoteRestModel.REMOTE_REST;
+import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
 
 import org.switchyard.component.common.knowledge.config.model.v1.V1KnowledgeMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
+import org.switchyard.config.model.property.v2.V2PropertiesModel;
 
 /**
  * A CompositeMarshaller which can also create knowledge models.
@@ -64,6 +66,8 @@ public class V2KnowledgeMarshaller extends V1KnowledgeMarshaller {
             return new V2ExtraJaxbClassModel(config, desc);
         } else if (INPUT.equals(name)) {
             return new V2InputModel(config, desc);
+        } else if (PROPERTIES.equals(name)) {
+            return new V2PropertiesModel(config, desc);
         }
         return super.read(config);
     }

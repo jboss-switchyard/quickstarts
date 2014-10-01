@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.component.camel.mqtt.model.v1;
+package org.switchyard.component.camel.mqtt.model.v2;
 
 import org.switchyard.component.camel.common.model.v1.V1BaseCamelMarshaller;
 import org.switchyard.config.Configuration;
@@ -22,16 +22,16 @@ import org.switchyard.config.model.composite.BindingModel;
 /**
  * Mqtt model marshaller.
  */
-public class V1CamelMqttModelMarshaller extends V1BaseCamelMarshaller {
+public class V2CamelMqttModelMarshaller extends V1BaseCamelMarshaller {
 
-    private static final String BINDING_MQTT = BindingModel.BINDING + '.' + V1CamelMqttBindingModel.MQTT;
+    private static final String BINDING_MQTT = BindingModel.BINDING + '.' + V2CamelMqttBindingModel.MQTT;
 
     /**
      * Creates new marshaller.
      * 
      * @param desc Descriptor
      */
-    public V1CamelMqttModelMarshaller(Descriptor desc) {
+    public V2CamelMqttModelMarshaller(Descriptor desc) {
         super(desc);
     }
 
@@ -47,7 +47,7 @@ public class V1CamelMqttModelMarshaller extends V1BaseCamelMarshaller {
         String name = config.getName();
         Descriptor desc = getDescriptor();
         if (BINDING_MQTT.equals(name)) {
-            return new V1CamelMqttBindingModel(config, desc);
+            return new V2CamelMqttBindingModel(config, desc);
         }
         return super.read(config);
     }

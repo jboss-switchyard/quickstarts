@@ -16,7 +16,7 @@ package org.switchyard.component.camel.mqtt.deploy;
 import org.switchyard.common.camel.SwitchYardCamelContext;
 import org.switchyard.component.camel.common.deploy.BaseBindingActivator;
 import org.switchyard.component.camel.common.deploy.BaseBindingComponent;
-import org.switchyard.component.camel.mqtt.model.v1.V1CamelMqttBindingModel;
+import org.switchyard.component.camel.mqtt.model.v2.V2CamelMqttBindingModel;
 
 /**
  * MQTT binding component.
@@ -27,7 +27,7 @@ public class CamelMqttComponent extends BaseBindingComponent {
      * Creates new component.
      */
     public CamelMqttComponent() {
-        super("CamelMqttComponent", V1CamelMqttBindingModel.MQTT);
+        super("CamelMqttComponent", V2CamelMqttBindingModel.MQTT);
     }
 
     @Override

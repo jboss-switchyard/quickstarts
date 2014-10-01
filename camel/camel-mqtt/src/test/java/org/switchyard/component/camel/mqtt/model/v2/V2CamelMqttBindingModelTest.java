@@ -1,13 +1,13 @@
-package org.switchyard.component.camel.mqtt.model.v1;
+package org.switchyard.component.camel.mqtt.model.v2;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.camel.component.mqtt.MQTTEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
 import org.switchyard.component.camel.mqtt.model.CamelMqttNamespace;
-import org.switchyard.component.camel.mqtt.model.v1.V1CamelMqttBindingModel.QualityOfService;
+import org.switchyard.component.camel.mqtt.model.v2.V2CamelMqttBindingModel.QualityOfService;
 
-public class V1CamelMqttBindingModelTest extends V1BaseCamelServiceBindingModelTest<V1CamelMqttBindingModel, MQTTEndpoint> {
+public class V2CamelMqttBindingModelTest extends V1BaseCamelServiceBindingModelTest<V2CamelMqttBindingModel, MQTTEndpoint> {
 
     private static final String NAME = "Garfield";
     private static final String HOST = "tcp://127.0.0.1:1883";
@@ -30,7 +30,7 @@ public class V1CamelMqttBindingModelTest extends V1BaseCamelServiceBindingModelT
     private static final Integer DISCONNECT_WAIT_IN_SECONDS = 10;
     private static final Integer SEND_WAIT_IN_SECONDS = 10;
 
-    private static final String CAMEL_XML = "/v1/switchyard-mqtt-binding-beans.xml";
+    private static final String CAMEL_XML = "/v2/switchyard-mqtt-binding-beans.xml";
     private static final String CAMEL_URI = "mqtt://" + NAME + "?host=" + HOST + "&localAddress=" + LOCAL_ADDRESS + "&connectAttemptsMax=" + CONNECT_ATTEMPTS_MAX 
             + "&reconnectAttemptsMax=" + RECONNECT_ATTEMPTS_MAX + "&reconnectDelay=" + RECONNECT_DELAY + "&reconnectBackOffMultiplier=" + RECONNECT_BACK_OFF_MULTIPLIER 
             + "&reconnectDelayMax=" + RECONNECT_DELAY_MAX + "&userName=" + USER_NAME + "&password=" + PASSWORD + "&qualityOfService=" + QUALITY_OF_SERVICE
@@ -39,13 +39,13 @@ public class V1CamelMqttBindingModelTest extends V1BaseCamelServiceBindingModelT
             + "&mqttQosPropertyName=" + MQTT_QOS_PROPERTY_NAME + "&connectWaitInSeconds=" + CONNECT_WAIT_IN_SECONDS
             + "&disconnectWaitInSeconds=" + DISCONNECT_WAIT_IN_SECONDS + "&sendWaitInSeconds=" + SEND_WAIT_IN_SECONDS;
 
-    public V1CamelMqttBindingModelTest () {
+    public V2CamelMqttBindingModelTest () {
         super(MQTTEndpoint.class, CAMEL_XML);
         setSkipCamelEndpointTesting(true);
     }
     
     @Override
-    protected void createModelAssertions(V1CamelMqttBindingModel model) {
+    protected void createModelAssertions(V2CamelMqttBindingModel model) {
         assertEquals(NAME, model.getName());
         assertEquals(HOST, model.getHost());
         assertEquals(LOCAL_ADDRESS, model.getLocalAddress());
@@ -69,8 +69,8 @@ public class V1CamelMqttBindingModelTest extends V1BaseCamelServiceBindingModelT
     }
 
     @Override
-    protected V1CamelMqttBindingModel createTestModel() {
-        return new V1CamelMqttBindingModel(CamelMqttNamespace.V_2_0.uri())
+    protected V2CamelMqttBindingModel createTestModel() {
+        return new V2CamelMqttBindingModel(CamelMqttNamespace.V_2_0.uri())
             .setName(NAME)
             .setHost(HOST)
             .setLocalAddress(LOCAL_ADDRESS)

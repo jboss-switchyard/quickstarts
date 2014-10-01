@@ -1,4 +1,4 @@
-package org.switchyard.component.camel.mqtt.model.v1;
+package org.switchyard.component.camel.mqtt.model.v2;
 
 import java.net.URI;
 import java.util.List;
@@ -11,9 +11,9 @@ import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
 /**
- * V1 CamelMqttBindingModel.
+ * V2 CamelMqttBindingModel.
  */
-public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements CamelMqttBindingModel {
+public class V2CamelMqttBindingModel extends V1BaseCamelBindingModel implements CamelMqttBindingModel {
 
     /** QoS enum. */
     public enum QualityOfService {
@@ -52,7 +52,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
      * @param config The switchyard configuration instance.
      * @param desc The switchyard descriptor instance.
      */
-    public V1CamelMqttBindingModel(Configuration config, Descriptor desc) {
+    public V2CamelMqttBindingModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -60,7 +60,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
      * Creates new mqtt binding model.
      * @param namespace namespace
      */
-    public V1CamelMqttBindingModel(String namespace) {
+    public V2CamelMqttBindingModel(String namespace) {
         super(MQTT, namespace);
 
         setModelChildrenOrder(NAME, HOST, LOCAL_ADDRESS, CONNECT_ATTEMPTS_MAX, RECONNECT_ATTEMPTS_MAX, RECONNECT_DELAY, RECONNECT_BACK_OFF_MULTIPLIER, RECONNECT_DELAY_MAX,
@@ -74,7 +74,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setName(String name) {
+    public V2CamelMqttBindingModel setName(String name) {
         setModelAttribute(NAME, name);
         return this;
     }
@@ -85,7 +85,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setHost(String host) {
+    public V2CamelMqttBindingModel setHost(String host) {
         return setConfig(HOST, host);
     }
 
@@ -95,7 +95,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setLocalAddress(String localAddress) {
+    public V2CamelMqttBindingModel setLocalAddress(String localAddress) {
         return setConfig(LOCAL_ADDRESS, localAddress);
     }
 
@@ -105,7 +105,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setConnectAttemptsMax(int connectAttemptsMax) {
+    public V2CamelMqttBindingModel setConnectAttemptsMax(int connectAttemptsMax) {
         return setConfig(CONNECT_ATTEMPTS_MAX, connectAttemptsMax);
     }
 
@@ -115,7 +115,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setReconnectAttemptsMax(int reconnectAttemptsMax) {
+    public V2CamelMqttBindingModel setReconnectAttemptsMax(int reconnectAttemptsMax) {
         return setConfig(RECONNECT_ATTEMPTS_MAX, reconnectAttemptsMax);
     }
 
@@ -125,7 +125,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setReconnectDelay(int reconnectDelay) {
+    public V2CamelMqttBindingModel setReconnectDelay(int reconnectDelay) {
         return setConfig(RECONNECT_DELAY, reconnectDelay);
     }
 
@@ -135,7 +135,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setReconnectBackOffMultiplier(double reconnectBackOffMultiplier) {
+    public V2CamelMqttBindingModel setReconnectBackOffMultiplier(double reconnectBackOffMultiplier) {
         return setConfig(RECONNECT_BACK_OFF_MULTIPLIER, reconnectBackOffMultiplier);
     }
 
@@ -145,7 +145,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setReconnectDelayMax(int reconnectDelayMax) {
+    public V2CamelMqttBindingModel setReconnectDelayMax(int reconnectDelayMax) {
         return setConfig(RECONNECT_DELAY_MAX, reconnectDelayMax);
     }
 
@@ -155,7 +155,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setUserName(String username) {
+    public V2CamelMqttBindingModel setUserName(String username) {
         return setConfig(USER_NAME, username);
     }
 
@@ -165,7 +165,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setPassword(String password) {
+    public V2CamelMqttBindingModel setPassword(String password) {
         return setConfig(PASSWORD, password);
     }
 
@@ -178,7 +178,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setQualityOfService(String qualityOfService) {
+    public V2CamelMqttBindingModel setQualityOfService(String qualityOfService) {
         return setConfig(QUALITY_OF_SERVICE, qualityOfService);
     }
 
@@ -188,7 +188,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setSubscribeTopicName(String subscribeTopicName) {
+    public V2CamelMqttBindingModel setSubscribeTopicName(String subscribeTopicName) {
         return setConfig(SUBSCRIBE_TOPIC_NAME, subscribeTopicName);
     }
 
@@ -198,7 +198,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setPublishTopicName(String publishTopicName) {
+    public V2CamelMqttBindingModel setPublishTopicName(String publishTopicName) {
         return setConfig(PUBLISH_TOPIC_NAME, publishTopicName);
     }
 
@@ -208,7 +208,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setByDefaultRetain(Boolean byDefaultRetain) {
+    public V2CamelMqttBindingModel setByDefaultRetain(Boolean byDefaultRetain) {
         return setConfig(BY_DEFAULT_RETAIN, byDefaultRetain);
     }
 
@@ -218,7 +218,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setMqttTopicPropertyName(String mqttTopicPropertyName) {
+    public V2CamelMqttBindingModel setMqttTopicPropertyName(String mqttTopicPropertyName) {
         return setConfig(MQTT_TOPIC_PROPERTY_NAME, mqttTopicPropertyName);
     }
 
@@ -228,7 +228,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setMqttRetainPropertyName(String mqttRetainPropertyName) {
+    public V2CamelMqttBindingModel setMqttRetainPropertyName(String mqttRetainPropertyName) {
         return setConfig(MQTT_RETAIN_PROPERTY_NAME, mqttRetainPropertyName);
     }
 
@@ -238,7 +238,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setMqttQosPropertyName(String mqttQosPropertyName) {
+    public V2CamelMqttBindingModel setMqttQosPropertyName(String mqttQosPropertyName) {
         return setConfig(MQTT_QOS_PROPERTY_NAME, mqttQosPropertyName);
     }
 
@@ -248,7 +248,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setConnectWaitInSeconds(int connectWaitInSeconds) {
+    public V2CamelMqttBindingModel setConnectWaitInSeconds(int connectWaitInSeconds) {
         return setConfig(CONNECT_WAIT_IN_SECONDS, connectWaitInSeconds);
     }
 
@@ -258,7 +258,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setDisonnectWaitInSeconds(int disconnectWaitInSeconds) {
+    public V2CamelMqttBindingModel setDisonnectWaitInSeconds(int disconnectWaitInSeconds) {
         return setConfig(DISCONNECT_WAIT_IN_SECONDS, disconnectWaitInSeconds);
     }
 
@@ -268,7 +268,7 @@ public class V1CamelMqttBindingModel extends V1BaseCamelBindingModel implements 
     }
 
     @Override
-    public V1CamelMqttBindingModel setSendWaitInSeconds(int sendWaitInSeconds) {
+    public V2CamelMqttBindingModel setSendWaitInSeconds(int sendWaitInSeconds) {
         return setConfig(SEND_WAIT_IN_SECONDS, sendWaitInSeconds);
     }
 

@@ -337,6 +337,7 @@
                 <sequence>
                     <element ref="rules:property" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="load" type="string" use="optional"/>
             </extension>
         </complexContent>
     </complexType>
