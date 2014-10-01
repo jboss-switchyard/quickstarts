@@ -13,13 +13,13 @@
  */
 package org.switchyard.deploy.osgi.internal;
 
+import java.util.Map;
+
 import javax.xml.namespace.QName;
 
 import org.osgi.framework.BundleContext;
 import org.switchyard.ServiceDomain;
 import org.switchyard.bus.camel.CamelExchangeBus;
-import org.switchyard.config.model.property.PropertiesModel;
-import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.deploy.ServiceDomainManager;
 import org.switchyard.internal.DomainImpl;
@@ -33,6 +33,7 @@ import org.switchyard.validate.ValidatorRegistry;
  */
 public class OsgiDomainManager extends ServiceDomainManager {
 
+    @SuppressWarnings("unused")
     private final SwitchYardExtender _extender;
 
     public OsgiDomainManager(SwitchYardExtender extender) {
@@ -58,11 +59,9 @@ public class OsgiDomainManager extends ServiceDomainManager {
         }*/
         
         // set properties on the domain
-        PropertiesModel properties = getProperties(switchyardConfig);
-        if (properties != null) {
-            for (PropertyModel property : properties.getProperties()) {
-                domain.setProperty(property.getName(), property.getValue());
-            }
+        Map<String, String> properties = getDomainProperties(switchyardConfig);
+        for (Map.Entry<String, String> property : properties.entrySet()) {
+            domain.setProperty(property.getKey(), property.getValue());
         }
 
         // now that all resources and properties are set, init the domain
