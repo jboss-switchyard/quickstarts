@@ -19,9 +19,6 @@ import org.switchyard.config.model.BaseMarshaller;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
 import org.switchyard.config.model.transform.TransformModel;
-import org.switchyard.transform.config.model.DozerFileEntryModel;
-import org.switchyard.transform.config.model.DozerMappingFilesModel;
-import org.switchyard.transform.config.model.DozerTransformModel;
 import org.switchyard.transform.config.model.JAXBTransformModel;
 import org.switchyard.transform.config.model.JSONTransformModel;
 import org.switchyard.transform.config.model.JavaTransformModel;
@@ -40,7 +37,6 @@ public class V1TransformMarshaller extends BaseMarshaller {
     private static final String TRANSFORM_JSON = TransformModel.TRANSFORM + "." + JSONTransformModel.JSON;
     private static final String TRANSFORM_XSLT = TransformModel.TRANSFORM + "." + XsltTransformModel.XSLT;
     private static final String TRANSFORM_JAXB = TransformModel.TRANSFORM + "." + JAXBTransformModel.JAXB;
-    private static final String TRANSFORM_DOZER = TransformModel.TRANSFORM + "." + DozerTransformModel.DOZER;
 
     /**
      * Constructs a new V1TransformMarshaller with the specified Descriptor.
@@ -68,12 +64,6 @@ public class V1TransformMarshaller extends BaseMarshaller {
             return new V1XsltTransformModel(config, desc);
         } else if (name.equals(TRANSFORM_JAXB)) {
             return new V1JAXBTransformModel(config, desc);
-        } else if (name.equals(TRANSFORM_DOZER)) {
-            return new V1DozerTransformModel(config, desc);
-        } else if (name.equals(DozerMappingFilesModel.MAPPING_FILES)) {
-            return new V1DozerMappingFilesModel(config, desc);
-        } else if (name.equals(DozerFileEntryModel.ENTRY)) {
-            return new V1DozerFileEntryModel(config, desc);
         }
 
         return null;

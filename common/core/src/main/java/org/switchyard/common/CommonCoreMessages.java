@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.jboss.logging.Messages;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageBundle;
+import org.switchyard.common.io.pull.PropertiesPuller.PropertiesType;
 
 /**
  * <p/>
@@ -41,4 +42,13 @@ public interface CommonCoreMessages {
      */
     @Message(id = 11406, value = ("Could not delete %s"))
     IOException couldNotDeleteFile(String filename);
+    
+    /**
+     * unsupportedPropertiesTypeForMethod method definition.
+     * @param propertiesType propertiesType
+     * @param method method
+     * @return IOException
+     */
+    @Message(id = 11407, value = ("Unsupported properties type %s for method %s"))
+    IOException unsupportedPropertiesTypeForMethod(PropertiesType propertiesType, String method);
 }

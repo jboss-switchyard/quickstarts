@@ -29,7 +29,22 @@ public interface PropertiesModel extends Model, PropertyResolver {
     public static final String PROPERTIES = "properties";
 
     /**
-     * Gets the child property models.
+     * Gets the load attribute.
+     * @return the load attribute
+     */
+    public String getLoad();
+
+    /**
+     * Sets the load attribute.
+     * @param load the load attribute
+     * @return this PropertiesModel (useful for chaining)
+     */
+    public PropertiesModel setLoad(String load);
+
+    /**
+     * Gets the child property models.<p/>
+     * <b>NOTE</b>: This <i>only</i> retrieves child property models, and does <i>not</i> include properties loaded via the load attribute.
+     * To access all property values, you can use {@link #getPropertyValue(String)}, {@link #toProperties()} or {@link #toMap()}.
      * @return the child property models
      */
     public List<PropertyModel> getProperties();
@@ -42,12 +57,21 @@ public interface PropertiesModel extends Model, PropertyResolver {
     public PropertiesModel addProperty(PropertyModel property);
     
     /**
-     * Fetch a property model by name.
+     * Fetch a property model by name.<p/>
+     * <b>NOTE</b>: This <i>only</i> retrieves a child property model, and does <i>not</i> include properties loaded via the load attribute.
+     * To access all property values, you can use {@link #getPropertyValue(String)}, {@link #toProperties()} or {@link #toMap()}.
      * @param name name of the property
      * @return property with the specified name, or null if no such property exists
      */
     public PropertyModel getProperty(String name);
-    
+
+    /**
+     * Gets a property value by name.
+     * @param name the name of the property
+     * @return the property value, or null if no such property exists
+     */
+    public String getPropertyValue(String name);
+
     /**
      * Removes a child property model.
      * @param propertyName the name of the property

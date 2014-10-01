@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.switchyard.transform.config.model.v1;
+package org.switchyard.transform.config.model.v2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import org.switchyard.transform.config.model.DozerMappingFilesModel;
 /**
  * A version 1 DozerMappingFilesModel.
  */
-public class V1DozerMappingFilesModel extends BaseModel implements DozerMappingFilesModel {
+public class V2DozerMappingFilesModel extends BaseModel implements DozerMappingFilesModel {
 
     private List<DozerFileEntryModel> _entries = new ArrayList<DozerFileEntryModel>();
     
@@ -36,7 +36,7 @@ public class V1DozerMappingFilesModel extends BaseModel implements DozerMappingF
      * Constructs a new V1DozerMappingFilesModel.
      * @param namespace namespace
      */
-    public V1DozerMappingFilesModel(String namespace) {
+    public V2DozerMappingFilesModel(String namespace) {
         super(new QName(namespace, DozerMappingFilesModel.MAPPING_FILES));
     }
 
@@ -45,7 +45,7 @@ public class V1DozerMappingFilesModel extends BaseModel implements DozerMappingF
      * @param config the Configuration
      * @param desc the Descriptor
      */
-    public V1DozerMappingFilesModel(Configuration config, Descriptor desc) {
+    public V2DozerMappingFilesModel(Configuration config, Descriptor desc) {
         super(config, desc);
         for (Configuration entryConfig : config.getChildrenStartsWith(DozerFileEntryModel.ENTRY)) {
             DozerFileEntryModel entry = (DozerFileEntryModel)readModel(entryConfig);

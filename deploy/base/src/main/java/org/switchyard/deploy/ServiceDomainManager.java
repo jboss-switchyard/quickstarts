@@ -14,6 +14,7 @@
 
 package org.switchyard.deploy;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +28,6 @@ import org.switchyard.config.model.domain.DomainModel;
 import org.switchyard.config.model.domain.SecuritiesModel;
 import org.switchyard.config.model.domain.SecurityModel;
 import org.switchyard.config.model.property.PropertiesModel;
-import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.internal.DefaultServiceRegistry;
 import org.switchyard.internal.DomainImpl;
@@ -114,11 +114,9 @@ public class ServiceDomainManager {
         camelContext.setServiceDomain(domain);
 
         // set properties on the domain
-        PropertiesModel properties = getProperties(switchyardConfig);
-        if (properties != null) {
-            for (PropertyModel property : properties.getProperties()) {
-                domain.setProperty(property.getName(), property.getValue());
-            }
+        Map<String, String> properties = getDomainProperties(switchyardConfig);
+        for (Map.Entry<String, String> property : properties.entrySet()) {
+            domain.setProperty(property.getKey(), property.getValue());
         }
 
         // now that all resources and properties are set, init the domain
@@ -173,11 +171,16 @@ public class ServiceDomainManager {
         return new DefaultServiceDomainSecurity(serviceSecurities, _systemSecurity);
     }
     
-    protected PropertiesModel getProperties(SwitchYardModel config) {
-        if (config == null || config.getDomain() == null) {
-            return null;
-        } else {
-            return config.getDomain().getProperties();
+    protected Map<String, String> getDomainProperties(SwitchYardModel config) {
+        if (config != null) {
+            DomainModel domain = config.getDomain();
+            if (domain != null) {
+                PropertiesModel properties = domain.getProperties();
+                if (properties != null) {
+                    return properties.toMap();
+                }
+            }
         }
+        return Collections.<String, String>emptyMap();
     }
 }

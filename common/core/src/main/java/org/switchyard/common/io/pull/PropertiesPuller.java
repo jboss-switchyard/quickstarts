@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.switchyard.common.CommonCoreMessages;
+
 
 /**
  * Utility class to safely access ("pull") Properties from various sources.
@@ -30,13 +32,49 @@ import java.util.Properties;
 public class PropertiesPuller extends Puller<Properties> {
 
     /**
+     * The type of the Properties file to pull.
+     */
+    public static enum PropertiesType {
+        /** A standard properties file. */
+        PROPERTIES,
+        /** An XML properties file. */
+        XML
+    };
+
+    private final PropertiesType _type;
+
+    /**
+     * Creates a new PropertiesPuller with type {@link PropertiesType#PROPERTIES}.
+     */
+    public PropertiesPuller() {
+        this(PropertiesType.PROPERTIES);
+    }
+
+    /**
+     * Creates a new PropertiesPuller with the specified PropertiesType.
+     * @param type the specified PropertiesType
+     */
+    public PropertiesPuller(PropertiesType type) {
+        _type = type;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public Properties pull(InputStream stream) throws IOException {
         Properties props = new Properties();
         if (stream != null) {
-            props.load(stream);
+            switch (_type) {
+                case PROPERTIES:
+                    props.load(stream);
+                    break;
+                case XML:
+                    props.loadFromXML(stream);
+                    break;
+                default:
+                    throw CommonCoreMessages.MESSAGES.unsupportedPropertiesTypeForMethod(_type, "pull(InputStream)");
+            }
         }
         return props;
     }
@@ -50,7 +88,18 @@ public class PropertiesPuller extends Puller<Properties> {
     public Properties pull(Reader reader) throws IOException {
         Properties props = new Properties();
         if (reader != null) {
-            props.load(reader);
+            switch (_type) {
+                case PROPERTIES:
+                    props.load(reader);
+                    break;
+                /*
+                case XML:
+                    props.loadFromXML(reader); // unsupported by JDK
+                    break;
+                */
+                default:
+                    throw CommonCoreMessages.MESSAGES.unsupportedPropertiesTypeForMethod(_type, "pull(Reader)");
+            }
         }
         return props;
     }

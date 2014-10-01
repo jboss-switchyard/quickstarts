@@ -26,7 +26,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.config.model.Model;
-import org.switchyard.config.model.property.PropertyModel;
 import org.switchyard.config.model.switchyard.SwitchYardModel;
 import org.switchyard.transform.Transformer;
 import org.switchyard.transform.config.model.XsltTransformModel;
@@ -93,10 +92,9 @@ public final class XsltTransformFactory implements TransformerFactory<XsltTransf
         if (root instanceof SwitchYardModel) {
             SwitchYardModel syModel = (SwitchYardModel)root;
             if (syModel.getDomain() != null && syModel.getDomain().getProperties() != null) {
-                PropertyModel poolProp = 
-                        syModel.getDomain().getProperties().getProperty(MAX_POOL_SIZE);
+                String poolProp = syModel.getDomain().getProperties().getPropertyValue(MAX_POOL_SIZE);
                 if (poolProp != null) {
-                    poolSize = Integer.parseInt(poolProp.getValue());
+                    poolSize = Integer.parseInt(poolProp);
                 }
             }
         }

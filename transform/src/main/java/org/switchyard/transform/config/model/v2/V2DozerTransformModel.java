@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.switchyard.transform.config.model.v1;
+package org.switchyard.transform.config.model.v2;
 
 import javax.xml.namespace.QName;
 
@@ -29,7 +29,7 @@ import org.switchyard.transform.dozer.internal.DozerTransformFactory;
  * A version 1 DozerTransformModel.
  */
 @TransformerFactoryClass(DozerTransformFactory.class)
-public class V1DozerTransformModel extends V1BaseTransformModel implements DozerTransformModel {
+public class V2DozerTransformModel extends V1BaseTransformModel implements DozerTransformModel {
 
     private DozerMappingFilesModel _mappingFilesModel;
 
@@ -37,7 +37,7 @@ public class V1DozerTransformModel extends V1BaseTransformModel implements Dozer
      * Constructs a new V1DozerTransformModel.
      * @param namespace namespace
      */
-    public V1DozerTransformModel(String namespace) {
+    public V2DozerTransformModel(String namespace) {
         super(new QName(namespace, TransformModel.TRANSFORM + '.' + DOZER));
     }
 
@@ -46,7 +46,7 @@ public class V1DozerTransformModel extends V1BaseTransformModel implements Dozer
      * @param config the Configuration
      * @param desc the Descriptor
      */
-    public V1DozerTransformModel(Configuration config, Descriptor desc) {
+    public V2DozerTransformModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 
@@ -65,7 +65,7 @@ public class V1DozerTransformModel extends V1BaseTransformModel implements Dozer
      * {@inheritDoc}
      */
     @Override
-    public V1DozerTransformModel setDozerMappingFiles(DozerMappingFilesModel model) {
+    public V2DozerTransformModel setDozerMappingFiles(DozerMappingFilesModel model) {
         setChildModel(model);
         _mappingFilesModel = model;
         return this;

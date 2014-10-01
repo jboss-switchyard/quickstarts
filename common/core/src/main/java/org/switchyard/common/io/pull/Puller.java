@@ -168,7 +168,7 @@ public abstract class Puller<R> {
     /**
      * Known path types.
      */
-    public enum PathType {
+    public static enum PathType {
         /** A class path. */
         CLASS,
         /** A file path. */

@@ -180,6 +180,7 @@
         <sequence>
             <element ref="swyd:property" minOccurs="0" maxOccurs="unbounded"/>
         </sequence>
+        <attribute name="load" type="string" use="optional"/>
     </complexType>
 
     <element name="property" type="swyd:PropertyType"/>

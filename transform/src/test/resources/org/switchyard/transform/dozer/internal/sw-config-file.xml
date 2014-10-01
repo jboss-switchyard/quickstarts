@@ -14,7 +14,7 @@
  -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.1">
     <transforms>
-        <transform.dozer xmlns="urn:switchyard-config:transform:1.0"
+        <transform.dozer xmlns="urn:switchyard-config:transform:2.0"
             from="java:org.switchyard.transform.dozer.internal.ClassA"
             to="java:org.switchyard.transform.dozer.internal.ClassB">
             <mappingFiles>

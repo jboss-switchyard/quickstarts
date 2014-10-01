@@ -18,10 +18,9 @@ import java.io.StringReader;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
-
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.io.pull.StringPuller;

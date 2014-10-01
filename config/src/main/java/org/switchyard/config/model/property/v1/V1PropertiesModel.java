@@ -66,6 +66,24 @@ public class V1PropertiesModel extends BaseModel implements PropertiesModel {
      * {@inheritDoc}
      */
     @Override
+    public String getLoad() {
+        // introduced in v2
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PropertiesModel setLoad(String load) {
+        // introduced in v2
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public synchronized List<PropertyModel> getProperties() {
         return Collections.unmodifiableList(_properties);
     }
@@ -93,6 +111,19 @@ public class V1PropertiesModel extends BaseModel implements PropertiesModel {
             }
         }
         return property;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getPropertyValue(String name) {
+        String value = null;
+        if (name != null) {
+            PropertyModel property = getProperty(name);
+            value = property != null ? property.getValue() : null;
+        }
+        return value;
     }
 
     /**
@@ -148,12 +179,7 @@ public class V1PropertiesModel extends BaseModel implements PropertiesModel {
      */
     @Override
     public Object resolveProperty(String key) {
-        Object value = null;
-        if (key != null) {
-            PropertyModel property = getProperty(key);
-            value = property != null ? property.getValue() : null;
-        }
-        return value;
+        return getPropertyValue(key);
     }
 
 }

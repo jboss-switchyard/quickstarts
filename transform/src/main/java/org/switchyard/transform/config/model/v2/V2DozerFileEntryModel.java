@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.switchyard.transform.config.model.v1;
+package org.switchyard.transform.config.model.v2;
 
 import javax.xml.namespace.QName;
 
@@ -24,13 +24,13 @@ import org.switchyard.transform.config.model.DozerFileEntryModel;
 /**
  * A version 1 DozerFileEntryModel.
  */
-public class V1DozerFileEntryModel extends BaseModel implements DozerFileEntryModel {
+public class V2DozerFileEntryModel extends BaseModel implements DozerFileEntryModel {
 
     /**
      * Constructs a new V1DozerFileEntryModel.
      * @param namespace namespace
      */
-    public V1DozerFileEntryModel(String namespace) {
+    public V2DozerFileEntryModel(String namespace) {
         super(new QName(namespace, DozerFileEntryModel.ENTRY));
     }
 
@@ -39,7 +39,7 @@ public class V1DozerFileEntryModel extends BaseModel implements DozerFileEntryMo
      * @param config the Configuration
      * @param desc the Descriptor
      */
-    public V1DozerFileEntryModel(Configuration config, Descriptor desc) {
+    public V2DozerFileEntryModel(Configuration config, Descriptor desc) {
         super(config, desc);
     }
 

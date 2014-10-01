@@ -19,10 +19,9 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
-
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.io.pull.StringPuller;
@@ -49,6 +48,7 @@ import org.switchyard.config.model.switchyard.v1.V1ArtifactsModel;
 import org.switchyard.config.model.switchyard.v1.V1SwitchYardModel;
 import org.switchyard.config.model.transform.TransformsModel;
 import org.switchyard.config.test.xmlunit.SchemaLocationDifferenceListener;
+
 
 /**
  * SwitchYardModelTests.
@@ -127,14 +127,14 @@ public class SwitchYardModelTests {
         // Verify property configuration
         PropertiesModel props = domain.getProperties();
         Assert.assertEquals(8, props.getProperties().size());
-        Assert.assertEquals("bar", props.getProperty("foo").getValue());
-        Assert.assertEquals("fish", props.getProperty("tuna").getValue());
-        Assert.assertEquals(System.getProperty("user.name"), props.getProperty("userName").getValue());
-        Assert.assertEquals(System.getProperty("os.name"), props.getProperty("osName").getValue());
-        Assert.assertEquals("iam", props.getProperty("whoIsWill").getValue());
-        Assert.assertEquals("stuff", props.getProperty("smooksConfig").getValue());
-        Assert.assertEquals("MyWebService", props.getProperty("soapServiceName").getValue());
-        Assert.assertEquals("service", props.getProperty("soapWsdlName").getValue());
+        Assert.assertEquals("bar", props.getPropertyValue("foo"));
+        Assert.assertEquals("fish", props.getPropertyValue("tuna"));
+        Assert.assertEquals(System.getProperty("user.name"), props.getPropertyValue("userName"));
+        Assert.assertEquals(System.getProperty("os.name"), props.getPropertyValue("osName"));
+        Assert.assertEquals("iam", props.getPropertyValue("whoIsWill"));
+        Assert.assertEquals("stuff", props.getPropertyValue("smooksConfig"));
+        Assert.assertEquals("MyWebService", props.getPropertyValue("soapServiceName"));
+        Assert.assertEquals("service", props.getPropertyValue("soapWsdlName"));
         Assert.assertEquals(switchyard, domain.getSwitchYard());
         // Verify artifact configuration
         ArtifactsModel artifacts = switchyard.getArtifacts();
