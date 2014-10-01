@@ -31,7 +31,7 @@
         <sca:service xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="SymbolService" promote="SymbolService/SymbolService">
             <http:binding.http xmlns:http="urn:switchyard-component-http:config:1.0">
                 <operationSelector xmlns="urn:switchyard-config:switchyard:1.0" operationName="getSymbol"/>
-                <http:contextMapper includes="[cC]ontent-[tT]ype"/>
+                <http:contextMapper/>
                 <http:messageComposer class="org.switchyard.quickstarts.http.binding.CustomComposer"/>
                 <http:contextPath>http-binding/symbol</http:contextPath>
             </http:binding.http>
