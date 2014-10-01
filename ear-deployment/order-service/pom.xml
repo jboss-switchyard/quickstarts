@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
         <artifactId>switchyard-ear-deployment</artifactId>
-        <version>2.0.0.Alpha3</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>switchyard-ear-deployment-order-service</artifactId>
     <name>SwitchYard Quickstart: ear-deployment - order-service</name>
