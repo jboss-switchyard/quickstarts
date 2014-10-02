@@ -24,6 +24,14 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
@@ -36,10 +44,13 @@ import javax.xml.ws.soap.SOAPFaultException;
 /**
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; (C) 2011 Red Hat Inc.
  */
+@Produces(MediaType.APPLICATION_XML)
 @WebService(name = "ReverseService", serviceName = "ReverseService", targetNamespace = "urn:switchyard-quickstart:camel-soap-proxy:1.0")
 @SOAPBinding(style = DOCUMENT, use = LITERAL)
 public class ReverseService {
 
+    @POST
+    @Path("/")
     @WebMethod(action = "urn:switchyard-quickstart:camel-soap-proxy:1.0")
     @WebResult(name = "text")
     public String reverse(@WebParam(name = "text") String text) throws Exception {
@@ -58,6 +69,8 @@ public class ReverseService {
         return new StringBuilder(text).reverse().toString();
     }
 
+    @POST
+    @Path("/")
     @WebMethod(action = "urn:switchyard-quickstart:camel-soap-proxy:1.0")
     @WebResult(name = "text")
     public String upper(@WebParam(name = "text") String text) {

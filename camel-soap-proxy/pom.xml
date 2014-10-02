@@ -15,11 +15,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard.quickstarts</groupId>
-    <artifactId>switchyard-camel-soap-proxy</artifactId>
+    <artifactId>switchyard-camel-soap-proxy-parent</artifactId>
     <version>2.0.0.Alpha3</version>
-    <packaging>jar</packaging>
-    <name>SwitchYard Quickstart: camel-soap-proxy</name>
-    <description>Quickstart : Camel SOAP Proxy</description>
+    <packaging>pom</packaging>
+    <name>SwitchYard Quickstart: camel-soap-proxy parent</name>
+    <description>Quickstart : Camel SOAP Proxy Parent</description>
     <url>http://switchyard.org</url>
     <organization>
         <name>JBoss by Red Hat</name>
@@ -47,6 +47,7 @@
         <wildfly.port>9999</wildfly.port>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        <version.felix.maven>2.4.0</version.felix.maven>
         <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
     </properties>
     <dependencyManagement>
@@ -58,8 +59,28 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-camel-soap-proxy-reverse</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-camel-soap-proxy-reverse-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard.quickstarts</groupId>
+                <artifactId>switchyard-camel-soap-proxy</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+    <modules>
+        <module>reverse</module>
+        <module>reverse-service</module>
+        <module>soap-proxy</module>
+    </modules>
     <dependencies>
         <dependency>
             <groupId>org.switchyard.components</groupId>
@@ -86,99 +107,13 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>${project.artifactId}</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.switchyard</groupId>
-                <artifactId>switchyard-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <scannerClassNames>
-                        <param>org.switchyard.transform.config.model.TransformSwitchYardScanner</param>
-                    </scannerClassNames>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>configure</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <warName>ReverseService</warName>
-                    <packagingExcludes>WEB-INF/lib/,WEB-INF/classes/META-INF/</packagingExcludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-a-war</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>war</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <version>${version.wildfly.maven}</version>
-                <executions>
-                    <execution>
-                        <id>deploy</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>deploy-only</goal>
-                        </goals>
-                        <configuration>
-                            <filename>${project.build.finalName}.jar</filename>
-                            <skip>${deploy.skip}</skip>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>deploy-reverse</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>deploy-only</goal>
-                        </goals>
-                        <configuration>
-                            <filename>ReverseService.war</filename>
-                            <skip>${deploy.skip}</skip>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>undeploy</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>undeploy</goal>
-                        </goals>
-                        <configuration>
-                            <filename>${project.build.finalName}.jar</filename>
-                            <skip>${deploy.skip}</skip>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>undeploy-reverse</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>undeploy</goal>
-                        </goals>
-                        <configuration>
-                            <filename>ReverseService.war</filename>
-                            <skip>${deploy.skip}</skip>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
-                    <classpathScope>test</classpathScope>
-                    <mainClass>org.switchyard.quickstarts.camel.soap.proxy.CamelClient</mainClass>
+                    <mainClass>dummy</mainClass>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
             <!-- Attach sources -->
