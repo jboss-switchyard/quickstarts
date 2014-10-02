@@ -21,8 +21,8 @@ import javax.xml.soap.SOAPHeaderElement;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.switchyard.common.xml.XMLHelper;
-import org.w3c.dom.Element;
+import org.switchyard.ServiceDomain;
+import org.switchyard.common.camel.SwitchYardCamelContext;
 
 @Named("orderProcessor")
 public class OrderProcessor implements Processor {
@@ -35,14 +35,9 @@ public class OrderProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String socketAddr = System.getProperty("org.switchyard.component.soap.client.port");
-        String socketAddrFault = System.getProperty("org.switchyard.component.http.standalone.port");
-        if (socketAddr==null) {
-            socketAddr = "8080";
-        }
-        if (socketAddrFault==null) {
-            socketAddrFault = "8080";
-        }
+        ServiceDomain domain = ((SwitchYardCamelContext)exchange.getContext()).getServiceDomain();
+        String socketAddr = (String)domain.getProperty("soapClientPort");
+        String socketAddrFault = (String)domain.getProperty("httpPort");
 
         Order order = exchange.getIn().getBody(Order.class);
         System.out.println("Received Order " + order.getItem() + " with quantity " + order.getQuantity() + ".");

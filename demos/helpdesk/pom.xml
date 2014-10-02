@@ -43,15 +43,18 @@
         </license>
     </licenses>
     <properties>
+        <!-- Bundle symbolic name may not contain dashes -->
+        <bundle.symbolic.name>${project.groupId}.switchyard.demo.helpdesk</bundle.symbolic.name>
+
         <deploy.skip>true</deploy.skip>
         <wildfly.port>9999</wildfly.port>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
         <switchyard.osgi.import>
-            org.switchyard.*;${switchyard.osgi.import.switchyard.version},
-            org.switchyard.annotations;${switchyard.osgi.import.switchyard.version},
-            org.switchyard.component.bean;${switchyard.osgi.import.switchyard.version},
-            org.switchyard.component.bpm.runtime;${switchyard.osgi.import.switchyard.version},
+            org.switchyard.*,
+            org.switchyard.annotations,
+            org.switchyard.component.bean,
+            org.switchyard.component.bpm.runtime,
             javax.faces.event,
             javax.servlet,
             javax.servlet.http,
@@ -215,14 +218,12 @@
                         <supportedProjectType>war</supportedProjectType>
                     </supportedProjectTypes>
                     <instructions>
-                        <Bundle-ClassPath>/WEB-INF/classes/</Bundle-ClassPath>
-                        <Bundle-Name>${project.name}</Bundle-Name>
-                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-ClassPath>/WEB-INF/classes</Bundle-ClassPath>
+                        <Bundle-SymbolicName>${bundle.symbolic.name}</Bundle-SymbolicName>
+                        <DynamicImport-Package>${switchyard.osgi.dynamic}</DynamicImport-Package>
+                        <Embed-Dependency>!*</Embed-Dependency>
                         <Import-Package>${switchyard.osgi.import}</Import-Package>
                         <Include-Resource>{maven-resources}, META-INF/switchyard.xml=target/classes/META-INF/switchyard.xml</Include-Resource>
-                        <DynamicImport-Package>${switchyard.osgi.dynamic}</DynamicImport-Package>
-                        <_failok>true</_failok>
-                        <Embed-Dependency>!*</Embed-Dependency>
                         <Require-Capability>${switchyard.osgi.require.capability}</Require-Capability>
                         <Meta-Persistence>WEB-INF/classes/META-INF/persistence-osgi.xml</Meta-Persistence>
                     </instructions>
@@ -405,6 +406,25 @@
             <properties>
                 <deploy.skip>false</deploy.skip>
             </properties>
+        </profile>
+        <profile>
+            <id>karaf</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                           <systemProperties>
+                               <systemProperty>
+                                   <key>org.switchyard.component.soap.client.port</key>
+                                   <value>8181/cxf</value>
+                               </systemProperty>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>wildfly</id>

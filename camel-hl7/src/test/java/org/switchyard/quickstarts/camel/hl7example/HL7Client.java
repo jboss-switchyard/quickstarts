@@ -16,24 +16,11 @@
  */
 package org.switchyard.quickstarts.camel.hl7example;
 
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v24.datatype.ST;
-import ca.uhn.hl7v2.model.v24.message.ADR_A19;
-import ca.uhn.hl7v2.model.v24.message.ADT_A01;
-import ca.uhn.hl7v2.model.v24.message.QRY_A19;
-import ca.uhn.hl7v2.model.v24.segment.MSA;
-import ca.uhn.hl7v2.model.v24.segment.MSH;
-import ca.uhn.hl7v2.model.v24.segment.PID;
-import ca.uhn.hl7v2.model.v24.segment.QRD;
-import ca.uhn.hl7v2.parser.PipeParser;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.component.hl7.HL7MLLPCodec;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.spi.DataFormat;
 
 /**
  * Unit test for HL7 routing.

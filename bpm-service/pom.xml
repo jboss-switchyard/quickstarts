@@ -43,6 +43,9 @@
         </license>
     </licenses>
     <properties>
+        <!-- Bundle symbolic name may not contain dashes -->
+        <bundle.symbolic.name>${project.groupId}.switchyard.bpm.service</bundle.symbolic.name>
+
         <deploy.skip>true</deploy.skip>
         <wildfly.port>9999</wildfly.port>
         <maven.compiler.target>1.6</maven.compiler.target>
@@ -132,13 +135,11 @@
                 <configuration>
                     <excludeDependencies>false</excludeDependencies>
                     <instructions>
-                        <Bundle-Name>${project.name}</Bundle-Name>
-                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${bundle.symbolic.name}</Bundle-SymbolicName>
+                        <DynamicImport-Package>${switchyard.osgi.dynamic}</DynamicImport-Package>
+                        <Embed-Dependency>!*</Embed-Dependency>
                         <Import-Package>${switchyard.osgi.import}</Import-Package>
                         <Include-Resource>{maven-resources}, META-INF/switchyard.xml=target/classes/META-INF/switchyard.xml</Include-Resource>
-                        <DynamicImport-Package>${switchyard.osgi.dynamic}</DynamicImport-Package>
-                        <_failok>true</_failok>
-                        <Embed-Dependency>!*</Embed-Dependency>
                         <Require-Capability>${switchyard.osgi.require.capability}</Require-Capability>
                     </instructions>
                     <archive>
@@ -230,6 +231,25 @@
             <properties>
                 <deploy.skip>false</deploy.skip>
             </properties>
+        </profile>
+        <profile>
+            <id>karaf</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                           <systemProperties>
+                               <systemProperty>
+                                   <key>org.switchyard.component.soap.client.port</key>
+                                   <value>8181/cxf</value>
+                               </systemProperty>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>wildfly</id>

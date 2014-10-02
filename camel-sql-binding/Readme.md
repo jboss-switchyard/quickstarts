@@ -12,7 +12,7 @@ JBoss AS 7
 
 2. Build and deploy the quickstart
 
-        mvn install -Pdeploy
+        mvn install -Pdeploy,db
 
 3. Wait a bit for producer and consumer threads to start
 
@@ -23,7 +23,7 @@ JBoss AS 7
 
 5. Undeploy the quickstart:
 
-        mvn clean -Pdeploy
+        mvn clean -Pdeploy,db
 
 ## Further Reading
 

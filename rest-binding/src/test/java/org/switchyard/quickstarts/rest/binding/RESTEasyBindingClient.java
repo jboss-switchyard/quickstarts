@@ -26,7 +26,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
 public class RESTEasyBindingClient {
 
     private static final int DEFAULT_PORT = 8080;
-    private static final String KEY_PORT = "org.switchyard.component.resteasy.standalone.port";
+    private static final String KEY_PORT = "org.switchyard.component.resteasy.client.port";
 
     public static void main(String[] args) throws Exception {
         int port = DEFAULT_PORT;
