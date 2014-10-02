@@ -43,7 +43,9 @@ public final class CamelClient {
 
         try {
             String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
-            String url = "http://localhost:" + port + "/proxy/ReverseService";
+	    // For karaf, the directory will generally be cxf/proxy/ReverseService
+	    String dir = System.getProperty("org.switchyard.component.soap.client.dir", "proxy/ReverseService");
+            String url = "http://localhost:" + port + "/" + dir;
             String result = soapMixIn.postFile(url, XML);
             System.out.println("SOAP Reply:\n" + result);
         } finally {

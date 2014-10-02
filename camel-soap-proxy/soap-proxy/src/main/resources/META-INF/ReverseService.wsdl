@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:switchyard-quickstart:camel-soap-proxy:1.0" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="ReverseService" targetNamespace="urn:switchyard-quickstart:camel-soap-proxy:1.0">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="urn:switchyard-quickstart:camel-soap-proxy:1.0" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="urn:switchyard-quickstart:camel-soap-proxy:1.0">
+  <xs:element name="reverse" type="tns:reverse"/>
+  <xs:element name="reverseResponse" type="tns:reverseResponse"/>
+  <xs:element name="upper" type="tns:upper"/>
+  <xs:element name="upperResponse" type="tns:upperResponse"/>
+  <xs:complexType name="reverse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="text" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="reverseResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="text" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="upper">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="text" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="upperResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="text" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Exception" type="tns:Exception"/>
+  <xs:complexType name="Exception">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="classContext" type="xs:string"/>
+      <xs:element minOccurs="0" name="message" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="reverse">
+    <wsdl:part element="tns:reverse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="upper">
+    <wsdl:part element="tns:upper" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="Exception">
+    <wsdl:part element="tns:Exception" name="Exception">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="upperResponse">
+    <wsdl:part element="tns:upperResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="reverseResponse">
+    <wsdl:part element="tns:reverseResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ReverseService">
+    <wsdl:operation name="reverse">
+      <wsdl:input message="tns:reverse" name="reverse">
+    </wsdl:input>
+      <wsdl:output message="tns:reverseResponse" name="reverseResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:Exception" name="Exception">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="upper">
+      <wsdl:input message="tns:upper" name="upper">
+    </wsdl:input>
+      <wsdl:output message="tns:upperResponse" name="upperResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ReverseServiceSoapBinding" type="tns:ReverseService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="reverse">
+      <soap:operation soapAction="urn:switchyard-quickstart:camel-soap-proxy:1.0" style="document"/>
+      <wsdl:input name="reverse">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="reverseResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="Exception">
+        <soap:fault name="Exception" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="upper">
+      <soap:operation soapAction="urn:switchyard-quickstart:camel-soap-proxy:1.0" style="document"/>
+      <wsdl:input name="upper">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="upperResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ReverseService">
+    <wsdl:port binding="tns:ReverseServiceSoapBinding" name="ReverseServicePort">
+      <soap:address location="UPDATED_AT_RUNTIME"/> 
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
