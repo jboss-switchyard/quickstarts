@@ -131,6 +131,7 @@
     <properties>
       <property name="soapPort" value="${org.switchyard.component.soap.standalone.port:8080}"/>
       <property name="soapClientPort" value="${org.switchyard.component.soap.client.port:8080}"/>
+      <property name="httpPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
       <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
     </properties>
   </domain>

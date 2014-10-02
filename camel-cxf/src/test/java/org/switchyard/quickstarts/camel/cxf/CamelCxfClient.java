@@ -16,10 +16,6 @@
  */
 package org.switchyard.quickstarts.camel.cxf;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.switchyard.component.soap.util.SOAPUtil;
 

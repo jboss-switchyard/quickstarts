@@ -26,7 +26,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
 public class HttpBindingClient {
 
     private static final int DEFAULT_PORT = 8080;
-    private static final String KEY_PORT = "org.switchyard.component.http.standalone.port";
+    private static final String KEY_PORT = "org.switchyard.component.http.client.port";
 
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
