@@ -508,6 +508,7 @@
         <feature version="${version.org.apache.camel.features}">camel-script-javascript</feature>
         <feature version="${version.org.apache.camel.features}">camel-ognl</feature>
         <feature version="${version.org.apache.camel.features}">camel-mvel</feature>
+        <feature version="${project.version}">switchyard-sca</feature>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-service/${project.version}</bundle>
     </feature>
     
