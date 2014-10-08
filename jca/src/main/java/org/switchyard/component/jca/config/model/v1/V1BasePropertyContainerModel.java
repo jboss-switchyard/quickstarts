@@ -55,11 +55,11 @@ public abstract class V1BasePropertyContainerModel extends BaseModel implements 
         List<Configuration> properties = getModelConfiguration().getChildren(JCAConstants.PROPERTY);
         for (Configuration prop : properties) {
             if (key.equals(prop.getAttribute(JCAConstants.NAME))) {
-                prop.setAttribute(JCAConstants.VALUE, value);
+                prop.setAttribute(JCAConstants.VALUE, value != null ? value : "");
                 return this;
             }
         }
-        V1PropertyModel model = new V1PropertyModel(getNamespaceURI(), key, value);
+        V1PropertyModel model = new V1PropertyModel(getNamespaceURI(), key, value != null ? value : "");
         setChildModel(model);
         return this;
     }
@@ -69,7 +69,11 @@ public abstract class V1BasePropertyContainerModel extends BaseModel implements 
         Properties properties = new Properties();
         List<Configuration> modelProperties = getModelConfiguration().getChildren(JCAConstants.PROPERTY);
         for (Configuration prop : modelProperties) {
-            properties.put(prop.getAttribute(JCAConstants.NAME), prop.getAttribute(JCAConstants.VALUE));
+            String name = prop.getAttribute(JCAConstants.NAME);
+            String value = prop.getAttribute(JCAConstants.VALUE);
+            if (name != null) {
+                properties.put(name, value != null ? value : "");
+            }
         }
         return properties;
     }
