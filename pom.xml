@@ -73,11 +73,10 @@
         <!-- Remove when RiftSaw upgrades to net.sf.saxon:Saxon-HE:9.5.1-2  -->
         <version.net.sourceforge.saxon>9.2.1.5</version.net.sourceforge.saxon>
 
-        <!-- KIE/Drools/jBPM -->
-        <version.kiedroolsjbpm>6.1.0.Final</version.kiedroolsjbpm>
-        <version.org.kie>${version.kiedroolsjbpm}</version.org.kie>
-        <version.org.drools>${version.kiedroolsjbpm}</version.org.drools>
-        <version.org.jbpm>${version.kiedroolsjbpm}</version.org.jbpm>
+        <!-- KIE/Drools/jBPM: these should all match -->
+        <version.org.kie>6.2.0.Beta3</version.org.kie>
+        <version.org.drools>6.2.0.Beta3</version.org.drools>
+        <version.org.jbpm>6.2.0.Beta3</version.org.jbpm>
 
         <!-- Require investigation and/or will be removed  -->
         <version.jbossws.jboss720.server.integration>4.2.0.Final</version.jbossws.jboss720.server.integration>
