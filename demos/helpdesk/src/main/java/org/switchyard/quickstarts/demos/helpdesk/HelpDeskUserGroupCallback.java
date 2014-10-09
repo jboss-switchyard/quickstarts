@@ -33,16 +33,16 @@ public final class HelpDeskUserGroupCallback extends BPMUserGroupCallback {
     public static final Map<String, List<String>> USERS_GROUPS;
     static {
         Map<String, List<String>> ugm = new LinkedHashMap<String, List<String>>();
-        ugm.put("krisv", Arrays.asList(new String[] { "developers" }));
-        ugm.put("david", Arrays.asList(new String[] { "users" }));
+        ugm.put("krisv", Arrays.asList(new String[] {"developers"}));
+        ugm.put("david", Arrays.asList(new String[] {"users"}));
         USERS_GROUPS = Collections.unmodifiableMap(ugm);
     }
 
     private static final Properties USERS_GROUPS_PROPERTIES = new Properties();
     static {
-        USERS_GROUPS_PROPERTIES.setProperty("Administrator", "users,developers");
-        USERS_GROUPS_PROPERTIES.setProperty("david", "users");
+        USERS_GROUPS_PROPERTIES.setProperty("Administrator", "Administrators,users,developers");
         USERS_GROUPS_PROPERTIES.setProperty("krisv", "developers");
+        USERS_GROUPS_PROPERTIES.setProperty("david", "users");
     }
 
     public HelpDeskUserGroupCallback() {

@@ -31,7 +31,7 @@
     <sca:component name="Interview">
       <rules:implementation.rules>
         <rules:manifest>
-          <rules:container sessionName="rules-interview-container"/>
+          <rules:container baseName="org.switchyard.quickstarts.rules.interview" sessionName="rules-interview-container"/>
         </rules:manifest>
         <rules:operations>
           <rules:operation name="verify" type="EXECUTE">
