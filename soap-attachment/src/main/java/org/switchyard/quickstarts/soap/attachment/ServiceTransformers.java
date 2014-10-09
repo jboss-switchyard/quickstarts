@@ -25,14 +25,8 @@ import javax.xml.transform.stream.StreamSource;
 import org.switchyard.annotations.Transformer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 public class ServiceTransformers {
-
-    private static String SOAP_TEMPLATE =
-        "<ns2:echoImage xmlns:ns2=\"urn:switchyard-quickstart:soap-attachment:1.0\">"
-            + "cid:%s"
-            + "</ns2:echoImage>";
 
     private static String SOAP_RESPONSE_TEMPLATE =
         "<ns2:echoImageResponse xmlns:ns2=\"urn:switchyard-quickstart:soap-attachment:1.0\">"

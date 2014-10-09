@@ -18,20 +18,11 @@ package org.switchyard.quickstarts.camel.rss.binding;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
 
-import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import junit.framework.Assert;
-
-import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
-import org.switchyard.quickstarts.camel.rss.binding.PrintService;
 
 /**
  * Simple service which parses RSS and prints it.
@@ -39,17 +30,11 @@ import org.switchyard.quickstarts.camel.rss.binding.PrintService;
 @Service(RSSParseService.class)
 public class RSSParseServiceImpl implements RSSParseService {
 
-    /**
-     * Reference which allows sending reply.
-     */
-    @Inject
-    @Reference("OutgoingRSSParseService")
-    private RSSParseService _outgoing;
-
     @Override
     public void parse(SyndFeed feed) throws Exception {
-        List entries = feed.getEntries();
-        Iterator itEntries = entries.iterator();
+        @SuppressWarnings("unchecked")
+        List<SyndEntry> entries = feed.getEntries();
+        Iterator<SyndEntry> itEntries = entries.iterator();
 
         while (itEntries.hasNext()) {
             SyndEntry entry = (SyndEntry) itEntries.next();

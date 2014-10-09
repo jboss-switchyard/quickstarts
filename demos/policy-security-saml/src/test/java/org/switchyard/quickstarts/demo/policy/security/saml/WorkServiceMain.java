@@ -40,6 +40,7 @@ import org.w3c.dom.Element;
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
+@SuppressWarnings( "deprecation" )
 public final class WorkServiceMain {
 
     private static final Logger LOGGER = Logger.getLogger(WorkServiceMain.class);

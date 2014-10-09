@@ -16,17 +16,12 @@
  */
 package org.switchyard.quickstarts.demo.security.propagation.basic;
 
-import static org.switchyard.policy.SecurityPolicy.AUTHORIZATION;
-import static org.switchyard.policy.SecurityPolicy.CLIENT_AUTHENTICATION;
-import static org.switchyard.policy.SecurityPolicy.CONFIDENTIALITY;
-
 import javax.ejb.EJB;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeSecurity;
-import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.quickstarts.demo.security.propagation.ejb.TestEJBBeanLocal;

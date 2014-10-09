@@ -18,7 +18,12 @@ package org.switchyard.quickstarts.camel.cxf;
 
 public class ItemNotAvailable extends Exception {
 
-    public ItemNotAvailable(final String message) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8619603174463610003L;
+
+	public ItemNotAvailable(final String message) {
         super(message);
     }
 

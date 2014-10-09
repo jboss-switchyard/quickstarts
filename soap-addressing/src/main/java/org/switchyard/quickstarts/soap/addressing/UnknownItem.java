@@ -18,7 +18,12 @@ package org.switchyard.quickstarts.soap.addressing;
 
 public class UnknownItem extends Exception {
 
-    public UnknownItem(final String message) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7959737830645304999L;
+
+	public UnknownItem(final String message) {
         super(message);
     }
 

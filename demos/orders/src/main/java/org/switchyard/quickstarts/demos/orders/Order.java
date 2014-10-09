@@ -29,7 +29,12 @@ import java.io.Serializable;
 @RequestScoped
 public class Order implements Serializable {
 
-    @Inject
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4945918723107627633L;
+
+	@Inject
     @Reference
     private OrderService orderService;
 

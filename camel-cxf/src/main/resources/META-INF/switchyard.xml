@@ -15,15 +15,10 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<switchyard xmlns="urn:switchyard-config:switchyard:2.0" xmlns:camel="urn:switchyard-component-camel:config:2.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:cxf="urn:switchyard-component-camel-cxf:config:2.0" xmlns:soap="urn:switchyard-component-soap:config:2.0" xmlns:xform="urn:switchyard-config:transform:2.0" name="switchyard-quickstart-camel-cxf" targetNamespace="urn:switchyard-quickstart:camel-cxf:2.0">
+<switchyard xmlns="urn:switchyard-config:switchyard:2.0" xmlns:camel="urn:switchyard-component-camel:config:2.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:cxf="urn:switchyard-component-camel-cxf:config:2.0" xmlns:xform="urn:switchyard-config:transform:2.0" name="switchyard-quickstart-camel-cxf" targetNamespace="urn:switchyard-quickstart:camel-cxf:2.0">
   <sca:composite name="switchyard-quickstart-camel-cxf" targetNamespace="urn:switchyard-quickstart:camel-cxf:2.0">
     <sca:service name="OrderService" promote="Route/OrderService">
       <sca:interface.wsdl interface="OrderService.wsdl#wsdl.porttype(OrderService)"/>
-      <!--<soap:binding.soap>
-        <soap:wsdl>OrderService.wsdl</soap:wsdl>
-        <soap:socketAddr>:${soapPort}</soap:socketAddr>
-        <soap:contextPath>camel-cxf/order</soap:contextPath>
-      </soap:binding.soap>-->
       <cxf:binding.cxf>
         <cxf:cxfURI>http://localhost:${cxfPort}/camel-cxf/order/OrderService</cxf:cxfURI>
         <cxf:wsdlURL>OrderService.wsdl</cxf:wsdlURL>
@@ -53,11 +48,6 @@
     </sca:component>
     <sca:service name="WarehouseService" promote="Route2/WarehouseService">
       <sca:interface.wsdl interface="WarehouseService.wsdl#wsdl.porttype(WarehouseService)"/>
-      <!--<soap:binding.soap>
-        <soap:wsdl>WarehouseService.wsdl</soap:wsdl>
-        <soap:socketAddr>:${soapPort2}</soap:socketAddr>
-        <soap:contextPath>camel-cxf/warehouse</soap:contextPath>
-      </soap:binding.soap>-->
       <cxf:binding.cxf>
         <cxf:cxfURI>http://localhost:${cxfPort2}/camel-cxf/warehouse/WarehouseService</cxf:cxfURI>
         <cxf:wsdlURL>WarehouseService.wsdl</cxf:wsdlURL>
@@ -75,14 +65,9 @@
     </sca:component>
   </sca:composite>
   <transforms>
-    <!-- Fails with java.lang.IllegalArgumentException in Karaf -->
-    <!--<xform:transform.jaxb from="{urn:switchyard-quickstart:camel-cxf:2.0}order" to="java:org.switchyard.quickstarts.camel.cxf.Order"/>
-    <xform:transform.jaxb from="java:org.switchyard.quickstarts.camel.cxf.Order" to="{urn:switchyard-quickstart:camel-cxf:2.0}order"/>
-    <xform:transform.jaxb from="java:org.switchyard.quickstarts.camel.cxf.OrderResponse" to="{urn:switchyard-quickstart:camel-cxf:2.0}orderResponse"/>
-    <xform:transform.jaxb from="{urn:switchyard-quickstart:camel-cxf:2.0}orderResponse" to="java:org.switchyard.quickstarts.camel.cxf.OrderResponse"/>-->
-
     <xform:transform.java from="{urn:switchyard-quickstart:camel-cxf:2.0}order" to="java:org.switchyard.quickstarts.camel.cxf.Order" bean="Transformers"/>
     <xform:transform.java from="{urn:switchyard-quickstart:camel-cxf:2.0}orderResponse" to="java:org.switchyard.quickstarts.camel.cxf.OrderResponse" bean="Transformers"/>
+    <xform:transform.java from="{urn:switchyard-quickstart:camel-cxf:2.0}ItemNotAvailable" to="java:org.switchyard.quickstarts.camel.cxf.ItemNotAvailable" bean="Transformers"/>
   </transforms>
   <domain>
     <properties>

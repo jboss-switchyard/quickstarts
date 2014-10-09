@@ -37,17 +37,14 @@ public class OrderParticipant implements BusinessAgreementWithCoordinatorComplet
         .getName());
 
     private String _txID;
-    private String _name;
     private String _fltid;
 
     /**
      * @param txID transaction identifier
-     * @param name username
      * @param fltid flight identifier
      */
-    public OrderParticipant(String txID, String name, String fltid) {
+    public OrderParticipant(String txID, String fltid) {
         _txID = txID;
-        _name = name;
         _fltid = fltid;
     }
 

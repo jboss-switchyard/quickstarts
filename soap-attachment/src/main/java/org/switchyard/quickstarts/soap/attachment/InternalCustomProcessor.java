@@ -16,9 +16,6 @@
  */
 package org.switchyard.quickstarts.soap.attachment;
 
-import java.util.Set;
-
-import javax.activation.DataHandler;
 import javax.inject.Named;
 
 import org.apache.camel.Exchange;

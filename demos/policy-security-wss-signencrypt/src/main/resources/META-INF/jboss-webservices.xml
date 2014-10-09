@@ -15,7 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<webservices xmlns="http://www.jboss.com/xml/ns/javaee" version="1.2">
+<webservices xmlns="http://www.jboss.com/xml/ns/javaee" >
     <config-name>SwitchYard-Endpoint-Config</config-name>
     <config-file>META-INF/jaxws-endpoint-config.xml</config-file>
 </webservices>

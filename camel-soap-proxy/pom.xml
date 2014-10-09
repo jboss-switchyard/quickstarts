@@ -82,31 +82,6 @@
         <module>reverse-service</module>
         <module>soap-proxy</module>
     </modules>
-    <dependencies>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-soap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-camel</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-test-mixin-cdi</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-test-mixin-http</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -116,42 +91,6 @@
                     <mainClass>dummy</mainClass>
                     <skip>true</skip>
                 </configuration>
-            </plugin>
-            <!-- Attach sources -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>${version.enforcer.maven}</version>
-                <executions>
-                    <execution>
-                        <id>enforce-versions</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <phase>clean</phase>
-                        <configuration>
-                            <rules>
-                                <requireJavaVersion>
-                                    <version>1.7</version>
-                                </requireJavaVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

@@ -17,15 +17,12 @@
 package org.switchyard.quickstarts.demo.policy.transaction;
 
 import javax.inject.Inject;
-import javax.naming.InitialContext;
 import javax.transaction.Status;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
-import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
-import org.switchyard.policy.TransactionPolicy;
 import org.switchyard.runtime.util.TransactionManagerLocator;
 
 /**
@@ -38,8 +35,6 @@ public class WorkServiceBean
 
     /** rollback command. */
     public static final String ROLLBACK = "rollback";
-
-    private static final String JNDI_TRANSACTION_MANAGER = "java:jboss/TransactionManager";
 
     @Inject
     @Reference

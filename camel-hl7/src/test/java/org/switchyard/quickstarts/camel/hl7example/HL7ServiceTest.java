@@ -18,12 +18,7 @@ package org.switchyard.quickstarts.camel.hl7example;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.datatype.ST;
-import ca.uhn.hl7v2.model.v24.message.ADR_A19;
-import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.message.QRY_A19;
-import ca.uhn.hl7v2.model.v24.segment.MSA;
-import ca.uhn.hl7v2.model.v24.segment.MSH;
-import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
 import ca.uhn.hl7v2.parser.PipeParser;
 

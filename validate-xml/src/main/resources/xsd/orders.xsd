@@ -19,7 +19,7 @@
         targetNamespace="urn:switchyard-quickstart:validate-xml:0.1.0"
         xmlns:base="urn:switchyard-quickstart:validate-xml-base:0.1.0"
         xmlns:orders="urn:switchyard-quickstart:validate-xml:0.1.0">
-        <import namespace="urn:switchyard-quickstart:validate-xml-base:0.1.0" schemaLocation="orders.base"/>
+        <import namespace="urn:switchyard-quickstart:validate-xml-base:0.1.0" schemaLocation="http://switchyard.org/quickstarts/validate-xml/orders.base"/>
 
         <element name="order" type="orders:orderType" substitutionGroup="base:order.base"/>
         <complexType name="orderType">

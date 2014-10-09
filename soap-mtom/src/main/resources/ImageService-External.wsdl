@@ -8,8 +8,7 @@
     targetNamespace="urn:switchyard-quickstart:soap-mtom-external:1.0"
     name="ImageServiceService">
     <types>
-      <xsd:schema targetNamespace="urn:switchyard-quickstart:soap-mtom-external:1.0"
-        xmlns:tns="urn:switchyard-quickstart:soap-mtom-external:1.0">
+      <xsd:schema targetNamespace="urn:switchyard-quickstart:soap-mtom-external:1.0">
 
         <xsd:element name="image" type="xsd:base64Binary" xmime:expectedContentTypes="image/jpeg"/>
         <xsd:element name="imageResponse" type="xsd:base64Binary" xmime:expectedContentTypes="image/jpeg"/>
@@ -33,10 +32,10 @@
         <operation name="resizeImage">
             <soap:operation soapAction="urn:switchyard-quickstart:soap-mtom-external:1.0:resizeImage"/>
             <input>
-                <soap:body use="literal" namespace="urn:switchyard-quickstart:soap-mtom-external:1.0"/>
+                <soap:body use="literal"/>
             </input>
             <output>
-                <soap:body use="literal" namespace="urn:switchyard-quickstart:soap-mtom-external:1.0"/>
+                <soap:body use="literal"/>
             </output>
         </operation>
     </binding>

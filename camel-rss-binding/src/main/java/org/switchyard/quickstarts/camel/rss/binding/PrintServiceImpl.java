@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
-import org.switchyard.quickstarts.camel.rss.binding.PrintService;
 
 /**
  * Dummy service implementation to print contents of the messages.

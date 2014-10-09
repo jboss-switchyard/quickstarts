@@ -17,12 +17,9 @@
 package org.switchyard.quickstarts.soap.mtom;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 
-import javax.activation.DataSource;
 import javax.imageio.ImageIO;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
@@ -32,7 +29,6 @@ import org.switchyard.annotations.Transformer;
 import org.switchyard.common.codec.Base64;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 public class ServiceTransformers {
 

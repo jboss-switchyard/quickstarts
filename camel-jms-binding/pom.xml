@@ -162,8 +162,6 @@
                             <Project-Artifact-Id>${project.artifactId}</Project-Artifact-Id>
                             <Project-Group-Id>${project.groupId}</Project-Group-Id>
                             <Project-Version>${project.version}</Project-Version>
-                            <Dependencies>org.jboss.as.naming</Dependencies>
-                            <Dependencies>org.hornetq</Dependencies>
                         </manifestEntries>
                     </archive>
                 </configuration>

@@ -18,7 +18,6 @@ package org.switchyard.quickstarts.soap.attachment;
 
 import javax.inject.Inject;
 
-import org.switchyard.Context;
 import org.switchyard.Message;
 import org.switchyard.component.bean.Service;
 
@@ -27,9 +26,6 @@ public class EchoServiceBean implements EchoService {
 
     @Inject
     private Message message;
-
-    @Inject
-    private Context context;
 
     @Override
     public String echoImage(String fileName) {

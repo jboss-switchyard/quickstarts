@@ -19,6 +19,6 @@
   <from uri="switchyard://OrderService"/>
   <log message="OrderService - message received: ${body}"/>
   <process ref="orderProcessor"/>
-  <inOnly uri="switchyard://WarehouseServiceExternal?operationName=order"/>
+  <to uri="switchyard://WarehouseServiceExternal?operationName=order"/>
   <process ref="orderReplyProcessor"/>
 </route>

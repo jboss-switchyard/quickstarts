@@ -16,11 +16,6 @@
  */
 package org.switchyard.quickstarts.camel.netty.binding;
 
-import static org.switchyard.policy.SecurityPolicy.AUTHORIZATION;
-import static org.switchyard.policy.SecurityPolicy.CLIENT_AUTHENTICATION;
-import static org.switchyard.policy.SecurityPolicy.CONFIDENTIALITY;
-
-import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Service;
 
 /**

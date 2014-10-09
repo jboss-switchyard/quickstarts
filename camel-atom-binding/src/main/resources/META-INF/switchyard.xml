@@ -25,13 +25,10 @@
             </atom:binding.atom>
         </service>
         <component name="AtomParseService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.camel.atom.binding.AtomParseServiceImpl"/>
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:2.0" class="org.switchyard.quickstarts.camel.atom.binding.AtomParseServiceImpl"/>
             <service name="AtomParseService">
                 <interface.java interface="org.switchyard.quickstarts.camel.atom.binding.AtomParseService"/>
             </service>
-            <reference name="OutgoingAtomParseService">
-                <interface.java interface="org.switchyard.quickstarts.camel.atom.binding.AtomParseService"/>
-            </reference>
         </component>
     </composite>
 </switchyard>

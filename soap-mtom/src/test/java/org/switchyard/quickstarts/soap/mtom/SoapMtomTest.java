@@ -19,11 +19,8 @@ package org.switchyard.quickstarts.soap.mtom;
 import java.awt.Image;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.switchyard.common.type.Classes;
-import org.switchyard.component.bean.config.model.BeanSwitchYardScanner;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
@@ -34,7 +31,7 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 @SwitchYardTestCaseConfig(
     mixins = { CDIMixIn.class },
     config = SwitchYardTestCaseConfig.SWITCHYARD_XML,
-    scanners = { BeanSwitchYardScanner.class, TransformSwitchYardScanner.class })
+    scanners = { TransformSwitchYardScanner.class })
 public class SoapMtomTest {
 
     private static String WSDL = "http://localhost:8081/soap-mtom/ImageServiceService?wsdl";

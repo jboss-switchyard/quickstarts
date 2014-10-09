@@ -108,8 +108,7 @@
 				<soap:body use="literal" />
 			</output>
 			<fault name="exception">
-				<soap:fault use="literal" name="exception"
-					namespace="http://www.jboss.org/bpel/examples" />
+				<soap:fault use="literal" name="exception" />
 			</fault>
 		</operation>
 	</binding>

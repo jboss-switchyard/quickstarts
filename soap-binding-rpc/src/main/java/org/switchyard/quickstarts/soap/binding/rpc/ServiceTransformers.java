@@ -29,12 +29,6 @@ import org.w3c.dom.NodeList;
 
 public class ServiceTransformers {
 
-    private static String SOAP_TEMPLATE =
-        "<ns2:sayHello xmlns:ns2=\"urn:switchyard-quickstart:soap-binding-rpc:1.0\">"
-            + "    <toWhom>%s</toWhom>"
-            + "    <language>%s</language>"
-            + "</ns2:sayHello>";
-
     private static String SOAP_RESPONSE_TEMPLATE =
         "<ns2:sayHelloResponse xmlns:ns2=\"urn:switchyard-quickstart:soap-binding-rpc:1.0\">"
             + "    <return>%s</return>"

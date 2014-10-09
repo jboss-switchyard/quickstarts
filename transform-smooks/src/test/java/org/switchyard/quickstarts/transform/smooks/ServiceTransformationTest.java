@@ -18,7 +18,7 @@ package org.switchyard.quickstarts.transform.smooks;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

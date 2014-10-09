@@ -18,30 +18,13 @@ package org.switchyard.quickstarts.camel.atom.binding;
 
 import org.apache.abdera.parser.stax.FOMEntry;
 
-import java.io.ByteArrayInputStream;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import junit.framework.Assert;
-
-import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
-import org.switchyard.quickstarts.camel.atom.binding.PrintService;
 
 /**
  * Simple service which parses Atom and prints it.
  */
 @Service(AtomParseService.class)
 public class AtomParseServiceImpl implements AtomParseService {
-
-    /**
-     * Reference which allows sending reply.
-     */
-    @Inject
-    @Reference("OutgoingAtomParseService")
-    private AtomParseService _outgoing;
 
     @Override
     public void parse(FOMEntry entry) throws Exception {

@@ -33,10 +33,10 @@
         <operation name="resizeImage">
             <soap:operation soapAction="urn:switchyard-quickstart:soap-mtom:1.0:resizeImage"/>
             <input>
-                <soap:body use="literal" namespace="urn:switchyard-quickstart:soap-mtom:1.0"/>
+                <soap:body use="literal"/>
             </input>
             <output>
-                <soap:body use="literal" namespace="urn:switchyard-quickstart:soap-mtom:1.0"/>
+                <soap:body use="literal"/>
             </output>
         </operation>
     </binding>

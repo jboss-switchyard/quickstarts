@@ -16,11 +16,7 @@
  */
 package org.switchyard.quickstarts.demo.policy.security.wss.signencrypt;
 
-import static org.switchyard.policy.SecurityPolicy.CLIENT_AUTHENTICATION;
-import static org.switchyard.policy.SecurityPolicy.CONFIDENTIALITY;
-
 import org.apache.log4j.Logger;
-import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Service;
 
 @Service(WorkService.class)

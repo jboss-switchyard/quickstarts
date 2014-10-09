@@ -17,8 +17,6 @@
 package org.switchyard.quickstarts.soap.binding.rpc;
 
 import org.switchyard.component.bean.Service;
-import org.switchyard.component.common.label.EndpointLabel;
-import org.switchyard.component.soap.composer.SOAPContextMapper;
 
 /**
  * HelloWorldService Implementation.

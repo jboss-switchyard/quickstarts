@@ -11,6 +11,14 @@ Fault is caught when you submit a invalid SOAP request against XML Schema.
 
 This example is invoked through a SOAP gateway binding.
 
+Note: When importing this quickstart into Eclipse you will see the following error:
+
+src-resolve: Cannot resolve the name 'base:order.base' to a(n) 'element declaration' component.
+
+To eliminate this error you need to import src/main/resources/xsd/catalog.xml via File -> Import… -> XML -> XML Catalog
+and then rebuild the project.
+
+
 Running the quickstart
 ======================
 

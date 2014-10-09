@@ -16,20 +16,7 @@
  */
 package org.switchyard.quickstarts.camel.hl7example;
 
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v24.datatype.CE;
-import ca.uhn.hl7v2.model.v24.datatype.CQ;
-import ca.uhn.hl7v2.model.v24.datatype.NM;
-import ca.uhn.hl7v2.model.v24.datatype.ST;
-import ca.uhn.hl7v2.model.v24.datatype.TS;
-import ca.uhn.hl7v2.model.v24.datatype.XCN;
-
-import ca.uhn.hl7v2.model.v24.message.ADR_A19;
-import ca.uhn.hl7v2.model.v24.message.ADT_A01;
 import ca.uhn.hl7v2.model.v24.message.QRY_A19;
-import ca.uhn.hl7v2.model.v24.segment.MSA;
-import ca.uhn.hl7v2.model.v24.segment.MSH;
-import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
 import ca.uhn.hl7v2.parser.PipeParser;
 
@@ -69,7 +56,7 @@ public class CamelServiceRoute extends RouteBuilder {
                             System.out.println("Deferred Response Date/Time : " + qrd.getDeferredResponseDateTime().getTimeOfAnEvent().getValue());
                             System.out.println("Quantity Limited Request : " + qrd.getQuantityLimitedRequest().getQuantity().getValue());
                             System.out.println("Query Results Level : " + qrd.getQueryResultsLevel().getValue());
-                            ST st = qrd.getQueryID();
+                            qrd.getQueryID();
                         } 
                     } catch (Exception e) {
                         throw e;

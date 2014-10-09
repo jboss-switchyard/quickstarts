@@ -16,8 +16,6 @@
  */
 package org.switchyard.quickstarts.soap.binding.rpc;
 
-import java.io.IOException;
-
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.switchyard.component.soap.util.SOAPUtil;
 
@@ -39,7 +37,6 @@ public class SoapBindingClient {
             + "</soap:Envelope>";
 
     public static void main(String[] args) throws Exception {
-        String command = null;
         if (args.length == 0) {
             System.out.println("Usage: SoapBindingClient <some_name>");
             return;

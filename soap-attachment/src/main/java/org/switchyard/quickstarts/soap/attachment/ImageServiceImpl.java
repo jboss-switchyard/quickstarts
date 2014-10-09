@@ -19,7 +19,6 @@ package org.switchyard.quickstarts.soap.attachment;
 import javax.activation.DataHandler;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import javax.xml.ws.WebServiceException;
 
 @WebService(name = "ImageService", targetNamespace = "urn:switchyard-quickstart:soap-attachment:1.0")
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, parameterStyle = SOAPBinding.ParameterStyle.BARE)

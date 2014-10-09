@@ -48,7 +48,7 @@ public class HL7Client {
         in.append("\r");
         in.append(line2);
 
-        Object response = template.requestBody("mina2:tcp://127.0.0.1:" + MINA2_PORT + "?sync=true&codec=#hl7codec", in.toString());
+        template.requestBody("mina2:tcp://127.0.0.1:" + MINA2_PORT + "?sync=true&codec=#hl7codec", in.toString());
         
         template.stop();
         camelContext.stop();

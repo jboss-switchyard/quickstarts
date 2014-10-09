@@ -17,9 +17,7 @@
 
 package org.switchyard.quickstarts.soap.mtom;
 
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
@@ -37,8 +35,6 @@ import javax.xml.ws.WebServiceFeature;
 public class ImageServiceService
     extends Service
 {
-
-    private final static Logger logger = Logger.getLogger(org.switchyard.quickstarts.soap.mtom.ImageServiceService.class.getName());
 
     public ImageServiceService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);

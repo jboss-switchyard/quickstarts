@@ -17,7 +17,6 @@
 package org.switchyard.quickstarts.http.binding;
 
 import org.switchyard.Exchange;
-import org.switchyard.Message;
 
 import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.component.http.composer.HttpBindingData;

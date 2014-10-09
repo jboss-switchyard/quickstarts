@@ -16,14 +16,10 @@
  */
 package org.switchyard.quickstarts.demo.policy.security.saml;
 
-import static org.switchyard.policy.SecurityPolicy.CLIENT_AUTHENTICATION;
-import static org.switchyard.policy.SecurityPolicy.CONFIDENTIALITY;
-
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.switchyard.Exchange;
-import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Service;
 
 @Service(WorkService.class)

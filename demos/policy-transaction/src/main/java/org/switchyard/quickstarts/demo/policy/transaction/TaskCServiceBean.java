@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
-import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.policy.TransactionPolicy;

@@ -30,6 +30,7 @@ import org.switchyard.common.lang.Strings;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.switchyard.policy.SecurityPolicy;
 
+@SuppressWarnings( "deprecation" )
 public final class WorkServiceMain {
 
     private static final Logger LOGGER = Logger.getLogger(WorkServiceMain.class);

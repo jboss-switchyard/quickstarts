@@ -121,11 +121,9 @@
     </sca:component>
   </sca:composite>
   <transforms>
-    <xform:transform.jaxb from="{urn:switchyard-quickstart:soap-addressing:1.0}order" to="java:org.switchyard.quickstarts.soap.addressing.Order"/>
-    <xform:transform.jaxb from="java:org.switchyard.quickstarts.soap.addressing.Order" to="{urn:switchyard-quickstart:soap-addressing:1.0}order"/>
-    <xform:transform.jaxb from="java:org.switchyard.quickstarts.soap.addressing.OrderResponse" to="{urn:switchyard-quickstart:soap-addressing:1.0}orderResponse"/>
-    <xform:transform.jaxb from="{urn:switchyard-quickstart:soap-addressing:1.0}orderResponse" to="java:org.switchyard.quickstarts.soap.addressing.OrderResponse"/>
-    <!--<xform:transform.jaxb from="java:org.switchyard.quickstarts.soap.addressing.ItemNotAvailable" to="{urn:switchyard-quickstart:soap-addressing:1.0}ItemNotAvailable"/>-->
+    <xform:transform.java from="{urn:switchyard-quickstart:soap-addressing:1.0}order" to="java:org.switchyard.quickstarts.soap.addressing.Order" bean="Transformers"/>
+    <xform:transform.java from="{urn:switchyard-quickstart:soap-addressing:1.0}orderResponse" to="java:org.switchyard.quickstarts.soap.addressing.OrderResponse" bean="Transformers"/>
+    <xform:transform.java from="{urn:switchyard-quickstart:soap-addressing:1.0}ItemNotAvailable" to="java:org.switchyard.quickstarts.soap.addressing.ItemNotAvailable" bean="Transformers"/>
   </transforms>
   <domain>
     <properties>

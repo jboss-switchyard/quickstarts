@@ -24,7 +24,6 @@ import org.switchyard.Scope;
 import org.switchyard.component.bean.Service;
 import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.component.http.composer.HttpComposition;
-import org.switchyard.component.http.composer.HttpContextMapper;
 import org.switchyard.component.http.composer.HttpRequestInfo;
 
 /**

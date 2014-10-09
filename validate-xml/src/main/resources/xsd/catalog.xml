@@ -16,6 +16,6 @@
     limitations under the License.
 -->
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
-    <system systemId="orders.base" uri="orders-base.xsd"/>
+    <system systemId="http://switchyard.org/quickstarts/validate-xml/orders.base" uri="orders-base.xsd"/>
 </catalog>
 

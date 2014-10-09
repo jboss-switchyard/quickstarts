@@ -18,7 +18,7 @@ package org.switchyard.quickstarts.transform.json;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;

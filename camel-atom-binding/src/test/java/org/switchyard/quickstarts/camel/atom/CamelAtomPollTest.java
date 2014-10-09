@@ -16,25 +16,16 @@
  */
 package org.switchyard.quickstarts.camel.atom;
 
-import static org.junit.Assert.assertEquals;
-
 import org.apache.abdera.parser.stax.FOMEntry;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
-import org.switchyard.extensions.java.JavaService;
-import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;

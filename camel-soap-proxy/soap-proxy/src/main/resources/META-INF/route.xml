@@ -18,6 +18,6 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="switchyard://ProxyService"/>
-        <to uri="switchyard://ReverseService"/>
+        <to uri="switchyard://ReverseService?operationName=reverse"/>
     </route>
 </routes>

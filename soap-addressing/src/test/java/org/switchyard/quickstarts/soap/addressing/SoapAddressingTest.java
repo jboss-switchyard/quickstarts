@@ -17,7 +17,6 @@
 package org.switchyard.quickstarts.soap.addressing;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;

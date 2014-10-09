@@ -98,11 +98,6 @@
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-bean</artifactId>
         </dependency>
-        <!-- Karaf tested with http until soap is supported: -->
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-http</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-soap</artifactId>

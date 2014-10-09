@@ -85,7 +85,7 @@ public class AirportService {
 
             // Create order participant (fly ticket)
             OrderParticipant op = new OrderParticipant(
-                uba.toString(), name, fltid);
+                uba.toString(), fltid);
 
             try {
                 // Enlist order participant to the transaction

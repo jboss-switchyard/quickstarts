@@ -16,8 +16,6 @@
  */
 package org.switchyard.quickstarts.soap.binding.rpc;
 
-import javax.xml.ws.Endpoint;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,8 +35,6 @@ import org.switchyard.transform.config.model.TransformSwitchYardScanner;
 public class SoapBindingTest {
 
     private static final String SWITCHYARD_WEB_SERVICE = "http://localhost:8081/soap-binding-rpc/HelloWorldWSService";
-
-    private static Endpoint _endpoint;
 
     private HTTPMixIn _httpMixIn;
 

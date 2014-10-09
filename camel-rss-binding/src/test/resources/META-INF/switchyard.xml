@@ -29,9 +29,6 @@
             <service name="PrintService">
                 <interface.java interface="org.switchyard.quickstarts.camel.rss.binding.PrintService"/>
             </service>
-            <reference name="OutgoingPrintService">
-                <interface.java interface="org.switchyard.quickstarts.camel.rss.binding.PrintService"/>
-            </reference>
         </component>
     </composite>
 </switchyard>

@@ -26,13 +26,10 @@
             </rss:binding.rss>
         </service>
         <component name="RSSParseService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.camel.rss.binding.RSSParseServiceImpl"/>
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:2.0" class="org.switchyard.quickstarts.camel.rss.binding.RSSParseServiceImpl"/>
             <service name="RSSParseService">
                 <interface.java interface="org.switchyard.quickstarts.camel.rss.binding.RSSParseService"/>
             </service>
-            <reference name="OutgoingRSSParseService">
-                <interface.java interface="org.switchyard.quickstarts.camel.rss.binding.RSSParseService"/>
-            </reference>
         </component>
     </composite>
 </switchyard>

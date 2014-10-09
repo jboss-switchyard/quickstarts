@@ -17,8 +17,6 @@
 
 package org.switchyard.quickstarts.soap.mtom;
 
-import java.awt.Image;
-
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;

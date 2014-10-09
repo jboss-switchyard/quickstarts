@@ -16,9 +16,6 @@
  */
 package org.switchyard.quickstarts.http.binding;
 
-import javax.inject.Inject;
-
-import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 
 @Service(QuoteErrorService.class)

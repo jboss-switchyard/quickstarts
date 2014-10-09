@@ -77,10 +77,6 @@
     <dependencies>
         <dependency>
             <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-bean</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel</artifactId>
         </dependency>
         <dependency>
@@ -88,12 +84,13 @@
             <artifactId>switchyard-component-camel-cxf</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-soap</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-soap</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

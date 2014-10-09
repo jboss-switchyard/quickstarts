@@ -24,7 +24,6 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.switchyard.annotations.Transformer;
-import org.switchyard.common.codec.Base64;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -47,6 +46,12 @@ public class ServiceTransformers {
         return orderAck;
     }
 
+    @Transformer(from = "{urn:switchyard-quickstart:camel-cxf:2.0}ItemNotAvailable")
+    public ItemNotAvailable transformToItemNotAvailable(Element from) {
+    	String message = getElementValue(from, "faultstring");
+    	return new ItemNotAvailable(message);
+    }
+
     @Transformer(to = "{urn:switchyard-quickstart:camel-cxf:2.0}orderResponse")
     public Element transformFromOrderResponse(OrderResponse orderAck) {
         StringBuffer ackXml = new StringBuffer()
@@ -66,6 +71,17 @@ public class ServiceTransformers {
             .append("<item>" + order.getItem() + "</item>")
             .append("<quantity>" + order.getQuantity() + "</quantity>")
             .append("</orders:order>");
+
+        return toElement(ackXml.toString());
+    }
+
+    @Transformer(to = "{urn:switchyard-quickstart:camel-cxf:2.0}ItemNotAvailable")
+    public Element transformFromItemNotAvailable(ItemNotAvailable fault) {
+        StringBuffer ackXml = new StringBuffer()
+            .append("<SOAP-ENV:Fault xmlns:ns4=\"http://www.w3.org/2003/05/soap-envelope\">")
+            .append("<faultcode>SOAP-ENV:Server</faultcode>")
+            .append("<faultstring>" + fault.getMessage() + "</faultstring>")
+            .append("</SOAP-ENV:Fault>");
 
         return toElement(ackXml.toString());
     }

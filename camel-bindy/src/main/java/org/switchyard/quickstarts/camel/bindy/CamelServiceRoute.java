@@ -20,14 +20,11 @@ import org.switchyard.quickstarts.camel.bindy.Order;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.dataformat.BindyDataFormat;
-import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
 import org.apache.camel.spi.DataFormat;
 
@@ -47,7 +44,8 @@ public class CamelServiceRoute extends RouteBuilder {
             .process(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     Message in = exchange.getIn();
-                    ArrayList<HashMap> list = (ArrayList) in.getBody();
+                    @SuppressWarnings("unchecked")
+                    ArrayList<HashMap<String, Order>> list = (ArrayList<HashMap<String, Order>>) in.getBody();
                     for (HashMap<String, Order> map : list) {
                         for (Order order : map.values()) {
                             if (order.getProduct().equals("Lucky Charms")) {

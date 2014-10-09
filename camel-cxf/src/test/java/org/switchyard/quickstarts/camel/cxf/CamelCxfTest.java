@@ -17,12 +17,12 @@
 package org.switchyard.quickstarts.camel.cxf;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.BeforeDeploy;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
+import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.switchyard.transform.config.model.TransformSwitchYardScanner;
@@ -55,7 +55,7 @@ public class CamelCxfTest {
     @Test
     public void fault() throws Exception {
         String response = CamelCxfClient.sendMessage("Guardian Angel", "1", SWITCHYARD_WEB_SERVICE);
-        org.switchyard.component.soap.util.SOAPUtil.prettyPrint(response, System.out);
+        SOAPUtil.prettyPrint(response, System.out);
         Assert.assertTrue(response.contains("Sorry, all Guardian Angels are sold out!"));
     }
 

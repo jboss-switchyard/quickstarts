@@ -39,7 +39,6 @@ public class OrderParticipant implements Durable2PCParticipant, Serializable {
         .getName());
 
     private String _txID;
-    private String _name;
     private String _fltid;
 
     /**
@@ -47,9 +46,8 @@ public class OrderParticipant implements Durable2PCParticipant, Serializable {
      * @param name username
      * @param fltid flight identifier
      */
-    public OrderParticipant(String txID, String name, String fltid) {
+    public OrderParticipant(String txID, String fltid) {
         _txID = txID;
-        _name = name;
         _fltid = fltid;
     }
 

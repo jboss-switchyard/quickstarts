@@ -44,7 +44,8 @@ public class SoapAttachmentClient {
         String port = System.getProperty("org.switchyard.component.soap.client.port", "8080");
         SOAPMessage response = sendMessage("http://localhost:" + port + "/soap-attachment/ImageServiceService");
         SOAPUtil.prettyPrint(response, System.out);
-        Iterator<AttachmentPart> iterator = response.getAttachments();
+        @SuppressWarnings("unchecked")
+		Iterator<AttachmentPart> iterator = response.getAttachments();
         AttachmentPart ap = iterator.next();
         System.out.println("Response attachment: " + ap.getContentId() + " with content type " + ap.getContentType());
     }

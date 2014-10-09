@@ -19,7 +19,6 @@ package org.switchyard.quickstarts.soap.attachment;
 import javax.activation.DataSource;
 import javax.inject.Inject;
 
-import org.switchyard.Context;
 import org.switchyard.Message;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;

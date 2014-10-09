@@ -18,7 +18,12 @@ package org.switchyard.quickstarts.soap.addressing;
 
 public class ItemNotAvailable extends Exception {
 
-    public ItemNotAvailable(final String message) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1541234567368810471L;
+
+	public ItemNotAvailable(final String message) {
         super(message);
     }
 

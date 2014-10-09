@@ -16,28 +16,18 @@
  */
 package org.switchyard.quickstarts.camel.rss;
 
-import static org.junit.Assert.assertEquals;
-
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.Exchange;
 import org.switchyard.component.test.mixins.cdi.CDIMixIn;
-import org.switchyard.extensions.java.JavaService;
-import org.switchyard.metadata.ServiceInterface;
 import org.switchyard.test.MockHandler;
 import org.switchyard.test.SwitchYardRunner;
 import org.switchyard.test.SwitchYardTestCaseConfig;
@@ -67,9 +57,10 @@ public class CamelRSSPollTest {
         final LinkedBlockingQueue<Exchange> receivedMessages = printService.getMessages();
         for (Exchange e : receivedMessages) {
             SyndFeed feed = (SyndFeed) e.getMessage().getContent();
-            List entries = feed.getEntries();
+            @SuppressWarnings("unchecked")
+            List<SyndEntry> entries = feed.getEntries();
             Assert.assertEquals(feed.getEntries().size(), 1);
-            Iterator itEntries = entries.iterator();
+            Iterator<SyndEntry> itEntries = entries.iterator();
      
             while (itEntries.hasNext()) {
                 SyndEntry entry = (SyndEntry) itEntries.next();

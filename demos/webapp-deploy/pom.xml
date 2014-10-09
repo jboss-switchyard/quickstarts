@@ -60,6 +60,10 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-deploy-webapp</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-bean</artifactId>
         </dependency>

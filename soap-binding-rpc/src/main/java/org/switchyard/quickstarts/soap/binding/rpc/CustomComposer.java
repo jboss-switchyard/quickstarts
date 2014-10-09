@@ -17,7 +17,6 @@
 package org.switchyard.quickstarts.soap.binding.rpc;
 
 import org.switchyard.Exchange;
-import org.switchyard.Message;
 
 import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.component.soap.composer.SOAPBindingData;
