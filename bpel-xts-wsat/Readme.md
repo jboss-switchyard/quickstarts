@@ -13,9 +13,9 @@ There are 3 scenarios which can be tried:
 Running the quickstart
 ======================
 
-JBoss AS 7
+EAP
 ----------
-1. Start JBoss AS 7 in standalone-full mode:
+1. Start EAP in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
@@ -26,6 +26,36 @@ JBoss AS 7
 3. Execute BPELClient
 
         mvn exec:java
+
+4. Undeploy the quickstart:
+
+        mvn clean -Pdeploy
+
+
+Wildfly
+----------
+1. Start Wildfly in standalone-full mode:
+
+${AS}/bin/standalone.sh --server-config=standalone-full.xml
+
+2. Build and deploy the quickstart
+
+mvn install -Pdeploy -Pwildfly
+
+3. Execute BPELClient
+
+mvn exec:java
+
+4. Undeploy the quickstart:
+
+mvn clean -Pdeploy -Pwildfly
+
+
+Karaf
+----------
+
+No feature has been created.
+
 
 Expected Output
 ===============
@@ -52,6 +82,3 @@ SOAP Reply:
     </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 ```
-
-4. Undeploy the quickstart:
-        mvn clean -Pdeploy
