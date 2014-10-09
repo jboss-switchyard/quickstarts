@@ -15,6 +15,7 @@ package org.switchyard.component.bpm.service;
 
 import static org.switchyard.component.bpm.BPMConstants.CORRELATION_KEY_PROPERTY;
 import static org.switchyard.component.bpm.BPMConstants.PROCESSS_INSTANCE_ID_PROPERTY;
+import static org.switchyard.component.common.knowledge.service.SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE_TASK;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +53,7 @@ import org.switchyard.component.common.knowledge.annotation.Manifest;
 import org.switchyard.component.common.knowledge.annotation.Output;
 import org.switchyard.component.common.knowledge.annotation.Resource;
 import org.switchyard.component.common.knowledge.service.SwitchYardServiceInvoker;
+import org.switchyard.component.common.knowledge.service.SwitchYardServiceTaskHandler;
 import org.switchyard.extensions.java.JavaService;
 import org.switchyard.metadata.InOnlyService;
 import org.switchyard.metadata.InOutService;
@@ -97,7 +99,7 @@ public class BPMServiceTests {
         SwitchYardServiceTaskHandler ssth = new SwitchYardServiceTaskHandler();
         ssth.setProcessRuntime(ksession);
         ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain));
-        ksession.getWorkItemManager().registerWorkItemHandler(ssth.getName(), ssth);
+        ksession.getWorkItemManager().registerWorkItemHandler(SWITCHYARD_SERVICE_TASK, ssth);
         ksession.startProcess("CallService");
         ksession.halt();
         ksession.dispose();
@@ -269,7 +271,7 @@ public class BPMServiceTests {
         SwitchYardServiceTaskHandler ssth = new SwitchYardServiceTaskHandler();
         ssth.setProcessRuntime(ksession);
         ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain));
-        ksession.getWorkItemManager().registerWorkItemHandler(ssth.getName(), ssth);
+        ksession.getWorkItemManager().registerWorkItemHandler(SWITCHYARD_SERVICE_TASK, ssth);
         WorkflowProcessInstance wpi = (WorkflowProcessInstance)ksession.startProcess("FaultResultProcess");
         HandlerException he = (HandlerException)wpi.getVariable("faultResult");
         if (bomb) {
@@ -308,7 +310,7 @@ public class BPMServiceTests {
         SwitchYardServiceTaskHandler ssth = new SwitchYardServiceTaskHandler();
         ssth.setProcessRuntime(ksession);
         ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain));
-        ksession.getWorkItemManager().registerWorkItemHandler(ssth.getName(), ssth);
+        ksession.getWorkItemManager().registerWorkItemHandler(SWITCHYARD_SERVICE_TASK, ssth);
         WorkflowProcessInstance wpi = (WorkflowProcessInstance)ksession.startProcess("FaultEventProcess");
         HandlerException he = (HandlerException)wpi.getVariable("faultEvent");
         if (bomb) {
@@ -347,7 +349,7 @@ public class BPMServiceTests {
         SwitchYardServiceTaskHandler ssth = new SwitchYardServiceTaskHandler();
         ssth.setProcessRuntime(ksession);
         ssth.setInvoker(new SwitchYardServiceInvoker(serviceDomain));
-        ksession.getWorkItemManager().registerWorkItemHandler(ssth.getName(), ssth);
+        ksession.getWorkItemManager().registerWorkItemHandler(SWITCHYARD_SERVICE_TASK, ssth);
         WorkflowProcessInstance wpi = (WorkflowProcessInstance)ksession.startProcess("FaultBoundaryProcess");
         String output = (String)wpi.getVariable("TestOutput");
         Assert.assertEquals(bomb ? "Failure" : "Success", output);

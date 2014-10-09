@@ -25,23 +25,20 @@
     <name>SwitchYard: BPM Component</name>
     <url>http://switchyard.org</url>
     <properties>
-        <switchyard.osgi.activator>org.switchyard.component.bpm.Activator</switchyard.osgi.activator>
+        <switchyard.osgi.activator>org.switchyard.component.common.knowledge.deploy.OSGiKnowledgeBundleActivator</switchyard.osgi.activator>
         <switchyard.osgi.export.pkg>
             org.switchyard.component.bpm.*
         </switchyard.osgi.export.pkg>
         <switchyard.osgi.import>
             org.switchyard.*;${switchyard.osgi.import.switchyard.version},
             org.switchyard.config.model;${switchyard.osgi.import.switchyard.version},
-            org.hibernate.*;resolution:=optional,
             *
         </switchyard.osgi.import>
         <switchyard.osgi.require.bundle>
             org.jbpm.bpmn2,
             org.jbpm.flow.core,
             org.jbpm.persistence.jpa,
-            org.jbpm.services.task.jpa,
-            org.kie.api,
-            org.kie.internalapi
+            org.jbpm.services.task.jpa
         </switchyard.osgi.require.bundle>
     </properties>
     <build>
@@ -57,57 +54,6 @@
                     </delimiters>
                 </configuration>
             </plugin>
-            <!--
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>extract-jbpm-orm</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.jbpm</groupId>
-                                    <artifactId>jbpm-executor</artifactId>
-                                    <version>${version.org.jbpm}</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.jbpm</groupId>
-                                    <artifactId>jbpm-human-task-audit</artifactId>
-                                    <version>${version.org.jbpm}</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.jbpm</groupId>
-                                    <artifactId>${artifactId.jbpm-human-task-orm}</artifactId>
-                                    <artifactId>jbpm-human-task-jpa</artifactId>
-                                    <version>${version.org.jbpm}</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.jbpm</groupId>
-                                    <artifactId>jbpm-kie-services</artifactId>
-                                    <version>${version.org.jbpm}</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.jbpm</groupId>
-                                    <artifactId>jbpm-persistence-jpa</artifactId>
-                                    <version>${version.org.jbpm}</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                            </artifactItems>
-                            <includes>META-INF/*orm.xml</includes>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
         </plugins>
     </build>
     <dependencies>
@@ -130,24 +76,12 @@
         </dependency>
         <!-- external dependencies -->
         <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-persistence-jpa</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-bpmn2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
             <artifactId>jbpm-flow</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-human-task-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
@@ -158,35 +92,12 @@
             <artifactId>jbpm-human-task-workitems</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-persistence-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-runtime-manager</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jbpm</groupId>
-            <artifactId>jbpm-workitems</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.kie</groupId>
             <artifactId>kie-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kie</groupId>
             <artifactId>kie-internal</artifactId>
-        </dependency>
-        <!-- OSGi dependencies (build) -->
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

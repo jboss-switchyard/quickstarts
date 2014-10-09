@@ -13,13 +13,7 @@
  */
 package org.switchyard.component.rules.config.model.v1;
 
-import static org.switchyard.component.common.knowledge.config.model.ChannelsModel.CHANNELS;
-import static org.switchyard.component.common.knowledge.config.model.ListenersModel.LISTENERS;
-import static org.switchyard.component.common.knowledge.config.model.LoggersModel.LOGGERS;
-import static org.switchyard.component.common.knowledge.config.model.ManifestModel.MANIFEST;
-import static org.switchyard.component.common.knowledge.config.model.OperationsModel.OPERATIONS;
-import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
-
+import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1KnowledgeComponentImplementationModel;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
 import org.switchyard.config.Configuration;
@@ -38,7 +32,6 @@ public class V1RulesComponentImplementationModel extends V1KnowledgeComponentImp
      */
     public V1RulesComponentImplementationModel(String namespace) {
         super(RULES, namespace);
-        setModelChildrenOrder(CHANNELS, LISTENERS, LOGGERS, MANIFEST, OPERATIONS, PROPERTIES);
     }
 
     /**
@@ -49,7 +42,42 @@ public class V1RulesComponentImplementationModel extends V1KnowledgeComponentImp
      */
     public V1RulesComponentImplementationModel(Configuration config, Descriptor desc) {
         super(config, desc);
-        setModelChildrenOrder(CHANNELS, LISTENERS, LOGGERS, MANIFEST, OPERATIONS, PROPERTIES);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isPersistent() {
+        // unsupported in rules (see bpm)
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public KnowledgeComponentImplementationModel setPersistent(boolean persistent) {
+        // unsupported in rules (see bpm)
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getProcessId() {
+        // unsupported in rules (see bpm)
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public KnowledgeComponentImplementationModel setProcessId(String processId) {
+        // unsupported in rules (see bpm)
+        return this;
     }
 
 }

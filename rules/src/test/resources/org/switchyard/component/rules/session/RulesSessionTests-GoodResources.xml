@@ -12,10 +12,16 @@
  - See the License for the specific language governing permissions and
  - limitations under the License.
  -->
-<implementation.rules xmlns="urn:switchyard-component-rules:config:1.0">
-    <manifest>
-        <resources>
-            <resource location="/org/switchyard/component/rules/session/RulesSessionTests-GoodRules.drl" type="DRL"/>
-        </resources>
-    </manifest>
-</implementation.rules>
+<switchyard xmlns="urn:switchyard-config:switchyard:2.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="RulesSessionTests" targetNamespace="urn:rules:test:2.0">
+        <component name="TestProcess">
+            <implementation.rules xmlns="urn:switchyard-component-rules:config:2.0">
+                <manifest>
+                    <resources>
+                        <resource location="/org/switchyard/component/rules/session/RulesSessionTests-GoodRules.drl" type="DRL"/>
+                    </resources>
+                </manifest>
+            </implementation.rules>
+        </component>
+    </composite>
+</switchyard>

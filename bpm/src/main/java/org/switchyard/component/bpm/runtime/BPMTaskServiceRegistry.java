@@ -13,22 +13,25 @@
  */
 package org.switchyard.component.bpm.runtime;
 
-import static org.switchyard.deploy.ServiceDomainManager.ROOT_DOMAIN;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 import javax.xml.namespace.QName;
 
+import org.kie.api.runtime.manager.RuntimeEngine;
+import org.kie.api.task.TaskService;
+import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeManager;
+import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeManagerRegistry;
+
 /**
- * The BPM task service registry.
+ * BPMTaskServiceRegistry is <b>DEPRECATED</b>.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
+ * @deprecated Use {@link KnowledgeRuntimeManagerRegistry} instead.
  */
+@Deprecated
 public final class BPMTaskServiceRegistry {
-
-    private static final Map<QName, Map<QName, BPMTaskService>> REGISTRY = Collections.synchronizedMap(new HashMap<QName, Map<QName, BPMTaskService>>());
 
     /**
      * Gets a task service.
@@ -37,11 +40,23 @@ public final class BPMTaskServiceRegistry {
      * @return the task service
      */
     public static final synchronized BPMTaskService getTaskService(QName serviceDomainName, QName serviceName) {
-        if (serviceDomainName == null) {
-            serviceDomainName = ROOT_DOMAIN;
+        KnowledgeRuntimeManager runtimeManager = KnowledgeRuntimeManagerRegistry.getRuntimeManager(serviceDomainName, serviceName);
+        if (runtimeManager != null) {
+            RuntimeEngine runtimeEngine = runtimeManager.getRuntimeEngine();
+            if (runtimeEngine != null) {
+                final TaskService taskService = runtimeEngine.getTaskService();
+                if (taskService != null) {
+                    InvocationHandler ih = new InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                           return method.invoke(taskService, args);
+                        }
+                    };
+                    return (BPMTaskService)Proxy.newProxyInstance(BPMTaskService.class.getClassLoader(), new Class[]{BPMTaskService.class}, ih);
+                }
+            }
         }
-        Map<QName, BPMTaskService> reg = REGISTRY.get(serviceDomainName);
-        return reg != null ?  reg.get(serviceName) : null;
+        return null;
     }
 
     /**
@@ -51,19 +66,7 @@ public final class BPMTaskServiceRegistry {
      * @param taskService the task service
      */
     public static final synchronized void putTaskService(QName serviceDomainName, QName serviceName, BPMTaskService taskService) {
-        if (serviceDomainName == null) {
-            serviceDomainName = ROOT_DOMAIN;
-        }
-        Map<QName, BPMTaskService> reg = REGISTRY.get(serviceDomainName);
-        if (reg == null) {
-            reg = Collections.synchronizedMap(new HashMap<QName, BPMTaskService>());
-            REGISTRY.put(serviceDomainName, reg);
-        }
-        if (taskService == null) {
-            reg.remove(serviceName);
-        } else {
-            reg.put(serviceName, taskService);
-        }
+        // deprecated
     }
 
     /**
@@ -72,7 +75,7 @@ public final class BPMTaskServiceRegistry {
      * @param serviceName the service name
      */
     public static final synchronized void removeTaskService(QName serviceDomainName, QName serviceName) {
-        putTaskService(serviceDomainName, serviceName, null);
+        // deprecated
     }
 
     private BPMTaskServiceRegistry() {}

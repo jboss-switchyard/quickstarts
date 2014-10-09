@@ -13,9 +13,6 @@
  */
 package org.switchyard.component.bpm.deploy;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
@@ -36,8 +33,6 @@ public class BPMActivator extends BaseActivator {
      */
     public static final String BPM_TYPE = "bpm";
 
-    private Map<QName, BPMExchangeHandler> _handlers = new HashMap<QName, BPMExchangeHandler>();
-
     /**
      * Constructs a new Activator of type "bpm".
      */
@@ -50,9 +45,7 @@ public class BPMActivator extends BaseActivator {
      */
     @Override
     public ServiceHandler activateService(QName name, ComponentModel config) {
-        BPMExchangeHandler handler = new BPMExchangeHandler((BPMComponentImplementationModel)config.getImplementation(), getServiceDomain(), name);
-        _handlers.put(name, handler);
-        return handler;
+        return new BPMExchangeHandler((BPMComponentImplementationModel)config.getImplementation(), getServiceDomain(), name);
     }
 
     /**
@@ -60,7 +53,7 @@ public class BPMActivator extends BaseActivator {
      */
     @Override
     public void deactivateService(QName name, ServiceHandler handler) {
-        _handlers.remove(name);
+        // no-op
     }
 
 }

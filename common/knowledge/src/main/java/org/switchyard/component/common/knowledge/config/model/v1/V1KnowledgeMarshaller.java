@@ -6,7 +6,7 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -30,6 +30,9 @@ import static org.switchyard.component.common.knowledge.config.model.ManifestMod
 import static org.switchyard.component.common.knowledge.config.model.OperationsModel.OPERATIONS;
 import static org.switchyard.component.common.knowledge.config.model.OutputModel.OUTPUT;
 import static org.switchyard.component.common.knowledge.config.model.OutputsModel.OUTPUTS;
+import static org.switchyard.component.common.knowledge.config.model.UserGroupCallbackModel.USER_GROUP_CALLBACK;
+import static org.switchyard.component.common.knowledge.config.model.WorkItemHandlerModel.WORK_ITEM_HANDLER;
+import static org.switchyard.component.common.knowledge.config.model.WorkItemHandlersModel.WORK_ITEM_HANDLERS;
 import static org.switchyard.config.model.property.PropertiesModel.PROPERTIES;
 import static org.switchyard.config.model.property.PropertyModel.PROPERTY;
 import static org.switchyard.config.model.resource.ResourceDetailModel.RESOURCE_DETAIL;
@@ -117,6 +120,12 @@ public class V1KnowledgeMarshaller extends V1CompositeMarshaller {
             return new V1PropertiesModel(config, desc);
         } else if (PROPERTY.equals(name)) {
             return new V1PropertyModel(config, desc);
+        } else if (USER_GROUP_CALLBACK.equals(name)) {
+            return new V1UserGroupCallbackModel(config, desc);
+        } else if (WORK_ITEM_HANDLERS.equals(name)) {
+            return new V1WorkItemHandlersModel(config, desc);
+        } else if (WORK_ITEM_HANDLER.equals(name)) {
+            return new V1WorkItemHandlerModel(config, desc);
         }
         return super.read(config);
     }

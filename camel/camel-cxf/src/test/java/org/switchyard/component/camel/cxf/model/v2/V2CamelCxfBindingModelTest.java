@@ -11,9 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.switchyard.component.camel.cxf.model.v1;
+package org.switchyard.component.camel.cxf.model.v2;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.net.URI;
 import java.text.ParseException;
@@ -22,7 +22,6 @@ import java.util.Collections;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.switchyard.component.camel.config.test.v1.V1BaseCamelServiceBindingModelTest;
 import org.switchyard.component.camel.cxf.model.CamelCxfNamespace;
-import org.switchyard.component.camel.cxf.model.v2.V2CamelCxfBindingModel;
 
 /**
  * Test of cxf binding model.

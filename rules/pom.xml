@@ -69,12 +69,12 @@
         </dependency>
         <!-- external dependencies -->
         <dependency>
-            <groupId>org.drools</groupId>
-            <artifactId>drools-decisiontables</artifactId>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kie</groupId>
-            <artifactId>kie-api</artifactId>
+            <artifactId>kie-internal</artifactId>
         </dependency>
     </dependencies>
 </project>

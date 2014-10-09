@@ -13,14 +13,14 @@
  */
 package org.switchyard.component.rules.exchange;
 
-import static org.switchyard.component.common.knowledge.util.Operations.getInputList;
-import static org.switchyard.component.common.knowledge.util.Operations.getInputOnlyList;
-import static org.switchyard.component.common.knowledge.util.Operations.getInputOutputMap;
-import static org.switchyard.component.common.knowledge.util.Operations.getListMap;
-import static org.switchyard.component.common.knowledge.util.Operations.setFaults;
-import static org.switchyard.component.common.knowledge.util.Operations.setGlobals;
-import static org.switchyard.component.common.knowledge.util.Operations.setOutputs;
-import static org.switchyard.component.common.knowledge.util.Operations.toVariable;
+import static org.switchyard.component.common.knowledge.operation.KnowledgeOperations.getInputList;
+import static org.switchyard.component.common.knowledge.operation.KnowledgeOperations.getInputOnlyList;
+import static org.switchyard.component.common.knowledge.operation.KnowledgeOperations.getInputOutputMap;
+import static org.switchyard.component.common.knowledge.operation.KnowledgeOperations.getListMap;
+import static org.switchyard.component.common.knowledge.operation.KnowledgeOperations.setFaults;
+import static org.switchyard.component.common.knowledge.operation.KnowledgeOperations.setGlobals;
+import static org.switchyard.component.common.knowledge.operation.KnowledgeOperations.setOutputs;
+import static org.switchyard.component.common.knowledge.operation.KnowledgeOperations.toVariable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +36,11 @@ import org.kie.api.command.BatchExecutionCommand;
 import org.kie.api.command.Command;
 import org.kie.api.command.KieCommands;
 import org.kie.api.runtime.ExecutionResults;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.rule.EntryPoint;
+import org.kie.internal.runtime.manager.Disposable;
+import org.kie.internal.runtime.manager.DisposeListener;
 import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
@@ -47,24 +51,26 @@ import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.knowledge.KnowledgeConstants;
 import org.switchyard.component.common.knowledge.exchange.KnowledgeExchangeHandler;
-import org.switchyard.component.common.knowledge.exchange.KnowledgeOperation;
-import org.switchyard.component.common.knowledge.session.KnowledgeDisposal;
-import org.switchyard.component.common.knowledge.session.KnowledgeSession;
+import org.switchyard.component.common.knowledge.operation.KnowledgeOperation;
+import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeEngine;
+import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeManager;
 import org.switchyard.component.rules.RulesConstants;
 import org.switchyard.component.rules.RulesMessages;
-import org.switchyard.component.rules.RulesOperationType;
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
+import org.switchyard.component.rules.operation.RulesOperationType;
 
 /**
  * A "rules" implementation of a KnowledgeExchangeHandler.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponentImplementationModel> {
+public class RulesExchangeHandler extends KnowledgeExchangeHandler {
 
     private static final AtomicInteger FIRE_UNTIL_HALT_COUNT = new AtomicInteger();
     private static final KnowledgeOperation DEFAULT_OPERATION = new KnowledgeOperation(RulesOperationType.EXECUTE);
 
+    private KnowledgeRuntimeManager _perRequestRuntimeManager = null;
+    private KnowledgeRuntimeManager _singletonRuntimeManager = null;
     private Thread _fireUntilHaltThread = null;
 
     /**
@@ -81,6 +87,31 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
      * {@inheritDoc}
      */
     @Override
+    protected void doStart() {
+        super.doStart();
+        _perRequestRuntimeManager = newPerRequestRuntimeManager();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doStop() {
+        try {
+            _perRequestRuntimeManager.close();
+        } finally {
+            try {
+                disposeSingletonRuntimeEngine();
+            } finally {
+                super.doStop();
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public KnowledgeOperation getDefaultOperation() {
         return DEFAULT_OPERATION;
     }
@@ -89,6 +120,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("deprecation")
     public void handleOperation(Exchange exchange, KnowledgeOperation operation) throws HandlerException {
         Integer sessionId = null;
         Message inputMessage = exchange.getMessage();
@@ -97,28 +129,36 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
         RulesOperationType operationType = (RulesOperationType)operation.getType();
         switch (operationType) {
             case EXECUTE: {
-                KnowledgeSession session = newStatelessSession();
-                sessionId = session.getId();
-                setGlobals(inputMessage, operation, session);
-                if (ExchangePattern.IN_ONLY.equals(exchangePattern)) {
-                    List<Object> facts = getInputList(inputMessage, operation, session);
-                    session.getStateless().execute(facts);
-                } else if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                    KieCommands cmds = KieServices.Factory.get().getCommands();
-                    List<Command<?>> batch = new ArrayList<Command<?>>();
-                    Map<String, Object> inouts = getInputOutputMap(inputMessage, operation, session);
-                    for (Entry<String, Object> inout : inouts.entrySet()) {
-                        batch.add(cmds.newInsert(inout.getValue(), inout.getKey()));
+                KnowledgeRuntimeEngine runtime = newPerRequestRuntimeEngine();
+                sessionId = runtime.getSessionId();
+                setGlobals(inputMessage, operation, runtime);
+                try {
+                    KieSession session = runtime.getKieSession();
+                    if (ExchangePattern.IN_ONLY.equals(exchangePattern)) {
+                        List<Object> facts = getInputList(inputMessage, operation, runtime);
+                        for (Object fact : facts) {
+                            session.insert(fact);
+                        }
+                        session.fireAllRules();
+                    } else if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
+                        KieCommands cmds = KieServices.Factory.get().getCommands();
+                        List<Command<?>> batch = new ArrayList<Command<?>>();
+                        Map<String, Object> inouts = getInputOutputMap(inputMessage, operation, runtime);
+                        for (Entry<String, Object> inout : inouts.entrySet()) {
+                            batch.add(cmds.newInsert(inout.getValue(), inout.getKey()));
+                        }
+                        List<Object> facts = getInputOnlyList(inputMessage, operation, runtime);
+                        batch.add(cmds.newInsertElements(facts));
+                        batch.add(cmds.newFireAllRules());
+                        BatchExecutionCommand exec = cmds.newBatchExecution(batch, KnowledgeConstants.RESULT);
+                        ExecutionResults results = session.execute(exec);
+                        for (String id : inouts.keySet()) {
+                            expressionVariables.put(id, results.getValue(id));
+                        }
+                        expressionVariables.putAll(getGlobalVariables(runtime));
                     }
-                    List<Object> facts = getInputOnlyList(inputMessage, operation, session);
-                    batch.add(cmds.newInsertElements(facts));
-                    batch.add(cmds.newFireAllRules());
-                    BatchExecutionCommand exec = cmds.newBatchExecution(batch, KnowledgeConstants.RESULT);
-                    ExecutionResults results = session.getStateless().execute(exec);
-                    for (String id : inouts.keySet()) {
-                        expressionVariables.put(id, results.getValue(id));
-                    }
-                    expressionVariables.putAll(getGlobalVariables(session));
+                } finally {
+                    disposePerRequestRuntimeEngine(runtime);
                 }
                 break;
             }
@@ -126,43 +166,45 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
             case FIRE_ALL_RULES: {
                 /*
                 if (!isContinue(exchange)) {
-                    disposeStatefulSession();
+                    disposeSingletonRuntimeEngine();
                 }
                 */
-                KnowledgeSession session = getStatefulSession();
-                sessionId = session.getId();
-                setGlobals(inputMessage, operation, session);
-                List<Object> facts = getInputList(inputMessage, operation, session);
+                KnowledgeRuntimeEngine runtime = getSingletonRuntimeEngine();
+                sessionId = runtime.getSessionId();
+                setGlobals(inputMessage, operation, runtime);
+                KieSession session = runtime.getKieSession();
+                List<Object> facts = getInputList(inputMessage, operation, runtime);
                 for (Object fact : facts) {
-                    session.getStateful().insert(fact);
+                    session.insert(fact);
                 }
                 if (RulesOperationType.FIRE_ALL_RULES.equals(operationType)) {
-                    session.getStateful().fireAllRules();
+                    session.fireAllRules();
                 }
                 if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                    expressionVariables.putAll(getGlobalVariables(session));
+                    expressionVariables.putAll(getGlobalVariables(runtime));
                 }
                 if (isDispose(exchange, inputMessage)) {
-                    disposeStatefulSession();
+                    disposeSingletonRuntimeEngine();
                 }
                 break;
             }
             case FIRE_UNTIL_HALT: {
                 /*
                 if (!isContinue(exchange, inputMessage)) {
-                    disposeStatefulSession();
+                    disposeSingletonRuntimeEngine();
                 }
                 */
-                KnowledgeSession session = getStatefulSession();
-                sessionId = session.getId();
-                setGlobals(inputMessage, operation, session);
-                if (_fireUntilHaltThread == null) {
+                KnowledgeRuntimeEngine runtime = getSingletonRuntimeEngine();
+                sessionId = runtime.getSessionId();
+                setGlobals(inputMessage, operation, runtime);
+                KieSession session = runtime.getKieSession();
+                if (_fireUntilHaltThread == null && runtime.getWrapped() instanceof Disposable) {
                     ClassLoader fireUntilHaltLoader = Classes.getTCCL();
                     if (fireUntilHaltLoader == null) {
                         fireUntilHaltLoader = getLoader();
                     }
-                    FireUntilHalt fireUntilHalt = new FireUntilHalt(this, session, fireUntilHaltLoader);
-                    session.addDisposals(fireUntilHalt);
+                    FireUntilHalt fireUntilHalt = new FireUntilHalt(this, runtime, fireUntilHaltLoader);
+                    ((Disposable)runtime.getWrapped()).addDisposeListener(fireUntilHalt);
                     _fireUntilHaltThread = fireUntilHalt.startThread();
                 }
                 final String undefinedVariable = toVariable(exchange);
@@ -179,10 +221,10 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                         List<Object> facts = inputEntry.getValue();
                         if (undefinedVariable.equals(key)) {
                             for (Object fact : facts) {
-                                session.getStateful().insert(fact);
+                                session.insert(fact);
                             }
                         } else {
-                            EntryPoint entryPoint = session.getStateful().getEntryPoint(key);
+                            EntryPoint entryPoint = session.getEntryPoint(key);
                             if (entryPoint != null) {
                                 for (Object fact : facts) {
                                     entryPoint.insert(fact);
@@ -193,16 +235,16 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
                         }
                     }
                 } else {
-                    List<Object> facts = getInputList(inputMessage, operation, session);
+                    List<Object> facts = getInputList(inputMessage, operation, runtime);
                     for (Object fact : facts) {
-                        session.getStateful().insert(fact);
+                        session.insert(fact);
                     }
                 }
                 if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                    expressionVariables.putAll(getGlobalVariables(session));
+                    expressionVariables.putAll(getGlobalVariables(runtime));
                 }
                 if (isDispose(exchange, inputMessage)) {
-                    disposeStatefulSession();
+                    disposeSingletonRuntimeEngine();
                 }
                 break;
             }
@@ -226,6 +268,35 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
         }
     }
 
+    private KnowledgeRuntimeEngine newPerRequestRuntimeEngine() {
+        return (KnowledgeRuntimeEngine)_perRequestRuntimeManager.getRuntimeEngine();
+    }
+
+    private void disposePerRequestRuntimeEngine(KnowledgeRuntimeEngine perRequestRuntimeEngine) {
+        _perRequestRuntimeManager.disposeRuntimeEngine(perRequestRuntimeEngine);
+    }
+
+    private synchronized KnowledgeRuntimeEngine getSingletonRuntimeEngine() {
+        if (_singletonRuntimeManager == null) {
+            _singletonRuntimeManager = newSingletonRuntimeManager();
+        }
+        return (KnowledgeRuntimeEngine)_singletonRuntimeManager.getRuntimeEngine();
+    }
+
+    private synchronized void disposeSingletonRuntimeEngine() {
+        if (_singletonRuntimeManager != null) {
+            try {
+                _singletonRuntimeManager.disposeRuntimeEngine(_singletonRuntimeManager.getRuntimeEngine());
+            } finally {
+                try {
+                    _singletonRuntimeManager.close();
+                } finally {
+                    _singletonRuntimeManager = null;
+                }
+            }
+        }
+    }
+
     /*
     private boolean isContinue(Exchange exchange, Message message) {
         return isBoolean(exchange, message, RulesConstants.CONTINUE_PROPERTY);
@@ -236,15 +307,15 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
         return isBoolean(exchange, message, RulesConstants.DISPOSE_PROPERTY);
     }
 
-    private final class FireUntilHalt implements Runnable, KnowledgeDisposal {
+    private final class FireUntilHalt implements Runnable, DisposeListener {
 
         private final RulesExchangeHandler _handler;
-        private final KnowledgeSession _session;
+        private final KnowledgeRuntimeEngine _runtime;
         private final ClassLoader _loader;
 
-        private FireUntilHalt(RulesExchangeHandler handler, KnowledgeSession session, ClassLoader loader) {
+        private FireUntilHalt(RulesExchangeHandler handler, KnowledgeRuntimeEngine runtime, ClassLoader loader) {
             _handler = handler;
-            _session = session;
+            _runtime = runtime;
             _loader = loader;
         }
 
@@ -252,10 +323,10 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
         public void run() {
             ClassLoader originalLoader = Classes.setTCCL(_loader);
             try {
-                _session.getStateful().fireUntilHalt();
+                _runtime.getKieSession().fireUntilHalt();
             } finally {
                 try {
-                    _handler.disposeStatefulSession();
+                    _handler.disposeSingletonRuntimeEngine();
                 } finally {
                     Classes.setTCCL(originalLoader);
                 }
@@ -263,7 +334,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler<RulesComponen
         }
 
         @Override
-        public void dispose() {
+        public void onDispose(RuntimeEngine runtime) {
             _handler._fireUntilHaltThread = null;
         }
 

@@ -13,9 +13,9 @@
  */
 package org.switchyard.component.bpm.config.model.v1;
 
-import org.switchyard.component.bpm.BPMOperationType;
-import org.switchyard.component.common.knowledge.OperationType;
+import org.switchyard.component.bpm.operation.BPMOperationType;
 import org.switchyard.component.common.knowledge.config.model.v1.V1OperationModel;
+import org.switchyard.component.common.knowledge.operation.KnowledgeOperationType;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
@@ -47,7 +47,7 @@ public class V1BPMOperationModel extends V1OperationModel {
      * {@inheritDoc}
      */
     @Override
-    public OperationType getType() {
+    public KnowledgeOperationType getType() {
         String type = getModelAttribute("type");
         return type != null ? BPMOperationType.valueOf(type) : null;
     }

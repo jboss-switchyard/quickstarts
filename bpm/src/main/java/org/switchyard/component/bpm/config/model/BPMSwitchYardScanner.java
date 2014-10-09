@@ -23,7 +23,6 @@ import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.classpath.ClasspathScanner;
 import org.switchyard.common.type.classpath.IsAnnotationPresentFilter;
 import org.switchyard.component.bpm.BPMMessages;
-import org.switchyard.component.bpm.BPMOperationType;
 import org.switchyard.component.bpm.annotation.AbortProcessInstance;
 import org.switchyard.component.bpm.annotation.BPM;
 import org.switchyard.component.bpm.annotation.SignalEvent;
@@ -33,11 +32,7 @@ import org.switchyard.component.bpm.annotation.UserGroupCallback;
 import org.switchyard.component.bpm.annotation.WorkItemHandler;
 import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1BPMOperationModel;
-import org.switchyard.component.bpm.config.model.v1.V1UserGroupCallbackModel;
-import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlerModel;
-import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlersModel;
-import org.switchyard.component.bpm.service.SwitchYardServiceTaskHandler;
-import org.switchyard.component.bpm.util.WorkItemHandlers;
+import org.switchyard.component.bpm.operation.BPMOperationType;
 import org.switchyard.component.common.knowledge.annotation.Fault;
 import org.switchyard.component.common.knowledge.annotation.Global;
 import org.switchyard.component.common.knowledge.annotation.Input;
@@ -45,7 +40,15 @@ import org.switchyard.component.common.knowledge.annotation.Output;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeSwitchYardScanner;
 import org.switchyard.component.common.knowledge.config.model.OperationModel;
 import org.switchyard.component.common.knowledge.config.model.OperationsModel;
+import org.switchyard.component.common.knowledge.config.model.UserGroupCallbackModel;
+import org.switchyard.component.common.knowledge.config.model.WorkItemHandlerModel;
+import org.switchyard.component.common.knowledge.config.model.WorkItemHandlersModel;
 import org.switchyard.component.common.knowledge.config.model.v1.V1OperationsModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1UserGroupCallbackModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1WorkItemHandlerModel;
+import org.switchyard.component.common.knowledge.config.model.v1.V1WorkItemHandlersModel;
+import org.switchyard.component.common.knowledge.service.StandardSwitchYardServiceTaskHandler;
+import org.switchyard.component.common.knowledge.service.SwitchYardServiceTaskHandler;
 import org.switchyard.config.model.ScannerInput;
 import org.switchyard.config.model.ScannerOutput;
 import org.switchyard.config.model.composite.ComponentModel;
@@ -259,13 +262,11 @@ public class BPMSwitchYardScanner extends KnowledgeSwitchYardScanner {
             workItemHandlerModel.setClazz(clazz);
             String name = workItemHandlerAnnotation.name();
             if (UNDEFINED.equals(name)) {
-                org.kie.api.runtime.process.WorkItemHandler wih = WorkItemHandlers.newWorkItemHandler(clazz, null, null);
-                if (wih instanceof SwitchYardServiceTaskHandler) {
-                    SwitchYardServiceTaskHandler ssth = (SwitchYardServiceTaskHandler)wih;
-                    if (ssth.getName() != null) {
-                        name = ssth.getName();
-                    }
-                } else if (wih instanceof AbstractHTWorkItemHandler) {
+                if (StandardSwitchYardServiceTaskHandler.class.isAssignableFrom(clazz)) {
+                    name = StandardSwitchYardServiceTaskHandler.SERVICE_TASK;
+                } else if (SwitchYardServiceTaskHandler.class.isAssignableFrom(clazz)) {
+                    name = SwitchYardServiceTaskHandler.SWITCHYARD_SERVICE_TASK;
+                } else if (AbstractHTWorkItemHandler.class.isAssignableFrom(clazz)) {
                     name = "Human Task";
                 }
             }

@@ -6,7 +6,7 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -17,7 +17,6 @@ import static org.switchyard.component.common.knowledge.KnowledgeConstants.DEFAU
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.xml.namespace.QName;
 
@@ -28,14 +27,16 @@ import org.switchyard.ExchangePhase;
 import org.switchyard.HandlerException;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
+import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.knowledge.config.model.KnowledgeComponentImplementationModel;
-import org.switchyard.component.common.knowledge.session.KnowledgeSession;
-import org.switchyard.component.common.knowledge.session.KnowledgeSessionFactory;
-import org.switchyard.component.common.knowledge.util.Environments;
-import org.switchyard.component.common.knowledge.util.Operations;
-import org.switchyard.component.common.knowledge.util.Resources;
+import org.switchyard.component.common.knowledge.operation.KnowledgeOperation;
+import org.switchyard.component.common.knowledge.operation.KnowledgeOperations;
+import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeEngine;
+import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeManager;
+import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeManagerFactory;
+import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeManagerType;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.deploy.ServiceHandler;
 import org.switchyard.metadata.ExchangeContract;
@@ -43,21 +44,17 @@ import org.switchyard.metadata.ServiceOperation;
 
 /**
  * An abstract "knowledge" implementation of an ExchangeHandler.
- * 
- * @param <M> the model implementation
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
  */
-public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImplementationModel> extends BaseServiceHandler implements ServiceHandler {
+public abstract class KnowledgeExchangeHandler extends BaseServiceHandler implements ServiceHandler {
 
-    private final String _deploymentId;
-    private final M _model;
+    private final KnowledgeComponentImplementationModel _model;
     private final ServiceDomain _serviceDomain;
     private final QName _serviceName;
-    private ClassLoader _loader;
     private final Map<String, KnowledgeOperation> _operations = new HashMap<String, KnowledgeOperation>();
-    private KnowledgeSessionFactory _sessionFactory;
-    private KnowledgeSession _statefulSession;
+    private ClassLoader _loader;
+    private KnowledgeRuntimeManagerFactory _runtimeManagerFactory;
 
     /**
      * Constructs a new KnowledgeExchangeHandler with the specified model, service domain, and service name.
@@ -65,36 +62,18 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * @param serviceDomain the specified service domain
      * @param serviceName the specified service name
      */
-    public KnowledgeExchangeHandler(M model, ServiceDomain serviceDomain, QName serviceName) {
+    public KnowledgeExchangeHandler(KnowledgeComponentImplementationModel model, ServiceDomain serviceDomain, QName serviceName) {
         super(serviceDomain);
-        // TODO: revisit how deploymentId is created and used
-        _deploymentId = serviceName.toString();
         _model = model;
         _serviceDomain = serviceDomain;
         _serviceName = serviceName;
     }
 
     /**
-     * Gets the deployment id.
-     * @return the deployment id
-     */
-    protected String getDeploymentId() {
-        return _deploymentId;
-    }
-
-    /**
-     * Gets the model.
-     * @return the model
-     */
-    protected M getModel() {
-        return _model;
-    }
-
-    /**
      * Gets the service domain.
      * @return the service domain
      */
-    protected ServiceDomain getServiceDomain() {
+    public ServiceDomain getServiceDomain() {
         return _serviceDomain;
     }
 
@@ -102,7 +81,7 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
      * Gets the service name.
      * @return the service name
      */
-    protected QName getServiceName() {
+    public QName getServiceName() {
         return _serviceName;
     }
 
@@ -115,93 +94,38 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     }
 
     /**
-     * Gets any property overrides.
-     * @return any property overrides
-     */
-    protected Properties getPropertyOverrides() {
-        return new Properties();
-    }
-
-    /**
-     * Gets any environment overrides.
-     * @return any environment overrides
-     */
-    protected Map<String, Object> getEnvironmentOverrides() {
-        Map<String, Object> env = new HashMap<String, Object>();
-        env.put(Environments.DEPLOYMENT_ID, getDeploymentId());
-        return env;
-    }
-
-    /**
-     * Gets a new stateless knowledge session.
-     * @return a new stateless knowledge session
-     */
-    protected KnowledgeSession newStatelessSession() {
-        return _sessionFactory.newStatelessSession();
-    }
-
-    /**
-     * Gets the stateful knowledge session.
-     * @return the stateful knowledge session
-     */
-    protected KnowledgeSession getStatefulSession() {
-        if (_statefulSession == null) {
-            _statefulSession = _sessionFactory.newStatefulSession(getEnvironmentOverrides());
-        }
-        return _statefulSession;
-    }
-
-    /**
-     * Gets the persistent knowledge session
-     * @return the persistent knowledge session
-     */
-    protected KnowledgeSession getPersistentSession(Integer sessionId) {
-        if (_statefulSession != null) {
-            if (!_statefulSession.isPersistent() || (sessionId != null && !sessionId.equals(_statefulSession.getId()))) {
-                disposeStatefulSession();
-            }
-        }
-        if (_statefulSession == null) {
-            _statefulSession = _sessionFactory.getPersistentSession(getEnvironmentOverrides(), sessionId);
-        }
-        return _statefulSession;
-    }
-
-    /**
-     * Disposes the stateful session.
-     */
-    protected void disposeStatefulSession() {
-        if (_statefulSession != null) {
-            try {
-                _statefulSession.dispose();
-            } finally {
-                _statefulSession = null;
-            }
-        }
-    }
-
-    /**
-     * Disposes the session factory.
-     */
-    private void disposeSessionFactory() {
-        if (_sessionFactory != null) {
-            try {
-                _sessionFactory.dispose();
-            } finally {
-                _sessionFactory = null;
-            }
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
     protected void doStart() {
         _loader = Classes.getClassLoader(getDeploymentClassLoader(), getClass().getClassLoader());
-        Resources.installTypes(_loader);
-        Operations.registerOperations(_model, _operations, getDefaultOperation());
-        _sessionFactory = KnowledgeSessionFactory.newSessionFactory(_model, _loader, _serviceDomain, getPropertyOverrides());
+        ResourceType.install(_loader);
+        KnowledgeOperations.registerOperations(_model, _operations, getDefaultOperation());
+        _runtimeManagerFactory = new KnowledgeRuntimeManagerFactory(_loader, _serviceDomain, _serviceName, _model);
+    }
+
+    /**
+     * Creates a new Singleton KnowledgeRuntimeManager.
+     * @return the Singleton KnowledgeRuntimeManager
+     */
+    protected KnowledgeRuntimeManager newSingletonRuntimeManager() {
+        return _runtimeManagerFactory.newRuntimeManager(KnowledgeRuntimeManagerType.SINGLETON);
+    }
+
+    /**
+     * Creates a new PerRequest KnowledgeRuntimeManager.
+     * @return the PerRequest KnowledgeRuntimeManager
+     */
+    protected KnowledgeRuntimeManager newPerRequestRuntimeManager() {
+        return _runtimeManagerFactory.newRuntimeManager(KnowledgeRuntimeManagerType.PER_REQUEST);
+    }
+
+    /**
+     * Creates a new PerProcessInstance KnowledgeRuntimeManager.
+     * @return the PerProcessInstance KnowledgeRuntimeManager
+     */
+    protected KnowledgeRuntimeManager newPerProcessInstanceRuntimeManager() {
+        return _runtimeManagerFactory.newRuntimeManager(KnowledgeRuntimeManagerType.PER_PROCESS_INSTANCE);
     }
 
     /**
@@ -211,11 +135,6 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     protected void doStop() {
         _loader = null;
         _operations.clear();
-        try {
-            disposeStatefulSession();
-        } finally {
-            disposeSessionFactory();
-        }
     }
 
     /**
@@ -359,14 +278,14 @@ public abstract class KnowledgeExchangeHandler<M extends KnowledgeComponentImple
     }
 
     /**
-     * Gets the global variables from the session.
-     * @param session the session
+     * Gets the global variables from the knowledge runtime engine.
+     * @param runtimeEngine the knowledge runtime engine
      * @return the global variables
      */
-    protected Map<String, Object> getGlobalVariables(KnowledgeSession session) {
+    protected Map<String, Object> getGlobalVariables(KnowledgeRuntimeEngine runtimeEngine) {
         Map<String, Object> globalVariables = new HashMap<String, Object>();
-        if (session != null) {
-            Globals globals = session.getGlobals();
+        if (runtimeEngine != null) {
+            Globals globals = runtimeEngine.getSessionGlobals();
             if (globals != null) {
                 for (String key : globals.getGlobalKeys()) {
                     Object value = globals.get(key);

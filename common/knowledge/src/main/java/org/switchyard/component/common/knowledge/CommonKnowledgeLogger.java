@@ -75,5 +75,23 @@ public interface CommonKnowledgeLogger {
     @LogMessage(level = Level.ERROR)
     @Message(id = 34606, value = "%s")
     void formattedFaultMessage(String emsg);
+
+    /**
+     * unknownDefaultingTo method definition.
+     * @param faultAction the faultAction
+     * @param fa the fa
+     * @param message the message
+     * @param name the FaultAction.DEFAULT.name())
+     */
+    @LogMessage(level = Level.WARN)
+    @Message(id = 34607, value = "Unknown %s: %s (%s). Defaulting to %s.")
+    void unknownDefaultingTo(String faultAction, String fa, String message, String name);
+
+    /**
+     * attemptToRegisterListenerReturnedNull method definition.
+     */
+    @LogMessage(level = Level.DEBUG)
+    @Message(id = 34608, value = "Attempt to register listener returned null")
+    void attemptToRegisterListenerReturnedNull();
 }
 

@@ -13,46 +13,14 @@
  */
 package org.switchyard.component.bpm.transaction;
 
-import java.util.Properties;
-
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-
-import org.hibernate.HibernateException;
-import org.hibernate.transaction.TransactionManagerLookup;
+import org.switchyard.component.common.knowledge.transaction.KnowledgeTransactionManagerLookup;
 
 /**
- * AS7TransactionManagerLookup.
+ * AS7TransactionManagerLookup is <b>DEPRECATED</b>.
  * <br/><br/>
  * See: <a href="http://kverlaen.blogspot.com/2011/07/jbpm5-on-as7-lightning.html">jBPM5 on AS7: Lightning !</a>
- * @deprecated use AS7JtaPlatform instead
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @deprecated Use {@link AS7JtaPlatform} instead
  */
 @Deprecated
-public class AS7TransactionManagerLookup implements TransactionManagerLookup {
-
-    /**
-     * {@inheritDoc}
-     * @Override
-     */
-    public TransactionManager getTransactionManager(Properties properties) throws HibernateException {
-        return (TransactionManager)AS7TransactionHelper.getTransactionManager(properties);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @Override
-     */
-    public String getUserTransactionName() {
-        return AS7TransactionHelper.JNDI_USER_TRANSACTION;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @Override
-     */
-    public Object getTransactionIdentifier(Transaction transaction) {
-        return transaction;
-    }
-
-}
+public class AS7TransactionManagerLookup extends KnowledgeTransactionManagerLookup {}

@@ -6,7 +6,7 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS, 
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -14,7 +14,6 @@
 package org.switchyard.component.common.knowledge.config.model;
 
 import org.switchyard.common.io.resource.ResourceType;
-import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.component.common.knowledge.LoggerType;
 import org.switchyard.component.common.knowledge.annotation.Channel;
 import org.switchyard.component.common.knowledge.annotation.Container;
@@ -96,12 +95,8 @@ public abstract class KnowledgeSwitchYardScanner implements Scanner<SwitchYardMo
             channelModel.setClazz(clazz);
             String name = channelAnnotation.name();
             if (UNDEFINED.equals(name)) {
-                org.kie.api.runtime.Channel c = Construction.construct(clazz);
-                if (c instanceof SwitchYardServiceChannel) {
-                    SwitchYardServiceChannel sysc = (SwitchYardServiceChannel)c;
-                    if (sysc.getName() != null) {
-                        name = sysc.getName();
-                    }
+                if (SwitchYardServiceChannel.class.isAssignableFrom(clazz)) {
+                    name = SwitchYardServiceChannel.SERVICE;
                 }
             }
             if (UNDEFINED.equals(name)) {

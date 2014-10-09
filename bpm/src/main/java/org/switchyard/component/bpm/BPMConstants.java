@@ -25,9 +25,17 @@ public final class BPMConstants {
     /** urn:switchyard-component-bpm:bpm:1.0 . */
     public static final String BPM_NAMESPACE = "urn:switchyard-component-bpm:bpm:1.0";
 
-    /** sessionId . */
+    /**
+     * sessionId .
+     * @deprecated
+     */
+    @Deprecated
     public static final String SESSION_ID = "sessionId";
-    /** {urn:switchyard-component-bpm:bpm:1.0}sessionId . */
+    /**
+     * {urn:switchyard-component-bpm:bpm:1.0}sessionId .
+     * @deprecated
+     */
+    @Deprecated
     public static final String SESSION_ID_PROPERTY = new QName(BPM_NAMESPACE, SESSION_ID).toString();
 
     /** processInstanceId . */

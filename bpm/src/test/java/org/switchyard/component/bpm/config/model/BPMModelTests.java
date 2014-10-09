@@ -38,8 +38,9 @@ import org.switchyard.common.io.pull.StringPuller;
 import org.switchyard.common.io.resource.ResourceDetail;
 import org.switchyard.common.io.resource.ResourceType;
 import org.switchyard.common.type.Classes;
-import org.switchyard.component.bpm.BPMOperationType;
+import org.switchyard.component.bpm.operation.BPMOperationType;
 import org.switchyard.component.common.knowledge.LoggerType;
+import org.switchyard.component.common.knowledge.config.manifest.ContainerManifest;
 import org.switchyard.component.common.knowledge.config.model.ChannelModel;
 import org.switchyard.component.common.knowledge.config.model.ContainerModel;
 import org.switchyard.component.common.knowledge.config.model.ExtraJaxbClassModel;
@@ -55,7 +56,8 @@ import org.switchyard.component.common.knowledge.config.model.OutputModel;
 import org.switchyard.component.common.knowledge.config.model.RemoteJmsModel;
 import org.switchyard.component.common.knowledge.config.model.RemoteModel;
 import org.switchyard.component.common.knowledge.config.model.RemoteRestModel;
-import org.switchyard.component.common.knowledge.util.Containers;
+import org.switchyard.component.common.knowledge.config.model.UserGroupCallbackModel;
+import org.switchyard.component.common.knowledge.config.model.WorkItemHandlerModel;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.Scanner;
 import org.switchyard.config.model.ScannerInput;
@@ -166,7 +168,7 @@ public class BPMModelTests {
         if (CONTAINER_XML.equals(xml)) {
             Assert.assertNull(resources);
             Assert.assertNull(remote);
-            ReleaseId rid = Containers.toReleaseId(container.getReleaseId());
+            ReleaseId rid = ContainerManifest.toReleaseId(container.getReleaseId());
             Assert.assertEquals("theGroupId", rid.getGroupId());
             Assert.assertEquals("theArtifactId", rid.getArtifactId());
             Assert.assertEquals("theVersion", rid.getVersion());
@@ -215,7 +217,6 @@ public class BPMModelTests {
             } else if (REMOTEREST_XML.equals(xml)) {
                 RemoteRestModel remoteRest = (RemoteRestModel)remote;
                 Assert.assertEquals("http://localhost:8080/kie-wb/", remoteRest.getUrl());
-                Assert.assertEquals(true, remoteRest.isUseFormBasedAuth());
             }
         } else {
             Assert.fail("couldn't find container, resources, remoteJms, or remoteRest");

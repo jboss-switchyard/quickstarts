@@ -12,10 +12,16 @@
  - See the License for the specific language governing permissions and
  - limitations under the License.
  -->
-<implementation.bpm xmlns="urn:switchyard-component-bpm:config:1.0">
-    <manifest>
-        <resources>
-            <resource location="/org/switchyard/component/bpm/session/BPMSessionTests-BadProcess.bpmn" type="BPMN2"/>
-        </resources>
-    </manifest>
-</implementation.bpm>
+<switchyard xmlns="urn:switchyard-config:switchyard:2.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="BPMSessionTests" targetNamespace="urn:bpm:test:2.0">
+        <component name="TestProcess">
+            <implementation.bpm xmlns="urn:switchyard-component-bpm:config:2.0">
+                <manifest>
+                    <resources>
+                        <resource location="/org/switchyard/component/bpm/session/BPMSessionTests-BadProcess.bpmn" type="BPMN2"/>
+                    </resources>
+                </manifest>
+            </implementation.bpm>
+        </component>
+    </composite>
+</switchyard>

@@ -1,9 +1,6 @@
 package org.switchyard.component.bpm;
 
 import org.jboss.logging.Logger;
-import org.jboss.logging.Logger.Level;
-import org.jboss.logging.annotations.LogMessage;
-import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 /**
  * <p/>
@@ -18,14 +15,4 @@ public interface BPMLogger {
      */
     BPMLogger ROOT_LOGGER = Logger.getMessageLogger(BPMLogger.class, BPMLogger.class.getPackage().getName());
 
-    /**
-     * null method definition.
-     * @param faultAction the faultAction
-     * @param fa the fa
-     * @param message the message
-     * @param name the FaultAction.DEFAULT.name())
-     */
-    @LogMessage(level = Level.WARN)
-    @Message(id = 31601, value = "Unknown %s: %s (%s). Defaulting to %s.")
-    void unknownDefaultingTo(String faultAction, String fa, String message, String name);
 }

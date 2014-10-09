@@ -13,42 +13,14 @@
  */
 package org.switchyard.component.bpm.transaction;
 
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
-
-import org.hibernate.HibernateException;
-import org.hibernate.service.jta.platform.internal.AbstractJtaPlatform;
+import org.switchyard.component.common.knowledge.transaction.KnowledgeJtaPlatform;
 
 /**
- * AS7JtaPlatform.
+ * AS7JtaPlatform is <b>DEPRECATED</b>.
  * 
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2012 Red Hat Inc.
+ * @deprecated Use {@link KnowledgeJtaPlatform} instead.
  */
+@Deprecated
 @SuppressWarnings("serial")
-public class AS7JtaPlatform extends AbstractJtaPlatform {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected TransactionManager locateTransactionManager() {
-        try {
-            return TransactionManagerLocator.INSTANCE.getTransactionManager();
-        } catch (Exception e) {
-            throw new HibernateException(e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected UserTransaction locateUserTransaction() {
-        try {
-            return TransactionManagerLocator.INSTANCE.getUserTransaction();
-        } catch (Exception e) {
-            throw new HibernateException(e);
-        }
-    }
-
-}
+public class AS7JtaPlatform extends KnowledgeJtaPlatform {}

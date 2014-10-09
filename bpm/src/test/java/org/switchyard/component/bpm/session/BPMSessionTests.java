@@ -13,16 +13,22 @@
  */
 package org.switchyard.component.bpm.session;
 
-import junit.framework.Assert;
+import javax.xml.namespace.QName;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.manager.RuntimeEngine;
+import org.switchyard.ServiceDomain;
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
-import org.switchyard.component.common.knowledge.session.KnowledgeSession;
-import org.switchyard.component.common.knowledge.session.KnowledgeSessionFactory;
+import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeManager;
+import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeManagerFactory;
+import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeManagerType;
 import org.switchyard.config.model.ModelPuller;
-import org.switchyard.SwitchYardException;
+import org.switchyard.config.model.switchyard.SwitchYardModel;
+import org.switchyard.deploy.ServiceDomainManager;
 
 /**
  * Tests BPM sessions.
@@ -34,11 +40,11 @@ public class BPMSessionTests {
     private static final String GOOD_RESOURCES = "/org/switchyard/component/bpm/session/BPMSessionTests-GoodResources.xml";
     private static final String BAD_RESOURCES = "/org/switchyard/component/bpm/session/BPMSessionTests-BadResources.xml";
 
-    private ModelPuller<BPMComponentImplementationModel> _puller;
+    private ModelPuller<SwitchYardModel> _puller;
 
     @Before
     public void before() throws Exception {
-        _puller = new ModelPuller<BPMComponentImplementationModel>();
+        _puller = new ModelPuller<SwitchYardModel>();
     }
 
     @After
@@ -49,23 +55,31 @@ public class BPMSessionTests {
     @Test
     public void testGoodResources() throws Exception {
         Throwable t = doTestResources(GOOD_RESOURCES);
+        //t.printStackTrace();
         Assert.assertNull(t);
     }
 
     @Test
     public void testBadResources() throws Exception {
         Throwable t = doTestResources(BAD_RESOURCES);
-        //System.err.println(t.getMessage());
-        Assert.assertTrue(t instanceof SwitchYardException);
+        //t.printStackTrace();
+        Assert.assertNotNull(t);
     }
 
     private Throwable doTestResources(String xml) {
         try {
             ClassLoader loader = getClass().getClassLoader();
-            BPMComponentImplementationModel model = _puller.pull(xml, loader);
-            KnowledgeSessionFactory factory = KnowledgeSessionFactory.newSessionFactory(model, loader, null, null);
-            KnowledgeSession session = factory.newStatefulSession(null);
-            session.getStateful().startProcess("TestProcess");
+            SwitchYardModel switchyardModel = _puller.pull(xml, loader);
+            BPMComponentImplementationModel implementationModel = (BPMComponentImplementationModel)switchyardModel.getComposite().getComponents().get(0).getImplementation();
+            ServiceDomain serviceDomain = new ServiceDomainManager().createDomain();
+            QName serviceName = new QName("test");
+            KnowledgeRuntimeManagerFactory runtimeManagerFactory = new KnowledgeRuntimeManagerFactory(loader, serviceDomain, serviceName, implementationModel);
+            KnowledgeRuntimeManager runtimeManager = runtimeManagerFactory.newRuntimeManager(KnowledgeRuntimeManagerType.SINGLETON);
+            RuntimeEngine runtimeEngine = runtimeManager.getRuntimeEngine();
+            KieSession session = runtimeEngine.getKieSession();
+            session.startProcess("TestProcess");
+            runtimeManager.disposeRuntimeEngine(runtimeEngine);
+            runtimeManager.close();
             return null;
         } catch (Throwable t) {
             return t;

@@ -13,9 +13,6 @@
  */
 package org.switchyard.component.rules.deploy;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 
 import org.switchyard.component.rules.config.model.RulesComponentImplementationModel;
@@ -36,8 +33,6 @@ public class RulesActivator extends BaseActivator {
      */
     public static final String RULES_TYPE = "rules";
 
-    private Map<QName, RulesExchangeHandler> _handlers = new HashMap<QName, RulesExchangeHandler>();
-
     /**
      * Constructs a new Activator of type "rules".
      */
@@ -50,9 +45,7 @@ public class RulesActivator extends BaseActivator {
     */
     @Override
     public ServiceHandler activateService(QName name, ComponentModel config) {
-        RulesExchangeHandler handler = new RulesExchangeHandler((RulesComponentImplementationModel)config.getImplementation(), getServiceDomain(), name);
-        _handlers.put(name, handler);
-        return handler;
+        return new RulesExchangeHandler((RulesComponentImplementationModel)config.getImplementation(), getServiceDomain(), name);
     }
 
     /**
@@ -60,7 +53,7 @@ public class RulesActivator extends BaseActivator {
      */
     @Override
     public void deactivateService(QName name, ServiceHandler handler) {
-        _handlers.remove(name);
+        // no-op
     }
 
 }

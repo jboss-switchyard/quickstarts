@@ -25,9 +25,17 @@ public final class RulesConstants {
     /** urn:switchyard-component-rules:rules:1.0 . */
     public static final String RULES_NAMESPACE = "urn:switchyard-component-rules:rules:1.0";
 
-    /** sessionId . */
+    /**
+     * sessionId .
+     * @deprecated
+     */
+    @Deprecated
     public static final String SESSION_ID = "sessionId";
-    /** {urn:switchyard-component-rules:rules:1.0}sessionId . */
+    /**
+     * {urn:switchyard-component-rules:rules:1.0}sessionId .
+     * @deprecated
+     */
+    @Deprecated
     public static final String SESSION_ID_PROPERTY = new QName(RULES_NAMESPACE, SESSION_ID).toString();
 
     /** continue . */

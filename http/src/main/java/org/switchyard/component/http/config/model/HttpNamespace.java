@@ -99,6 +99,7 @@ public enum HttpNamespace implements Namespace {
         return Util.fromUri(HttpNamespace.class, uri);
     }
 
+    @SuppressWarnings("serial")
     private static final class Util extends Namespace.Util {
         // static final since we only want to do the somewhat expensive work of instantiating this once!
         private static final Descriptor DESCRIPTOR = new Descriptor(HttpNamespace.class);

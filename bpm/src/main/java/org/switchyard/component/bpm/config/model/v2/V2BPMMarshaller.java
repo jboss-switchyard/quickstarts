@@ -13,17 +13,11 @@
  */
 package org.switchyard.component.bpm.config.model.v2;
 
-import static org.switchyard.component.bpm.config.model.UserGroupCallbackModel.USER_GROUP_CALLBACK;
-import static org.switchyard.component.bpm.config.model.WorkItemHandlerModel.WORK_ITEM_HANDLER;
-import static org.switchyard.component.bpm.config.model.WorkItemHandlersModel.WORK_ITEM_HANDLERS;
 import static org.switchyard.component.common.knowledge.config.model.OperationModel.OPERATION;
 
 import org.switchyard.component.bpm.config.model.BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1BPMComponentImplementationModel;
 import org.switchyard.component.bpm.config.model.v1.V1BPMOperationModel;
-import org.switchyard.component.bpm.config.model.v1.V1UserGroupCallbackModel;
-import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlerModel;
-import org.switchyard.component.bpm.config.model.v1.V1WorkItemHandlersModel;
 import org.switchyard.component.common.knowledge.config.model.v2.V2KnowledgeMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
@@ -66,12 +60,6 @@ public class V2BPMMarshaller extends V2KnowledgeMarshaller {
             return new V1BPMComponentImplementationModel(config, desc);
         } else if (OPERATION.equals(name)) {
             return new V1BPMOperationModel(config, desc);
-        } else if (USER_GROUP_CALLBACK.equals(name)) {
-            return new V1UserGroupCallbackModel(config, desc);
-        } else if (WORK_ITEM_HANDLERS.equals(name)) {
-            return new V1WorkItemHandlersModel(config, desc);
-        } else if (WORK_ITEM_HANDLER.equals(name)) {
-            return new V1WorkItemHandlerModel(config, desc);
         }
         return super.read(config);
     }

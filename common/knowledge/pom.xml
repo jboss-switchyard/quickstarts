@@ -33,8 +33,12 @@
             org.switchyard.*;${switchyard.osgi.import.switchyard.version},
             org.switchyard.common.io;${switchyard.osgi.import.switchyard.version},
             org.switchyard.common.io.resource;${switchyard.osgi.import.switchyard.version}, 
+            org.hibernate.*;resolution:=optional,
             *
         </switchyard.osgi.import>
+        <switchyard.osgi.require.bundle>
+            org.kie.api
+        </switchyard.osgi.require.bundle>
     </properties>
     <dependencies>
         <!-- internal dependencies -->
@@ -43,17 +47,69 @@
             <artifactId>switchyard-serial</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.switchyard</groupId>
-            <artifactId>switchyard-serial-jackson</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common</artifactId>
         </dependency>
         <!-- external dependencies -->
         <dependency>
             <groupId>org.drools</groupId>
+            <artifactId>drools-compiler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
             <artifactId>drools-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-decisiontables</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-persistence-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.aether</groupId>
+            <artifactId>aether-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-audit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-bpmn2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-flow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-human-task-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-human-task-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-human-task-workitems</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-persistence-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-runtime-manager</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-workitems</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kie</groupId>
@@ -61,19 +117,32 @@
         </dependency>
         <dependency>
             <groupId>org.kie</groupId>
+            <artifactId>kie-ci</artifactId>
+            <!-- we don't want this showing up in the quickstart tests -->
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
             <artifactId>kie-internal</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kie.remote</groupId>
-            <artifactId>kie-services-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.kie.remote</groupId>
-            <artifactId>kie-services-jaxb</artifactId>
+            <artifactId>kie-remote-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mvel</groupId>
             <artifactId>mvel2</artifactId>
+        </dependency>
+        <!-- OSGi dependencies (build) -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
