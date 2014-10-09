@@ -75,23 +75,74 @@ Running the quickstart
 ======================
 1. Make sure the 'DestinationMetadataProducer.java' and 'ServerMetadataProducer.java' match those of your SAP instance
 
-1. Start AS7 instance
+
+EAP
+----------
+1. Start EAP instance
     cd ${JBOSS_HOME}
     ./bin/standalone.sh
 
-1. Build and deploy the quickstart
+2. Build and deploy the quickstart
 
     cd ${JBOSS_HOME}/quickstarts/camel-sap-binding
-    mvn -Pdeploy install
+    mvn install -Pdeploy
 
-1. Now 'Execute' the program in the SAP and define there some information
+3. Now 'Execute' the program in the SAP and define there some information
     - you will probably need look into the table to specify good date of flight and destinations with using Data Browser (/nse16).
 
-1. You will see the result of flight booking request on SAP GUI window
+4. You will see the result of flight booking request on SAP GUI window
 
-1. Undeploy the quickstart
+5. Undeploy the quickstart
 
-    mvn -Pundeploy clean
+    mvn clean -Pdeploy
+
+
+Wildfly
+----------
+1. Start Wildfly instance
+    cd ${JBOSS_HOME}
+    ./bin/standalone.sh
+
+2. Build and deploy the quickstart
+
+cd ${JBOSS_HOME}/quickstarts/camel-sap-binding
+    mvn -Pdeploy -Pwildfly install
+
+3. Now 'Execute' the program in the SAP and define there some information
+- you will probably need look into the table to specify good date of flight and destinations with using Data Browser (/nse16).
+
+4. You will see the result of flight booking request on SAP GUI window
+
+5. Undeploy the quickstart
+
+    mvn clean -Pdeploy -Pwildfly
+
+
+Karaf
+----------
+1. Start the Karaf server :
+
+${KARAF_HOME}/bin/karaf
+
+2. Add the features URL for the respective version of SwitchYard.   Replace {SWITCHYARD-VERSION}
+with the version of SwitchYard that you are using (ex. 2.0.0): 
+
+karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERSION}/xml/features
+
+3. Install the feature for the sap-binding quickstart :
+
+karaf@root> features:install switchyard-quickstart-camel-sap-binding
+
+4. Now 'Execute' the program in the SAP and define there some information
+- you will probably need look into the table to specify good date of flight and destinations with using Data Browser (/nse16).
+
+5. You will see the result of flight booking request on SAP GUI window
+
+6. Undeploy the quickstart:
+
+karaf@root> features:uninstall switchyard-quickstart-camel-sap-binding
+
+
 
 ## Further Reading
 

@@ -13,9 +13,10 @@ then operation selector choose the spanish operation so you would get a spanish 
 
     Hola Fernando :-)
 
-JBoss AS 7
+
+EAP
 ----------
-1. Start JBoss AS 7 in standalone-full mode:
+1. Start EAP in standalone-full mode:
 
         ${AS}/bin/standalone.sh -server-config standalone-full.xml
 
@@ -36,6 +37,37 @@ JBoss AS 7
 6. Undeploy the quickstart:
 
         mvn clean -Pdeploy
+
+
+Wildfly
+----------
+1. Start Wildfly in standalone-full mode:
+
+${AS}/bin/standalone.sh -server-config standalone-full.xml
+
+2. Add JMS user using add-user.sh with username=guest, password=guestp.1, Realm=ApplicationRealm, role=guest
+
+${AS}}/bin/add-user.sh
+
+3. Build and deploy the quickstart
+
+mvn install -Pdeploy -Pwildfly
+
+4. Execute HornetQClient
+
+mvn exec:java
+
+5. Check the server console for output from the service.
+
+6. Undeploy the quickstart:
+
+mvn clean -Pdeploy -Pwildfly
+
+
+Karaf
+----------
+No Karaf feature is present for this quickstart.
+
 
 Expected Results
 ================

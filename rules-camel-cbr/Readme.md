@@ -22,7 +22,8 @@ Maven
 Running the quickstart
 ======================
 
-JBoss AS 7
+
+EAP
 ----------
 1. Start JBoss AS 7 in standalone mode:
 
@@ -37,13 +38,44 @@ JBoss AS 7
 
         mvn exec:java
 
-You should see the following in the command output:
-```
-```
+See the "Expected Output" section for the expected results.
 
 4. Undeploy the quickstart:
 
         mvn clean -Pdeploy
+
+
+Wildfly
+----------
+1. Start Wildfly in standalone mode:
+
+        ${AS}/bin/standalone.sh
+
+2. Build and deploy the Quickstart :
+
+        mvn install -Pdeploy -Pwildfly
+
+3. Use the RulesCamelCBRClient class to send a request message to the Dealer service.  The client can be
+run from the command-line using:
+
+        mvn exec:java
+
+See the "Expected Output" section for the expected results.
+
+4. Undeploy the quickstart:
+
+mvn clean -Pdeploy -Pwildfly
+
+
+Karaf
+----------
+
+Expected Output
+======================
+```
+13:52:09,079 INFO  [org.switchyard.quickstarts.rules.camel.cbr.RedServiceBean] (http-/127.0.0.1:8080-1) Red service processing boxed widget with id: FF0000-ABC-123
+```
+
 
 ## Further Reading
 

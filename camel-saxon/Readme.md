@@ -11,9 +11,9 @@ This example is invoked through a SOAP gateway binding.
 Running the quickstart
 ======================
 
-JBoss AS 7
+EAP
 ----------
-1. Start JBoss AS 7 in standalone mode:
+1. Start EAP in standalone mode:
 
         ${AS}/bin/standalone.sh
 
@@ -28,6 +28,54 @@ JBoss AS 7
 
    Enter a name "Garfield" or whatever you like.
 
+4. Undeploy the quickstart:
+
+mvn clean -Pdeploy
+
+
+Wildfly
+----------
+1. Start Wildfly in standalone mode:
+
+${AS}/bin/standalone.sh
+
+2. Build and deploy the Quickstart :
+
+mvn install -Pdeploy -Pwildfly
+
+3. Use the CamelSaxonClient class to send a request message to the GreetingService.  The client can be
+run from the command-line using:
+
+mvn exec:java
+
+Enter a name "Garfield" or whatever you like.
+
+4. Undeploy the quickstart:
+
+mvn clean -Pdeploy -Pwildfly
+
+
+Karaf
+----------
+1. Start JBoss AS 7 in standalone mode:
+
+${AS}/bin/standalone.sh
+
+2. Build and deploy the Quickstart :
+
+mvn install -Pdeploy
+
+3. Use the CamelSaxonClient class to send a request message to the GreetingService.  The client can be
+run from the command-line using:
+
+mvn exec:java -Pkaraf
+
+Enter a name "Garfield" or whatever you like.
+
+4. Undeploy the quickstart:
+
+mvn clean -Pdeploy 
+
 
 Expected Output
 ===============
@@ -38,9 +86,6 @@ Expected Output
 00:29:07,606 INFO  [stdout] (http-/127.0.0.1:8080-1) Hello SpongeBob
 ```
 
-4. Undeploy the quickstart:
-
-        mvn clean -Pdeploy
 
 ## Further Reading
 
