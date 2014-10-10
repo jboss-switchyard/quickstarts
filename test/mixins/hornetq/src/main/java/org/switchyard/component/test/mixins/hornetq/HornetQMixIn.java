@@ -38,7 +38,7 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.apache.log4j.Logger;
 import org.hornetq.api.core.HornetQBuffer;
@@ -73,11 +73,16 @@ public class HornetQMixIn extends AbstractTestMixIn {
     
     private static final String HORNETQ_CONF_FILE = "hornetq-configuration.xml";
     private static final String HORNETQ_JMS_CONF_FILE = "hornetq-jms.xml";
+    
+    private static final String HOST_PROP_NAME = "hornetqmixin.host";
+    private static final String PORT_PROP_NAME = "hornetqmixin.port";
+    private static final String HTTP_UPGRADE_ENABLED_PROP_NAME = "hornetqmixin.http.upgrade.enabled";
+    // TODO Use TransportConstants.HTTP_UPGRADE_ENABLED_PROP_NAME instead once we upgrade to HornetQ 2.4.x
+    private static final String HORNETQ_HTTP_UPGRADE_ENABLED_PROP_NAME = "http-upgrade-enabled";
 
     private Logger _logger = Logger.getLogger(HornetQMixIn.class);
     private boolean _startEmbedded;
-    private String _host = TransportConstants.DEFAULT_HOST;
-    private int _port = TransportConstants.DEFAULT_PORT;
+    private Map<String,Object> _transportParams;
     private String _user = null;
     private String _passwd = null; 
     private EmbeddedJMS _embeddedJMS;
@@ -103,6 +108,21 @@ public class HornetQMixIn extends AbstractTestMixIn {
      */
     public HornetQMixIn(boolean embedded) {
         _startEmbedded = embedded;
+        _transportParams = new HashMap<String,Object>();
+        String host = System.getProperty(HOST_PROP_NAME);
+        if (host == null) {
+            host = TransportConstants.DEFAULT_HOST;
+        }
+        _transportParams.put(TransportConstants.HOST_PROP_NAME, host);
+        String port = System.getProperty(PORT_PROP_NAME);
+        if (port == null) {
+            port = Integer.toString(TransportConstants.DEFAULT_PORT);
+        }
+        _transportParams.put(TransportConstants.PORT_PROP_NAME, port);
+        String upgrade = System.getProperty(HTTP_UPGRADE_ENABLED_PROP_NAME);
+        if (upgrade != null) {
+            _transportParams.put(HORNETQ_HTTP_UPGRADE_ENABLED_PROP_NAME, upgrade);
+        }
     }
     
     @Override
@@ -127,7 +147,7 @@ public class HornetQMixIn extends AbstractTestMixIn {
      * @return this instance
      */
     public HornetQMixIn setHost(String host) {
-        _host = host;
+        _transportParams.put(TransportConstants.HOST_PROP_NAME, host);
         return this;
     }
     
@@ -137,10 +157,31 @@ public class HornetQMixIn extends AbstractTestMixIn {
      * @return this instance
      */
     public HornetQMixIn setPort(int port) {
-        _port = port;
+        _transportParams.put(TransportConstants.PORT_PROP_NAME, port);
         return this;
     }
-    
+
+    /**
+     * Set http-upgrade-enabled.
+     * @param upgrade http-upgrade-enabled
+     * @return this instance
+     */
+    public HornetQMixIn setHttpUpgradeEnabled(boolean upgrade) {
+        _transportParams.put(HORNETQ_HTTP_UPGRADE_ENABLED_PROP_NAME, upgrade);
+        return this;
+    }
+
+    /**
+     * Set a transport parameter.
+     * @param key key
+     * @param value value
+     * @return this instance
+     */
+    public HornetQMixIn setTransportParameter(String key, Object value) {
+        _transportParams.put(key, value);
+        return this;
+    }
+
     /**
      * Set user to connect.
      * @param user user
@@ -229,10 +270,8 @@ public class HornetQMixIn extends AbstractTestMixIn {
                     _serverLocator = HornetQClient.createServerLocatorWithoutHA(getTransports(getConfiguration()));
                     _clientSessionFactory = _serverLocator.createSessionFactory();
                 } else {
-                    Map<String, Object> params = new HashMap<String,Object>();
-                    params.put(TransportConstants.HOST_PROP_NAME, _host);
-                    params.put(TransportConstants.PORT_PROP_NAME, _port);
-                    _serverLocator = HornetQClient.createServerLocatorWithoutHA(new TransportConfiguration(NettyConnectorFactory.class.getName(), params));
+                    _serverLocator = HornetQClient.createServerLocatorWithoutHA(
+                            new TransportConfiguration(NettyConnectorFactory.class.getName(), _transportParams));
                     _clientSessionFactory = _serverLocator.createSessionFactory();
                 }
             }
@@ -342,10 +381,8 @@ public class HornetQMixIn extends AbstractTestMixIn {
                 if (_startEmbedded) {
                     _jmsConnectionFactory = new HornetQConnectionFactory(false, getTransports(getConfiguration()));
                 } else {
-                    Map<String, Object> params = new HashMap<String,Object>();
-                    params.put(TransportConstants.HOST_PROP_NAME, _host);
-                    params.put(TransportConstants.PORT_PROP_NAME, _port);
-                    _jmsConnectionFactory = new HornetQConnectionFactory(false, new TransportConfiguration(NettyConnectorFactory.class.getName(), params));
+                    _jmsConnectionFactory = new HornetQConnectionFactory(false,
+                            new TransportConfiguration(NettyConnectorFactory.class.getName(), _transportParams));
                 }
                 _jmsConnection = _jmsConnectionFactory.createConnection(_user, _passwd);
                 _jmsConnection.start();

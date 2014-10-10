@@ -38,30 +38,15 @@
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-ra</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hornetq</groupId>
-            <artifactId>hornetq-core-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hornetq</groupId>
             <artifactId>hornetq-jms-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-server</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.hornetq</groupId>
             <artifactId>hornetq-jms-server</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty</artifactId>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
