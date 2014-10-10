@@ -48,6 +48,7 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
         <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
+        <version.wildfly.hornetq>2.4.1.Final</version.wildfly.hornetq>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -207,7 +208,67 @@
             <id>wildfly</id>
             <properties>
                 <wildfly.port>9990</wildfly.port>
+                <hornetqmixin.http.upgrade.enabled>true</hornetqmixin.http.upgrade.enabled>
+                <hornetqmixin.port>8080</hornetqmixin.port>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.hornetq</groupId>
+                    <artifactId>hornetq-core-client</artifactId>
+                    <version>${version.wildfly.hornetq}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.hornetq</groupId>
+                    <artifactId>hornetq-jms-client</artifactId>
+                    <version>${version.wildfly.hornetq}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.hornetq</groupId>
+                    <artifactId>hornetq-server</artifactId>
+                    <version>${version.wildfly.hornetq}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.hornetq</groupId>
+                    <artifactId>hornetq-jms-server</artifactId>
+                    <version>${version.wildfly.hornetq}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.hornetq</groupId>
+                    <artifactId>hornetq-commons</artifactId>
+                    <version>${version.wildfly.hornetq}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.hornetq</groupId>
+                    <artifactId>hornetq-journal</artifactId>
+                    <version>${version.wildfly.hornetq}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                            <systemProperties>
+                                <systemProperty>
+                                    <key>hornetqmixin.port</key>
+                                    <value>8080</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <key>hornetqmixin.http.upgrade.enabled</key>
+                                    <value>true</value>
+                                </systemProperty>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
