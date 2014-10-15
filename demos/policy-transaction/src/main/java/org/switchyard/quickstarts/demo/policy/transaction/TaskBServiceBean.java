@@ -31,7 +31,6 @@ import org.switchyard.runtime.util.TransactionManagerLocator;
  *  current transaction, pass <code>TaskBServiceBean.ROLLBACK</code> as the command name.
  */
 @Service(TaskBService.class)
-@Requires(transaction = { TransactionPolicy.SUSPENDS_TRANSACTION, TransactionPolicy.MANAGED_TRANSACTION_LOCAL })
 public class TaskBServiceBean implements TaskBService {
 
     /** rollback command for this subtask. */
@@ -42,7 +41,6 @@ public class TaskBServiceBean implements TaskBService {
 
     @Inject
     @Reference("StoreBService")
-    @Requires(transaction = TransactionPolicy.SUSPENDS_TRANSACTION)
     private StoreService _storeB;
 
     @Override

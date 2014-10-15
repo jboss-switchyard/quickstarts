@@ -31,7 +31,6 @@ import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 import org.switchyard.quickstarts.demo.security.propagation.ejb.TestEJBBeanLocal;
 
-@Requires(security = { CONFIDENTIALITY, CLIENT_AUTHENTICATION, AUTHORIZATION })
 @Service(WorkService.class)
 public class WorkServiceBean implements WorkService {
 

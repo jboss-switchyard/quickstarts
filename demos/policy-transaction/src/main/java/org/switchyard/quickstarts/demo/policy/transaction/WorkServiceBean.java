@@ -33,7 +33,6 @@ import org.switchyard.runtime.util.TransactionManagerLocator;
  *  current transaction, pass <code>WorkService.ROLLBACK</code> as the command name.
  */
 @Service(WorkService.class)
-@Requires(transaction = TransactionPolicy.PROPAGATES_TRANSACTION)
 public class WorkServiceBean
     implements org.switchyard.quickstarts.demo.policy.transaction.WorkService {
 
@@ -44,17 +43,14 @@ public class WorkServiceBean
 
     @Inject
     @Reference
-    @Requires(transaction = TransactionPolicy.PROPAGATES_TRANSACTION)
     private TaskAService _taskAService;
 
     @Inject
     @Reference
-    @Requires(transaction = TransactionPolicy.SUSPENDS_TRANSACTION)
     private TaskBService _taskBService;
 
     @Inject
     @Reference
-    @Requires(transaction = TransactionPolicy.SUSPENDS_TRANSACTION)
     private TaskCService _taskCService;
 
     @Override

@@ -26,7 +26,6 @@ import org.switchyard.Exchange;
 import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Service;
 
-@Requires(security = { CONFIDENTIALITY, CLIENT_AUTHENTICATION })
 @Service(WorkService.class)
 public class WorkServiceBean implements WorkService {
 
