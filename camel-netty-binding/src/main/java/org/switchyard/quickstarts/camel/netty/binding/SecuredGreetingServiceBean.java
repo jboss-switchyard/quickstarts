@@ -28,7 +28,6 @@ import org.switchyard.component.bean.Service;
  *
  * @author Lukasz Dywicki
  */
-@Requires(security = { CONFIDENTIALITY, CLIENT_AUTHENTICATION, AUTHORIZATION })
 @Service(name = "SecuredGreetingService", componentName = "SecuredGreetingService", value = GreetingService.class)
 public class SecuredGreetingServiceBean extends GreetingServiceBean {
 

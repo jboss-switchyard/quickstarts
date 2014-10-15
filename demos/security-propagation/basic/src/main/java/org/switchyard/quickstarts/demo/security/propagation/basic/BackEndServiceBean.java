@@ -28,7 +28,6 @@ import org.switchyard.ExchangeSecurity;
 import org.switchyard.annotations.Requires;
 import org.switchyard.component.bean.Service;
 
-@Requires(security = { CONFIDENTIALITY, CLIENT_AUTHENTICATION, AUTHORIZATION })
 @Service(BackEndService.class)
 public class BackEndServiceBean implements BackEndService {
 

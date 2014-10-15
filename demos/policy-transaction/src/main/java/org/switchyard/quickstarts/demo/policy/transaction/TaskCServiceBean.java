@@ -31,7 +31,6 @@ import org.switchyard.runtime.util.TransactionManagerLocator;
  *  current transaction, pass <code>TaskCServiceBean.ROLLBACK</code> as the command name.
  */
 @Service(TaskCService.class)
-@Requires(transaction = { TransactionPolicy.SUSPENDS_TRANSACTION, TransactionPolicy.NO_MANAGED_TRANSACTION })
 public class TaskCServiceBean implements TaskCService {
 
     /** rollback command for this subtask. */
