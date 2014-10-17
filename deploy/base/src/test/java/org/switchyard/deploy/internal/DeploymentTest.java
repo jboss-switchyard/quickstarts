@@ -437,6 +437,34 @@ public class DeploymentTest {
                 1, service.getMessages().size());
     }
 
+    @Test
+    public void testManagedLocalTxPolicyDependency() throws Exception {
+        InputStream swConfigStream = Classes.getResourceAsStream("/switchyard-config-policy-tx-managedLocal.xml", getClass());
+        Deployment deployment = new Deployment(swConfigStream);
+        swConfigStream.close();
+        
+        MockDomain serviceDomain = new MockDomain();
+        deployment.init(serviceDomain, ActivatorLoader.createActivators(serviceDomain));
+        deployment.start();
+        
+        Service implService = deployment.getDomain().getServices(
+                new QName("urn:test:config-mock-binding:1.0", "TestService")).get(0);
+        Assert.assertNotNull(implService.getServiceMetadata().getRegistrant());
+        Assert.assertTrue(implService.getServiceMetadata().getRequiredPolicies().contains(TransactionPolicy.MANAGED_TRANSACTION_LOCAL));
+        Assert.assertTrue(implService.getServiceMetadata().getRequiredPolicies().contains(TransactionPolicy.SUSPENDS_TRANSACTION));
+
+        ServiceReference implReference = deployment.getDomain().getServiceReference(
+                new QName("urn:test:config-mock-binding:1.0", "TestService/TestReference"));
+        Assert.assertNotNull(implReference.getServiceMetadata().getRegistrant());
+        Assert.assertTrue(implReference.getServiceMetadata().getRequiredPolicies().contains(TransactionPolicy.SUSPENDS_TRANSACTION));
+        deployment.destroy();
+    }
+
+    @Test
+    public void testManagedLocalTxPolicyDependencyInvalid() throws Exception {
+        deployWithFail("/switchyard-config-policy-tx-managedLocal-invalid.xml");
+    }
+
     // helper methods
     private void deployWithoutFail(String name) throws IOException {
         InputStream swConfigStream = Classes.getResourceAsStream(name, getClass());

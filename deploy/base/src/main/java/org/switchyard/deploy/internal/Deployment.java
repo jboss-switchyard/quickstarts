@@ -486,13 +486,13 @@ public class Deployment extends AbstractDeployment {
                         throw BaseDeployMessages.MESSAGES.componentReferenceBindingsNotAllowed(model.toString(), reference.toString());
                     }
                 }
-                
                 List<Policy> requires = null;
                 try {
                     requires = getPolicyRequirements(reference);
                 } catch (Exception e) {
                     throw BaseDeployMessages.MESSAGES.unableCollectRequirements(reference.toString(), e);
                 }
+                processPolicyDependency(requires, requiresImpl);
                 validatePolicy(requires, requiresImpl);
 
                 ServiceInterface refIntf = getComponentReferenceInterface(reference);
@@ -544,6 +544,7 @@ public class Deployment extends AbstractDeployment {
                 List<Policy> requires = null;
                 try {
                     requires = getPolicyRequirements(service);
+                    processPolicyDependency(requires, requiresImpl);
                     validatePolicy(requires, requiresImpl);
                 } catch (Exception e) {
                     throw new SwitchYardException(e);
@@ -748,46 +749,63 @@ public class Deployment extends AbstractDeployment {
         return requires;
     }
 
-    private void validatePolicy(List<Policy> interaction, List<Policy> implementation) {
-        for (int i=0; interaction != null && i<interaction.size(); i++) {
-            if (!interaction.get(i).supports(PolicyType.INTERACTION)) {
-                BaseDeployMessages.MESSAGES.policyNotInteraction(interaction.get(i).toString());
-            }
+    private void processPolicyDependency(List<Policy> interaction, List<Policy> implementation) {
+        if (interaction == null || implementation == null) {
+            return; // Just to avoid findbugs error
+        }
 
+        List<Policy> implToAdd = new LinkedList<Policy>();
+        List<Policy> interactToAdd = new LinkedList<Policy>();
+        for (int i=0; i<interaction.size(); i++) {
             Policy required = interaction.get(i).getPolicyDependency();
             if (required != null) {
-                if (required.supports(PolicyType.INTERACTION) && !interaction.contains(required)) {
-                    throw BaseDeployMessages.MESSAGES.interactionPolicyShouldBeRequestedWith(interaction.get(i).toString(), required.toString());
-                    
-                } else if (required.supports(PolicyType.IMPLEMENTATION) && !implementation.contains(required)) {
-                    throw BaseDeployMessages.MESSAGES.interactionPolicyRequiresImplPolicy(interaction.get(i).toString(), required.toString(), implementation.toString());
+                if (required.supports(PolicyType.INTERACTION) && !interaction.contains(required) && !interactToAdd.contains(required)) {
+                    BaseDeployLogger.ROOT_LOGGER.enforcingInteractionPolicyDependency(required.toString(), interaction.get(i).toString());
+                    interactToAdd.add(required);
+                } else if (required.supports(PolicyType.IMPLEMENTATION) && !implementation.contains(required) && !implToAdd.contains(required)) {
+                    BaseDeployLogger.ROOT_LOGGER.enforcingImplementationPolicyDependency(required.toString(), interaction.get(i).toString());
+                    implToAdd.add(required);
+                }
+            }
+        }
+        for (int i=0; i<implementation.size(); i++) {
+            Policy required = implementation.get(i).getPolicyDependency();
+            if (required != null) {
+                if (required.supports(PolicyType.IMPLEMENTATION) && !implementation.contains(required) && !implToAdd.contains(required)) {
+                    BaseDeployLogger.ROOT_LOGGER.enforcingImplementationPolicyDependency(required.toString(), implementation.get(i).toString());
+                    implToAdd.add(required);
+                } else if (required.supports(PolicyType.INTERACTION) && !interaction.contains(required) && !interactToAdd.contains(required)) {
+                    BaseDeployLogger.ROOT_LOGGER.enforcingInteractionPolicyDependency(required.toString(), implementation.get(i).toString());
+                    interactToAdd.add(required);
                 }
             }
             
+        }
+        interaction.addAll(interactToAdd);
+        implementation.addAll(implToAdd);
+    }
+
+    private void validatePolicy(List<Policy> interaction, List<Policy> implementation) {
+        for (int i=0; interaction != null && i<interaction.size(); i++) {
+            if (!interaction.get(i).supports(PolicyType.INTERACTION)) {
+                throw BaseDeployMessages.MESSAGES.policyNotInteraction(interaction.get(i).toString());
+            }
+
             for (int j=i+1; j<interaction.size(); j++) {
                 if (!interaction.get(i).isCompatibleWith(interaction.get(j))) {
-                    BaseDeployMessages.MESSAGES.interactionPolicyNotCompatible(interaction.get(i).toString(), interaction.get(j).toString());
+                    throw BaseDeployMessages.MESSAGES.interactionPolicyNotCompatible(interaction.get(i).toString(), interaction.get(j).toString());
                 }
             }
         }
 
         for (int i=0; implementation != null && i<implementation.size(); i++) {
             if (!implementation.get(i).supports(PolicyType.IMPLEMENTATION)) {
-                BaseDeployMessages.MESSAGES.policyNotImplementationPolicy(implementation.get(i).toString());
-            }
-            
-            Policy required = implementation.get(i).getPolicyDependency();
-            if (required != null) {
-                if (required.supports(PolicyType.IMPLEMENTATION) && !implementation.contains(required)) {
-                    throw BaseDeployMessages.MESSAGES.implementationPolicyShouldBeRequestedWith(implementation.get(i).toString(), required.toString());
-                } else if (required.supports(PolicyType.INTERACTION) && !interaction.contains(required)) {
-                    throw BaseDeployMessages.MESSAGES.implementationPolicyRequiresInterPolicy(implementation.get(i).toString(), required.toString(), interaction.toString());                    
-                }
+                throw BaseDeployMessages.MESSAGES.policyNotImplementationPolicy(implementation.get(i).toString());
             }
             
             for (int j=i+1; j<implementation.size(); j++) {
                 if (!implementation.get(i).isCompatibleWith(implementation.get(j))) {
-                    BaseDeployMessages.MESSAGES.implementationPolicyNotCompatible(implementation.get(i).toString(), implementation.get(j).toString());
+                    throw BaseDeployMessages.MESSAGES.implementationPolicyNotCompatible(implementation.get(i).toString(), implementation.get(j).toString());
                 }
             }
 
