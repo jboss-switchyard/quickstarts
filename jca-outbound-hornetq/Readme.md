@@ -6,9 +6,10 @@ This quickstart also has a service binding to a HornetQ Queue. When you send a m
 OrderService queue, corresponding OrderServiceBean#process() will be called. And then
 OrderServiceBean will forward it to the ShippingQueue or FillingStockQueue through the reference bindings.
 
-JBoss AS 7
+
+EAP
 ----------
-11. Start JBoss AS 7 in standalone-full mode:
+1. Start EAP in standalone-full mode:
 
         ${AS}/bin/standalone.sh -server-config standalone-full.xml
 
@@ -29,6 +30,38 @@ JBoss AS 7
 6. Undeploy the quickstart:
 
         mvn clean -Pdeploy
+
+
+Wildfly
+----------
+1. Start Wildfly in standalone-full mode:
+
+${AS}/bin/standalone.sh -server-config standalone-full.xml
+
+2. Add JMS user using add-user.sh with username=guest, password=guestp.1, Realm=ApplicationRealm, role=guest
+
+${AS}/bin/add-user.sh
+
+3. Build and deploy the quickstart
+
+mvn install -Pdeploy
+
+4. Execute HornetQClient
+
+mvn exec:java
+
+5. Check the output from the client.
+
+6. Undeploy the quickstart:
+
+mvn clean -Pdeploy
+
+
+Karaf
+----------
+No Karaf feature is present for this quickstart.
+
+
 
 Expected Results
 ================

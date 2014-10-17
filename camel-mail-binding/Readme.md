@@ -46,12 +46,12 @@ Please change the connection parameters in src/main/resources/META-INF/switchyar
 
 You can then send plain text messages to test account, after processing you will receive copy with 'Greetings' as subject.
 
-JBoss AS 7
+
+EAP
 ----------
-1. Start JBoss AS 7 in standalone-full mode:
+1. Start EAP in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
-=======
 
 2. Build and deploy the quickstart
 
@@ -64,6 +64,50 @@ JBoss AS 7
 5. Undeploy the quickstart:
 
         mvn clean -Pdeploy
+
+Wildfly
+----------
+1. Start Wildfly in standalone-full mode:
+
+        ${AS}/bin/standalone.sh --server-config=standalone-full.xml
+
+2. Build and deploy the quickstart
+
+        mvn -Dmaven.test.skip=true install -Pdeploy -Pwildfly
+
+3. Wait a bit for mail poller to open mailbox and read messages.
+
+4. Check the server console for output from the service. For every message you should see one entry with contents of the message. The best for testing is plaintext mail.
+
+5. Undeploy the quickstart:
+
+        mvn clean -Pdeploy -Pwildfly
+
+
+Karaf
+----------
+1. Start the Karaf server :
+
+        ${KARAF_HOME}/bin/karaf
+
+2. Add the features URL for the respective version of SwitchYard.   Replace {SWITCHYARD-VERSION}
+with the version of SwitchYard that you are using (ex. 2.0.0): 
+
+karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERSION}/xml/features
+
+3. Install the feature for the camel-mail-binding quickstart :
+
+karaf@root> features:install switchyard-quickstart-camel-mail-binding
+
+4. Wait a bit for mail poller to open mailbox and read messages.
+
+5. Check the server console for output from the service. For every message you should see one entry with contents of the message. The best for testing is plaintext mail.
+
+6. Undeploy the quickstart:
+
+karaf@root> features:uninstall switchyard-quickstart-camel-mail-binding
+
+
 
 ## Further Reading
 
