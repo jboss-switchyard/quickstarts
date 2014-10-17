@@ -50,7 +50,7 @@
         <wildfly.port>9999</wildfly.port>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
-        <version.enforcer.maven>1.0-alpha-4-sonatype</version.enforcer.maven>
+        <version.enforcer.maven>1.3.1</version.enforcer.maven>
         <switchyard.osgi.import>*</switchyard.osgi.import>
         <switchyard.osgi.require.capability>
             org.ops4j.pax.cdi.extension; filter:="(extension=switchyard-component-bean)",
