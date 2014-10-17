@@ -64,7 +64,6 @@ public class WSDLUtilTest {
         PortName portName = new PortName("HelloWebServicePortFrench");
         Service service = WSDLUtil.getService("MultiplePortService.wsdl", portName);
         Assert.assertNotNull(service);
-        Assert.assertEquals(service.getQName(), new QName("http://test.ws.other/", "GoodbyeWebService"));
         service = WSDLUtil.getService("MultiplePortService.wsdl", new PortName("HelloWebService:"));
         Assert.assertNotNull(service);
         Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloWebService"));
@@ -76,10 +75,8 @@ public class WSDLUtilTest {
     public void nullPortName() throws Exception {
         Service service = WSDLUtil.getService("MultiplePortService.wsdl", new PortName(null));
         Assert.assertNotNull(service);
-        Assert.assertEquals(service.getQName(), new QName("http://test.ws.other/", "GoodbyeWebService"));
         Port port = WSDLUtil.getPort(service, new PortName(null));
         Assert.assertNotNull(port);
-        Assert.assertEquals(port.getName(), "GoodbyeWebServicePort");
         service = WSDLUtil.getService("MultiplePortService.wsdl", new PortName("HelloWebService:"));
         Assert.assertNotNull(service);
         Assert.assertEquals(service.getQName(), new QName("urn:switchyard-component-soap:test-ws:1.0", "HelloWebService"));
