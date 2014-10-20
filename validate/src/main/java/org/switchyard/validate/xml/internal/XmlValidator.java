@@ -484,6 +484,9 @@ public class XmlValidator extends BaseValidator<Message> {
          */
         @Override
         public String getStringData() {
+            if (_inputSource == null) {
+                return null;
+            }
             Reader r = _inputSource.getCharacterStream();
             int c;
             StringBuilder buf = new StringBuilder();
