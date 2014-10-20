@@ -99,6 +99,7 @@ public enum SwitchYardNamespace implements Namespace {
         return Util.fromUri(SwitchYardNamespace.class, uri);
     }
 
+    @SuppressWarnings("serial")
     private static final class Util extends Namespace.Util {
         // static final since we only want to do the somewhat expensive work of instantiating this once!
         private static final Descriptor DESCRIPTOR = new Descriptor(SwitchYardNamespace.class);

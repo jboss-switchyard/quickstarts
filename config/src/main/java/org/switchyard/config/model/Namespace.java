@@ -13,12 +13,14 @@
  */
 package org.switchyard.config.model;
 
+import java.io.Serializable;
+
 /**
  * Represents config model namespace.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
-public interface Namespace {
+public interface Namespace extends Serializable {
 
     /**
      * The namespace section.
@@ -61,6 +63,7 @@ public interface Namespace {
     /**
      * A utility class for Namespace enums, since enums can't have extend base classes.
      */
+    @SuppressWarnings("serial")
     public static abstract class Util implements Namespace {
 
         private final String _section;

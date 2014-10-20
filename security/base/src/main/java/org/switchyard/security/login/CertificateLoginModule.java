@@ -28,6 +28,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 
 import org.switchyard.common.io.pull.PropertiesPuller;
+import org.switchyard.common.io.pull.PropertiesPuller.PropertiesType;
 import org.switchyard.common.io.pull.Puller.PathType;
 import org.switchyard.common.lang.Strings;
 import org.switchyard.security.BaseSecurityMessages;
@@ -158,7 +159,8 @@ public class CertificateLoginModule extends SwitchYardLoginModule {
     private Properties getRolesProperties() {
         String rolesPropertiesFile = getOption("rolesProperties", false);
         if (rolesPropertiesFile != null) {
-            return new PropertiesPuller().pullPath(rolesPropertiesFile, getClass(), PathType.values());
+            PropertiesType propertiesType = rolesPropertiesFile.endsWith(".xml") ? PropertiesType.XML : PropertiesType.PROPERTIES;
+            return new PropertiesPuller(propertiesType).pullPath(rolesPropertiesFile, getClass(), PathType.values());
         }
         return null;
     }
