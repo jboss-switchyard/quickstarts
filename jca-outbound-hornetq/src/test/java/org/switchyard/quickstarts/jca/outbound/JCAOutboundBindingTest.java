@@ -50,7 +50,7 @@ public class JCAOutboundBindingTest {
     private static final String QUEUE_FILE = "target/test-classes/switchyard-quickstart-jca-outbound-hornetq-jms.xml";
     private static final String USER = "guest";
     private static final String PASSWD = "guestp.1";
-    private static final String JAR_FILE = "target/switchyard-quickstart-jca-outbound-hornetq.jar";
+    private static final String JAR_FILE = "target/switchyard-jca-outbound-hornetq.jar";
 
     @Resource(mappedName = "/ConnectionFactory")
     private ConnectionFactory _connectionFactory;

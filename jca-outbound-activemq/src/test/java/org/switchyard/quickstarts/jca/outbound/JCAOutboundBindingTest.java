@@ -47,7 +47,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 public class JCAOutboundBindingTest {
-    private static final String JAR_FILE = "target/switchyard-quickstart-jca-outbound-activemq.jar";
+    private static final String JAR_FILE = "target/switchyard-jca-outbound-activemq.jar";
     private static final String ORDER_QUEUE = "OrderQueue";
     private static final String SHIPPING_QUEUE = "ShippingQueue";
     private static final String FILLING_STOCK_QUEUE = "FillingStockQueue";
