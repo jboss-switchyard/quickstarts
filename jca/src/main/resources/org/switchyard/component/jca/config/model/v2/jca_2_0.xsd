@@ -59,7 +59,7 @@
       <sequence>
          <element name="listener" type="string" minOccurs="0" />
          <element name="endpoint" type="jca:Endpoint" minOccurs="0" />
-         <element name="transacted" type="boolean" minOccurs="0" />
+         <element name="transacted" type="swyd:propBoolean" minOccurs="0" />
          <element name="batchCommit" type="jca:batchCommit" minOccurs="0"/>
       </sequence>
    </complexType>
@@ -68,7 +68,7 @@
          <element name="property" type="jca:Property" minOccurs="0"
                   maxOccurs="unbounded" />
       </sequence>
-      <attribute name="name" type="NMTOKEN" use="optional" />
+      <attribute name="name" type="string" use="optional" />
    </complexType>
    <complexType name="Connection">
       <sequence>
@@ -100,7 +100,7 @@
          <element name="property" type="jca:Property" minOccurs="0"
                   maxOccurs="unbounded" />
       </sequence>
-      <attribute name="type" type="NMTOKEN" use="required" />
+      <attribute name="type" type="string" use="required" />
    </complexType>
    <complexType name="batchCommit">
       <attribute name="batchSize" type="swyd:propInteger" use="required"/>
@@ -111,7 +111,7 @@
          <element name="property" type="jca:Property" minOccurs="0"
                   maxOccurs="unbounded" />
       </sequence>
-      <attribute name="type" type="NMTOKEN" use="required" />
+      <attribute name="type" type="string" use="required" />
    </complexType>
 
     <complexType name="Property">
