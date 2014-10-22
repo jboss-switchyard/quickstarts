@@ -46,7 +46,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 public class JCAInflowBindingTest {
-    private static final String JAR_FILE = "target/switchyard-quickstart-jca-inflow-activemq.jar";
+    private static final String JAR_FILE = "target/switchyard-jca-inflow-activemq.jar";
     private static final String QUEUE = "JCAInflowGreetingServiceQueue";
     private static final File ACTIVEMQ_DATA_DIR = new File(System.getProperty("java.io.tmpdir"), "activemq-data");
     private static final long MEMORY_STORE_USAGE_LIMIT = 209715200;

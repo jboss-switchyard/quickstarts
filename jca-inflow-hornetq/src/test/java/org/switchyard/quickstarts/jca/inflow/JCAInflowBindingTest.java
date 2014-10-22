@@ -47,7 +47,7 @@ public class JCAInflowBindingTest {
     private static final String QUEUE_FILE = "target/test-classes/switchyard-quickstart-jca-inflow-hornetq-jms.xml";
     private static final String USER = "guest";
     private static final String PASSWD = "guestp.1";
-    private static final String JAR_FILE = "target/switchyard-quickstart-jca-inflow-hornetq.jar";
+    private static final String JAR_FILE = "target/switchyard-jca-inflow-hornetq.jar";
 
     private static Logger _logger = Logger.getLogger(JCAInflowBindingTest.class);
 
