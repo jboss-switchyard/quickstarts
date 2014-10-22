@@ -35,21 +35,23 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.quickstarts.testutil.JBossCliUtil;
 
 /**
  * Functional test for the switchyard-quickstart-jca-inflow-hornetq.
  */
 @RunWith(Arquillian.class)
 public class JCAInflowBindingTest {
-    private static final String QUEUE_FILE = "target/test-classes/switchyard-quickstart-jca-inflow-hornetq-jms.xml";
-    private static final String USER = "guest";
-    private static final String PASSWD = "guestp.1";
-    private static final String JAR_FILE = "target/switchyard-jca-inflow-hornetq.jar";
-
-    private static Logger _logger = Logger.getLogger(JCAInflowBindingTest.class);
+    private static final Logger _logger = Logger.getLogger(JCAInflowBindingTest.class);
+    private static final String CLI_CONFIG_FILE = System.getProperty("cli.config.file");
+    private static final String CLI_UNCONFIG_FILE = System.getProperty("cli.unconfig.file");
+    private static final String HORNETQ_USER = System.getProperty("hornetq.user");
+    private static final String HORNETQ_PASSWORD = System.getProperty("hornetq.password");
+    private static final String QUICKSTART_JAR = System.getProperty("quickstart.jar");
 
     @Resource(mappedName = "/ConnectionFactory")
     private ConnectionFactory _connectionFactory;
@@ -59,20 +61,31 @@ public class JCAInflowBindingTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-        File artifact = new File(JAR_FILE);
+        File artifact = new File(QUICKSTART_JAR);
+        if (!artifact.exists()) {
+            String error = QUICKSTART_JAR + " not found. Do \"mvn package\" before the test";
+            _logger.error(error);
+            throw new RuntimeException(error);
+        }
         try {
+            JBossCliUtil.executeCliScript(CLI_CONFIG_FILE);
             return ShrinkWrap.create(ZipImporter.class, artifact.getName())
                 .importFrom(new ZipFile(artifact))
-                .as(JavaArchive.class)
-                .addAsManifestResource(new File(QUEUE_FILE));
+                .as(JavaArchive.class);
         } catch (Exception e) {
-            throw new RuntimeException(JAR_FILE + " not found. Do \"mvn package\" before the test", e);
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        JBossCliUtil.executeCliScript(CLI_UNCONFIG_FILE);
     }
 
     @Test
     public void triggerGreetingService() throws Exception {
-        Connection conn = _connectionFactory.createConnection(USER, PASSWD);
+        Connection conn = _connectionFactory.createConnection(HORNETQ_USER, HORNETQ_PASSWORD);
 
         try {
             Session session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);

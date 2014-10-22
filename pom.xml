@@ -63,6 +63,7 @@
         <maven.compiler.source>1.6</maven.compiler.source>
     </properties>
     <modules>
+        <module>testutil</module>
         <module>bean-service</module>
         <module>bpel-jms-binding</module>
         <module>bpel-loan-approval</module>

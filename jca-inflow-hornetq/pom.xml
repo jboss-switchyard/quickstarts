@@ -97,6 +97,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.switchyard.quickstarts</groupId>
+            <artifactId>switchyard-quickstart-testutil</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
             <scope>test</scope>
@@ -194,6 +199,13 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skip>${skipTests}</skip>
+                    <systemPropertyVariables>
+                        <cli.config.file>config.cli</cli.config.file>
+                        <cli.unconfig.file>unconfig.cli</cli.unconfig.file>
+                        <hornetq.user>guest</hornetq.user>
+                        <hornetq.password>guestp.1</hornetq.password>
+                        <quickstart.jar>${project.build.directory}/${project.build.finalName}.jar</quickstart.jar>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <!-- Attach sources -->

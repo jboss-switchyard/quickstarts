@@ -84,19 +84,11 @@ by following steps.
 
         mvn clean package
 
-2. Copy the ActiveMQ RAR into AS7 deployment directory:
-
-        cp ${MAVEN_HOME}/repository/org/apache/activemq/activemq-rar/5.8.0/activemq-rar-5.8.0.rar ${AS}/standalone/deployments/activemq-ra.rar
-
-3. Add a resource adapter configuration in standalone-full.xml
-
-        see this document for more information: https://community.jboss.org/wiki/SwitchYardJCAComponentAndActiveMQResourceAdapter
-
-4. Start JBoss AS 7 in standalone-full mode:
+2. Start JBoss AS 7 in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
-5. Execute the test:
+3. Execute the test:
 
         mvn test -DskipTests=false
 
