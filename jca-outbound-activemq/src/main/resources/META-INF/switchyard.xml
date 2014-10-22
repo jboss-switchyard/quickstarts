@@ -37,7 +37,7 @@
             <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
                 <outboundConnection>
                     <resourceAdapter name="activemq-ra.rar"/>
-                    <connection jndiName="java:/JmsXA"/>
+                    <connection jndiName="java:/AMQJmsXA"/>
                 </outboundConnection>
                 <outboundInteraction>
                     <processor type="org.switchyard.component.jca.processor.JMSProcessor">
@@ -52,7 +52,7 @@
             <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
                 <outboundConnection>
                     <resourceAdapter name="activemq-ra.rar"/>
-                    <connection jndiName="java:/JmsXA"/>
+                    <connection jndiName="java:/AMQJmsXA"/>
                 </outboundConnection>
                 <outboundInteraction>
                     <processor type="org.switchyard.component.jca.processor.JMSProcessor">

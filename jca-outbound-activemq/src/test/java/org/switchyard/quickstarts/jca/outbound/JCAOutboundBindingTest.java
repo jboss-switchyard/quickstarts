@@ -34,20 +34,28 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.usage.SystemUsage;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.quickstarts.testutil.JBossCliUtil;
 
 /**
  * Functional test for a switchyard-quickstart-jca-outbound-activemq.
  */
 @RunWith(Arquillian.class)
 public class JCAOutboundBindingTest {
-    private static final String JAR_FILE = "target/switchyard-jca-outbound-activemq.jar";
+    private static final Logger _logger = Logger.getLogger(JCAOutboundBindingTest.class);
+    private static final String CLI_CONFIG_FILE = System.getProperty("cli.config.file");
+    private static final String CLI_UNCONFIG_FILE = System.getProperty("cli.unconfig.file");
+    private static final String QUICKSTART_JAR = System.getProperty("quickstart.jar");
     private static final String ORDER_QUEUE = "OrderQueue";
     private static final String SHIPPING_QUEUE = "ShippingQueue";
     private static final String FILLING_STOCK_QUEUE = "FillingStockQueue";
@@ -71,18 +79,41 @@ public class JCAOutboundBindingTest {
         _broker.start();
     }
 
-    @Deployment
-    public static Archive<?> createTestArchive() throws Exception {
+    @Deployment(order=1, name="activemq-ra.rar")
+    public static ResourceAdapterArchive createActiveMQRAR() throws Exception {
         startActiveMQBroker();
+        File rar =  Maven.resolver()
+                         .loadPomFromFile("./pom.xml")
+                         .resolve("org.apache.activemq:activemq-rar:rar:?")
+                         .withoutTransitivity()
+                         .asSingleFile();
+        return ShrinkWrap.create(ZipImporter.class, "activemq-ra.rar")
+                         .importFrom(new ZipFile(rar))
+                         .as(ResourceAdapterArchive.class);
+    }
 
-        File artifact = new File(JAR_FILE);
+    @Deployment(order=2)
+    public static Archive<?> createTestArchive() throws Exception {
+        File artifact = new File(QUICKSTART_JAR);
+        if (!artifact.exists()) {
+            String error = QUICKSTART_JAR + " not found. Do \"mvn package\" before the test";
+            _logger.error(error);
+            throw new RuntimeException(error);
+        }
         try {
+            JBossCliUtil.executeCliScript(CLI_CONFIG_FILE);
             return ShrinkWrap.create(ZipImporter.class, artifact.getName())
                 .importFrom(new ZipFile(artifact))
                 .as(JavaArchive.class);
         } catch (Exception e) {
-            throw new RuntimeException(JAR_FILE + " not found. Do \"mvn package\" before the test", e);
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        JBossCliUtil.executeCliScript(CLI_UNCONFIG_FILE);
     }
 
     /**

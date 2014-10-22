@@ -25,29 +25,33 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.quickstarts.testutil.JBossCliUtil;
 
 /**
  * Functional test for a policy-transaction demo quickstart.
  */
 @RunWith(Arquillian.class)
 public class JmsBindingTest {
-    private static final String QUEUE_FILE = "target/test-classes/switchyard-quickstart-demo-policy-transaction-hornetq-jms.xml";
-    private static final String USER = "guest";
-    private static final String PASSWD = "guestp.1";
-    private static final String JAR_FILE = "target/switchyard-demo-policy-transaction.jar";
+    private static final Logger _logger = Logger.getLogger(JmsBindingTest.class);
+    private static final String CLI_CONFIG_FILE = System.getProperty("cli.config.file");
+    private static final String CLI_UNCONFIG_FILE = System.getProperty("cli.unconfig.file");
+    private static final String HORNETQ_USER = System.getProperty("hornetq.user");
+    private static final String HORNETQ_PASSWORD = System.getProperty("hornetq.password");
+    private static final String QUICKSTART_JAR = System.getProperty("quickstart.jar");
 
     @Resource(mappedName = "/ConnectionFactory")
     private ConnectionFactory _connectionFactory;
@@ -69,15 +73,32 @@ public class JmsBindingTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-        File artifact = new File(JAR_FILE);
-        try {
-            return ShrinkWrap.create(ZipImporter.class, artifact.getName())
-                .importFrom(new ZipFile(artifact))
-                .as(JavaArchive.class)
-                .addAsManifestResource(new File(QUEUE_FILE));
-        } catch (Exception e) {
-            throw new RuntimeException(JAR_FILE + " not found. Do \"mvn package\" before the test", e);
+        File artifact = new File(QUICKSTART_JAR);
+        if (!artifact.exists()) {
+            String error = QUICKSTART_JAR + " not found. Do \"mvn package\" before the test";
+            _logger.error(error);
+            throw new RuntimeException(error);
         }
+
+        try {
+            JBossCliUtil.executeCliScript(CLI_CONFIG_FILE);
+            JavaArchive archive = ShrinkWrap.create(ZipImporter.class, artifact.getName())
+                    .importFrom(new ZipFile(artifact))
+                    .as(JavaArchive.class);
+                    //.addAsManifestResource(new File(QUEUE_FILE));
+            // SWITCHYARD-2418 replace manifest file to remove OSGi related attributes
+            archive.delete("META-INF/MANIFEST.MF");
+            archive.addManifest();
+            return archive;
+        } catch (Throwable e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        JBossCliUtil.executeCliScript(CLI_UNCONFIG_FILE);
     }
 
     /**
@@ -86,7 +107,7 @@ public class JmsBindingTest {
     @Test
     public void testRollbackA() throws Exception {
         String command = "rollback.A";
-        Connection conn = _connectionFactory.createConnection(USER, PASSWD);
+        Connection conn = _connectionFactory.createConnection(HORNETQ_USER, HORNETQ_PASSWORD);
         conn.start();
 
         try {
@@ -99,32 +120,32 @@ public class JmsBindingTest {
 
             session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageConsumer consumer = session.createConsumer(_queueOutA);
-            ObjectMessage msg = ObjectMessage.class.cast(consumer.receive(30000));
-            Assert.assertEquals(command, msg.getObject());
+            TextMessage msg = TextMessage.class.cast(consumer.receive(30000));
+            Assert.assertEquals(command, msg.getText());
             Assert.assertNull(consumer.receive(1000));
             consumer.close();
 
             consumer = session.createConsumer(_queueOutB);
-            msg = ObjectMessage.class.cast(consumer.receive(1000));
-            Assert.assertEquals(command, msg.getObject());
-            msg = ObjectMessage.class.cast(consumer.receive(1000));
-            Assert.assertEquals(command, msg.getObject());
-            msg = ObjectMessage.class.cast(consumer.receive(1000));
-            Assert.assertEquals(command, msg.getObject());
-            msg = ObjectMessage.class.cast(consumer.receive(1000));
-            Assert.assertEquals(command, msg.getObject());
+            msg = TextMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getText());
+            msg = TextMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getText());
+            msg = TextMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getText());
+            msg = TextMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getText());
             Assert.assertNull(consumer.receive(1000));
             consumer.close();
 
             consumer = session.createConsumer(_queueOutC);
-            msg = ObjectMessage.class.cast(consumer.receive(1000));
-            Assert.assertEquals(command, msg.getObject());
-            msg = ObjectMessage.class.cast(consumer.receive(1000));
-            Assert.assertEquals(command, msg.getObject());
-            msg = ObjectMessage.class.cast(consumer.receive(1000));
-            Assert.assertEquals(command, msg.getObject());
-            msg = ObjectMessage.class.cast(consumer.receive(1000));
-            Assert.assertEquals(command, msg.getObject());
+            msg = TextMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getText());
+            msg = TextMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getText());
+            msg = TextMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getText());
+            msg = TextMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getText());
             Assert.assertNull(consumer.receive(1000));
             session.close();
         } finally {
@@ -135,7 +156,7 @@ public class JmsBindingTest {
     @Test
     public void testRollbackB() throws Exception {
         String command = "rollback.B";
-        Connection conn = _connectionFactory.createConnection(USER, PASSWD);
+        Connection conn = _connectionFactory.createConnection(HORNETQ_USER, HORNETQ_PASSWORD);
         conn.start();
 
         try {
@@ -148,20 +169,20 @@ public class JmsBindingTest {
 
             session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
             MessageConsumer consumer = session.createConsumer(_queueOutA);
-            ObjectMessage msg = ObjectMessage.class.cast(consumer.receive(1000));
-            Assert.assertEquals(command, msg.getObject());
+            TextMessage msg = TextMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getText());
             Assert.assertNull(consumer.receive(1000));
             consumer.close();
 
             consumer = session.createConsumer(_queueOutB);
-            msg = ObjectMessage.class.cast(consumer.receive(1000));
-            Assert.assertEquals(command, msg.getObject());
+            msg = TextMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getText());
             Assert.assertNull(consumer.receive(1000));
             consumer.close();
 
             consumer = session.createConsumer(_queueOutC);
-            msg = ObjectMessage.class.cast(consumer.receive(1000));
-            Assert.assertEquals(command, msg.getObject());
+            msg = TextMessage.class.cast(consumer.receive(1000));
+            Assert.assertEquals(command, msg.getText());
             Assert.assertNull(consumer.receive(1000));
             session.close();
         } finally {
@@ -172,7 +193,7 @@ public class JmsBindingTest {
     @Test
     public void testNonTransacted() throws Exception {
         String command = "rollback.A";
-        Connection conn = _connectionFactory.createConnection(USER, PASSWD);
+        Connection conn = _connectionFactory.createConnection(HORNETQ_USER, HORNETQ_PASSWORD);
         conn.start();
 
         try {
@@ -194,4 +215,5 @@ public class JmsBindingTest {
             conn.close();
         }
     }
+
 }
