@@ -57,6 +57,15 @@ public class BaseTransformerRegistryTest {
     }
 
     @Test
+    public void testNullTransformer() {
+    	final QName fromName = new QName("garfield");
+        final QName toName = new QName("odie");
+        Transformer<?, ?> transformer = _registry.getTransformer(fromName, toName);
+        
+        Assert.assertTrue(transformer == null);  	 
+    }
+    
+    @Test
     public void test_fallbackTransformerComparator_resolvable() {
         List<BaseTransformerRegistry.JavaSourceFallbackTransformer> transformersList = new ArrayList<BaseTransformerRegistry.JavaSourceFallbackTransformer>();
 

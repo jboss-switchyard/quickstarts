@@ -120,7 +120,7 @@ public class BaseTransformerRegistry implements TransformerRegistry {
             _log.debug("Selecting transformer: from '" + transformer.getFrom() + "' to '" + transformer.getTo() + "'. Type: " + transformer.getClass().getName());
         }
 
-        return transformer;
+        return transformer == NULL_TRANSFORMER ? null : transformer;
     }
 
     @Override
@@ -156,11 +156,11 @@ public class BaseTransformerRegistry implements TransformerRegistry {
                 }
             }
         }
-
         if (fallbackTransforms.size() == 0) {
-            // No fallback...
-            return null;
+            addFallbackTransformer(NULL_TRANSFORMER, from, to);
+            return NULL_TRANSFORMER;
         }
+
         if (fallbackTransforms.size() == 1) {
             Transformer<?, ?> fallbackTransformer = fallbackTransforms.get(0).getTransformer();
             addFallbackTransformer(fallbackTransformer, from, to);
@@ -357,4 +357,50 @@ public class BaseTransformerRegistry implements TransformerRegistry {
             }
         }
     }
+    
+    
+    /**
+     * NULL_TRANSFORMER is a default validator used to prevent searching for 
+     * fallback validators multiple times. Searching for fallback validators is
+     * expensive because of Class.forName() usage.
+     */
+    private static final Transformer NULL_TRANSFORMER = new Transformer() {
+
+        @Override
+        public Object transform(Object from) {
+            return null;
+        }
+
+        @Override
+        public Transformer setFrom(QName fromType) {
+            return null;
+        }
+
+        @Override
+        public QName getFrom() {
+            return null;
+        }
+
+        @Override
+        public Transformer setTo(QName toType) {
+            return null;
+        }
+
+        @Override
+        public QName getTo() {
+            return null;
+        }
+
+        @Override
+        public Class getFromType() {
+            return null;
+        }
+
+        @Override
+        public Class getToType() {
+            return null;
+        }
+
+    };
+    
 }
