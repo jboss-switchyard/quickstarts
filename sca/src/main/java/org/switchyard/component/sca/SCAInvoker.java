@@ -60,6 +60,7 @@ public class SCAInvoker extends BaseServiceHandler {
     private final String _targetNamespace;
     private final boolean _clustered;
     private ClusteredInvoker _invoker;
+    private boolean _preferLocal;
     private boolean _disableRemoteTransaction = false;
     private TransactionContextSerializer _txSerializer = new TransactionContextSerializer();
     
@@ -73,6 +74,7 @@ public class SCAInvoker extends BaseServiceHandler {
         _targetService = config.getTarget();
         _targetNamespace = config.getTargetNamespace();
         _clustered = config.isClustered();
+        _preferLocal = config.isPreferLocal();
     }
     
     /**
@@ -100,10 +102,23 @@ public class SCAInvoker extends BaseServiceHandler {
             throw SCAMessages.MESSAGES.referenceBindingNotStarted(_referenceName, _bindingName);
         }
         try {
+            // Figure out the QName for the service were invoking
+            QName serviceName = getTargetServiceName(exchange);
+            // Get a handle for the reference and use a copy of the exchange to invoke it
+            ServiceReference ref = exchange.getProvider().getDomain().getServiceReference(serviceName);
+            
             if (_clustered) {
-                invokeRemote(exchange);
+                // check to see if local is preferred and available
+                if (_preferLocal && ref != null) {
+                    invokeLocal(exchange, ref);
+                } else {
+                    invokeRemote(exchange, serviceName);
+                }
             } else {
-                invokeLocal(exchange);
+                if (ref == null) {
+                    throw SCAMessages.MESSAGES.serviceReferenceNotFoundInDomain(serviceName.toString(), exchange.getProvider().getDomain().getName().toString());
+                }
+                invokeLocal(exchange, ref);
             }
         } catch (SwitchYardException syEx) {
             throw new HandlerException(syEx.getMessage());
@@ -126,16 +141,9 @@ public class SCAInvoker extends BaseServiceHandler {
         _invoker = invoker;
     }
     
-    private void invokeLocal(Exchange exchange) throws HandlerException {
-        // Figure out the QName for the service were invoking
-        QName serviceName = getTargetServiceName(exchange);
-        // Get a handle for the reference and use a copy of the exchange to invoke it
-        ServiceReference ref = exchange.getProvider().getDomain().getServiceReference(serviceName);
-        if (ref == null) {
-            throw SCAMessages.MESSAGES.serviceReferenceNotFoundInDomain(serviceName.toString(), exchange.getProvider().getDomain().getName().toString());
-        }
+    private void invokeLocal(Exchange exchange, ServiceReference targetRef) throws HandlerException {
         SynchronousInOutHandler replyHandler = new SynchronousInOutHandler();
-        Exchange ex = ref.createExchange(exchange.getContract().getProviderOperation().getName(), replyHandler);
+        Exchange ex = targetRef.createExchange(exchange.getContract().getProviderOperation().getName(), replyHandler);
         
         // Can't send same message twice, so make a copy
         Message invokeMsg = exchange.getMessage().copy();
@@ -146,7 +154,7 @@ public class SCAInvoker extends BaseServiceHandler {
         ClassLoader origCL = null;
         try {
             ClassLoader targetCL = (ClassLoader) 
-                    ref.getDomain().getProperty(Deployment.CLASSLOADER_PROPERTY);
+                    targetRef.getDomain().getProperty(Deployment.CLASSLOADER_PROPERTY);
             origCL = Classes.setTCCL(targetCL);
             ex.send(invokeMsg);
         } finally {
@@ -172,10 +180,8 @@ public class SCAInvoker extends BaseServiceHandler {
         }
     }
     
-    private void invokeRemote(Exchange exchange) throws HandlerException {
-        // Figure out the QName for the service were invoking
-        QName serviceName = getTargetServiceName(exchange);
-
+    private void invokeRemote(Exchange exchange, QName serviceName) throws HandlerException {
+        
         RemoteMessage request = new RemoteMessage()
             .setDomain(exchange.getProvider().getDomain().getName())
             .setService(serviceName)
