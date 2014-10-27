@@ -68,7 +68,7 @@
   
   <service name="HelpDeskService">
     <port name="HelpDeskServicePort" binding="tns:HelpDeskServiceBinding">
-      <soap:address location="http://localhost:18001/HelpDeskService"/>
+      <soap:address location="http://localhost:8080/HelpDeskService"/>
     </port>
   </service>
 </definitions>

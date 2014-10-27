@@ -71,7 +71,7 @@
   
   <service name="OrderService">
     <port name="OrderServicePort" binding="tns:OrderServiceBinding">
-      <soap:address location="http://localhost:18001/test"/>
+      <soap:address location="http://localhost:8080/test"/>
     </port>
   </service>
 </definitions>
