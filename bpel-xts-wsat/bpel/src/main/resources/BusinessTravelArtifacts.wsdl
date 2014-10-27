@@ -115,7 +115,7 @@
 
 	<service name="BusinessTravelService">
 		<port name="BusinessTravelPort" binding="tns:BusinessTravelServiceBinding">
-			<soap:address location="http://127.0.0.1:18001/xts_wsat/BusinessTravelService" />
+			<soap:address location="http://127.0.0.1:8080/xts_wsat/BusinessTravelService" />
 		</port>
 	</service>
 
