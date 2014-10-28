@@ -11,11 +11,11 @@ EAP
 ----------
 1. Start EAP in standalone-full mode:
 
-        ${AS}/bin/standalone.sh -server-config standalone-full.xml
+        ${AS}/bin/standalone.sh --server-config standalone-full.xml
 
-2. Add JMS user using add-user.sh with username=guest, password=guestp.1, Realm=ApplicationRealm, role=guest
+2. Create an application user:
 
-        ${AS}/bin/add-user.sh
+        ${AS}/bin/add-user.sh --user guest --password guestp.1 --realm ApplicationRealm --group guest
 
 3. Build and deploy the quickstart
 
@@ -36,25 +36,25 @@ Wildfly
 ----------
 1. Start Wildfly in standalone-full mode:
 
-${AS}/bin/standalone.sh -server-config standalone-full.xml
+        ${AS}/bin/standalone.sh -server-config standalone-full.xml
 
-2. Add JMS user using add-user.sh with username=guest, password=guestp.1, Realm=ApplicationRealm, role=guest
+2. Create an application user:
 
-${AS}/bin/add-user.sh
+        ${AS}/bin/add-user.sh --user guest --password guestp.1 --realm ApplicationRealm --group guest
 
 3. Build and deploy the quickstart
 
-mvn install -Pdeploy
+        mvn install -Pdeploy
 
 4. Execute HornetQClient
 
-mvn exec:java
+        mvn exec:java
 
 5. Check the output from the client.
 
 6. Undeploy the quickstart:
 
-mvn clean -Pdeploy
+        mvn clean -Pdeploy
 
 
 Karaf

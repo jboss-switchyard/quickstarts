@@ -10,9 +10,7 @@ Running the quickstart
 
 1. Create an application user:
 
-        ${AS}/bin/add-user.sh
-
-        (Add username "kermit", password "the-frog-1", and role "friend".)
+        ${AS}/bin/add-user.sh --user kermit --password the-frog-1 --realm ApplicationRealm --group friend
 
 2. Start JBoss AS in standalone mode:
         ${AS}/bin/standalone.sh
