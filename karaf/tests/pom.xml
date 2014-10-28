@@ -145,7 +145,7 @@
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>features-maven-plugin</artifactId>
-                <version>2.3.3</version>
+                <version>2.4.0</version>
                 <executions>
                     <execution>
                         <id>add-features-to-repo</id>
@@ -156,6 +156,7 @@
                         <configuration>
                             <karafVersion>${version.org.apache.karaf}</karafVersion>
                             <descriptors>
+                                <descriptor>mvn:org.apache.karaf.assemblies.features/spring/${version.org.apache.karaf}/xml/features</descriptor>
                                 <descriptor>mvn:org.switchyard.karaf/switchyard/${project.version}/xml/features</descriptor>
                             </descriptors>
                             <features>
@@ -185,7 +186,7 @@
                                 <feature version="${version.org.apache.camel}">camel-mina2</feature>
                                 <feature version="${version.org.apache.camel}">camel-jaxb</feature>
                                 <feature version="${version.org.apache.camel}">camel-saxon</feature>
-                                <feature version="5.9.0">activemq-broker</feature>
+                                <feature version="${version.org.apache.activemq}">activemq-broker</feature>
                             </features>
                             <repository>target/dependencies/apache-karaf-${version.org.apache.karaf}/system</repository>
                         </configuration>

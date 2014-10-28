@@ -26,7 +26,6 @@
     <dependencySet>
       <outputDirectory>/modules/system/layers/soa/org/springframework/main</outputDirectory>
       <includes>
-        <include>org.springframework:spring-asm</include>
         <include>org.springframework:spring-aop</include>
         <include>org.springframework:spring-beans</include>
         <include>org.springframework:spring-core</include>

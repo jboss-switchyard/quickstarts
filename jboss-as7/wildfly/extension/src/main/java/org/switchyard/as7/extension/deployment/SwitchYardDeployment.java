@@ -141,7 +141,7 @@ public class SwitchYardDeployment {
             Thread.currentThread().setContextClassLoader(module.getClassLoader());
             setDeploymentState(SwitchYardDeploymentState.INITIALIZING);
 
-            _appServiceDomain = _domainManager.createDomain(_deployment.getName(), _deployment.getConfig());
+            _appServiceDomain = _domainManager.createDomain(getName(_deployment.getConfig()), _deployment.getConfig());
 
             // Override the default Camel ThreadPoolFactory to allow for naming
             // context to be set on any threads created within Camel
@@ -248,4 +248,14 @@ public class SwitchYardDeployment {
                 PathElement.pathElement(SwitchYardModelConstants.APPLICATION, applicationName.toString())).clear();
     }
 
+    private QName getName(SwitchYardModel config) {
+        if (config == null) {
+            return null;
+        }
+        QName name = config.getQName();
+        if (name == null && config.getComposite() != null) {
+            name = config.getComposite().getQName();
+        }
+        return name;
+    }
 }

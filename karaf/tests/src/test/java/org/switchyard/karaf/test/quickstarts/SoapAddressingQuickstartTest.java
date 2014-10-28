@@ -59,9 +59,9 @@ public class SoapAddressingQuickstartTest extends AbstractQuickstartTest {
                 testFile.delete();
             }
             String response = _httpMixIn.postString(SWITCHYARD_WEB_SERVICE, REQUEST2);
-            Assert.assertTrue(response.contains("urn:switchyard-quickstart:soap-addressing:1.0:OrderService:orderResponse"));
-            Assert.assertTrue(response.contains("uuid:3d3fcbbb-fd43-4118-b40e-62577894f39a"));
-            Assert.assertTrue(response.contains("Thank you for your order. You should hear back from our WarehouseService shortly!"));
+            Assert.assertTrue(response, response.contains("urn:switchyard-quickstart:soap-addressing:1.0:OrderService:orderResponse"));
+            Assert.assertTrue(response, response.contains("uuid:3d3fcbbb-fd43-4118-b40e-62577894f39a"));
+            Assert.assertTrue(response, response.contains("Thank you for your order. You should hear back from our WarehouseService shortly!"));
             // Wait for the actual response from WarehouseService
             int timeout = 0;
             while (!testFile.exists()) {

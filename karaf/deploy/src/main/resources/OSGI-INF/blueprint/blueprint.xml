@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0">
-  
+    <service interface="org.switchyard.component.soap.endpoint.EndpointPublisher" activation="lazy">
+        <bean class="org.switchyard.deploy.osgi.internal.soap.OsgiEndpointPublisher"/>
+    </service>
 </blueprint>
