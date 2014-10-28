@@ -17,9 +17,9 @@ EAP
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
-2. Add JMS user using add-user.sh with username=guest, password=guestp.1, Realm=ApplicationRealm, role=guest
+2. Create an application user:
 
-        ${AS}/bin/add-user.sh
+        ${AS}/bin/add-user.sh --user guest --password guestp.1 --realm ApplicationRealm --group guest
 
 3. Build and deploy the quickstart
 
@@ -39,9 +39,9 @@ Wildfly
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
-2. Add JMS user using add-user.sh with username=guest, password=guestp.1, Realm=ApplicationRealm, role=guest
+2. Create an application user:
 
-        ${AS}/bin/add-user.sh
+        ${AS}/bin/add-user.sh --user guest --password guestp.1 --realm ApplicationRealm --group guest
 
 3. Build and deploy the quickstart
 

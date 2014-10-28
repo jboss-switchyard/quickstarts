@@ -21,7 +21,7 @@ EAP
 
 2. Start EAP in standalone-full mode:
 
-        ${AS}/bin/standalone.sh -server-config standalone-full.xml
+        ${AS}/bin/standalone.sh --server-config standalone-full.xml
 
 3. Build and deploy the quickstart
 
@@ -44,21 +44,21 @@ Wildfly
 
 2. Start Wildfly in standalone-full mode:
 
-${AS}/bin/standalone.sh -server-config standalone-full.xml
+        ${AS}/bin/standalone.sh -server-config standalone-full.xml
 
 3. Build and deploy the quickstart
 
-mvn install -Pdeploy -Pwildfly
+        mvn install -Pdeploy -Pwildfly
 
 4. Execute ActiveMQClient
 
-mvn exec:java
+        mvn exec:java
 
 5. Check the server console for output from the service.
 
 6. Undeploy the quickstart:
 
-mvn clean -Pdeploy -Pwildfly
+        mvn clean -Pdeploy -Pwildfly
 
 
 Karaf
