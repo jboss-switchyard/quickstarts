@@ -15,6 +15,7 @@
 package org.switchyard.component.soap.endpoint;
 
 import org.switchyard.common.util.ProviderRegistry;
+import org.switchyard.component.soap.SOAPLogger;
 import org.switchyard.component.soap.WebServicePublishException;
 
 /**
@@ -30,13 +31,12 @@ public final class EndpointPublisherFactory {
         try {
             PUBLISHER = ProviderRegistry.getProvider(EndpointPublisher.class);
             if (PUBLISHER == null) {
+                SOAPLogger.ROOT_LOGGER.noEndpointPublisherRegistered();
                 PUBLISHER = new CXFJettyEndpointPublisher();
             }
+            SOAPLogger.ROOT_LOGGER.endpointPublisherRegistered(PUBLISHER.getClass().getSimpleName());
         } catch (Exception e) {
             throw new WebServicePublishException(e);
-        }
-        if (PUBLISHER == null) {
-            throw new WebServicePublishException("Unable to find EndpointPublisher");
         }
     }
 

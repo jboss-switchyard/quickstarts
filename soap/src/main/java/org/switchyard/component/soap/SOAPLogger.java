@@ -115,5 +115,20 @@ public interface SOAPLogger {
     @LogMessage(level = Level.ERROR)
     @Message(id = 35020, value = "Could not instantiate SOAP 1.2 Message Factory")
     void couldNotInstantiateSOAP12MessageFactory(@Cause SOAPException soape);
+
+    /**
+     * noEndpointPublisherRegistered method definition.
+     */
+    @LogMessage(level = Level.WARN)
+    @Message(id = 35021, value = "No endpoint publisher service registered.  Using default publisher.")
+    void noEndpointPublisherRegistered();
+
+    /**
+     * endpointPublisherRegistered method definition.
+     * @param type the publisher type
+     */
+    @LogMessage(level = Level.DEBUG)
+    @Message(id = 35022, value = "Endpoint publisher service loaded: %s.")
+    void endpointPublisherRegistered(String type);
 }
 

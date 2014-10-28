@@ -15,8 +15,10 @@
 package org.switchyard.component.bean.deploy;
 
 
+import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,10 +32,12 @@ import org.switchyard.component.bean.internal.ReferenceInvokerBean;
 /**
  * Bean Deployment Meta Data.
  * <p/>
- * All the CDI bean info for a specific deployment.
+ * All the CDI bean info for a specific deployment.  This bean is actually
+ * managed by BeanDeploymentMetaDataCDIBean.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
+@Alternative
 public class BeanDeploymentMetaData {
 
     private BeanManager _beanManager;

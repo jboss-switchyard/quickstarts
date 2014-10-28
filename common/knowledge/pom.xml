@@ -36,6 +36,11 @@
             org.hibernate.*;resolution:=optional,
             *
         </switchyard.osgi.import>
+        <switchyard.osgi.dynamic>
+            org.jbpm.*,
+            org.drools.*,
+            org.kie.*
+        </switchyard.osgi.dynamic>
         <switchyard.osgi.require.bundle>
             org.kie.api
         </switchyard.osgi.require.bundle>

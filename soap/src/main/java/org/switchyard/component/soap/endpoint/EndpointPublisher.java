@@ -15,6 +15,8 @@
 package org.switchyard.component.soap.endpoint;
 import javax.xml.ws.WebServiceFeature;
 
+import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.message.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.soap.InboundHandler;
@@ -47,4 +49,9 @@ public interface EndpointPublisher {
      * @return The published endpoint
      */
     Endpoint publish(ServiceDomain domain, SOAPBindingModel config, String bindingId, InboundHandler handler, WebServiceFeature... features);
+    
+    /**
+     * @return a new interceptor used to hook addressing
+     */
+    Interceptor<? extends Message> createAddressingInterceptor();
 }

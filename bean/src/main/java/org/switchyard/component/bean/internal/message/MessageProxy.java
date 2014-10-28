@@ -17,18 +17,21 @@ import java.util.Map;
 
 import javax.activation.DataSource;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Alternative;
 
 import org.switchyard.Context;
 import org.switchyard.Message;
-
 import org.switchyard.component.bean.BeanMessages;
 
 /**
  * SwitchYard Message proxy.
+ * <p/>
+ * Injection is managed through MessageBean.
  *
  * @author David Ward &lt;<a href="mailto:dward@jboss.org">dward@jboss.org</a>&gt; &copy; 2013 Red Hat Inc.
  */
 @ApplicationScoped
+@Alternative
 public class MessageProxy implements Message {
 
     private static final ThreadLocal<Message> MESSAGE = new ThreadLocal<Message>();

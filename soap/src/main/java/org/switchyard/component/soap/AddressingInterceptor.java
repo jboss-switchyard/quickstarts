@@ -62,6 +62,7 @@ public class AddressingInterceptor extends AbstractSoapInterceptor {
                 AttributedURIType uri = null;
                 EndpointReferenceType ref = null;
                 if (property != null) {
+                    uri = new AttributedURIType();
                     uri.setValue(property);
                     maps.setAction(uri);
                 }

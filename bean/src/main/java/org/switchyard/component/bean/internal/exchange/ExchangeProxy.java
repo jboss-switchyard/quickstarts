@@ -14,6 +14,7 @@
 package org.switchyard.component.bean.internal.exchange;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Alternative;
 
 import org.switchyard.Context;
 import org.switchyard.Exchange;
@@ -31,8 +32,11 @@ import org.switchyard.metadata.ServiceOperation;
 
 /**
  * SwitchYard Exchange proxy.
+ * <p/>
+ * Injection is managed through ExchangeBean
  */
 @ApplicationScoped
+@Alternative
 public class ExchangeProxy implements Exchange {
 
     private static final ThreadLocal<Exchange> EXCHANGE = new ThreadLocal<Exchange>();

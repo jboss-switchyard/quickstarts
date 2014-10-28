@@ -17,19 +17,22 @@ package org.switchyard.component.bean.internal.context;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Alternative;
 
 import org.switchyard.Context;
 import org.switchyard.Property;
 import org.switchyard.Scope;
-
 import org.switchyard.component.bean.BeanMessages;
 
 /**
  * SwitchYard Context proxy.
+ * <p/>
+ * Injection is managed through ContextBean.
  *
  * @author <a href="mailto:tom.fennelly@gmail.com">tom.fennelly@gmail.com</a>
  */
 @ApplicationScoped
+@Alternative
 public class ContextProxy implements Context {
 
     private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<Context>();

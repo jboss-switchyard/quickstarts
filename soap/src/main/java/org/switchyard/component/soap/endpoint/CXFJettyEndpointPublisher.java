@@ -23,6 +23,7 @@ import javax.xml.ws.handler.MessageContext;
 
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.common.Endpoint;
+import org.switchyard.component.soap.AddressingInterceptor;
 import org.switchyard.component.soap.InboundHandler;
 import org.switchyard.component.soap.WebServicePublishException;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
@@ -50,7 +51,7 @@ public class CXFJettyEndpointPublisher extends AbstractEndpointPublisher {
 
             String publishUrl = HTTP_SCHEME + "://" + config.getSocketAddr().getHost() + ":" + config.getSocketAddr().getPort() + "/" + getContextPath();
 
-            wsEndpoint = new CXFJettyEndpoint(bindingId, handler, features);
+            wsEndpoint = new CXFJettyEndpoint(bindingId, handler, new AddressingInterceptor(), features);
             //wsEndpoint.getEndpoint().setProperties(properties);
             wsEndpoint.getEndpoint().setWsdlURL(getWsdlLocation());
             wsEndpoint.getEndpoint().setServiceName(config.getPort().getServiceQName());

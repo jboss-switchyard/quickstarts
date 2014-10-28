@@ -40,6 +40,11 @@
             org.jbpm.persistence.jpa,
             org.jbpm.services.task.jpa
         </switchyard.osgi.require.bundle>
+        <switchyard.osgi.dynamic>
+            org.jbpm.*,
+            org.drools.*,
+            org.kie.*
+        </switchyard.osgi.dynamic>
     </properties>
     <build>
         <plugins>

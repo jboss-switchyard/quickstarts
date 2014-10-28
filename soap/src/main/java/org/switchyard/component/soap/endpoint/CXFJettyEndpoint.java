@@ -26,18 +26,17 @@ import javax.xml.ws.soap.MTOMFeature;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
-import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.ws.addressing.WSAddressingFeature;
-import org.apache.cxf.ws.addressing.impl.AddressingFeatureApplier;
 import org.apache.cxf.ws.addressing.soap.DecoupledFaultHandler;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.Endpoint;
-import org.switchyard.component.soap.SOAPLogger;
-import org.switchyard.component.soap.AddressingInterceptor;
 import org.switchyard.component.soap.InboundHandler;
+import org.switchyard.component.soap.SOAPLogger;
 
 /**
  * Wrapper for CXF JAX-WS endpoints.
@@ -54,16 +53,22 @@ public class CXFJettyEndpoint implements Endpoint {
 
     static {
         _bus = BusFactory.newInstance().createBus();
-        _bus.setExtension(new AddressingFeatureApplier(), WSAddressingFeature.WSAddressingFeatureApplier.class);
+        try {
+            _bus.setExtension(new org.apache.cxf.ws.addressing.impl.AddressingFeatureApplier(), WSAddressingFeature.WSAddressingFeatureApplier.class);
+        } catch (Throwable t) {
+            // checkstyle
+            t.fillInStackTrace();
+        }
     }
 
     /**
      * Construct a JAX-WS endpoint based on SOAP version.
      * @param bindingId The SOAP binding version
      * @param handler The handler instance that contains the actual invoke method implementation
+     * @param addressingInterceptor specialized interceptor for mapping addressing information
      * @param features A list of WebService features
      */
-    public CXFJettyEndpoint(final String bindingId, final InboundHandler handler, WebServiceFeature... features) {
+    public CXFJettyEndpoint(final String bindingId, final InboundHandler handler, Interceptor<? extends Message> addressingInterceptor, WebServiceFeature... features) {
         BaseWebService wsProvider = new BaseWebService();
         wsProvider.setInvocationClassLoader(Classes.getTCCL());
         // Hook the handler
@@ -89,12 +94,14 @@ public class CXFJettyEndpoint implements Endpoint {
                 String.valueOf(((MTOMFeature)feature).getThreshold()));
             }
         }
-        ((JaxWsServiceFactoryBean)_svrFactory.getServiceFactory()).setWsFeatures(cxfFeatures);
+        ((JaxWsServerFactoryBean)_svrFactory).getJaxWsServiceFactory().setWsFeatures(cxfFeatures);
         _svrFactory.setProperties(props);
         if (addressingEnabled) {
             _svrFactory.getInInterceptors().add(new DecoupledFaultHandler());
-            _svrFactory.getOutInterceptors().add(new AddressingInterceptor());
-            _svrFactory.getOutFaultInterceptors().add(new AddressingInterceptor());
+            if (addressingInterceptor != null) {
+                _svrFactory.getOutInterceptors().add(addressingInterceptor);
+                _svrFactory.getOutFaultInterceptors().add(addressingInterceptor);
+            }
         }
         _svrFactory.getInInterceptors().add(new LoggingInInterceptor());
         _svrFactory.getInInterceptors().add(new org.apache.cxf.binding.soap.saaj.SAAJInInterceptor());

@@ -34,6 +34,7 @@ import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxws.DispatchImpl;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
@@ -50,6 +51,7 @@ import org.switchyard.component.soap.composer.SOAPComposition;
 import org.switchyard.component.soap.composer.SOAPFaultInfo;
 import org.switchyard.component.soap.composer.SOAPMessageComposer;
 import org.switchyard.component.soap.config.model.SOAPBindingModel;
+import org.switchyard.component.soap.endpoint.EndpointPublisherFactory;
 import org.switchyard.component.soap.util.SOAPUtil;
 import org.switchyard.component.soap.util.WSDLUtil;
 import org.switchyard.deploy.BaseServiceHandler;
@@ -136,8 +138,9 @@ public class OutboundHandler extends BaseServiceHandler {
                 Client client = ((DispatchImpl)_dispatcher).getClient();
                 if (_feature.isAddressingEnabled()) {
                     // Add handler to process WS-A headers
-                    client.getOutInterceptors().add(new AddressingInterceptor());
-                    client.getOutFaultInterceptors().add(new AddressingInterceptor());
+                    Interceptor<? extends org.apache.cxf.message.Message> addressingInterceptor = EndpointPublisherFactory.getEndpointPublisher().createAddressingInterceptor();
+                    client.getOutInterceptors().add(addressingInterceptor);
+                    client.getOutFaultInterceptors().add(addressingInterceptor);
                 } else {
                     // Defaulting to use soapAction property in request header
                     _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
