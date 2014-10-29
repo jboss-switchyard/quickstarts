@@ -16,15 +16,26 @@
  */
 package org.switchyard.quickstarts.camel.cxf;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 public class ItemNotAvailable extends Exception {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = -8619603174463610003L;
 
 	public ItemNotAvailable(final String message) {
-        super(message);
-    }
+		super(message);
+	}
+
+	@XmlTransient
+	@Override
+	public synchronized Throwable getCause() {
+		return super.getCause();
+	}
+
+	@XmlTransient
+	@Override
+	public StackTraceElement[] getStackTrace() {
+		return super.getStackTrace();
+	}
 
 }

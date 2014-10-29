@@ -65,9 +65,12 @@
     </sca:component>
   </sca:composite>
   <transforms>
-    <xform:transform.java from="{urn:switchyard-quickstart:camel-cxf:2.0}order" to="java:org.switchyard.quickstarts.camel.cxf.Order" bean="Transformers"/>
-    <xform:transform.java from="{urn:switchyard-quickstart:camel-cxf:2.0}orderResponse" to="java:org.switchyard.quickstarts.camel.cxf.OrderResponse" bean="Transformers"/>
-    <xform:transform.java from="{urn:switchyard-quickstart:camel-cxf:2.0}ItemNotAvailable" to="java:org.switchyard.quickstarts.camel.cxf.ItemNotAvailable" bean="Transformers"/>
+    <xform:transform.jaxb from="{urn:switchyard-quickstart:camel-cxf:2.0}order" to="java:org.switchyard.quickstarts.camel.cxf.Order"/>
+    <xform:transform.jaxb from="{urn:switchyard-quickstart:camel-cxf:2.0}orderResponse" to="java:org.switchyard.quickstarts.camel.cxf.OrderResponse"/>
+    <xform:transform.jaxb from="{urn:switchyard-quickstart:camel-cxf:2.0}ItemNotAvailable" to="java:org.switchyard.quickstarts.camel.cxf.ItemNotAvailable"/>
+    <xform:transform.jaxb to="{urn:switchyard-quickstart:camel-cxf:2.0}order" from="java:org.switchyard.quickstarts.camel.cxf.Order"/>
+    <xform:transform.jaxb to="{urn:switchyard-quickstart:camel-cxf:2.0}orderResponse" from="java:org.switchyard.quickstarts.camel.cxf.OrderResponse"/>
+    <xform:transform.jaxb to="{urn:switchyard-quickstart:camel-cxf:2.0}ItemNotAvailable" from="java:org.switchyard.quickstarts.camel.cxf.ItemNotAvailable"/>
   </transforms>
   <domain>
     <properties>
