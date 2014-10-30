@@ -14,6 +14,7 @@
 package org.switchyard.serial.graph;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.UndeclaredThrowableException;
 
 import org.switchyard.common.type.reflect.Construction;
 import org.switchyard.serial.SerialMessages;
@@ -40,7 +41,7 @@ public class ThrowableFactory<T> extends BaseFactory<T> {
     @Override
     public boolean supports(Class<?> type) {
         if (type != null) {
-            return getConstructor(type) != null;
+            return UndeclaredThrowableException.class.equals(type) || getConstructor(type) != null;
         }
         return false;
     }
@@ -52,17 +53,20 @@ public class ThrowableFactory<T> extends BaseFactory<T> {
     public T create(Class<T> type, Node node) {
         T obj = null;
         if (type != null) {
+            final String message = (node instanceof ThrowableAccessNode) ? ((ThrowableAccessNode)node).getMessage() : null;
+            if (UndeclaredThrowableException.class.equals(type)) {
+                return type.cast(new UndeclaredThrowableException(null, message));
+            }
             Constructor<?> constructor = getConstructor(type);
             Class<?>[] parameterTypes = constructor != null ? constructor.getParameterTypes() : new Class<?>[0];
             try {
                 if (parameterTypes.length == 0) {
                     obj = Construction.construct(type);
                 } else if (parameterTypes.length == 1) {
-                    String message = (node instanceof ThrowableAccessNode) ? ((ThrowableAccessNode)node).getMessage() : null;
                     obj = Construction.construct(type, parameterTypes, new Object[]{message});
                 }
             } catch (Throwable t) {
-                throw SerialMessages.MESSAGES.couldNotInstantiateThrowable(type.getName());
+                throw SerialMessages.MESSAGES.couldNotInstantiateThrowable(type.getName(), t.getMessage());
             }
         }
         return obj;

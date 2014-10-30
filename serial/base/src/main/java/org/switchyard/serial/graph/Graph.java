@@ -94,6 +94,22 @@ public final class Graph implements Serializable {
     }
 
     /**
+     * Gets a reference id with the specified object.
+     * @param obj the specified object
+     * @return the reference id
+     */
+    public Integer getReferenceId(Object obj) {
+        if (obj != null) {
+            for (Map.Entry<Integer, Object> entry : _references.entrySet()) {
+                if (entry.getValue() == obj) {
+                    return entry.getKey();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Puts a reference with the specified id.
      * @param id the specified id
      * @param obj the reference

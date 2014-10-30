@@ -21,15 +21,22 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-serial-protostuff</artifactId>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
     <name>SwitchYard: Serial - Protostuff</name>
     <description>The Protostuff serialization library.</description>
     <url>http://switchyard.org</url>
     <properties>
-        <version.protostuff>1.0.7</version.protostuff>
+        <version.com.dyuproject.protostuff>1.0.8</version.com.dyuproject.protostuff>
+        <switchyard.osgi.export.pkg>
+            org.switchyard.serial.protostuff.*
+        </switchyard.osgi.export.pkg>
     </properties>
     <dependencies>
         <!-- internal dependencies -->
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-common</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-serial</artifactId>
@@ -38,32 +45,51 @@
         <dependency>
             <groupId>com.dyuproject.protostuff</groupId>
             <artifactId>protostuff-api</artifactId>
-            <version>${version.protostuff}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dyuproject.protostuff</groupId>
-            <artifactId>protostuff-collectionschema</artifactId>
-            <version>${version.protostuff}</version>
         </dependency>
         <dependency>
             <groupId>com.dyuproject.protostuff</groupId>
             <artifactId>protostuff-core</artifactId>
-            <version>${version.protostuff}</version>
         </dependency>
         <dependency>
             <groupId>com.dyuproject.protostuff</groupId>
             <artifactId>protostuff-json</artifactId>
-            <version>${version.protostuff}</version>
         </dependency>
         <dependency>
             <groupId>com.dyuproject.protostuff</groupId>
             <artifactId>protostuff-runtime</artifactId>
-            <version>${version.protostuff}</version>
         </dependency>
         <dependency>
             <groupId>com.dyuproject.protostuff</groupId>
             <artifactId>protostuff-xml</artifactId>
-            <version>${version.protostuff}</version>
         </dependency>
     </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.dyuproject.protostuff</groupId>
+                <artifactId>protostuff-api</artifactId>
+                <version>${version.com.dyuproject.protostuff}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.dyuproject.protostuff</groupId>
+                <artifactId>protostuff-core</artifactId>
+                <version>${version.com.dyuproject.protostuff}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.dyuproject.protostuff</groupId>
+                <artifactId>protostuff-json</artifactId>
+                <version>${version.com.dyuproject.protostuff}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.dyuproject.protostuff</groupId>
+                <artifactId>protostuff-runtime</artifactId>
+                <version>${version.com.dyuproject.protostuff}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.dyuproject.protostuff</groupId>
+                <artifactId>protostuff-xml</artifactId>
+                <version>${version.com.dyuproject.protostuff}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

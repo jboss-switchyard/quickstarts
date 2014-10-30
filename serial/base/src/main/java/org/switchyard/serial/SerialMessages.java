@@ -13,6 +13,7 @@ import org.switchyard.SwitchYardException;
  */
 @MessageBundle(projectCode = "SWITCHYARD")
 public interface SerialMessages {
+
     /**
      * Default messages. 
      */
@@ -21,9 +22,10 @@ public interface SerialMessages {
     /**
      * couldNotInstantiateThrowable method definition.
      * @param className className
+     * @param cause cause
      * @return SwitchYardException
      */
-    @Message(id=15200, value = "Could not instantiate Throwable class: %s")
-    SwitchYardException couldNotInstantiateThrowable(String className);
+    @Message(id=15200, value = "Could not instantiate Throwable class [%s] because [%s]")
+    SwitchYardException couldNotInstantiateThrowable(String className, String cause);
 
 }

@@ -13,8 +13,7 @@
  */
 package org.switchyard.serial.jackson;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.serial.CompressionType;
 import org.switchyard.serial.FormatType;

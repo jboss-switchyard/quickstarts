@@ -13,6 +13,7 @@
  */
 package org.switchyard.serial.graph.node;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -179,7 +180,15 @@ public final class ThrowableAccessNode extends AccessNode {
         Throwable throwable = (Throwable)super.decompose(graph);
         Throwable cause = (Throwable)graph.decomposeReference(getCause());
         if (cause != null) {
-            throwable.initCause(cause);
+            if (UndeclaredThrowableException.class.equals(throwable.getClass())) {
+                Integer referenceId = graph.getReferenceId(throwable);
+                throwable = new UndeclaredThrowableException(cause, throwable.getMessage());
+                if (referenceId != null) {
+                    graph.putReference(referenceId, throwable);
+                }
+            } else {
+                throwable.initCause(cause);
+            }
         }
         Object[] array = (Object[])graph.decomposeReference(getStackTrace());
         if (array != null) {

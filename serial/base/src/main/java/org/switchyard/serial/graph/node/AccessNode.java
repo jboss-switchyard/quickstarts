@@ -34,6 +34,7 @@ import org.switchyard.common.type.reflect.Access;
 import org.switchyard.common.type.reflect.BeanAccess;
 import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.common.type.reflect.MethodAccess;
+import org.switchyard.serial.SerialLogger;
 import org.switchyard.serial.graph.AccessType;
 import org.switchyard.serial.graph.CoverageType;
 import org.switchyard.serial.graph.Exclude;
@@ -129,7 +130,14 @@ public abstract class AccessNode implements Node {
         }
         final Class clazz = (Class)graph.decomposeReference(getClazz());
         final Factory factory = Factory.getFactory(clazz);
-        final Object obj = factory.supports(clazz) ? factory.create(clazz, this) : null;
+        final Object obj;
+        if (factory.supports(clazz)) {
+            obj = factory.create(clazz, this);
+        } else {
+            final String className = clazz != null ? clazz.getName() : "null";
+            SerialLogger.ROOT_LOGGER.classUnsupportedByFactoryReturningNull(className, factory.getClass().getName());
+            obj = null;
+        }
         Map<String, Integer> ids = getIds();
         if (obj != null && ids != null) {
             for (final Access access : getAccessList(clazz)) {

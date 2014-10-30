@@ -14,6 +14,7 @@
 package org.switchyard.serial.jackson;
 
 import java.io.StringReader;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,8 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.switchyard.HandlerException;
 import org.switchyard.common.io.pull.ElementPuller;
@@ -215,6 +215,23 @@ public final class JacksonComplexSerializationTest {
         Assert.assertEquals(expectedOutOfGasException.getExplicitive(), actualOutOfGasException.getExplicitive());
         Assert.assertSame(expectedFlatTireException.getWheel().getLocation(), actualFlatTireException.getWheel().getLocation());
         Assert.assertEquals("Really?", actualFlatTireException.getMessage());
+    }
+
+    @Test
+    public void testUndeclaredThrowableException() throws Exception {
+        final UndeclaredThrowableException expectedUndeclaredThrowableException = new UndeclaredThrowableException(new Throwable("undeclared"), "message");
+        Car car = new Car();
+        car.setProblems(Arrays.asList(new Exception[]{expectedUndeclaredThrowableException, expectedUndeclaredThrowableException}));
+        car = serDeser(car, Car.class);
+        final List<Exception> actualExceptions = car.getProblems();
+        final UndeclaredThrowableException actualUndeclaredThrowableException = (UndeclaredThrowableException)actualExceptions.get(0);
+        final UndeclaredThrowableException sameUndeclaredThrowableException = (UndeclaredThrowableException)actualExceptions.get(1);
+        Assert.assertSame(actualUndeclaredThrowableException, sameUndeclaredThrowableException);
+        Assert.assertEquals("message", actualUndeclaredThrowableException.getMessage());
+        Assert.assertEquals(expectedUndeclaredThrowableException.getMessage(), actualUndeclaredThrowableException.getMessage());
+        Assert.assertEquals(expectedUndeclaredThrowableException.getStackTrace().length, actualUndeclaredThrowableException.getStackTrace().length);
+        Assert.assertEquals("undeclared", actualUndeclaredThrowableException.getUndeclaredThrowable().getMessage());
+        Assert.assertSame(actualUndeclaredThrowableException.getUndeclaredThrowable(), actualUndeclaredThrowableException.getCause());
     }
 
     @Test
