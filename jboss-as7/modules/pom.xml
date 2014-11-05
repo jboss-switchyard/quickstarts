@@ -534,7 +534,17 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cdi</artifactId>
-        </dependency>
+            <exclusions>
+                <exclusion>
+                    <artifactId>deltaspike-core-impl</artifactId>
+                    <groupId>org.apache.deltaspike.core</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>deltaspike-cdictrl-api</artifactId>
+                    <groupId>org.apache.deltaspike.cdictrl</groupId>
+                </exclusion>
+            </exclusions>
+  	</dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
