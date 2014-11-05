@@ -32,7 +32,7 @@
         <distro.file>switchyard-${project.version}-WildFly</distro.file>
         <distro.root.dir>/</distro.root.dir>
         <installer.root.dir>/switchyard-wildfly-installer-${version.distro}</installer.root.dir>
-        <switchyard.jboss.home>${staging.jboss.dir}</switchyard.jboss.home>
+        <switchyard.wildfly.home>${staging.jboss.dir}</switchyard.wildfly.home>
         <zip.file.name>${distro.file}.zip</zip.file.name>
     </properties>
     <dependencies>
@@ -308,14 +308,14 @@
                     <argLine>-Xms512m -Xmx512m</argLine>
                     <forkMode>always</forkMode>
                     <environmentVariables>
-                        <JBOSS_HOME>${jboss.home}</JBOSS_HOME>
+                        <JBOSS_HOME>${wildfly.home}</JBOSS_HOME>
                         <SWITCHYARD_VERSION>${project.version}</SWITCHYARD_VERSION>
                     </environmentVariables>
                     <systemPropertyVariables>
                         <arquillian.launch>jboss</arquillian.launch>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                        <jboss.home>${jboss.home}</jboss.home>
-                        <module.path>${jboss.home}/modules</module.path>
+                        <jboss.home>${wildfly.home}</jboss.home>
+                        <module.path>${wildfly.home}/modules</module.path>
                     </systemPropertyVariables>
                     <redirectTestOutputToFile>false</redirectTestOutputToFile>
                     <excludes>
@@ -338,18 +338,18 @@
             <id>default</id>
             <activation>
                 <property>
-                    <name>!jboss.home</name>
+                    <name>!wildfly.home</name>
                 </property>
             </activation>
             <properties>
-                <jboss.home>${switchyard.jboss.home}</jboss.home>
+                <wildfly.home>${switchyard.wildfly.home}</wildfly.home>
             </properties>
         </profile>
         <profile>
             <id>manual</id>
             <activation>
                 <property>
-                    <name>jboss.home</name>
+                    <name>wildfly.home</name>
                 </property>
             </activation>
             <build>
@@ -363,9 +363,9 @@
                                 <phase>process-test-resources</phase>
                                 <configuration>
                                     <tasks>
-                                        <unzip dest="${jboss.home}" src="${project.build.directory}/${zip.file.name}"/>
-                                        <copy file="${staging.jboss.dir}/standalone/configuration/application-users.properties" todir="${jboss.home}/standalone/configuration"/>
-                                        <copy file="${staging.jboss.dir}/standalone/configuration/application-roles.properties" todir="${jboss.home}/standalone/configuration"/>
+                                        <unzip dest="${wildfly.home}" src="${project.build.directory}/${zip.file.name}"/>
+                                        <copy file="${staging.jboss.dir}/standalone/configuration/application-users.properties" todir="${wildfly.home}/standalone/configuration"/>
+                                        <copy file="${staging.jboss.dir}/standalone/configuration/application-roles.properties" todir="${wildfly.home}/standalone/configuration"/>
                                     </tasks>
                                 </configuration>
                                 <goals>

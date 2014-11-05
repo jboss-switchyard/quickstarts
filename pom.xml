@@ -35,8 +35,6 @@
     <modules>
         <module>testutil</module>
         <module>distribution</module>
-        <module>jboss-as7</module>
-        <module>karaf</module>
         <module>tools/dist</module>
         <module>admin/rhq</module>
         <module>installer</module>
@@ -81,4 +79,42 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>eap</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>jboss-as7</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>wildfly</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>jboss-as7</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>karaf</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>karaf</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>openshift</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>jboss-as7</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

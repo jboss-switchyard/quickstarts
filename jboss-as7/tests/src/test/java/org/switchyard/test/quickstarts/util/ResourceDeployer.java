@@ -40,16 +40,20 @@ public class ResourceDeployer {
     
     public static ModelNode addQueue(final String host, final int port, final String queueName, final String jndiName) throws IOException {
         final ModelControllerClient client = createClient(host, port);
-        final ModelNode op = new ModelNode();
-        op.get("operation").set("add");
-        op.get("address").add("subsystem", "messaging");
-        op.get("address").add("hornetq-server", "default");
-        op.get("address").add("jms-queue", queueName);
-        op.get("entries").add(jndiName)
-                         .add("java:jboss/exported/jms/" + jndiName);
-        op.get("durable").set(false);
-
-        return client.execute(op);
+        try {
+            final ModelNode op = new ModelNode();
+            op.get("operation").set("add");
+            op.get("address").add("subsystem", "messaging");
+            op.get("address").add("hornetq-server", "default");
+            op.get("address").add("jms-queue", queueName);
+            op.get("entries").add(jndiName)
+                             .add("java:jboss/exported/jms/" + jndiName);
+            op.get("durable").set(false);
+    
+            return client.execute(op);
+        } finally {
+            client.close();
+        }
     }
 
     public static ModelNode addQueue(final String host, final int port, final String queueName) throws IOException {
@@ -66,12 +70,16 @@ public class ResourceDeployer {
 
     public static ModelNode removeQueue(final String host, final int port, final String queueName) throws IOException {
         final ModelControllerClient client = createClient(host, port);
-        final ModelNode op = new ModelNode();
-        op.get("operation").set("remove");
-        op.get("address").add("subsystem", "messaging");
-        op.get("address").add("hornetq-server", "default");
-        op.get("address").add("jms-queue", queueName);
-        return client.execute(op);
+        try {
+            final ModelNode op = new ModelNode();
+            op.get("operation").set("remove");
+            op.get("address").add("subsystem", "messaging");
+            op.get("address").add("hornetq-server", "default");
+            op.get("address").add("jms-queue", queueName);
+            return client.execute(op);
+        } finally {
+            client.close();
+        }
     }
 
     public static ModelNode removeQueue(final String queueName) throws IOException {
@@ -80,15 +88,19 @@ public class ResourceDeployer {
 
     public static ModelNode addPooledConnectionFactory(final String host, final int port, final String cfName, final boolean xa, final String jndiName) throws IOException {
         final ModelControllerClient client = createClient(host, port);
-        final ModelNode op = new ModelNode();
-        op.get("operation").set("add");
-        op.get("address").add("subsystem", "messaging");
-        op.get("address").add("hornetq-server", "default");
-        op.get("address").add("pooled-connection-factory", cfName);
-        op.get("transaction").set(xa ? "xa" : "local");
-        op.get("connector").set("in-vm", "");
-        op.get("entries").add(jndiName);
-        return client.execute(op);
+        try {
+            final ModelNode op = new ModelNode();
+            op.get("operation").set("add");
+            op.get("address").add("subsystem", "messaging");
+            op.get("address").add("hornetq-server", "default");
+            op.get("address").add("pooled-connection-factory", cfName);
+            op.get("transaction").set(xa ? "xa" : "local");
+            op.get("connector").set("in-vm", "");
+            op.get("entries").add(jndiName);
+            return client.execute(op);
+        } finally {
+            client.close();
+        }
     }
 
     public static ModelNode addPooledConnectionFactory(final String cfName, final boolean xa, final String jndiName) throws IOException {
@@ -97,12 +109,16 @@ public class ResourceDeployer {
 
     public static ModelNode removePooledConnectionFactory(final String host, final int port, final String cfName) throws IOException {
         final ModelControllerClient client = createClient(host, port);
-        final ModelNode op = new ModelNode();
-        op.get("operation").set("remove");
-        op.get("address").add("subsystem", "messaging");
-        op.get("address").add("hornetq-server", "default");
-        op.get("address").add("pooled-connection-factory", cfName);
-        return client.execute(op);
+        try {
+            final ModelNode op = new ModelNode();
+            op.get("operation").set("remove");
+            op.get("address").add("subsystem", "messaging");
+            op.get("address").add("hornetq-server", "default");
+            op.get("address").add("pooled-connection-factory", cfName);
+            return client.execute(op);
+        } finally {
+            client.close();
+        }
     }
 
     public static ModelNode removePooledConnectionFactory(final String cfName) throws IOException {

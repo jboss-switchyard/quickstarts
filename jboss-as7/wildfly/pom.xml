@@ -26,14 +26,9 @@
     <description>SwitchYard Wildfly Standalone Parent</description>
     <properties>
         <version.wildfly>8.0.0.Final</version.wildfly>
-        <version.shrinkwrap>1.1.2</version.shrinkwrap>
-        <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
-        <version.shrinkwrap.descriptors>2.0.0-alpha-3</version.shrinkwrap.descriptors>
         <!-- Required for the module.xml file generation. -->
         <version.io.netty>3.6.6.Final</version.io.netty>
         <!-- Overridden version settings. -->
-        <version.arquillian.container>1.1.2.Final-wildfly-1</version.arquillian.container>
-        <version.jbossws.spi>2.2.2.Final</version.jbossws.spi>
     </properties>
     <modules>
         <module>extension</module>
@@ -57,39 +52,6 @@
                 <artifactId>wildfly-dist</artifactId>
                 <type>zip</type>
                 <version>${version.wildfly}</version>
-            </dependency>
-            <!--<dependency>
-                <groupId>org.jboss.arquillian.protocol</groupId>
-                <artifactId>arquillian-protocol-servlet</artifactId>
-                <version>${version.arquillian.container}</version>
-            </dependency>-->
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${version.arquillian.container}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap</groupId>
-                <artifactId>shrinkwrap-bom</artifactId>
-                <type>pom</type>
-                <scope>import</scope>
-                <version>${version.shrinkwrap}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-                <artifactId>shrinkwrap-descriptors-bom</artifactId>
-                <type>pom</type>
-                <scope>import</scope>
-                <version>${version.shrinkwrap.descriptors}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.shrinkwrap.resolver</groupId>
-                <artifactId>shrinkwrap-resolver-bom</artifactId>
-                <type>pom</type>
-                <scope>import</scope>
-                <version>${version.shrinkwrap.resolver}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
