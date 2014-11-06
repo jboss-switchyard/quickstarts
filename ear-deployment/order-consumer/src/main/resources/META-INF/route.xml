@@ -15,7 +15,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<route xmlns="http://camel.apache.org/schema/spring">
+<routes xmlns="http://camel.apache.org/schema/spring">
+  <route>
     <from uri="switchyard://OrderInput"/>
     <to uri="switchyard://OrderService"/>
-</route>
+  </route>
+</routes>
