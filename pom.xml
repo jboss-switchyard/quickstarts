@@ -894,6 +894,12 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard</groupId>
+                <artifactId>switchyard-as7-modules</artifactId>
+                <version>${project.version}</version>
+                <type>zip</type>
+            </dependency>
+            <dependency>
+                <groupId>org.switchyard</groupId>
                 <artifactId>switchyard-as7-standalone-bundle</artifactId>
                 <version>${project.version}</version>
                 <type>zip</type>
