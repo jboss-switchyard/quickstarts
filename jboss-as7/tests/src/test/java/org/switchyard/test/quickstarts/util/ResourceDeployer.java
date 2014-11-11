@@ -13,10 +13,12 @@
  */
 package org.switchyard.test.quickstarts.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.as.controller.client.ModelControllerClient;
 import org.jboss.dmr.ModelNode;
 
@@ -123,6 +125,83 @@ public class ResourceDeployer {
 
     public static ModelNode removePooledConnectionFactory(final String cfName) throws IOException {
         return removePooledConnectionFactory(DEFAULT_HOST, DEFAULT_PORT, cfName);
+    }
+
+    public static void setupSSL(ManagementClient client, String keystorePath, String keystorePassword) throws Exception {
+        // EAP
+        ModelNode op = new ModelNode();
+        op.get("operation").set("add");
+        op.get("address").add("subsystem", "web");
+        op.get("address").add("connector", "https");
+        op.get("socket-binding").set("https");
+        op.get("scheme").set("https");
+        op.get("protocol").set("HTTP/1.1");
+        op.get("secure").set("true");
+        op.get("enabled").set("true");
+        op.get("enable-lookups").set("false");
+        op.get("operation-headers", "allow-resource-service-restart").set("true");
+        client.getControllerClient().execute(op);
+
+        op = new ModelNode();
+        op.get("operation").set("add");
+        op.get("address").add("subsystem", "web");
+        op.get("address").add("connector", "https");
+        op.get("address").add("ssl", "configuration");
+        op.get("name").set("https");
+        op.get("password").set(keystorePassword);
+        op.get("certificate-key-file").set(keystorePath);
+        op.get("operation-headers", "allow-resource-service-restart").set("true");
+        client.getControllerClient().execute(op);
+
+        // WildFly
+        op = new ModelNode();
+        op.get("operation").set("add");
+        op.get("address").add("core-service", "management");
+        op.get("address").add("security-realm", "SslRealm");
+        client.getControllerClient().execute(op);
+
+        op = new ModelNode();
+        op.get("operation").set("add");
+        op.get("address").add("core-service", "management");
+        op.get("address").add("security-realm", "SslRealm");
+        op.get("address").add("server-identity", "ssl");
+        op.get("keystore-password").set(keystorePassword);
+        op.get("keystore-path").set(keystorePath);
+        op.get("operation-headers", "allow-resource-service-restart").set("true");
+        client.getControllerClient().execute(op);
+
+        op = new ModelNode();
+        op.get("operation").set("add");
+        op.get("address").add("subsystem", "undertow");
+        op.get("address").add("server", "default-server");
+        op.get("address").add("https-listener", "default-https");
+        op.get("socket-binding").set("https");
+        op.get("security-realm").set("SslRealm");
+        op.get("operation-headers", "allow-resource-service-restart").set("true");
+        client.getControllerClient().execute(op);
+    }
+
+    public static void tearDownSSL(ManagementClient client) throws Exception {
+        // EAP
+        ModelNode op = new ModelNode();
+        op.get("operation").set("remove");
+        op.get("address").add("subsystem", "web");
+        op.get("address").add("connector", "https");
+        client.getControllerClient().execute(op);
+
+        // WildFly
+        op = new ModelNode();
+        op.get("operation").set("remove");
+        op.get("address").add("subsystem", "undertow");
+        op.get("address").add("server", "default-server");
+        op.get("address").add("https-listener", "https");
+        client.getControllerClient().execute(op);
+
+        op = new ModelNode();
+        op.get("operation").set("remove");
+        op.get("address").add("core-service", "management");
+        op.get("address").add("security-realm", "SslRealm");
+        client.getControllerClient().execute(op);
     }
 
     private static ModelControllerClient createClient(final String host, final int port) throws UnknownHostException {

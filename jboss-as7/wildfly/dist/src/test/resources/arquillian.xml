@@ -9,7 +9,6 @@
     <container qualifier="jboss" default="true">
         <configuration>
             <property name="serverConfig">../../../../test-classes/standalone-test.xml</property>
-            <property name="javaVmArguments">-Xms256m -Xmx1024m -XX:MaxPermSize=512m</property>
         </configuration>
     </container>
     <!--<engine>

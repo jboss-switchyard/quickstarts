@@ -13,12 +13,18 @@
  */
 package org.switchyard.test.quickstarts;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.custommonkey.xmlunit.SimpleNamespaceContext;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.switchyard.test.ArquillianUtil;
 
 /**
@@ -33,8 +39,35 @@ public class CamelCdiBusQuickstartTest {
     }
 
     @Test
-    public void testDeployment() {
-        Assert.assertNotNull("Dummy not null", "");
+    public void testDeployment() throws Exception {
+        HTTPMixIn httpMixIn = new HTTPMixIn();
+
+        httpMixIn.initialize();
+        try {
+            XMLUnit.setIgnoreWhitespace(true);
+            String response = httpMixIn.postString("http://localhost:8080/quickstart-cdi-bus/OrderService", SOAP_REQUEST);
+
+            Map<String, String> namespaces = new HashMap<String, String>();
+            namespaces.put("ns", "urn:switchyard-quickstart:cdi-bus:1.0");
+            XMLUnit.setXpathNamespaceContext(new SimpleNamespaceContext(namespaces));
+
+            XMLAssert.assertXpathEvaluatesTo("PO-19838-XYZ", "//ns:orderAck/orderId", response);
+            XMLAssert.assertXpathEvaluatesTo("true", "//ns:orderAck/accepted", response);
+            XMLAssert.assertXpathEvaluatesTo("Order Accepted", "//ns:orderAck/status", response);
+        } finally {
+            httpMixIn.uninitialize();
+        }
     }
+
+    private static final String SOAP_REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+            "    <soap:Header/>" +
+            "    <soap:Body>\n" +
+            "        <orders:order xmlns:orders=\"urn:switchyard-quickstart:cdi-bus:1.0\">\n" +
+            "            <orderId>PO-19838-XYZ</orderId>\n" +
+            "            <itemId>BUTTER</itemId>\n" +
+            "            <quantity>200</quantity>\n" +
+            "        </orders:order>\n" +
+            "    </soap:Body>\n" +
+            "</soap:Envelope>";
 
 }

@@ -8,7 +8,6 @@
         <configuration>
     	    <property name="startupTimeoutInSeconds">120</property>
 	        <property name="serverConfig">standalone-full.xml</property>
-	        <property name="javaVmArguments">-Xms256m -Xmx1024m -XX:MaxPermSize=512m</property>
         </configuration>
     </container>
 </arquillian>

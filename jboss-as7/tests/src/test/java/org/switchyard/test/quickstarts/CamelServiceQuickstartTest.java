@@ -13,12 +13,19 @@
  */
 package org.switchyard.test.quickstarts;
 
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.remote.RemoteInvoker;
+import org.switchyard.remote.RemoteMessage;
+import org.switchyard.remote.http.HttpInvoker;
 import org.switchyard.test.ArquillianUtil;
 
 /**
@@ -28,14 +35,25 @@ import org.switchyard.test.ArquillianUtil;
 @RunWith(Arquillian.class)
 public class CamelServiceQuickstartTest {
 
+    private static final QName SERVICE = new QName( "urn:switchyard-quickstart:camel-service:0.1.0", "JavaDSL");
+
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
         return ArquillianUtil.createJarQSDeployment("switchyard-camel-service");
     }
 
     @Test
-    public void testDeployment() {
-        Assert.assertNotNull("Dummy not null", "");
+    public void testDeployment() throws Exception {
+        // Create a new remote client invoker
+        String port = System.getProperty("org.switchyard.component.sca.client.port", "8080");
+        RemoteInvoker invoker = new HttpInvoker("http://localhost:" + port + "/switchyard-remote");
+
+        // Create the request message
+        RemoteMessage message = new RemoteMessage();
+        message.setService(SERVICE).setOperation("acceptMessage").setContent("test");
+
+        // Invoke the service
+        invoker.invoke(message);
     }
 
 }

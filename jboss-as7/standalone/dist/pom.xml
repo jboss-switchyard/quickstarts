@@ -40,6 +40,12 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-as7-standalone-bundle</artifactId>
             <type>zip</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
@@ -122,6 +128,21 @@
             <artifactId>cxf-rt-databinding-jaxb</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-hl7</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-mina2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.picketlink</groupId>
+            <artifactId>picketlink-federation</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <testResources>
@@ -150,8 +171,8 @@
                         <configuration>
                             <rules>
                                 <requireProperty>
-                                    <property>jboss.home</property>
-                                    <message>You must set jboss.home property!</message>
+                                    <property>eap.home</property>
+                                    <message>You must set eap.home property!</message>
                                 </requireProperty>
                             </rules>
                             <fail>true</fail>
@@ -273,21 +294,25 @@
                 <configuration>
                     <argLine>-Xms512m -Xmx512m</argLine>
                     <environmentVariables>
-                        <JBOSS_HOME>${jboss.home}</JBOSS_HOME>
+                        <JBOSS_HOME>${eap.home}</JBOSS_HOME>
                         <SWITCHYARD_VERSION>${project.version}</SWITCHYARD_VERSION>
                     </environmentVariables>
                     <systemProperties>
                         <property>
                             <name>jboss.home</name>
-                            <value>${jboss.home}</value>
+                            <value>${eap.home}</value>
                         </property>
                         <property>
                             <name>module.path</name>
-                            <value>${jboss.home}/modules</value>
+                            <value>${eap.home}/modules</value>
                         </property>
                         <property>
                             <name>server-config</name>
                             <value>standalone-full.xml</value>
+                        </property>
+                        <property>
+                            <name>jboss.options</name>
+                            <value>-Xms256m -Xmx1024m -XX:MaxPermSize=512m</value>
                         </property>
                     </systemProperties>
                     <trimStackTrace>false</trimStackTrace>
@@ -302,7 +327,7 @@
             <id>default</id>
             <activation>
                 <property>
-                    <name>jboss.home</name>
+                    <name>eap.home</name>
                 </property>
             </activation>
             <build>
@@ -316,9 +341,9 @@
                                 <phase>process-test-classes</phase>
                                 <configuration>
                                     <tasks>
-                                        <unzip dest="${jboss.home}" src="${project.build.directory}/${zip.file.name}"/>
-                                        <copy file="${project.build.testOutputDirectory}/application-users.properties" todir="${jboss.home}/standalone/configuration"/>
-                                        <copy file="${project.build.testOutputDirectory}/application-roles.properties" todir="${jboss.home}/standalone/configuration"/>
+                                        <unzip dest="${eap.home}" src="${project.build.directory}/${zip.file.name}"/>
+                                        <copy file="${project.build.testOutputDirectory}/application-users.properties" todir="${eap.home}/standalone/configuration"/>
+                                        <copy file="${project.build.testOutputDirectory}/application-roles.properties" todir="${eap.home}/standalone/configuration"/>
                                     </tasks>
                                 </configuration>
                                 <goals>

@@ -13,6 +13,9 @@
  */
 package org.switchyard.test.quickstarts;
 
+import java.io.File;
+import java.io.FileWriter;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -28,14 +31,33 @@ import org.switchyard.test.ArquillianUtil;
 @RunWith(Arquillian.class)
 public class CamelBindingQuickstartTest {
 
-    @Deployment(testable = false)
+    private static String DEST_FILE = "target/input/test.txt";
+
+    @Deployment(testable = true)
     public static JavaArchive createDeployment() {
         return ArquillianUtil.createJarQSDeployment("switchyard-camel-binding");
     }
 
     @Test
-    public void testDeployment() {
-        Assert.assertNotNull("Dummy not null", "");
+    public void testDeployment() throws Exception {
+        File destFile = new File(DEST_FILE);
+        destFile.getParentFile().mkdirs();
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(destFile);
+            writer.append("Captain Crunch");
+            Assert.assertTrue(destFile.exists());
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
+        // Wait a spell so that the file component polls and picks up the file
+        while (destFile.exists()) {
+            Thread.sleep(50);
+        }
+        // File should have been picked up
+        Assert.assertFalse(destFile.exists());
     }
 
 }

@@ -45,7 +45,7 @@ public class CamelCxfQuickstartTest {
             // goose the reference to workaround deadlock in initialization
             _httpMixIn.postString(SWITCHYARD_REFERENCE_SERVICE, REQUEST);
             String response = _httpMixIn.postString(SWITCHYARD_WEB_SERVICE, REQUEST);
-            Assert.assertTrue(response.contains("Order Boeing with quantity 10 accepted."));
+            Assert.assertTrue(response, response.contains("Order Boeing with quantity 10 accepted."));
         } finally {
             _httpMixIn.uninitialize();
         }

@@ -13,10 +13,14 @@
  */
 package org.switchyard.test.quickstarts;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.hl7.HL7MLLPCodec;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.switchyard.test.ArquillianUtil;
@@ -33,8 +37,43 @@ public class CamelHL7QuickstartTest {
     }
 
     @Test
-    public void testDeployment() {
-        Assert.assertNotNull("Dummy not null", "");
+    public void testDeployment() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
+        HL7MLLPCodec codec = new HL7MLLPCodec();
+        codec.setCharset("iso-8859-1");
+        codec.setConvertLFtoCR(true);
+
+        registry.put("hl7codec", codec);
+        CamelContext camelContext = null;
+        ProducerTemplate template = null;
+        
+        try {
+            camelContext = new DefaultCamelContext(registry);
+            camelContext.start();
+            template = camelContext.createProducerTemplate();
+            String line1 = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|1234|P|2.4";
+            String line2 = "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
+
+            StringBuilder in = new StringBuilder();
+            in.append(line1);
+            in.append("\r");
+            in.append(line2);
+
+            template.requestBody("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", in.toString());
+        } finally {
+            if (template != null) {
+                try {
+                    template.stop();
+                } catch (Exception e) {
+                }
+            }
+            if (camelContext != null) {
+                try {
+                    camelContext.stop();
+                } catch (Exception e) {
+                }
+            }
+        }
     }
 
 }
