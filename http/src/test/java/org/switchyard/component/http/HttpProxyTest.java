@@ -156,7 +156,8 @@ public class HttpProxyTest {
         } catch (Exception e) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             e.printStackTrace(new PrintStream(baos));
-            Assert.assertTrue(baos.toString().contains("UnknownHostException: unreachablehost"));
+            Assert.assertTrue(baos.toString().contains("org.apache.http.NoHttpResponseException: unreachablehost") 
+                    || baos.toString().contains("UnknownHostException: unreachablehost"));
         }
     }
 
