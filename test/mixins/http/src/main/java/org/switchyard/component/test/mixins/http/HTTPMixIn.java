@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -37,7 +39,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
@@ -89,7 +91,25 @@ public class HTTPMixIn extends AbstractTestMixIn {
     private HashMap<String,String> _requestHeaders = new HashMap<String,String>();
     private HashMap<String,String> _expectedHeaders = new HashMap<String,String>();
     private boolean _dumpMessages = false;
-    
+    private SSLContext _sslContext;
+
+    /**
+     * Default constructor.
+     */
+    public HTTPMixIn() {
+        super();
+    }
+
+    /**
+     * Create a new HTTPMixIn.
+     * 
+     * @param sslContext SSLContext to use for secure connections.
+     */
+    public HTTPMixIn(SSLContext sslContext) {
+        this();
+        _sslContext = sslContext;
+    }
+
     /**
      * Set the content type.
      * <p/>
@@ -105,7 +125,7 @@ public class HTTPMixIn extends AbstractTestMixIn {
 
     @Override
     public void initialize() {
-        _httpClient = new DefaultHttpClient();
+        _httpClient = HttpClientBuilder.create().setSslcontext(_sslContext).build();
     }
 
     /**
