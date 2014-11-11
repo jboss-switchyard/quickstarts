@@ -35,6 +35,11 @@
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-release-distribution</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-as7-modules</artifactId>
+            <type>zip</type>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
