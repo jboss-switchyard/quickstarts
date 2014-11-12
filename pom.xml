@@ -720,6 +720,12 @@
                 <groupId>org.fusesource</groupId>
                 <artifactId>camel-sap</artifactId>
                 <version>${version.camelsap}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sap.conn.jco</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.fusesource.mqtt-client</groupId>
