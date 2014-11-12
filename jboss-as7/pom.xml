@@ -141,6 +141,12 @@
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-transform-dozer</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
@@ -278,11 +284,23 @@
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-camel-rss-binding</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>
             <artifactId>switchyard-camel-sap-binding</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.switchyard.quickstarts</groupId>

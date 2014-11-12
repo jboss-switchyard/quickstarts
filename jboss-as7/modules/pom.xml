@@ -222,6 +222,12 @@
         <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-camel-sap</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sap.conn.jco</groupId>
+                    <artifactId>sapjco3</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
@@ -608,6 +614,12 @@
         <dependency>
             <groupId>org.fusesource</groupId>
             <artifactId>camel-sap</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sap.conn.jco</groupId>
+                    <artifactId>sapjco3</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
