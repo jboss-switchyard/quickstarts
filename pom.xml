@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.jboss.integration-platform</groupId>
         <artifactId>jboss-integration-platform-parent</artifactId>
-        <version>6.0.0.CR14</version>
+        <version>6.0.0.CR17</version>
     </parent>
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-parent</artifactId>
@@ -55,7 +55,7 @@
 
         <version.org.jboss.as.console>1.5.4.Final</version.org.jboss.as.console>
         <version.redhat.eap6.bom>6.3.0.GA</version.redhat.eap6.bom>
-        <version.ip.bom>6.0.0.CR14</version.ip.bom>
+        <version.ip.bom>6.0.0.CR17</version.ip.bom>
         <!-- This version is only used as a prefix for a jar included in release modules -->
         <version.redhat.eap6>6.3</version.redhat.eap6>
         <version.redhat.eap6.minor>0.GA</version.redhat.eap6.minor>
