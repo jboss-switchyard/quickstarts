@@ -26,15 +26,15 @@ This can be done by simply making copies of the standalone directory for each in
 
 _Window 1_
 
-    bin/standalone.sh -Djboss.node.name=node1 -Djboss.server.base.dir=node1 --server-config=standalone-ha.xml
+    bin/standalone.sh -Djboss.node.name=node1 --server-config=standalone-ha.xml
 
 _Window 2_
 
-    bin/standalone.sh -Djboss.node.name=node2 -Djboss.server.base.dir=node2 -Djboss.socket.binding.port-offset=1000 --server-config=standalone-ha.xml
+    bin/standalone.sh -Djboss.node.name=node2 -Djboss.socket.binding.port-offset=1000 --server-config=standalone-ha.xml
 
 _Window 3_
 
-    bin/standalone.sh -Djboss.node.name=node3 -Djboss.server.base.dir=node3 -Djboss.socket.binding.port-offset=2000 --server-config=standalone-ha.xml
+    bin/standalone.sh -Djboss.node.name=node3 -Djboss.socket.binding.port-offset=2000 --server-config=standalone-ha.xml
 
 *3. In a separate terminal window deploy the dealer and credit applications.*
 
