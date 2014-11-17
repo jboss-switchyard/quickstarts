@@ -52,6 +52,7 @@
                 <version>2.8</version>
                 <configuration>
                     <filtering>true</filtering>
+                    <version>5</version>
                     <modules>
                         <jarModule>
                             <groupId>org.switchyard.quickstarts</groupId>
