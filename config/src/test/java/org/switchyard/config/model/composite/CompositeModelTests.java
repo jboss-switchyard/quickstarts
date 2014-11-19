@@ -23,13 +23,14 @@ import java.io.StringReader;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.common.io.pull.StringPuller;
+import org.switchyard.common.lang.Strings;
 import org.switchyard.common.property.PropertyResolver;
 import org.switchyard.common.xml.XMLHelper;
 import org.switchyard.config.Configuration;
@@ -58,6 +59,7 @@ public class CompositeModelTests {
     private static final String EXTENSION_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Extension.xml";
     private static final String SCA_BINDING_XML = "/org/switchyard/config/model/composite/CompositeModelTests-SCABinding.xml";
     private static final String PROMOTE_XML = "/org/switchyard/config/model/composite/CompositeModelTests-Promote.xml";
+    private static final String PROPERTIES_SELF_REFERRING_XML = "/org/switchyard/config/model/composite/CompositeModelTests-PropertiesSelfReferring.xml";
 
     private static ModelPuller<CompositeModel> _puller;
 
@@ -200,6 +202,27 @@ public class CompositeModelTests {
         assertEquals("component." + System.getProperty("user.name"), componentPr.resolveProperty("component.userName"));
     }
     
+    @Test
+    public void testSelfReferringPropertyModel() throws Exception {
+        CompositeModel composite = _puller.pull(PROPERTIES_SELF_REFERRING_XML, getClass());
+        // Test component property
+        ComponentModel component = composite.getComponents().get(1);
+        assertEquals(5, component.getProperties().size());
+        PropertyResolver componentPr = component.getModelConfiguration().getPropertyResolver();
+
+        Object result = componentPr.resolveProperty("creditTerms");
+        assertTrue("${creditTerms}".equals(result));
+
+        result = componentPr.resolveProperty("foobar");
+        assertTrue("foobar".equals((String) result));
+
+        result = componentPr.resolveProperty("bar");
+        assertTrue("${bar}".equals(result));
+
+        result = componentPr.resolveProperty("bar");
+        assertTrue("${bar}".equals(result));
+    }
+
     @Test
     public void testWriteComplete() throws Exception {
         String old_xml = new StringPuller().pull(COMPLETE_XML, getClass());

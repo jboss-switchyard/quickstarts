@@ -26,6 +26,8 @@ import org.switchyard.config.model.property.PropertyModel;
  */
 public class V1PropertyModel extends BaseModel implements PropertyModel {
 
+    private boolean _valueRecursionCheck;
+
     /**
      * Creates a new PropertyModel in the specified namespace.
      * @param namespace the specified namespace
@@ -72,8 +74,16 @@ public class V1PropertyModel extends BaseModel implements PropertyModel {
      * {@inheritDoc}
      */
     @Override
-    public String getValue() {
-        return getModelAttribute("value");
+    public synchronized String getValue() {
+        if (_valueRecursionCheck) {
+            return null;
+        }
+        _valueRecursionCheck = true;
+        try {
+            return getModelAttribute("value");
+        } finally {
+            _valueRecursionCheck = false;
+        }
     }
 
     /**
