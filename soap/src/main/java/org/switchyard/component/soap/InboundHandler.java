@@ -302,6 +302,12 @@ public class InboundHandler extends BaseServiceHandler {
             securityContext.getCredentials().addAll(soapBindingData.extractCredentials());
             _securityContextManager.setContext(exchange, securityContext);
 
+            @SuppressWarnings("unchecked")
+            Map<String, List<String>> httpHeaders =
+                    (Map<String, List<String>>) wsContext.getMessageContext()
+                                                         .get(MessageContext.HTTP_REQUEST_HEADERS);
+            soapBindingData.setHttpHeaders(httpHeaders);
+
             Message message;
             try {
                 message = _messageComposer.compose(soapBindingData, exchange);
@@ -356,6 +362,16 @@ public class InboundHandler extends BaseServiceHandler {
             soapResponse = _messageComposer.decompose(exchange, bindingData).getSOAPMessage();
             if ((msgContext != null) && (bindingData.getStatus() != null)) {
                 msgContext.put(MessageContext.HTTP_RESPONSE_CODE, bindingData.getStatus());
+            }
+            if (msgContext != null) {
+                @SuppressWarnings("unchecked")
+                Map<String, List<String>> httpHeaders =
+                        (Map<String, List<String>>) msgContext.get(MessageContext.HTTP_RESPONSE_HEADERS);
+                if (httpHeaders == null) {
+                    msgContext.put(MessageContext.HTTP_RESPONSE_HEADERS, bindingData.getHttpHeaders());
+                } else {
+                    httpHeaders.putAll(bindingData.getHttpHeaders());
+                }
             }
         } catch (SOAPException soapEx) {
             throw soapEx;

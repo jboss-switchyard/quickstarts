@@ -16,6 +16,9 @@ package org.switchyard.component.soap;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
@@ -235,13 +238,13 @@ public class OutboundHandler extends BaseServiceHandler {
                 throw SOAPMessages.MESSAGES.failedToInstantiateSOAPMessageFactory();
             }
 
-            SOAPMessage request;
+            SOAPBindingData request;
             Boolean oneWay = false;
             String action = null;
             try {
-                request = _messageComposer.decompose(exchange, new SOAPBindingData(SOAPUtil.createMessage(_bindingId))).getSOAPMessage();
+                request = _messageComposer.decompose(exchange, new SOAPBindingData(SOAPUtil.createMessage(_bindingId)));
 
-                QName firstBodyElement = SOAPUtil.getFirstBodyElement(request);
+                QName firstBodyElement = SOAPUtil.getFirstBodyElement(request.getSOAPMessage());
                 action = WSDLUtil.getSoapAction(_wsdlPort, firstBodyElement, _documentStyle);
                 oneWay = WSDLUtil.isOneWay(_wsdlPort, firstBodyElement, _documentStyle);
 
@@ -258,7 +261,7 @@ public class OutboundHandler extends BaseServiceHandler {
                 throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
             }
             if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Outbound ---> Request:[" + _referenceName + "][" + SOAPUtil.soapMessageToString(request) + "]" + (oneWay ? " oneWay " : ""));
+                LOGGER.trace("Outbound ---> Request:[" + _referenceName + "][" + SOAPUtil.soapMessageToString(request.getSOAPMessage()) + "]" + (oneWay ? " oneWay " : ""));
             }
             SOAPMessage response = invokeService(request, oneWay, action);
             if (LOGGER.isTraceEnabled()) {
@@ -280,6 +283,13 @@ public class OutboundHandler extends BaseServiceHandler {
                     if (status != null) {
                         bindingData.setStatus(status);
                     }
+                    @SuppressWarnings("unchecked")
+                    Map<String, List<String>> httpHeaders =
+                            (Map<String, List<String>>) _dispatcher.getResponseContext().get(MessageContext.HTTP_RESPONSE_HEADERS);
+                    if (httpHeaders != null) {
+                        bindingData.setHttpHeaders(httpHeaders);
+                    }
+                    
                     message = _messageComposer.compose(bindingData, exchange);
                 } catch (Exception e) {
                     throw e instanceof SOAPException ? (SOAPException)e : new SOAPException(e);
@@ -304,10 +314,21 @@ public class OutboundHandler extends BaseServiceHandler {
      * @return the SOAP response
      * @throws SOAPException If a Dispatch could not be created based on the SOAP message.
      */
-    private SOAPMessage invokeService(final SOAPMessage soapMessage, final Boolean oneWay, final String action) throws SOAPException {
+    private SOAPMessage invokeService(final SOAPBindingData bindingData, final Boolean oneWay, final String action) throws SOAPException {
 
+        SOAPMessage soapMessage = bindingData.getSOAPMessage();
         SOAPMessage response = null;
         try {
+            @SuppressWarnings("unchecked")
+            Map<String, List<String>> httpHeaders =
+                (Map<String, List<String>>) _dispatcher.getRequestContext().get(MessageContext.HTTP_REQUEST_HEADERS);
+           if (httpHeaders == null) {
+               httpHeaders = new HashMap<String, List<String>>();
+               _dispatcher.getRequestContext()
+                          .put(MessageContext.HTTP_REQUEST_HEADERS, httpHeaders);
+           }
+            httpHeaders.putAll(bindingData.getHttpHeaders());
+
             if (!_feature.isAddressingEnabled() && (action != null)) {
                 _dispatcher.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, "\"" + action + "\"");
             }

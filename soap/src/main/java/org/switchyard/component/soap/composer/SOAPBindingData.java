@@ -13,7 +13,10 @@
  */
 package org.switchyard.component.soap.composer;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletRequest;
@@ -40,6 +43,7 @@ public class SOAPBindingData implements SecurityBindingData {
     private final WebServiceContext _webServiceContext;
     private SOAPFaultInfo _soapFaultInfo;
     private Integer _status;
+    private Map<String, List<String>> _httpHeaders = new HashMap<String, List<String>>();
 
     /**
      * Constructs a new SOAP binding data with the specified SOAP message.
@@ -105,6 +109,22 @@ public class SOAPBindingData implements SecurityBindingData {
      */
     public void setStatus(Integer status) {
         _status = status;
+    }
+
+    /**
+     * Get the HTTP headers.
+     * @return HTTP headers
+     */
+    public Map<String, List<String>> getHttpHeaders() {
+        return _httpHeaders;
+    }
+
+    /**
+     * Set the HTTP headers.
+     * @param httpHeaders HTTP headers
+     */
+    public void setHttpHeaders(Map<String, List<String>> httpHeaders) {
+        _httpHeaders = httpHeaders;
     }
 
     /**

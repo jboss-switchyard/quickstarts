@@ -14,11 +14,13 @@
 package org.switchyard.component.soap.composer;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
@@ -49,7 +51,10 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
      * The HTTP responce code.
      */
     public static final String HTTP_RESPONSE_STATUS = "http_response_status";
-
+    /**
+    * Headers to be excluded.
+    */
+    public static final List<String> HTTP_HEADERS_EXCLUDED = Arrays.asList(new String[]{"content-type", "content-length"});
     private static final String[] SOAP_HEADER_LABELS = new String[]{ComponentLabel.SOAP.label(), EndpointLabel.SOAP.label()};
     private static final String[] SOAP_MIME_LABELS = new String[]{ComponentLabel.SOAP.label(), EndpointLabel.HTTP.label()};
 
@@ -85,18 +90,15 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
         if (source.getStatus() != null) {
             context.setProperty(HTTP_RESPONSE_STATUS, source.getStatus()).addLabels(SOAP_MIME_LABELS);
         }
-        @SuppressWarnings("unchecked")
-        Iterator<MimeHeader> mimeHeaders = soapMessage.getMimeHeaders().getAllHeaders();
-        while (mimeHeaders.hasNext()) {
-            MimeHeader mimeHeader = mimeHeaders.next();
-            String name = mimeHeader.getName();
-            if (matches(name)) {
-                String value = mimeHeader.getValue();
-                if (value != null) {
-                    context.setProperty(name, value).addLabels(SOAP_MIME_LABELS);
+        for (String key : source.getHttpHeaders().keySet()) {
+            if (matches(key)) {
+                List<String> values = source.getHttpHeaders().get(key);
+                if (values != null) {
+                    context.setProperty(key, values).addLabels(SOAP_MIME_LABELS);
                 }
             }
         }
+
         @SuppressWarnings("unchecked")
         Iterator<SOAPHeaderElement> soapHeaders = soapMessage.getSOAPHeader().examineAllHeaderElements();
         while (soapHeaders.hasNext()) {
@@ -134,7 +136,6 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
     @Override
     public void mapTo(Context context, SOAPBindingData target) throws Exception {
         SOAPMessage soapMessage = target.getSOAPMessage();
-        MimeHeaders mimeHeaders = soapMessage.getMimeHeaders();
         SOAPHeader soapHeader = soapMessage.getSOAPHeader();
         for (Property property : context.getProperties()) {
             Object value = property.getValue();
@@ -171,8 +172,23 @@ public class SOAPContextMapper extends BaseRegexContextMapper<SOAPBindingData> {
                         } else if (value instanceof Integer) {
                             target.setStatus((Integer) value);
                         }
+                    } else if (HTTP_HEADERS_EXCLUDED.contains(name.toLowerCase())) {
+                        // Excluding HTTP headers which should not be set manually
+                        continue;
                     } else {
-                        mimeHeaders.addHeader(name, String.valueOf(value));
+                        if (value instanceof List) {
+                            List<String> stringValues = new ArrayList<String>();
+                            for (Object v : List.class.cast(value)) {
+                                if (v == null || v instanceof String) {
+                                    stringValues.add((String)v);
+                                }
+                            }
+                            if (!stringValues.isEmpty()) {
+                                target.getHttpHeaders().put(name, stringValues);
+                            }
+                        } else if (value instanceof String) {
+                            target.getHttpHeaders().put(name, Collections.singletonList((String)value));
+                        }
                     }
                 }
             }
