@@ -16,6 +16,7 @@
  */
 package org.switchyard.quickstarts.camel.quartz.binding;
 
+import org.apache.log4j.Logger;
 import org.switchyard.component.bean.Service;
 
 /**
@@ -28,8 +29,10 @@ public class GreetingServiceBean implements GreetingService {
 
     private int times;
 
+    private static final Logger LOGGER = Logger.getLogger(GreetingServiceBean.class);
+
     @Override
     public final void greet() {
-        System.out.println((times++) + ". Service executed.");
+        LOGGER.info((times++) + ". Service executed.");
     }
 }

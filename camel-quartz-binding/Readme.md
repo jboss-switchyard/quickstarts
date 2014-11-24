@@ -69,14 +69,17 @@ karaf@root> features:uninstall switchyard-quickstart-camel-quartz-binding
 
 Expected Output
 =================
-11:21:11,024 INFO  [stdout] (DefaultQuartzScheduler-camel-3_Worker-2) 1. Service executed.
-11:21:12,006 INFO  [stdout] (DefaultQuartzScheduler-camel-3_Worker-3) 2. Service executed.
-11:21:13,005 INFO  [stdout] (DefaultQuartzScheduler-camel-3_Worker-4) 3. Service executed.
-11:21:14,005 INFO  [stdout] (DefaultQuartzScheduler-camel-3_Worker-5) 4. Service executed.
-11:21:15,004 INFO  [stdout] (DefaultQuartzScheduler-camel-3_Worker-6) 5. Service executed.
-11:21:16,005 INFO  [stdout] (DefaultQuartzScheduler-camel-3_Worker-7) 6. Service executed.
-11:21:17,007 INFO  [stdout] (DefaultQuartzScheduler-camel-3_Worker-8) 7. Service executed.
-11:21:18,008 INFO  [stdout] (DefaultQuartzScheduler-camel-3_Worker-9) 8. Service executed.
+13:33:05,001 | INFO  | camel-2_Worker-9 | GreetingServiceBean              | 311 - org.switchyard.quickstarts.switchyard.camel.quartz.binding - 2.0.0.SNAPSHOT | 1. Service executed.
+13:33:06,001 | INFO  | camel-2_Worker-1 | GreetingServiceBean              | 311 - org.switchyard.quickstarts.switchyard.camel.quartz.binding - 2.0.0.SNAPSHOT | 2. Service executed.
+13:33:07,002 | INFO  | camel-2_Worker-2 | GreetingServiceBean              | 311 - org.switchyard.quickstarts.switchyard.camel.quartz.binding - 2.0.0.SNAPSHOT | 3. Service executed.
+13:33:08,001 | INFO  | camel-2_Worker-3 | GreetingServiceBean              | 311 - org.switchyard.quickstarts.switchyard.camel.quartz.binding - 2.0.0.SNAPSHOT | 4. Service executed.
+13:33:09,001 | INFO  | camel-2_Worker-4 | GreetingServiceBean              | 311 - org.switchyard.quickstarts.switchyard.camel.quartz.binding - 2.0.0.SNAPSHOT | 5. Service executed.
+13:33:10,002 | INFO  | camel-2_Worker-5 | GreetingServiceBean              | 311 - org.switchyard.quickstarts.switchyard.camel.quartz.binding - 2.0.0.SNAPSHOT | 6. Service executed.
+13:33:11,001 | INFO  | camel-2_Worker-6 | GreetingServiceBean              | 311 - org.switchyard.quickstarts.switchyard.camel.quartz.binding - 2.0.0.SNAPSHOT | 7. Service executed.
+13:33:12,001 | INFO  | camel-2_Worker-7 | GreetingServiceBean              | 311 - org.switchyard.quickstarts.switchyard.camel.quartz.binding - 2.0.0.SNAPSHOT | 8. Service executed.
+13:33:13,002 | INFO  | camel-2_Worker-8 | GreetingServiceBean              | 311 - org.switchyard.quickstarts.switchyard.camel.quartz.binding - 2.0.0.SNAPSHOT | 9. Service executed.
+
+
 
 
 ## Further Reading
