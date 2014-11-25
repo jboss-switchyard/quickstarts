@@ -30,6 +30,7 @@
                     <element name="dataSourceRef" type="string" minOccurs="0" maxOccurs="1"/>
                     <element name="batch" type="boolean" minOccurs="0" maxOccurs="1"/>
                     <element name="placeholder" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="consume" type="tns:SQLConsumerType" minOccurs="0" maxOccurs="1"/>
                 </sequence>
                 <attribute name="timerName" type="string" />
                 <attribute name="period" type="string" />
@@ -37,5 +38,10 @@
             </extension>
         </complexContent>
     </complexType>
-
+    <complexType name="SQLConsumerType">
+        <sequence>
+            <element name="consumer.delay" type="switchyard:propLong" minOccurs="0" maxOccurs="1" />
+            <element name="consumer.initialDelay" type="switchyard:propLong" minOccurs="0" maxOccurs="1" />
+        </sequence>
+    </complexType>
 </schema>

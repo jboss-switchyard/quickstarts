@@ -6,7 +6,7 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -22,14 +22,14 @@ public interface CamelSqlBindingModel extends CamelBindingModel {
 
     /**
      * Get SQL query to be executed.
-     * 
+     *
      * @return SQL query.
      */
     String getQuery();
 
     /**
      * Specify sql query to execute.
-     * 
+     *
      * @param query SQL query.
      * @return a reference to this Camel binding model
      */
@@ -37,14 +37,14 @@ public interface CamelSqlBindingModel extends CamelBindingModel {
 
     /**
      * Reference to a DataSource to look up in the registry.
-     * 
+     *
      * @return Data source bean name.
      */
     String getDataSourceRef();
 
     /**
      * Specify data source bean name.
-     * 
+     *
      * @param dataSourceRef Bean name.
      * @return a reference to this Camel binding model
      */
@@ -52,14 +52,14 @@ public interface CamelSqlBindingModel extends CamelBindingModel {
 
     /**
      * Execute SQL batch update statements.
-     * 
+     *
      * @return True if jdbc batch update should be performed.
      */
     Boolean isBatch();
 
     /**
      * Turn on/off JDBC batching support.
-     * 
+     *
      * @param batch Batch flag.
      * @return a reference to this Camel binding model
      */
@@ -67,16 +67,16 @@ public interface CamelSqlBindingModel extends CamelBindingModel {
 
     /**
      * Get placeholder character.
-     * 
+     *
      * @return Paceholder character.
      */
     String getPlaceholder();
 
     /**
-     * Specifies a character that will be replaced to ? in SQL query. 
+     * Specifies a character that will be replaced to ? in SQL query.
      * Notice, that it is simple String.replaceAll() operation and no SQL parsing is
      * involved (quoted strings will also change).
-     * 
+     *
      * @param placeholder Placeholder in query.
      * @return a reference to this Camel binding model
      */
@@ -84,14 +84,14 @@ public interface CamelSqlBindingModel extends CamelBindingModel {
 
     /**
      * Period between polls.
-     * 
+     *
      * @return Period between polls.
      */
     String getPeriod();
 
     /**
      * Specifies delays between pools. Possible values are long (millis) and string, eg: 1s, 1m.
-     * 
+     *
      * @param period Period between polls.
      * @return a reference to this Camel binding model
      */
@@ -99,7 +99,7 @@ public interface CamelSqlBindingModel extends CamelBindingModel {
 
     /**
      * Specifies delay in millis before first poll.
-     * 
+     *
      * @param initialDelay First poll delay.
      * @return a reference to this Camel binding model
      */
@@ -107,17 +107,25 @@ public interface CamelSqlBindingModel extends CamelBindingModel {
 
     /**
      * Get first poll delay.
-     * 
+     *
      * @return First poll delay.
      */
     Long getInitialDelay();
 
     /**
-     * Returns timer uri used to call component uri.
-     * 
-     * @param timerId Name of timer endpoint.
-     * @return Camel timer uri.
+     * The consumer's configurations.
+     *
+     * @return an instance of the camel sql consumer binding model
      */
-    String getTimerURI(String timerId);
+    CamelSqlConsumerBindingModel getConsumer();
+
+    /**
+     * Specify the consumer binding model.
+     *
+     * @param consumer
+     *            The consumer binding model
+     * @return a reference to this binding model
+     */
+    CamelSqlBindingModel setConsumer(CamelSqlConsumerBindingModel consumer);
 
 }
