@@ -21,6 +21,7 @@
         <rest:binding.rest name="testGateway">
             <rest:contextMapper class="org.switchyard.component.resteasy.CustomMapper"/>
             <rest:interfaces>org.switchyard.component.resteasy.HelloResource</rest:interfaces>
+            <rest:address>http://localhost:6090/greeters</rest:address>
         </rest:binding.rest>
     </sca:service>
 
@@ -28,6 +29,8 @@
         <rest:binding.rest name="testGateway">
             <rest:contextMapper class="org.switchyard.component.resteasy.AnotherCustomMapper" includes="bar"/>
             <rest:interfaces>org.switchyard.component.resteasy.HelloResource</rest:interfaces>
+            <rest:address>http://localhost:6080</rest:address>
+			<rest:timeout>1300</rest:timeout>            
         </rest:binding.rest>
     </sca:reference>
 

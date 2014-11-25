@@ -6,18 +6,13 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
 package org.switchyard.component.resteasy;
-
-import com.sun.net.httpserver.HttpContext;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -34,6 +29,7 @@ import org.junit.Test;
 import org.switchyard.Message;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.switchyard.config.model.ModelPuller;
 import org.switchyard.config.model.composite.CompositeModel;
 import org.switchyard.config.model.composite.CompositeReferenceModel;
@@ -44,7 +40,11 @@ import org.switchyard.metadata.InOutOperation;
 import org.switchyard.metadata.ServiceOperation;
 import org.switchyard.test.Invoker;
 import org.switchyard.test.MockHandler;
-import org.switchyard.component.test.mixins.http.HTTPMixIn;
+
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 
 /**
  * Contains tests for RESTEasy Gateway.
@@ -57,7 +57,7 @@ public class RESTEasyGatewayTest {
     private static final QName RESPONSE_QNAME = new QName("javax.ws.rs.core.Response");
     private static ModelPuller<CompositeModel> _puller;
     private ServiceDomain _domain;
-    private HTTPMixIn _httpMixIn = new HTTPMixIn();
+    private final HTTPMixIn _httpMixIn = new HTTPMixIn();
 
     private Invoker _consumerService;
     private Invoker _consumerService2;
@@ -69,8 +69,11 @@ public class RESTEasyGatewayTest {
     private OutboundHandler _restOutbound2;
     private final MockHandler mockService = new MockHandler().forwardInToOut();
 
+    private final static int PORT = 6080;
+
     @Before
     public void setUp() throws Exception {
+        System.setProperty("org.switchyard.component.resteasy.standalone.port", PORT + "");
         _httpMixIn.initialize();
         _domain = new ServiceDomainManager().createDomain();
         _consumerService = new Invoker(_domain, QName.valueOf("{urn:resteasy:test:1.1}SampleRESTEasyConsumerService"));
@@ -115,19 +118,24 @@ public class RESTEasyGatewayTest {
         _restOutbound2.stop();
     }
 
+    private String getBaseURL() {
+        return "http://localhost:" + PORT;
+    }
+
     @Test
     public void restGatewayServiceTest() throws Exception {
         _httpMixIn.setContentType("text/plain");
-        String response = _httpMixIn.sendString("http://localhost:8080/greeters/magesh", "", HTTPMixIn.HTTP_PUT);
+        String baseURL = getBaseURL();
+        String response = _httpMixIn.sendString(baseURL + "/greeters/magesh", "", HTTPMixIn.HTTP_PUT);
         Assert.assertEquals(1, mockService.getMessages().size());
         Assert.assertEquals("magesh", response);
-        response = _httpMixIn.sendString("http://localhost:8080/greeters/keith", "", HTTPMixIn.HTTP_GET);
+        response = _httpMixIn.sendString(baseURL + "/greeters/keith", "", HTTPMixIn.HTTP_GET);
         Assert.assertEquals(2, mockService.getMessages().size());
         Assert.assertEquals("keith", response);
-        response = _httpMixIn.sendString("http://localhost:8080/greeters/magesh", "keith", HTTPMixIn.HTTP_POST);
+        response = _httpMixIn.sendString(baseURL + "/greeters/magesh", "keith", HTTPMixIn.HTTP_POST);
         Assert.assertEquals(3, mockService.getMessages().size());
         Assert.assertEquals("keith", response);
-        response = _httpMixIn.sendString("http://localhost:8080/greeters/response", "", HTTPMixIn.HTTP_GET);
+        response = _httpMixIn.sendString(baseURL + "/greeters/response", "", HTTPMixIn.HTTP_GET);
         Assert.assertEquals(4, mockService.getMessages().size());
     }
 
@@ -149,6 +157,7 @@ public class RESTEasyGatewayTest {
         httpServer.setExecutor(null); // creates a default executor
         httpServer.start();
         HttpContext httpContext = httpServer.createContext("/forever", new HttpHandler() {
+            @Override
             public void handle(HttpExchange exchange) {
                     try {
                         Thread.sleep(10000);
