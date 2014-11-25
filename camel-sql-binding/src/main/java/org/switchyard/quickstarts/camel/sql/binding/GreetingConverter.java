@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Converter;
+import org.apache.log4j.Logger;
 
 /**
  * Custom type converter used to convert from {@link Greeting} into {@link Iterator}.
@@ -28,9 +29,11 @@ import org.apache.camel.Converter;
 @Converter
 public class GreetingConverter {
 
+    private static final Logger LOGGER = Logger.getLogger(GreetingConverter.class);
+
     /**
      * Wraps greeting into iterator.
-     * 
+     *
      * @param greeting Greeting.
      * @return
      */
@@ -52,5 +55,18 @@ public class GreetingConverter {
         }
         return greetings;
     }
+
+    /**
+     * Wraps a map that contains the greeting sql result into a Greeting[].
+     *
+     * @param object Map with the result.
+     */
+    @Converter
+    public static Greeting from(Map<String, Object> object) {
+        LOGGER.debug("Converting " + object.toString() + "to a Greeting object");
+        Greeting greeting = new Greeting((Integer) object.get("id"), (String) object.get("receiver"), (String) object.get("sender"));
+        return greeting;
+    }
+
 
 }

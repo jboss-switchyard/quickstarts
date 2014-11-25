@@ -20,6 +20,7 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 
@@ -29,6 +30,7 @@ import org.switchyard.component.bean.Service;
 @Service(GreetingService.class)
 public class GreetingServiceImpl implements GreetingService {
 
+    private static final Logger LOGGER = Logger.getLogger(GreetingConverter.class);
     // some values to populate entity
     private final static String[] NAMES = {
         "Keith", "David", "Brian", "Rob",
@@ -54,9 +56,9 @@ public class GreetingServiceImpl implements GreetingService {
     }
 
     @Override
-    public void consume(Greeting[] greetings) {
-        for (Greeting greeting : greetings) {
-            System.out.println("Consumed [id: " + greeting.getId() + "] from " + greeting.getSender() + " to " + greeting.getReceiver());
+    public void consume(Greeting greeting) {
+        if (greeting != null) {
+            LOGGER.info("Consumed [id: " + greeting.getId() + "] from " + greeting.getSender() + " to " + greeting.getReceiver());
             remove.execute(greeting);
         }
     }

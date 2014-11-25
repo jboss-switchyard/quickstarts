@@ -27,7 +27,7 @@ public class Greeting {
 
     /**
      * Creates greeting.
-     * 
+     *
      * @param id Greeting id.
      * @param receiver Person to receive greet.
      * @param sender Greeting sender.
@@ -48,7 +48,7 @@ public class Greeting {
 
     /**
      * Creates greeting.
-     * 
+     *
      * @param receiver Person to receive greet.
      * @param sender Greeting sender.
      */
@@ -92,6 +92,41 @@ public class Greeting {
     @Override
     public String toString() {
         return "Greeting [id=" + _id + ", sender=" + _sender + ", receiver = " + _receiver + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((_id == null) ? 0 : _id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Greeting other = (Greeting) obj;
+        if (_id == null) {
+            if (other._id != null)
+                return false;
+        } else if (!_id.equals(other._id))
+            return false;
+        if (_receiver == null) {
+            if (other._receiver != null)
+                return false;
+        } else if (!_receiver.equals(other._receiver))
+            return false;
+        if (_sender == null) {
+            if (other._sender != null)
+                return false;
+        } else if (!_sender.equals(other._sender))
+            return false;
+        return true;
     }
 
 }

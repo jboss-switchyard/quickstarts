@@ -25,7 +25,7 @@ public interface GreetingService {
 
     void store(Greeting greeting);
 
-    void consume(Greeting[] greetings);
+    void consume(Greeting greeting);
 
     void generate();
 
