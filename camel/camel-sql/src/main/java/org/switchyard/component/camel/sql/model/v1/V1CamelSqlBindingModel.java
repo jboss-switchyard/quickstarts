@@ -19,7 +19,6 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.switchyard.component.camel.common.QueryString;
 import org.switchyard.component.camel.common.model.v1.V1BaseCamelBindingModel;
 import org.switchyard.component.camel.sql.model.CamelSqlBindingModel;
-import org.switchyard.component.camel.sql.model.CamelSqlConsumerBindingModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 
@@ -142,16 +141,6 @@ public class V1CamelSqlBindingModel extends V1BaseCamelBindingModel
         return URI.create(UnsafeUriCharactersEncoder.encode(baseUri + queryStr.toString()));
     }
 
-    @Override
-    public CamelSqlConsumerBindingModel getConsumer() {
-
-        return null;
-    }
-
-    @Override
-    public CamelSqlBindingModel setConsumer(CamelSqlConsumerBindingModel consumer) {
-        return this;
-    }
 
     protected Long convertPeriodToLongMilliseconds(String period) {
         if (isLong(period)) {

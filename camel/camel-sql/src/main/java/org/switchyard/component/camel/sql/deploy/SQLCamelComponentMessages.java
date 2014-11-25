@@ -32,27 +32,11 @@ public interface SQLCamelComponentMessages {
     SQLCamelComponentMessages MESSAGES = Messages.getBundle(SQLCamelComponentMessages.class);
 
     /**
-     * multipleInitialDelayDefined method definition.
-     *
-     * @return SwitchYardException
-     */
-    @Message(id = 34000, value = "The initial delay has been defined twice.")
-    SwitchYardException multipleInitialDelayDefined();
-
-    /**
-     * multipleDelayDefined method definition.
-     *
-     * @return SwitchYardException
-     */
-    @Message(id = 34001, value = "The delay has been defined twice.")
-    SwitchYardException multipleDelayDefined();
-
-    /**
      * periodAttributeMandatory method definition.
-     * 
+     *
      * @return SwitchYardException
      */
-    @Message(id = 34002, value = "Period attribute is mandatory for SQL service bindings")
+    @Message(id = 34000, value = "Period attribute is mandatory for SQL service bindings")
     SwitchYardException periodAttributeMandatory();
 
 

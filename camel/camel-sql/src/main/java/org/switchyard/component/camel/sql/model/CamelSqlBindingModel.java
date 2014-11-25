@@ -112,20 +112,5 @@ public interface CamelSqlBindingModel extends CamelBindingModel {
      */
     Long getInitialDelay();
 
-    /**
-     * The consumer's configurations.
-     *
-     * @return an instance of the camel sql consumer binding model
-     */
-    CamelSqlConsumerBindingModel getConsumer();
-
-    /**
-     * Specify the consumer binding model.
-     *
-     * @param consumer
-     *            The consumer binding model
-     * @return a reference to this binding model
-     */
-    CamelSqlBindingModel setConsumer(CamelSqlConsumerBindingModel consumer);
 
 }

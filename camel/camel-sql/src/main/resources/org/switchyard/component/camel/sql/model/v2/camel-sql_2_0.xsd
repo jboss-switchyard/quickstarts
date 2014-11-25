@@ -1,47 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
- - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
- - 
- - Licensed under the Apache License, Version 2.0 (the "License");
- - you may not use this file except in compliance with the License.
- - You may obtain a copy of the License at
- - http://www.apache.org/licenses/LICENSE-2.0
- - Unless required by applicable law or agreed to in writing, software
- - distributed under the License is distributed on an "AS IS" BASIS,
- - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- - See the License for the specific language governing permissions and
- - limitations under the License.
- -->
-<schema xmlns="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="urn:switchyard-component-camel-sql:config:2.0"
-    xmlns:tns="urn:switchyard-component-camel-sql:config:2.0"
-    xmlns:switchyard="urn:switchyard-config:switchyard:2.0"
-    elementFormDefault="qualified">
-
-    <import namespace="urn:switchyard-config:switchyard:2.0"/>
-    <include schemaLocation="camel-common_2_0.xsd" />
-
-    <element name="binding.sql" type="tns:CamelSqlBindingType" substitutionGroup="switchyard:binding.switchyard"/>
-    <complexType name="CamelSqlBindingType">
-        <complexContent>
-            <extension base="tns:BaseCamelBinding">
-                <sequence>
-                    <element name="query" type="string" />
-                    <element name="dataSourceRef" type="string" minOccurs="0" maxOccurs="1"/>
-                    <element name="batch" type="boolean" minOccurs="0" maxOccurs="1"/>
-                    <element name="placeholder" type="string" minOccurs="0" maxOccurs="1"/>
-                    <element name="consume" type="tns:SQLConsumerType" minOccurs="0" maxOccurs="1"/>
-                </sequence>
-                <attribute name="timerName" type="string" />
-                <attribute name="period" type="string" />
-                <attribute name="initialDelay" type="switchyard:propLong" />
-            </extension>
-        </complexContent>
-    </complexType>
-    <complexType name="SQLConsumerType">
-        <sequence>
-            <element name="consumer.delay" type="switchyard:propLong" minOccurs="0" maxOccurs="1" />
-            <element name="consumer.initialDelay" type="switchyard:propLong" minOccurs="0" maxOccurs="1" />
-        </sequence>
-    </complexType>
+<!-- - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors. 
+	- - Licensed under the Apache License, Version 2.0 (the "License"); - you 
+	may not use this file except in compliance with the License. - You may obtain 
+	a copy of the License at - http://www.apache.org/licenses/LICENSE-2.0 - Unless 
+	required by applicable law or agreed to in writing, software - distributed 
+	under the License is distributed on an "AS IS" BASIS, - WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. - See the License for 
+	the specific language governing permissions and - limitations under the License. -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:switchyard-component-camel-sql:config:2.0"
+	xmlns:tns="urn:switchyard-component-camel-sql:config:2.0"
+	xmlns:switchyard="urn:switchyard-config:switchyard:2.0"
+	elementFormDefault="qualified">
+	<import namespace="urn:switchyard-config:switchyard:2.0" />
+	<include schemaLocation="camel-common_2_0.xsd" />
+	<element name="binding.sql" type="tns:CamelSqlBindingType"
+		substitutionGroup="switchyard:binding.switchyard" />
+	<complexType name="CamelSqlBindingType">
+		<complexContent>
+			<extension base="tns:BaseCamelBinding">
+				<sequence>
+					<element name="query" type="string" />
+					<element name="dataSourceRef" type="string" minOccurs="0"
+						maxOccurs="1" />
+					<element name="batch" type="boolean" minOccurs="0"
+						maxOccurs="1" />
+					<element name="placeholder" type="string" minOccurs="0"
+						maxOccurs="1" />
+				</sequence>
+				<attribute name="timerName" type="string" />
+				<attribute name="period" type="string" />
+				<attribute name="initialDelay" type="switchyard:propLong" />
+			</extension>
+		</complexContent>
+	</complexType>
 </schema>
