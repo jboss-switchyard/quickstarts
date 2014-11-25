@@ -19,9 +19,10 @@ package org.switchyard.quickstarts.camel.sql;
 import static org.junit.Assert.assertEquals;
 
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.switchyard.Exchange;
@@ -43,6 +44,10 @@ public class CamelSqlRetrieveTest extends CamelSqlBindingTest {
 
     private SwitchYardTestKit _testKit;
 
+    private final static Integer REPLY_TIMEOUT_SECONDS = 4;
+
+    protected final static String RECEIVER_2 = "John";
+    protected final static String SENDER_2 = "Robert";
     @Test
     public void shouldRetrieveGreetings() throws Exception {
         _testKit.removeService("GreetingService");
@@ -54,26 +59,42 @@ public class CamelSqlRetrieveTest extends CamelSqlBindingTest {
         statement.setString(1, RECEIVER);
         statement.setString(2, SENDER);
         assertEquals(1, statement.executeUpdate());
-        List<Greeting> content = getContents(handler);
-        assertEquals(1, content.size());
-        assertEquals(SENDER, content.get(0).getSender());
-        assertEquals(RECEIVER, content.get(0).getReceiver());
+
+        PreparedStatement statement2 = connection.prepareStatement("INSERT INTO greetings (receiver, sender) VALUES (?,?)");
+        statement2.setString(1, RECEIVER_2);
+        statement2.setString(2, SENDER_2);
+        assertEquals(1, statement2.executeUpdate());
+        Set<Greeting> greetings = getContents(handler);
+        assertEquals(2, greetings.size());
+        assertEquals(true, checkGreeting(RECEIVER, SENDER, greetings));
+        assertEquals(true, checkGreeting(RECEIVER_2, SENDER_2, greetings));
     }
 
     // method which is capable to hold execution of test until some records pulled from database
-    private List<Greeting> getContents(MockHandler handler) {
+    private Set<Greeting> getContents(MockHandler handler) {
         handler.waitForOKMessage(); // first execution of poll done
-        List<Greeting> greetings = new ArrayList<Greeting>();
 
-        while (greetings.isEmpty()) {
+        long stop = System.nanoTime() + TimeUnit.SECONDS.toNanos(REPLY_TIMEOUT_SECONDS);
+        Set<Greeting> greetings = new HashSet<Greeting>();
+
+        while (System.nanoTime() < stop) {
             for (Exchange exchange : handler.getMessages()) {
-                Greeting[] content = exchange.getMessage().getContent(Greeting[].class);
-                if (content != null) {
-                    greetings.addAll(Arrays.asList(content));
+                Greeting greeting = exchange.getMessage().getContent(Greeting.class);
+                if (greeting != null && !greetings.contains(greeting)) {
+                    greetings.add(greeting);
                 }
             }
         }
         return greetings;
+    }
+
+    private boolean checkGreeting(String receiver, String sender, Collection<Greeting> greetings) {
+        for (Greeting greeting : greetings) {
+            if (greeting.getReceiver().equals(receiver) && greeting.getSender().equals(sender)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
