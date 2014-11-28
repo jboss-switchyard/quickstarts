@@ -43,7 +43,6 @@
 
     <group name="GenericFileBindingType">
         <sequence>
-            <element name="directory" type="string" />
             <element name="autoCreate" type="boolean" minOccurs="0" maxOccurs="1"/>
             <element name="bufferSize" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
             <element name="fileName" type="string" minOccurs="0" maxOccurs="1"/>

@@ -21,14 +21,23 @@
     <import namespace="urn:switchyard-config:switchyard:2.0"/>
     <include schemaLocation="camel-common_2_0.xsd" />
 
+    <complexType name="GenericFtpBindingType">
+        <complexContent>
+            <extension base="tns:BaseCamelBinding">
+                 <sequence>
+                     <element name="directory" type="string" minOccurs="0" maxOccurs="1"/>
+                     <group ref="tns:GenericFileBindingType" minOccurs="1" maxOccurs="1"/>
+                     <group ref="tns:CamelRemoteBindingType" minOccurs="1" maxOccurs="1"/>
+                 </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <element name="binding.ftp" type="tns:CamelFtpBindingType" substitutionGroup="switchyard:binding.switchyard"/>
     <complexType name="CamelFtpBindingType">
         <complexContent>
-            <extension base="tns:BaseCamelBinding">
+            <extension base="tns:GenericFtpBindingType">
                 <sequence>
-                    <group ref="tns:GenericFileBindingType" minOccurs="1" maxOccurs="1"/>
-                    <group ref="tns:CamelRemoteBindingType" minOccurs="1" maxOccurs="1"/>
-
                     <element name="passiveMode" type="boolean" minOccurs="0" maxOccurs="1"/>
                     <element name="timeout" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
                     <element name="soTimeout" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
@@ -61,11 +70,8 @@
     <element name="binding.sftp" type="tns:CamelSftpBindingType" substitutionGroup="switchyard:binding.switchyard"/>
     <complexType name="CamelSftpBindingType">
         <complexContent>
-            <extension base="tns:BaseCamelBinding">
+            <extension base="tns:GenericFtpBindingType">
                 <sequence>
-                    <group ref="tns:GenericFileBindingType" minOccurs="0" maxOccurs="1"/>
-                    <group ref="tns:CamelRemoteBindingType" minOccurs="0" maxOccurs="1"/>
-
                     <element name="knownHostsFile" type="string" minOccurs="0" maxOccurs="1" />
                     <element name="privateKeyFile" type="string" minOccurs="0" maxOccurs="1" />
                     <element name="privateKeyFilePassphrase" type="string" minOccurs="0" maxOccurs="1" />

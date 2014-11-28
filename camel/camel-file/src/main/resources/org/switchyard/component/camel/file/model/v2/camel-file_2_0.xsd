@@ -27,6 +27,7 @@
         <complexContent>
             <extension base="tns:BaseCamelBinding">
                 <sequence>
+                    <element name="directory" type="string" minOccurs="1" maxOccurs="1"/>
                     <group ref="tns:GenericFileBindingType" minOccurs="1" maxOccurs="1"/>
                     <choice minOccurs="0" maxOccurs="1">
                         <element name="consume" type="tns:FileConsumerType"/>
