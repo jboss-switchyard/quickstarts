@@ -54,7 +54,7 @@ public class HelpDesk {
     private String _userId = "krisv";
 
     public HelpDesk() {
-        _taskService = BPMTaskServiceRegistry.getTaskService(null, new QName("urn:switchyard-quickstart-demo:helpdesk:0.1.0", "HelpDeskService"));
+        _taskService = BPMTaskServiceRegistry.getTaskService(new QName(null, "helpdesk"), new QName("urn:switchyard-quickstart-demo:helpdesk:0.1.0", "HelpDeskService"));
         _userTasks = Collections.synchronizedList(new ArrayList<TaskSummary>());
         _userTickets = Collections.synchronizedMap(new LinkedHashMap<Long, Ticket>());
     }

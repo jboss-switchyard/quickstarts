@@ -25,7 +25,9 @@
         <jta-data-source>osgi:service/datasources/ExampleDS</jta-data-source>
         <mapping-file>META-INF/Executor-orm.xml</mapping-file>
         <mapping-file>META-INF/JBPMorm.xml</mapping-file>
+        <!-- jbpm-kie-services needs to export org.jbpm.kie.services.impl.model
         <mapping-file>META-INF/Servicesorm.xml</mapping-file>
+         -->
         <mapping-file>META-INF/TaskAuditorm.xml</mapping-file>
         <mapping-file>META-INF/Taskorm.xml</mapping-file>
         <class>org.drools.persistence.info.SessionInfo</class>

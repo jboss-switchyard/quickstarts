@@ -51,20 +51,27 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
         <switchyard.osgi.import>
-            org.switchyard.*,
-            org.switchyard.annotations,
-            org.switchyard.component.bean,
-            org.switchyard.component.bpm.runtime,
-            javax.faces.event,
-            javax.servlet,
-            javax.servlet.http,
-            javax.xml.transform,
-            javax.xml.transform.dom,
-            javax.xml.transform.stream,
+            javax.el,
+            javax.faces.webapp,
+            javax.servlet;version="[3.0.0,4.0.0)",
+            javax.servlet.http;version="[3.0.0,4.0.0)",
+            javax.servlet.jsp;version="2.2.0",
+            javax.servlet.jsp.jstl.core;version="2.2",
+            javax.servlet.jsp.jstl.fmt;version="2.2",
+            javax.servlet.jsp.jstl.tlv;version="2.2",
+            org.apache.taglibs.standard.resources;version="1.1.2",
+            org.apache.taglibs.standard.tag.common.core;version="1.1.2",
+            org.apache.taglibs.standard.tag.rt.core;version="1.1.2",
+            org.apache.taglibs.standard.tei;version="1.1.2",
+            org.apache.taglibs.standard.tlv;version="1.1.2"
+            com.sun.el.lang,
+            com.sun.el.parser,
+            com.sun.el,
+            com.sun.el.util,
+            javax.faces.*,
             org.apache.log4j,
             org.drools.persistence.info,
             org.jbpm.executor.entities,
-            org.jbpm.kie.services.impl.model,
             org.jbpm.persistence.correlation,
             org.jbpm.persistence.processinstance,
             org.jbpm.process.audit,
@@ -85,6 +92,9 @@
             org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
             osgi.extender; filter:="(osgi.extender=pax.cdi)"
         </switchyard.osgi.require.capability>
+        <switchyard.osgi.require.bundle>
+            org.apache.myfaces.core.bundle
+        </switchyard.osgi.require.bundle>
         <switchyard.osgi.dynamic>
             org.switchyard,org.switchyard.*
         </switchyard.osgi.dynamic>
@@ -176,8 +186,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -229,14 +239,16 @@
                         <supportedProjectType>war</supportedProjectType>
                     </supportedProjectTypes>
                     <instructions>
-                        <Bundle-ClassPath>/WEB-INF/classes</Bundle-ClassPath>
                         <Bundle-SymbolicName>${bundle.symbolic.name}</Bundle-SymbolicName>
                         <DynamicImport-Package>${switchyard.osgi.dynamic}</DynamicImport-Package>
                         <Embed-Dependency>!*</Embed-Dependency>
                         <Import-Package>${switchyard.osgi.import}</Import-Package>
-                        <Include-Resource>{maven-resources}, META-INF/switchyard.xml=target/classes/META-INF/switchyard.xml</Include-Resource>
+                        <Include-Resource>{maven-resources}, WEB-INF/switchyard.xml=target/classes/META-INF/switchyard.xml</Include-Resource>
                         <Require-Capability>${switchyard.osgi.require.capability}</Require-Capability>
+                        <Require-Bundle>${switchyard.osgi.require.bundle}</Require-Bundle>
                         <Meta-Persistence>WEB-INF/classes/META-INF/persistence-osgi.xml</Meta-Persistence>
+                        <Web-ContextPath>helpdesk</Web-ContextPath>
+                        <_wab>src/main/webapp</_wab>
                     </instructions>
                     <archive>
                         <manifestEntries>

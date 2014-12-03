@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+    <!-- Karaf does not automatically configure JSF, so we do it manually. -->
+  <Call name="addServlet">
+    <Arg type="java.lang.String">javax.faces.webapp.FacesServlet</Arg>
+    <Arg type="java.lang.String">/faces/*,*.jsf,*.faces,*.xhtml</Arg>
+  </Call>
+  <Call name="setInitParameter">
+    <Arg>org.apache.myfaces.INITIALIZE_ALWAYS_STANDALONE</Arg>
+    <Arg>true</Arg>
+  </Call>
+  <Call name="setWelcomeFiles">
+    <Arg>
+        <Array type="java.lang.String">
+            <Item>index.html</Item>
+        </Array>
+    </Arg>
+  </Call>
+</Configure>
