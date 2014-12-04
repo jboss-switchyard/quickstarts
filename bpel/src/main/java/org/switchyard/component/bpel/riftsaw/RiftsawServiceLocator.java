@@ -24,6 +24,7 @@ import org.riftsaw.engine.Fault;
 import org.riftsaw.engine.Service;
 import org.riftsaw.engine.ServiceLocator;
 import org.switchyard.Exchange;
+import org.switchyard.ExchangePattern;
 import org.switchyard.ExchangeState;
 import org.switchyard.Message;
 import org.switchyard.Scope;
@@ -265,54 +266,57 @@ public class RiftsawServiceLocator implements ServiceLocator {
             
             exchange.send(req);
 
-            try {
-                exchange = rh.waitForOut(_waitTimeout);
-            } catch (DeliveryException e) {
-                throw BPELMessages.MESSAGES.timedOutAfterMsWaitingOnSynchronousResponseFromTargetService(_waitTimeout, _serviceReference.getName().toString());
-            }
-            
-            Message resp=exchange.getMessage();
-            
-            if (resp == null) {
-                throw BPELMessages.MESSAGES.responseNotReturnedFromOperationOnService(operationName, _serviceReference.getName().toString());
-            }
-            
-            // Process header values associated with the response
-            for (org.switchyard.Property p : exchange.getContext().getProperties(Scope.MESSAGE)) {
-                if (p.hasLabel(EndpointLabel.SOAP.label())) {
-                    headers.put(p.getName(), p.getValue());
-                }
-            }
-            
-            // Check for exception - but don't rethrow a BPEL
-            // fault as it will be converted to a message
-            // response
-            if (resp.getContent() instanceof Exception
-                    && !(resp.getContent() instanceof BPELFault)) {
-                throw (Exception)resp.getContent();
-            }
-            
-            Element respelem=(Element)resp.getContent(Node.class);
-            
             javax.wsdl.Operation operation=_portType.getOperation(operationName, null, null);
-            
+            Element newresp = null;
+            Element respelem = null;
+            if (ExchangePattern.IN_OUT.equals(exchange.getContract().getConsumerOperation().getExchangePattern())) {
+                try {
+                    exchange = rh.waitForOut(_waitTimeout);
+                } catch (DeliveryException e) {
+                    throw BPELMessages.MESSAGES.timedOutAfterMsWaitingOnSynchronousResponseFromTargetService(_waitTimeout, _serviceReference.getName().toString());
+                }
+
+                Message resp=exchange.getMessage();
+
+                if (resp == null) {
+                    throw BPELMessages.MESSAGES.responseNotReturnedFromOperationOnService(operationName, _serviceReference.getName().toString());
+                }
+
+                // Process header values associated with the response
+                for (org.switchyard.Property p : exchange.getContext().getProperties(Scope.MESSAGE)) {
+                     if (p.hasLabel(EndpointLabel.SOAP.label())) {
+                       headers.put(p.getName(), p.getValue());
+                     }
+                }
+
+                // Check for exception - but don't rethrow a BPEL
+                // fault as it will be converted to a message
+                // response
+                if (resp.getContent() instanceof Exception
+                        && !(resp.getContent() instanceof BPELFault)) {
+                     throw (Exception)resp.getContent();
+                }
+
+                respelem = (Element)resp.getContent(Node.class);
+                newresp=WSDLHelper.wrapResponseMessagePart(respelem, operation);
+
+            }
+
             if (exchange.getState() == ExchangeState.FAULT) {
                 QName faultCode=null;
                 
-                if (respelem instanceof SOAPFault) {
+                if ((respelem != null) && (respelem instanceof SOAPFault)) {
                     SOAPFault fault=(SOAPFault)respelem;
-                    
+
                     respelem = (Element)fault.getDetail().getFirstChild();
                     
                     faultCode = fault.getFaultCodeAsQName();
                 }
-                
+
                 Element newfault=WSDLHelper.wrapFaultMessagePart(respelem, operation, null);
                 throw new Fault(faultCode, newfault);
             }
-            
-            Element newresp=WSDLHelper.wrapResponseMessagePart(respelem, operation);
-            
+
             return ((Element)newresp);
         }
     }

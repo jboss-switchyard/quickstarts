@@ -12,9 +12,13 @@
  - limitations under the License.
  -->
 <deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03"
+        xmlns:bpl="http://www.jboss.org/bpel/examples"
 	xmlns:ls="http://example.com/loan-approval/loanService/" 
+        xmlns:ls2="http://example.com/loan2-approval/loan2Service/"
 	xmlns:ra="http://example.com/loan-approval/riskAssessment/"
-    xmlns:testDomain="urn:bpel:test:1.0"
+        xmlns:ra2="http://example.com/loan-approval/risk2Assessment/"
+        xmlns:testDomain="urn:bpel:test:1.0"
+        xmlns:intf="http://www.jboss.org/bpel/examples/wsdl"
 	xmlns:examples="http://www.jboss.org/bpel/examples">
 
 	<!-- loan_approval/loanService example -->
@@ -47,5 +51,24 @@
 			<service name="testDomain:SayHelloService" port="ignored"/>
 		</provide>
 	</process>
-	
+
+        <process name="ls2:loan2ApprovalProcess">
+                <active>true</active>
+        <process-events generate="all"/>
+                <provide partnerLink="customer">
+                        <service name="testDomain:loan2Service" port="ignored"/>
+                </provide>
+                <invoke partnerLink="assessor" usePeer2Peer="false">
+                        <service name="testDomain:risk2Assessor" port="ignored"/>
+                </invoke>
+        </process>
+
+        <process name="ra2:risk2AssessmentProcess">
+                <active>true</active>
+        <process-events generate="all"/>
+                <provide partnerLink="assessor">
+                        <service name="testDomain:risk2Assessor" port="ignored"/>
+                </provide>
+        </process>
+
 </deploy>
