@@ -36,7 +36,7 @@ Wildfly
 
 2. Build and deploy the quickstart
 
-        mvn install -Pdeploy
+        mvn install -Pdeploy,db
 
 3. Wait a bit for producer and consumer threads to start
 
@@ -47,7 +47,7 @@ Wildfly
 
 5. Undeploy the quickstart:
 
-        mvn clean -Pdeploy
+        mvn clean -Pdeploy,db
 
 
 Karaf
@@ -56,23 +56,31 @@ Karaf
 
 ${KARAF_HOME}/bin/karaf
 
-2. Add the features URL for the respective version of SwitchYard.   Replace {SWITCHYARD-VERSION}
+2. Build the Quickstart and setup the database
+
+    mvn install -Pdb
+
+3. Add the features URL for the respective version of SwitchYard.   Replace {SWITCHYARD-VERSION}
 with the version of SwitchYard that you are using (ex. 2.0.0): 
 
 karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERSION}/xml/features
 
-3. Install the feature for the camel-sql-binding quickstart :
+4. Install the feature for the camel-sql-binding quickstart :
 
 karaf@root> features:install switchyard-quickstart-camel-sql-binding
 
-4. Check the server console for output from the service
+5. Check the server console for output from the service
 
 Consumed Greeting [id: 2] from Foo to Bar
 Consumed Greeting [id: 3] from Tom to Rob
 
-5. Undeploy the quickstart:
+6. Undeploy the quickstart:
 
 karaf@root> features:uninstall switchyard-quickstart-camel-sql-binding
+
+7. Shutdown the database
+
+    mvn clean -Pdb
 
 
 ## Further Reading

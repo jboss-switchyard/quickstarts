@@ -47,6 +47,7 @@
         <bundle.symbolic.name>${project.groupId}.switchyard.camel.file.binding</bundle.symbolic.name>
 
         <deploy.skip>true</deploy.skip>
+        <wildfly.port>9999</wildfly.port>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
         <switchyard.osgi.import>*</switchyard.osgi.import>
@@ -161,6 +162,35 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven}</version>
+                <executions>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>deploy-only</goal>
+                        </goals>
+                        <configuration>
+                            <filename>${project.build.finalName}.jar</filename>
+                            <skip>${deploy.skip}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>undeploy</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>undeploy</goal>
+                        </goals>
+                        <configuration>
+                            <filename>${project.build.finalName}.jar</filename>
+                            <skip>${deploy.skip}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Attach sources -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -178,4 +208,18 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <properties>
+                <deploy.skip>false</deploy.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>wildfly</id>
+            <properties>
+                <wildfly.port>9990</wildfly.port>
+            </properties>
+        </profile>
+    </profiles>
 </project>

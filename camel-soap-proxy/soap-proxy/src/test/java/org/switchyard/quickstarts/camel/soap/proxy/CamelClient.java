@@ -16,14 +16,14 @@
  */
 package org.switchyard.quickstarts.camel.soap.proxy;
 
+import java.io.File;
+
 import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 /**
  * Simple client to send a SOAP message.
  */
 public final class CamelClient {
-
-    private static final String XML = "src/test/resources/xml/soap-request.xml";
 
     /**
      * Private no-args constructor.
@@ -36,7 +36,7 @@ public final class CamelClient {
      * @param ignored not used.
      * @throws Exception if something goes wrong.
      */
-    public static void main(final String[] ignored) throws Exception {
+    public static void main(final String[] args) throws Exception {
 
         HTTPMixIn soapMixIn = new HTTPMixIn();
         soapMixIn.initialize();
@@ -46,7 +46,7 @@ public final class CamelClient {
 	    // For karaf, the directory will generally be cxf/proxy/ReverseService
 	    String dir = System.getProperty("org.switchyard.component.soap.client.dir", "proxy/ReverseService");
             String url = "http://localhost:" + port + "/" + dir;
-            String result = soapMixIn.postFile(url, XML);
+            String result = soapMixIn.postFile(url, args[0]);
             System.out.println("SOAP Reply:\n" + result);
         } finally {
             soapMixIn.uninitialize();

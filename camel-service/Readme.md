@@ -48,7 +48,7 @@ Wildfly
 3. Use the CamelServiceClient class to send a request message to the JavaDSL service.  The client can be
 run from the command-line using:
 
-        mvn exec:java -Pkaraf
+        mvn exec:java
 
 4. Undeploy the quickstart:
 
@@ -73,7 +73,7 @@ karaf@root> features:install switchyard-quickstart-camel-service
 4. Use the CamelServiceClient class to send a request message to the JavaDSL service.  The client can be
 run from the command-line using:
 
-mvn exec:java
+mvn exec:java -Pkaraf
 
 6. Undeploy the quickstart:
 

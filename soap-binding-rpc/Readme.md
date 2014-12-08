@@ -77,7 +77,7 @@ karaf@root> features:install switchyard-quickstart-soap-binding-rpc
 4. To submit a webservice request to invoke the SOAP gateway, run the quickstart client :
 <br/>
 ```
-mvn exec:java -Pkaraf
+mvn exec:java -Pkaraf -Dexec.args=Einstein
 ```
 <br/>
 

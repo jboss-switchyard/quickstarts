@@ -30,7 +30,6 @@ EAP
    the responses that you should see. Alternatively use the simple bundled SOAP client and
    the sample request XML found in the soap-proxy subdirectory e.g.
 
-        cd soap-proxy
         mvn exec:java
 
 4. Undeploy the quickstart:

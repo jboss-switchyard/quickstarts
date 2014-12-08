@@ -82,7 +82,7 @@ karaf@root> features:install switchyard-quickstart-http-binding
 4. To submit a HTTP request to invoke the SOAP gateway, run the quickstart client :
 <br/>
 ```
-mvn exec:java -Pkaraf
+mvn exec:java -Pkaraf -Dexec.args="vineyard"
 ```
 <br/>
 

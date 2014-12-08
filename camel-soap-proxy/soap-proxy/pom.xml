@@ -120,6 +120,9 @@
 					<classpathScope>test</classpathScope>
 					<mainClass>org.switchyard.quickstarts.camel.soap.proxy.CamelClient</mainClass>
 					<skip>false</skip>
+                    <arguments>
+                        <argument>${project.build.directory}/test-classes/xml/soap-request.xml</argument>
+                    </arguments>
 				</configuration>
 			</plugin>
 			<plugin>

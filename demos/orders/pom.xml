@@ -183,7 +183,7 @@
                             <goal>deploy-only</goal>
                         </goals>
                         <configuration>
-                            <filename>${project.build.finalName}.jar</filename>
+                            <filename>${project.build.finalName}.war</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
                     </execution>

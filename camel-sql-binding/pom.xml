@@ -58,6 +58,7 @@
         <switchyard.osgi.dynamic>
             org.switchyard,org.switchyard.*
         </switchyard.osgi.dynamic>
+        <version.com.h2database>1.3.168</version.com.h2database>
         <version.enforcer.maven>1.3.1</version.enforcer.maven>
         <version.felix.maven>2.4.0</version.felix.maven>
         <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
@@ -281,13 +282,13 @@
                             <dependency>
                                 <groupId>com.h2database</groupId>
                                 <artifactId>h2</artifactId>
+                                <version>${version.com.h2database}</version>
                             </dependency>
                         </dependencies>
                         <configuration>
                             <driver>org.h2.Driver</driver>
                             <url>jdbc:h2:tcp://localhost/h2db</url>
                             <username>sa</username>
-                            <skip>${deploy.skip}</skip>
                         </configuration>
                         <executions>
                             <execution>

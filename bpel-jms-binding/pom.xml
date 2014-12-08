@@ -306,5 +306,22 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>karaf</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                            <arguments>
+                                <argument>activemq</argument>
+                                <argument>Skippy</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
