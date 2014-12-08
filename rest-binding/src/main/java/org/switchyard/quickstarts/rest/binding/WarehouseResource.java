@@ -35,12 +35,13 @@ import javax.ws.rs.core.Response;
 public interface WarehouseResource {
 
     @GET
-    @Path("{itemId}")
+    @Path("/get/{itemId}")
     @Produces({ "text/xml" })
-    public Response getItem(@PathParam("itemId") Integer itemId);
+    public Response getItem(@PathParam("itemId") Integer itemId) throws Exception;
 
     @PUT
     @Path("{itemId}/{desc}")
+    @Produces({ "text/plain" })
     public String addItem(@PathParam("itemId") Integer itemId, @PathParam("desc") String description) throws Exception;
 
     @POST
@@ -50,9 +51,11 @@ public interface WarehouseResource {
 
     @DELETE
     @Path("{itemId}")
+    @Produces({ "text/plain" })
     public String removeItem(@PathParam("itemId") Integer itemId) throws Exception;
 
     @GET
     @Path("/count/")
+    @Produces({ "text/plain" })
     public Integer getItemCount();
 }

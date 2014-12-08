@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:2.0">
 <!--
     JBoss, Home of Professional Open Source
     Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
@@ -17,27 +17,31 @@
 -->
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="OrderService" targetNamespace="urn:switchyard-quickstart:resteasy-binding:1.0">
         <sca:service xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="OrderService" promote="OrderService/OrderService">
-            <rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:1.0">
+            <rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:2.0">
+                <rest:messageComposer class="org.switchyard.quickstarts.rest.binding.CustomComposer"/>
                 <rest:interfaces>org.switchyard.quickstarts.rest.binding.OrderResource,org.switchyard.quickstarts.rest.binding.TestResource</rest:interfaces>
                 <rest:contextPath>rest-binding</rest:contextPath>
+                <rest:contextParams>
+                    <rest:contextParam name="resteasy.providers" value="org.switchyard.quickstarts.rest.binding.ItemNotFoundExceptionMapper,org.switchyard.quickstarts.rest.binding.WrongRequestArgsExceptionMapper"/>
+                </rest:contextParams>
             </rest:binding.rest>
         </sca:service>
         <sca:service xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="WarehouseService" promote="WarehouseService/WarehouseService">
-            <rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:1.0">
+            <rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:2.0">
                 <rest:messageComposer class="org.switchyard.quickstarts.rest.binding.CustomComposer"/>
                 <rest:interfaces>org.switchyard.quickstarts.rest.binding.WarehouseResource</rest:interfaces>
                 <rest:contextPath>rest-binding</rest:contextPath>
             </rest:binding.rest>
         </sca:service>
         <sca:reference xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" multiplicity="1..1" name="Warehouse" promote="OrderService/Warehouse">
-            <rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:1.0">
+            <rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:2.0">
                 <rest:messageComposer class="org.switchyard.quickstarts.rest.binding.CustomComposer"/>
                 <rest:interfaces>org.switchyard.quickstarts.rest.binding.WarehouseResource</rest:interfaces>
                 <rest:address>http://localhost:${restPort}${restPath}</rest:address>
             </rest:binding.rest>
         </sca:reference>
         <component name="OrderService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.rest.binding.OrderServiceImpl"/>
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:2.0" class="org.switchyard.quickstarts.rest.binding.OrderServiceImpl"/>
             <service name="OrderService">
                 <interface.java interface="org.switchyard.quickstarts.rest.binding.OrderService"/>
             </service>
@@ -46,7 +50,7 @@
             </reference>
         </component>
         <component name="WarehouseService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.rest.binding.WarehouseServiceImpl"/>
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:2.0" class="org.switchyard.quickstarts.rest.binding.WarehouseServiceImpl"/>
             <service name="WarehouseService">
                 <interface.java interface="org.switchyard.quickstarts.rest.binding.WarehouseService"/>
             </service>
@@ -56,7 +60,7 @@
         <properties>
             <property name="restPort" value="${org.switchyard.component.resteasy.standalone.port:8080}"/>
             <property name="restPath" value="${org.switchyard.component.resteasy.standalone.path:/rest-binding}"/>
-      <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
+      <property name="org.switchyard.handlers.messageTrace.enabled" value="false"/>
         </properties>
     </domain>
 </switchyard>

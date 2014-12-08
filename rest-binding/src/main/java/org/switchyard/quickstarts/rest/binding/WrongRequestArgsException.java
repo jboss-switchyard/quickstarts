@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * Copyright 2014, Red Hat, Inc. and/or its affiliates, and individual
  * contributors by the @authors tag. See the copyright.txt in the
  * distribution for a full listing of individual contributors.
  *
@@ -17,19 +17,11 @@
 package org.switchyard.quickstarts.rest.binding;
 
 /**
- * Interface for Warehouse.
- *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * @author Vaclav Chalupa <vchalupa@redhat.com> (C) 2014 Red Hat Inc.
  */
-public interface Warehouse {
+public class WrongRequestArgsException extends Exception {
 
-    Item getItem(Integer itemId) throws Exception;
-
-    String addItem(Item item) throws Exception;
-
-    String updateItem(Item item) throws Exception;
-
-    String removeItem(Integer itemId) throws Exception;
-
-    Integer getItemCount();
+    public WrongRequestArgsException(String message) {
+        super(message);
+    }
 }
