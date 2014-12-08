@@ -1392,7 +1392,7 @@
             </dependency>
             <dependency>
                 <groupId>org.switchyard.quickstarts</groupId>
-                <artifactId>switchyard-camel-cxf</artifactId>
+                <artifactId>switchyard-camel-cxf-binding</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
