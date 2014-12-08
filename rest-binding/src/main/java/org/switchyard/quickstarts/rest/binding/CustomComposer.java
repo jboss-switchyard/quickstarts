@@ -16,12 +16,15 @@
  */
 package org.switchyard.quickstarts.rest.binding;
 
+import javax.ws.rs.core.Response;
+
+import org.jboss.resteasy.client.core.BaseClientResponse;
 import org.switchyard.Exchange;
+import org.switchyard.ExchangeState;
+import org.switchyard.HandlerException;
 import org.switchyard.Message;
 
-import org.switchyard.component.common.label.EndpointLabel;
 import org.switchyard.component.resteasy.composer.RESTEasyBindingData;
-import org.switchyard.component.resteasy.composer.RESTEasyContextMapper;
 import org.switchyard.component.resteasy.composer.RESTEasyMessageComposer;
 
 /**
@@ -37,7 +40,12 @@ public class CustomComposer extends RESTEasyMessageComposer {
     @Override
     public Message compose(RESTEasyBindingData source, Exchange exchange) throws Exception {
         final Message message = super.compose(source, exchange);
-        if (source.getOperationName().equals("addItem") && (source.getParameters().length == 2)) {
+        if (message.getContent() instanceof BaseClientResponse) {
+            BaseClientResponse<?> clientResponse = (BaseClientResponse<?>) message.getContent();
+            if (clientResponse.getResponseStatus() == Response.Status.NOT_FOUND) {
+                throw new ItemNotFoundException("Item not found");
+            }
+        } else if (source.getOperationName().equals("addItem") && (source.getParameters().length == 2)) {
             // Wrap the parameters
             Item item = new Item((Integer) source.getParameters()[0], (String) source.getParameters()[1]);
             message.setContent(item);
@@ -51,20 +59,21 @@ public class CustomComposer extends RESTEasyMessageComposer {
     @Override
     public RESTEasyBindingData decompose(Exchange exchange, RESTEasyBindingData target) throws Exception {
         Object content = exchange.getMessage().getContent();
-        String opName = exchange.getContract().getProviderOperation().getName();
-        if (opName.equals("getItem") && (content == null)) {
-            exchange.getContext().setProperty(RESTEasyContextMapper.HTTP_RESPONSE_STATUS, 404).addLabels(new String[] { EndpointLabel.HTTP.label() });
+        if (exchange.getState().equals(ExchangeState.FAULT)) {
+            if (content instanceof HandlerException) {
+                HandlerException he = (HandlerException) content;
+                if (he.getCause() instanceof ItemNotFoundException) {
+                    throw (Exception) he.getCause();
+                }
+            }
         }
 
         target = super.decompose(exchange, target);
 
-        if (target.getOperationName().equals("addItem")
-            && (content != null) && (content instanceof Item)) {
+        if (target.getOperationName().equals("addItem") && (content != null) && (content instanceof Item)) {
             // Unwrap the parameters
             target.setParameters(new Object[] { ((Item) content).getItemId(), ((Item) content).getName() });
         }
-
         return target;
     }
-
 }

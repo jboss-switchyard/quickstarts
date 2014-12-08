@@ -19,13 +19,8 @@ package org.switchyard.quickstarts.rest.binding;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-//import javax.inject.Inject;
-
 import org.apache.log4j.Logger;
-//import org.switchyard.Context;
 import org.switchyard.component.bean.Service;
-//import org.switchyard.component.common.label.EndpointLabel;
-//import org.switchyard.component.resteasy.composer.RESTEasyContextMapper;
 
 /**
  * A WarehouseService implementation.
@@ -35,29 +30,24 @@ import org.switchyard.component.bean.Service;
 @Service(WarehouseService.class)
 public class WarehouseServiceImpl implements WarehouseService {
 
-    //    @Inject
-    //    private Context context;
-
     private static final Logger LOGGER = Logger.getLogger(WarehouseService.class);
     private static final String SUCCESS = "SUCCESS";
     private ConcurrentMap<Integer, Item> items = new ConcurrentHashMap<Integer, Item>();
 
-    public Item getItem(Integer itemId) {
+    public Item getItem(Integer itemId) throws Exception {
         System.out.println("++++++ getItem " + itemId);
         Item item = this.items.get(itemId);
-        // TODO: Currently not possible to set property on return path for CDI Beans
-        /*if (item == null) {
-            context.setProperty(RESTEasyContextMapper.HTTP_RESPONSE_STATUS, 404).addLabels(new String[]{EndpointLabel.HTTP.label()});
-        }*/
+        if (item == null) {
+            throw new ItemNotFoundException("Item " + itemId + " not found!");
+        }
         return item;
     }
 
     public String addItem(Item item) throws Exception {
-        if (getItem(item.getItemId()) != null) {
-            throw new RuntimeException("Item " + item.getItemId() + " already exists!");
+        if (this.items.get(item.getItemId()) == null) {
+            this.items.put(item.getItemId(), item);
+            LOGGER.info("Added item " + item.getItemId() + " with name " + item.getName());
         }
-        this.items.put(item.getItemId(), item);
-        LOGGER.info("Added item " + item.getItemId() + " with name " + item.getName());
         return SUCCESS;
     }
 
@@ -70,7 +60,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     public String removeItem(Integer itemId) throws Exception {
         if (getItem(itemId) == null) {
-            throw new RuntimeException("Item " + itemId + " not found!");
+            throw new ItemNotFoundException("Item " + itemId + " not found!");
         }
         this.items.remove(itemId);
         LOGGER.info("Removed item " + itemId);

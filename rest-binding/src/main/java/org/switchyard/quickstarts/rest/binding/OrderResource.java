@@ -36,21 +36,23 @@ public interface OrderResource {
     @POST
     @Path("/")
     @Produces({ "text/xml" })
-    public Order newOrder();
+    public Order newOrder() throws Exception;
 
     @GET
     @Path("{orderId}")
     @Produces({ "text/xml" })
-    public Order getOrder(@PathParam("orderId") Integer orderId);
+    public Order getOrder(@PathParam("orderId") Integer orderId) throws Exception;
 
     @PUT
     @Path("/item")
     @Consumes({ "text/xml" })
-    public String addItems(Order order);
+    @Produces({ "text/plain" })
+    public String addItems(Order order) throws Exception;
 
     @DELETE
     @Path("{itemId}")
-    public String removeItem(@PathParam("itemId") String orderItemId);
+    @Produces({ "text/plain" })
+    public String removeItem(@PathParam("itemId") String orderItemId) throws Exception;
 
     @GET
     @Path("/error")

@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
         LOGGER.info("Getting Order with no: " + orderId);
         Order corder = _orders.get(orderId);
         if (corder == null) {
-            throw new RuntimeException("Order " + orderId + " not found!");
+            throw new ItemNotFoundException("Order " + orderId + " not found!");
         }
         LOGGER.info("Updating descriptions: " + corder.getItems());
         // Get the updated descriptions of items
@@ -74,12 +74,8 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItem orderItem : order.getItems()) {
             LOGGER.info("Adding item: " + orderItem.getItem().getItemId());
             Item item = _warehouse.getItem(orderItem.getItem().getItemId());
-            if (item == null) {
-                throw new RuntimeException("Item " + orderItem.getItem().getItemId() + " not found!");
-            } else {
-                orderItem.setItem(item);
-                corder.getItems().add(orderItem);
-            }
+            orderItem.setItem(item);
+            corder.getItems().add(orderItem);
         }
         LOGGER.info("Order after adding items: " + corder);
         return SUCCESS;
@@ -89,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
         // Not so elegant, but what to do?
         String[] ids = orderItemId.split(":");
         if (ids.length != 2) {
-            throw new RuntimeException("Missing either order id or item id!");
+            throw new WrongRequestArgsException("Missing either order id or item id!");
         }
         Integer orderId = Integer.parseInt(ids[0]);
         Integer itemId = Integer.parseInt(ids[1]);

@@ -91,6 +91,10 @@ public class RESTEasyBindingTest {
         response = http.sendString(BASE_URL + "/order/1:1", "", HTTPMixIn.HTTP_DELETE);
         Assert.assertEquals(SUCCESS, response);
 
+        // Try to delete item with wrong composite ID
+        status = http.sendStringAndGetStatus(BASE_URL + "/order/1", "", HTTPMixIn.HTTP_DELETE);
+        Assert.assertEquals(400, status);
+
         // Look at our order
         response = http.sendString(BASE_URL + "/order/1", "", HTTPMixIn.HTTP_GET);
         SwitchYardTestKit.compareXMLToString(response, ORDER4);
@@ -103,8 +107,12 @@ public class RESTEasyBindingTest {
         response = http.sendString(BASE_URL + "/order/1", "", HTTPMixIn.HTTP_GET);
         SwitchYardTestKit.compareXMLToString(response, ORDER5);
 
+        // Look at non existing order
+        status = http.sendStringAndGetStatus(BASE_URL + "/order/" + Integer.MAX_VALUE, "", HTTPMixIn.HTTP_GET);
+        Assert.assertEquals(404, status);
+
         // Get item
-        status = http.sendStringAndGetStatus(BASE_URL + "/warehouse/26", "", HTTPMixIn.HTTP_GET);
+        status = http.sendStringAndGetStatus(BASE_URL + "/warehouse/get/26", "", HTTPMixIn.HTTP_GET);
         Assert.assertEquals(404, status);
 
         // Destroy our inventory

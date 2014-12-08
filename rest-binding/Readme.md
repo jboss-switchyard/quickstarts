@@ -74,7 +74,15 @@ EAP
 12. Your output should be like this  
     `<order><orderId>1</orderId><orderItem><item><itemId>4</itemId><name>Time Machine</name></item><quantity>1</quantity></orderItem></order>`
 
-13. Undeploy the quickstart:
+13. Try to get non existing order, add non existing item and so on
+
+        mvn exec:java -Dexec.args="get 10000000"
+
+14. Your output should be like this
+
+    `<api-error><message>Order 10000000 not found!</message></api-error>`
+
+15. Undeploy the quickstart:
 
         mvn clean -Pdeploy
 
@@ -133,7 +141,15 @@ Wildfly
 12. Your output should be like this  
     `<order><orderId>1</orderId><orderItem><item><itemId>4</itemId><name>Time Machine</name></item><quantity>1</quantity></orderItem></order>`
 
-13. Undeploy the quickstart:
+13. Try to get non existing order, add non existing item and so on
+
+        mvn exec:java -Dexec.args="get 10000000"
+
+14. Your output should be like this
+
+    `<api-error><message>Order 10000000 not found!</message></api-error>`
+
+15. Undeploy the quickstart:
 
         mvn clean -Pdeploy,wildfly
 
@@ -155,7 +171,7 @@ karaf@root> features:install switchyard-quickstart-rest-binding
 
 3. Open a console windows and type  
 
-mvn exec:java -Pkaraf -Dexec.args="new"
+        mvn exec:java -Pkaraf -Dexec.args="new"
 
 4. You should see the following output  
 `<order><orderId>1</orderId></order>`
@@ -168,7 +184,7 @@ Added item 4 with name Time Machine
 ```
 6. Add an item to the order created in step 5  
 
-mvn exec:java -Pkaraf -Dexec.args="add 1 3 10"
+        mvn exec:java -Pkaraf -Dexec.args="add 1 3 10"
 
 7. Switch back to server console or log and these messages should be displayed  
 ```
@@ -178,7 +194,7 @@ Items:{Item: {ItemId: 3, name:Einstein's Bust - Talks about your future :)}, qua
 ```
 8. Add another item  
 
-mvn exec:java -Pkaraf -Dexec.args="add 1 4 1"
+        mvn exec:java -Pkaraf -Dexec.args="add 1 4 1"
 
 9. Switch back to server console or log and these messages should be displayed  
 ```
@@ -188,16 +204,24 @@ Items:{Item: {ItemId: 3, name:Einstein's Bust - Talks about your future :)}, qua
 ```
 10. Delete an item  
 
-mvn exec:java -Pkaraf -Dexec.args="del 1 3"
+        mvn exec:java -Pkaraf -Dexec.args="del 1 3"
 
 11. Get the order now  
 
-mvn exec:java -Pkaraf -Dexec.args="get 1"
+        mvn exec:java -Pkaraf -Dexec.args="get 1"
 
 12. Your output should be like this  
 `<order><orderId>1</orderId><orderItem><item><itemId>4</itemId><name>Time Machine</name></item><quantity>1</quantity></orderItem></order>`
 
-5. Undeploy the quickstart:
+13. Try to get non existing order, add non existing item and so on
+
+        mvn exec:java -Pkaraf -Dexec.args="get 10000000"
+
+14. Your output should be like this
+
+    `<api-error><message>Order 10000000 not found!</message></api-error>`
+
+15. Undeploy the quickstart:
 
 karaf@root> features:uninstall switchyard-quickstart-rest-binding
 

@@ -23,7 +23,7 @@ package org.switchyard.quickstarts.rest.binding;
  */
 public interface WarehouseService extends Warehouse {
 
-    Item getItem(Integer itemId);
+    Item getItem(Integer itemId) throws Exception;
 
     String addItem(Item item) throws Exception;
 

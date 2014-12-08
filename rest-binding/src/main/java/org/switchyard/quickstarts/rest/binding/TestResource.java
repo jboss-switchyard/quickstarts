@@ -19,6 +19,7 @@ package org.switchyard.quickstarts.rest.binding;
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 
 /**
  * RPC like REST interface for Test methods.
@@ -33,27 +34,31 @@ public interface TestResource {
      */
     @OPTIONS
     @Path("/create/")
-    public String createInventory();
+    @Produces({ "text/plain" })
+    public String createInventory() throws Exception;
 
     /**
      * Convenience method for test cases.
      */
     @OPTIONS
     @Path("/update/")
-    public String updateInventory();
+    @Produces({ "text/plain" })
+    public String updateInventory() throws Exception;
 
     /**
      * Convenience method for test cases.
      */
     @OPTIONS
     @Path("/remove/")
-    public String removeInventory();
+    @Produces({ "text/plain" })
+    public String removeInventory() throws Exception;
 
     /**
      * Convenience method for test cases.
      */
     @GET
     @Path("/")
-    public Boolean isInventorySetup();
+    @Produces({ "text/plain" })
+    public Boolean isInventorySetup() throws Exception;
 
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+ * Copyright 2014, Red Hat, Inc. and/or its affiliates, and individual
  * contributors by the @authors tag. See the copyright.txt in the
  * distribution for a full listing of individual contributors.
  *
@@ -16,20 +16,31 @@
  */
 package org.switchyard.quickstarts.rest.binding;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
- * Interface for Warehouse.
- *
- * @author Magesh Kumar B <mageshbk@jboss.com> (C) 2012 Red Hat Inc.
+ * @author Vaclav Chalupa <vchalupa@redhat.com> (C) 2014 Red Hat Inc.
  */
-public interface Warehouse {
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "api-error")
+public class ApiError {
 
-    Item getItem(Integer itemId) throws Exception;
+    private String message;
 
-    String addItem(Item item) throws Exception;
+    public ApiError() {
+    }
 
-    String updateItem(Item item) throws Exception;
+    public ApiError(String message) {
+        this.message = message;
+    }
 
-    String removeItem(Integer itemId) throws Exception;
+    public String getMessage() {
+        return message;
+    }
 
-    Integer getItemCount();
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }
