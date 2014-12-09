@@ -28,6 +28,8 @@
 		</license>
 	</licenses>
 	<properties>
+        <!-- Bundle symbolic name may not contain dashes -->
+        <bundle.symbolic.name>${project.groupId}.switchyard.camel.soap.proxy</bundle.symbolic.name>
 		<deploy.skip>true</deploy.skip>
 		<maven.compiler.target>1.6</maven.compiler.target>
 		<maven.compiler.source>1.6</maven.compiler.source>
@@ -134,7 +136,7 @@
 					<excludeDependencies>false</excludeDependencies>
 					<instructions>
 						<Bundle-Name>${project.name}</Bundle-Name>
-						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-SymbolicName>${bundle.symbolic.name}</Bundle-SymbolicName>
 						<Import-Package>${switchyard.osgi.import}</Import-Package>
 						<Include-Resource>{maven-resources},
 							META-INF/switchyard.xml=target/classes/META-INF/switchyard.xml</Include-Resource>
