@@ -16,14 +16,17 @@ package org.switchyard.component.resteasy.osgi;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.osgi.service.http.HttpService;
 import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.resteasy.resource.ResourcePublisher;
+import org.switchyard.component.resteasy.util.RESTEasyProviderUtil;
 
 /**
  * Creates a RESTEasy Resource on karaf.
@@ -45,7 +48,7 @@ public class OsgiRESTEasyResourcePublisher implements ResourcePublisher {
     }
 
     @Override
-    public Endpoint publish(ServiceDomain domain, String context, List<Object> instances) throws Exception {
+    public Endpoint publish(ServiceDomain domain, String context, List<Object> instances, Map<String, String> contextParams) throws Exception {
         OsgiRESTEasyServletRegistry servletRegistry = (OsgiRESTEasyServletRegistry) domain.getProperty(KEY_SERVLET_REGISTRY);
         if (servletRegistry == null) {
             if (LOGGER.isDebugEnabled()) {
@@ -64,12 +67,28 @@ public class OsgiRESTEasyResourcePublisher implements ResourcePublisher {
             servlet = new OsgiRESTEasyServletWrapper().setClassLoader(Classes.getTCCL());
             Dictionary<String,String> initparams = new Hashtable<String,String>();
             initparams.put(KEY_SERVLET_MAPPING_PREFIX, alias);
+            if (contextParams != null) {
+                for (Map.Entry<String, String> cp : contextParams.entrySet()) {
+                    // @Provider must be registered manually by bundle class loader
+                    if (!cp.getKey().equals(ResteasyContextParameters.RESTEASY_PROVIDERS)) {
+                        initparams.put(cp.getKey(), cp.getValue());
+                    }
+                }
+            }
             servletRegistry.registerRESTEasyServlet(alias, servlet, initparams, null);
 
             // A workaround for https://issues.jboss.org/browse/RESTEASY-640
             ResteasyProviderFactory repFactory = servlet.getDispatcher().getProviderFactory();
             for (Class<?> provider : RESTEasyProviders.PROVIDERS) {
                 repFactory.registerProvider(provider);
+            }
+
+            // Register @Provider classes
+            List<Class<?>> providerClasses = RESTEasyProviderUtil.getProviderClasses(contextParams);
+            if (providerClasses != null) {
+                for (Class<?> pc : providerClasses) {
+                    repFactory.registerProvider(pc);
+                }
             }
         }
 

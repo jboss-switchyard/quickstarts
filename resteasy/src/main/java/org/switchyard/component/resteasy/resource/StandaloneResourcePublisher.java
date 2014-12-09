@@ -15,16 +15,19 @@
 package org.switchyard.component.resteasy.resource;
 
 import java.io.IOException;
-import java.net.InetSocketAddress; 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
-import org.jboss.logging.Logger;
 import com.sun.net.httpserver.HttpServer;
+import org.jboss.logging.Logger;
+import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.resteasy.RestEasyLogger;
-import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
+import org.switchyard.component.resteasy.util.RESTEasyProviderUtil;
 
 /**
  * Publishes standalone RESTEasy resource.
@@ -57,7 +60,7 @@ public class StandaloneResourcePublisher implements ResourcePublisher {
     /**
      * {@inheritDoc}
      */
-    public Endpoint publish(ServiceDomain domain, String context, List<Object> instances) throws Exception {
+    public Endpoint publish(ServiceDomain domain, String context, List<Object> instances, Map<String, String> contextParams) throws Exception {
         List<Object> resourceInstances = new ArrayList<Object>();
         String path = _contextBuilder.getPath();
         if (path.startsWith("/")) {
@@ -80,6 +83,9 @@ public class StandaloneResourcePublisher implements ResourcePublisher {
             resourceInstances.add(instance);
         }
         _contextBuilder.getDeployment().setResources(resourceInstances);
+        // Register @Provider classes
+        List<String> providers = RESTEasyProviderUtil.getProviders(contextParams);
+        _contextBuilder.getDeployment().setScannedProviderClasses(providers != null ? providers : Collections.<String>emptyList());
         _contextBuilder.setPath(context);
         _contextBuilder.bind(_httpServer);
         return new StandaloneResource();

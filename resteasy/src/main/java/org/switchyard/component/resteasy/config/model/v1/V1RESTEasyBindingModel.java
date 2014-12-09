@@ -17,6 +17,7 @@ package org.switchyard.component.resteasy.config.model.v1;
 import javax.xml.namespace.QName;
 
 import org.switchyard.component.resteasy.config.model.BasicAuthModel;
+import org.switchyard.component.resteasy.config.model.ContextParamsModel;
 import org.switchyard.component.resteasy.config.model.NtlmAuthModel;
 import org.switchyard.component.resteasy.config.model.ProxyModel;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
@@ -41,7 +42,8 @@ public class V1RESTEasyBindingModel extends V1BindingModel implements RESTEasyBi
         RESTEasyName.timeout.name(),
         RESTEasyName.basic.name(),
         RESTEasyName.ntlm.name(),
-        RESTEasyName.proxy.name()
+        RESTEasyName.proxy.name(),
+        ContextParamsModel.CONTEXT_PARAMS
     };
 
     private QName _serviceName;
@@ -225,6 +227,18 @@ public class V1RESTEasyBindingModel extends V1BindingModel implements RESTEasyBi
      */
     public Boolean hasAuthentication() {
         return ((getBasicAuthConfig() != null) || (getNtlmAuthConfig() != null)) ? true : false;
+    }
+
+    @Override
+    public ContextParamsModel getContextParamsConfig() {
+        // introduced in v2
+        return null;
+    }
+
+    @Override
+    public RESTEasyBindingModel setContextParamsConfig(ContextParamsModel contextParamsConfig) {
+        // introduced in v2
+        return this;
     }
 
     /**

@@ -28,22 +28,6 @@ public interface RestEasyLogger {
     void defaultRESTEasyMessageComposerDoesnTHandleMultipleInputParameters();
 
     /**
-     * unexpectedExceptionComposingInboundMessage method definition.
-     * @param e the e
-     */
-    @LogMessage(level = Level.ERROR)
-    @Message(id = 37601, value = "Unexpected exception composing inbound Message")
-    void unexpectedExceptionComposingInboundMessage(@Cause Exception e);
-
-    /**
-     * unexpectedExceptionComposingOutboundRESTResponse method definition.
-     * @param e the e
-     */
-    @LogMessage(level = Level.ERROR)
-    @Message(id = 37602, value = "Unexpected exception composing outbound REST response")
-    void unexpectedExceptionComposingOutboundRESTResponse(@Cause Exception e);
-
-    /**
      * unableToLaunchStandaloneHttpServer method definition.
      * @param ioe the ioe
      */

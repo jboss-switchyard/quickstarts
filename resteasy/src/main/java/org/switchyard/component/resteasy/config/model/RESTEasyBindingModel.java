@@ -168,6 +168,19 @@ public interface RESTEasyBindingModel extends BindingModel {
     public Boolean hasAuthentication();
 
     /**
+     * Gets the contextParams config.
+     * @return the contextParams config
+     */
+    public ContextParamsModel getContextParamsConfig();
+
+    /**
+     * Sets the contextParams config.
+     * @param contextParamsConfig the contextParams config
+     * @return this RESTEasyBindingModel
+     */
+    public RESTEasyBindingModel setContextParamsConfig(ContextParamsModel contextParamsConfig);
+
+    /**
      * Gets the global configuration.
      * 
      * @return the environment/global config

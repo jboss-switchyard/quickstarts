@@ -15,6 +15,7 @@
 package org.switchyard.component.resteasy.resource;
 
 import java.util.List;
+import java.util.Map;
 
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.common.Endpoint;
@@ -41,8 +42,9 @@ public interface ResourcePublisher {
      * @param domain The ServiceDomain for the application/deployment
      * @param context The web context root where the resource need to be published
      * @param instances The a list of JAX-RS resource instances
+     * @param contextParams The map of endpoint context parameters
      * @return The published resource holder
      * @throws Exception if resource could not be published
      */
-    Endpoint publish(ServiceDomain domain, String context, List<Object> instances) throws Exception;
+    Endpoint publish(ServiceDomain domain, String context, List<Object> instances, Map<String, String> contextParams) throws Exception;
 }

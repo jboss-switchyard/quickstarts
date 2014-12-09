@@ -14,11 +14,10 @@
 
 package org.switchyard.component.resteasy.config.model;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
-import org.switchyard.component.resteasy.config.model.NtlmAuthModel;
-import org.switchyard.component.resteasy.config.model.ProxyModel;
-import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
 import org.switchyard.config.model.ModelPuller;
 
 /**
@@ -33,6 +32,7 @@ public class RESTEasyConfigModelTest {
     private static final String REST_BINDING_INVALID = "rest-binding-invalid.xml";
     private static final String REST_BINDING_AUTH = "rest-binding-auth.xml";
     private static final String REST_BINDING_PROXY = "rest-binding-proxy.xml";
+    private static final String REST_BINDING_CONTEXT_PARAMS = "rest-binding-context-params.xml";
 
     @Test
     public void testReadConfigBinding() throws Exception {
@@ -73,5 +73,21 @@ public class RESTEasyConfigModelTest {
         Assert.assertEquals("8090", proxyConfig.getPort());
         Assert.assertEquals("Beal", proxyConfig.getUser());
         Assert.assertEquals("conjecture", proxyConfig.getPassword());
+    }
+
+    @Test
+    public void testReadConfigBindingWithContextParams() throws Exception {
+        ModelPuller<RESTEasyBindingModel> puller = new ModelPuller<RESTEasyBindingModel>();
+        RESTEasyBindingModel model = puller.pull(REST_BINDING_CONTEXT_PARAMS, getClass());
+        Assert.assertTrue(model.isModelValid());
+
+        List<ContextParamModel> contextParams = model.getContextParamsConfig().getContextParams();
+        Assert.assertEquals(2, contextParams.size());
+
+        Assert.assertEquals("resteasy.providers", contextParams.get(0).getName());
+        Assert.assertEquals("org.switchyard.quickstarts.rest.binding.TestResourceExceptionMapper", contextParams.get(0).getValue());
+
+        Assert.assertEquals("resteasy.use.builtin.providers", contextParams.get(1).getName());
+        Assert.assertEquals("true", contextParams.get(1).getValue());
     }
 }

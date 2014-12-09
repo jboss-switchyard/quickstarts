@@ -70,6 +70,7 @@
                             </element>
                         </sequence>
                     </choice>
+                    <element name="contextParams" type="rest:ContextParamsType" minOccurs="0" maxOccurs="1"/>
                 </sequence>
             </extension>
         </complexContent>
@@ -150,4 +151,22 @@
         </complexContent>
     </complexType>
 
+    <complexType name="ContextParamsType">
+        <complexContent>
+            <extension base="sca:CommonExtensionBase">
+                <sequence>
+                    <element name="contextParam" type="rest:ContextParamType" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>Context parameters.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ContextParamType">
+        <attribute name="name" type="string" use="required"/>
+        <attribute name="value" type="string" use="required"/>
+    </complexType>
 </schema>

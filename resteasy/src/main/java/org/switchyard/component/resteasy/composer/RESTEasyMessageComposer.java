@@ -66,16 +66,18 @@ public class RESTEasyMessageComposer extends BaseMessageComposer<RESTEasyBinding
             if (content instanceof WebApplicationException) {
                 throw (WebApplicationException)content;
             } else if (content instanceof HandlerException) {
-                Throwable throwable = ((HandlerException)content).getCause();
+                Throwable throwable = ((HandlerException) content).getCause();
                 if (throwable != null) {
                     if (throwable instanceof WebApplicationException) {
-                        throw (WebApplicationException)throwable;
+                        throw (WebApplicationException) throwable;
                     } else {
                         throw new WebApplicationException(throwable);
                     }
                 } else {
-                    throw new WebApplicationException((HandlerException)content);
+                    throw new WebApplicationException((HandlerException) content);
                 }
+            } else if (content instanceof Exception) {
+                throw (Exception) content;
             } else if (content instanceof Throwable) {
                 throw new WebApplicationException((Throwable)content);
             } else {
