@@ -539,13 +539,13 @@
 
     <!-- Requires SOAP binding -->
     <feature name="switchyard-quickstart-camel-soap-proxy" version="${project.version}" resolver="(obr)">
-        <feature version="${version.org.apache.cxf.features}">cxf</feature>
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-camel</feature>
         <feature version="${project.version}">switchyard-soap</feature>
-        <config name="">
+        <feature version="${version.org.apache.cxf.features}">cxf</feature>
+        <config name="org.switchyard.quickstarts.switchyard.camel.soap.proxy">
             org.switchyard.component.soap.client.port=8181/cxf
-            org.switchyard.component.soap.standalone.port=8181
+            org.switchyard.component.soap.standalone.port=8181/cxf
         </config>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-soap-proxy-reverse/${project.version}</bundle>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-soap-proxy/${project.version}</bundle>
