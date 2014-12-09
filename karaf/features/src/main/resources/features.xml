@@ -122,7 +122,6 @@
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/2.7.1_8</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan-serializer/2.7.1_5</bundle>
         <bundle>wrap:mvn:org.apache.xmlbeans/xmlbeans/${version.org.apache.xmlbeans}</bundle>
-        <bundle>wrap:mvn:jaxen/jaxen/${version.jaxen}</bundle>
         <bundle>mvn:org.codehaus.jettison/jettison/${version.org.codehaus.jettison}</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.batik/1.7_3</bundle>
         <bundle>mvn:commons-codec/commons-codec/${version.commons-codec}</bundle>
