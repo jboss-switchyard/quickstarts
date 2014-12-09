@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Map;
 import javax.naming.NamingException;
 
 import org.apache.catalina.Host;
@@ -53,7 +54,7 @@ public class RESTEasyResourcePublisher implements ResourcePublisher {
     /**
      * {@inheritDoc}
      */
-    public synchronized Endpoint publish(ServiceDomain domain, String context, List<Object> instances) throws Exception {
+    public synchronized Endpoint publish(ServiceDomain domain, String context, List<Object> instances, Map<String, String> contextParams) throws Exception {
         Host host = ServerUtil.getDefaultHost().getHost();
         StandardContext serverContext = (StandardContext) host.findChild("/" + context);
         if (serverContext == null) {
@@ -80,6 +81,12 @@ public class RESTEasyResourcePublisher implements ResourcePublisher {
             serverContext.addChild(wrapper);
             serverContext.addServletMapping("/*", SERVLET_NAME);
             serverContext.addApplicationListener(LISTENER_CLASS);
+
+            if (contextParams != null) {
+                for (Map.Entry<String, String> cp : contextParams.entrySet()) {
+                    serverContext.addParameter(cp.getKey(), cp.getValue());
+                }
+            }
 
             host.addChild(serverContext);
             serverContext.create();

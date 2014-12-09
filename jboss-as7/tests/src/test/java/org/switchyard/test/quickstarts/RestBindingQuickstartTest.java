@@ -23,12 +23,11 @@ import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.switchyard.component.test.mixins.http.HTTPMixIn;
 import org.switchyard.test.ArquillianUtil;
 import org.switchyard.test.SwitchYardTestKit;
-import org.switchyard.component.test.mixins.http.HTTPMixIn;
 
 @RunWith(Arquillian.class)
 public class RestBindingQuickstartTest {
@@ -68,6 +67,10 @@ public class RestBindingQuickstartTest {
             response = httpMixIn.sendString(BASE_URL + "/order/1:1", "", HTTPMixIn.HTTP_DELETE);
             Assert.assertEquals(SUCCESS, response);
 
+            // Try to delete item with wrong composite ID
+            int status = httpMixIn.sendStringAndGetStatus(BASE_URL + "/order/1", "", HTTPMixIn.HTTP_DELETE);
+            Assert.assertEquals(400, status);
+
             // Look at our order
             response = httpMixIn.sendString(BASE_URL + "/order/1", "", HTTPMixIn.HTTP_GET);
             SwitchYardTestKit.compareXMLToString(response, ORDER4);
@@ -80,8 +83,12 @@ public class RestBindingQuickstartTest {
             response = httpMixIn.sendString(BASE_URL + "/order/1", "", HTTPMixIn.HTTP_GET);
             SwitchYardTestKit.compareXMLToString(response, ORDER5);
 
+            // Look at non existing order
+            status = httpMixIn.sendStringAndGetStatus(BASE_URL + "/order/" + Integer.MAX_VALUE, "", HTTPMixIn.HTTP_GET);
+            Assert.assertEquals(404, status);
+
             // Get item
-            int status = httpMixIn.sendStringAndGetStatus(BASE_URL + "/warehouse/26", "", HTTPMixIn.HTTP_GET);
+            status = httpMixIn.sendStringAndGetStatus(BASE_URL + "/warehouse/get/26", "", HTTPMixIn.HTTP_GET);
             Assert.assertEquals(404, status);
 
             // Destroy our inventory

@@ -10,3 +10,4 @@ target/
 transaction.log
 .fbExcludeFilterFile
 .factorypath
+.idea
