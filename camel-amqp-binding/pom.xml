@@ -47,6 +47,7 @@
         <bundle.symbolic.name>${project.groupId}.switchyard.camel.amqp.binding</bundle.symbolic.name>
 
         <deploy.skip>true</deploy.skip>
+        <maven.exec.mainClass>org.switchyard.quickstarts.camel.amqp.binding.QpidServer</maven.exec.mainClass>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
         <switchyard.osgi.import>*</switchyard.osgi.import>
@@ -187,7 +188,7 @@
                 <configuration>
                     <executable>java</executable>
                     <classpathScope>test</classpathScope>
-                    <mainClass>org.switchyard.quickstarts.camel.amqp.binding.QpidClient</mainClass>
+                    <mainClass>${maven.exec.mainClass}</mainClass>
                 </configuration>
             </plugin>
             <!-- Attach sources -->
@@ -207,4 +208,12 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>client</id>
+            <properties>
+                <maven.exec.mainClass>org.switchyard.quickstarts.camel.amqp.binding.QpidClient</maven.exec.mainClass>
+            </properties>
+        </profile>
+    </profiles>
 </project>
