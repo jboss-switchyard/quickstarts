@@ -32,7 +32,10 @@
   </sca:composite>
   <domain>
     <properties>
-      <property name="org.switchyard.propagateExceptionOnInOnly" value="true"/>
+      <!-- SWITCHYARD-2468 Exception is propagated back by default from now on.
+             To ignore the Exception like before, set this property to false.
+      <property name="org.switchyard.propagateExceptionOnInOnly" value="false"/>
+      -->
     </properties>
   </domain>
 </switchyard>

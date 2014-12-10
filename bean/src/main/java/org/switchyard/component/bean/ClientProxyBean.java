@@ -312,7 +312,7 @@ public class ClientProxyBean implements Bean {
                 }
 
                 Object propagateException = _service.getDomain().getProperty(Exchange.PROPAGATE_EXCEPTION_ON_IN_ONLY);
-                if (propagateException != null && Boolean.parseBoolean(propagateException.toString())
+                if ((propagateException == null || Boolean.parseBoolean(propagateException.toString()))
                         && exchange.getState().equals(ExchangeState.FAULT)) {
                     handleException(exchange, method);
                 }

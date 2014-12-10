@@ -156,7 +156,7 @@ public class OutboundHandler extends BaseServiceHandler {
         try {
             final org.apache.camel.Exchange camelExchange = _producerTemplate.send(_uri, createProcessor(exchange));
             Object propagateException = _domain.getProperty(Exchange.PROPAGATE_EXCEPTION_ON_IN_ONLY);
-            if (propagateException != null && Boolean.parseBoolean(propagateException.toString())
+            if ((propagateException == null || Boolean.parseBoolean(propagateException.toString()))
                     && camelExchange.isFailed()) {
                 Exception camelException = camelExchange.getException();
                 if (camelException != null) {
