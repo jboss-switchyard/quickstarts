@@ -55,7 +55,7 @@ Wildfly
 
 4. Execute HornetQClient
 
-        mvn exec:java
+        mvn exec:java -Pwildfly
 
 5. Check the server console for output from the service.
 

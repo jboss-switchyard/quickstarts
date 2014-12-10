@@ -44,17 +44,17 @@ Wildfly
 
 3. Build and deploy the quickstart
 
-        mvn install -Pdeploy
+        mvn install -Pdeploy -Pwildfly
 
 4. Execute HornetQClient
 
-        mvn exec:java
+        mvn exec:java -Pwildfly
 
 5. Check the output from the client.
 
 6. Undeploy the quickstart:
 
-        mvn clean -Pdeploy
+        mvn clean -Pdeploy -Pwildfly
 
 
 Karaf
