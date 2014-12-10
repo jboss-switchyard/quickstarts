@@ -87,9 +87,9 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.jboss.as.plugins</groupId>
-				<artifactId>jboss-as-maven-plugin</artifactId>
-				<version>7.5.Final</version>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven}</version>
 				<executions>
 					<execution>
 						<id>deploy</id>

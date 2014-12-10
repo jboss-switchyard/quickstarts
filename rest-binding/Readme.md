@@ -87,7 +87,7 @@ Wildfly
 
 2. Build and deploy the quickstart
 
-        mvn install -Pdeploy
+        mvn install -Pdeploy,wildfly
 
 3. Open a console windows and type  
 
@@ -135,7 +135,7 @@ Wildfly
 
 13. Undeploy the quickstart:
 
-        mvn clean -Pdeploy
+        mvn clean -Pdeploy,wildfly
 
 
 Karaf
