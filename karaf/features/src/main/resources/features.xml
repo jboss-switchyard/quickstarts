@@ -381,10 +381,10 @@
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-bindy/${project.version}</bundle>
     </feature>
 
-    <feature name="switchyard-quickstart-camel-cxf" version="${project.version}" resolver="(obr)">
+    <feature name="switchyard-quickstart-camel-cxf-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-bean</feature>
         <feature version="${project.version}">switchyard-camel-cxf</feature>
-        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-cxf/${project.version}</bundle>
+        <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-cxf-binding/${project.version}</bundle>
     </feature>
 
     <feature name="switchyard-quickstart-camel-bus-cdi" version="${project.version}" resolver="(obr)">
