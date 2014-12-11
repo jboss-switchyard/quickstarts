@@ -24,7 +24,7 @@ import org.switchyard.component.test.mixins.http.HTTPMixIn;
  * Test deployment of Camel Cxf.
  */
 public class CamelCxfQuickstartTest extends AbstractQuickstartTest {
-    private static String bundleName = "org.switchyard.quickstarts.switchyard.camel.cxf";
+    private static String bundleName = "org.switchyard.quickstarts.switchyard.camel.cxf.binding";
     private static String featureName = "switchyard-quickstart-camel-cxf-binding";
 
     private HTTPMixIn _httpMixIn = new HTTPMixIn();

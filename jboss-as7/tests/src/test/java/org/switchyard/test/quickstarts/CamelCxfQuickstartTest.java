@@ -36,7 +36,7 @@ public class CamelCxfQuickstartTest {
 
     @Deployment(testable = false)
     public static JavaArchive createDeployment() {
-        return ArquillianUtil.createJarQSDeployment("switchyard-camel-cxf");
+        return ArquillianUtil.createJarQSDeployment("switchyard-camel-cxf-binding");
     }
 
     @Ignore("Sporadic failures with JAXBMarshalling") @Test
