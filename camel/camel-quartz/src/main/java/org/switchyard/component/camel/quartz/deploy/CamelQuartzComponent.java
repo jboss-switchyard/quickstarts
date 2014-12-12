@@ -13,6 +13,8 @@
  */
 package org.switchyard.component.camel.quartz.deploy;
 
+import org.switchyard.common.camel.SwitchYardCamelContext;
+import org.switchyard.component.camel.common.deploy.BaseBindingActivator;
 import org.switchyard.component.camel.common.deploy.BaseBindingComponent;
 import org.switchyard.component.camel.quartz.model.v2.V2CamelQuartzBindingModel;
 
@@ -26,6 +28,11 @@ public class CamelQuartzComponent extends BaseBindingComponent {
      */
     public CamelQuartzComponent() {
         super("CamelQuartzComponent", V2CamelQuartzBindingModel.QUARTZ);
+    }
+
+    @Override
+    protected BaseBindingActivator createActivator(SwitchYardCamelContext context, String... types) {
+        return new CamelQuartzActivator(context, types);
     }
 
 }
