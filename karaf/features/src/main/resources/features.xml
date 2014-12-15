@@ -254,7 +254,7 @@
      </feature>
 
     <feature name="switchyard-internal-rest" version="${project.version}" resolver="(obr)">
-        <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/1.9.0</bundle>
+        <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/2.2.0</bundle>
         <bundle dependency='true'>wrap:mvn:org.jboss.resteasy/resteasy-jaxrs/${version.org.jboss.resteasy}</bundle>
         <bundle>wrap:mvn:org.jboss.resteasy/resteasy-jaxb-provider/${version.org.jboss.resteasy}</bundle>
         <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/4.2.4</bundle>
