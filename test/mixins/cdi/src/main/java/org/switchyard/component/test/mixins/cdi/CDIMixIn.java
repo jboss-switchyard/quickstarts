@@ -17,6 +17,7 @@ package org.switchyard.component.test.mixins.cdi;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -110,11 +111,11 @@ public class CDIMixIn extends AbstractTestMixIn {
                 };
                 Deployment deployment = super.createDeployment(filterLoader, bootstrap);
                 if (getTestKit() != null) {
-                    Set<TestMixIn> optionalDependencies = getTestKit().getOptionalDependencies(CDIMixIn.this);
-                    for (TestMixIn dependency : optionalDependencies) {
-                        if (dependency instanceof CDIMixInParticipant) {
+                    List<TestMixIn> mixins = getTestKit().getMixIns();
+                    for (TestMixIn mixin : mixins) {
+                        if (mixin instanceof CDIMixInParticipant) {
                            try {
-                               ((CDIMixInParticipant) dependency).participate(deployment);
+                               ((CDIMixInParticipant) mixin).participate(deployment);
                             } catch (Exception e) {
                                 throw new SwitchYardException("Can not initialize Weld due CDIMixIn initialization error", e);
                             }

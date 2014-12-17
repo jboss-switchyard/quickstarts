@@ -13,12 +13,15 @@
  */
 package org.switchyard.component.test.mixins;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.naming.NamingException;
 import javax.transaction.UserTransaction;
 
+import org.junit.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,45 +37,55 @@ import static org.mockito.Mockito.*;
 /**
  * Unit test which checks usage of {@link CDIMixIn} together with {@link TransactionMixIn}.
  */
-public class CDIMixInWithTransaction {
+public class CDIMixInWithTransactionTest {
 
     private static TransactionMixIn transactionMixIn;
     private static NamingMixIn namingMixIn;
     private static CDIMixIn cdiMixIn;
+    private static MyTransactionMixInParticipant myTxMixInParticipant;
+    private static boolean _transactionMixInParticipantInvoked = false;
 
     @BeforeClass
     public static void setup() {
         namingMixIn = new NamingMixIn();
-        namingMixIn.initialize();
         transactionMixIn = new TransactionMixIn();
-        transactionMixIn.initialize();
         cdiMixIn = new CDIMixIn();
-
-        cdiMixIn.setTestKit(createMockTestKit());
+        myTxMixInParticipant = new MyTransactionMixInParticipant(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                _transactionMixInParticipantInvoked = true;
+                return null;
+            }
+        });
+        List<TestMixIn> mixins = new ArrayList<TestMixIn>(Arrays.<TestMixIn>asList(namingMixIn,transactionMixIn,cdiMixIn,myTxMixInParticipant));
+        SwitchYardTestKit testkit = mock(SwitchYardTestKit.class);
+        when(testkit.getMixIns()).thenReturn(mixins);
+        namingMixIn.setTestKit(testkit);
+        transactionMixIn.setTestKit(testkit);
+        cdiMixIn.setTestKit(testkit);
+        myTxMixInParticipant.setTestKit(testkit);
+        namingMixIn.initialize();
+        transactionMixIn.initialize();
         cdiMixIn.initialize();
-    }
-
-    /**
-     * Creates mock to catch TestKit calls.
-     */
-    private static SwitchYardTestKit createMockTestKit() {
-        HashSet<TestMixIn> mixins = new HashSet<TestMixIn>(Arrays.<TestMixIn>asList(transactionMixIn));
-        SwitchYardTestKit testKitMock = mock(SwitchYardTestKit.class);
-        when(testKitMock.getOptionalDependencies(any(CDIMixIn.class))).thenReturn(mixins);
-        return testKitMock;
+        myTxMixInParticipant.initialize();
     }
 
     @AfterClass
     public static void tearDown() {
-        verify(cdiMixIn.getTestKit());
+        myTxMixInParticipant.uninitialize();
         cdiMixIn.uninitialize();
         transactionMixIn.uninitialize();
         namingMixIn.uninitialize();
     }
 
     @Test
-    public void shouldUseSameInstance() throws Exception {
+    public void testUserTransaction() throws Exception {
         assertNotNull(getUserTransaction());
+    }
+
+    @Test
+    public void testTransactionMixInParticipant() {
+        Assert.assertTrue(_transactionMixInParticipantInvoked);
     }
 
     private UserTransaction getUserTransaction() throws NamingException {
