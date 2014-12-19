@@ -26,13 +26,13 @@ public final class RulesConstants {
     public static final String RULES_NAMESPACE = "urn:switchyard-component-rules:rules:1.0";
 
     /**
-     * sessionId .
+     * sessionId is not used anymore.
      * @deprecated
      */
     @Deprecated
     public static final String SESSION_ID = "sessionId";
     /**
-     * {urn:switchyard-component-rules:rules:1.0}sessionId .
+     * {urn:switchyard-component-rules:rules:1.0}sessionId is not used anymore.
      * @deprecated
      */
     @Deprecated

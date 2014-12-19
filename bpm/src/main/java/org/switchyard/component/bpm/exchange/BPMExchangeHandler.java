@@ -116,9 +116,8 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("deprecation")
     public void handleOperation(Exchange exchange, KnowledgeOperation operation) throws HandlerException {
-        Integer sessionId = null;
+        //Long sessionIdentifier = null;
         Long processInstanceId = null;
         Message inputMessage = exchange.getMessage();
         ExchangePattern exchangePattern = exchange.getContract().getProviderOperation().getExchangePattern();
@@ -129,8 +128,8 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler {
             case START_PROCESS: {
                 try {
                     txh.begin();
-                    KnowledgeRuntimeEngine runtime = newRuntimeEngine();
-                    sessionId = runtime.getSessionId();
+                    KnowledgeRuntimeEngine runtime = getRuntimeEngine();
+                    //sessionIdentifier = runtime.getSessionIdentifier();
                     setGlobals(inputMessage, operation, runtime);
                     Map<String, Object> inputMap = getInputMap(inputMessage, operation, runtime);
                     ProcessInstance processInstance;
@@ -163,9 +162,9 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler {
                     if (BPMOperationType.SIGNAL_EVENT.equals(operationType)) {
                         runtime = getRuntimeEngine(exchange, inputMessage);
                     } else { //BPMOperationType.SIGNAL_EVENT_ALL
-                        runtime = newRuntimeEngine();
+                        runtime = getRuntimeEngine();
                     }
-                    sessionId = runtime.getSessionId();
+                    //sessionIdentifier = runtime.getSessionIdentifier();
                     setGlobals(inputMessage, operation, runtime);
                     Object eventObject = getInput(inputMessage, operation, runtime);
                     String eventId = operation.getEventId();
@@ -202,7 +201,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler {
                 try {
                     txh.begin();
                     KnowledgeRuntimeEngine runtime = getRuntimeEngine(exchange, inputMessage);
-                    sessionId = runtime.getSessionId();
+                    //sessionIdentifier = runtime.getSessionIdentifier();
                     processInstanceId = getProcessInstanceId(exchange, inputMessage, runtime);
                     if (processInstanceId == null) {
                         throw BPMMessages.MESSAGES.cannotAbortProcessInstance();
@@ -230,10 +229,12 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler {
         if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
             Message outputMessage = exchange.createMessage();
             Context outputContext = exchange.getContext(outputMessage);
-            if (sessionId != null && sessionId.intValue() > 0) {
-                outputContext.setProperty(BPMConstants.SESSION_ID_PROPERTY, sessionId);
+            /*
+            if (sessionIdentifier != null) {
+                outputContext.setProperty(BPMConstants.SESSION_ID_PROPERTY, sessionIdentifier);
             }
-            if (processInstanceId != null && processInstanceId.longValue() > 0) {
+            */
+            if (processInstanceId != null) {
                 outputContext.setProperty(BPMConstants.PROCESSS_INSTANCE_ID_PROPERTY, processInstanceId);
             }
             setFaults(outputMessage, operation, expressionVariables);
@@ -246,7 +247,7 @@ public class BPMExchangeHandler extends KnowledgeExchangeHandler {
         }
     }
 
-    private KnowledgeRuntimeEngine newRuntimeEngine() {
+    private KnowledgeRuntimeEngine getRuntimeEngine() {
         return (KnowledgeRuntimeEngine)_runtimeManager.getRuntimeEngine();
     }
 

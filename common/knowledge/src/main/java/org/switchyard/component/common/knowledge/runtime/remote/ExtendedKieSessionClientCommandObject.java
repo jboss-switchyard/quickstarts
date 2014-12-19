@@ -27,12 +27,12 @@ import org.kie.services.client.api.command.RemoteConfiguration;
 public class ExtendedKieSessionClientCommandObject extends KieSessionClientCommandObject {
 
     //private final Context<?> _context;
-    private final int _sessionId;
+    private final Long _sessionIdentifier;
 
-    ExtendedKieSessionClientCommandObject(RemoteConfiguration config, Context<?> context, int sessionId) {
+    ExtendedKieSessionClientCommandObject(RemoteConfiguration config, Context<?> context, Long sessionIdentifier) {
         super(config);
         //_context = context;
-        _sessionId = sessionId;
+        _sessionIdentifier = sessionIdentifier;
     }
 
     /**
@@ -51,7 +51,15 @@ public class ExtendedKieSessionClientCommandObject extends KieSessionClientComma
      */
     @Override
     public int getId() {
-        return _sessionId;
+        return _sessionIdentifier.intValue();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getIdentifier() {
+        return _sessionIdentifier.longValue();
     }
 
 }

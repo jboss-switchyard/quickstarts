@@ -408,17 +408,17 @@ public class BPMServiceTests {
         )
         public Object process(Object content);
         @SignalEvent(
-            eventId="Signal_1",
+            eventId="TestSignal1",
             inputs={@Input(from="message.content", to="Parameter")},
             outputs={@Output(from="Result", to="message.content")}
         )
-        public void signal(Object content);
+        public Object signal(Object content);
     }
 
     @Test
     public void testSignalProcess() throws Exception {
         final Map<String,String> testAssertionMap = new HashMap<String,String>();
-        Service serviceOne = serviceDomain.registerService(new QName("ServiceOne"), new InOnlyService(), new BaseHandler(){
+        Service serviceOne = serviceDomain.registerService(new QName("ServiceOne"), new InOutService(), new BaseHandler(){
             public void handleMessage(Exchange exchange) throws HandlerException {
                 Holder h = exchange.getMessage().getContent(Holder.class);
                 testAssertionMap.put("ServiceOne", h.getValue());

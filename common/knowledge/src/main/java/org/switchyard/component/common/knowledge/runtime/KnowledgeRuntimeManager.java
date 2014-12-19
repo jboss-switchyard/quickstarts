@@ -61,7 +61,7 @@ public class KnowledgeRuntimeManager implements RuntimeManager {
     private final List<ChannelBuilder> _channelBuilders;
     private final List<LoggerBuilder> _loggerBuilders;
     private final boolean _persistent;
-    private final Set<Integer> _sessionIds = Collections.synchronizedSet(new LinkedHashSet<Integer>());
+    private final Set<Long> _sessionIds = Collections.synchronizedSet(new LinkedHashSet<Long>());
 
     /**
      * Creates a new KnowledgeRuntimeManager.
@@ -187,7 +187,7 @@ public class KnowledgeRuntimeManager implements RuntimeManager {
             final Disposable disposable = (Disposable)runtimeEngine;
             final KieSession session = runtimeEngine.getKieSession();
             if (session != null) {
-                final Integer sessionId = Integer.valueOf(session.getId());
+                final Long sessionId = Long.valueOf(session.getIdentifier());
                 synchronized (_sessionIds) {
                     if (!_sessionIds.contains(sessionId)) {
                         _sessionIds.add(sessionId);

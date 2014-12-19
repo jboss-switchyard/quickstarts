@@ -127,10 +127,10 @@ public final class KnowledgeOperations {
      * Sets the globals.
      * @param message the message
      * @param operation the operation
-     * @param session the session
+     * @param runtime the runtime engine
      */
-    public static void setGlobals(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine session) {
-        Globals globals = session.getSessionGlobals();
+    public static void setGlobals(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine runtime) {
+        Globals globals = runtime.getSessionGlobals();
         if (globals != null) {
             Map<String, Object> globalsMap = new HashMap<String, Object>();
             globalsMap.put(GLOBALS, new ConcurrentHashMap<String, Object>());
@@ -148,14 +148,14 @@ public final class KnowledgeOperations {
      * Gets the input.
      * @param message the message
      * @param operation the operation
-     * @param session the session
+     * @param runtime the runtime engine
      * @return the input
      */
-    public static Object getInput(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine session) {
+    public static Object getInput(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine runtime) {
         List<Object> list = getList(message, operation.getInputExpressionMappings());
         switch (list.size()) {
             case 0:
-                return filterRemoteDefaultInputContent(message.getContent(), session);
+                return filterRemoteDefaultInputContent(message.getContent(), runtime);
             case 1:
                 return list.get(0);
             default:
@@ -167,30 +167,30 @@ public final class KnowledgeOperations {
      * Gets an input (all) list.
      * @param message the message
      * @param operation the operation
-     * @param session the session
+     * @param runtime the runtime engine
      * @return the input (all) list
      */
-    public static List<Object> getInputList(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine session) {
-        return getInputList(message, operation.getInputExpressionMappings(), session);
+    public static List<Object> getInputList(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine runtime) {
+        return getInputList(message, operation.getInputExpressionMappings(), runtime);
     }
 
     /**
      * Gets an input-only list.
      * @param message the message
      * @param operation the operation
-     * @param session the session
+     * @param runtime the runtime engine
      * @return the input-only list
      */
-    public static List<Object> getInputOnlyList(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine session) {
-        return getInputList(message, operation.getInputOnlyExpressionMappings(), session);
+    public static List<Object> getInputOnlyList(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine runtime) {
+        return getInputList(message, operation.getInputOnlyExpressionMappings(), runtime);
     }
 
-    private static List<Object> getInputList(Message message, List<ExpressionMapping> inputs, KnowledgeRuntimeEngine session) {
+    private static List<Object> getInputList(Message message, List<ExpressionMapping> inputs, KnowledgeRuntimeEngine runtime) {
         List<Object> list = new ArrayList<Object>();
         if (inputs.size() > 0) {
             list.addAll(getList(message, inputs));
         } else {
-            expand(filterRemoteDefaultInputContent(message.getContent(), session), list);
+            expand(filterRemoteDefaultInputContent(message.getContent(), runtime), list);
         }
         return list;
     }
@@ -199,10 +199,10 @@ public final class KnowledgeOperations {
      * Gets an input-output map.
      * @param message the message
      * @param operation the operation
-     * @param session the session
+     * @param runtime the runtime engine
      * @return the input-output map
      */
-    public static Map<String, Object> getInputOutputMap(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine session) {
+    public static Map<String, Object> getInputOutputMap(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine runtime) {
         Map<String, Object> map = new LinkedHashMap<String, Object>();
         Map<String, ExpressionMapping> inputs = operation.getInputOutputExpressionMappings();
         for (Entry<String, ExpressionMapping> entry : inputs.entrySet()) {
@@ -227,16 +227,16 @@ public final class KnowledgeOperations {
      * Gets an input map.
      * @param message the message
      * @param operation the operation
-     * @param session the session
+     * @param runtime the runtime engine
      * @return the input map
      */
-    public static Map<String, Object> getInputMap(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine session) {
+    public static Map<String, Object> getInputMap(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine runtime) {
         Map<String, Object> map = new HashMap<String, Object>();
         List<ExpressionMapping> inputs = operation.getInputExpressionMappings();
         if (inputs.size() > 0) {
             map.putAll(getMap(message, inputs, null));
         } else {
-            Object content = filterRemoteDefaultInputContent(message.getContent(), session);
+            Object content = filterRemoteDefaultInputContent(message.getContent(), runtime);
             if (content != null) {
                 map.put(PARAMETER, content);
             }
@@ -244,8 +244,8 @@ public final class KnowledgeOperations {
         return map;
     }
 
-    private static Object filterRemoteDefaultInputContent(Object content, KnowledgeRuntimeEngine session) {
-        if (session.isRemote() && content != null && content.getClass().getAnnotation(XmlType.class) == null) {
+    private static Object filterRemoteDefaultInputContent(Object content, KnowledgeRuntimeEngine runtime) {
+        if (runtime.isRemote() && content != null && content.getClass().getAnnotation(XmlType.class) == null) {
             content = null;
         }
         return content;

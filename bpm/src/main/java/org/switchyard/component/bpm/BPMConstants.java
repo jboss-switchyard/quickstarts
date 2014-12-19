@@ -26,13 +26,13 @@ public final class BPMConstants {
     public static final String BPM_NAMESPACE = "urn:switchyard-component-bpm:bpm:1.0";
 
     /**
-     * sessionId .
+     * sessionId is not used anymore.
      * @deprecated
      */
     @Deprecated
     public static final String SESSION_ID = "sessionId";
     /**
-     * {urn:switchyard-component-bpm:bpm:1.0}sessionId .
+     * {urn:switchyard-component-bpm:bpm:1.0}sessionId is not used anymore.
      * @deprecated
      */
     @Deprecated

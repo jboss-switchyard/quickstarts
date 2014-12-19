@@ -25,14 +25,14 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.drools.core.command.runtime.BatchExecutionCommandImpl;
+import org.kie.api.runtime.manager.RuntimeEngine;
+import org.kie.remote.client.api.RemoteJmsRuntimeEngineBuilder;
+import org.kie.remote.client.api.RemoteRestRuntimeEngineBuilder;
+import org.kie.remote.client.api.RemoteRuntimeEngineBuilder;
 import org.kie.remote.client.jaxb.AcceptedClientCommands;
-import org.kie.services.client.api.RemoteJmsRuntimeEngineFactory;
-import org.kie.services.client.api.RemoteRestRuntimeEngineFactory;
 import org.kie.services.client.api.RemoteRuntimeEngineFactory;
-import org.kie.services.client.api.builder.RemoteJmsRuntimeEngineBuilder;
-import org.kie.services.client.api.builder.RemoteRestRuntimeEngineBuilder;
-import org.kie.services.client.api.builder.RemoteRuntimeEngineBuilder;
 import org.kie.services.client.api.command.RemoteConfiguration;
+import org.kie.services.client.api.command.RemoteRuntimeEngine;
 import org.switchyard.common.type.reflect.Access;
 import org.switchyard.common.type.reflect.FieldAccess;
 import org.switchyard.component.common.knowledge.config.model.ExtraJaxbClassModel;
@@ -66,22 +66,16 @@ public class RemoteConfigurationBuilder extends KnowledgeBuilder {
      */
     public RemoteConfigurationBuilder(ClassLoader classLoader, RemoteModel remoteModel) {
         super(classLoader);
-        RemoteConfiguration config = null;
-        RemoteRuntimeEngineFactory remoteRuntimeEngineFactory = buildRemoteRuntimeEngineFactory(remoteModel);
-        if (remoteRuntimeEngineFactory != null) {
-            Access<RemoteConfiguration> configAccess = new FieldAccess<RemoteConfiguration>(RemoteRuntimeEngineFactory.class, "config");
-            config = configAccess.isReadable() ? configAccess.read(remoteRuntimeEngineFactory) : null;
-        }
-        _remoteConfiguration = config;
+        _remoteConfiguration = buildRemoteConfiguration(remoteModel);
     }
 
-    private RemoteRuntimeEngineFactory buildRemoteRuntimeEngineFactory(RemoteModel remoteModel) {
-        RemoteRuntimeEngineFactory factory = null;
+    private RemoteConfiguration buildRemoteConfiguration(RemoteModel remoteModel) {
+        RuntimeEngine engine = null;
         if (remoteModel instanceof RemoteJmsModel) {
-            RemoteJmsRuntimeEngineBuilder builder = RemoteJmsRuntimeEngineFactory.newBuilder();
+            RemoteJmsRuntimeEngineBuilder builder = RemoteRuntimeEngineFactory.newJmsBuilder();
             InitialContext ctx = configRemoteJms(builder, (RemoteJmsModel)remoteModel);
             try {
-                factory = builder.buildFactory();
+                engine = builder.build();
             } finally {
                 if (ctx != null) {
                     try {
@@ -92,11 +86,16 @@ public class RemoteConfigurationBuilder extends KnowledgeBuilder {
                 }
             }
         } else if (remoteModel instanceof RemoteRestModel) {
-            RemoteRestRuntimeEngineBuilder builder = RemoteRestRuntimeEngineFactory.newBuilder();
+            RemoteRestRuntimeEngineBuilder builder = RemoteRuntimeEngineFactory.newRestBuilder();
             configRemoteRest(builder, (RemoteRestModel)remoteModel);
-            factory = builder.buildFactory();
+            engine = builder.build();
         }
-        return factory;
+        RemoteConfiguration config = null;
+        if (engine instanceof RemoteRuntimeEngine) {
+            Access<RemoteConfiguration> configAccess = new FieldAccess<RemoteConfiguration>(RemoteRuntimeEngine.class, "config");
+            config = configAccess.isReadable() ? configAccess.read(engine) : null;
+        }
+        return config;
     }
 
     private InitialContext configRemoteJms(RemoteJmsRuntimeEngineBuilder builder, RemoteJmsModel model) {

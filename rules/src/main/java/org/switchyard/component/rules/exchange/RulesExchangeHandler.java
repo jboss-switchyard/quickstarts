@@ -41,7 +41,6 @@ import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.rule.EntryPoint;
 import org.kie.internal.runtime.manager.Disposable;
 import org.kie.internal.runtime.manager.DisposeListener;
-import org.switchyard.Context;
 import org.switchyard.Exchange;
 import org.switchyard.ExchangePattern;
 import org.switchyard.HandlerException;
@@ -120,17 +119,16 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("deprecation")
     public void handleOperation(Exchange exchange, KnowledgeOperation operation) throws HandlerException {
-        Integer sessionId = null;
+        //Long sessionIdentifier = null;
         Message inputMessage = exchange.getMessage();
         ExchangePattern exchangePattern = exchange.getContract().getProviderOperation().getExchangePattern();
         Map<String, Object> expressionVariables = new HashMap<String, Object>();
         RulesOperationType operationType = (RulesOperationType)operation.getType();
         switch (operationType) {
             case EXECUTE: {
-                KnowledgeRuntimeEngine runtime = newPerRequestRuntimeEngine();
-                sessionId = runtime.getSessionId();
+                KnowledgeRuntimeEngine runtime = getPerRequestRuntimeEngine();
+                //sessionIdentifier = runtime.getSessionIdentifier();
                 setGlobals(inputMessage, operation, runtime);
                 try {
                     KieSession session = runtime.getKieSession();
@@ -170,7 +168,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler {
                 }
                 */
                 KnowledgeRuntimeEngine runtime = getSingletonRuntimeEngine();
-                sessionId = runtime.getSessionId();
+                //sessionIdentifier = runtime.getSessionIdentifier();
                 setGlobals(inputMessage, operation, runtime);
                 KieSession session = runtime.getKieSession();
                 List<Object> facts = getInputList(inputMessage, operation, runtime);
@@ -195,7 +193,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler {
                 }
                 */
                 KnowledgeRuntimeEngine runtime = getSingletonRuntimeEngine();
-                sessionId = runtime.getSessionId();
+                //sessionIdentifier = runtime.getSessionIdentifier();
                 setGlobals(inputMessage, operation, runtime);
                 KieSession session = runtime.getKieSession();
                 if (_fireUntilHaltThread == null && runtime.getWrapped() instanceof Disposable) {
@@ -254,10 +252,12 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler {
         }
         if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
             Message outputMessage = exchange.createMessage();
+            /*
             Context outputContext = exchange.getContext(outputMessage);
-            if (sessionId != null && sessionId.intValue() > 0) {
-                outputContext.setProperty(RulesConstants.SESSION_ID_PROPERTY, sessionId);
+            if (sessionIdentifier != null) {
+                outputContext.setProperty(RulesConstants.SESSION_ID_PROPERTY, sessionIdentifier);
             }
+            */
             setFaults(outputMessage, operation, expressionVariables);
             if (outputMessage.getContent() != null) {
                 exchange.sendFault(outputMessage);
@@ -268,7 +268,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler {
         }
     }
 
-    private KnowledgeRuntimeEngine newPerRequestRuntimeEngine() {
+    private KnowledgeRuntimeEngine getPerRequestRuntimeEngine() {
         return (KnowledgeRuntimeEngine)_perRequestRuntimeManager.getRuntimeEngine();
     }
 

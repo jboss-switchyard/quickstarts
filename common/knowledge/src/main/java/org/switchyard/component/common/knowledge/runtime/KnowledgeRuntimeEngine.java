@@ -92,17 +92,17 @@ public class KnowledgeRuntimeEngine implements RuntimeEngine {
      * {@inheritDoc}
      */
     @Override
-    public AuditService getAuditLogService() {
-        InvocationHandler ih = new TransactionInvocationHandler(_wrapped.getAuditLogService(), _persistent);
+    public AuditService getAuditService() {
+        InvocationHandler ih = new TransactionInvocationHandler(_wrapped.getAuditService(), _persistent);
         return (AuditService)Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{AuditLogService.class}, ih);
     }
 
     /**
-     * Gets the wrapped KieSession id.
+     * Gets the wrapped KieSession identifier.
      * @return the id
      */
-    public Integer getSessionId() {
-        return Integer.valueOf(getKieSession().getId());
+    public Long getSessionIdentifier() {
+        return Long.valueOf(getKieSession().getIdentifier());
     }
 
     /**
