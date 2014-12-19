@@ -31,9 +31,9 @@
         <version.org.jboss.as>7.4.0.Final-redhat-19</version.org.jboss.as>
         <version.redhat.eap6.bom>6.3.0.GA</version.redhat.eap6.bom>
         <!-- KIE/Drools/jBPM: these should all match -->
-        <version.org.kie>6.2.0.Beta3</version.org.kie>
-        <version.org.drools>6.2.0.Beta3</version.org.drools>
-        <version.org.jbpm>6.2.0.Beta3</version.org.jbpm>
+        <version.org.kie>6.2.0.CR3</version.org.kie>
+        <version.org.drools>6.2.0.CR3</version.org.drools>
+        <version.org.jbpm>6.2.0.CR3</version.org.jbpm>
     </properties>
     <dependencyManagement>
         <dependencies>
