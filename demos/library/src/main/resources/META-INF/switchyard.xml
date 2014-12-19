@@ -73,7 +73,7 @@
               <bpm:output from="loanResponse" to="message.content"/>
             </bpm:outputs>
           </bpm:operation>
-          <bpm:operation name="returnRequest" type="SIGNAL_EVENT" eventId="Signal_1">
+          <bpm:operation name="returnRequest" type="SIGNAL_EVENT" eventId="ReturnSignal">
             <bpm:outputs>
               <bpm:output from="returnResponse" to="message.content"/>
             </bpm:outputs>
