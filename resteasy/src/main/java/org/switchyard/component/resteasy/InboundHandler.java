@@ -17,6 +17,8 @@ package org.switchyard.component.resteasy;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.WebApplicationException;
+
 import org.switchyard.Exchange;
 import org.switchyard.ExchangeState;
 import org.switchyard.HandlerException;
@@ -32,6 +34,7 @@ import org.switchyard.component.resteasy.composer.RESTEasyComposition;
 import org.switchyard.component.resteasy.config.model.RESTEasyBindingModel;
 import org.switchyard.component.resteasy.resource.ResourcePublisherFactory;
 import org.switchyard.component.resteasy.util.ClassUtil;
+import org.switchyard.component.resteasy.util.RESTEasyUtil;
 import org.switchyard.deploy.BaseServiceHandler;
 import org.switchyard.label.BehaviorLabel;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
@@ -51,6 +54,7 @@ public class InboundHandler extends BaseServiceHandler {
     private Endpoint _resource;
     private MessageComposer<RESTEasyBindingData> _messageComposer;
     private SecurityContextManager _securityContextManager;
+    private Map<Class<?>, Class<?>> _exceptionMappers;
 
     /**
      * Constructor for unit test.
@@ -89,6 +93,7 @@ public class InboundHandler extends BaseServiceHandler {
                 contextPath = "/";
             }
             Map<String, String> contextParams = _config.getContextParamsConfig() == null ? null : _config.getContextParamsConfig().toMap();
+            _exceptionMappers = RESTEasyUtil.getExceptionProviderMap(contextParams);
             // Add as singleton instances
             _resource = ResourcePublisherFactory.getPublisher().publish(_domain, contextPath, instances, contextParams);
             // Create and configure the RESTEasy message composer
@@ -118,17 +123,35 @@ public class InboundHandler extends BaseServiceHandler {
 
         _securityContextManager.addCredentials(exchange, restMessageRequest.extractCredentials());
 
-        Message message = _messageComposer.compose(restMessageRequest, exchange);
-
-        if (oneWay) {
-            exchange.send(message);
-            if (exchange.getState().equals(ExchangeState.FAULT)) {
+        Message message = null;
+        try {
+            message = _messageComposer.compose(restMessageRequest, exchange);
+        } catch (Exception e) {
+            if (_exceptionMappers.containsKey(e.getClass()) || (e instanceof WebApplicationException)) {
+                throw e;
+            } else {
+                RestEasyLogger.ROOT_LOGGER.unexpectedExceptionComposingInboundMessage(e);
+                throw new WebApplicationException(e);
+            }
+        }
+        try {
+            if (oneWay) {
+                exchange.send(message);
+                if (exchange.getState().equals(ExchangeState.FAULT)) {
+                    output = _messageComposer.decompose(exchange, output);
+                }
+            } else {
+                exchange.send(message);
+                exchange = inOutHandler.waitForOut();
                 output = _messageComposer.decompose(exchange, output);
             }
-        } else {
-            exchange.send(message);
-            exchange = inOutHandler.waitForOut();
-            output = _messageComposer.decompose(exchange, output);
+        } catch (Exception e) {
+            if (_exceptionMappers.containsKey(e.getClass()) || (e instanceof WebApplicationException)) {
+                throw e;
+            } else {
+                RestEasyLogger.ROOT_LOGGER.unexpectedExceptionComposingOutboundRESTResponse(e);
+                throw new WebApplicationException(e);
+            }
         }
         return output;
     }

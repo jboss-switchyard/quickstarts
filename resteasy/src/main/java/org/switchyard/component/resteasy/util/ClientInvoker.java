@@ -60,6 +60,7 @@ import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.core.BaseClientResponse;
+import org.jboss.resteasy.client.core.ClientErrorInterceptor;
 import org.jboss.resteasy.client.core.ClientInterceptorRepositoryImpl;
 import org.jboss.resteasy.client.core.ClientInvokerInterceptorFactory;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
@@ -192,10 +193,17 @@ public class ClientInvoker extends ClientInterceptorRepositoryImpl implements Me
             }
 
             // Register @Provider classes
-            List<Class<?>> providerClasses = RESTEasyProviderUtil.getProviderClasses(contextParams);
+            List<Class<?>> providerClasses = RESTEasyUtil.getProviderClasses(contextParams);
             if (providerClasses != null) {
                 for (Class<?> pc : providerClasses) {
                     _providerFactory.registerProvider(pc);
+                }
+            }
+
+            List<ClientErrorInterceptor> interceptors = RESTEasyUtil.getClientErrorInterceptors(contextParams);
+            if (interceptors != null) {
+                for (ClientErrorInterceptor interceptor : interceptors) {
+                    _providerFactory.addClientErrorInterceptor(interceptor);
                 }
             }
         }

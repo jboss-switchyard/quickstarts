@@ -72,5 +72,12 @@ public interface RestEasyMessages {
      */
     @Message(id = 38018, value = "Unable to map %s among resources %s")
     String unableToMapAmongResources(String opName, String keySet);
+
+    /**
+     * unexpectedExceptionComposingRESTResponse method definition.
+     * @return String
+     */
+    @Message(id = 38019, value = "Unexpected exception composing inbound REST response")
+    String unexpectedExceptionComposingRESTResponse();
 }
 

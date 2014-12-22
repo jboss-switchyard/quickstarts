@@ -147,7 +147,7 @@ public class OutboundHandler extends BaseServiceHandler {
             // Our transformer magic transforms the entity appropriately here :)
             exchange.send(out);
         } catch (Exception e) {
-            final String m = "Unexpected exception composing inbound Message from Outbound";
+            final String m = RestEasyMessages.MESSAGES.unexpectedExceptionComposingRESTResponse();
             LOGGER.error(m, e);
             throw new HandlerException(m, e);
         }

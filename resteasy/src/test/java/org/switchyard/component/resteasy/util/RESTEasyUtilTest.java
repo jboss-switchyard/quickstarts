@@ -23,9 +23,9 @@ import org.junit.Test;
 import org.switchyard.component.resteasy.InboundHandler;
 
 /**
- * Tests for RESTEasyProviderUtil.
+ * Tests for RESTEasyUtil.
  */
-public class RESTEasyProviderUtilTest extends InboundHandler {
+public class RESTEasyUtilTest extends InboundHandler {
 
     private static final String STRING_CLASS_NAME = "java.lang.String";
     private static final String BAD_CLASS_NAME = "bad.Cls";
@@ -34,7 +34,7 @@ public class RESTEasyProviderUtilTest extends InboundHandler {
     private Map<String, String> contextParamsWithOnlyBadProviders;
     private Map<String, String> contextParams;
 
-    public RESTEasyProviderUtilTest() {
+    public RESTEasyUtilTest() {
         contextParams = new HashMap<String, String>(1);
         contextParams.put(ResteasyContextParameters.RESTEASY_USE_BUILTIN_PROVIDERS, "false");
 
@@ -47,10 +47,10 @@ public class RESTEasyProviderUtilTest extends InboundHandler {
 
     @Test
     public void testGetProviders() throws Exception {
-        Assert.assertNull(RESTEasyProviderUtil.getProviders(null));
-        Assert.assertNull(RESTEasyProviderUtil.getProviders(contextParams));
+        Assert.assertNull(RESTEasyUtil.getParamValues(null, ResteasyContextParameters.RESTEASY_PROVIDERS));
+        Assert.assertNull(RESTEasyUtil.getParamValues(contextParams, ResteasyContextParameters.RESTEASY_PROVIDERS));
 
-        List<String> providers = RESTEasyProviderUtil.getProviders(contextParamsWithProviders);
+        List<String> providers = RESTEasyUtil.getParamValues(contextParamsWithProviders, ResteasyContextParameters.RESTEASY_PROVIDERS);
         Assert.assertEquals(2, providers.size());
         Assert.assertEquals(STRING_CLASS_NAME, providers.get(0));
         Assert.assertEquals(BAD_CLASS_NAME, providers.get(1));
@@ -58,11 +58,11 @@ public class RESTEasyProviderUtilTest extends InboundHandler {
 
     @Test
     public void testGetProviderClasses() throws Exception {
-        Assert.assertNull(RESTEasyProviderUtil.getProviderClasses(null));
-        Assert.assertNull(RESTEasyProviderUtil.getProviderClasses(contextParams));
-        Assert.assertNull(RESTEasyProviderUtil.getProviderClasses(contextParamsWithOnlyBadProviders));
+        Assert.assertNull(RESTEasyUtil.getProviderClasses(null));
+        Assert.assertNull(RESTEasyUtil.getProviderClasses(contextParams));
+        Assert.assertNull(RESTEasyUtil.getProviderClasses(contextParamsWithOnlyBadProviders));
 
-        List<Class<?>> providerClasses = RESTEasyProviderUtil.getProviderClasses(contextParamsWithProviders);
+        List<Class<?>> providerClasses = RESTEasyUtil.getProviderClasses(contextParamsWithProviders);
         Assert.assertEquals(1, providerClasses.size());
         Assert.assertEquals(String.class, providerClasses.get(0));
     }

@@ -23,11 +23,12 @@ import java.util.Map;
 
 import com.sun.net.httpserver.HttpServer;
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.resteasy.RestEasyLogger;
-import org.switchyard.component.resteasy.util.RESTEasyProviderUtil;
+import org.switchyard.component.resteasy.util.RESTEasyUtil;
 
 /**
  * Publishes standalone RESTEasy resource.
@@ -84,7 +85,7 @@ public class StandaloneResourcePublisher implements ResourcePublisher {
         }
         _contextBuilder.getDeployment().setResources(resourceInstances);
         // Register @Provider classes
-        List<String> providers = RESTEasyProviderUtil.getProviders(contextParams);
+        List<String> providers = RESTEasyUtil.getParamValues(contextParams, ResteasyContextParameters.RESTEASY_PROVIDERS);
         _contextBuilder.getDeployment().setScannedProviderClasses(providers != null ? providers : Collections.<String>emptyList());
         _contextBuilder.setPath(context);
         _contextBuilder.bind(_httpServer);

@@ -26,7 +26,7 @@ import org.switchyard.ServiceDomain;
 import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.Endpoint;
 import org.switchyard.component.resteasy.resource.ResourcePublisher;
-import org.switchyard.component.resteasy.util.RESTEasyProviderUtil;
+import org.switchyard.component.resteasy.util.RESTEasyUtil;
 
 /**
  * Creates a RESTEasy Resource on karaf.
@@ -84,7 +84,7 @@ public class OsgiRESTEasyResourcePublisher implements ResourcePublisher {
             }
 
             // Register @Provider classes
-            List<Class<?>> providerClasses = RESTEasyProviderUtil.getProviderClasses(contextParams);
+            List<Class<?>> providerClasses = RESTEasyUtil.getProviderClasses(contextParams);
             if (providerClasses != null) {
                 for (Class<?> pc : providerClasses) {
                     repFactory.registerProvider(pc);

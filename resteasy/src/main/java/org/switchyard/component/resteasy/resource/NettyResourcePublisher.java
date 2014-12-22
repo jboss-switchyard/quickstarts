@@ -18,9 +18,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.resteasy.spi.ResteasyDeployment;
+import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.switchyard.ServiceDomain;
 import org.switchyard.component.common.Endpoint;
-import org.switchyard.component.resteasy.util.RESTEasyProviderUtil;
+import org.switchyard.component.resteasy.util.RESTEasyUtil;
 
 /**
  * Publishes standalone RESTEasy resource to Netty.
@@ -54,7 +55,7 @@ public class NettyResourcePublisher implements ResourcePublisher {
         for (Object instance : instances) {
             _nettyServer.getDeployment().getResources().add(instance);
         }
-        List<String> providers = RESTEasyProviderUtil.getProviders(contextParams);
+        List<String> providers = RESTEasyUtil.getParamValues(contextParams, ResteasyContextParameters.RESTEASY_PROVIDERS);
         if (providers != null) {
             _nettyServer.getDeployment().getScannedProviderClasses().addAll(providers);
         }
