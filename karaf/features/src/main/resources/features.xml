@@ -19,9 +19,9 @@
 
     <feature name="switchyard-internal-core" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-cdi</feature>
-        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${version.org.apache.geronimo.specs.servlet}</bundle>
-        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/1.2_5</bundle>
-        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-impl/2.2.6_1</bundle>
+        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${version.org.apache.geronimo.specs.geronimo-servlet_3.0_spec}</bundle>
+        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${version.org.apache.servicemix.bundles.xmlresolver}</bundle>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-impl/${version.org.apache.servicemix.bundles.jaxb-impl}</bundle>
         <bundle>mvn:org.jboss.logging/jboss-logging/${version.org.jboss.logging.jboss-logging}</bundle>
         <bundle>mvn:org.switchyard/switchyard-api/${project.version}</bundle>
         <bundle>mvn:org.switchyard/switchyard-common/${project.version}</bundle>
@@ -54,19 +54,19 @@
     </feature>
 
     <feature name="switchyard-camel-jpa-hibernate" version="${project.version}" resolver="(obr)">
-        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/1.1.1</bundle>
-        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/1.1</bundle>
-        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/1.2</bundle>
+        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/${version.org.apache.geronimo.specs.geronimo-annotation_1.0_spec}</bundle>
+        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/${version.org.apache.geronimo.specs.geronimo-jpa_2.0_spec}</bundle>
+        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${version.org.apache.geronimo.specs.geronimo-servlet_2.5_spec}</bundle>
         <feature version='${version.org.springframework.features}'>spring-tx</feature>
-        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-el_1.0_spec/1.0.1</bundle>
-        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-el_1.0_spec/${version.org.apache.geronimo.specs.geronimo-el_1.0_spec}</bundle>
+        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${version.org.apache.geronimo.specs.geronimo-jta_1.1_spec}</bundle>
         <feature version='${version.org.springframework.features}'>spring-jdbc</feature>
-        <bundle dependency='true'>mvn:commons-lang/commons-lang/2.6</bundle>
-        <bundle dependency='true'>mvn:commons-collections/commons-collections/3.2.1</bundle>
-        <bundle dependency='true'>mvn:commons-pool/commons-pool/1.6</bundle>
-        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.4_3</bundle>
-        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
-        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/3.3_2</bundle>
+        <bundle dependency='true'>mvn:commons-lang/commons-lang/${version.commons-lang}</bundle>
+        <bundle dependency='true'>mvn:commons-collections/commons-collections/${version.commons-collections}</bundle>
+        <bundle dependency='true'>mvn:commons-pool/commons-pool/${version.commons-pool}</bundle>
+        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/${version.org.apache.servicemix.bundles.commons-dbcp}</bundle>
+        <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${version.org.apache.geronimo.specs.geronimo-jms_1.1_spec}</bundle>
+        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/${version.org.apache.servicemix.bundles.asm}</bundle>
         <feature version="${version.org.hibernate.features}">hibernate</feature>
         <feature version='${version.org.springframework.features}'>spring-orm</feature>
         <feature version='${version.org.apache.camel.features}'>camel-core</feature>
@@ -118,15 +118,15 @@
         <bundle>wrap:mvn:net.sourceforge.saxon/saxonhe/${version.net.sourceforge.saxon}$Export-Package=*;-noimport:=true;version="${version.net.sourceforge.saxon}"</bundle>
         <bundle>mvn:commons-collections/commons-collections/${version.commons-collections}</bundle>
         <bundle>mvn:commons-lang/commons-lang/${version.commons-lang}</bundle>
-        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/5.2_4</bundle>
-        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/2.7.1_8</bundle>
-        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan-serializer/2.7.1_5</bundle>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${version.org.apache.servicemix.bundles.bcel}</bundle>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/${version.org.apache.servicemix.bundles.xalan}</bundle>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan-serializer/${version.org.apache.servicemix.bundles.xalan-serializer}</bundle>
         <bundle>wrap:mvn:org.apache.xmlbeans/xmlbeans/${version.org.apache.xmlbeans}</bundle>
         <bundle>mvn:org.codehaus.jettison/jettison/${version.org.codehaus.jettison}</bundle>
-        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.batik/1.7_3</bundle>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.batik/${version.org.apache.servicemix.bundles.batik}</bundle>
         <bundle>mvn:commons-codec/commons-codec/${version.commons-codec}</bundle>
         <bundle>wrap:mvn:xml-apis/xml-apis-ext/${version.xml-apis}</bundle>
-        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.wsdl4j/1.6.2_6</bundle>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.wsdl4j/${version.org.apache.servicemix.bundles.wsdl4j}</bundle>
 
         <bundle>mvn:org.overlord/overlord-commons-services/${version.overlord-commons}</bundle>
 
@@ -146,7 +146,7 @@
         <feature version="${project.version}">switchyard</feature>
         <feature version="${version.org.drools}">drools-decisiontable</feature>
         <feature version="${version.org.jbpm}">jbpm</feature>
-        <bundle>wrap:mvn:org.eclipse.aether/aether-api/0.9.0.M3</bundle><!-- ${version.org.eclipse.aether} -->
+        <bundle>wrap:mvn:org.eclipse.aether/aether-api/${version.org.eclipse.aether.aether-api}</bundle><!-- ${version.org.eclipse.aether} -->
         <bundle>wrap:mvn:org.jbpm/jbpm-executor/${version.org.jbpm}$DynamicImport-Package=org.hibernate.*,javassist.*</bundle>
         <bundle>wrap:mvn:org.jbpm/jbpm-workitems/${version.org.jbpm}</bundle>
         <bundle>wrap:mvn:org.kie/kie-ci/${version.org.kie}</bundle>
@@ -200,8 +200,8 @@
 
     <feature name="switchyard-internal-http" version="${project.version}" resolver="(obr)">
         <feature version="[7,9)">jetty</feature>
-        <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/4.2.4</bundle>
-        <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/4.2.5</bundle>
+        <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${version.org.apache.httpcomponents.httpcore}</bundle>
+        <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${version.org.apache.httpcomponents.httpclient}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-http/${project.version}</bundle>
     </feature>
 
@@ -254,13 +254,13 @@
      </feature>
 
     <feature name="switchyard-internal-rest" version="${project.version}" resolver="(obr)">
-        <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/2.2.0</bundle>
+        <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/${version.org.apache.servicemix.specs.jsr311-api-1.1.1}</bundle>
         <bundle dependency='true'>wrap:mvn:org.jboss.resteasy/resteasy-jaxrs/${version.org.jboss.resteasy}</bundle>
         <bundle>wrap:mvn:org.jboss.resteasy/resteasy-jaxb-provider/${version.org.jboss.resteasy}</bundle>
-        <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/4.2.4</bundle>
-        <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/4.2.5</bundle>
-        <bundle dependency='true'>mvn:commons-io/commons-io/2.1</bundle>
-        <bundle dependency='true'>wrap:mvn:org.scannotation/scannotation/1.0.3</bundle>
+        <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${version.org.apache.httpcomponents.httpcore}</bundle>
+        <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${version.org.apache.httpcomponents.httpclient}</bundle>
+        <bundle dependency='true'>mvn:commons-io/commons-io/${version.commons-io}</bundle>
+        <bundle dependency='true'>wrap:mvn:org.scannotation/scannotation/${version.org.scannotation}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-resteasy/${project.version}</bundle>
      </feature>
@@ -273,7 +273,7 @@
     <feature name="switchyard-internal-sca" version="${project.version}" resolver="(obr)">
         <bundle dependency="true">wrap:mvn:org.jboss.marshalling/jboss-marshalling/${version.org.jboss.marshalling}</bundle>
         <bundle dependency="true">wrap:mvn:org.jboss.marshalling/jboss-marshalling-river/${version.org.jboss.marshalling}</bundle>
-        <bundle>mvn:org.jboss.marshalling/jboss-marshalling-osgi/1.4.5.Final</bundle>
+        <bundle>mvn:org.jboss.marshalling/jboss-marshalling-osgi/${version.org.jboss.marshalling.jboss-marshalling-osgi}</bundle>
         <bundle dependency="true">wrap:mvn:org.jboss/staxmapper/${version.org.jboss.staxmapper}</bundle>
         <bundle dependency="true">mvn:org.jgroups/jgroups/${version.org.jgroups}</bundle>
         <bundle dependency="true">mvn:org.infinispan/infinispan-core/${version.org.infinispan}</bundle>
@@ -304,7 +304,7 @@
         <feature version="${version.org.apache.cxf.features}">cxf-ws-addr</feature>
         <feature version="${version.org.apache.cxf.features}">cxf-specs</feature>
         <feature version="${version.org.apache.cxf.features}">cxf-http-jetty</feature>
-        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.wsdl4j/1.6.2_6</bundle>
+        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.wsdl4j/${version.org.apache.servicemix.bundles.wsdl4j}</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saaj-impl/${version.org.apache.servicemix.bundles.saaj-impl}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-common/${project.version}</bundle>
         <bundle>mvn:org.switchyard.components/switchyard-component-soap/${project.version}</bundle>
@@ -741,9 +741,9 @@
         <bundle dependency="true">mvn:commons-collections/commons-collections/${version.commons-collections}</bundle>
         <bundle dependency="true">mvn:commons-codec/commons-codec/${version.commons-codec}</bundle>
         <bundle dependency="true">mvn:commons-beanutils/commons-beanutils/${version.commons-beanutils}</bundle>
-        <bundle dependency="true">mvn:commons-digester/commons-digester/1.8.1</bundle>
-        <bundle dependency="true">mvn:org.apache.myfaces.core/myfaces-bundle/2.1.15</bundle>
-        <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-validation_1.0_spec/1.1</bundle>
+        <bundle dependency="true">mvn:commons-digester/commons-digester/${version.commons-digester}</bundle>
+        <bundle dependency="true">mvn:org.apache.myfaces.core/myfaces-bundle/${version.org.apache.myfaces.core.myfaces-bundle}</bundle>
+        <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-validation_1.0_spec/${version.org.apache.geronimo.specs.geronimo-validation_1.0_spec}</bundle>
         
         <bundle>mvn:org.switchyard.quickstarts.demos/switchyard-demo-helpdesk/${project.version}/war</bundle>
     </feature>
