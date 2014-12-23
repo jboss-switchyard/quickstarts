@@ -88,7 +88,19 @@ public class HttpContextMapper extends BaseRegexContextMapper<HttpBindingData> {
                     }
                 } else {
                     if (value instanceof List) {
-                        httpHeaders.put(name, (List<String>)value);
+                        // We need to check through the list for non-string values and map .toString()
+                        // values to those entries
+                        List<String> vals = new ArrayList<String>();
+                        List valueList = (List)value;
+                        for (Object obj : valueList) {
+                            if (obj instanceof String) {
+                                vals.add((String) obj);
+                            } else {
+                                vals.add(obj.toString());
+                            }
+                        }
+                        
+                        httpHeaders.put(name, vals);                            
                     } else if (value instanceof String) {
                         List<String> list = new ArrayList<String>();
                         list.add(String.valueOf(value));
