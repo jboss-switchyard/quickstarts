@@ -39,8 +39,12 @@ public class OrderServiceImpl implements OrderService {
     private ConcurrentMap<Integer, Order> _orders = new ConcurrentHashMap<Integer, Order>();
 
     @Inject
-    @Reference
+    @Reference("Warehouse")
     private Warehouse _warehouse;
+
+    @Inject
+    @Reference("WarehouseRef")
+    private WarehouseRef _warehouseRef;
 
     public OrderServiceImpl() {
     }
@@ -55,6 +59,16 @@ public class OrderServiceImpl implements OrderService {
 
     public Order getOrder(Integer orderId) throws Exception {
         LOGGER.info("Getting Order with no: " + orderId);
+        if (orderId == 404) {
+            Order order = new Order(404);
+            _orders.put(orderNo, order);
+            try {
+                _warehouseRef.get404();
+            } catch (Exception e) {
+                throw e;
+            }
+            return order;
+        }
         Order corder = _orders.get(orderId);
         if (corder == null) {
             throw new ItemNotFoundException("Order " + orderId + " not found!");

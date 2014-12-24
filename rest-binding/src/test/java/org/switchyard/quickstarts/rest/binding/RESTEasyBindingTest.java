@@ -118,6 +118,10 @@ public class RESTEasyBindingTest {
         // Destroy our inventory
         response = http.sendString(BASE_URL + "/inventory/remove", "", HTTPMixIn.HTTP_OPTIONS);
         Assert.assertEquals(SUCCESS, response);
+
+        // Test 404 returned with complete url
+        response = http.sendString(BASE_URL + "/order/404", "", HTTPMixIn.HTTP_GET);
+        Assert.assertTrue(response.contains("Error at [http://localhost:8081/404/404/]"));
     }
 
     private static String BASE_URL = "http://localhost:8081/rest-binding";
