@@ -31,6 +31,9 @@
                 <rest:messageComposer class="org.switchyard.quickstarts.rest.binding.CustomComposer"/>
                 <rest:interfaces>org.switchyard.quickstarts.rest.binding.WarehouseResource</rest:interfaces>
                 <rest:contextPath>rest-binding</rest:contextPath>
+                <rest:contextParams>
+                    <rest:contextParam name="resteasy.providers" value="org.switchyard.quickstarts.rest.binding.ItemNotFoundExceptionMapper"/>
+                </rest:contextParams>
             </rest:binding.rest>
         </sca:service>
         <sca:reference xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" multiplicity="1..1" name="Warehouse" promote="OrderService/Warehouse">
@@ -40,6 +43,17 @@
                 <rest:address>http://localhost:${restPort}${restPath}</rest:address>
             </rest:binding.rest>
         </sca:reference>
+        <sca:reference xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" multiplicity="1..1" name="WarehouseRef" promote="OrderService/WarehouseRef">
+            <rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:2.0">
+                <rest:messageComposer class="org.switchyard.quickstarts.rest.binding.CustomComposer"/>
+                <rest:interfaces>org.switchyard.quickstarts.rest.binding.WarehouseResourceRef</rest:interfaces>
+                <rest:address>http://localhost:${restPort}${restPath}</rest:address>
+                <rest:contextParams>
+                    <rest:contextParam name="resteasy.providers" value="org.switchyard.quickstarts.rest.binding.MyClientExecutionInterceptor"/>
+                    <rest:contextParam name="resteasy.client.error.interceptors" value="org.switchyard.quickstarts.rest.binding.MyClientErrorInterceptor"/>
+                </rest:contextParams>
+            </rest:binding.rest>
+        </sca:reference>
         <component name="OrderService">
             <implementation.bean xmlns="urn:switchyard-component-bean:config:2.0" class="org.switchyard.quickstarts.rest.binding.OrderServiceImpl"/>
             <service name="OrderService">
@@ -47,6 +61,9 @@
             </service>
             <reference name="Warehouse">
                 <interface.java interface="org.switchyard.quickstarts.rest.binding.Warehouse"/>
+            </reference>
+            <reference name="WarehouseRef">
+                <interface.java interface="org.switchyard.quickstarts.rest.binding.WarehouseRef"/>
             </reference>
         </component>
         <component name="WarehouseService">
