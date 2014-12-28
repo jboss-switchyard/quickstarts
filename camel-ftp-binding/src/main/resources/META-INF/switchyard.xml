@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:2.0">
 <!--
     JBoss, Home of Professional Open Source
     Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
@@ -15,25 +15,68 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-ftp-binding" targetNamespace="urn:switchyard-quickstart:camel-ftp-binding:0.1.0">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-ftp-binding" targetNamespace="urn:switchyard-quickstart:camel-ftp-binding:0.1.0"
+        xmlns:ftp="urn:switchyard-component-camel-ftp:config:2.0">
         <service name="GreetingService" promote="GreetingService/GreetingService">
-            <ftp:binding.ftp xmlns:ftp="urn:switchyard-component-camel-ftp:config:1.0">
+            <ftp:binding.ftp>
                 <ftp:directory>.</ftp:directory>
                 <ftp:host>localhost</ftp:host>
                 <ftp:port>2222</ftp:port>
                 <ftp:username>camel</ftp:username>
                 <ftp:password>isMyFriend</ftp:password>
                 <ftp:consume>
+                    <ftp:move>done</ftp:move>
                     <ftp:initialDelay>50</ftp:initialDelay>
                     <ftp:delay>50</ftp:delay>
                 </ftp:consume>
             </ftp:binding.ftp>
+            <ftp:binding.ftps>
+                <ftp:additionalUriParameters>
+                    <ftp:parameter name="ftpClient.keyStore.file" value="${storefile}"/>
+                    <ftp:parameter name="ftpClient.keyStore.password" value="password"/>
+                    <ftp:parameter name="ftpClient.keyStore.keyPassword" value="password"/>
+                    <ftp:parameter name="ftpClient.trustStore.file" value="${storefile}"/>
+                    <ftp:parameter name="ftpClient.trustStore.password" value="password"/>
+                </ftp:additionalUriParameters>
+                <ftp:directory>ftps</ftp:directory>
+                <ftp:host>localhost</ftp:host>
+                <ftp:port>2221</ftp:port>
+                <ftp:username>camel</ftp:username>
+                <ftp:password>isMyFriend</ftp:password>
+                <ftp:consume>
+                    <ftp:move>done</ftp:move>
+                    <ftp:initialDelay>50</ftp:initialDelay>
+                    <ftp:delay>50</ftp:delay>
+                </ftp:consume>
+            </ftp:binding.ftps>
+            <ftp:binding.sftp>
+                <ftp:directory>target/ftp/sftp</ftp:directory>
+                <ftp:host>localhost</ftp:host>
+                <ftp:port>2220</ftp:port>
+                <ftp:username>camel</ftp:username>
+                <ftp:password>isMyFriend</ftp:password>
+                <ftp:knownHostsFile>${hostsfile}</ftp:knownHostsFile>
+                <ftp:privateKeyFile>${keyfile}</ftp:privateKeyFile>
+                <ftp:privateKeyFilePassphrase>password</ftp:privateKeyFilePassphrase>
+                <ftp:consume>
+                    <ftp:move>done</ftp:move>
+                    <ftp:initialDelay>50</ftp:initialDelay>
+                    <ftp:delay>50</ftp:delay>
+                </ftp:consume>
+            </ftp:binding.sftp>
         </service>
         <component name="GreetingService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.camel.ftp.binding.GreetingServiceBean"/>
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:2.0" class="org.switchyard.quickstarts.camel.ftp.binding.GreetingServiceBean"/>
             <service name="GreetingService">
                 <interface.java interface="org.switchyard.quickstarts.camel.ftp.binding.GreetingService"/>
             </service>
         </component>
     </composite>
+    <domain>
+        <properties>
+            <property name="storefile" value="${org.switchyard.component.camel.ftps.storefile:src/test/resources/ftpclient.jks}"/>
+            <property name="hostsfile" value="${org.switchyard.component.camel.sftp.knownhosts:src/test/resources/known_hosts_sftp}"/>
+            <property name="keyfile" value="${org.switchyard.component.camel.sftp.keyfile:src/test/resources/id_sftp_rsa}"/>
+        </properties>
+    </domain>
 </switchyard>

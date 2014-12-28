@@ -16,13 +16,17 @@
  */
 package org.switchyard.quickstarts.camel.ftp.binding;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.UIKeyboardInteractive;
+import com.jcraft.jsch.UserInfo;
 
 import java.io.File;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.ftpserver.FtpServer;
@@ -31,8 +35,17 @@ import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
+import org.apache.ftpserver.ssl.SslConfigurationFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
+import org.apache.sshd.SshServer;
+import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
+import org.apache.sshd.common.NamedFactory;
+import org.apache.sshd.server.Command;
+import org.apache.sshd.server.PasswordAuthenticator;
+import org.apache.sshd.server.command.ScpCommandFactory;
+import org.apache.sshd.server.session.ServerSession;
+import org.apache.sshd.sftp.subsystem.SftpSubsystem;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,13 +66,24 @@ public class CamelFtpBindingTest {
     private static final String FILE_NAME = "Kris.txt";
     private SwitchYardTestKit _testKit;
     private static FtpServer ftpServer;
+    private static SshServer sshd;
 
     @BeforeClass
-    public static void startUp() throws FtpException {
+    public static void startUp() throws Exception {
         FtpServerFactory serverFactory = new FtpServerFactory();
         ListenerFactory listenerFactory = new ListenerFactory();
         listenerFactory.setPort(2222);
         serverFactory.addListener("default", listenerFactory.createListener());
+
+        ListenerFactory sslListenerFactory = new ListenerFactory();
+        sslListenerFactory.setPort(2221);
+        SslConfigurationFactory ssl = new SslConfigurationFactory();
+        ssl.setKeystoreFile(new File("src/test/resources/ftpserver.jks"));
+        ssl.setKeystorePassword("password");
+        sslListenerFactory.setSslConfiguration(ssl.createSslConfiguration());
+        sslListenerFactory.setImplicitSsl(false); // Setting it to true will not read the file
+        serverFactory.addListener("ftps", sslListenerFactory.createListener());
+
         PropertiesUserManagerFactory managerFactory = new PropertiesUserManagerFactory();
         managerFactory.setPasswordEncryptor(new ClearTextPasswordEncryptor());
         managerFactory.setFile(new File("src/test/resources/users.properties"));
@@ -70,34 +94,130 @@ public class CamelFtpBindingTest {
         fileSystemFactory.setCreateHome(true);
         serverFactory.setFileSystem(fileSystemFactory);
 
+        File file = new File("target/ftp/ftps");
+        file.mkdirs();
+        file = new File("target/ftp/sftp");
+        file.mkdirs();
+
         ftpServer = serverFactory.createServer();
         ftpServer.start();
+
+        SshServer sshd = SshServer.setUpDefaultServer();
+        sshd.setPort(2220);
+        sshd.setKeyPairProvider(createTestKeyPairProvider("src/test/resources/hostkey.pem"));
+        sshd.setSubsystemFactories(Arrays.<NamedFactory<Command>>asList(new SftpSubsystem.Factory()));
+        sshd.setCommandFactory(new ScpCommandFactory());
+        sshd.setPasswordAuthenticator(new BogusPasswordAuthenticator());
+
+        sshd.start();
+
+        JSch sch = new JSch();
+        Session session = sch.getSession("camel", "localhost", 2220);
+        session.setUserInfo(new SimpleUserInfo("isMyFriend"));
+        session.connect();
+        ChannelSftp c = (ChannelSftp) session.openChannel("sftp");
+        c.connect();
+        System.out.println("Home: " + c.getHome());
+        c.chmod(777, ".");
+        c.chmod(777, "target");
+        c.chmod(777, "target/ftp");
+        c.chmod(777, "target/ftp/sftp");
+        c.disconnect();
+        session.disconnect();
     }
 
     @AfterClass
-    public static void shutDown() {
-        ftpServer.stop();
+    public static void shutDown() throws Exception {
+        if (ftpServer != null) {
+            ftpServer.stop();
+        }
+        if (sshd != null) {
+            sshd.stop();
+        }
     }
 
     @Test
     public void receiveFile() throws Exception {
-        final String payload = "dummy payload";
-        // replace existing implementation for testing purposes
-        _testKit.removeService("GreetingService");
-        final MockHandler greetingService = _testKit.registerInOnlyService("GreetingService");
+        File file = new File("target/ftp", FILE_NAME);
+        File destFile = new File("target/ftp/done", FILE_NAME);
+        FileUtils.write(file, "The Phantom");
+        // Allow for the file to be processed.
+        Thread.sleep(500);
+        assertFalse(file.exists());
+        assertTrue(destFile.exists());
 
-        createFile(payload, FILE_NAME);
-        // Allow for the JMS Message to be processed.
-        Thread.sleep(3000);
+        file = new File("target/ftp/ftps", FILE_NAME);
+        destFile = new File("target/ftp/ftps/done", FILE_NAME);
+        FileUtils.write(file, "The Ghost Who Walks");
+        // Allow for the file to be processed.
+        Thread.sleep(500);
+        assertFalse(file.exists());
+        assertTrue(destFile.exists());
 
-        final LinkedBlockingQueue<Exchange> recievedMessages = greetingService.getMessages();
-        assertThat(recievedMessages, is(notNullValue()));
-        final Exchange recievedExchange = recievedMessages.iterator().next();
-        assertThat(recievedExchange.getMessage().getContent(String.class), is(equalTo(payload)));
+        file = new File("target/ftp/sftp", FILE_NAME);
+        destFile = new File("target/ftp/sftp/done", FILE_NAME);
+        FileUtils.write(file, "Kit Walker");
+        // Allow for the file to be processed.
+        Thread.sleep(500);
+        assertFalse(file.exists());
+        assertTrue(destFile.exists());
     }
 
-    private void createFile(final String text, final String fileName) throws Exception {
+    private File createFile(final String text, final String fileName) throws Exception {
         File file = new File("target/ftp", fileName);
         FileUtils.write(file, text);
+        return file;
+    }
+
+    public static FileKeyPairProvider createTestKeyPairProvider(String resource) {
+        return new FileKeyPairProvider(new String[] { getFile(resource).toString() });
+    }
+
+    private static File getFile(String resource) {
+        File f = new File(resource);
+        return f;
+    }
+
+    public static class BogusPasswordAuthenticator implements PasswordAuthenticator {
+
+        public boolean authenticate(String username, String password, ServerSession session) {
+            return ((username != null) && (password != null) && username.equals("camel") && password.equals("isMyFriend"));
+        }
+    }
+
+    public static class SimpleUserInfo implements UserInfo, UIKeyboardInteractive {
+
+        private final String password;
+
+        public SimpleUserInfo(String password) {
+            this.password = password;
+        }
+
+        public String getPassphrase() {
+            return null;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public boolean promptPassword(String message) {
+            return true;
+        }
+
+        public boolean promptPassphrase(String message) {
+            return false;
+        }
+
+        public boolean promptYesNo(String message) {
+            return true;
+        }
+
+        public void showMessage(String message) {
+        }
+
+        public String[] promptKeyboardInteractive(String destination, String name, String instruction, String[] prompt, boolean[] echo) {
+            return new String[] { password };
+        }
     }
 }
