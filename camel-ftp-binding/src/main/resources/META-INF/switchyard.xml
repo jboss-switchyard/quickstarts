@@ -18,18 +18,52 @@
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-ftp-binding" targetNamespace="urn:switchyard-quickstart:camel-ftp-binding:0.1.0"
         xmlns:ftp="urn:switchyard-component-camel-ftp:config:2.0">
         <service name="GreetingService" promote="GreetingService/GreetingService">
-            <ftp:binding.ftp>
-                <ftp:directory>/tmp</ftp:directory>
+<ftp:binding.ftp>
+                <ftp:directory>.</ftp:directory>
                 <ftp:host>localhost</ftp:host>
-                <ftp:port>21</ftp:port>
-                <ftp:username>tcunning</ftp:username>
-                <ftp:password>!Verson3</ftp:password>
+                <ftp:port>2222</ftp:port>
+                <ftp:username>camel</ftp:username>
+                <ftp:password>isMyFriend</ftp:password>
                 <ftp:consume>
                     <ftp:move>done</ftp:move>
                     <ftp:initialDelay>50</ftp:initialDelay>
                     <ftp:delay>50</ftp:delay>
                 </ftp:consume>
             </ftp:binding.ftp>
+            <ftp:binding.ftps>
+                <ftp:additionalUriParameters>
+                    <ftp:parameter name="ftpClient.keyStore.file" value="${storefile}"/>
+                    <ftp:parameter name="ftpClient.keyStore.password" value="password"/>
+                    <ftp:parameter name="ftpClient.keyStore.keyPassword" value="password"/>
+                    <ftp:parameter name="ftpClient.trustStore.file" value="${storefile}"/>
+                    <ftp:parameter name="ftpClient.trustStore.password" value="password"/>
+                </ftp:additionalUriParameters>
+                <ftp:directory>ftps</ftp:directory>
+                <ftp:host>localhost</ftp:host>
+                <ftp:port>2221</ftp:port>
+                <ftp:username>camel</ftp:username>
+                <ftp:password>isMyFriend</ftp:password>
+                <ftp:consume>
+                    <ftp:move>done</ftp:move>
+                    <ftp:initialDelay>50</ftp:initialDelay>
+                    <ftp:delay>50</ftp:delay>
+                </ftp:consume>
+            </ftp:binding.ftps>
+            <ftp:binding.sftp>
+                <ftp:directory>target/ftp/sftp</ftp:directory>
+                <ftp:host>localhost</ftp:host>
+                <ftp:port>2220</ftp:port>
+                <ftp:username>camel</ftp:username>
+                <ftp:password>isMyFriend</ftp:password>
+                <ftp:knownHostsFile>${hostsfile}</ftp:knownHostsFile>
+                <ftp:privateKeyFile>${keyfile}</ftp:privateKeyFile>
+                <ftp:privateKeyFilePassphrase>password</ftp:privateKeyFilePassphrase>
+                <ftp:consume>
+                    <ftp:move>done</ftp:move>
+                    <ftp:initialDelay>50</ftp:initialDelay>
+                    <ftp:delay>50</ftp:delay>
+                </ftp:consume>
+            </ftp:binding.sftp>
         </service>
         <component name="GreetingService">
             <implementation.bean xmlns="urn:switchyard-component-bean:config:2.0" class="org.switchyard.quickstarts.camel.ftp.binding.GreetingServiceBean"/>
