@@ -48,7 +48,6 @@
             </plugin>
         </plugins>
     </build>
-<<<<<<< HEAD
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -115,10 +114,7 @@
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-ws-policy</artifactId>
                 <version>${version.org.apache.cxf}</version>
-=======
-    <!-- Used for testing in Karaf only -->
-    <dependencyManagement>
-        <dependencies>
+            </dependency>
             <dependency>
                 <groupId>org.apache.ftpserver</groupId>
                 <artifactId>ftplet-api</artifactId>
@@ -151,7 +147,6 @@
                 <artifactId>bcpkix-jdk15on</artifactId>
                 <version>1.49</version>
                 <scope>test</scope>
->>>>>>> 92ba74e... [SWITCHYARD-2066 - Included karaf ftp, ftps and sftp test]
             </dependency>
         </dependencies>
     </dependencyManagement>

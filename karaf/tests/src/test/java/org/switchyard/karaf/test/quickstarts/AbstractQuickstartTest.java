@@ -148,8 +148,10 @@ public abstract class AbstractQuickstartTest {
                 configureConsole().ignoreLocalConsole().ignoreRemoteShell(),
                 editConfigurationFileExtend("etc/config.properties", "org.osgi.framework.system.packages.extra",
                         "sun.misc"),
-<<<<<<< HEAD
-=======
+                editConfigurationFilePut("etc/org.ops4j.pax.logging.cfg", "log4j.logger.org.switchyard", "DEBUG"),
+                editConfigurationFilePut("etc/org.ops4j.pax.logging.cfg", "log4j.logger.org.ops4j.pax.exam", "DEBUG"),
+                editConfigurationFilePut("etc/org.ops4j.pax.logging.cfg", "log4j.appender.out.file",
+                        "${karaf.home}/../test.log"),
                 editConfigurationFilePut("etc/system.properties", "org.switchyard.component.http.standalone.port",
                         "8181"),
                 editConfigurationFilePut("etc/system.properties", "org.switchyard.component.soap.client.port",
@@ -162,15 +164,10 @@ public abstract class AbstractQuickstartTest {
                         "../../../test-classes/quickstarts/camel-ftp-binding/known_hosts_sftp"),
                 editConfigurationFilePut("etc/system.properties", "org.switchyard.component.camel.sftp.keyfile",
                         "../../../test-classes/quickstarts/camel-ftp-binding/id_sftp_rsa"),
->>>>>>> 92ba74e... [SWITCHYARD-2066 - Included karaf ftp, ftps and sftp test]
                 editConfigurationFilePut(
                         "etc/org.ops4j.pax.url.mvn.cfg",
                         "org.ops4j.pax.url.mvn.repositories",
                         "https://repository.jboss.org/nexus/content/groups/public@id=jboss-public-repository-group,http://repo1.maven.org/maven2@id=central, http://svn.apache.org/repos/asf/servicemix/m2-repo@id=servicemix, http://repository.springsource.com/maven/bundles/release@id=springsource.release, http://repository.springsource.com/maven/bundles/external@id=springsource.external, https://repository.jboss.org/nexus/content/repositories/snapshots@snapshots@noreleases@id=jboss-snapshot, https://repository.jboss.org/nexus/content/repositories/fs-releases@id=fusesource.release"),
-                editConfigurationFilePut("etc/org.ops4j.pax.logging.cfg", "log4j.logger.org.switchyard", "DEBUG"),
-                editConfigurationFilePut("etc/org.ops4j.pax.logging.cfg", "log4j.logger.org.ops4j.pax.exam", "DEBUG"),
-                editConfigurationFilePut("etc/org.ops4j.pax.logging.cfg", "log4j.appender.out.file",
-                        "${karaf.home}/../test.log"),
                 features(maven().groupId("org.switchyard.karaf").artifactId("switchyard").type("xml").classifier("features").versionAsInProject().getURL(), featureName),
                 systemProperty(DeploymentProbe.BUNDLE_NAME_KEY).value(bundleName),
                 vmOptions("-Xmx1G", "-XX:MaxPermSize=256M"),
