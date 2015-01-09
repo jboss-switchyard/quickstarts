@@ -30,31 +30,11 @@
         <sca:interface.java interface="org.switchyard.quickstarts.remoteinvoker.CreditCheck"/>
       </sca:reference>
     </sca:component>
-    <sca:component name="RulesComponent">
-      <rules:implementation.rules>
-        <rules:manifest>
-          <rules:resources>
-            <rules:resource location="RulesComponent.drl" type="DRL"/>
-          </rules:resources>
-        </rules:manifest>
-        <rules:operations>
-          <rules:operation name="checkCredit" type="EXECUTE">
-            <rules:inputs>
-              <rules:input from="message.content.application"/>
-            </rules:inputs>
-          </rules:operation>
-        </rules:operations>
-      </rules:implementation.rules>
+    <sca:component name="CreditCheckBean">
+      <bean:implementation.bean class="org.switchyard.quickstarts.remoteinvoker.CreditCheckBean"/>
       <sca:service name="CreditCheck">
         <sca:interface.java interface="org.switchyard.quickstarts.remoteinvoker.CreditCheck"/>
       </sca:service>
     </sca:component>
   </sca:composite>
-  <!-- Uncomment this section to trace message exchange activity
-  <domain>
-      <properties>
-        <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
-      </properties>
-  </domain>
-  -->
 </switchyard>
