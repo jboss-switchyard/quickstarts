@@ -142,7 +142,12 @@ public class CamelFtpBindingTest {
         File destFile = new File("target/ftp/done", FILE_NAME);
         FileUtils.write(file, "The Phantom");
         // Allow for the file to be processed.
-        Thread.sleep(500);
+        for (int i = 0; i < 20; i++) {
+            Thread.sleep(500);
+            if (!file.exists()) {
+                break;
+            }
+        }
         assertFalse(file.exists());
         assertTrue(destFile.exists());
 
@@ -150,7 +155,12 @@ public class CamelFtpBindingTest {
         destFile = new File("target/ftp/ftps/done", FILE_NAME);
         FileUtils.write(file, "The Ghost Who Walks");
         // Allow for the file to be processed.
-        Thread.sleep(500);
+        for (int i = 0; i < 20; i++) {
+            Thread.sleep(500);
+            if (!file.exists()) {
+                break;
+            }
+        }
         assertFalse(file.exists());
         assertTrue(destFile.exists());
 
@@ -158,7 +168,12 @@ public class CamelFtpBindingTest {
         destFile = new File("target/ftp/sftp/done", FILE_NAME);
         FileUtils.write(file, "Kit Walker");
         // Allow for the file to be processed.
-        Thread.sleep(500);
+        for (int i = 0; i < 20; i++) {
+            Thread.sleep(500);
+            if (!file.exists()) {
+                break;
+            }
+        }
         assertFalse(file.exists());
         assertTrue(destFile.exists());
     }
