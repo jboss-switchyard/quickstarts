@@ -20,5 +20,8 @@
 
     <dependencies>
         <module name="javax.api"/>
+        <module name="sun.jdk" optional="true"/>
+        <module name="xmlpull" optional="true"/>
+        <module name="xpp3" optional="true"/>
     </dependencies>
 </module>
