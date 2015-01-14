@@ -129,7 +129,12 @@ public class CamelFTPBindingQuickstartTest extends AbstractQuickstartTest {
         // Ftp
         File srcFile = new File("target/ftp", "test.txt");
         FileUtils.write(srcFile, "The Phantom");
-        Thread.sleep(500);
+        for (int i = 0; i < 20; i++) {
+            Thread.sleep(500);
+            if (!srcFile.exists()) {
+                break;
+            }
+        }
         // File should have been picked up
         assertFalse(srcFile.exists());
         File destFile = new File("target/ftp/done", "test.txt");
@@ -138,7 +143,12 @@ public class CamelFTPBindingQuickstartTest extends AbstractQuickstartTest {
         // Ftps
         srcFile = new File("target/ftp/ftps", "ftps-test.txt");
         FileUtils.write(srcFile, "The Ghost Who Walks");
-        Thread.sleep(500);
+        for (int i = 0; i < 20; i++) {
+            Thread.sleep(500);
+            if (!srcFile.exists()) {
+                break;
+            }
+        }
         // File should have been picked up
         assertFalse(srcFile.exists());
         destFile = new File("target/ftp/ftps/done", "ftps-test.txt");
@@ -147,7 +157,12 @@ public class CamelFTPBindingQuickstartTest extends AbstractQuickstartTest {
         // Sftp
         srcFile = new File("target/ftp/sftp", "sftp-test.txt");
         FileUtils.write(srcFile, "Christopher Walker");
-        Thread.sleep(500);
+        for (int i = 0; i < 20; i++) {
+            Thread.sleep(500);
+            if (!srcFile.exists()) {
+                break;
+            }
+        }
         // File should have been picked up
         assertFalse(srcFile.exists());
         destFile = new File("target/ftp/sftp/done", "sftp-test.txt");
