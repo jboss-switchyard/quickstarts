@@ -17,25 +17,6 @@
 -->
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:sy="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:jpa="urn:switchyard-component-camel-jpa:config:1.0" xmlns:rules="urn:switchyard-component-rules:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="switchyard-quickstart-demo-transaction-propagation-credit" targetNamespace="urn:switchyard-quickstart-demo-transaction-propagation-credit:1.0">
   <sca:composite name="switchyard-quickstart-demo-transaction-propagation-credit" targetNamespace="urn:switchyard-quickstart-demo-transaction-propagation-credit:1.0">
-    <sca:component name="RulesComponent">
-      <rules:implementation.rules>
-        <rules:manifest>
-          <rules:resources>
-            <rules:resource location="RulesComponent.drl" type="DRL"/>
-          </rules:resources>
-        </rules:manifest>
-        <rules:operations>
-          <rules:operation name="checkCredit" type="EXECUTE">
-            <rules:inputs>
-              <rules:input from="message.content.application"/>
-            </rules:inputs>
-          </rules:operation>
-        </rules:operations>
-      </rules:implementation.rules>
-      <sca:service name="RuleService">
-        <sca:interface.java interface="org.switchyard.quickstarts.demo.txpropagation.RuleService"/>
-      </sca:service>
-    </sca:component>
     <sca:service name="CreditCheckService" promote="CreditCheckService/CreditCheckService">
       <sca:interface.java interface="org.switchyard.quickstarts.demo.txpropagation.CreditCheckService"/>
       <sca:binding.sca sy:clustered="true"/>
@@ -46,8 +27,7 @@
         <jpa:entityClassName>org.switchyard.quickstarts.demo.txpropagation.Application</jpa:entityClassName>
         <jpa:persistenceUnit>CreditUnit</jpa:persistenceUnit>
         <jpa:transactionManager>#jtaTransactionManager</jpa:transactionManager>
-        <jpa:produce>
-        </jpa:produce>
+        <jpa:produce/>
       </jpa:binding.jpa>
     </sca:reference>
     <sca:component name="CreditCheckService">
@@ -60,6 +40,12 @@
       </sca:reference>
       <sca:service name="CreditCheckService" requires="propagatesTransaction">
         <sca:interface.java interface="org.switchyard.quickstarts.demo.txpropagation.CreditCheckService"/>
+      </sca:service>
+    </sca:component>
+    <sca:component name="RuleServiceBean">
+      <bean:implementation.bean class="org.switchyard.quickstarts.demo.txpropagation.RuleServiceBean"/>
+      <sca:service name="RuleService">
+        <sca:interface.java interface="org.switchyard.quickstarts.demo.txpropagation.RuleService"/>
       </sca:service>
     </sca:component>
   </sca:composite>

@@ -15,30 +15,17 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:sy="urn:switchyard-config:switchyard:1.0" xmlns:rules="urn:switchyard-component-rules:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="switchyard-quickstart-demo-cluster-credit" targetNamespace="urn:switchyard-quickstart-demo-cluster-credit:1.0">
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:sy="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:rules="urn:switchyard-component-rules:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="switchyard-quickstart-demo-cluster-credit" targetNamespace="urn:switchyard-quickstart-demo-cluster-credit:1.0">
   <sca:composite name="switchyard-quickstart-demo-cluster-credit" targetNamespace="urn:switchyard-quickstart-demo-cluster-credit:1.0">
-    <sca:component name="RulesComponent">
-      <rules:implementation.rules>
-        <rules:manifest>
-          <rules:resources>
-            <rules:resource location="RulesComponent.drl" type="DRL"/>
-          </rules:resources>
-        </rules:manifest>
-        <rules:operations>
-          <rules:operation name="checkCredit" type="EXECUTE">
-            <rules:inputs>
-              <rules:input from="message.content.application"/>
-            </rules:inputs>
-          </rules:operation>
-        </rules:operations>
-      </rules:implementation.rules>
+    <sca:component name="CreditCheckBean">
+      <bean:implementation.bean class="org.switchyard.quickstarts.demo.cluster.CreditCheckBean"/>
       <sca:service name="CreditCheck">
         <sca:interface.java interface="org.switchyard.quickstarts.demo.cluster.CreditCheck"/>
       </sca:service>
     </sca:component>
-    <sca:service name="CreditCheck" promote="RulesComponent/CreditCheck">
+    <sca:service name="CreditCheck" promote="CreditCheckBean/CreditCheck">
       <sca:interface.java interface="org.switchyard.quickstarts.demo.cluster.CreditCheck"/>
-      <sca:binding.sca sy:clustered="true"/>
+      <sca:binding.sca sy:clustered="true" name="SCA"/>
     </sca:service>
   </sca:composite>
 </switchyard>
