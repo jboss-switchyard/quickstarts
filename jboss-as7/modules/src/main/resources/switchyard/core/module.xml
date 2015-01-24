@@ -63,5 +63,6 @@
         <module name="org.jboss.com.sun.httpserver"/>
         <module name="org.jboss.ws.jaxws-jboss-httpserver-httpspi" />
         <module name="org.jboss.ws.cxf.jbossws-cxf-transports-httpserver"/>
+        <module name="org.jboss.ws.jaxws-client" export="true"/>
     </dependencies>
 </module>

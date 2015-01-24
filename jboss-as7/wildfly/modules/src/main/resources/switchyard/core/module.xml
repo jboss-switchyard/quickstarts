@@ -62,5 +62,6 @@
         <module name="org.switchyard.component.soap"/>
         <module name="org.switchyard.component.jca"/>
         <module name="org.jboss.resteasy.resteasy-jaxrs"/>
+        <module name="org.jboss.ws.jaxws-client" export="true"/>
     </dependencies>
 </module>
