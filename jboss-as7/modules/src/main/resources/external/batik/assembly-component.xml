@@ -57,7 +57,6 @@
     <dependencySet>
       <outputDirectory>/modules/system/layers/soa/org/apache/xmlgraphics/main</outputDirectory>
       <includes>
-        <include>xml-apis:xml-apis</include>
         <include>xml-apis:xml-apis-ext</include>
       </includes>
       <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>

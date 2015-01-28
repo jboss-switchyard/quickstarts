@@ -32,7 +32,6 @@
         <resource-root path="batik-xml-${version.org.apache.xmlgraphics.batik}.jar"/>
         <resource-root path="axiom-api-${version.org.apache.ws.commons.axiom}.jar"/>
         <resource-root path="axiom-impl-${version.org.apache.ws.commons.axiom}.jar"/>
-        <resource-root path="xml-apis-${version.xml-apis}.jar" />
         <resource-root path="xml-apis-ext-${version.xml-apis}.jar"/>
 
     </resources>
@@ -40,7 +39,7 @@
     <dependencies>
         <module name="org.apache.commons.codec"/>
         <module name="org.apache.commons.logging"/>
-        <module name="javax.api" />
+        <module name="javax.api" export="true"/>
         <system>
           <paths>
             <path name="com/sun/image/codec/jpeg"/>
