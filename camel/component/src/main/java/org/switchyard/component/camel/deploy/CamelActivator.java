@@ -131,9 +131,9 @@ public class CamelActivator extends BaseCamelActivator {
                     if (serviceConsumer > 0) {
                         throw CamelComponentMessages.MESSAGES.onlyOneSwitchYardInputPerImpl();
                     }
-                    String host = from.getHost();
+                    String authority = from.getAuthority();
 
-                    if (!serviceName.equals(host)) {
+                    if (!serviceName.equals(authority)) {
                         throw CamelComponentMessages.MESSAGES.implementationConsumerDoesNotMatchService(serviceName);
                     }
                     serviceConsumer++;
@@ -146,7 +146,7 @@ public class CamelActivator extends BaseCamelActivator {
                     ToDefinition to = (ToDefinition) processorDefinition;
                     final URI componentUri = URI.create(to.getUri());
                     if (componentUri.getScheme().equals(CamelConstants.SWITCHYARD_COMPONENT_NAME)) {
-                        final String referenceName = componentUri.getHost();
+                        final String referenceName = componentUri.getAuthority();
                         final QName refServiceName = new QName(compositeNs, referenceName);
                         if (!containsServiceRef(ccim.getComponent().getReferences(), referenceName)) {
                             throw CamelComponentMessages.MESSAGES.couldNotFindServiceReference(referenceName, to.toString());
