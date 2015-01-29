@@ -83,6 +83,12 @@ public class Invoker {
         } else if (serviceNameTokens.length == 2) {
             _serviceName = XMLHelper.createQName(serviceName.getNamespaceURI(), serviceNameTokens[0]);
             _operationName = serviceNameTokens[1];
+        } else if (serviceNameTokens.length >= 3) {
+            // in case the service name contains dot
+            String serviceOpName = serviceName.getLocalPart();
+            int operDotIndex = serviceOpName.lastIndexOf('.');
+            _serviceName = XMLHelper.createQName(serviceName.getNamespaceURI(), serviceOpName.substring(0, operDotIndex));
+            _operationName = serviceOpName.substring(operDotIndex+1);
         }
     }
 
