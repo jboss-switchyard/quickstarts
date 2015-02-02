@@ -14,13 +14,20 @@
 
 package org.switchyard.transform.jaxb.internal;
 
+import java.io.InputStream;
+import java.io.Reader;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stax.StAXSource;
 
+import org.jboss.logging.Logger;
 import org.switchyard.Message;
 import org.switchyard.SwitchYardException;
 import org.switchyard.common.xml.QNameUtil;
@@ -38,6 +45,8 @@ import org.switchyard.transform.internal.TransformMessages;
  */
 @Scannable(false)
 public class JAXBUnmarshalTransformer<F, T> extends BaseTransformer<Message, Message> {
+
+    private static Logger _logger = Logger.getLogger(JAXBUnmarshalTransformer.class);
 
     private JAXBContext _jaxbContext;
 
@@ -72,7 +81,25 @@ public class JAXBUnmarshalTransformer<F, T> extends BaseTransformer<Message, Mes
         }
 
         try {
-            Object unmarshalledObject = unmarshaller.unmarshal(message.getContent(Source.class));
+            byte[] bytes = null;
+            if (InputStream.class.isAssignableFrom(message.getContent().getClass())
+                    || Reader.class.isAssignableFrom(message.getContent().getClass())) {
+                // Convert the stream/reader content to byte array first so it won't exhausted
+                bytes = message.getContent(byte[].class);
+                message.setContent(bytes);
+            }
+            Source source = message.getContent(Source.class);
+            if (source instanceof StAXSource || source instanceof SAXSource) {
+                // SWITCHYARD-2511 - Avoid StAXSource and SAXSource as those have issues on JAXB unmarshal
+                if (bytes != null) {
+                    message.setContent(bytes);
+                }
+                source = message.getContent(DOMSource.class);
+            }
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("Unmarshalling from " + source.getClass() + ", systemId=" + source.getSystemId());
+            }
+            Object unmarshalledObject = unmarshaller.unmarshal(source);
 
             if (unmarshalledObject instanceof JAXBElement) {
                 message.setContent(((JAXBElement)unmarshalledObject).getValue());

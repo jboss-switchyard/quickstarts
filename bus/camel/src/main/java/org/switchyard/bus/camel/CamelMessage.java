@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.jboss.logging.Logger;
 import org.switchyard.Context;
 import org.switchyard.Message;
 import org.switchyard.common.camel.HandlerDataSource;
@@ -38,6 +39,8 @@ import org.switchyard.transform.TransformerRegistry;
  * {@link org.apache.camel.Message}.
  */
 public class CamelMessage extends SwitchYardMessage implements Message {
+
+    private static Logger _logger = Logger.getLogger(CamelMessage.class);
 
     /**
      * Creates new Camel message with specified exchange.
@@ -84,8 +87,14 @@ public class CamelMessage extends SwitchYardMessage implements Message {
 
         QName toType = JavaTypes.toMessageType(type);
         QName fromType = JavaTypes.toMessageType(body.getClass());
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Looking for a transformer:[from='" + fromType + "', to='" + toType + "']");
+        }
         Transformer transformer = transformerRegistry.getTransformer(fromType, toType);
         if (transformer == null) {
+            if (_logger.isDebugEnabled()) {
+                _logger.debug("No suitable transformer in registry. Trying camel converters for next.");
+            }
             T camelBody = super.getBody(type, body);
             if (camelBody == null) {
                 throw BusMessages.MESSAGES.transformerMustBeRegistered(body.getClass().getName(), type.getName(), fromType.toString(), toType.toString());
@@ -93,6 +102,12 @@ public class CamelMessage extends SwitchYardMessage implements Message {
             return camelBody;
         }
 
+        if (_logger.isDebugEnabled()) {
+            _logger.debug("Applying a transformer:[from='" + fromType
+                    + "', to='" + toType
+                    + "', class=" + transformer.getClass()
+                    + "'] to the body '" + body + "'");
+        }
         Object transformedContent = transformer.transform(body);
         if (transformedContent == null) {
             throw BusMessages.MESSAGES.transformerReturnedNull(body.getClass().getName(), type.getName(), transformer.getClass().getName());
