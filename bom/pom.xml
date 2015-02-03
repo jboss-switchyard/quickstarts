@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.jboss.integration-platform</groupId>
         <artifactId>jboss-integration-platform-parent</artifactId>
-        <version>6.0.0.CR17</version>
+        <version>6.0.0.CR24</version>
     </parent>
     <groupId>org.switchyard</groupId>
     <artifactId>switchyard-bom</artifactId>
@@ -27,7 +27,7 @@
     <description>The BOM for SwitchYard application development</description>
     <url>http://switchyard.org</url>
     <properties>
-        <version.ip.bom>6.0.0.CR17</version.ip.bom>
+        <version.ip.bom>6.0.0.CR24</version.ip.bom>
         <version.org.jboss.as>7.4.0.Final-redhat-19</version.org.jboss.as>
         <version.redhat.eap6.bom>6.3.0.GA</version.redhat.eap6.bom>
         <!-- KIE/Drools/jBPM: these should all match -->
