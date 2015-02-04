@@ -26,7 +26,6 @@ import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.osgi.framework.ServiceReference;
 import org.switchyard.deploy.Component;
-import org.switchyard.deploy.osgi.internal.ComponentExtension;
 
 /**
  * Shell commands for components.
@@ -34,15 +33,17 @@ import org.switchyard.deploy.osgi.internal.ComponentExtension;
 @Command(scope = "switchyard", name = "component-list", description = "List switchyard components.")
 public class ComponentList extends OsgiCommandSupport {
 
+    public static final String SWITCHYARD_TYPES = "switchyard.types";
+
     @Override
     protected Object doExecute() throws Exception {
         Collection<ServiceReference<Component>> refs =
                 getBundleContext().getServiceReferences(
-                        Component.class, "(" + ComponentExtension.SWITCHYARD_TYPES + "=*)");
+                        Component.class, "(" + SWITCHYARD_TYPES + "=*)");
         if (refs != null) {
             Set<String> types = new TreeSet<String>();
             for (ServiceReference<Component> ref : refs) {
-                types.addAll(getTypes(ref.getProperty(ComponentExtension.SWITCHYARD_TYPES)));
+                types.addAll(getTypes(ref.getProperty(SWITCHYARD_TYPES)));
             }
             for (String type : types) {
                 System.out.println(type);
@@ -54,7 +55,7 @@ public class ComponentList extends OsgiCommandSupport {
     private static List<String> getTypes(Object ns) {
         if (ns == null) {
             throw new IllegalArgumentException("Component service does not have an associated "
-                    + ComponentExtension.SWITCHYARD_TYPES + " property defined");
+                    + SWITCHYARD_TYPES + " property defined");
         } else if (ns instanceof String[]) {
             return Arrays.asList((String[]) ns);
         } else if (ns instanceof URI) {
@@ -77,7 +78,7 @@ public class ComponentList extends OsgiCommandSupport {
             return types;
         } else {
             throw new IllegalArgumentException("Component service has an associated "
-                    + ComponentExtension.SWITCHYARD_TYPES + " property defined which can not be converted to an array of String");
+                    + SWITCHYARD_TYPES + " property defined which can not be converted to an array of String");
         }
     }
 
