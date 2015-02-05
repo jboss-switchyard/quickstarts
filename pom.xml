@@ -71,7 +71,6 @@
         <module>bpel-simple-correlation</module>
         <module>bpel-xts-subordinate-wsba</module>
         <module>bpel-xts-wsat</module>
-        <module>bpm-service</module>
         <module>camel-atom-binding</module>
         <module>camel-file-binding</module>
         <module>camel-cxf-binding</module>
@@ -97,10 +96,6 @@
         <module>http-binding</module>
         <module>remote-invoker</module>
         <module>rest-binding</module>
-        <module>rules-camel-cbr</module>
-        <module>rules-interview</module>
-        <module>rules-interview-container</module>
-        <module>rules-interview-dtable</module>
         <module>soap-addressing</module>
         <module>soap-attachment</module>
         <module>soap-binding-rpc</module>
@@ -115,8 +110,6 @@
         <module>transform-smooks</module>
         <module>transform-xslt</module>
         <module>validate-xml</module>
-        <module>demos/helpdesk</module>
-        <module>demos/library</module>
         <module>demos/orders</module>
         <module>demos/webapp-deploy</module>
         <module>demos/multiApp</module>
@@ -133,6 +126,24 @@
     <!-- Conditionally include the assembly module.  It's not always present e.g. in the quickstarts distro. -->
     <profiles>
         <profile>
+            <id>brms</id>
+            <activation>
+                <property>
+                    <name>!skipBRMS</name>
+                </property>
+            </activation>
+            <modules>
+                <module>bpm-service</module>
+	        <module>rules-camel-cbr</module>
+       		<module>rules-interview</module>
+	        <module>rules-interview-container</module>
+        	<module>rules-interview-dtable</module>
+        	<module>demos/helpdesk</module>
+        	<module>demos/library</module>
+            </modules>	
+        </profile>
+        <profile>
+            <id>assembly</id>
             <activation>
                 <file>
                     <exists>assembly</exists>

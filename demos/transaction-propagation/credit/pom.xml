@@ -65,10 +65,6 @@
         </dependency>
         <dependency>
             <groupId>org.switchyard.components</groupId>
-            <artifactId>switchyard-component-rules</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-sca</artifactId>
         </dependency>
         <dependency>
