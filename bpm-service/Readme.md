@@ -88,6 +88,8 @@ ${KARAF_HOME}/bin/karaf
 with the version of SwitchYard that you are using (ex. 2.0.0): 
 
 karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERSION}/xml/features
+karaf@root> features:addurl mvn:org.switchyard.brms.karaf/switchyard/{SWITCHYARD-VERSION}/xml/features
+
 
 3. Install the feature for the bpm-service quickstart :
 

@@ -25,7 +25,7 @@
 
     <fileSets>
         <fileSet>
-            <directory>../</directory>
+            <directory>../../</directory>
             <excludes>
                 <exclude>**/.git</exclude>
                 <exclude>**/.gitignore</exclude>
@@ -41,6 +41,20 @@
                 <exclude>**/.settings/**/*</exclude>
                 <exclude>**/target</exclude>
                 <exclude>**/target/**/*</exclude>
+                <exclude>**/bpm-service</exclude>
+                <exclude>**/bpm-service/**/*</exclude>
+                <exclude>**/rules-camel-cbr</exclude>
+                <exclude>**/rules-camel-cbr/**/*</exclude>
+                <exclude>**/rules-interview</exclude>
+                <exclude>**/rules-interview/**/*</exclude>
+                <exclude>**/rules-interview-container</exclude>
+                <exclude>**/rules-interview-container/**/*</exclude>
+                <exclude>**/rules-interview-dtable</exclude>
+                <exclude>**/rules-interview-dtable/**/*</exclude>
+                <exclude>**/demos/helpdesk</exclude>
+                <exclude>**/demos/helpdesk/**/*</exclude>
+                <exclude>**/demos/library</exclude>
+                <exclude>**/demos/library/**/*</exclude>
             </excludes>
             <fileMode>644</fileMode>
             <directoryMode>755</directoryMode>
