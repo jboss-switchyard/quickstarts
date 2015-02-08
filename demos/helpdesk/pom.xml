@@ -16,7 +16,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard.quickstarts.demos</groupId>
     <artifactId>switchyard-demo-helpdesk</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.0.1-ER1</version>
     <packaging>war</packaging>
     <name>Quickstart Demo : Help Desk</name>
     <description>Quickstart Demo : Help Desk</description>

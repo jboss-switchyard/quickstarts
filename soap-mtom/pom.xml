@@ -16,7 +16,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-soap-mtom</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.0.1-ER1</version>
     <packaging>bundle</packaging>
     <name>SwitchYard Quickstart: soap-mtom</name>
     <description>Quickstart : SOAP with MTOM</description>

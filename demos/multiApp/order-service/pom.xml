@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.switchyard.quickstarts.demos</groupId>
         <artifactId>switchyard-demo-multiApp</artifactId>
-        <version>2.0.1-SNAPSHOT</version>
+        <version>2.0.1-ER1</version>
     </parent>
     <artifactId>switchyard-demo-multiApp-order-service</artifactId>
     <packaging>jar</packaging>
