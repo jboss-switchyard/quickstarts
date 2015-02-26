@@ -16,7 +16,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-camel-soap-proxy-parent</artifactId>
-    <version>2.0.0.CR1</version>
+    <version>2.0.0.Final</version>
     <packaging>pom</packaging>
     <name>SwitchYard Quickstart: camel-soap-proxy parent</name>
     <description>Quickstart : Camel SOAP Proxy Parent</description>

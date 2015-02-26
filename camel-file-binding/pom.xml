@@ -16,7 +16,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-camel-file-binding</artifactId>
-    <version>2.0.0.CR1</version>
+    <version>2.0.0.Final</version>
     <packaging>bundle</packaging>
     <name>SwitchYard Quickstart: camel-file-binding</name>
     <description>Quickstart : Camel Binding</description>

@@ -15,7 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-atom-binding" targetNamespace="urn:switchyard-quickstart:camel-atom-binding:2.0.0-SNAPSHOT">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-atom-binding" targetNamespace="urn:switchyard-quickstart:camel-atom-binding:2.0.0.Final">
         <service name="AtomParseService" promote="AtomParseService/AtomParseService">
             <atom:binding.atom xmlns:atom="urn:switchyard-component-camel-atom:config:2.0">
 		<atom:feedURI>http://itunes.apple.com/us/rss/topsongs/limit=10/genre=16/explicit=false/xml</atom:feedURI>

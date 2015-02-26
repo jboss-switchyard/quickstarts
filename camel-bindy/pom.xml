@@ -16,7 +16,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.switchyard.quickstarts</groupId>
     <artifactId>switchyard-camel-bindy</artifactId>
-    <version>2.0.0.CR1</version>
+    <version>2.0.0.Final</version>
     <name>SwitchYard Quickstart: camel-bindy</name>
     <packaging>bundle</packaging>
     <description>Quickstart : Camel Bindy</description>
