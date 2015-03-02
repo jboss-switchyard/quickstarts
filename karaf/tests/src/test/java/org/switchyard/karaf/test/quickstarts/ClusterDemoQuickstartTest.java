@@ -44,7 +44,7 @@ public class ClusterDemoQuickstartTest extends AbstractQuickstartTest {
     public static void before() throws Exception {
         startTestContainer(featureName, bundleName, 
                 CoreOptions.options(features(
-                        "mvn:org.switchyard.karaf/switchyard/2.0.0.Final/xml/features", 
+                        "mvn:org.switchyard.karaf/switchyard/2.0.0-SNAPSHOT/xml/features", 
                         extraFeatures)));
     }
 
