@@ -22,21 +22,22 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 
 import org.fusesource.camel.component.sap.SapConnectionConfiguration;
-import org.fusesource.camel.component.sap.SapSynchronousRfcServerComponent;
-import org.fusesource.camel.component.sap.model.rfc.RepositoryData;
+import org.fusesource.camel.component.sap.model.rfc.DestinationData;
+import org.fusesource.camel.component.sap.model.rfc.ServerData;
 
 /**
- * Camel SAPComponent producer which setup the required metadata.
+ * Camel SapConnectionConfiguration producer which setup the required metadata.
  */
-public class CamelSAPComponentProducer {
+public class CamelSAPConnectionConfigurationProducer {
 
     @Produces
-    @Named("sap-srfc-server")
-    public SapSynchronousRfcServerComponent create(
-            @Named("sap-configuration") SapConnectionConfiguration sapConfiguration,
-            @Named("repositoryDataStore") Map<String,RepositoryData> repositoryDataStore ) {
-        SapSynchronousRfcServerComponent sap = new SapSynchronousRfcServerComponent();
-        sap.setRepositoryDataStore(repositoryDataStore);
-        return sap;
+    @Named("sap-configuration")
+    public SapConnectionConfiguration create(
+            @Named("destinationDataStore") Map<String,DestinationData> destinationDataStore,
+            @Named("serverDataStore") Map<String,ServerData> serverDataStore ) {
+        SapConnectionConfiguration conf = new SapConnectionConfiguration();
+        conf.setDestinationDataStore(destinationDataStore);
+        conf.setServerDataStore(serverDataStore);
+        return conf;
     }
 }

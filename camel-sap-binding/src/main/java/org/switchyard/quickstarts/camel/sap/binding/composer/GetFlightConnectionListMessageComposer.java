@@ -18,7 +18,7 @@ package org.switchyard.quickstarts.camel.sap.binding.composer;
 
 import java.util.Date;
 
-import org.fusesource.camel.component.sap.SAPEndpoint;
+import org.fusesource.camel.component.sap.SapSynchronousRfcDestinationEndpoint;
 import org.fusesource.camel.component.sap.model.rfc.Structure;
 import org.fusesource.camel.component.sap.model.rfc.Table;
 import org.fusesource.camel.component.sap.util.RfcUtil;
@@ -43,8 +43,8 @@ public class GetFlightConnectionListMessageComposer extends CamelMessageComposer
         BookFlightRequest bookFlightRequest = exchange.getMessage().getContent(BookFlightRequest.class);
 
         // Create SAP Request object from target endpoint.
-        SAPEndpoint endpoint = response.getMessage().getExchange().getContext().getEndpoint("sap:destination:nplDest:BAPI_FLCONN_GETLIST", SAPEndpoint.class);
-        Structure request = endpoint.getRequest();
+        SapSynchronousRfcDestinationEndpoint endpoint = response.getMessage().getExchange().getContext().getEndpoint("sap-srfc-destination:nplDest:BAPI_FLCONN_GETLIST", SapSynchronousRfcDestinationEndpoint.class);
+        Structure request = endpoint.createRequest();
 
         // Add Travel Agency Number to request if set
         if (bookFlightRequest.getTravelAgencyNumber() != null && bookFlightRequest.getTravelAgencyNumber().length() > 0) {

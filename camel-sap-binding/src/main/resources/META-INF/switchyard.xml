@@ -38,8 +38,10 @@
     <sca:service name="FlightBookingService" promote="FlightBookingService/FlightBookingService">
       <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.FlightBookingPromotedService"/>
       <sap:binding.sap name="FlightBookingServiceBinding">
-        <sap:server>nplServer</sap:server>
-        <sap:rfcName>BOOK_FLIGHT</sap:rfcName>
+        <sap:srfc-server>
+          <sap:serverName>nplServer</sap:serverName>
+          <sap:rfcName>BOOK_FLIGHT</sap:rfcName>
+        </sap:srfc-server>
       </sap:binding.sap>
     </sca:service>
     <sca:component name="PassengerInfoService">
@@ -52,32 +54,40 @@
       <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.GetFlightConnectionListService"/>
       <sap:binding.sap name="GetFlightConnectionListReferenceBinding">
         <sap:messageComposer class="org.switchyard.quickstarts.camel.sap.binding.composer.GetFlightConnectionListMessageComposer"/>
-        <sap:destination>nplDest</sap:destination>
-        <sap:rfcName>BAPI_FLCONN_GETLIST</sap:rfcName>
+        <sap:srfc-destination>
+          <sap:destinationName>nplDest</sap:destinationName>
+          <sap:rfcName>BAPI_FLCONN_GETLIST</sap:rfcName>
+        </sap:srfc-destination>
       </sap:binding.sap>
     </sca:reference>
     <sca:reference name="GetFlightConnectionDetailService" promote="FlightConnectionInfoService/GetFlightConnectionDetailService" multiplicity="0..1">
       <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.GetFlightConnectionDetailService"/>
       <sap:binding.sap name="GetFlightConnectionDetailReferenceBinding">
         <sap:messageComposer class="org.switchyard.quickstarts.camel.sap.binding.composer.GetFlightConnectionDetailMessageComposer"/>
-        <sap:destination>nplDest</sap:destination>
-        <sap:rfcName>BAPI_FLCONN_GETDETAIL</sap:rfcName>
+        <sap:srfc-destination>
+          <sap:destinationName>nplDest</sap:destinationName>
+          <sap:rfcName>BAPI_FLCONN_GETDETAIL</sap:rfcName>
+        </sap:srfc-destination>
       </sap:binding.sap>
     </sca:reference>
     <sca:reference name="FlightCustomerInfoService" promote="FlightBookingService/FlightCustomerInfoService" multiplicity="0..1">
       <sca:interface.java interface="org.switchyard.quickstarts.camel.sap.binding.FlightCustomerInfoService"/>
       <sap:binding.sap name="FlightCustomerInfoReferenceBinding">
         <sap:messageComposer class="org.switchyard.quickstarts.camel.sap.binding.composer.FlightCustomerInfoMessageComposer"/>
-        <sap:destination>nplDest</sap:destination>
-        <sap:rfcName>BAPI_FLCUST_GETLIST</sap:rfcName>
+        <sap:srfc-destination>
+          <sap:destinationName>nplDest</sap:destinationName>
+          <sap:rfcName>BAPI_FLCUST_GETLIST</sap:rfcName>
+        </sap:srfc-destination>
       </sap:binding.sap>
     </sca:reference>
     <sca:reference name="CreateFlightTripService" promote="FlightBookingService/CreateFlightTripService" multiplicity="0..1">
       <sap:binding.sap name="CreateFlightTripReferenceBinding">
         <sap:messageComposer class="org.switchyard.quickstarts.camel.sap.binding.composer.CreateFlightTripMessageComposer"/>
-        <sap:destination>nplDest</sap:destination>
-        <sap:rfcName>BAPI_FLTRIP_CREATE</sap:rfcName>
-        <sap:transacted>true</sap:transacted>
+        <sap:srfc-destination>
+          <sap:destinationName>nplDest</sap:destinationName>
+          <sap:rfcName>BAPI_FLTRIP_CREATE</sap:rfcName>
+          <sap:transacted>true</sap:transacted>
+        </sap:srfc-destination>
       </sap:binding.sap>
     </sca:reference>
   </sca:composite>

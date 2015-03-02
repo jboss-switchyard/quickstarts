@@ -4,9 +4,9 @@ This quickstart demonstrates the usage of the Camel SAP and it's binding feature
 This example application is originally created for JBoss Fuse camel-sap, and then imported as a SwitchYard quickstart. You can also see the original README here
     https://github.com/fabric8io/fabric8/blob/6.1.x/fabric/fabric8-karaf/src/main/resources/distro/fabric/import/fabric/configs/versions/1.0/profiles/example-camel-sap/ReadMe.md
 
-Creating SAP JCo JBoss module
-=============================
-sapjco3.jar and libsapjco3.so can be downloaded from SAP portal.
+EAP/WildFly: Creating SAP JCo JBoss module
+==========================================
+sapjco3.jar, sapidoc3.jar and libsapjco3.so can be downloaded from SAP portal.
 
 1. Create a directory
 
@@ -24,13 +24,29 @@ sapjco3.jar and libsapjco3.so can be downloaded from SAP portal.
 
 1. Copy JCo library files (assuming your platform is linux-x86_64)
 
-    cp sapjco3.jar $JBOSS_HOME/modules/system/layers/soa/com/sap/conn/jco/main/
+    cp sapjco3.jar sapidoc3.jar $JBOSS_HOME/modules/system/layers/soa/com/sap/conn/jco/main/
     mkdir -p $JBOSS_HOME/modules/system/layers/soa/com/sap/conn/jco/main/lib/linux-x86_64
     cp libsapjco3.so $JBOSS_HOME/modules/system/layers/soa/com/sap/conn/jco/main/lib/linux-x86_64/
 
 1. Add a dependency on JCo library to the $JBOSS_HOME/modules/system/layers/soa/org/fusesource/camel/sap/main/module.xml
 
     <module name="com.sap.conn.jco"/>
+
+Fuse/karaf: Adding SAP JCo library to system packages
+=====================================================
+sapjco3.jar, sapidoc3.jar and libsapjco3.so can be downloaded from SAP portal.
+
+1. Copy JCo library files
+    cp sapjco3.jar sapidoc3.jar libsapjco3.so $KARAF_HOME/lib/
+
+1. Add following JCo packages into org.osgi.framework.system.packages.extra in $KARAF_HOME/etc/config.properties
+     com.sap.conn.idoc, \
+     com.sap.conn.idoc.jco, \
+     com.sap.conn.jco, \
+     com.sap.conn.jco.ext, \
+     com.sap.conn.jco.monitor, \
+     com.sap.conn.jco.rt, \
+     com.sap.conn.jco.server,
 
 Registering ABAP program from SAP GUI
 =====================================
