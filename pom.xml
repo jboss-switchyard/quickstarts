@@ -61,7 +61,7 @@
         <version.org.fusesource.hawtdispatch>1.18</version.org.fusesource.hawtdispatch>
         <version.org.fusesource.hawtbuf>1.9</version.org.fusesource.hawtbuf>
         <!-- consider moving to integration platform bom -->
-        <version.camelsap>1.0.0.redhat-379</version.camelsap>
+        <version.camelsap>6.2.0.redhat-064</version.camelsap>
         <version.org.fusesource.mqtt-client>1.6</version.org.fusesource.mqtt-client>
         <!--  RiftSaw -->
         <version.activity.monitor.model>1.2.2.Final</version.activity.monitor.model>
