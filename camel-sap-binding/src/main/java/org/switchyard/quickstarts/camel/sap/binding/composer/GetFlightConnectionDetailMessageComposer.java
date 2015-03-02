@@ -25,7 +25,7 @@ import java.util.Set;
 
 import javax.activation.DataHandler;
 
-import org.fusesource.camel.component.sap.SAPEndpoint;
+import org.fusesource.camel.component.sap.SapSynchronousRfcDestinationEndpoint;
 import org.fusesource.camel.component.sap.model.rfc.Structure;
 import org.fusesource.camel.component.sap.model.rfc.Table;
 import org.slf4j.Logger;
@@ -67,8 +67,8 @@ public class GetFlightConnectionDetailMessageComposer extends CamelMessageCompos
         Structure connection = connectionList.get(0);
 
         // Create SAP Request object from target endpoint.
-        SAPEndpoint endpoint = response.getMessage().getExchange().getContext().getEndpoint("sap:destination:nplDest:BAPI_FLCONN_GETDETAIL", SAPEndpoint.class);
-        Structure request = endpoint.getRequest();
+        SapSynchronousRfcDestinationEndpoint endpoint = response.getMessage().getExchange().getContext().getEndpoint("sap-srfc-destination:nplDest:BAPI_FLCONN_GETDETAIL", SapSynchronousRfcDestinationEndpoint.class);
+        Structure request = endpoint.createRequest();
 
         // Copy connection number of matching connection into request.
         String connectionNumber = connection.get("FLIGHTCONN", String.class);

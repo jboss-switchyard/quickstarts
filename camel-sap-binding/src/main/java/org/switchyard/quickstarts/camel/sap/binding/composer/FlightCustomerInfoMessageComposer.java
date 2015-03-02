@@ -21,7 +21,7 @@ import java.util.Set;
 
 import javax.activation.DataHandler;
 
-import org.fusesource.camel.component.sap.SAPEndpoint;
+import org.fusesource.camel.component.sap.SapSynchronousRfcDestinationEndpoint;
 import org.fusesource.camel.component.sap.model.rfc.Structure;
 import org.fusesource.camel.component.sap.model.rfc.Table;
 import org.slf4j.Logger;
@@ -47,8 +47,8 @@ public class FlightCustomerInfoMessageComposer extends CamelMessageComposer {
         BookFlightRequest bookFlightRequest = exchange.getMessage().getContent(BookFlightRequest.class);
 
         // Create SAP Request object from target endpoint.
-        SAPEndpoint endpoint = target.getMessage().getExchange().getContext().getEndpoint("sap:destination:nplDest:BAPI_FLCUST_GETLIST", SAPEndpoint.class);
-        Structure request = endpoint.getRequest();
+        SapSynchronousRfcDestinationEndpoint endpoint = target.getMessage().getExchange().getContext().getEndpoint("sap-srfc-destination:nplDest:BAPI_FLCUST_GETLIST", SapSynchronousRfcDestinationEndpoint.class);
+        Structure request = endpoint.createRequest();
 
         // Add Customer Name to request if set
         if (bookFlightRequest.getCustomerName() != null && bookFlightRequest.getCustomerName().length() > 0) {

@@ -25,7 +25,7 @@ import java.util.Set;
 
 import javax.activation.DataHandler;
 
-import org.fusesource.camel.component.sap.SAPEndpoint;
+import org.fusesource.camel.component.sap.SapSynchronousRfcDestinationEndpoint;
 import org.fusesource.camel.component.sap.model.rfc.Structure;
 import org.fusesource.camel.component.sap.model.rfc.Table;
 import org.slf4j.Logger;
@@ -64,8 +64,8 @@ public class CreateFlightTripMessageComposer extends CamelMessageComposer {
         exchange.getContext().setProperty(FLIGHT_TRIP_REQUEST_INFO, flightTripRequestInfo, Scope.EXCHANGE);
 
         // Create SAP Request object from target endpoint.
-        SAPEndpoint endpoint = response.getMessage().getExchange().getContext().getEndpoint("sap:destination:nplDest:BAPI_FLTRIP_CREATE", SAPEndpoint.class);
-        Structure request = endpoint.getRequest();
+        SapSynchronousRfcDestinationEndpoint endpoint = response.getMessage().getExchange().getContext().getEndpoint("sap-srfc-destination:nplDest:BAPI_FLTRIP_CREATE", SapSynchronousRfcDestinationEndpoint.class);
+        Structure request = endpoint.createRequest();
 
         //
         // Add Flight Trip Data to request object.
