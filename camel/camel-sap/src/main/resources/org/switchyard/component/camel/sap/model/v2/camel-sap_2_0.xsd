@@ -23,18 +23,112 @@
 
     <element name="binding.sap" type="tns:CamelSapBindingType" substitutionGroup="switchyard:binding.switchyard"/>
     <complexType name="CamelSapBindingType">
+        <annotation>
+            <documentation xml:lang="en">
+                SAP Binding configuration. *-server is for service binding, and *-destination is for reference binding.
+            </documentation>
+        </annotation>
         <complexContent>
             <extension base="tns:BaseCamelBinding">
                 <sequence>
                     <choice minOccurs="1" maxOccurs="1">
-                        <element name="server" type="string" />
-                        <element name="destination" type="string" />
+                        <element name="idoclist-server" type="tns:CamelSapIDocListServerType" />
+                        <element name="srfc-server" type="tns:CamelSapSRfcServerType" />
+                        <element name="trfc-server" type="tns:CamelSapTRfcServerType" />
+                        <element name="idoc-destination" type="tns:CamelSapIDocDestinationType" />
+                        <element name="idoclist-destination" type="tns:CamelSapIDocListDestinationType" />
+                        <element name="qidoc-destination" type="tns:CamelSapQIDocDestinationType" />
+                        <element name="qidoclist-destination" type="tns:CamelSapQIDocListDestinationType" />
+                        <element name="qrfc-destination" type="tns:CamelSapQRfcDestinationType" />
+                        <element name="srfc-destination" type="tns:CamelSapSRfcDestinationType" />
+                        <element name="trfc-destination" type="tns:CamelSapTRfcDestinationType" />
                     </choice>
-                    <element name="rfcName" type="string" minOccurs="1" maxOccurs="1"/>
-                    <element name="transacted" type="boolean" minOccurs="0" maxOccurs="1"/>
                 </sequence>
             </extension>
         </complexContent>
+    </complexType>
+
+    <complexType name="CamelSapIDocListServerType">
+        <sequence>
+            <element name="serverName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="idocType" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="idocTypeExtension" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="systemRelease" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="applicationRelease" type="string" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <complexType name="CamelSapSRfcServerType">
+        <sequence>
+            <element name="serverName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="rfcName" type="string" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <complexType name="CamelSapTRfcServerType">
+        <sequence>
+            <element name="serverName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="rfcName" type="string" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="CamelSapIDocDestinationType">
+        <sequence>
+            <element name="destinationName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="idocType" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="idocTypeExtension" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="systemRelease" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="applicationRelease" type="string" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <complexType name="CamelSapIDocListDestinationType">
+        <sequence>
+            <element name="destinationName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="idocType" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="idocTypeExtension" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="systemRelease" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="applicationRelease" type="string" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <complexType name="CamelSapQIDocDestinationType">
+        <sequence>
+            <element name="destinationName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="queueName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="idocType" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="idocTypeExtension" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="systemRelease" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="applicationRelease" type="string" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <complexType name="CamelSapQIDocListDestinationType">
+        <sequence>
+            <element name="destinationName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="queueName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="idocType" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="idocTypeExtension" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="systemRelease" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="applicationRelease" type="string" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <complexType name="CamelSapQRfcDestinationType">
+        <sequence>
+            <element name="destinationName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="queueName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="rfcName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="transacted" type="switchyard:propBoolean" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <complexType name="CamelSapSRfcDestinationType">
+        <sequence>
+            <element name="destinationName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="rfcName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="transacted" type="switchyard:propBoolean" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <complexType name="CamelSapTRfcDestinationType">
+        <sequence>
+            <element name="destinationName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="rfcName" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="transacted" type="switchyard:propBoolean" minOccurs="0" maxOccurs="1"/>
+        </sequence>
     </complexType>
 
 </schema>

@@ -17,14 +17,11 @@ import org.switchyard.component.camel.common.model.v1.V1BaseCamelMarshaller;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
 import org.switchyard.config.model.Model;
-import org.switchyard.config.model.composite.BindingModel;
 
 /**
  * SAP model marshaller.
  */
 public class V2CamelSapModelMarshaller extends V1BaseCamelMarshaller {
-
-    private static final String BINDING_SAP = BindingModel.BINDING + '.' + V2CamelSapBindingModel.SAP;
 
     /**
      * Creates new marshaller.
@@ -46,8 +43,26 @@ public class V2CamelSapModelMarshaller extends V1BaseCamelMarshaller {
     public Model read(Configuration config) {
         String name = config.getName();
         Descriptor desc = getDescriptor();
-        if (BINDING_SAP.equals(name)) {
+        if (Constants.BINDING_SAP.equals(name)) {
             return new V2CamelSapBindingModel(config, desc);
+        }
+        if (Constants.IDOCLIST_SERVER.equals(name)) {
+            return new V2IDocServerModel(config, desc);
+        }
+        if (Constants.SRFC_SERVER.equals(name) || Constants.TRFC_SERVER.equals(name)) {
+            return new V2RfcServerModel(config, desc);
+        }
+        if (Constants.IDOC_DESTINATION.equals(name) || Constants.IDOCLIST_DESTINATION.equals(name)) {
+            return new V2IDocDestinationModel(config, desc);
+        }
+        if (Constants.QIDOC_DESTINATION.equals(name) || Constants.QIDOCLIST_DESTINATION.equals(name)) {
+            return new V2QIDocDestinationModel(config, desc);
+        }
+        if (Constants.QRFC_DESTINATION.equals(name)) {
+            return new V2QRfcDestinationModel(config, desc);
+        }
+        if (Constants.SRFC_DESTINATION.equals(name) || Constants.TRFC_DESTINATION.equals(name)) {
+            return new V2RfcDestinationModel(config, desc);
         }
         return super.read(config);
     }

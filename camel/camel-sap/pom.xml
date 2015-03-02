@@ -35,6 +35,10 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>org.switchyard</groupId>
+            <artifactId>switchyard-config</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard.components</groupId>
             <artifactId>switchyard-component-common-camel</artifactId>
         </dependency>

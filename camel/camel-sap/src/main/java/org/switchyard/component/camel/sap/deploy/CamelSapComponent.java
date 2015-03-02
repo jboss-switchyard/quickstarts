@@ -14,7 +14,7 @@
 package org.switchyard.component.camel.sap.deploy;
 
 import org.switchyard.component.camel.common.deploy.BaseBindingComponent;
-import org.switchyard.component.camel.sap.model.v2.V2CamelSapBindingModel;
+import org.switchyard.component.camel.sap.model.v2.Constants;
 
 /**
  * Camel sap component.
@@ -25,7 +25,7 @@ public class CamelSapComponent extends BaseBindingComponent {
      * Creates new component.
      */
     public CamelSapComponent() {
-        super("CamelSapComponent", V2CamelSapBindingModel.SAP);
+        super("CamelSapComponent", Constants.SAP);
     }
 
 }

@@ -13,24 +13,20 @@
  */
 package org.switchyard.component.camel.sap.model;
 
-import org.switchyard.component.camel.common.model.CamelBindingModel;
-
 /**
- * Camel SAP binding model.
+ * camel-sap server model.
  */
-public interface CamelSapBindingModel extends CamelBindingModel {
-    
+public interface ServerModel extends EndpointModel {
     /**
-     * Gets endpoint.
-     * @return server
+     * Gets server name.
+     * @return server name
      */
-    EndpointModel getEndpointModel();
+    public String getServerName();
 
     /**
-     * Sets endpoint.
-     * @param endpoint endpoint
-     * @return this BindingModel (useful for chaining)
+     * Sets server name.
+     * @param server server name
+     * @return this model (useful for chaining)
      */
-    CamelSapBindingModel setEndpointModel(EndpointModel endpoint);
-
+    public ServerModel setServerName(String server);
 }

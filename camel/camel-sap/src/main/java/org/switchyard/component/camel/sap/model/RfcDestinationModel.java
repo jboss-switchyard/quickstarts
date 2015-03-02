@@ -13,24 +13,33 @@
  */
 package org.switchyard.component.camel.sap.model;
 
-import org.switchyard.component.camel.common.model.CamelBindingModel;
-
 /**
- * Camel SAP binding model.
+ * camel-sap destination model.
  */
-public interface CamelSapBindingModel extends CamelBindingModel {
-    
+public interface RfcDestinationModel extends DestinationModel {
     /**
-     * Gets endpoint.
-     * @return server
+     * Gets RFC name.
+     * @return destination name
      */
-    EndpointModel getEndpointModel();
+    public String getRfcName();
 
     /**
-     * Sets endpoint.
-     * @param endpoint endpoint
-     * @return this BindingModel (useful for chaining)
+     * Sets RFC name.
+     * @param rfc RFC name.
+     * @return this model (useful for chaining)
      */
-    CamelSapBindingModel setEndpointModel(EndpointModel endpoint);
+    public RfcDestinationModel setRfcName(String rfc);
 
+    /**
+     * Gets if it's transacted.
+     * @return true if it's transacted
+     */
+    public boolean isTransacted();
+
+    /**
+     * Sets if it's transacted.
+     * @param transacted true if it's transacted
+     * @return this model (useful for chaining)
+     */
+    public RfcDestinationModel setTransacted(boolean transacted);
 }

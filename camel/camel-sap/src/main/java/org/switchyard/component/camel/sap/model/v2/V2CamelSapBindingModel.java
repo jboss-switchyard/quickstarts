@@ -16,35 +16,20 @@ package org.switchyard.component.camel.sap.model.v2;
 import java.net.URI;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import org.switchyard.component.camel.common.QueryString;
 import org.switchyard.component.camel.common.model.v1.V1BaseCamelBindingModel;
 import org.switchyard.component.camel.sap.model.CamelSapBindingModel;
+import org.switchyard.component.camel.sap.model.CamelSapNamespace;
+import org.switchyard.component.camel.sap.model.EndpointModel;
 import org.switchyard.config.Configuration;
 import org.switchyard.config.model.Descriptor;
+import org.switchyard.config.model.Model;
 /**
  * A binding for Camel's sap component.
  */
-public class V2CamelSapBindingModel extends V1BaseCamelBindingModel
-    implements CamelSapBindingModel {
-
-    /**
-     * The name of this binding type ("binding.sap").
-     */
-    public static final String SAP = "sap";
-
-    private static final String SERVER = "server";
-    private static final String DESTINATION = "destination";
-    private static final String RFC_NAME = "rfcName";
-    private static final String TRANSACTED = "transacted";
-    /**
-     * Create a new V2CamelSapBindingModel.
-     * @param namespace namespace
-     */
-    public V2CamelSapBindingModel(String namespace) {
-        super(SAP, namespace);
-
-        setModelChildrenOrder(SERVER, DESTINATION, RFC_NAME, TRANSACTED);
-    }
+public class V2CamelSapBindingModel extends V1BaseCamelBindingModel implements CamelSapBindingModel {
 
     /**
      * Constructor.
@@ -56,47 +41,39 @@ public class V2CamelSapBindingModel extends V1BaseCamelBindingModel
         super(config, desc);
     }
 
-    @Override
-    public String getServer() {
-        return getConfig(SERVER);
+    /**
+     * Create a new V2CamelSapBindingModel.
+     * @param namespace namespace
+     */
+    public V2CamelSapBindingModel(String namespace) {
+        super(Constants.SAP, namespace);
+        setModelChildrenOrder(Constants.IDOCLIST_SERVER, Constants.SRFC_SERVER, Constants.TRFC_SERVER,
+                Constants.IDOC_DESTINATION, Constants.IDOCLIST_DESTINATION, Constants.QIDOC_DESTINATION,
+                Constants.QIDOCLIST_DESTINATION, Constants.QRFC_DESTINATION, Constants.SRFC_DESTINATION,
+                Constants.TRFC_DESTINATION);
     }
 
     @Override
-    public V2CamelSapBindingModel setServer(String server) {
-        setConfig(SERVER, server);
-        return this;
+    public EndpointModel getEndpointModel() {
+        for (Model child : getModelChildren()) {
+            if (child instanceof EndpointModel) {
+                return (EndpointModel) child;
+            }
+        }
+        return null;
     }
 
     @Override
-    public String getDestination() {
-        return getConfig(DESTINATION);
-    }
-
-    @Override
-    public V2CamelSapBindingModel setDestination(String destination) {
-        setConfig(DESTINATION, destination);
-        return this;
-    }
-
-    @Override
-    public String getRfcName() {
-        return getConfig(RFC_NAME);
-    }
-
-    @Override
-    public V2CamelSapBindingModel setRfcName(String rfcName) {
-        setConfig(RFC_NAME, rfcName);
-        return this;
-    }
-
-    @Override
-    public Boolean isTransacted() {
-        return getBooleanConfig(TRANSACTED);
-    }
-
-    @Override
-    public V2CamelSapBindingModel setTransacted(Boolean transacted) {
-        setConfig(TRANSACTED, transacted);
+    public V2CamelSapBindingModel setEndpointModel(EndpointModel endpoint) {
+        for (Model child : getModelChildren()) {
+            if (child instanceof EndpointModel) {
+                EndpointModel endpointChild = EndpointModel.class.cast(child);
+                getModelConfiguration().removeChildren(
+                        new QName(CamelSapNamespace.V_2_0.uri(), endpointChild.getName()));
+                break;
+            }
+        }
+        setChildModel(endpoint);
         return this;
     }
 
@@ -105,22 +82,12 @@ public class V2CamelSapBindingModel extends V1BaseCamelBindingModel
         Configuration modelConfiguration = getModelConfiguration();
         List<Configuration> children = modelConfiguration.getChildren();
 
-        StringBuilder uriBuf = new StringBuilder(SAP);
-        if (isReferenceBinding()) {
-            uriBuf.append(":destination:")
-                  .append(getDestination());
-        } else {
-            uriBuf.append(":server:")
-                  .append(getServer());
-        }
-        uriBuf.append(":")
-              .append(getRfcName());
-
         QueryString queryString = new QueryString();
-        traverseConfiguration(children, queryString, SERVER, DESTINATION, RFC_NAME);
-        uriBuf.append(queryString.toString());
+        StringBuilder buf = getEndpointModel().createBaseURIString(queryString);
+        traverseConfiguration(children, queryString, getEndpointModel().getName());
+        buf.append(queryString.toString());
 
-        return URI.create(uriBuf.toString());
+        return URI.create(buf.toString());
     }
 
 }

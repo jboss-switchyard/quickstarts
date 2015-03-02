@@ -19,9 +19,11 @@
     <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
         <sca:reference name="test" multiplicity="0..1" promote="test/test">
             <sap:binding.sap>
-                <sap:destination>nplHost</sap:destination>
-                <sap:rfcName>BAPI_FLTRIP_GETLIST</sap:rfcName>
-                <sap:transacted>true</sap:transacted>
+                <sap:trfc-destination>
+                    <sap:destinationName>nplHost</sap:destinationName>
+                    <sap:rfcName>BAPI_FLTRIP_GETLIST</sap:rfcName>
+                    <sap:transacted>true</sap:transacted>
+                </sap:trfc-destination>
             </sap:binding.sap>
         </sca:reference>
     </sca:composite>

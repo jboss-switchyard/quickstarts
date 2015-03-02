@@ -13,24 +13,36 @@
  */
 package org.switchyard.component.camel.sap.model;
 
-import org.switchyard.component.camel.common.model.CamelBindingModel;
+import org.switchyard.component.camel.common.QueryString;
+import org.switchyard.config.model.Model;
 
 /**
- * Camel SAP binding model.
+ * camel-sap endpoint model.
  */
-public interface CamelSapBindingModel extends CamelBindingModel {
-    
+public interface EndpointModel extends Model {
     /**
-     * Gets endpoint.
-     * @return server
+     * Gets schema.
+     * @return schema
      */
-    EndpointModel getEndpointModel();
+    public String getSchema();
 
     /**
-     * Sets endpoint.
-     * @param endpoint endpoint
-     * @return this BindingModel (useful for chaining)
+     * Gets name.
+     * @return name
      */
-    CamelSapBindingModel setEndpointModel(EndpointModel endpoint);
+    public String getName();
 
+    /**
+     * Sets name.
+     * @param name name
+     * @return this model (useful for chaining)
+     */
+    public EndpointModel setName(String name);
+
+    /**
+     * Gets base URI string.
+     * @param queryString query string
+     * @return base URI string
+     */
+    public StringBuilder createBaseURIString(QueryString queryString);
 }
