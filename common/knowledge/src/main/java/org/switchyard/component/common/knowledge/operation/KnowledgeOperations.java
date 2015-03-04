@@ -129,7 +129,7 @@ public final class KnowledgeOperations {
      * @param operation the operation
      * @param runtime the runtime engine
      */
-    public static void setGlobals(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine runtime) {
+    public static void setGlobals(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine runtime, boolean singleton) {
         Globals globals = runtime.getSessionGlobals();
         if (globals != null) {
             Map<String, Object> globalsMap = new HashMap<String, Object>();
@@ -139,9 +139,34 @@ public final class KnowledgeOperations {
                 globalsMap.putAll(expressionMap);
             }
             for (Entry<String, Object> globalsEntry : globalsMap.entrySet()) {
-                globals.set(globalsEntry.getKey(), globalsEntry.getValue());
+                if (!singleton) {
+                    globals.set(globalsEntry.getKey(), globalsEntry.getValue());
+                } else {
+                    if (globals.get(globalsEntry.getKey()) == null
+                            || (globalsEntry.getValue() != null && (globalsEntry
+                                    .getValue() instanceof Map && !((Map) globalsEntry
+                                    .getValue()).isEmpty()))) {
+                        globals.set(globalsEntry.getKey(), globalsEntry.getValue());
+                    }
+                }
             }
         }
+    }
+
+    /**
+     * Contains the globals.
+     *
+     * @param message
+     *            the message
+     * @param operation
+     *            the operation
+     * @param runtime
+     *            the runtime engine
+     */
+    public static boolean containsGlobals(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine runtime) {
+        Map<String, Object> expressionMap = getMap(message, operation.getGlobalExpressionMappings(), null);
+        return expressionMap != null && expressionMap.size() > 0;
+
     }
 
     /**

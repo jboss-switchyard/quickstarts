@@ -6,7 +6,7 @@
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,  
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -51,6 +51,7 @@ import org.switchyard.common.type.Classes;
 import org.switchyard.component.common.knowledge.KnowledgeConstants;
 import org.switchyard.component.common.knowledge.exchange.KnowledgeExchangeHandler;
 import org.switchyard.component.common.knowledge.operation.KnowledgeOperation;
+import org.switchyard.component.common.knowledge.operation.KnowledgeOperations;
 import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeEngine;
 import org.switchyard.component.common.knowledge.runtime.KnowledgeRuntimeManager;
 import org.switchyard.component.rules.RulesConstants;
@@ -129,7 +130,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler {
             case EXECUTE: {
                 KnowledgeRuntimeEngine runtime = getPerRequestRuntimeEngine();
                 //sessionIdentifier = runtime.getSessionIdentifier();
-                setGlobals(inputMessage, operation, runtime);
+                setGlobals(inputMessage, operation, runtime, false);
                 try {
                     KieSession session = runtime.getKieSession();
                     if (ExchangePattern.IN_ONLY.equals(exchangePattern)) {
@@ -162,85 +163,47 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler {
             }
             case INSERT:
             case FIRE_ALL_RULES: {
-                /*
-                if (!isContinue(exchange)) {
-                    disposeSingletonRuntimeEngine();
-                }
-                */
                 KnowledgeRuntimeEngine runtime = getSingletonRuntimeEngine();
-                //sessionIdentifier = runtime.getSessionIdentifier();
-                setGlobals(inputMessage, operation, runtime);
-                KieSession session = runtime.getKieSession();
-                List<Object> facts = getInputList(inputMessage, operation, runtime);
-                for (Object fact : facts) {
-                    session.insert(fact);
-                }
-                if (RulesOperationType.FIRE_ALL_RULES.equals(operationType)) {
-                    session.fireAllRules();
-                }
                 if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                    expressionVariables.putAll(getGlobalVariables(runtime));
+                    synchronized (this) {
+                        fireAllRules(inputMessage, operation);
+                        expressionVariables.putAll(getGlobalVariables(runtime));
+                    }
+                } else {
+                    if(KnowledgeOperations.containsGlobals(inputMessage, operation, runtime)) {
+                        synchronized (this) {
+                            fireAllRules(inputMessage, operation);
+                        }
+                    } else {
+                        fireAllRules(inputMessage, operation);
+                    }
+
                 }
+
                 if (isDispose(exchange, inputMessage)) {
                     disposeSingletonRuntimeEngine();
                 }
+
                 break;
             }
             case FIRE_UNTIL_HALT: {
-                /*
-                if (!isContinue(exchange, inputMessage)) {
-                    disposeSingletonRuntimeEngine();
-                }
-                */
                 KnowledgeRuntimeEngine runtime = getSingletonRuntimeEngine();
-                //sessionIdentifier = runtime.getSessionIdentifier();
-                setGlobals(inputMessage, operation, runtime);
-                KieSession session = runtime.getKieSession();
-                if (_fireUntilHaltThread == null && runtime.getWrapped() instanceof Disposable) {
-                    ClassLoader fireUntilHaltLoader = Classes.getTCCL();
-                    if (fireUntilHaltLoader == null) {
-                        fireUntilHaltLoader = getLoader();
-                    }
-                    FireUntilHalt fireUntilHalt = new FireUntilHalt(this, runtime, fireUntilHaltLoader);
-                    ((Disposable)runtime.getWrapped()).addDisposeListener(fireUntilHalt);
-                    _fireUntilHaltThread = fireUntilHalt.startThread();
-                }
-                final String undefinedVariable = toVariable(exchange);
-                Map<String, List<Object>> inputMap = getListMap(inputMessage, operation.getInputExpressionMappings(), true, undefinedVariable);
-                if (inputMap.size() > 0) {
-                    for (Entry<String, List<Object>> inputEntry : inputMap.entrySet()) {
-                        String key = inputEntry.getKey();
-                        if (undefinedVariable.equals(key)) {
-                            String eventId = Strings.trimToNull(operation.getEventId());
-                            if (eventId != null) {
-                                key = eventId;
-                            }
-                        }
-                        List<Object> facts = inputEntry.getValue();
-                        if (undefinedVariable.equals(key)) {
-                            for (Object fact : facts) {
-                                session.insert(fact);
-                            }
-                        } else {
-                            EntryPoint entryPoint = session.getEntryPoint(key);
-                            if (entryPoint != null) {
-                                for (Object fact : facts) {
-                                    entryPoint.insert(fact);
-                                }
-                            } else {
-                                throw RulesMessages.MESSAGES.unknownEntryPoint(key);
-                            }
-                        }
+                if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
+                    synchronized (this) {
+                        fireUntilHalt(inputMessage, exchange, operation);
+                        expressionVariables.putAll(getGlobalVariables(runtime));
                     }
                 } else {
-                    List<Object> facts = getInputList(inputMessage, operation, runtime);
-                    for (Object fact : facts) {
-                        session.insert(fact);
+                    if(KnowledgeOperations.containsGlobals(inputMessage, operation, runtime)) {
+                        synchronized (this) {
+                            fireUntilHalt(inputMessage, exchange, operation);
+                        }
+                    } else {
+                        fireUntilHalt(inputMessage, exchange, operation);
                     }
+
                 }
-                if (ExchangePattern.IN_OUT.equals(exchangePattern)) {
-                    expressionVariables.putAll(getGlobalVariables(runtime));
-                }
+
                 if (isDispose(exchange, inputMessage)) {
                     disposeSingletonRuntimeEngine();
                 }
@@ -265,7 +228,9 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler {
                 setOutputs(outputMessage, operation, expressionVariables);
                 exchange.send(outputMessage);
             }
+
         }
+
     }
 
     private KnowledgeRuntimeEngine getPerRequestRuntimeEngine() {
@@ -353,6 +318,85 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler {
             return thread;
         }
 
+    }
+
+
+    private void fireUntilHalt(Message inputMessage, Exchange exchange,
+            KnowledgeOperation operation) throws HandlerException {
+        KnowledgeRuntimeEngine runtime = getSingletonRuntimeEngine();
+        // sessionIdentifier = runtime.getSessionIdentifier();
+        setGlobals(inputMessage, operation, runtime, true);
+        KieSession session = runtime.getKieSession();
+        if (_fireUntilHaltThread == null
+                && runtime.getWrapped() instanceof Disposable) {
+            ClassLoader fireUntilHaltLoader = Classes.getTCCL();
+            if (fireUntilHaltLoader == null) {
+                fireUntilHaltLoader = getLoader();
+            }
+            FireUntilHalt fireUntilHalt = new FireUntilHalt(this,
+                    runtime, fireUntilHaltLoader);
+            ((Disposable) runtime.getWrapped())
+                    .addDisposeListener(fireUntilHalt);
+            _fireUntilHaltThread = fireUntilHalt.startThread();
+        }
+        final String undefinedVariable = toVariable(exchange);
+        Map<String, List<Object>> inputMap = getListMap(
+                inputMessage,
+                operation.getInputExpressionMappings(), true,
+                undefinedVariable);
+        if (inputMap.size() > 0) {
+            for (Entry<String, List<Object>> inputEntry : inputMap
+                    .entrySet()) {
+                String key = inputEntry.getKey();
+                if (undefinedVariable.equals(key)) {
+                    String eventId = Strings.trimToNull(operation
+                            .getEventId());
+                    if (eventId != null) {
+                        key = eventId;
+                    }
+                }
+                List<Object> facts = inputEntry.getValue();
+                if (undefinedVariable.equals(key)) {
+                    for (Object fact : facts) {
+                        session.insert(fact);
+                    }
+                } else {
+                    EntryPoint entryPoint = session
+                            .getEntryPoint(key);
+                    if (entryPoint != null) {
+                        for (Object fact : facts) {
+                            entryPoint.insert(fact);
+                        }
+                    } else {
+                        throw RulesMessages.MESSAGES
+                                .unknownEntryPoint(key);
+                    }
+                }
+            }
+        } else {
+            List<Object> facts = getInputList(inputMessage,
+                    operation, runtime);
+            for (Object fact : facts) {
+                session.insert(fact);
+            }
+        }
+    }
+
+    private int fireAllRules(Message inputMessage, KnowledgeOperation operation) {
+        KnowledgeRuntimeEngine runtime = getSingletonRuntimeEngine();
+        RulesOperationType operationType = (RulesOperationType) operation
+                .getType();
+        // sessionIdentifier = runtime.getSessionIdentifier();
+        setGlobals(inputMessage, operation, runtime, true);
+        KieSession session = runtime.getKieSession();
+        List<Object> facts = getInputList(inputMessage, operation, runtime);
+        for (Object fact : facts) {
+            session.insert(fact);
+        }
+        if (RulesOperationType.FIRE_ALL_RULES.equals(operationType)) {
+            return session.fireAllRules();
+        }
+        return 0;
     }
 
 }
