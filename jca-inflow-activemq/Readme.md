@@ -23,19 +23,27 @@ EAP
 
         ${AS}/bin/standalone.sh --server-config standalone-full.xml
 
-3. Build and deploy the quickstart
+3. Deploy ActiveMQ resource adapter
+
+        mvn install -Pdeploy-rar
+
+4. Restart EAP instance to reflect resource adapter configuration
+
+5. Build and deploy the quickstart
 
         mvn install -Pdeploy
 
-4. Execute ActiveMQClient
+6. Execute ActiveMQClient
 
         mvn exec:java
 
-5. Check the server console for output from the service.
+7. Check the server console for output from the service.
 
-6. Undeploy the quickstart:
+8. Undeploy the quickstart and resource adapter:
 
         mvn clean -Pdeploy
+
+9. Shutdown EAP instance (previous step removes resource adapter configuration, but is not reflected until shutdown)
 
 
 Wildfly
@@ -46,19 +54,27 @@ Wildfly
 
         ${AS}/bin/standalone.sh -server-config standalone-full.xml
 
-3. Build and deploy the quickstart
+3. Deploy ActiveMQ resource adapter
+
+        mvn install -Pdeploy-rar -Pwildfly
+
+4. Restart wildfly instance to reflect resource adapter configuration
+
+5. Build and deploy the quickstart
 
         mvn install -Pdeploy -Pwildfly
 
-4. Execute ActiveMQClient
+6. Execute ActiveMQClient
 
         mvn exec:java
 
-5. Check the server console for output from the service.
+7. Check the server console for output from the service.
 
-6. Undeploy the quickstart:
+8. Undeploy the quickstart and resource adapter:
 
         mvn clean -Pdeploy -Pwildfly
+
+9. Shutdown wildfly instance (previous step removes resource adapter configuration, but is not reflected until shutdown)
 
 
 Karaf
