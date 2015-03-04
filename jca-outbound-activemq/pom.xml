@@ -43,6 +43,7 @@
     </licenses>
     <properties>
         <skipTests>true</skipTests>
+        <deploy-rar.skip>true</deploy-rar.skip>
         <deploy.skip>true</deploy.skip>
         <wildfly.port>9999</wildfly.port>
         <maven.compiler.target>1.6</maven.compiler.target>
@@ -149,7 +150,7 @@
                                     <script>config.cli</script>
                                 </scripts>
                             </afterDeployment>
-                            <skip>${deploy.skip}</skip>
+                            <skip>${deploy-rar.skip}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -244,6 +245,12 @@
             <id>deploy</id>
             <properties>
                 <deploy.skip>false</deploy.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>deploy-rar</id>
+            <properties>
+                <deploy-rar.skip>false</deploy-rar.skip>
             </properties>
         </profile>
         <profile>
