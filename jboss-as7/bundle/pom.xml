@@ -98,6 +98,7 @@
                                     <version>${project.version}</version>
                                 </artifactItem>
                             </artifactItems>
+                            <excludes>camel-amqp-binding/**</excludes>
                             <outputDirectory>${staging.jboss.dir}/quickstarts</outputDirectory>
                         </configuration>
                     </execution>
