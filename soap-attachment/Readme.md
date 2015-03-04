@@ -77,6 +77,10 @@ karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERS
 
 karaf@root> features:install switchyard-quickstart-soap-attachment
 
+4. Turn the logging on ImageService to WARN : 
+
+karaf@root> log:set WARN org.apache.services.ImageService
+
 4. To submit a webservice request to invoke the SOAP gateway, run the quickstart client :
 <br/>
 ```
