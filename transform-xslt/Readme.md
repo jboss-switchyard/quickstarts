@@ -111,6 +111,12 @@ Expected Output
 </SOAP-ENV:Envelope>
 ```
 
+Notes
+==============
+If you are using JDK 7, you may come across this issue when running this quickstart :
+
+https://bugs.openjdk.java.net/browse/JDK-8016153
+
 
 ## Further Reading
 
