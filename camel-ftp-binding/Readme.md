@@ -78,15 +78,19 @@ with the version of SwitchYard that you are using (ex. 2.0.0):
 
 karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERSION}/xml/features
 
-3. Install the feature for the camel-ftp-binding quickstart :
+3. Copy src/main/resources/ftpclient.jks to ${KARAF_HOME}/src/main/resources.  Y
+ou will have to create the ${KARAF_HOME}/src/main/resources directories in order
+ to do this.
+
+4. Install the feature for the camel-ftp-binding quickstart :
 
 karaf@root> features:install switchyard-quickstart-camel-ftp-binding
 
-4. Create a file on the ftp server using a standalone FTP client.
+5. Create a file on the ftp server using a standalone FTP client.
 
-5. Check the server console for output from the service.
+6. Check the server console for output from the service.
 
-5. Undeploy the quickstart:
+7. Undeploy the quickstart:
 
 karaf@root> features:uninstall switchyard-quickstart-camel-ftp-binding
 
