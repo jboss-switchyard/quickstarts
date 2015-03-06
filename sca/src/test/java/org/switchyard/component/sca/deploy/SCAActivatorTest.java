@@ -2,31 +2,20 @@ package org.switchyard.component.sca.deploy;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
-
-import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.switchyard.component.sca.NOPEndpointPublisher;
-import org.switchyard.config.ConfigurationPuller;
 import org.switchyard.config.model.composite.SCABindingModel;
 import org.switchyard.config.model.composite.v1.V1SCABindingModel;
 import org.switchyard.config.model.switchyard.SwitchYardNamespace;
 
 public class SCAActivatorTest {
-    private static final String TEST_XML = "TestConfig.xml";
-    private ConfigurationPuller _cfg_puller;
     private SCAActivator activator;
     
     @Before
     public void setUp() throws Exception {
-        _cfg_puller = new ConfigurationPuller(); 
-        activator = new SCAActivator(_cfg_puller.pull(TEST_XML, getClass()));
-    }
-    
-    @After
-    public void after() {
-        _cfg_puller = null;
+        activator = new SCAActivator(null);
     }
     
     @Test
