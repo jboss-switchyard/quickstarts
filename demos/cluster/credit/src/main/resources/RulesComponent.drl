@@ -24,7 +24,7 @@ rule "ApproveCredit"
     when
         app : Application(creditScore >= 600)
     then
-        System.out.println("Credit Service : Approving credit for " + app.getName());
+        org.jboss.logging.Logger.getLogger("Credit Service").info("Credit Service : Approving credit for " + app.getName());
         app.setApproved(true);
         globals.put("Result", app);
 end
@@ -33,7 +33,7 @@ rule "DenyCredit"
     when
         app : Application(creditScore < 600)
     then
-        System.out.println("Credit Service : Denying credit for " + app.getName());
+        org.jboss.logging.Logger.getLogger("Credit Service").info("Credit Service : Denying credit for " + app.getName());
         app.setApproved(false);
         globals.put("Result", app);
 end

@@ -18,11 +18,14 @@ package org.switchyard.quickstarts.demo.cluster;
 
 import javax.inject.Inject;
 
+import org.jboss.logging.Logger;
 import org.switchyard.component.bean.Reference;
 import org.switchyard.component.bean.Service;
 
 @Service(Dealer.class)
 public class DealerBean implements Dealer {
+
+    private Logger _log = Logger.getLogger(DealerBean.class);
 
     @Inject
     @Reference
@@ -30,7 +33,7 @@ public class DealerBean implements Dealer {
 
     @Override
     public Deal offer(Offer offer) {
-        System.out.println("Dealer Service : Received an offer");
+        _log.info("Dealer Service : Received an offer");
         Deal deal = new Deal();
         deal.setOffer(offer);
 
@@ -40,7 +43,7 @@ public class DealerBean implements Dealer {
             return deal;
         }
 
-        System.out.println("Dealer Service : Checking Credit");
+        _log.info("Dealer Service : Checking Credit");
         // Check credit of applicant
         Application creditReply = creditService.checkCredit(offer);
         deal.setAccepted(creditReply.isApproved());
