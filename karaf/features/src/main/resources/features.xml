@@ -396,6 +396,11 @@
     <feature name="switchyard-quickstart-camel-ftp-binding" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">switchyard-ftp</feature>
         <feature version="${project.version}">switchyard-bean</feature>
+        <config name="org.switchyard.quickstart.camel-ftp-binding">
+           storefile = etc/ftpclient.jks
+           hostsfile = etc/known_hosts_sftp
+           keyfile =  etc/id_sftp_rsa
+        </config>
         <bundle>mvn:org.switchyard.quickstarts/switchyard-camel-ftp-binding/${project.version}</bundle>
     </feature>
 
