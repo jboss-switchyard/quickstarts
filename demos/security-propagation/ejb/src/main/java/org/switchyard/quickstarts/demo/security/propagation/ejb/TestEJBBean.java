@@ -17,18 +17,16 @@
 package org.switchyard.quickstarts.demo.security.propagation.ejb;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.annotation.security.RolesAllowed;
 
 import org.apache.log4j.Logger;
-import org.jboss.ejb3.annotation.SecurityDomain;
 
 @Stateless
 @EJB(name = "java:global/TestEJBBean", beanInterface = TestEJBBeanLocal.class)
 @RolesAllowed({"friend"})
-@SecurityDomain("other")
 public class TestEJBBean implements TestEJBBeanLocal {
 
     private static final Logger LOGGER = Logger.getLogger(TestEJBBean.class);

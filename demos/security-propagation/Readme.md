@@ -12,6 +12,9 @@ protected via annotations is also called, and the security context is propagated
 Running the quickstart
 ======================
 
+EAP
+----------
+
 1. Create an application user:
 
         ${AS}/bin/add-user.sh --user kermit --password the-frog-1 --realm ApplicationRealm --group friend
@@ -33,6 +36,41 @@ Running the quickstart
 
         mvn clean -Pdeploy
 		cd ../ejb ; mvn clean -Pdeploy
+
+
+Wildfly
+----------
+
+
+1. Create an application user:
+
+        ${WILDFLY}/bin/add-user.sh 
+
+        realm=ApplicationRealm Username=kermit Password=the-frog-1  group=friend
+
+2. Edit the standalone.xml placed on WILDFLY_HOME/standalone/configuration
+
+      Remove the default-security-domain tag inside of the ejb3 domain
+
+3. Start Wildfly in standalone mode :
+    
+        ${WILDFLY}/bin/standalone.sh
+
+4. Build and deploy the demo : 
+
+       cd ejb ; mvn install -Pdeploy -Pwildfly
+        cd ../basic ; mvn install -Pdeploy -Pwildfly
+5. Execute the test. (See "Options" section below.)
+
+6. Check the server console for output from the service.
+
+7. Undeploy the application, then the ejb
+
+        mvn clean -Pdeploy -Pwildfly
+		cd ../ejb ; mvn clean -Pdeploy -Pwildfly
+
+   Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done. 
+
 
 
 Options

@@ -35,6 +35,8 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
         <version.wildfly.maven>1.0.2.Final</version.wildfly.maven>
+        <config.file>config.cli</config.file>
+        <unconfig.file>unconfig.cli</unconfig.file>
     </properties>
     <dependencies>
         <dependency>
@@ -108,7 +110,7 @@
                         <configuration>
                             <beforeDeployment>
                                 <scripts>
-                                    <script>config.cli</script>
+                                    <script>${config.file}</script>
                                 </scripts>
                             </beforeDeployment>
                             <filename>${project.build.finalName}.jar</filename>
@@ -124,7 +126,7 @@
                         <configuration>
                             <afterDeployment>
                                 <scripts>
-                                    <script>unconfig.cli</script>
+                                    <script>${unconfig.file}</script>
                                 </scripts>
                             </afterDeployment>
                             <filename>${project.build.finalName}.jar</filename>
@@ -156,6 +158,8 @@
             <id>wildfly</id>
             <properties>
                 <wildfly.port>9990</wildfly.port>
+                <config.file>config_wildfly.cli</config.file>
+                <unconfig.file>unconfig_wildfly.cli</unconfig.file>
             </properties>
         </profile>
     </profiles>
