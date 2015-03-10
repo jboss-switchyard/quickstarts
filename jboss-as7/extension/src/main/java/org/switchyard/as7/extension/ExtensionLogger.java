@@ -102,5 +102,31 @@ public interface ExtensionLogger {
     @Message(id = 40008, value = "Failed to parse URL: %s")
     void failedToParseURL(String url, @Cause Exception e);
     
+    /**
+     * noSocketBindingDefinitionFound method definition.
+     * @param host host
+     * @param port port
+     */
+    @LogMessage(level = WARN)
+    @Message(id = 40009, value = "No socket binding definition is found for the default listener. Using host='%s', port='%s'")
+    void noSocketBindingDefinitionFound(String host, String port);
 
+    /**
+     * defaultListenerIsNotHttpListener method definition.
+     * @param name listener name
+     */
+    @LogMessage(level = WARN)
+    @Message(id = 40010, value = "The default listener '%s' is not a HTTP listener. Using HTTP protocol anyway.")
+    void defaultListenerIsNotHttpListener(String name);
+
+    /**
+     * noDefaultListenerDefined method definition.
+     * @param schema schema
+     * @param host host
+     * @param port port
+     */
+    @LogMessage(level = WARN)
+    @Message(id = 40011, value = "No default listener is found. Using schema='%s', host='%s', port='%s'")
+    void noDefaultListenerDefined(String schema, String host, String port);
+    
 }

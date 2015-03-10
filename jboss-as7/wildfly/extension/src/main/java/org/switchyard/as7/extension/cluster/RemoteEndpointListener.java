@@ -15,25 +15,32 @@
 package org.switchyard.as7.extension.cluster;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.namespace.QName;
 
+import org.jboss.as.network.SocketBinding;
 import org.jboss.as.server.ServerEnvironment;
 import org.jboss.as.web.host.ServletBuilder;
 import org.jboss.as.web.host.WebDeploymentBuilder;
 import org.jboss.as.web.host.WebDeploymentController;
 import org.jboss.as.web.host.WebHost;
 import org.jboss.logging.Logger;
+import org.jboss.msc.value.InjectedValue;
 import org.switchyard.ServiceDomain;
 import org.switchyard.as7.extension.ExtensionLogger;
 import org.switchyard.as7.extension.ExtensionMessages;
 import org.switchyard.as7.extension.util.ServerUtil;
 import org.switchyard.component.sca.RemoteEndpointPublisher;
 import org.switchyard.component.sca.SwitchYardRemotingServlet;
+import org.wildfly.extension.undertow.HttpListenerService;
+import org.wildfly.extension.undertow.HttpsListenerService;
+import org.wildfly.extension.undertow.ListenerService;
 
 /**
  * Publishes standalone HTTP endpoint.
@@ -127,20 +134,39 @@ public class RemoteEndpointListener implements RemoteEndpointPublisher {
      * @return An address string
      */
     public String getAddress() {
-        String hostAddress = null;
-        // TODO::
-        /*Connector connector = ServerUtil.getDefaultConnector();
-        if (connector.getProtocolHandler() instanceof Http11Protocol) {
-            Http11Protocol protocol = (Http11Protocol) connector.getProtocolHandler();
-            InetAddress address = protocol.getAddress();
-            hostAddress = address.getHostAddress();
-         } else {
-             ExtensionLogger.ROOT_LOGGER.unableToDetermineHostAddress();
-             hostAddress = ServerUtil.getDefaultHost().getHost().findAliases()[0];
-         }
-        return connector.getScheme() + "://" + hostAddress + ":" + connector.getPort() + "/" + _contextName;
-        */
-        return _contextName;
+        String schema = "http";
+        String hostAddress = "127.0.0.1";
+        int port = 8080;
+
+        ListenerService listener = ServerUtil.getDefaultListener();
+        if (listener != null) {
+            if (listener instanceof HttpsListenerService) {
+                schema = "https";
+            } else if (listener instanceof HttpListenerService) {
+                schema = "http";
+            } else {
+                ExtensionLogger.ROOT_LOGGER.defaultListenerIsNotHttpListener(listener.getClass().getName());
+                schema = "http";
+            }
+
+            InjectedValue<SocketBinding> inject = listener.getBinding();
+            if (inject != null) {
+                SocketBinding binding = inject.getValue();
+                InetAddress address = binding.getAddress();
+                hostAddress = address.getHostAddress();
+                port = binding.getAbsolutePort();
+            }else {
+                Set<String> aliases = ServerUtil.getDefaultHostAliases();
+                if (aliases != null && !aliases.isEmpty()) {
+                    hostAddress = aliases.iterator().next();
+                }
+                ExtensionLogger.ROOT_LOGGER.noSocketBindingDefinitionFound(hostAddress, Integer.toString(port));
+            }
+        } else {
+            ExtensionLogger.ROOT_LOGGER.noDefaultListenerDefined(schema, hostAddress, Integer.toString(port));
+        }
+
+        return schema + "://" + hostAddress + ":" + port + "/" + _contextName;
     }
 
     @Override
