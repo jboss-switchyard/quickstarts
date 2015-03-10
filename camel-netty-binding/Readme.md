@@ -105,7 +105,7 @@ karaf@root> features:install switchyard-quickstart-camel-netty-binding
 5. Execute client and send text message :
 <br/>
 ```
-mvn exec:java -Pudp -Pkaraf
+mvn exec:java -Pudp
 ```
 <br/>
 
