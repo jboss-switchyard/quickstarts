@@ -1,0 +1,13 @@
+if (outcome != success) of /subsystem=undertow/server=default-server/https-listener=https/:read-resource
+    /core-service=management/security-realm=https:add()
+    /core-service=management/security-realm=https/server-identity=ssl:add(keystore-path=${jboss.home.dir}/quickstarts/demos/policy-security-saml/connector.jks, keystore-password=changeit)
+    /subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, security-realm=https)
+end-if
+if (outcome != success) of /subsystem=security/security-domain=picketlink-sts:read-resource
+    /subsystem=security/security-domain=picketlink-sts:add(cache-type=default)
+    /subsystem=security/security-domain=picketlink-sts/authentication=classic:add(login-modules=[{"code"=>"UsersRoles", "flag"=>"required", "module-options"=>[("usersProperties"=>"users.properties"),("rolesProperties"=>"roles.properties")] }]   )
+end-if
+if (outcome != success) of /subsystem=security/security-domain=saml-validate-token:read-resource
+    /subsystem=security/security-domain=saml-validate-token:add(cache-type=default)
+    /subsystem=security/security-domain=saml-validate-token/authentication=classic:add(login-modules=[{"code"=>"org.picketlink.identity.federation.core.wstrust.auth.STSValidatingLoginModule", "flag"=>"required", "module-options"=>[("configFile"=>"${jboss.home.dir}/quickstarts/demos/policy-security-saml/sts-client.properties"),("useOptionsCredentials"=>"true")] }]   )
+end-if

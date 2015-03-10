@@ -1,0 +1,7 @@
+if (outcome == success) of /subsystem=undertow/server=default-server/https-listener=https/:read-resource
+    /subsystem=undertow/server=default-server/https-listener=https/:remove
+    /core-service=management/security-realm=https/:remove
+end-if
+if (outcome == success) of /subsystem=security/security-domain=policy-security-cert:read-resource
+    /subsystem=security/security-domain=policy-security-cert:remove
+end-if

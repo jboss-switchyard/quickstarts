@@ -19,7 +19,10 @@ command.
 Running the quickstart
 ======================
 
-1. Start EAP in standalone-full mode:
+EAP
+----------
+
+1. Start  EAP in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
@@ -43,6 +46,35 @@ Running the quickstart
 
         mvn clean -Pdeploy
 
+
+Wildfly
+----------
+1. Start Wildfly in standalone-full mode:
+
+        ${WILDFLY}/bin/standalone.sh --server-config=standalone-full.xml
+
+2. Create an application user:
+
+        ${WILDFLY}/bin/add-user.sh --user guest --password guestp.1 --realm ApplicationRealm --group guest
+
+3. Build and deploy the quickstart
+
+        mvn install -Pdeploy,wildfly
+
+4. Execute HornetQClient
+
+        mvn exec:java -Pwildfly
+
+5. Check the server console for output from the service.  With the default
+   configuration of the quickstart, you should see the output below in the
+   AS server.log.
+
+6. Undeploy the application
+
+        mvn clean -Pdeploy,wildfly
+
+CONSOLE
+----------
 ```
 :: WorkService :: Received command =>  rollback
 :: WorkService :: Marked transaction to rollback!

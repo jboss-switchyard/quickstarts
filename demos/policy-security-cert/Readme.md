@@ -45,6 +45,33 @@ org.ops4j.pax.web.ssl.clientauthneeded=false
 
 3. When executing the test (as directed below), add the following system property: -Dorg.switchyard.component.soap.client.port=8183
 
+
+Wildfly
+----------
+
+
+1. Start Wildfly in standalone mode :
+
+        ${WILDFLY}/bin/standalone.sh
+
+2. Build and deploy the demo :
+
+        mvn install -Pdeploy -Pwildfly
+
+3. Execute the test. (See "Options" section below.)
+
+4. Check the server console for output from the service.
+
+5. Undeploy the application
+
+        mvn clean -Pdeploy -Pwildfly
+
+     Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done.
+
+
+
+
+
 Options
 =======
 
