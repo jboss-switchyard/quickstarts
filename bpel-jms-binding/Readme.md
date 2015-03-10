@@ -19,7 +19,9 @@ EAP
 
 2. Create an application user:
 
-        ${AS}/bin/add-user.sh --user guest --password guestp.1 --realm ApplicationRealm --group guest
+        ${AS}/bin/add-user.sh
+
+        realm=ApplicationRealm user=guest password=guestp.1 group=guest
 
 3. Build and deploy the quickstart
 
@@ -35,13 +37,14 @@ EAP
 
 Wildfly
 ----------
-1. Start JBoss AS 7 in standalone-full mode:
+1. Start Wildfly in standalone-full mode:
 
-        ${AS}/bin/standalone.sh --server-config=standalone-full.xml
+        ${WILDFLY}/bin/standalone.sh --server-config=standalone-full.xml
 
 2. Create an application user:
 
-        ${AS}/bin/add-user.sh --user guest --password guestp.1 --realm ApplicationRealm --group guest
+        ${WILDFLY}/bin/add-user.sh
+        realm=ApplicationRealm user=guest password=guestp.1 group=guest
 
 3. Build and deploy the quickstart
 
@@ -49,7 +52,7 @@ Wildfly
 
 4. Execute HornetQClient.   See the "Expected Output" heading for the expected results.
 
-        mvn exec:java
+        mvn exec:java -Pwildfly
 
 5. Undeploy the quickstart:
 
