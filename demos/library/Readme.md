@@ -79,6 +79,38 @@ Return acknowledged? true
         mvn clean -Pdeploy
 ```
 
+Karaf
+-----
+Instead of steps 1-3 above for EAP...
+
+1. Start the Karaf server :
+
+${KARAF_HOME}/bin/karaf
+
+2. Add the features URL for the respective version of SwitchYard.   Replace {SWITCHYARD-VERSION}
+with the version of SwitchYard that you are using (ex. 2.0.0):
+
+karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERSION}/xml/features
+
+3. Install the feature for the library demo :
+
+karaf@root> features:install switchyard-demo-library 
+
+4. Execute client :
+<br/>
+```
+mvn exec:java
+```
+<br/>
+
+5. Check the log for the expected results :
+
+karaf@root> log:display
+
+6. Undeploy the quickstart:
+
+karaf@root> features:uninstall switchyard-demo-library
+
 
 Wildfly
 ----------
