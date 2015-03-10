@@ -1,0 +1,5 @@
+if (outcome != success) of /subsystem=undertow/server=default-server/https-listener=https/:read-resource
+    /core-service=management/security-realm=https:add()
+    /core-service=management/security-realm=https/server-identity=ssl:add(keystore-path=${jboss.home.dir}/quickstarts/demos/policy-security-wss-signencrypt/connector.jks, keystore-password=changeit)
+    /subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, security-realm=https)
+end-if

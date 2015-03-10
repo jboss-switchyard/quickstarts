@@ -8,12 +8,18 @@ SSL is used for "confidentiality", and WS-Security UsernameToken is used for "cl
 Running the quickstart
 ======================
 
+
+EAP
+----------
+
 1. Create an application user:
 
-        ${AS}/bin/add-user.sh --user kermit --password the-frog-1 --realm ApplicationRealm --group friend
+        ${AS}/bin/add-user.sh
 
-2. Start JBoss AS in standalone mode:
-        ${AS}/bin/standalone.sh
+        realm=ApplicationRealm Username=kermit Password=the-frog-1 group=friend
+
+2. Start JBoss EAP in standalone mode:
+        ${EAP}/bin/standalone.sh
 
 3. Build and deploy the quickstart
 
@@ -27,6 +33,34 @@ Running the quickstart
 
         mvn clean -Pdeploy
 
+
+Wildfly
+----------
+
+
+1. Create an application user:
+
+        ${WILDFLY}/bin/add-user.sh
+
+        realm=ApplicationRealm Username=kermit Password=the-frog-1 group=friend
+
+2. Start Wildfly in standalone mode :
+
+        ${WILDFLY}/bin/standalone.sh
+
+3. Build and deploy the demo :
+
+        mvn install -Pdeploy  -Pwildfly
+
+4. Execute the test. (See "Options" section below.)
+
+5. Check the server console for output from the service.
+
+6. Undeploy the application
+
+        mvn clean -Pdeploy -Pwildfly
+
+     Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done.
 
 Options
 =======

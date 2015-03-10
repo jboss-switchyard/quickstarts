@@ -1,0 +1,10 @@
+if (outcome == success) of /subsystem=undertow/server=default-server/https-listener=https/:read-resource
+    /subsystem=undertow/server=default-server/https-listener=https/:remove
+    /core-service=management/security-realm=https/:remove
+end-if
+if (outcome == success) of /subsystem=security/security-domain=picketlink-sts:read-resource
+    /subsystem=security/security-domain=picketlink-sts:remove
+end-if
+if (outcome == success) of /subsystem=security/security-domain=saml-validate-token:read-resource
+    /subsystem=security/security-domain=saml-validate-token:remove
+end-if
