@@ -25,7 +25,6 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.switchyard.as7.extension.deployment.SwitchYardDeployment;
-import org.switchyard.as7.extension.runtime.JBossNamespaceHandler;
 import org.switchyard.deploy.Component;
 import org.switchyard.runtime.event.ExchangeCompletionEvent;
 import org.switchyard.runtime.event.ExchangeInitiatedEvent;
@@ -76,10 +75,6 @@ public class SwitchYardService implements Service<SwitchYardDeployment> {
             }
             _switchyardDeployment.setNamespaceContextSelector(selector);
             _switchyardDeployment.start(components);
-            JBossNamespaceHandler jndiObserver = new JBossNamespaceHandler(selector);
-            _switchyardDeployment.getDomain().addEventObserver(jndiObserver, ExchangeInitiatedEvent.class);
-            _switchyardDeployment.getDomain().addEventObserver(jndiObserver, ExchangeCompletionEvent.class);
-            _switchyardDeployment.getDomain().setProperty("contextSelector", selector);
         } catch (Exception e) {
             try {
                 _switchyardDeployment.stop();
