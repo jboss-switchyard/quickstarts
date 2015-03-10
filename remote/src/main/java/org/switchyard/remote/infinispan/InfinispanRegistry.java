@@ -72,6 +72,18 @@ public class InfinispanRegistry implements RemoteRegistry {
             endpoint.setNode(_nodeName);
             String epStr = new String(_serializer.serialize(endpoint, RemoteEndpoint.class));
             _serviceCache.put(cacheKey, epStr);
+
+            if (_log.isDebugEnabled()) {
+                StringBuilder buf = new StringBuilder()
+                    .append("Added Endpoint:[")
+                    .append("EndpointAddress='").append(endpoint.getEndpoint()).append("'")
+                    .append(", NodeName='").append(endpoint.getNode()).append("'")
+                    .append(", DomainName='").append(endpoint.getDomainName()).append("'")
+                    .append(", ServiceName='").append(endpoint.getServiceName()).append("'")
+                    .append(", ServiceContract='").append(endpoint.getContract()).append("'")
+                    .append("]");
+                _log.debug(buf.toString());
+            }
         } catch (java.io.IOException ioEx) {
             RemoteLogger.ROOT_LOGGER.failedAddEndpoint(cacheKey, ioEx);
         }
@@ -81,6 +93,18 @@ public class InfinispanRegistry implements RemoteRegistry {
     public void removeEndpoint(RemoteEndpoint endpoint) {
         if (_nodeName != null) {
             _serviceCache.remove(createNodeKey(ROOT_DOMAIN, endpoint.getServiceName(), _nodeName));
+
+            if (_log.isDebugEnabled()) {
+                StringBuilder buf = new StringBuilder()
+                    .append("Removed Endpoint:[")
+                    .append("EndpointAddress='").append(endpoint.getEndpoint()).append("'")
+                    .append(", NodeName='").append(endpoint.getNode()).append("'")
+                    .append(", DomainName='").append(endpoint.getDomainName()).append("'")
+                    .append(", ServiceName='").append(endpoint.getServiceName()).append("'")
+                    .append(", ServiceContract='").append(endpoint.getContract()).append("'")
+                    .append("]");
+                _log.debug(buf.toString());
+            }
         }
     }
 
