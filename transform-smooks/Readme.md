@@ -52,7 +52,7 @@ Wildfly
 
 2. Build and deploy the quickstart: 
 
-        mvn install -Pdeploy
+        mvn install -Pdeploy,wildfly
 
 3. Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
 - Submit a request with your preferred SOAP client - src/test/resources/xml contains 
@@ -69,7 +69,7 @@ as an example of a sample request.  Check the "Expected Output" section for the 
 
 4. Undeploy the quickstart:
 
-        mvn clean -Pdeploy
+        mvn clean -Pdeploy,wildfly
 
 
 Karaf

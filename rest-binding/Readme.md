@@ -28,7 +28,7 @@ EAP
 
 2. Build and deploy the quickstart
 
-        mvn install -Pdeploy
+        mvn -Dmaven.test.skip=true install -Pdeploy
 
 3. Open a console windows and type  
 
@@ -95,7 +95,7 @@ Wildfly
 
 2. Build and deploy the quickstart
 
-        mvn install -Pdeploy,wildfly
+        mvn -Dmaven.test.skip=true install -Pdeploy,wildfly
 
 3. Open a console windows and type  
 
