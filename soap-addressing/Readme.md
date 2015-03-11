@@ -60,7 +60,7 @@ Wildfly
 2. If on Windows, please create a directory called 'tmp' under c:
 3. Build and deploy the quickstart
 <pre>
-        mvn install -Pdeploy
+        mvn install -Pdeploy -Pwildfly
 </pre>
 4. Open a console window and type
 <pre>
@@ -74,7 +74,7 @@ Order Boeing with quantity 10 accepted.
 
 7. Undeploy the quickstart:
 
-mvn clean -Pdeploy
+mvn clean -Pdeploy,wildfly
 
 
 Karaf

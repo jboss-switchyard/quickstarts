@@ -20,7 +20,7 @@ EAP
 
 2. Build and deploy the Quickstart : 
 
-        mvn install -Pdeploy
+        mvn -Dmaven.test.skip=true install -Pdeploy
 
 3. Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
     - Submit a request with your preferred SOAP client - src/test/resources/xml contains 
@@ -48,7 +48,7 @@ Wildfly
 
 2. Build and deploy the Quickstart : 
 
-        mvn install -Pdeploy -Pwildfly
+        mvn -Dmaven.test.skip=true install -Pdeploy -Pwildfly
 
 3. Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
 - Submit a request with your preferred SOAP client - src/test/resources/xml contains 

@@ -33,7 +33,7 @@ EAP
 
 4. Undeploy the quickstart:
 
-        mvn clean -Pdeploy -Pwildfly
+        mvn clean -Pdeploy
 
 
 Wildfly
@@ -44,7 +44,7 @@ Wildfly
 
 2. Build and deploy the Quickstart :
 
-        mvn install -Pdeploy
+        mvn install -Pdeploy,wildfly
 
 3. Submit a request with your preferred SOAP client - src/test/resources/xml contains sample 
 requests and the responses that you should see
