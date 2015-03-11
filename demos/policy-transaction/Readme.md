@@ -19,7 +19,7 @@ command.
 Running the quickstart
 ======================
 
-1. Start JBoss AS 7 in standalone-full mode:
+1. Start EAP in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
@@ -118,7 +118,7 @@ by following steps.
 
         mvn clean package
 
-2. Start JBoss AS 7 in standalone-full mode:
+2. Start EAP in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 

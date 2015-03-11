@@ -8,7 +8,7 @@ SSL is used for "confidentiality", and Certificate Authentication is used for "c
 Running the quickstart
 ======================
 
-1. Start JBoss AS in standalone mode:
+1. Start EAP in standalone mode:
 
         ${AS}/bin/standalone.sh
 
@@ -26,7 +26,7 @@ Running the quickstart
 
 Karaf
 -----
-Instead of steps 1,2,5 above for JBoss AS 7...
+Instead of steps 1,2,5 above for EAP...
 
 1. Create a ${KARAF}/quickstarts/demos/policy-security-cert/ directory, and copy users.jks, roles.properties, and connector.jks into it.
 

@@ -48,7 +48,7 @@ The default parameters are:
     user: camel
     password: isMyFriend
 ```
-2. Start JBoss AS 7 in standalone-full mode:
+2. Start Wildfly in standalone-full mode:
 
 ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 

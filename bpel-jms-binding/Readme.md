@@ -35,7 +35,7 @@ EAP
 
 Wildfly
 ----------
-1. Start JBoss AS 7 in standalone-full mode:
+1. Start Wildfly in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
@@ -49,7 +49,7 @@ Wildfly
 
 4. Execute HornetQClient.   See the "Expected Output" heading for the expected results.
 
-        mvn exec:java
+        mvn exec:java -Pwildfly
 
 5. Undeploy the quickstart:
 

@@ -27,7 +27,7 @@ Maven
 Running the quickstart
 ======================
 
-JBoss AS 7
+EAP
 ----------
 1. Start the application server:
     ${AS}/bin/standalone.sh

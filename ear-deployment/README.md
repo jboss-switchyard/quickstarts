@@ -58,7 +58,7 @@ Wildfly
 
 4. Test the application
 
-        mvn exec:java
+        mvn exec:java -Pwildfly
 
 5. Undeploy the EAR
 

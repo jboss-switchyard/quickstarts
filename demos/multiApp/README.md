@@ -13,7 +13,10 @@ Consult the README.md in each individual project for more info.
 
 ## Running the Example
 
-1. Start JBoss AS 7 in standalone-full mode:
+
+EAP
+----------
+1. Start EAP in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
@@ -34,6 +37,32 @@ Consult the README.md in each individual project for more info.
 6. Undeploy the quickstart:
 
         mvn clean -Pdeploy
+
+
+
+Wildfly
+----------
+1. Start Wildfly in standalone mode:
+
+2. Create an application user:
+
+        ${AS}/bin/add-user.sh --user guest --password guestp.1 --realm ApplicationRealm --group guest
+
+3. Build and deploy the quickstart
+
+        mvn install -Pdeploy -Pwildfly
+
+4. Use one or both of the consuming application projects:
+    * <b>Web</b>: Visit <http://localhost:8080/switchyard-quickstart-demo-multi-web>.
+    * <b>JMS</b>: Use 'mvn exec:java -Pwildfly' in the order-consumer project to submit a JMS order message via the OrderIntake service.
+
+5. Check the server console for output from the service.
+
+6. Undeploy the quickstart:
+
+        mvn clean -Pdeploy -Pwildfly
+
+
 
 ## Further Reading
 
