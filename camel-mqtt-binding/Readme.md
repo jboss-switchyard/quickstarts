@@ -13,7 +13,6 @@ Running the quickstart
 EAP
 ----------
 1. Download a recent version of ActiveMQ (for the purposes of this quickstart, 5.10.0 was tested) and extract the contents. 
-
 2. Start ActiveMQ in standalone mode:
 
         ${ActiveMQ}/bin/activemq start
@@ -24,7 +23,7 @@ EAP
 
 4. Build and deploy the Quickstart :
 
-        mvn install -Pdeploy
+        mvn -Dmaven.test.skip=true install -Pdeploy
 
 5. Use the MqttClient class to send a request message to the queue.  The client can be
    run from the command-line using:
@@ -54,7 +53,7 @@ Wildfly
 
 4. Build and deploy the Quickstart :
 
-        mvn install -Pdeploy
+        mvn -Dmaven.test.skip=true install -Pdeploy -Pwildfly
 
 5. Use the MqttClient class to send a request message to the queue.  The client can be
 run from the command-line using:
@@ -63,7 +62,7 @@ run from the command-line using:
 
 6. Undeploy the quickstart:
 
-        mvn clean -Pdeploy
+        mvn clean -Pdeploy,wildfly
 
 7. Stop ActiveMQ:
 
