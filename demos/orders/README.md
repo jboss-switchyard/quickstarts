@@ -40,6 +40,39 @@ JBoss AS 7
       create a soap-ui project. Use the sample request (src/test/resources/xml/soap-request.xml) 
       as an example of a sample request. The output below is the expected output : 
 
+
+4. Undeploy the quickstart:
+
+mvn clean -Pdeploy
+
+
+
+Wildfly
+----------
+1. Start Wildfly in standalone mode:
+
+${AS}/bin/standalone.sh
+
+2. Build and deploy the quickstart: 
+
+mvn install -Pdeploy,wildfly
+
+3. Submit a webservice request to invoke the SOAP gateway.  There are a number of ways to do this :
+- Submit a request with your preferred SOAP client - src/test/resources/xml contains 
+sample requests and the responses that you should see
+- Use the simple bundled SOAP client and the sample request XML e.g.
+<br/>
+```
+mvn exec:java
+```
+
+4. Undeploy the quickstart:
+
+mvn clean -Pdeploy,wildfly
+
+
+
+
 Expected Output
 ===============
 ```
@@ -56,10 +89,6 @@ Expected Output
     </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 ```
-
-4. Undeploy the quickstart:
-
-        mvn clean -Pdeploy
 
 
 ## Further Reading
