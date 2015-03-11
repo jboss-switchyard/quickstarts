@@ -8,14 +8,14 @@ SSL is used for "confidentiality", and Basic Authentication is used for "clientA
 Running the quickstart
 ======================
 
-JBoss AS 7
+EAP
 ----------
 
 1. Create an application user:
 
         ${AS}/bin/add-user.sh --user kermit --password the-frog-1 --realm ApplicationRealm --group friend
 
-2. Start JBoss AS in standalone mode:
+2. Start EAP in standalone mode:
 
         ${AS}/bin/standalone.sh
 
@@ -33,7 +33,7 @@ JBoss AS 7
 
 Karaf
 -----
-Instead of steps 1-3,6 above for JBoss AS 7...
+Instead of steps 1-3,6 above for EAP...
 
 1. Create a ${KARAF}/quickstarts/demos/policy-security-basic/ directory, and copy connector.jks into it.
 

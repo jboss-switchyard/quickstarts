@@ -85,7 +85,7 @@ To test TCP:
 
 Karaf
 -----
-Instead of steps 1-2,7 above for JBoss AS 7...
+Instead of steps 1-2,7 above for EAP...
 
 1. Create a ${KARAF}/quickstarts/camel-netty-binding/ directory, and copy users.jks and roles.properties into it.
 

@@ -17,9 +17,9 @@ various aspects of transforming from one form of SOAP request to another.
 Running the quickstart
 ======================
 
-JBoss AS 7
+EAP
 ----------
-1. Start JBoss AS 7 in standalone mode:
+1. Start EAP in standalone mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone.xml
 

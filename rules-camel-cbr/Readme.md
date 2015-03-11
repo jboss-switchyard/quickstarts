@@ -25,7 +25,7 @@ Running the quickstart
 
 EAP
 ----------
-1. Start JBoss AS 7 in standalone mode:
+1. Start EAP in standalone mode:
 
         ${AS}/bin/standalone.sh
 
