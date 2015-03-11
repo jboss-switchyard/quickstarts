@@ -53,6 +53,40 @@ JBoss AS 7
     Continue toggling back and forth as the users until all tasks are completed.
     You can view the application server output in its console window to see the progression of the progress.
 
+6. Undeploy the quickstart:
+mvn clean -Pdeploy
+
+
+Wildfly
+----------
+1. Start the application server:
+${AS}/bin/standalone.sh
+
+2. Build and deploy the web application:
+mvn install -Pdeploy,wildfly
+
+3. In a web browser window, use the web application:
+Browse to http://localhost:8080/helpdesk/
+Select the User you want to act as.
+Note that you can toggle back and forth between users. (This would normally be automatically chosen based on the logged on user.)
+So far there are no processes started, so there are no tasks.
+
+4. In a different console window, start a process (this will use the SOAP gateway):
+mvn exec:java
+You can do this as many times as you wish, starting as many processes as you wish.
+
+5. Going back to your web browser window:
+As krisv (a developer), click the Submit button to get the list of tasks.
+As krisv, review the tasks you want to perform and click the Submit button again.
+As david (a user), click the Submit button to get the list of tasks. He will only have tasks if more details were required.
+If there were user tasks, check the tasks you want to complete and click the Submit button again.
+Continue toggling back and forth as the users until all tasks are completed.
+You can view the application server output in its console window to see the progression of the progress.
+
+6. Undeploy the quickstart:
+mvn clean -Pdeploy,wildfly
+
+
 Expected Output:
 ================
 (Note: Your outcome might be different from below based on the result of the ticket review.)
@@ -63,8 +97,7 @@ INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] (h
 INFO  [org.switchyard.quickstarts.demos.helpdesk.TicketManagementServiceBean] (http-/127.0.0.1:8080-1) ********** closing ticket **********
 ```
 
-6. Undeploy the quickstart:
-        mvn clean -Pdeploy
+
 
 ## Further Reading
 
