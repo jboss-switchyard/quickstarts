@@ -52,7 +52,9 @@ org.ops4j.pax.web.ssl.clientauthneeded=false
 
 3. Add this line to ${KARAF}/etc/users.properties:
 
-       kermit=the-frog-1,friend
+       
+         kermit = the-frog-1,_g_:friend
+         _g_\:friend = group,friend
 
 4. When executing the test (as directed below), add the following system property: -Dorg.switchyard.component.soap.client.port=8183
 
