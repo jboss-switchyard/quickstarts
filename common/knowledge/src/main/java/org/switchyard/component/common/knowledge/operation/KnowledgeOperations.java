@@ -128,6 +128,7 @@ public final class KnowledgeOperations {
      * @param message the message
      * @param operation the operation
      * @param runtime the runtime engine
+     * @param singleton singleton
      */
     public static void setGlobals(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine runtime, boolean singleton) {
         Globals globals = runtime.getSessionGlobals();
@@ -162,6 +163,7 @@ public final class KnowledgeOperations {
      *            the operation
      * @param runtime
      *            the runtime engine
+     * @return containsGlobal
      */
     public static boolean containsGlobals(Message message, KnowledgeOperation operation, KnowledgeRuntimeEngine runtime) {
         Map<String, Object> expressionMap = getMap(message, operation.getGlobalExpressionMappings(), null);

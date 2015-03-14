@@ -170,7 +170,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler {
                         expressionVariables.putAll(getGlobalVariables(runtime));
                     }
                 } else {
-                    if(KnowledgeOperations.containsGlobals(inputMessage, operation, runtime)) {
+                    if (KnowledgeOperations.containsGlobals(inputMessage, operation, runtime)) {
                         synchronized (this) {
                             fireAllRules(inputMessage, operation);
                         }
@@ -194,7 +194,7 @@ public class RulesExchangeHandler extends KnowledgeExchangeHandler {
                         expressionVariables.putAll(getGlobalVariables(runtime));
                     }
                 } else {
-                    if(KnowledgeOperations.containsGlobals(inputMessage, operation, runtime)) {
+                    if (KnowledgeOperations.containsGlobals(inputMessage, operation, runtime)) {
                         synchronized (this) {
                             fireUntilHalt(inputMessage, exchange, operation);
                         }
