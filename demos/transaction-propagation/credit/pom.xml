@@ -33,6 +33,7 @@
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
         <version.com.h2database>1.3.168</version.com.h2database>
+        <wildfly.protocol>remote</wildfly.protocol>
         <wildfly.port>10999</wildfly.port>
     </properties>
     <dependencies>
@@ -150,7 +151,6 @@
                                     <script>config.cli</script>
                                 </scripts>
                             </afterDeployment>
-                            <protocol>remote</protocol>
                             <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
@@ -167,7 +167,6 @@
                                     <script>unconfig.cli</script>
                                 </scripts>
                             </afterDeployment>
-                            <protocol>remote</protocol>
                             <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
@@ -184,4 +183,19 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>deploy</id>
+            <properties>
+                <deploy.skip>false</deploy.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>wildfly</id>
+            <properties>
+                <wildfly.protocol>http-remoting</wildfly.protocol>
+                <wildfly.port>10990</wildfly.port>
+            </properties>
+        </profile>
+    </profiles>
 </project>

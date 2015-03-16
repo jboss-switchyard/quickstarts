@@ -34,6 +34,9 @@
         <!-- Bundle symbolic name may not contain dashes -->
         <bundle.symbolic.name>${project.groupId}.switchyard.demo.cluster.credit</bundle.symbolic.name>
         <deploy.skip>true</deploy.skip>
+        <wildfly.protocol>remote</wildfly.protocol>
+        <wildfly.port.node2>10999</wildfly.port.node2>
+        <wildfly.port.node3>11999</wildfly.port.node3>
         <switchyard.osgi.import>*</switchyard.osgi.import>
         <switchyard.osgi.require.capability>
            org.ops4j.pax.cdi.extension; filter:="(extension=deltaspike-core-api)",
@@ -131,8 +134,7 @@
                             <goal>deploy-only</goal>
                         </goals>
                         <configuration>
-                            <port>10999</port>
-                            <protocol>remote</protocol>
+                            <port>${wildfly.port.node2}</port>
                             <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
@@ -144,8 +146,7 @@
                             <goal>deploy-only</goal>
                         </goals>
                         <configuration>
-                            <port>11999</port>
-                            <protocol>remote</protocol>
+                            <port>${wildfly.port.node3}</port>
                             <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
@@ -157,8 +158,7 @@
                             <goal>undeploy</goal>
                         </goals>
                         <configuration>
-                            <port>10999</port>
-                            <protocol>remote</protocol>
+                            <port>${wildfly.port.node2}</port>
                             <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
@@ -170,8 +170,7 @@
                             <goal>undeploy</goal>
                         </goals>
                         <configuration>
-                            <port>11999</port>
-                            <protocol>remote</protocol>
+                            <port>${wildfly.port.node3}</port>
                             <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
@@ -193,6 +192,14 @@
             <id>deploy</id>
             <properties>
                 <deploy.skip>false</deploy.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>wildfly</id>
+            <properties>
+            <wildfly.protocol>http-remoting</wildfly.protocol>
+                <wildfly.port.node2>10990</wildfly.port.node2>
+                <wildfly.port.node3>11990</wildfly.port.node3>
             </properties>
         </profile>
     </profiles>

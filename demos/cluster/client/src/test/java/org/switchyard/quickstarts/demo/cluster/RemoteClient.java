@@ -31,7 +31,6 @@ public final class RemoteClient {
     private static final QName SERVICE = new QName(
         "urn:switchyard-quickstart-demo-cluster-dealer:1.0",
         "Dealer");
-    private static final String URL = "http://localhost:8080/switchyard-remote";
 
     /**
      * Private no-args constructor.
@@ -46,7 +45,8 @@ public final class RemoteClient {
      */
     public static void main(final String[] ignored) throws Exception {
         // Create a new remote client invoker
-        RemoteInvoker invoker = new HttpInvoker(URL);
+        String port = System.getProperty("org.switchyard.component.sca.client.port", "8080");
+        RemoteInvoker invoker = new HttpInvoker("http://localhost:" + port + "/switchyard-remote");
 
         // Create request payload
         Offer offer = createOffer(true);
@@ -60,6 +60,9 @@ public final class RemoteClient {
         if (reply.isFault()) {
             System.err.println("Oops ... something bad happened.  "
                 + reply.getContent());
+            if (reply.getContent() instanceof Throwable) {
+                Throwable.class.cast(reply.getContent()).printStackTrace();
+            }
         } else {
             Deal deal = (Deal) reply.getContent();
             out.println("==================================");
