@@ -151,7 +151,7 @@
                     </instructions>
                     <archive>
                         <manifestEntries>
-                            <Dependencies>org.apache.mina, org.apache.camel.mina2, org.apache.camel.hl7, ca.uhn.hapi-osgi-base</Dependencies>
+                            <Dependencies>org.apache.mina.core, org.apache.camel.component.mina2, org.apache.camel.component.hl7, ca.uhn.hapi-osgi-base</Dependencies>
                             <Project-Artifact-Id>${project.artifactId}</Project-Artifact-Id>
                             <Project-Group-Id>${project.groupId}</Project-Group-Id>
                             <Project-Version>${project.version}</Project-Version>
