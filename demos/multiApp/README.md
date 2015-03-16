@@ -26,7 +26,7 @@ Consult the README.md in each individual project for more info.
         mvn install -Pdeploy
 
 4. Use one or both of the consuming application projects:
-    * <b>Web</b>: Visit <http://localhost:8080/switchyard-quickstart-demo-multi-web>.
+    * <b>Web</b>: Visit <http://localhost:8080/switchyard-demo-multiApp-web>.
     * <b>JMS</b>: Use 'mvn exec:java' in the order-consumer project to submit a JMS order message via the OrderIntake service.
 
 5. Check the server console for output from the service.
