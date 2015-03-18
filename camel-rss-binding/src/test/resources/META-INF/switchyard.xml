@@ -18,10 +18,14 @@
     <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-rss-binding" targetNamespace="urn:switchyard-quickstart:camel-rss-binding:2.0.1-ER1">
         <service name="PrintService" promote="PrintService/PrintService">
             <rss:binding.rss xmlns:rss="urn:switchyard-component-camel-rss:config:2.0">
-		<rss:feedURI>file:src/test/resources/rss.xml</rss:feedURI>
-		<rss:splitEntries>true</rss:splitEntries>
-		<rss:filter>false</rss:filter>
-		<rss:feedHeader>true</rss:feedHeader>
+                <rss:feedURI>file:src/test/resources/rss.xml</rss:feedURI>
+                <rss:splitEntries>true</rss:splitEntries>
+                <rss:filter>false</rss:filter>
+                <rss:feedHeader>true</rss:feedHeader>
+                <rss:consume>
+                    <rss:initialDelay>1000</rss:initialDelay>
+                    <rss:delay>60000</rss:delay>
+                </rss:consume>
             </rss:binding.rss>
         </service>
         <component name="PrintService">

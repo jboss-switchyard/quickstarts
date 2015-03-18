@@ -33,12 +33,14 @@
       <sca:interface.java interface="org.switchyard.quickstarts.camel.sql.binding.SingleGreetService"/>
       <sql:binding.sql>
         <sql:query>INSERT INTO greetings (receiver,sender,id) VALUES (#,#,#)</sql:query>
+        <sql:dataSourceRef>${datasourceName}</sql:dataSourceRef>
       </sql:binding.sql>
     </sca:reference>
     <sca:reference name="RemoveService" multiplicity="0..1" promote="GreetingService/RemoveService">
       <sca:interface.java interface="org.switchyard.quickstarts.camel.sql.binding.SingleGreetService"/>
       <sql:binding.sql>
         <sql:query>DELETE FROM greetings WHERE receiver = # AND sender = # AND id = #</sql:query>
+        <sql:dataSourceRef>${datasourceName}</sql:dataSourceRef>
       </sql:binding.sql>
     </sca:reference>
     <sca:component name="GreetingService">
