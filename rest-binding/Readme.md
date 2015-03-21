@@ -43,6 +43,10 @@ EAP
     Added item 3 with name Einstein's Bust - Talks about your future :)
     Added item 4 with name Time Machine
 ```
+Please note it is normal to see WARN messages as below when adding items as the addItem method has two input parameters
+```
+    Default RESTEasy Message Composer doesn't handle multiple input parameters.
+```
 6. Add an item to the order created in step 5  
 
         mvn exec:java -Dexec.args="add 1 3 10"
@@ -109,6 +113,10 @@ Wildfly
     Added item 2 with name Handcrafted Copper Plate
     Added item 3 with name Einstein's Bust - Talks about your future :)
     Added item 4 with name Time Machine
+```
+Please note it is normal to see WARN messages as below when adding items as the addItem method has two input parameters
+```
+    Default RESTEasy Message Composer doesn't handle multiple input parameters.
 ```
 6. Add an item to the order created in step 5  
 
@@ -181,6 +189,10 @@ Added item 1 with name Hydrogen Atom - No, we are not kidding!
 Added item 2 with name Handcrafted Copper Plate
 Added item 3 with name Einstein's Bust - Talks about your future :)
 Added item 4 with name Time Machine
+```
+Please note it is normal to see WARN messages as below when adding items as the addItem method has two input parameters
+```
+Default RESTEasy Message Composer doesn't handle multiple input parameters.
 ```
 6. Add an item to the order created in step 5  
 
