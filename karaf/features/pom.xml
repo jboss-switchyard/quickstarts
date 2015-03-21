@@ -36,6 +36,8 @@
         <version.org.apache.geronimo.specs.geronimo-servlet_2.5_spec>1.2</version.org.apache.geronimo.specs.geronimo-servlet_2.5_spec>
         <version.org.apache.geronimo.specs.geronimo-servlet_3.0_spec>1.0</version.org.apache.geronimo.specs.geronimo-servlet_3.0_spec>
         <version.org.apache.geronimo.specs.geronimo-validation_1.0_spec>1.1</version.org.apache.geronimo.specs.geronimo-validation_1.0_spec>
+        <version.org.apache.httpcomponents.httpcore>4.2.4</version.org.apache.httpcomponents.httpcore>
+        <version.org.apache.httpcomponents.httpclient>4.2.5</version.org.apache.httpcomponents.httpclient>
         <version.org.apache.myfaces.core.myfaces-bundle>2.1.15</version.org.apache.myfaces.core.myfaces-bundle>
         <version.org.apache.servicemix.bundles.asm>3.3_2</version.org.apache.servicemix.bundles.asm>
         <version.org.apache.servicemix.bundles.batik>1.7_3</version.org.apache.servicemix.bundles.batik>
