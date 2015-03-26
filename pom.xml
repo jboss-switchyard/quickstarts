@@ -126,23 +126,6 @@
     <!-- Conditionally include the assembly module.  It's not always present e.g. in the quickstarts distro. -->
     <profiles>
         <profile>
-            <id>brms</id>
-            <activation>
-                <property>
-                    <name>!skipBRMS</name>
-                </property>
-            </activation>
-            <modules>
-                <module>bpm-service</module>
-                <module>rules-camel-cbr</module>
-                <module>rules-interview</module>
-                <module>rules-interview-container</module>
-                <module>rules-interview-dtable</module>
-                <module>demos/helpdesk</module>
-                <module>demos/library</module>
-            </modules>
-        </profile>
-        <profile>
             <id>assembly</id>
             <activation>
                 <file>

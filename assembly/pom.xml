@@ -33,17 +33,4 @@
     <modules>
         <module>assembly</module>
     </modules>
-    <profiles>
-        <profile>
-            <id>brms</id>
-            <activation>
-                <property>
-                    <name>!skipBRMS</name>
-                </property>
-            </activation>
-            <modules>
-                <module>assembly-brms</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>
