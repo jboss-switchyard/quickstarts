@@ -48,7 +48,7 @@ Wildfly
 
         mvn clean -Pdeploy -Pwildfly
 
-     Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done.
+Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done.
 
 
 
@@ -59,7 +59,7 @@ When running with no options:
 
     mvn exec:java
 
-, you will be hitting the http (non-SSL) URL, and see this in your log:
+You will be hitting the http (non-SSL) URL, and see this in your log:
 
     Caused by: org.switchyard.exception.SwitchYardException: Required policies have not been provided: clientAuthentication confidentiality
 
@@ -67,7 +67,7 @@ When running with this option:
 
     mvn exec:java -Dexec.args="confidentiality clientAuthentication" -Djavax.net.ssl.trustStore=connector.jks
 
-, you will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
+You will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
 
     :: WorkService :: Received work command => CMD-1398967051060 (caller principal=UserPrincipal@1045975928[name=admin])
 

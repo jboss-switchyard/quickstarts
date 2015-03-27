@@ -19,6 +19,7 @@ EAP
         realm=ApplicationRealm Username=kermit Password=the-frog-1 group=friend
 
 2. Start JBoss EAP in standalone mode:
+
         ${EAP}/bin/standalone.sh
 
 3. Build and deploy the quickstart
@@ -50,7 +51,7 @@ Wildfly
 
 3. Build and deploy the demo :
 
-        mvn install -Pdeploy  -Pwildfly
+        mvn install -Pdeploy -Pwildfly
 
 4. Execute the test. (See "Options" section below.)
 
@@ -60,7 +61,7 @@ Wildfly
 
         mvn clean -Pdeploy -Pwildfly
 
-     Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done.
+Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done.
 
 Options
 =======
@@ -69,7 +70,7 @@ When running with no options:
 
     mvn exec:java
 
-, you will be hitting the http (non-SSL) URL without providing authentication information, and see this in your log:
+You will be hitting the http (non-SSL) URL without providing authentication information, and see this in your log:
 
     Caused by: org.apache.ws.security.WSSecurityException: Failed Authentication : Subject has not been created
 
@@ -77,7 +78,7 @@ When running with this option:
 
     mvn exec:java -Dexec.args="clientAuthentication"
 
-, you will be hitting the http (non-SSL) URL while providing authentication information, and see this in your log:
+You will be hitting the http (non-SSL) URL while providing authentication information, and see this in your log:
 
     Caused by: org.switchyard.exception.SwitchYardException: Required policies have not been provided: confidentiality
 
@@ -85,7 +86,7 @@ When running with this option:
 
     mvn exec:java -Dexec.args="confidentiality clientAuthentication" -Djavax.net.ssl.trustStore=connector.jks
 
-, you will be hitting the https (SSL) URL while providing authentication information, and see this in your log:
+You will be hitting the https (SSL) URL while providing authentication information, and see this in your log:
 
     :: WorkService :: Received work command => CMD-1398262803294 (caller principal=kermit, in roles? 'friend'=true 'enemy'=false)
 

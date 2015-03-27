@@ -149,4 +149,4 @@ In this case, DealerBean sets RollbackOnly flag and the transaction is rolled ba
 
 1. [SwitchYard SCA Binding] (https://docs.jboss.org/author/display/SWITCHYARD/SCA)
 2. [SwitchYard Transaction Policy] (https://docs.jboss.org/author/display/SWITCHYARD/Policy)
-2. [SwitchYard Clustering](https://docs.jboss.org/author/display/SWITCHYARD/Clustering)
+3. [SwitchYard Clustering](https://docs.jboss.org/author/display/SWITCHYARD/Clustering)

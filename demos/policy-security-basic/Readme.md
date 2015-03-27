@@ -54,7 +54,6 @@ org.ops4j.pax.web.ssl.clientauthneeded=false
 
 3. Add this line to ${KARAF}/etc/users.properties:
 
-       
          kermit = the-frog-1,_g_:friend
          _g_\:friend = group,friend
 
@@ -77,7 +76,7 @@ Wildfly
 
 3. Build and deploy the demo :
 
-        mvn install -Pdeploy  -Pwildfly
+        mvn install -Pdeploy -Pwildfly
 
 4. Execute the test. (See "Options" section below.)
 
@@ -87,7 +86,7 @@ Wildfly
 
         mvn clean -Pdeploy -Pwildfly
 
-     Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done.
+Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done.
 
 
 
@@ -100,7 +99,7 @@ When running with no options:
 
     mvn exec:java
 
-, you will be hitting the http (non-SSL) URL, and see this in your log:
+You will be hitting the http (non-SSL) URL, and see this in your log:
 
     Caused by: org.switchyard.exception.SwitchYardException: Required policies have not been provided: authorization clientAuthentication confidentiality
 
@@ -108,7 +107,7 @@ When running with this option:
 
     mvn exec:java -Dexec.args="confidentiality clientAuthentication" -Djavax.net.ssl.trustStore=connector.jks
 
-, you will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
+You will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
 
     :: WorkService :: Received work command => CMD-1398262304944 (caller principal=kermit, in roles? 'friend'=true 'enemy'=false)
 

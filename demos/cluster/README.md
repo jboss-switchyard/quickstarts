@@ -147,7 +147,15 @@ ${KARAF_HOME}/instances/node3/etc/org.ops4j.pax.web.cfg:
 org.osgi.service.http.port=10181
 ```
 
-If your machine is multihomed, default JGoups setting may not work for you. In that case, uncomment "jgroups-config" property in the ${KARAF_HOME}/instances/node{1,2,3}/etc/org.switchyard.component.sca.cfg and create your own JGroups setting file. Usually just adding "bind_addr" attribute to the default jgroups-udp.xml is enough. The default jgroups-udp.xml is in infinispan-core-${version}.jar.
+If your machine is multihomed, the default JGroups settings may not work for you.  In that case, uncomment the "jgroups-config" property in the ${KARAF_HOME}/instances/node{1,2,3}/etc/org.switchyard.component.sca.cfg files and create your own JGroups setting files.   We suggest storing them in ${KARAF_HOME}/instances/node{1,2,3}/etc/jgroups-udp-switchyard.xml 
+
+The default jgroups-udp.xml can be found in infinispan-core-${version.jar}, and add the "bind_addr" attribute to the <UDP/> in the default jgroups-udp.xml. The default jgroups-udp.xml is in infinispan-core-${version}.jar.
+
+   <UDP
++        bind_addr="127.0.0.1"
+         mcast_addr="${jgroups.udp.mcast_addr:228.6.7.8}"
+         mcast_port="${jgroups.udp.mcast_port:46655}"
+         tos="8"
 
 *4. Start karaf subinstances.*
 

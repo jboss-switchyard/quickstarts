@@ -17,7 +17,10 @@ EAP
 
 1. Create an application user:
 
-        ${AS}/bin/add-user.sh --user kermit --password the-frog-1 --realm ApplicationRealm --group friend
+        ${AS}/bin/add-user.sh
+	User : kermit
+        Password : the-frog-1
+ 	Group : friend	
 
 2. Start JBoss AS in standalone mode:
 
@@ -25,8 +28,8 @@ EAP
 
 3. Build and deploy the ejb, then the basic application
 
-        cd ejb ; mvn install -Pdeploy
-        cd ../basic ; mvn install -Pdeploy
+        cd ejb; mvn install -Pdeploy
+        cd ../basic; mvn install -Pdeploy
 
 4. Execute the test. (See "Options" section below.)
 
@@ -35,7 +38,7 @@ EAP
 6. Undeploy the application, then the ejb
 
         mvn clean -Pdeploy
-		cd ../ejb ; mvn clean -Pdeploy
+        cd ../ejb; mvn clean -Pdeploy
 
 
 Wildfly
@@ -45,12 +48,24 @@ Wildfly
 1. Create an application user:
 
         ${WILDFLY}/bin/add-user.sh 
+        User : kermit
+        Password : the-frog-1
+        Group : friend
 
-        realm=ApplicationRealm Username=kermit Password=the-frog-1  group=friend
-
-2. Edit the standalone.xml placed on WILDFLY_HOME/standalone/configuration
+2. Edit the standalone.xml placed on ${WILDFLY_HOME}/standalone/configuration
 
       Remove the default-security-domain tag inside of the ejb3 domain
+
+        <subsystem xmlns="urn:jboss:domain:ejb3:2.0">
+            <session-bean>
+                <stateful default-access-timeout="5000" cache-ref="simple" passivation-disabled-cache-ref="simple"/>
+                <singleton default-access-timeout="5000"/>
+            </session-bean>
+            ... 
+-           <default-security-domain value="other"/>
+            <default-missing-method-permissions-deny-access value="true"/>
+        </subsystem>
+
 
 3. Start Wildfly in standalone mode :
     
@@ -58,8 +73,9 @@ Wildfly
 
 4. Build and deploy the demo : 
 
-       cd ejb ; mvn install -Pdeploy -Pwildfly
-        cd ../basic ; mvn install -Pdeploy -Pwildfly
+       cd ejb; mvn install -Pdeploy -Pwildfly
+       cd ../basic; mvn install -Pdeploy -Pwildfly
+
 5. Execute the test. (See "Options" section below.)
 
 6. Check the server console for output from the service.
@@ -67,9 +83,9 @@ Wildfly
 7. Undeploy the application, then the ejb
 
         mvn clean -Pdeploy -Pwildfly
-		cd ../ejb ; mvn clean -Pdeploy -Pwildfly
+        cd ../ejb; mvn clean -Pdeploy -Pwildfly
 
-   Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done. 
+Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done. 
 
 
 
@@ -80,7 +96,7 @@ When running with no options:
 
     mvn exec:java
 
-, you will be hitting the http (non-SSL) URL, and see this in your log:
+You will be hitting the http (non-SSL) URL, and see this in your log:
 
     Caused by: org.switchyard.exception.SwitchYardException: Required policies have not been provided: authorization clientAuthentication confidentiality
 
@@ -88,7 +104,7 @@ When running with this option:
 
     mvn exec:java -Dexec.args="confidentiality clientAuthentication" -Djavax.net.ssl.trustStore=connector.jks
 
-, you will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
+You will be hitting the https (SSL) URL and providing authentication information, and see this in your log:
 
     :: WorkService :: Received work command => CMD-1401308184129 (caller principal=kermit, in roles? 'friend'=true 'enemy'=false)
     :: BackEndService :: process => CMD-1401308184129 (caller principal=kermit, in roles? 'friend'=true 'enemy'=false)

@@ -50,7 +50,7 @@ Wildfly
 
         mvn clean -Pdeploy -Pwildfly
 
-     Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done.
+Warning --> Wildfly 8.0.0 When the application is undeployed, it is required to restart the server to get all the undeployment changes done.
 
 
 
@@ -61,7 +61,7 @@ When running with no options:
 
     mvn exec:java
 
-, you will be hitting the http (non-SSL) URL while NOT providing signed and encrypted information, and see this in your log:
+You will be hitting the http (non-SSL) URL while NOT providing signed and encrypted information, and see this in your log:
 
 ```
 [org.apache.cxf.phase.PhaseInterceptorChain] (http-/127.0.0.1:8080-1) Interceptor for
@@ -76,7 +76,7 @@ When running with this option:
 
     mvn exec:java -Dexec.args="confidentiality signencrypt" -Djavax.net.ssl.trustStore=connector.jks
 
-, you will be hitting the https (SSL) URL while providing signed and encrypted information, and see this in your log:
+You will be hitting the https (SSL) URL while providing signed and encrypted information, and see this in your log:
 
     :: WorkService :: Received work command => CMD-86
 
@@ -84,7 +84,7 @@ When running with this option:
 
     mvn exec:java -Dexec.args="signencrypt"
 
-, you will be hitting the http (non-SSL) URL while providing signed and encrypted information, and see this in your log:
+You will be hitting the http (non-SSL) URL while providing signed and encrypted information, and see this in your log:
 
     :: WorkService :: Received work command => CMD-86
 

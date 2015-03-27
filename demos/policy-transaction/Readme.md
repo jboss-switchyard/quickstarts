@@ -116,6 +116,7 @@ You can test any of these transaction policy scenarios using this quickstart:
    to receive the JMS message. TaskCService accepts "rollback.C", but it doesn't
    have any transaction to rollback, just print a message.
 
+
 Options
 =======
 The maven exec goal in this quickstart accepts the following options:
