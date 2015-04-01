@@ -48,6 +48,7 @@ public class SCAComponent extends BaseComponent {
 
     private Logger _log = Logger.getLogger(SCAComponent.class);
     private RemoteEndpointPublisher _endpointPublisher;
+    private String _cacheName;
     private Cache<String, String> _cache;
     private boolean _disableRemoteTransaction = false;
 
@@ -69,10 +70,10 @@ public class SCAComponent extends BaseComponent {
         super.init(environment);
 
         // Determine the cache name
-        String cacheName = "cluster";
+        _cacheName = "cluster";
         Configuration cacheNameConfig = environment.getFirstChild(CACHE_NAME_PROPERTY);
         if (cacheNameConfig != null) {
-            cacheName = cacheNameConfig.getValue();
+            _cacheName = cacheNameConfig.getValue();
         }
         
         // If a cache config is specified in the component configuration, then we 
@@ -81,12 +82,7 @@ public class SCAComponent extends BaseComponent {
         Configuration cacheFileConfig = environment.getFirstChild(CACHE_CONFIG_PROPERTY);
         if (cacheFileConfig != null && cacheFileConfig.getValue() != null) {
             Configuration jgroupsConfig = environment.getFirstChild(JGROUPS_CONFIG_PROPERTY);
-            createCache(cacheFileConfig.getValue(), cacheName, jgroupsConfig != null ? jgroupsConfig.getValue() : null);
-        } else {
-            lookupCache(cacheName);
-        }
-        if (_cache == null) {
-            SCALogger.ROOT_LOGGER.unableToResolveCacheContainer(cacheName);
+            createCache(cacheFileConfig.getValue(), _cacheName, jgroupsConfig != null ? jgroupsConfig.getValue() : null);
         }
         
         Configuration bridgeRemoteTxConfig = environment.getFirstChild(DISABLE_REMOTE_TRANSACTION_PROPERTY);
@@ -97,6 +93,13 @@ public class SCAComponent extends BaseComponent {
     
     @Override
     public Activator createActivator(ServiceDomain domain) {
+        if (_cache == null) {
+            lookupCache(_cacheName);
+            if (_cache == null) {
+                SCALogger.ROOT_LOGGER.unableToResolveCacheContainer(_cacheName);
+            }
+        }
+
         SCAActivator activator = new SCAActivator(_cache);
         activator.setServiceDomain(domain);
         activator.setEndpointPublisher(_endpointPublisher);
