@@ -264,7 +264,7 @@
     <!-- binding.sca extensions -->
     <attribute name="target" type="string"/>
     <attribute name="targetNamespace" type="string"/>
-    <attribute name="clustered" type="boolean"/>
+    <attribute name="clustered" type="swyd:propBoolean"/>
     <attribute name="loadBalance" type="string"/>
     <attribute name="preferLocal" type="boolean" default="true"/>
     
