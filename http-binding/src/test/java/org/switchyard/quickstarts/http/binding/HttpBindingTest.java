@@ -79,7 +79,7 @@ public class HttpBindingTest {
     @Test
     public void headers() throws Exception {
         String response = http.sendString(BASE_URL + "/symbol", "headers", HTTPMixIn.HTTP_POST);
-        Assert.assertTrue(response.indexOf("Content-type=text/xml; charset=UTF-8") > 0);
+        Assert.assertTrue("Unexpected response: [" + response + "]", response.indexOf("Content-type=text/xml; charset=UTF-8") >= 0);
     }
 
     @Test
