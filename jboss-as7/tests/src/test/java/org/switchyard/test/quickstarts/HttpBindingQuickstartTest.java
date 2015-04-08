@@ -91,7 +91,7 @@ public class HttpBindingQuickstartTest {
         httpMixIn.initialize();
         try {
             String response = httpMixIn.sendString(BASE_URL + "/symbol", "headers", HTTPMixIn.HTTP_POST);
-            Assert.assertTrue(response.toLowerCase().indexOf("content-type=text/xml; charset=utf-8") > 0);
+            Assert.assertTrue("Unexpected response: [" + response + "]", response.toLowerCase().indexOf("content-type=text/xml; charset=utf-8") >= 0);
             int status = httpMixIn.sendStringAndGetStatus(BASE_URL + "/symbol", "rum", HTTPMixIn.HTTP_POST);
             Assert.assertEquals(404, status);
         } finally {
