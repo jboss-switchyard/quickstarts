@@ -73,17 +73,66 @@ Wildfly
 
         mvn clean -Pdeploy,wildfly
 
+
+Karaf
+----------
+1. Start the Karaf server :
+
+        ${KARAF_HOME}/bin/karaf
+
+2. Add the features URL for the respective version of SwitchYard.   Replace {SWITCHYARD-VERSION}
+with the version of SwitchYard that you are using (ex. 2.0.0): 
+
+karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERSION}/xml/features
+
+3. Install the feature for the policy-transaction demo :
+
+karaf@root> features:install switchyard-demo-policy-transaction
+
+4. Execute JMSClient
+
+        mvn exec:java -Dexec.args="activemq"
+
+5. Check the server console for output from the service.  With the default
+   configuration of the quickstart, you should see the output below in the
+   karaf console.
+
+6. Undeploy the demo:
+
+karaf@root> features:uninstall switchyard-demo-policy-transaction
+
+
 CONSOLE
 ----------
 ```
-:: WorkService :: Received command =>  rollback
-:: WorkService :: Marked transaction to rollback!
-:: WorkService :: Received command =>  rollback
-:: WorkService :: Marked transaction to rollback!
-:: WorkService :: Received command =>  rollback
-:: WorkService :: Marked transaction to rollback!
-:: WorkService :: Received command =>  rollback
-:: WorkService :: Rollbacks completed
+:: WorkService :: Received command =>  rollback.A
+:: TaskAService :: Received command =>  rollback.A
+:: TaskAService :: Marked transaction to rollback!
+:: TaskBService :: Received command =>  rollback.A
+:: TaskCService :: Received command =>  rollback.A
+:: TaskCService :: No active transaction
+:: WorkService :: transaction is marked as rollback only
+:: WorkService :: Received command =>  rollback.A
+:: TaskAService :: Received command =>  rollback.A
+:: TaskAService :: Marked transaction to rollback!
+:: TaskBService :: Received command =>  rollback.A
+:: TaskCService :: Received command =>  rollback.A
+:: TaskCService :: No active transaction
+:: WorkService :: transaction is marked as rollback only
+:: WorkService :: Received command =>  rollback.A
+:: TaskAService :: Received command =>  rollback.A
+:: TaskAService :: Marked transaction to rollback!
+:: TaskBService :: Received command =>  rollback.A
+:: TaskCService :: Received command =>  rollback.A
+:: TaskCService :: No active transaction
+:: WorkService :: transaction is marked as rollback only
+:: WorkService :: Received command =>  rollback.A
+:: TaskAService :: Received command =>  rollback.A
+:: TaskAService :: Rollbacks completed - will be committed
+:: TaskBService :: Received command =>  rollback.A
+:: TaskCService :: Received command =>  rollback.A
+:: TaskCService :: No active transaction
+:: WorkService :: transaction will be committed
 ```
 
 Scenarios
