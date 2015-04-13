@@ -22,6 +22,7 @@
             <excludes>
                 <exclude>quickstarts/bpel-xts-subordinate-wsba/**</exclude>
                 <exclude>quickstarts/bpel-xts-wsat/**</exclude>
+                <exclude>quickstarts/demos/webapp-deploy/**</exclude>
                 <exclude>standalone/configuration/standalone_xml_history/**</exclude>
             </excludes>
             <fileMode>644</fileMode>
