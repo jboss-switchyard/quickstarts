@@ -75,7 +75,7 @@ karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERS
 
 3. Install the feature for the bpel-say-hello quickstart :
 
-karaf@root> features:install features:install switchyard-quickstart-bpel-say-hello
+karaf@root> features:install switchyard-quickstart-bpel-say-hello
 
 4. To submit a webservice request to invoke the SOAP gateway, run the quickstart client :
 <br/>

@@ -57,7 +57,16 @@ org.ops4j.pax.web.ssl.clientauthneeded=false
          kermit = the-frog-1,_g_:friend
          _g_\:friend = group,friend
 
-4. When executing the test (as directed below), add the following system property: -Dorg.switchyard.component.soap.client.port=8183
+4. Add the features URL for the respective version of SwitchYard.   Replace {SWITCHYARD-VERSION}
+with the version of SwitchYard that you are using (ex. 2.0.0):
+
+karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERSION}/xml/features
+
+5. Install the feature for the bean-service quickstart :
+
+karaf@root> features:install switchyard-demo-policy-security-basic
+
+6. When executing the test (as directed below), add the following system property: -Dorg.switchyard.component.soap.client.port=8183
 
 
 Wildfly

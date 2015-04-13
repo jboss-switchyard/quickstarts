@@ -83,7 +83,7 @@ karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERS
 
 3. Install the feature for the bpel-simple-correlation quickstart :
 
-karaf@root> features:install features:install switchyard-quickstart-bpel-simple-correlation
+karaf@root> features:install switchyard-quickstart-bpel-simple-correlation
 
 4. To submit a webservice request to invoke the SOAP gateway, run the quickstart client :
 <br/>

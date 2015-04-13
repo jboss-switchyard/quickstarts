@@ -28,11 +28,13 @@ EAP
 
     Tests should be skipped after parameter change because embedded server have hardcoded username and password.
 
-4. Create a file on the ftp server using a standalone FTP client.
+4. From src/test/resources, copy ftpclient.jks, id_sftp_rsa, and known_hosts_sftp to ${EAP_HOME}/src/test/resources.
 
-5. Check the server console for output from the service.
+5. Create a file on the ftp server using a standalone FTP client.
 
-6. Undeploy the quickstart:
+6. Check the server console for output from the service.
+
+7. Undeploy the quickstart:
 
         mvn clean -Pdeploy
 
@@ -58,11 +60,13 @@ mvn install -Pdeploy -Pwildfly -DskipTests=true
 
 Tests should be skipped after parameter change because embedded server have hardcoded username and password.
 
-4. Create file on ftp server using a standalone FTP client
+4. From src/test/resources, copy ftpclient.jks, id_sftp_rsa, and known_hosts_sftp to ${WILDFLY_HOME}/src/test/resources. 
 
-5. Check the server console for output from the service.
+5. Create file on ftp server using a standalone FTP client
 
-6. Undeploy the quickstart:
+6. Check the server console for output from the service.
+
+7. Undeploy the quickstart:
 
 mvn clean -Pdeploy -Pwildfly
 

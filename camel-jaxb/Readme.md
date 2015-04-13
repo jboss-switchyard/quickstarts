@@ -62,9 +62,9 @@ with the version of SwitchYard that you are using (ex. 2.0.0):
 
 karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERSION}/xml/features
 
-3. Install the feature for the camel-ftp-binding quickstart :
+3. Install the feature for the camel-jaxb quickstart :
 
-karaf@root> features:install switchyard-quickstart-camel-ftp-binding
+karaf@root> features:install switchyard-quickstart-camel-jaxb
 
 4. To submit a webservice request to invoke the SOAP gateway, run the quickstart client :
 <br/>
@@ -75,7 +75,7 @@ mvn exec:java -Pkaraf
 
 5. Undeploy the quickstart:
 
-karaf@root> features:uninstall switchyard-quickstart-camel-ftp-binding
+karaf@root> features:uninstall switchyard-quickstart-camel-jaxb
 
 
 

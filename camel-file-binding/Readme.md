@@ -62,7 +62,7 @@ karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERS
 
 3. Install the feature for the camel-file-binding quickstart :
 
-karaf@root> features:install features:install switchyard-quickstart-camel-file-binding
+karaf@root> features:install switchyard-quickstart-camel-file-binding
 
 4. Copy src/test/resources/test.txt to ${KARAF_HOME}/target/input/test.txt
 

@@ -59,22 +59,26 @@ Karaf
 ----------
 1. Start EAP in standalone mode:
 
-${AS}/bin/standalone.sh
+${KARAF_HOME}/bin/karaf
 
-2. Build and deploy the Quickstart :
+2. Add the features URL for the respective version of SwitchYard.   Replace {SWITCHYARD-VERSION}
+with the version of SwitchYard that you are using (ex. 2.0.0):
 
-mvn install -Pdeploy
+karaf@root> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERSION}/xml/features
 
-3. Use the CamelSaxonClient class to send a request message to the GreetingService.  The client can be
-run from the command-line using:
+3. Install the feature for the camel-saxon quickstart :
 
+karaf@root> features:install switchyard-quickstart-camel-saxon
+
+3. Use the CamelSaxonClient class to send a request message to the GreetingService. 
+The client can be run from the command-line using:
 mvn exec:java -Pkaraf
 
 Enter a name "Garfield" or whatever you like.
 
 4. Undeploy the quickstart:
 
-mvn clean -Pdeploy 
+karaf@root> features:uninstall switchyard-quickstart-camel-saxon
 
 
 Expected Output

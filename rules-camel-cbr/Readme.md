@@ -58,7 +58,7 @@ Wildfly
 3. Use the RulesCamelCBRClient class to send a request message to the Dealer service.  The client can be
 run from the command-line using:
 
-        mvn exec:java
+        mvn exec:java -Pwildfly
 
 See the "Expected Output" section for the expected results.
 

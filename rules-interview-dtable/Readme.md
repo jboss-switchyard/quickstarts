@@ -67,7 +67,7 @@ sample requests and the responses that you should see
 - Use the simple bundled SOAP client and the sample request XML e.g.
 <br/>
 ```
-        mvn exec:java
+        mvn exec:java -Pwildfly
 ```
 <br/>
 - SOAP-UI : Use the wsdl for this project (src/main/resources/wsdl/OrderService.wsdl) to 

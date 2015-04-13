@@ -178,7 +178,7 @@ Replace {SWITCHYARD-VERSION} with the version of SwitchYard that you are using (
 
 *6. Install Dealer application on node1.*
 
-    karaf@root> admin:connect node2
+    karaf@root> admin:connect node1
     karaf@node1> features:addurl mvn:org.switchyard.karaf/switchyard/{SWITCHYARD-VERSION}/xml/features
     karaf@node1> features:install switchyard-demo-cluster-dealer
     karaf@node1> logout
