@@ -16,6 +16,7 @@
 package org.switchyard.security.karaf.provider;
 
 import java.security.Principal;
+import java.util.Enumeration;
 import java.util.Set;
 
 import javax.security.auth.Subject;
@@ -100,6 +101,14 @@ public class KarafSecurityProvider extends DefaultSecurityProvider {
                 if (principal instanceof GroupPrincipal) {
                     if (principal.getName().equalsIgnoreCase(roleName)) {
                         return true;
+                    }
+                } else if (principal instanceof org.switchyard.security.principal.GroupPrincipal) {
+                    Enumeration<? extends Principal> e = ((org.switchyard.security.principal.GroupPrincipal) principal).members();
+                    while (e.hasMoreElements()) {
+                        Principal p = e.nextElement();
+                        if (p.getName().equals(roleName)) {
+                            return true;
+                        }
                     }
                 }
             }
