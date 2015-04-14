@@ -17,6 +17,7 @@ sapjco3.jar, sapidoc3.jar and libsapjco3.so can be downloaded from SAP portal.
     <?xml version="1.0" encoding="UTF-8"?>
     <module xmlns="urn:jboss:module:1.1" name="com.sap.conn.jco">
         <resources>
+            <resource-root path="sapidoc3.jar"/>
             <resource-root path="sapjco3.jar"/>
             <resource-root path="lib/linux-x86_64"/>
         </resources>

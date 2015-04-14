@@ -27,7 +27,8 @@ EAP
 
 2. Create an application user:
 
-        ${AS}/bin/add-user.sh --user guest --password guestp.1 --realm ApplicationRealm --group guest
+        ${AS}/bin/add-user.sh
+        realm=ApplicationRealm user=guest password=guestp.1 group=guest
         
 3. Build and deploy the EAR
 
@@ -50,7 +51,8 @@ Wildfly
 
 2. Create an application user:
 
-        ${AS}/bin/add-user.sh --user guest --password guestp.1 --realm ApplicationRealm --group guest
+        ${AS}/bin/add-user.sh
+        realm=ApplicationRealm user=guest password=guestp.1 group=guest
 
 3. Build and deploy the EAR
 

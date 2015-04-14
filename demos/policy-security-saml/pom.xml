@@ -213,11 +213,6 @@
                             <goal>undeploy</goal>
                         </goals>
                         <configuration>
-                            <afterDeployment>
-                                <scripts>
-                                    <script>${unconfig.file}</script>
-                                </scripts>
-                            </afterDeployment>
                             <filename>${project.build.finalName}.jar</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
@@ -229,6 +224,11 @@
                             <goal>undeploy</goal>
                         </goals>
                         <configuration>
+                            <afterDeployment>
+                                <scripts>
+                                    <script>${unconfig.file}</script>
+                                </scripts>
+                            </afterDeployment>
                             <filename>../picketlink-sts.war</filename>
                             <skip>${deploy.skip}</skip>
                         </configuration>
