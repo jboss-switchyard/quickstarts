@@ -17,14 +17,14 @@
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
         <artifactId>switchyard-quickstart-parent</artifactId>
-        <version>1.1.1-p9</version>
+        <version>1.1.1-p10</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-quickstart-transform-xslt</artifactId>
     <packaging>jar</packaging>
     <name>Quickstart : XSLT Transformation</name>
     <properties>
-        <switchyard.version>1.1.1-p9</switchyard.version>
+        <switchyard.version>1.1.1-p10</switchyard.version>
     </properties>
     <dependencies>
         <dependency>
