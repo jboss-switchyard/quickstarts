@@ -16,7 +16,7 @@
  limitations under the License.
  -->
 <switchyard xmlns="urn:switchyard-config:switchyard:2.0">
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-rss-binding" targetNamespace="urn:switchyard-quickstart:camel-rss-binding:2.0.0-SNAPSHOT">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-rss-binding" targetNamespace="urn:switchyard-quickstart:camel-rss-binding:2.0.0.Final">
         <service name="RSSParseService" promote="RSSParseService/RSSParseService">
             <rss:binding.rss xmlns:rss="urn:switchyard-component-camel-rss:config:2.0">
 		<rss:feedURI>http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml</rss:feedURI>

@@ -15,7 +15,7 @@
     limitations under the License.
 -->
 <switchyard xmlns="urn:switchyard-config:switchyard:2.0">
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-rss-binding" targetNamespace="urn:switchyard-quickstart:camel-rss-binding:2.0.0-SNAPSHOT">
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="camel-rss-binding" targetNamespace="urn:switchyard-quickstart:camel-rss-binding:2.0.0.Final">
         <service name="PrintService" promote="PrintService/PrintService">
             <rss:binding.rss xmlns:rss="urn:switchyard-component-camel-rss:config:2.0">
 		<rss:feedURI>file:src/test/resources/rss.xml</rss:feedURI>
