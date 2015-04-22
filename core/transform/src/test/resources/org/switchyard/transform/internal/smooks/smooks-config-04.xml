@@ -1,0 +1,28 @@
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+
+<smooks-resource-list xmlns="http://www.milyn.org/xsd/smooks-1.1.xsd"
+                      xmlns:core="http://www.milyn.org/xsd/smooks/smooks-core-1.4.xsd"
+                      xmlns:jb="http://www.milyn.org/xsd/smooks/javabean-1.4.xsd">
+
+    <jb:bean beanId="person" class="org.switchyard.transform.internal.smooks.Person" createOnElement="/person">
+        <jb:value property="name" data="/person/@name"/>
+        <jb:value property="age" data="/person/@age"/>
+    </jb:bean>
+
+    <core:exports>
+        <core:result type="org.milyn.payload.JavaResult" extract="person"/>
+    </core:exports>
+
+</smooks-resource-list>

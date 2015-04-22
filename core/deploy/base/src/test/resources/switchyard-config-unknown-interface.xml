@@ -1,0 +1,14 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:mock="urn:switchyard-component-mock:config:1.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:switchyard-component-mock:config:1.0 org/switchyard/component/mock/config/model/v1/mock_1_0.xsd">
+
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="orders" targetNamespace="urn:test:config-unknown-interface:1.0">
+        <component name="OrderService">
+            <mock:implementation.mock/>
+            <service name="OrderService">
+                <interface.java interface="org.acme.Blah"/>
+            </service>
+        </component>
+    </composite>
+</switchyard>

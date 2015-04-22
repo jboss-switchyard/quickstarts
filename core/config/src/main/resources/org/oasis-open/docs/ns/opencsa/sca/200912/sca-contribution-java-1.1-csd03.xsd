@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2005,2010. All Rights Reserved.
+     OASIS trademark, IPR and other policies apply.  -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+   xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+   targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+   elementFormDefault="qualified">
+
+   <include schemaLocation="sca-contribution-1.1-cd06.xsd"/>
+
+   <!-- Import.java -->   
+   <element name="import.java" type="sca:JavaImportType"
+      substitutionGroup="sca:importBase" />
+   <complexType name="JavaImportType">
+      <complexContent>
+         <extension base="sca:Import">
+            <attribute name="package" type="string" use="required"/>
+            <attribute name="location" type="anyURI" use="optional"/>
+         </extension>
+      </complexContent>
+   </complexType>
+   
+   <!-- Export.java -->
+   <element name="export.java" type="sca:JavaExportType"
+      substitutionGroup="sca:exportBase" />
+   <complexType name="JavaExportType">
+      <complexContent>
+         <extension base="sca:Export">
+            <attribute name="package" type="string" use="required"/>
+         </extension>
+      </complexContent>
+   </complexType>
+
+</schema>

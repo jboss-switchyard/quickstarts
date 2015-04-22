@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2005,2010. All Rights Reserved. 
+     OASIS trademark, IPR and other policies apply.  -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+   targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+   xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+   elementFormDefault="qualified">
+   
+   <include schemaLocation="sca-core-1.1-cd06.xsd"/>
+   
+   <!-- Java Interface -->
+   <element name="interface.java" type="sca:JavaInterface" 
+            substitutionGroup="sca:interface"/>
+   <complexType name="JavaInterface">
+      <complexContent>
+         <extension base="sca:Interface">
+            <sequence>
+               <any namespace="##other" processContents="lax" minOccurs="0" 
+                    maxOccurs="unbounded"/>
+            </sequence>
+            <attribute name="interface" type="NCName" use="required"/>
+            <attribute name="callbackInterface" type="NCName" 
+                       use="optional"/>
+         </extension>
+      </complexContent>
+   </complexType>
+   
+</schema>

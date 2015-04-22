@@ -1,0 +1,5 @@
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0">
+    <transforms>
+        <transform.json xmlns="urn:switchyard-config:transform:1.0" from="java:org.switchyard.transform.internal.json.User" to="B" />
+    </transforms>
+</switchyard>

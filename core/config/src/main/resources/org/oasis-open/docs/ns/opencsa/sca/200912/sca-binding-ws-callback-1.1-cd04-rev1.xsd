@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- (c) Copyright OASIS 2005, 2010. All Rights Reserved.
+     OASIS trademark, IPR and other policies apply. -->
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+    elementFormDefault="qualified">
+
+    <element name="WSCallback">
+        <complexType>
+            <sequence>
+                <any namespace="##other" processContents="lax" minOccurs="0"
+                     maxOccurs="unbounded"/>
+            </sequence>
+            <anyAttribute namespace="##any" processContents="lax"/>
+        </complexType>
+    </element>
+
+</schema>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2005,2010. All Rights Reserved. 
+     OASIS trademark, IPR and other policies apply. -->
+<schema 
+   targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+   xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns="http://www.w3.org/2001/XMLSchema"
+   elementFormDefault="qualified">
+
+   <!-- SCA-Assembly XML Schema -->
+   <include schemaLocation="sca-core-1.1-cd06.xsd" />
+
+   <!-- SCA-BPEL Component Implementation Type -->
+   <element name="implementation.bpel" 
+      type="sca:BPELImplementation" substitutionGroup="sca:implementation" />
+
+   <complexType name="BPELImplementation">
+      <complexContent>
+         <extension base="sca:Implementation">
+            <sequence>
+               <any namespace="##other" processContents="lax"
+                  minOccurs="0" maxOccurs="unbounded" />
+            </sequence>
+            <attribute name="process" type="QName" use="required" />
+            <anyAttribute namespace="##other" processContents="lax" />
+         </extension>
+      </complexContent>
+   </complexType>
+
+</schema>
+ 

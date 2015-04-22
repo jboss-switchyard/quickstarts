@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions targetNamespace="urn:switchyard-services:orderservice:1.0"
+  xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:switchyard-services:orderservice:1.0"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:common="urn:switchyard-services:common:1.0" >
+  
+  <import location="Common.wsdl" namespace="urn:switchyard-services:common:1.0"></import>
+
+  <portType name="OrderService">
+    <operation name="submitOrder">
+      <input message="common:submitOrder" />
+      <output message="common:submitOrderResponse" />
+    </operation>
+  </portType>
+
+  <binding name="OrderServiceBinding" type="tns:OrderService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="submitOrder">
+      <soap:operation soapAction="urn:switchyard-services:orderservice:1.0" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <service name="OrderService">
+    <port name="OrderServicePort" binding="tns:OrderServiceBinding">
+      <soap:address location="http://127.0.0.1:8080/orderservice/OrderServiceWS" />
+    </port>
+  </service>
+</definitions>

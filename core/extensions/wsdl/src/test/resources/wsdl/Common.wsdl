@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wsdl:definitions targetNamespace="urn:switchyard-services:common:1.0"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:tns="urn:switchyard-services:common:1.0"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+
+  <wsdl:types>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:import schemaLocation="OrderTypes.xsd"
+        namespace="urn:switchyard-services:common:1.0" />
+    </xs:schema>
+  </wsdl:types>
+  
+  <wsdl:message name="submitOrder">
+    <wsdl:part name="parameters" element="tns:submitOrder" />
+  </wsdl:message>
+  <wsdl:message name="submitOrderResponse">
+    <wsdl:part name="parameters" element="tns:submitOrderResponse" />
+  </wsdl:message>
+  
+</wsdl:definitions>

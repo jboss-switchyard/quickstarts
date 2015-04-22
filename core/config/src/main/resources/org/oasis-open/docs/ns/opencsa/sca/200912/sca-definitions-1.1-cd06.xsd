@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2005,20010. All Rights Reserved. 
+     OASIS trademark, IPR and other policies apply.  -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+   targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+   xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+   elementFormDefault="qualified">
+   
+   <include schemaLocation="sca-core-1.1-cd06.xsd"/>
+   <include schemaLocation="sca-policy-1.1-cd04.xsd"/>
+   
+   <!-- Definitions -->
+   <element name="definitions" type="sca:tDefinitions"/>
+   <complexType name="tDefinitions">
+      <complexContent>
+         <extension base="sca:CommonExtensionBase">
+            <choice minOccurs="0" maxOccurs="unbounded">
+               <element ref="sca:intent"/>
+               <element ref="sca:policySet"/>
+               <element ref="sca:bindingType"/>
+               <element ref="sca:implementationType"/>
+               <element ref="sca:externalAttachment"/>
+               <any namespace="##other" processContents="lax" 
+                  minOccurs="0" maxOccurs="unbounded"/>
+            </choice>
+            <attribute name="targetNamespace" type="anyURI" use="required"/>
+         </extension>
+      </complexContent>
+   </complexType>
+
+</schema>

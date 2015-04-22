@@ -1,0 +1,9 @@
+<smooks-resource-list xmlns="http://www.milyn.org/xsd/smooks-1.1.xsd"
+                      xmlns:core="http://www.milyn.org/xsd/smooks/smooks-core-1.4.xsd">
+
+    <!-- silly transform... -->
+    <core:setElementData onElement="/order">
+        <core:attribute name="type" value="B" />
+    </core:setElementData>
+
+</smooks-resource-list>
