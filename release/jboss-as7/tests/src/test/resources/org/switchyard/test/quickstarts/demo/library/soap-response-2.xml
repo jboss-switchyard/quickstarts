@@ -1,0 +1,12 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><processInstanceId xmlns="urn:switchyard-component-bpm:bpm:1.0">1</processInstanceId></SOAP-ENV:Header><soap:Body><ns2:loanResponse xmlns:ns2="urn:switchyard-quickstart-demo:library:1.0">
+    <ns2:loan>
+        <id>1</id>
+        <approved>true</approved>
+        <notes>Happy reading! Remaining copies: 0</notes>
+        <ns2:book>
+            <isbn>978-0-307-35193-7</isbn>
+            <title>World War Z</title>
+            <synopsis>An Oral History of the Zombie War</synopsis>
+        </ns2:book>
+    </ns2:loan>
+</ns2:loanResponse></soap:Body></soap:Envelope>

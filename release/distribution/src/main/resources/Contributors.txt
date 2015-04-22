@@ -1,0 +1,12 @@
+Individual contributors to the SwitchYard project are listed below.  If your name 
+is missing please email kbabo@redhat.com.
+
+Antollini, Mario
+Babo, Keith
+Bevenius, Daniel
+Bojan, Magesh
+Cunningham, Thomas
+Fennelly, Tom
+Montenegro, Alejandro
+Ward, David
+

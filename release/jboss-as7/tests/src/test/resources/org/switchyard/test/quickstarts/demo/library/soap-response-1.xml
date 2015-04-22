@@ -1,0 +1,9 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"/><soap:Body><ns2:suggestionResponse xmlns:ns2="urn:switchyard-quickstart-demo:library:1.0">
+    <ns2:suggestion>
+        <ns2:book>
+            <isbn>978-0-307-35193-7</isbn>
+            <title>World War Z</title>
+            <synopsis>An Oral History of the Zombie War</synopsis>
+        </ns2:book>
+    </ns2:suggestion>
+</ns2:suggestionResponse></soap:Body></soap:Envelope>

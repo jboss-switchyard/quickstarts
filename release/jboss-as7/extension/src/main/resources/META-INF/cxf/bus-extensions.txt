@@ -1,0 +1,1 @@
+org.switchyard.as7.extension.camel.cxf.HttpServerDestinationFactory::true

@@ -1,0 +1,58 @@
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    <id>SwitchyardTools</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>zip</format>
+    </formats>
+
+	<fileSets>
+		<fileSet>
+			<directory>src/main/resources</directory>
+            <outputDirectory>${tools.root.dir}</outputDirectory>
+		</fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.switchyard.console:switchyard-console-application</include>
+            </includes>
+            <outputDirectory>${tools.root.dir}</outputDirectory>
+            <outputFileNameMapping>switchyard-console-application.war</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.riftsaw.console:switchyard-bpel-console-server</include>
+            </includes>
+            <outputDirectory>${tools.root.dir}</outputDirectory>
+            <outputFileNameMapping>switchyard-bpel-console-server.war</outputFileNameMapping>
+        </dependencySet>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.riftsaw.console:switchyard-bpel-console</include>
+            </includes>
+            <unpack>true</unpack>
+            <outputDirectory>${tools.root.dir}/switchyard-bpel-console.war</outputDirectory>
+        </dependencySet>
+    </dependencySets>
+
+</assembly>

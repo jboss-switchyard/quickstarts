@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<module xmlns="urn:jboss:module:1.0" name="org.apache.xmlgraphics">
+
+    <resources>
+        <resource-root path="batik-anim-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-awt-util-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-bridge-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-codec-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-css-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-dom-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-ext-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-gvt-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-parser-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-script-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-svg-dom-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-svggen-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-transcoder-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-util-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="batik-xml-${version.org.apache.xmlgraphics.batik}.jar"/>
+        <resource-root path="axiom-api-${version.org.apache.ws.commons.axiom}.jar"/>
+        <resource-root path="axiom-impl-${version.org.apache.ws.commons.axiom}.jar"/>
+        <resource-root path="xml-apis-ext-${version.xml-apis}.jar"/>
+
+    </resources>
+
+    <dependencies>
+        <module name="org.apache.commons.codec"/>
+        <module name="org.apache.commons.logging"/>
+        <module name="javax.api" export="true"/>
+        <system>
+          <paths>
+            <path name="com/sun/image/codec/jpeg"/>
+          </paths>
+       </system>
+    </dependencies>
+
+</module>

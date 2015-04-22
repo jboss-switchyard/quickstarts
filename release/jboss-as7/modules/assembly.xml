@@ -1,0 +1,137 @@
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+
+    <id>JBossAS7</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <files>
+        <file>
+            <source>src/main/resources/layers.conf</source>
+            <outputDirectory>/modules</outputDirectory>
+            <filtered>false</filtered>
+        </file>
+    </files>
+
+    <componentDescriptors>
+      <componentDescriptor>src/main/resources/switchyard/core/assembly-component.xml</componentDescriptor>
+
+      <!-- FROM: src/main/resources/switchyard/components/assembly.xml -->
+      <componentDescriptor>src/main/resources/switchyard/components/bean/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/bpel/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/bpm/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/amqp/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/atom/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/core/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/cxf/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/file/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/ftp/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/jms/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/jpa/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/mail/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/mqtt/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/netty/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/quartz/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/sap/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/rss/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/sql/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/camel/switchyard/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/http/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/sca/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/resteasy/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/rules/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/soap/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/jca/assembly-component.xml</componentDescriptor>
+
+      <!-- FROM: src/main/resources/switchyard/components/common/assembly.xml -->
+      <componentDescriptor>src/main/resources/switchyard/components/common/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/common/camel/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/switchyard/components/common/knowledge/assembly-component.xml</componentDescriptor>
+
+      <componentDescriptor>src/main/resources/switchyard/console/assembly-component.xml</componentDescriptor>
+
+      <!-- ## External assembly references ## -->
+      <componentDescriptor>src/main/resources/external/apache/ws/commons/axiom/api/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/apache/ws/commons/axiom/impl/assembly-component.xml</componentDescriptor> 
+      <componentDescriptor>src/main/resources/external/apache/abdera/core/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/apache/abdera/i18n/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/apache/abdera/parser/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/hapi-osgi-base/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/apache/commons/collections/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/apache/mina/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/apache/commons/net/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/apache/commons/lang3/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/apache/deltaspike/core-api/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/batik/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/beanshell/assembly-component.xml</componentDescriptor>
+
+      <!--Camel assemblies -->
+      <componentDescriptor>src/main/resources/external/camel/bindy/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/atom/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/cdi/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/core/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/cxf/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/ftp/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/hl7/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/jms/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/jaxb/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/jpa/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/mail/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/mqtt/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/mina2/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/mvel/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/netty/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/quartz/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/rss/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/ognl/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/script/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/soap/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/spring/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/sap/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/saxon/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/camel/sql/assembly-component.xml</componentDescriptor>
+
+      <componentDescriptor>src/main/resources/external/dozer/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/freemarker/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/groovy/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/jcraft/jsch/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/jruby/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/milyn/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/ognl/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/opencsv/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/python/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/quartz/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/rome/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/rhino/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/saaj-impl/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/saxon/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/saxonhe95/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/spring/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/springframework/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/ws-impl/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/xstream/assembly-component.xml</componentDescriptor>
+
+      <!--JBossWS-CXF assemblies -->
+      <componentDescriptor>src/main/resources/external/jbossws/jbossws-spi/assembly-component.xml</componentDescriptor>
+      <componentDescriptor>src/main/resources/external/jbossws/jbossws-jboss720-server-integration/assembly-component.xml</componentDescriptor>
+    </componentDescriptors>
+
+</assembly>

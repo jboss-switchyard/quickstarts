@@ -1,0 +1,1 @@
+Only SwitchYard modules (no external) should be located in this folder.
