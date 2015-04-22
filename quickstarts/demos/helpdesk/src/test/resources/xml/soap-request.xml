@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:helpdesk="urn:switchyard-quickstart-demo:helpdesk:1.0">
+    <soap:Header/>
+    <soap:Body>
+        <helpdesk:openTicket>
+            <ticket>
+                <id>TICKET_ID</id>
+            </ticket>
+        </helpdesk:openTicket>
+    </soap:Body>
+</soap:Envelope>

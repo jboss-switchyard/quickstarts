@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    JBoss, Home of Professional Open Source
+    Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+    contributors by the @authors tag. See the copyright.txt in the
+    distribution for a full listing of individual contributors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+             xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+             xmlns:trfm="urn:switchyard-config:transform:1.0"
+             xmlns:bean="urn:switchyard-component-bean:config:1.0"
+             xmlns:soap="urn:switchyard-component-soap:config:1.0"
+             xmlns:bpel="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+             xmlns:ls="http://example.com/loan-approval/loanService/"
+             xmlns:ra="http://example.com/loan-approval/riskAssessment/"
+             targetNamespace="urn:switchyard-quickstart:bpel-loan-approval:0.1.0"
+             name="loanapproval">
+     <sca:composite name="loanservice" targetNamespace="urn:switchyard-quickstart:bpel-loan-approval:0.1.0">
+        <sca:service name="loanService" promote="loanService">
+            <soap:binding.soap>
+            <soap:contextMapper includes=".*" soapHeadersType="DOM"/>
+                <soap:wsdl>loanServicePT.wsdl</soap:wsdl>
+                <soap:socketAddr>:${soapPort}</soap:socketAddr>
+            </soap:binding.soap>
+         </sca:service>
+
+         <sca:component name="loanService">
+             <bpel:implementation.bpel process="ls:loanApprovalProcess" />
+             <sca:service name="loanService">
+                 <sca:interface.wsdl interface="loanServicePT.wsdl#wsdl.porttype(loanServicePT)"/>
+             </sca:service>
+             <sca:reference name="riskAssessor" >
+                 <sca:interface.wsdl interface="riskAssessmentPT.wsdl#wsdl.porttype(riskAssessmentPT)"/>
+             </sca:reference>
+         </sca:component>
+         
+         <sca:component name="riskAssessor" >
+             <bpel:implementation.bpel process="ra:riskAssessmentProcess" />
+             <sca:service name="riskAssessor">
+                 <sca:interface.wsdl interface="riskAssessmentPT.wsdl#wsdl.porttype(riskAssessmentPT)"/>
+             </sca:service>
+         </sca:component>
+
+     </sca:composite>
+    <domain>
+        <properties>
+            <property name="soapPort" value="${org.switchyard.component.soap.standalone.port:8080}"/>
+        </properties>
+    </domain>
+</switchyard>

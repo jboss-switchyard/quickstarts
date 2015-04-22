@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:2.0" xmlns:mqtt="urn:switchyard-component-camel-mqtt:config:2.0" xmlns:bean="urn:switchyard-component-bean:config:2.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912">
+  <sca:composite name="camel-mqtt-binding" targetNamespace="urn:switchyard-quickstart:camel-mqtt-binding:0.1.0">
+    <sca:service name="GreetingService" promote="GreetingService/GreetingService">
+      <mqtt:binding.mqtt name="Greet">
+        <mqtt:userName>karaf</mqtt:userName>
+        <mqtt:password>karaf</mqtt:password>
+        <mqtt:subscribeTopicName>camel/mqtt/test/input</mqtt:subscribeTopicName>
+       </mqtt:binding.mqtt>
+    </sca:service>
+    <sca:component name="GreetingService">
+      <sca:service name="GreetingService">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.mqtt.binding.GreetingService"/>
+      </sca:service>
+      <sca:reference name="StoreReference">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.mqtt.binding.GreetingService"/>
+      </sca:reference>
+      <bean:implementation.bean class="org.switchyard.quickstarts.camel.mqtt.binding.GreetingServiceBean"/>
+    </sca:component>
+    <sca:reference name="StoreReference" multiplicity="0..1" promote="GreetingService/StoreReference">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.mqtt.binding.GreetingService"/>
+      <mqtt:binding.mqtt name="Store">
+        <mqtt:userName>karaf</mqtt:userName>
+        <mqtt:password>karaf</mqtt:password>
+        <mqtt:publishTopicName>camel/mqtt/test/output</mqtt:publishTopicName>
+       </mqtt:binding.mqtt>
+    </sca:reference>
+  </sca:composite>
+  <domain>
+    <properties>
+<!--
+      <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
+-->
+      <property name="org.switchyard.propagateExceptionOnInOnly" value="true"/>
+    </properties>
+  </domain>
+</switchyard>

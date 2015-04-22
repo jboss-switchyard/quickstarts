@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns2="urn:switchyard-quickstart:soap-binding-rpc:1.0">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <ns2:sayHello>
+            <toWhom>500</toWhom>
+            <language>English</language>
+        </ns2:sayHello>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions targetNamespace="urn:switchyard-quickstart:soap-addressing:1.0" name="ResponseService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+    xmlns:tns="urn:switchyard-quickstart:soap-addressing:1.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+    xmlns:wsp="http://www.w3.org/ns/ws-policy"
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+
+  <types>
+    <xs:schema version="1.0" targetNamespace="urn:switchyard-quickstart:soap-addressing:1.0"
+      xmlns:tns="urn:switchyard-quickstart:soap-addressing:1.0">
+
+      <xs:element name="orderResponse" type="tns:orderResponse"/>
+
+      <xs:complexType name="orderResponse">
+        <xs:sequence>
+          <xs:element name="return" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </types>
+  <message name="orderResponse">
+    <part name="parameters" element="tns:orderResponse"/>
+  </message>
+  <portType name="ResponseService">
+    <operation name="order">
+      <input wsaw:Action="urn:switchyard-quickstart:soap-addressing:1.0:ResponseService:orderResponse" message="tns:orderResponse"/>
+    </operation>
+  </portType>
+  <binding name="ResponseServicePortBinding" type="tns:ResponseService">
+    <wsaw:UsingAddressing required="true"/>
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="order">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+    </operation>
+  </binding>
+  <service name="ResponseService">
+    <port name="ResponseServicePort" binding="tns:ResponseServicePortBinding">
+      <soap:address location="REPLACE_WITH_ACTUAL_URL"/>
+    </port>
+  </service>
+</definitions>
+

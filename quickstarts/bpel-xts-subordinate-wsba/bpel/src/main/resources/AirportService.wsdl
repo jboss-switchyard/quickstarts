@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions name="AirportService"
+	targetNamespace="http://www.jboss.org/bpel/examples/airport" xmlns:ns1="http://schemas.xmlsoap.org/soap/http"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.jboss.org/bpel/examples/airport"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+	xmlns:wsba="http://docs.oasis-open.org/ws-tx/wsba/2006/06"
+	xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+	<wsdl:types>
+		<xs:schema elementFormDefault="unqualified"
+			targetNamespace="http://www.jboss.org/bpel/examples/airport" version="1.0"
+			xmlns:tns="http://www.jboss.org/bpel/examples/airport" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:element name="getFLTID" type="tns:getFLTID" />
+			<xs:element name="getFLTIDResponse" type="tns:getFLTIDResponse" />
+			<xs:element name="order" type="tns:order" />
+			<xs:element name="orderResponse" type="tns:orderResponse" />
+			<xs:complexType name="order">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="name" type="xs:string" />
+					<xs:element minOccurs="0" name="fltid" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="orderResponse">
+				<xs:sequence />
+			</xs:complexType>
+			<xs:complexType name="getFLTID">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="from" type="xs:string" />
+					<xs:element minOccurs="0" name="to" type="xs:string" />
+					<xs:element minOccurs="0" name="date" type="xs:dateTime" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="getFLTIDResponse">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="fltid" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="order">
+		<wsdl:part element="tns:order" name="parameters">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="orderResponse">
+		<wsdl:part element="tns:orderResponse" name="parameters">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getFLTIDResponse">
+		<wsdl:part element="tns:getFLTIDResponse" name="parameters">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getFLTID">
+		<wsdl:part element="tns:getFLTID" name="parameters">
+		</wsdl:part>
+	</wsdl:message>
+	<wsp:Policy wsu:Id="BAAtomicPolicy" >
+        <wsba:BAAtomicOutcomeAssertion/>
+    </wsp:Policy>
+	<wsdl:portType name="AirportService">
+		<wsdl:operation name="order">
+			<wsdl:input message="tns:order" name="order">
+			</wsdl:input>
+			<wsdl:output message="tns:orderResponse" name="orderResponse">
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getFLTID">
+			<wsdl:input message="tns:getFLTID" name="getFLTID">
+			</wsdl:input>
+			<wsdl:output message="tns:getFLTIDResponse" name="getFLTIDResponse">
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="AirportServiceSoapBinding" type="tns:AirportService">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="order">
+			<soap:operation soapAction="" style="document" />
+			<wsp:PolicyReference URI="#BAAtomicPolicy"
+				wsdl:required="true" />
+			<wsdl:input name="order">
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output name="orderResponse">
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getFLTID">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input name="getFLTID">
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output name="getFLTIDResponse">
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="AirportService">
+		<wsdl:port binding="tns:AirportServiceSoapBinding" name="AirportServicePort">
+			<soap:address
+				location="http://localhost:8080/switchyard-quickstart-bpel-service-xts-subordinate-wsba-ws/AirportService/AirportService" />
+		</wsdl:port>
+	</wsdl:service>
+	<plnk:partnerLinkType name="AirportServicePL">
+		<plnk:role name="AirportServiceRole" portType="tns:AirportService" />
+	</plnk:partnerLinkType>
+</wsdl:definitions>

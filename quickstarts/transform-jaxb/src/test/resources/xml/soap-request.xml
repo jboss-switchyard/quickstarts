@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:switchyard-quickstart:transform-jaxb:1.0">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <urn:order>
+         <orderId>PO-19838-XYZ</orderId>
+         <itemId>BUTTER</itemId>
+         <quantity>200</quantity>
+      </urn:order>
+   </soapenv:Body>
+</soapenv:Envelope>

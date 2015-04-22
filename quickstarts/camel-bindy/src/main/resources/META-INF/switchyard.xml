@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:camel="urn:switchyard-component-camel:config:1.0" xmlns:file="urn:switchyard-component-camel-file:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="bindy-example" targetNamespace="urn:com.example.switchyard:bindy-example:1.0">
+  <sca:composite name="bindy-example" targetNamespace="urn:com.example.switchyard:bindy-example:1.0">
+    <sca:component name="FileProcessorBean">
+      <bean:implementation.bean class="org.switchyard.quickstarts.camel.bindy.FileProcessorBean"/>
+      <sca:service name="FileProcessor">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.bindy.FileProcessor"/>
+      </sca:service>
+      <sca:reference name="BindyRoute">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.bindy.BindyRoute"/>
+      </sca:reference>
+    </sca:component>
+    <sca:service name="FileProcessor" promote="FileProcessorBean/FileProcessor">
+      <sca:interface.java interface="org.switchyard.quickstarts.camel.bindy.FileProcessor"/>
+      <file:binding.file name="file1">
+        <operationSelector operationName="process"/>
+        <file:directory>/tmp/inbox</file:directory>
+        <file:fileName>file.txt</file:fileName>
+        <file:consume/>
+      </file:binding.file>
+    </sca:service>
+    <sca:component name="CamelServiceRoute">
+      <camel:implementation.camel>
+        <camel:java class="org.switchyard.quickstarts.camel.bindy.CamelServiceRoute"/>
+      </camel:implementation.camel>
+      <sca:service name="BindyRoute">
+        <sca:interface.java interface="org.switchyard.quickstarts.camel.bindy.BindyRoute"/>
+      </sca:service>
+    </sca:component>
+  </sca:composite>
+</switchyard>

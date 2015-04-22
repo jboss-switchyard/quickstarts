@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:tns="urn:switchyard-quickstart:soap-mtom:1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    targetNamespace="urn:switchyard-quickstart:soap-mtom:1.0"
+    name="ImageServiceService">
+    <types>
+      <xsd:schema targetNamespace="urn:switchyard-quickstart:soap-mtom:1.0"
+        xmlns:tns="urn:switchyard-quickstart:soap-mtom:1.0">
+
+        <xsd:element name="image" type="xsd:base64Binary" xmime:expectedContentTypes="image/jpeg"/>
+        <xsd:element name="imageResponse" type="xsd:base64Binary" xmime:expectedContentTypes="image/jpeg"/>
+
+    </xsd:schema>
+    </types>
+    <message name="resizeImage">
+        <part name="jpeg" element="tns:image"/>
+    </message>
+    <message name="resizeImageResponse">
+        <part name="jpeg" element="tns:imageResponse"/>
+    </message>
+    <portType name="ImageService">
+        <operation name="resizeImage">
+            <input message="tns:resizeImage"/>
+            <output message="tns:resizeImageResponse"/>
+        </operation>
+    </portType>
+    <binding name="ImageServicePortBinding" type="tns:ImageService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="resizeImage">
+            <soap:operation soapAction="urn:switchyard-quickstart:soap-mtom:1.0:resizeImage"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="ImageServiceService">
+        <port name="ImageServicePort" binding="tns:ImageServicePortBinding">
+            <soap:address location="http://localhost:8080/soap-mtom/ImageServiceService"/>
+        </port>
+    </service>
+</definitions>

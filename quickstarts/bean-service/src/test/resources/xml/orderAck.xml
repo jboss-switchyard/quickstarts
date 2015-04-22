@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<orders:submitOrderResponse xmlns:orders="urn:switchyard-quickstart:bean-service:1.0">
+    <orderAck>
+        <orderId>PO-19838-XYZ</orderId>
+        <accepted>true</accepted>
+        <status>Order Accepted [intercepted]</status>
+    </orderAck>
+</orders:submitOrderResponse>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions 
+    targetNamespace="urn:switchyard-quickstart:validate-xml:0.1.0" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:orders="urn:switchyard-quickstart:validate-xml:0.1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    
+  <types>
+    <xsd:schema 
+        targetNamespace="urn:switchyard-quickstart:validate-xml:0.1.0" 
+        xmlns:orders="urn:switchyard-quickstart:validate-xml:0.1.0" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="order" type="orders:order"/>
+        <xs:complexType name="order">
+            <xs:sequence>
+                <xs:element name="orderId" type="xs:string"/>
+                <xs:element name="itemId" type="xs:string"/>
+                <xs:element name="quantity" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:element name="orderAck" type="orders:orderAck"/>
+        <xs:complexType name="orderAck">
+            <xs:sequence>
+                <xs:element name="orderId" type="xs:string"/>
+                <xs:element name="accepted" type="xs:boolean"/>
+                <xs:element name="status" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xsd:schema>
+  </types>
+  
+  <message name="submitOrder">
+    <part name="parameters" element="orders:order"/>
+  </message>
+  <message name="submitOrderResponse">
+    <part name="parameters" element="orders:orderAck"/>
+  </message>
+  
+  <portType name="OrderService">
+    <operation name="submitOrder">
+      <input message="orders:submitOrder"/>
+      <output message="orders:submitOrderResponse"/>
+    </operation>
+  </portType>
+  
+  <binding name="OrderServiceBinding" type="orders:OrderService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="submitOrder">
+      <soap:operation soapAction="urn:switchyard-quickstart:validate-xml:0.1.0"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  
+  <service name="OrderService">
+    <port name="OrderServicePort" binding="orders:OrderServiceBinding">
+      <soap:address location="http://localhost:8080/test"/>
+    </port>
+  </service>
+</definitions>

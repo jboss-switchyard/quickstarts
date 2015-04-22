@@ -1,0 +1,98 @@
+<!--
+    JBoss, Home of Professional Open Source
+    Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+    contributors by the @authors tag. See the copyright.txt in the
+    distribution for a full listing of individual contributors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:c="http://java.sun.com/jsf/core">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+        <title>Help Desk</title>
+    </head>
+    <body>
+        <div id="content">
+            <h1><a href="/helpdesk/">Help Desk</a></h1>
+            <div style="color: red">
+               <h:messages id="messages" globalOnly="false"/>
+            </div>
+            <h:form id="HelpDesk">
+                <table border="0">
+                    <tbody>
+                        <tr>
+                            <td align="right">User: </td>
+                            <td>
+                                <h:selectOneMenu value="#{helpDesk.userId}" onchange="submit()" valueChangeListener="#{helpDesk.selectUser}">
+                                  <c:selectItems value="#{helpDesk.usersGroups}"/>
+                                </h:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <td align="right">Tasks: </td>
+                            <td>
+                                <h:dataTable value="#{helpDesk.userTasks}" var="task" bgcolor="#F1F1F1" border="10" cellpadding="5" cellspacing="3" dir="ltr" frame="hsides" rules="all">
+                                    <h:column>
+                                        <c:facet name="header">ID</c:facet>
+                                        <h:outputText value="#{task.id}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <c:facet name="header">Name (Status)</c:facet>
+                                        <h:outputText value="#{task.name}"/><p/>
+                                        (<h:outputText value="#{task.status}"/>)
+                                    </h:column>
+                                    <h:column>
+                                        <c:facet name="header">Ticket (status)</c:facet>
+                                        <h:outputText value="#{helpDesk.userTickets[task.processInstanceId].id}"/><p/>
+                                        (<h:outputText value="#{helpDesk.userTickets[task.processInstanceId].status}"/>)
+                                    </h:column>
+                                    <h:column>
+                                        <c:facet name="header">Step [Action]</c:facet>
+                                        <ui:fragment rendered="#{helpDesk.groupId == 'developers'}">
+                                            <ui:fragment rendered="#{task.name == 'Review Ticket'}">
+                                                Review Ticket<p/>
+                                                <h:selectOneMenu value="#{helpDesk.userTickets[task.processInstanceId].status}">
+                                                    <c:selectItem itemValue="requested" itemLabel="Request Details"/>
+                                                    <c:selectItem itemValue="approved" itemLabel="Approve Ticket"/>
+                                                    <c:selectItem itemValue="rejected" itemLabel="Reject Ticket"/>
+                                                </h:selectOneMenu>
+                                            </ui:fragment>
+                                            <ui:fragment rendered="#{task.name == 'Resolve Ticket'}">Resolve Ticket</ui:fragment>
+                                        </ui:fragment>
+                                        <ui:fragment rendered="#{helpDesk.groupId == 'users'}">Provide Details</ui:fragment>
+                                    </h:column>
+                                    <h:column>
+                                        <c:facet name="header">Details</c:facet>
+                                        <h:inputTextarea value="#{helpDesk.userTickets[task.processInstanceId].details}" rows="10" cols="40"/>
+                                    </h:column>
+                                </h:dataTable>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <h:commandButton id="submit" value="Submit" action="#{helpDesk.submit}"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </h:form>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <orders:submitOrderResponse xmlns:orders="urn:switchyard-quickstart:bean-service:1.0">
+            <orderAck>
+                <orderId>PO-19838-XYZ</orderId>
+                <accepted>true</accepted>
+                <status>Order Accepted [intercepted]</status>
+            </orderAck>
+        </orders:submitOrderResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

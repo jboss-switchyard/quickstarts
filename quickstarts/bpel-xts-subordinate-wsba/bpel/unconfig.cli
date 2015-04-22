@@ -1,0 +1,8 @@
+if (outcome == success) of /subsystem=xts:read-resource
+    /subsystem=xts:remove
+end-if
+if (outcome == success) of /extension=org.jboss.as.xts:read-resource
+    /extension=org.jboss.as.xts:remove
+end-if
+/subsystem=switchyard/module=org.switchyard.component.bpel:undefine-attribute(name=properties)
+:reload

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="eager">
+  
+    <bean id="ConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616" />
+        <property name="userName" value="karaf" />
+        <property name="password" value="karaf" />
+    </bean>  
+
+    <service interface="javax.jms.ConnectionFactory" ref="ConnectionFactory">
+        <service-properties>
+            <entry key="name" value="ConnectionFactory"/>
+            <entry key="osgi.jndi.service.name" value="ConnectionFactory"/>
+        </service-properties>
+    </service>
+
+</blueprint>

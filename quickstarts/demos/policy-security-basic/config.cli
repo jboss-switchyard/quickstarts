@@ -1,0 +1,4 @@
+if (outcome != success) of /subsystem=web/connector=https/:read-resource
+    /subsystem=web/connector=https/:add(socket-binding=https,scheme=https,protocol=HTTP/1.1,secure=true,enabled=true,enable-lookups=false)
+    /subsystem=web/connector=https/ssl=configuration:add(name="https",password="changeit",certificate-key-file="${jboss.home.dir}/quickstarts/demos/policy-security-basic/connector.jks")
+end-if

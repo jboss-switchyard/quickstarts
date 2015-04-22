@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    JBoss, Home of Professional Open Source
+    Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+    contributors by the @authors tag. See the copyright.txt in the
+    distribution for a full listing of individual contributors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<switchyard xmlns="urn:switchyard-config:switchyard:1.1" xmlns:rules="urn:switchyard-component-rules:config:1.1" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:soap="urn:switchyard-component-soap:config:1.1" name="rules-interview-dtable">
+  <sca:composite name="Interview" targetNamespace="urn:switchyard-quickstart:rules-interview-dtable:0.1.0">
+    <sca:service name="Interview" promote="Interview/Interview">
+      <sca:interface.java interface="org.switchyard.quickstarts.rules.interview.Interview"/>
+    </sca:service>
+    <sca:service name="InterviewPortType" promote="Interview/Interview">
+      <sca:interface.wsdl interface="META-INF/Interview.wsdl#wsdl.porttype(InterviewPortType)"/>
+      <soap:binding.soap>
+        <soap:wsdl>META-INF/Interview.wsdl</soap:wsdl>
+        <soap:socketAddr>:${jettyPort}</soap:socketAddr>
+        <soap:contextPath>rules-interview-dtable</soap:contextPath>
+      </soap:binding.soap>
+    </sca:service>
+    <sca:component name="Interview">
+      <rules:implementation.rules>
+        <rules:manifest>
+          <rules:resources>
+            <rules:resource location="META-INF/Interview.xls" type="DTABLE">
+                <rules:resourceDetail inputType="XLS"/>
+            </rules:resource>
+          </rules:resources>
+        </rules:manifest>
+        <rules:operations>
+          <rules:operation name="verify" type="EXECUTE">
+            <rules:globals>
+              <rules:global from="userName" to="userName"/>
+            </rules:globals>
+            <rules:inputs>
+              <rules:input from="message.content"/>
+            </rules:inputs>
+            <rules:outputs>
+              <rules:output from="globals.Result" to="message.content"/>
+            </rules:outputs>
+          </rules:operation>
+        </rules:operations>
+      </rules:implementation.rules>
+      <sca:service name="Interview">
+        <sca:interface.java interface="org.switchyard.quickstarts.rules.interview.Interview"/>
+      </sca:service>
+    </sca:component>
+  </sca:composite>
+  <transforms>
+    <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.quickstarts.rules.interview.Transformers" from="{urn:switchyard-quickstart:rules-interview-dtable:0.1.0}verify" to="java:org.switchyard.quickstarts.rules.interview.Applicant"/>
+    <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.quickstarts.rules.interview.Transformers" from="java:boolean" to="{urn:switchyard-quickstart:rules-interview-dtable:0.1.0}verifyResponse"/>
+  </transforms>
+  <domain>
+    <properties>
+      <property name="userName" value="${user.name}"/>
+      <property name="jettyPort" value="${org.switchyard.component.http.standalone.port:8080}"/>
+    </properties>
+  </domain>
+</switchyard>

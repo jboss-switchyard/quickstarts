@@ -1,0 +1,15 @@
+<!--<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <orderResponse xmlns="urn:switchyard-quickstart:camel-cxf:2.0">
+            <return>Order Boeing with quantity 10 accepted.</return>
+        </orderResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>-->
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <orderResponse xmlns="urn:switchyard-quickstart:camel-cxf:2.0">
+            <return>Order Boeing with quantity 10 accepted.</return>
+        </orderResponse>
+    </soap:Body>
+</soap:Envelope>

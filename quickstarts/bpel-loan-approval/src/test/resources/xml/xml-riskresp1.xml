@@ -1,0 +1,3 @@
+<checkResponse xmlns="http://example.com/loan-approval/riskAssessment/">
+  <tns:level xmlns:tns="http://example.com/loan-approval/loanService/">low</tns:level>
+</checkResponse>

@@ -1,0 +1,93 @@
+<process name="riskAssessmentProcess"
+		targetNamespace="http://example.com/loan-approval/riskAssessment/"
+		xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+		xmlns:lns="http://example.com/loan-approval/riskAssessment/"
+		queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"
+		expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"
+   		suppressJoinFailure="yes">
+
+   <import importType="http://schemas.xmlsoap.org/wsdl/"
+      location="riskAssessmentPT.wsdl"
+      namespace="http://example.com/loan-approval/riskAssessment/" />
+      
+   <partnerLinks>
+      <partnerLink name="assessor"
+         partnerLinkType="lns:riskAssessmentLT"
+         myRole="assessor" />
+   </partnerLinks>
+
+   <variables>
+      <variable name="check" messageType="lns:checkMessage" />
+      <variable name="checkResponse" messageType="lns:checkResponseMessage" />
+      <variable name="faultResponse" messageType="lns:errorMessage" />
+   </variables>
+
+   <sequence>
+
+      <receive partnerLink="assessor" 
+         portType="lns:riskAssessmentPT"
+         operation="check" 
+         variable="check"
+         createInstance="yes">
+      </receive>
+
+		<if>
+   			<condition>
+				<![CDATA[$check.parameter//lns:amount >= 1000]]>
+			</condition>
+			<sequence>
+		        <assign validate="no" name="AssignFaultValue">
+		            <copy>
+		                <from><literal>
+		                	<integer xmlns="http://example.com/loan-approval/xsd/error-messages/">1</integer>
+						</literal></from>
+		                <to variable="faultResponse" part="errorCode"></to>
+		            </copy>
+		        </assign>
+				<!--throw faultName="lns:loanProcessFault" faultVariable="faultResponse" / -->
+			      <reply partnerLink="assessor" 
+			         portType="lns:riskAssessmentPT"
+			         operation="check" 
+					 faultName="lns:loanProcessFault"
+			         variable="faultResponse">
+			
+			      </reply>
+			
+			</sequence>
+			<else>
+				<sequence>
+				
+			        <assign validate="no" name="AssignName">
+			            <copy>
+			                <from><literal><tns:CheckResponse xmlns:tns="http://example.com/loan-approval/loanService/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <tns:level>low</tns:level>
+</tns:CheckResponse>
+</literal></from>
+			                <to variable="checkResponse" part="parameter"></to>
+			            </copy>
+				    <copy>
+					<from variable="check" header="conversationId" />
+					<to variable="checkResponse" header="conversationId" />
+				    </copy>
+				    <copy>
+			                <from><literal><ns:exampleHeader xmlns:ns="http://www.jboss.org/header">Outbound</ns:exampleHeader></literal></from>
+					<to variable="checkResponse" header="exampleHeader" />
+				    </copy>
+			        </assign>
+			
+			      <reply partnerLink="assessor" 
+			
+			         portType="lns:riskAssessmentPT"
+			
+			         operation="check" 
+			
+			         variable="checkResponse">
+			
+			      </reply>
+			
+				</sequence>
+			</else>
+		</if>
+   </sequence>
+
+</process>

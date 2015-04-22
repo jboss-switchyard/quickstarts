@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions 
+    targetNamespace="urn:switchyard-quickstart-demo:multiapp:1.0" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:tns="urn:switchyard-quickstart-demo:multiapp:1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    
+    <types>
+      <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:import schemaLocation="orderTypes.xsd" namespace="urn:switchyard-quickstart-demo:multiapp:1.0"/>
+      </xs:schema>
+    </types>
+  <message name="submitOrder">
+    <part name="parameters" element="tns:submitOrder"/>
+  </message>
+  <message name="submitOrderResponse">
+    <part name="parameters" element="tns:submitOrderResponse"/>
+  </message>
+  
+  <portType name="OrderService">
+    <operation name="submitOrder">
+      <input message="tns:submitOrder"/>
+      <output message="tns:submitOrderResponse"/>
+    </operation>
+  </portType>
+  
+  <binding name="OrderServiceBinding" type="tns:OrderService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="submitOrder">
+      <soap:operation soapAction="urn:switchyard-quickstart-demo:multiapp:1.0"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  
+  <service name="OrderService">
+    <port name="OrderServicePort" binding="tns:OrderServiceBinding">
+      <soap:address location="http://localhost:8080/quickstart-demo-multiapp/OrderService"/>
+    </port>
+  </service>
+</definitions>
+

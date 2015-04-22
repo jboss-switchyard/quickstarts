@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="eager">
+  
+  <bean id="dataSource" class="org.h2.jdbcx.JdbcDataSource">
+      <property name="URL" value="jdbc:h2:tcp://localhost/h2db;DB_CLOSE_DELAY=-1"/>
+      <property name="user" value="sa"/>
+      <property name="password" value=""/>
+  </bean>
+  
+  <service interface="javax.sql.DataSource" ref="dataSource">
+    <service-properties>
+            <entry key="osgi.jndi.service.name" value="jboss/myDS"/>
+    </service-properties>
+  </service>
+</blueprint>

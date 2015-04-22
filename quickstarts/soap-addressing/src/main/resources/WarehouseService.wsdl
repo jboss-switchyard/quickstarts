@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions targetNamespace="urn:switchyard-quickstart:soap-addressing:1.0" name="WarehouseService"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+    xmlns:tns="urn:switchyard-quickstart:soap-addressing:1.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+    xmlns:wsp="http://www.w3.org/ns/ws-policy"
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+
+  <wsp:Policy wsu:Id="OrderServicePortBinding_policy">
+    <wsam:Addressing required="true">
+        <wsp:Policy/>
+    </wsam:Addressing>
+  </wsp:Policy>
+
+  <types>
+    <xs:schema version="1.0" targetNamespace="urn:switchyard-quickstart:soap-addressing:1.0"
+      xmlns:tns="urn:switchyard-quickstart:soap-addressing:1.0">
+
+      <xs:element name="ItemNotAvailable" type="tns:ItemNotAvailable"/>
+
+      <xs:element name="order" type="tns:order"/>
+
+      <xs:element name="orderResponse" type="tns:orderResponse"/>
+
+      <xs:complexType name="ItemNotAvailable">
+        <xs:sequence>
+          <xs:element name="message" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="order">
+        <xs:sequence>
+          <xs:element name="item" type="xs:string" minOccurs="0"/>
+          <xs:element name="quantity" type="xs:int"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="orderResponse">
+        <xs:sequence>
+          <xs:element name="return" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </types>
+  <message name="ItemNotAvailable">
+    <part name="fault" element="tns:ItemNotAvailable"/>
+  </message>
+  <message name="order">
+    <part name="parameters" element="tns:order"/>
+  </message>
+  <message name="orderResponse">
+    <part name="parameters" element="tns:orderResponse"/>
+  </message>
+  <portType name="WarehouseService">
+    <operation name="order">
+      <input wsaw:Action="urn:switchyard-quickstart:soap-addressing:1.0:WarehouseService:orderRequest" message="tns:order"/>
+      <output message="tns:orderResponse" wsaw:Action="urn:switchyard-quickstart:soap-addressing:1.0:ResponseService:orderResponse"/>
+      <fault message="tns:ItemNotAvailable" name="ItemNotAvailable" wsaw:Action="urn:switchyard-quickstart:soap-addressing:1.0:FaultService:fault"/>
+    </operation>
+  </portType>
+  <binding name="WarehouseServicePortBinding" type="tns:WarehouseService">
+    <!--<wsp:PolicyReference URI="#OrderServicePortBinding_policy"/>-->
+    <wsaw:UsingAddressing required="true"/>
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="order">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="ItemNotAvailable">
+        <soap:fault name="ItemNotAvailable" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="WarehouseService">
+    <port name="WarehouseServicePort" binding="tns:WarehouseServicePortBinding">
+      <soap:address location="REPLACE_WITH_ACTUAL_URL"/>
+    </port>
+  </service>
+</definitions>
+

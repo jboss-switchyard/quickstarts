@@ -1,0 +1,14 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:exam="http://www.jboss.org/bpel/examples">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <exam:orderRequestType>
+         <id>4</id>
+         <name>Ivo</name>
+         <from>Prague</from>
+         <to>Brno</to>
+         <persons>1</persons>
+         <arrival>2012-03-18</arrival>
+         <departure>2012-03-23</departure>
+      </exam:orderRequestType>
+   </soapenv:Body>
+</soapenv:Envelope>

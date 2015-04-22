@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    JBoss, Home of Professional Open Source
+    Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+    contributors by the @authors tag. See the copyright.txt in the
+    distribution for a full listing of individual contributors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:switchyard-quickstart:validate-xml:0.1.0"
+        xmlns:base="urn:switchyard-quickstart:validate-xml-base:0.1.0"
+        xmlns:orders="urn:switchyard-quickstart:validate-xml:0.1.0">
+        <import namespace="urn:switchyard-quickstart:validate-xml-base:0.1.0" schemaLocation="http://switchyard.org/quickstarts/validate-xml/orders.base"/>
+
+        <element name="order" type="orders:orderType" substitutionGroup="base:order.base"/>
+        <complexType name="orderType">
+            <complexContent>
+                <extension base="base:orderBaseType">
+                    <sequence>
+                        <element name="orderId" type="string"/>
+                        <element name="itemId" type="string"/>
+                        <element name="quantity" type="int"/>
+                    </sequence>
+                </extension>
+            </complexContent>
+        </complexType>
+        <element name="orderAck" type="orders:orderAckType" substitutionGroup="base:orderAck.base"/>
+        <complexType name="orderAckType">
+            <complexContent>
+                <extension base="base:orderAckBaseType">
+                    <sequence>
+                        <element name="orderId" type="string"/>
+                        <element name="accepted" type="boolean"/>
+                        <element name="status" type="string"/>
+                    </sequence>
+                </extension>
+            </complexContent>
+        </complexType>
+</schema>

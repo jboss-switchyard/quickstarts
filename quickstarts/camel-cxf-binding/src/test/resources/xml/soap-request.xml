@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:urn="urn:switchyard-quickstart:camel-cxf:2.0">
+   <soapenv:Header>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn:order>
+         <item>Boeing</item>
+         <quantity>10</quantity>
+      </urn:order>
+   </soapenv:Body>
+</soapenv:Envelope>

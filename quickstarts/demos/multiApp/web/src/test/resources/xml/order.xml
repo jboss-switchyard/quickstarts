@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<order xmlns="urn:switchyard-quickstart-demo:orders:1.0">
+    <orderId>PO-19838-XYZ</orderId>
+    <itemId>BUTTER</itemId>
+    <quantity>200</quantity>
+</order>

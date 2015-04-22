@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions 
+    targetNamespace="urn:switchyard-quickstart-demo:orders:1.0" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:tns="urn:switchyard-quickstart-demo:orders:1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    
+  <types>
+    <xsd:schema 
+        targetNamespace="urn:switchyard-quickstart-demo:orders:1.0" 
+        xmlns:tns="urn:switchyard-quickstart-demo:orders:1.0" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="submitOrder" type="tns:submitOrderType"/>
+        <xs:element name="submitOrderResponse" type="tns:submitOrderResponseType"/>
+        <xs:element name="order" type="tns:orderType"/>
+        <xs:element name="orderAck" type="tns:orderAckType"/>
+        <xs:complexType name="submitOrderType">
+            <xs:sequence>
+                <xs:element name="order" type="tns:orderType"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="submitOrderResponseType">
+            <xs:sequence>
+                <xs:element name="orderAck" type="tns:orderAckType"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="orderType">
+            <xs:sequence>
+                <xs:element name="orderId" type="xs:string"/>
+                <xs:element name="itemId" type="xs:string"/>
+                <xs:element name="quantity" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="orderAckType">
+            <xs:sequence>
+                <xs:element name="orderId" type="xs:string"/>
+                <xs:element name="accepted" type="xs:boolean"/>
+                <xs:element name="status" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xsd:schema>
+  </types>
+  
+  <message name="submitOrder">
+    <part name="parameters" element="tns:submitOrder"/>
+  </message>
+  <message name="submitOrderResponse">
+    <part name="parameters" element="tns:submitOrderResponse"/>
+  </message>
+  
+  <portType name="OrderService">
+    <operation name="submitOrder">
+      <input message="tns:submitOrder"/>
+      <output message="tns:submitOrderResponse"/>
+    </operation>
+  </portType>
+  
+  <binding name="OrderServiceBinding" type="tns:OrderService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="submitOrder">
+      <soap:operation soapAction="urn:switchyard-quickstart-demo:orders:1.0"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  
+  <service name="OrderService">
+    <port name="OrderServicePort" binding="tns:OrderServiceBinding">
+      <soap:address location="http://localhost:8080/test"/>
+    </port>
+  </service>
+</definitions>
+

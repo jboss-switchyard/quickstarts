@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+   <soap:Header/>
+   <soap:Body>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Error during validation with '/xsd/orders.xsd' as 'XML_SCHEMA'.</faultstring>
+      </soap:Fault>
+   </soap:Body>
+</soap:Envelope>

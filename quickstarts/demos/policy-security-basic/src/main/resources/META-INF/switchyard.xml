@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="policy-securty-basic">
+<!--
+    JBoss, Home of Professional Open Source
+    Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
+    contributors by the @authors tag. See the copyright.txt in the
+    distribution for a full listing of individual contributors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="policy-security-basic" targetNamespace="urn:switchyard-quickstart-demo:policy-security-basic:0.1.0">
+        <service name="WorkService" promote="WorkService">
+            <interface.wsdl interface="META-INF/WorkService.wsdl#wsdl.porttype(WorkService)"/>
+            <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
+                <wsdl>META-INF/WorkService.wsdl</wsdl>
+                <contextPath>policy-security-basic</contextPath>
+            </binding.soap>
+        </service>
+        <component name="WorkService">
+            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.WorkServiceBean" requires="authorization"/>
+            <service name="WorkService" requires="confidentiality clientAuthentication">
+                <interface.java interface="org.switchyard.quickstarts.demo.policy.security.basic.WorkService"/>
+            </service>
+        </component>
+    </composite>
+    <transforms>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.Transformers" from="java:org.switchyard.quickstarts.demo.policy.security.basic.WorkAck" to="java:org.switchyard.quickstarts.demo.policy.security.basic.Work"/>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.Transformers" from="java:org.switchyard.quickstarts.demo.policy.security.basic.WorkAck" to="{urn:switchyard-quickstart-demo:policy-security-basic:0.1.0}doWorkResponse"/>
+        <transform.java xmlns="urn:switchyard-config:transform:1.0" class="org.switchyard.quickstarts.demo.policy.security.basic.Transformers" from="{urn:switchyard-quickstart-demo:policy-security-basic:0.1.0}doWork" to="java:org.switchyard.quickstarts.demo.policy.security.basic.Work"/>
+    </transforms>
+    <domain>
+        <!--
+        <properties>
+            <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
+        </properties>
+        -->
+        <securities>
+            <security rolesAllowed="friend"/>
+        </securities>
+    </domain>
+</switchyard>

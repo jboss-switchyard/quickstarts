@@ -1,0 +1,156 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<process name="HelloGoodbye"
+    targetNamespace="http://www.jboss.org/bpel/examples/simple_correlation/"
+    xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:tns="http://www.jboss.org/bpel/examples/simple_correlation/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:intf="http://www.jboss.org/bpel/examples/simple_correlation/"
+    queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0"
+    expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath2.0">
+
+  <import location="HelloGoodbye.wsdl"
+     namespace="http://www.jboss.org/bpel/examples/simple_correlation/"
+     importType="http://schemas.xmlsoap.org/wsdl/" />
+
+   <partnerLinks>
+      <partnerLink name="helloGoodbyePartnerLink" 
+         partnerLinkType="intf:HelloGoodbyePartnerLinkType" 
+         myRole="me" />
+   </partnerLinks>
+    
+   <correlationSets xmlns:cor="http://example.com/supplyCorrelation">
+       <correlationSet name="Session"
+          properties="intf:SessionID" />
+   </correlationSets>
+
+   <variables>
+     <variable name="myHelloVar" messageType="intf:HelloMessage"/>
+	 <variable name="helloResponse" messageType="intf:HelloMessage"/>
+     <variable name="myGoodbyeVar" messageType="intf:GoodbyeMessage"/>
+	 <variable name="goodbyeResponse" messageType="intf:GoodbyeMessage"/>
+   </variables>
+
+   <sequence>
+       <receive
+          name="start"
+          partnerLink="helloGoodbyePartnerLink"
+          portType="intf:HelloGoodbyePortType"
+          operation="hello"
+          variable="myHelloVar"
+          createInstance="yes">
+	<correlations>
+	   <correlation set="Session" initiate="yes" />
+	</correlations>
+       </receive>
+
+      <assign name="assignHelloMesg">
+          <copy>
+              <from><literal><helloMessage xmlns="http://www.jboss.org/bpel/examples/simple_correlation/" >
+  <sessionId>
+    <id></id>
+  </sessionId>
+  <parameter></parameter>
+</helloMessage>
+</literal></from>
+              <to variable="helloResponse" part="parameters" />
+          </copy>
+
+          <copy>
+              <from part="parameters" variable="myHelloVar">
+                  <query>//intf:id</query>
+              </from>
+              <to part="parameters" variable="helloResponse">
+                  <query>//intf:id</query>
+              </to>
+          </copy>
+
+          <copy>
+              <from>
+                  <![CDATA[concat($myHelloVar.parameters/intf:parameter, ', Hello World!')]]>
+              </from>
+              <to part="parameters" variable="helloResponse">
+				  <query>//intf:parameter</query>
+              </to>
+          </copy>
+      </assign>
+
+       <reply name="end"  
+              partnerLink="helloGoodbyePartnerLink"
+              portType="intf:HelloGoodbyePortType" 
+              operation="hello"
+              variable="helloResponse">
+	<correlations>
+	   <correlation set="Session" initiate="no" />
+	</correlations>
+       </reply>
+
+       <receive
+          name="start"
+          partnerLink="helloGoodbyePartnerLink"
+          portType="intf:HelloGoodbyePortType"
+          operation="goodbye"
+          variable="myGoodbyeVar">
+	<correlations>
+	   <correlation set="Session" initiate="no" />
+	</correlations>
+       </receive>
+
+      <assign name="assignGoodbyeMesg">
+          <copy>
+              <from><literal><goodbyeMessage xmlns="http://www.jboss.org/bpel/examples/simple_correlation/" >
+  <sessionId>
+    <id></id>
+  </sessionId>
+  <parameter></parameter>
+</goodbyeMessage>
+</literal></from>
+              <to variable="goodbyeResponse" part="parameters" />
+          </copy>
+
+          <copy>
+              <from part="parameters" variable="myGoodbyeVar">
+                  <query>//intf:id</query>
+              </from>
+              <to part="parameters" variable="goodbyeResponse">
+                  <query>//intf:id</query>
+              </to>
+          </copy>
+
+          <copy>
+              <from>
+                  <![CDATA[concat($myGoodbyeVar.parameters/intf:parameter, ', Goodbye World!')]]>
+              </from>
+              <to part="parameters" variable="goodbyeResponse">
+				  <query>//intf:parameter</query>
+              </to>
+          </copy>
+
+      </assign>
+       <reply name="end"  
+              partnerLink="helloGoodbyePartnerLink"
+              portType="intf:HelloGoodbyePortType" 
+              operation="goodbye"
+              variable="goodbyeResponse">
+	<correlations>
+	   <correlation set="Session" initiate="no" />
+	</correlations>
+       </reply>
+   </sequence>
+</process>

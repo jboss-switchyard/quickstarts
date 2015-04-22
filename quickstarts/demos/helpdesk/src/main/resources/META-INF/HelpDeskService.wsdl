@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions 
+    targetNamespace="urn:switchyard-quickstart-demo:helpdesk:1.0" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:tns="urn:switchyard-quickstart-demo:helpdesk:1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    
+  <types>
+    <xsd:schema 
+        targetNamespace="urn:switchyard-quickstart-demo:helpdesk:1.0" 
+        xmlns:tns="urn:switchyard-quickstart-demo:helpdesk:1.0" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="openTicket" type="tns:openTicketType"/>
+        <xs:element name="openTicketResponse" type="tns:openTicketResponseType"/>
+        <xs:element name="ticket" type="tns:ticketType"/>
+        <xs:element name="ticketAck" type="tns:ticketAckType"/>
+        <xs:complexType name="openTicketType">
+            <xs:sequence>
+                <xs:element name="ticket" type="tns:ticketType"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="openTicketResponseType">
+            <xs:sequence>
+                <xs:element name="ticketAck" type="tns:ticketAckType"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="ticketType">
+            <xs:sequence>
+                <xs:element name="id" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="ticketAckType">
+            <xs:sequence>
+                <xs:element name="id" type="xs:string"/>
+                <xs:element name="received" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xsd:schema>
+  </types>
+  
+  <message name="openTicket">
+    <part name="parameters" element="tns:openTicket"/>
+  </message>
+  <message name="openTicketResponse">
+    <part name="parameters" element="tns:openTicketResponse"/>
+  </message>
+  
+  <portType name="HelpDeskService">
+    <operation name="openTicket">
+      <input message="tns:openTicket"/>
+      <output message="tns:openTicketResponse"/>
+    </operation>
+  </portType>
+  
+  <binding name="HelpDeskServiceBinding" type="tns:HelpDeskService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="openTicket">
+      <soap:operation soapAction="urn:switchyard-quickstart-demo:helpdesk:1.0"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  
+  <service name="HelpDeskService">
+    <port name="HelpDeskServicePort" binding="tns:HelpDeskServiceBinding">
+      <soap:address location="http://localhost:8080/HelpDeskService"/>
+    </port>
+  </service>
+</definitions>
+

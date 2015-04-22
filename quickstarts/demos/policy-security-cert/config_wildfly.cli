@@ -1,0 +1,9 @@
+if (outcome != success) of /subsystem=undertow/server=default-server/https-listener=https/:read-resource
+    /core-service=management/security-realm=https:add()
+    /core-service=management/security-realm=https/server-identity=ssl:add(keystore-path=${jboss.home.dir}/quickstarts/demos/policy-security-cert/connector.jks, keystore-password=changeit)
+    /subsystem=undertow/server=default-server/https-listener=https:add(socket-binding=https, security-realm=https)
+end-if
+if (outcome != success) of /subsystem=security/security-domain=policy-security-cert:read-resource
+    /subsystem=security/security-domain=policy-security-cert:add(cache-type=default)
+    /subsystem=security/security-domain=policy-security-cert/authentication=classic:add(login-modules=[{"code"=>"org.switchyard.security.login.CertificateLoginModule", "flag"=>"required", "module-options"=>[("keyStoreLocation"=>"${jboss.home.dir}/quickstarts/demos/policy-security-cert/users.jks"),("keyStorePassword"=>"changeit"),("rolesProperties"=>"${jboss.home.dir}/quickstarts/demos/policy-security-cert/roles.properties")] }]   )
+end-if

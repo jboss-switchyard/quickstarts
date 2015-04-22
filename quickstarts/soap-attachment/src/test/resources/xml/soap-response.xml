@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <ns2:sayHelloResponse xmlns:ns2="urn:switchyard-quickstart:soap-binding-rpc:1.0">
+            <return>Hello World Greeting for 'SwitchYard' in English on a Sunday!</return>
+        </ns2:sayHelloResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

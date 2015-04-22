@@ -1,0 +1,27 @@
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=policyQSTransacted:read-resource
+    jms-queue add --queue-address=policyQSTransacted --entries=policyQSTransacted --durable=false
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=policyQSNonTransacted:read-resource
+    jms-queue add --queue-address=policyQSNonTransacted --entries=policyQSNonTransacted --durable=false
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=queueA:read-resource
+    jms-queue add --queue-address=queueA --entries=queueA --durable=false
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=queueB:read-resource
+    jms-queue add --queue-address=queueB --entries=queueB --durable=false
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/jms-queue=queueC:read-resource
+    jms-queue add --queue-address=queueC --entries=queueC --durable=false
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/pooled-connection-factory=hornetq-ra-in:read-resource
+    /subsystem=messaging/hornetq-server=default/pooled-connection-factory=hornetq-ra-in:add(transaction=xa,connector={"in-vm"=>{null}},entries=["java:/JmsXAIn"])
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/pooled-connection-factory=hornetq-ra-out-a:read-resource
+    /subsystem=messaging/hornetq-server=default/pooled-connection-factory=hornetq-ra-out-a:add(transaction=xa,connector={"in-vm"=>{null}},entries=["java:/JmsXAOutA"])
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/pooled-connection-factory=hornetq-ra-out-b:read-resource
+    /subsystem=messaging/hornetq-server=default/pooled-connection-factory=hornetq-ra-out-b:add(transaction=xa,connector={"in-vm"=>{null}},entries=["java:/JmsXAOutB"])
+end-if
+if (outcome != success) of /subsystem=messaging/hornetq-server=default/pooled-connection-factory=hornetq-ra-out-c:read-resource
+    /subsystem=messaging/hornetq-server=default/pooled-connection-factory=hornetq-ra-out-c:add(transaction=xa,connector={"in-vm"=>{null}},entries=["java:/JmsXAOutC"])
+end-if

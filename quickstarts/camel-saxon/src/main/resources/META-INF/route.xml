@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ASCII"?>
+<routes xmlns="http://camel.apache.org/schema/spring">
+  <route xmlns:tns="urn:switchyard-quickstart:camel-saxon:0.1.0">
+    <from uri="switchyard://RoutingService"/>
+    <log message="GreetingService - message received: ${body}"/>
+    <choice>
+      <when>
+        <xquery>//tns:greet="Garfield"</xquery>
+        <setBody>
+          <xpath>//tns:greet/text()</xpath>
+        </setBody>
+        <to uri="switchyard://GoodbyeService"/>
+      </when>
+      <otherwise>
+        <setBody>
+          <xpath>//tns:greet/text()</xpath>
+        </setBody>
+        <to uri="switchyard://HelloService"/>
+      </otherwise>
+    </choice>
+  </route>
+</routes>

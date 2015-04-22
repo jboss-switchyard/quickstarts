@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<orders:orderAck xmlns:orders="urn:switchyard-quickstart:transform-smooks:1.0">
+    <orderId>PO-19838-XYZ</orderId>
+    <accepted>true</accepted>
+    <status>Order Accepted</status>
+</orders:orderAck>

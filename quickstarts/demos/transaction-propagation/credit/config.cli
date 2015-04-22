@@ -1,0 +1,8 @@
+if (outcome != success) of /extension=org.jboss.as.xts:read-resource
+/extension=org.jboss.as.xts:add
+end-if
+if (outcome != success) of /subsystem=xts:read-resource
+/subsystem=xts:add(url="http://${jboss.bind.address:127.0.0.1}:9080/ws-c11/ActivationService")
+end-if
+/subsystem=switchyard/module=org.switchyard.component.bpel:write-attribute(name=properties, value={bpel.xts.enable => true})
+:reload

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:urn="urn:switchyard-quickstart:soap-addressing:1.0"
+    xmlns:wsa="http://www.w3.org/2005/08/addressing">
+    <soapenv:Header>
+        <wsa:MessageID>uuid:3d3fcbbb-fd43-4118-b40e-62577894f39a</wsa:MessageID>
+        <wsa:Action>urn:switchyard-quickstart:soap-addressing:1.0:OrderService:orderRequest</wsa:Action>
+        <wsa:FaultTo>
+             <wsa:Address>http://localhost:8081/soap-addressing/fault/FaultService</wsa:Address>
+        </wsa:FaultTo>
+    </soapenv:Header>
+   <soapenv:Body>
+      <urn:order>
+         <item>Boeing</item>
+         <quantity>3</quantity>
+      </urn:order>
+   </soapenv:Body>
+</soapenv:Envelope>

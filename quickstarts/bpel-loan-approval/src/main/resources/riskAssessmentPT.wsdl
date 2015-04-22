@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions
+targetNamespace="http://example.com/loan-approval/riskAssessment/"
+xmlns:ens="http://example.com/loan-approval/xsd/error-messages/"
+xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+xmlns:tns="http://example.com/loan-approval/riskAssessment/"
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:types>
+		<xsd:schema targetNamespace="http://example.com/loan-approval/xsd/error-messages/">
+		  <xsd:element name="integer" type="xsd:integer" />
+		</xsd:schema>
+        <xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+                targetNamespace="http://example.com/loan-approval/riskAssessment/" 
+                xmlns="http://www.w3.org/2001/XMLSchema">
+
+	        <element name="check">
+	            <complexType>
+	                <sequence>
+						<element name="firstName" type="xsd:string" />
+						<element name="name" type="xsd:string" />
+						<element name="amount" type="xsd:integer" />
+	                 </sequence>
+	            </complexType>
+	        </element>
+	         
+	        <element name="checkResponse">
+	            <complexType>
+	                <sequence>
+	                    <element name="level" type="string"/>
+	                 </sequence>
+	            </complexType>
+	        </element>
+         </xsd:schema>
+	</wsdl:types>
+	
+	<wsdl:message name="checkMessage">
+		<wsdl:part name="parameter" element="tns:check" />
+	</wsdl:message>
+
+	<wsdl:message name="checkResponseMessage">
+		<wsdl:part name="parameter" element="tns:checkResponse" />
+	</wsdl:message>
+
+	<wsdl:message name="errorMessage">
+		<wsdl:part name="errorCode" element="ens:integer" />
+	</wsdl:message>
+	
+	<wsdl:portType name="riskAssessmentPT">
+		<wsdl:operation name="check">
+			<wsdl:input message="tns:checkMessage" />
+			<wsdl:output message="tns:checkResponseMessage" />
+			<wsdl:fault name="loanProcessFault"
+					message="tns:errorMessage" />
+		</wsdl:operation>
+	</wsdl:portType>
+	
+	<plnk:partnerLinkType name="riskAssessmentLT">
+		<plnk:role name="assessor" portType="tns:riskAssessmentPT" />
+	</plnk:partnerLinkType>
+	
+</wsdl:definitions>

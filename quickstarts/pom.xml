@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+- Copyright 2015 Red Hat Inc. and/or its affiliates and other contributors.
+-
+- Licensed under the Apache License, Version 2.0 (the "License")
+- you may not use this file except in compliance with the License.
+- You may obtain a copy of the License at
+- http://www.apache.org/licenses/LICENSE-2.0
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-parent</artifactId>
+        <version>2.0.0.Final</version>
+        <relativePath>../parent</relativePath>
+    </parent>
+    <groupId>org.switchyard.quickstarts</groupId>
+    <artifactId>switchyard-quickstart-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>SwitchYard Quickstart: quickstarts</name>
+    <description>Quickstarts repository for SwitchYard</description>
+    <url>http://switchyard.org</url>
+    <organization>
+        <name>JBoss by Red Hat</name>
+        <url>http://jboss.org</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <distribution>repo</distribution>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+        </license>
+    </licenses>
+    <repositories>
+        <repository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+    <scm>
+        <connection>scm:git:https://github.com/jboss-switchyard/quickstarts.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:jboss-switchyard/quickstarts.git</developerConnection>
+        <url>http://github.com/jboss-switchyard/quickstarts</url>
+    </scm>
+    <properties>
+        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.6</maven.compiler.source>
+    </properties>
+    <modules>
+        <module>testutil</module>
+        <module>bean-service</module>
+        <module>bpel-jms-binding</module>
+        <module>bpel-loan-approval</module>
+        <module>bpel-say-hello</module>
+        <module>bpel-simple-correlation</module>
+        <module>bpel-xts-subordinate-wsba</module>
+        <module>bpel-xts-wsat</module>
+        <module>bpm-service</module>
+        <module>camel-atom-binding</module>
+        <module>camel-file-binding</module>
+        <module>camel-cxf-binding</module>
+        <module>camel-jaxb</module>
+        <module>camel-hl7</module>
+        <module>camel-amqp-binding</module>
+        <module>camel-ftp-binding</module>
+        <module>camel-jms-binding</module>
+        <module>camel-netty-binding</module>
+        <module>camel-quartz-binding</module>
+        <module>camel-rss-binding</module>
+        <module>camel-jpa-binding</module>
+        <module>camel-sql-binding</module>
+        <module>camel-mail-binding</module>
+        <module>camel-mqtt-binding</module>
+        <module>camel-sap-binding</module>
+        <module>camel-service</module>
+        <module>camel-soap-proxy</module>
+        <module>camel-bus-cdi</module>
+        <module>camel-bindy</module>
+        <module>camel-saxon</module>
+        <module>ear-deployment</module>
+        <module>http-binding</module>
+        <module>remote-invoker</module>
+        <module>rest-binding</module>
+        <module>rules-camel-cbr</module>
+        <module>rules-interview</module>
+        <module>rules-interview-container</module>
+        <module>rules-interview-dtable</module>
+        <module>soap-addressing</module>
+        <module>soap-attachment</module>
+        <module>soap-binding-rpc</module>
+        <module>soap-mtom</module>
+        <module>jca-inflow-hornetq</module>
+        <module>jca-outbound-hornetq</module>
+        <module>jca-inflow-activemq</module>
+        <module>jca-outbound-activemq</module>
+        <module>transform-dozer</module>
+        <module>transform-jaxb</module>
+        <module>transform-json</module>
+        <module>transform-smooks</module>
+        <module>transform-xslt</module>
+        <module>validate-xml</module>
+        <module>demos/helpdesk</module>
+        <module>demos/library</module>
+        <module>demos/orders</module>
+        <module>demos/webapp-deploy</module>
+        <module>demos/multiApp</module>
+        <module>demos/policy-security-basic</module>
+        <module>demos/policy-security-cert</module>
+        <module>demos/policy-security-saml</module>
+        <module>demos/policy-security-wss-signencrypt</module>
+        <module>demos/policy-security-wss-username</module>
+        <module>demos/policy-transaction</module>
+        <module>demos/cluster</module>
+        <module>demos/security-propagation</module>
+        <module>demos/transaction-propagation</module>
+    </modules>
+    <!-- Conditionally include the assembly module.  It's not always present e.g. in the quickstarts distro. -->
+    <profiles>
+        <profile>
+            <activation>
+                <file>
+                    <exists>assembly</exists>
+                </file>
+            </activation>
+            <modules>
+                <module>assembly</module>
+            </modules>
+        </profile>
+    </profiles>
+</project>

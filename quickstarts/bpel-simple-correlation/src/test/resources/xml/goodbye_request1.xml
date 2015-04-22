@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:sim="http://www.jboss.org/bpel/examples/simple_correlation/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <sim:goodbyeMessage>
+         <sim:sessionId>
+            <sim:id>1</sim:id>
+         </sim:sessionId>
+         <sim:parameter>BPEL</sim:parameter>
+      </sim:goodbyeMessage>
+   </soapenv:Body>
+</soapenv:Envelope>

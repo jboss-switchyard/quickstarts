@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    JBoss, Home of Professional Open Source
+    Copyright 2014, Red Hat, Inc. and/or its affiliates, and individual
+    contributors by the @authors tag. See the copyright.txt in the
+    distribution for a full listing of individual contributors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<switchyard xmlns="urn:switchyard-config:switchyard:2.0" xmlns:camel="urn:switchyard-component-camel:config:2.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:cxf="urn:switchyard-component-camel-cxf:config:2.0" xmlns:xform="urn:switchyard-config:transform:2.0" name="switchyard-quickstart-camel-cxf" targetNamespace="urn:switchyard-quickstart:camel-cxf:2.0">
+  <sca:composite name="switchyard-quickstart-camel-cxf" targetNamespace="urn:switchyard-quickstart:camel-cxf:2.0">
+    <sca:service name="OrderService" promote="Route/OrderService">
+      <sca:interface.wsdl interface="OrderService.wsdl#wsdl.porttype(OrderService)"/>
+      <cxf:binding.cxf>
+        <cxf:cxfURI>http://localhost:${cxfPort}/camel-cxf/order/OrderService</cxf:cxfURI>
+        <cxf:wsdlURL>OrderService.wsdl</cxf:wsdlURL>
+        <cxf:dataFormat>PAYLOAD</cxf:dataFormat>
+        <cxf:setDefaultBus>false</cxf:setDefaultBus>
+      </cxf:binding.cxf>
+    </sca:service>
+    <sca:reference name="WarehouseServiceExternal" multiplicity="0..1" promote="Route/WarehouseServiceExternal">
+      <sca:interface.wsdl interface="WarehouseService.wsdl#wsdl.porttype(WarehouseService)"/>
+      <cxf:binding.cxf>
+        <cxf:cxfURI>http://localhost:${cxfPort2}/camel-cxf/warehouse/WarehouseService</cxf:cxfURI>
+        <cxf:wsdlURL>WarehouseService.wsdl</cxf:wsdlURL>
+        <cxf:dataFormat>PAYLOAD</cxf:dataFormat>
+        <cxf:setDefaultBus>false</cxf:setDefaultBus>
+      </cxf:binding.cxf>
+    </sca:reference>
+    <sca:component name="Route">
+      <camel:implementation.camel>
+        <camel:xml path="route.xml"/>
+      </camel:implementation.camel>
+      <sca:service name="OrderService">
+        <interface.esb inputType="java:org.switchyard.quickstarts.camel.cxf.Order" outputType="java:org.switchyard.quickstarts.camel.cxf.OrderResponse"/>
+      </sca:service>
+      <sca:reference name="WarehouseServiceExternal">
+        <interface.esb faultType="java:org.switchyard.quickstarts.camel.cxf.ItemNotAvailable" inputType="java:org.switchyard.quickstarts.camel.cxf.Order" outputType="java:org.switchyard.quickstarts.camel.cxf.OrderResponse"/>
+      </sca:reference>
+    </sca:component>
+    <sca:service name="WarehouseService" promote="Route2/WarehouseService">
+      <sca:interface.wsdl interface="WarehouseService.wsdl#wsdl.porttype(WarehouseService)"/>
+      <cxf:binding.cxf>
+        <cxf:cxfURI>http://localhost:${cxfPort2}/camel-cxf/warehouse/WarehouseService</cxf:cxfURI>
+        <cxf:wsdlURL>WarehouseService.wsdl</cxf:wsdlURL>
+        <cxf:dataFormat>PAYLOAD</cxf:dataFormat>
+        <cxf:setDefaultBus>false</cxf:setDefaultBus>
+      </cxf:binding.cxf>
+    </sca:service>
+    <sca:component name="Route2">
+      <camel:implementation.camel>
+        <camel:xml path="route2.xml"/>
+      </camel:implementation.camel>
+      <sca:service name="WarehouseService">
+        <interface.esb faultType="java:org.switchyard.quickstarts.camel.cxf.ItemNotAvailable" inputType="java:org.switchyard.quickstarts.camel.cxf.Order" outputType="java:org.switchyard.quickstarts.camel.cxf.OrderResponse"/>
+      </sca:service>
+    </sca:component>
+  </sca:composite>
+  <transforms>
+    <xform:transform.jaxb from="{urn:switchyard-quickstart:camel-cxf:2.0}order" to="java:org.switchyard.quickstarts.camel.cxf.Order"/>
+    <xform:transform.jaxb from="{urn:switchyard-quickstart:camel-cxf:2.0}orderResponse" to="java:org.switchyard.quickstarts.camel.cxf.OrderResponse"/>
+    <xform:transform.jaxb from="{urn:switchyard-quickstart:camel-cxf:2.0}ItemNotAvailable" to="java:org.switchyard.quickstarts.camel.cxf.ItemNotAvailable"/>
+    <xform:transform.jaxb to="{urn:switchyard-quickstart:camel-cxf:2.0}order" from="java:org.switchyard.quickstarts.camel.cxf.Order"/>
+    <xform:transform.jaxb to="{urn:switchyard-quickstart:camel-cxf:2.0}orderResponse" from="java:org.switchyard.quickstarts.camel.cxf.OrderResponse"/>
+    <xform:transform.jaxb to="{urn:switchyard-quickstart:camel-cxf:2.0}ItemNotAvailable" from="java:org.switchyard.quickstarts.camel.cxf.ItemNotAvailable"/>
+  </transforms>
+  <domain>
+    <properties>
+      <property name="cxfPort" value="${org.switchyard.component.camel.cxf.port:8082}"/>
+      <property name="cxfPort2" value="${org.switchyard.component.camel.cxf.port2:8083}"/>
+      <property name="org.switchyard.handlers.messageTrace.enabled" value="false"/>
+    </properties>
+  </domain>
+</switchyard>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions 
+    targetNamespace="urn:switchyard-quickstart-demo:policy-security-saml:0.1.0" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:tns="urn:switchyard-quickstart-demo:policy-security-saml:0.1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    
+  <types>
+    <xsd:schema 
+        targetNamespace="urn:switchyard-quickstart-demo:policy-security-saml:0.1.0" 
+        xmlns:tns="urn:switchyard-quickstart-demo:policy-security-saml:0.1.0" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="doWork" type="tns:doWorkType"/>
+        <xs:element name="doWorkResponse" type="tns:doWorkResponseType"/>
+        <xs:element name="work" type="tns:workType"/>
+        <xs:element name="workAck" type="tns:workAckType"/>
+        <xs:complexType name="doWorkType">
+            <xs:sequence>
+                <xs:element name="work" type="tns:workType"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="doWorkResponseType">
+            <xs:sequence>
+                <xs:element name="workAck" type="tns:workAckType"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="workType">
+            <xs:sequence>
+                <xs:element name="command" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:complexType name="workAckType">
+            <xs:sequence>
+                <xs:element name="command" type="xs:string"/>
+                <xs:element name="received" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xsd:schema>
+  </types>
+  
+  <message name="doWork">
+    <part name="parameters" element="tns:doWork"/>
+  </message>
+  <message name="doWorkResponse">
+    <part name="parameters" element="tns:doWorkResponse"/>
+  </message>
+  
+  <portType name="WorkService">
+    <operation name="doWork">
+      <input message="tns:doWork"/>
+      <output message="tns:doWorkResponse"/>
+    </operation>
+  </portType>
+  
+  <binding name="WorkServiceBinding" type="tns:WorkService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+    <operation name="doWork">
+      <soap:operation soapAction="urn:switchyard-quickstart-demo:policy-security-saml:0.1.0"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  
+  <service name="WorkService">
+    <port name="WorkServicePort" binding="tns:WorkServiceBinding">
+      <soap:address location="https://localhost:8443/WorkService/WorkService"/>
+    </port>
+  </service>
+</definitions>
+
