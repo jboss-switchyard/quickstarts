@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+		<submitResponse xmlns="urn:test:unwrapped">
+		   <invoice>
+		      <amount>100.00</amount>
+		      <daysOut>50</daysOut>
+		   </invoice>
+		</submitResponse>
+	</SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

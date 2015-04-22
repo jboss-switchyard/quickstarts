@@ -1,0 +1,4 @@
+<rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:1.1">
+    <rest:interfaces>org.switchyard.quickstarts.rest.binding.OrderResource,org.switchyard.quickstarts.rest.binding.TestResource</rest:interfaces>
+    <rest:contextPath>rest-binding</rest:contextPath>
+</rest:binding.rest>

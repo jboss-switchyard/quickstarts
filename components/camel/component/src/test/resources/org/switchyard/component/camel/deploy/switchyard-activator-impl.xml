@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:camel="urn:switchyard-component-camel:config:1.0"
+    xmlns:bean="urn:switchyard-component-bean:config:1.0">
+
+    <sca:composite name="OrderService" targetNamespace="urn:camel-core:test:1.0">
+        <sca:component name="WarehouseComponent" >
+            <bean:implementation.bean class="org.switchyard.component.camel.deploy.support.WarehouseServiceImpl"/>
+            <sca:service name="WarehouseService">
+                <sca:interface.java interface="org.switchyard.component.camel.deploy.support.WarehouseService"/>
+            </sca:service>
+        </sca:component>
+
+        <sca:component name="CamelComponent">
+            <camel:implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
+                 <xml path="org/switchyard/component/camel/deploy/impl-route.xml"/>
+            </camel:implementation.camel>
+            <sca:service name="OrderService" >
+                <sca:interface.java interface="org.switchyard.component.camel.deploy.support.OrderService"/>
+            </sca:service>
+            <sca:reference name="WarehouseService">
+                <sca:interface.java interface="org.switchyard.component.camel.deploy.support.WarehouseService"/>
+            </sca:reference>
+            <sca:property name="prop.component" value="prop.component value"/>
+        </sca:component>
+        <sca:property name="prop.composite" value="prop.composite value"/>
+    </sca:composite>
+    <domain>
+        <properties>
+            <property name="prop.domain" value="prop.domain value"/>
+        </properties>
+    </domain>
+</switchyard>

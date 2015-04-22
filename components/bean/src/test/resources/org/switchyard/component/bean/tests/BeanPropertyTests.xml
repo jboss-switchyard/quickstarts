@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+            xmlns:bean="urn:switchyard-component-bean:config:1.0">
+    <sca:composite name="BeanPropertyTest" targetNamespace="urn:bean:test:1.0">
+        <sca:component name="PropertyService">
+            <bean:implementation.bean class="org.switchyard.component.bean.tests.PropertyServiceBean"/>
+            <sca:service name="PropertyService">
+                <sca:interface.java interface="org.switchyard.component.bean.tests.PropertyService"/>
+            </sca:service>
+            <sca:property name="foo" value="(component) should be overridden by domain property"/>
+            <sca:property name="composite.foo" value="(component) should be overridden by composite property"/>
+            <sca:property name="component.foo" value="component.bar"/>
+        </sca:component>
+        <sca:property name="foo" value="(composite) should be overridden by domain property"/>
+        <sca:property name="composite.foo" value="composite.bar"/>
+    </sca:composite>
+    <domain>
+        <properties>
+            <property name="foo" value="bar"/>
+        </properties>
+    </domain>
+</switchyard>

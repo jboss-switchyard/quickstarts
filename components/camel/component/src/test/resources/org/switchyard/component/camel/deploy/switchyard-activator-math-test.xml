@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:camel="urn:switchyard-component-camel:config:1.0"
+    xmlns:core="urn:switchyard-component-camel-core:config:1.0">
+
+    <sca:composite name="MathComposite" targetNamespace="urn:camel-core:test:1.0">
+        <sca:service name="CamelMathService" promote="MathComponent/CamelMathService" />
+
+        <sca:component name="MathComponent">
+            <camel:implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
+	         <xml path="org/switchyard/component/camel/deploy/math-route.xml"/> 
+            </camel:implementation.camel>
+
+            <sca:service name="CamelMathService">
+                <sca:interface.java interface="org.switchyard.component.camel.deploy.support.MathService"/>
+            </sca:service>
+
+            <sca:reference name="MathAll">
+                <interface.esb inputType="java:java.lang.Double" />
+            </sca:reference>
+            <sca:reference name="MathCos">
+                <interface.esb inputType="java:java.lang.Double" />
+            </sca:reference>
+            <sca:reference name="MathAbs">
+                <interface.esb inputType="java:java.lang.Double" />
+            </sca:reference>
+        </sca:component>
+
+        <sca:reference name="MathAll" multiplicity="0..1" promote="MathAll">
+            <interface.esb inputType="java:java.lang.Double" />
+            <core:binding.mock>
+                <core:name>all</core:name>
+            </core:binding.mock>
+        </sca:reference>
+        <sca:reference name="MathAbs" multiplicity="0..1" promote="MathAbs">
+            <interface.esb inputType="java:java.lang.Double" />
+            <core:binding.mock>
+                <core:name>abs</core:name>
+            </core:binding.mock>
+        </sca:reference>
+        <sca:reference name="MathCos" multiplicity="0..1" promote="MathCos">
+            <interface.esb inputType="java:java.lang.Double" />
+            <core:binding.mock>
+                <core:name>cos</core:name>
+            </core:binding.mock>
+        </sca:reference>
+    </sca:composite>
+
+</switchyard>

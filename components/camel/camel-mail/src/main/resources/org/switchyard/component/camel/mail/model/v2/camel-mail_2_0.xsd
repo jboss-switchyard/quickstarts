@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="urn:switchyard-component-camel-mail:config:2.0"
+    xmlns:tns="urn:switchyard-component-camel-mail:config:2.0"
+    xmlns:switchyard="urn:switchyard-config:switchyard:2.0"
+    elementFormDefault="qualified">
+
+    <import namespace="urn:switchyard-config:switchyard:2.0"/>
+    <include schemaLocation="camel-common_2_0.xsd" />
+
+    <element name="binding.mail" type="tns:CamelMailBindingType" substitutionGroup="switchyard:binding.switchyard"/>
+    <complexType name="CamelMailBindingType">
+        <complexContent>
+            <extension base="tns:BaseCamelBinding">
+                <sequence>
+                    <element name="host" type="string" />
+                    <element name="port" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
+                    <element name="username" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="password" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="connectionTimeout" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
+                    <choice minOccurs="0" maxOccurs="1">
+                        <element name="consume" type="tns:CamelMailConsumerType"/>
+                        <element name="produce" type="tns:CamelMailProducerType"/>
+                    </choice>
+                </sequence>
+                <attribute name="secure" type="boolean"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="CamelMailProducerType">
+        <sequence>
+            <element name="subject" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="from" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="to" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="CC" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="BCC" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="replyTo" type="string" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="CamelMailConsumerType">
+        <sequence>
+            <group ref="tns:ScheduledPollConsumerType" minOccurs="0" maxOccurs="1" />
+            <group ref="tns:ScheduledBatchPollConsumerType" minOccurs="0" maxOccurs="1" />
+
+            <element name="folderName" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="fetchSize" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
+            <element name="unseen" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="delete" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <element name="copyTo" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="disconnect" type="boolean" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+        <attribute name="accountType" type="tns:MailConsumerAccountType" default="imap"/>
+    </complexType>
+
+    <simpleType name="MailConsumerAccountType">
+        <restriction base="string">
+            <enumeration value="imap" />
+            <enumeration value="pop3" />
+        </restriction>
+    </simpleType>
+
+</schema>

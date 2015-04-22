@@ -1,0 +1,4 @@
+<soap:binding.soap xmlns:soap="urn:switchyard-component-soap:config:1.0">
+    <soap:messageComposer unwrapped="true"/>
+    <soap:wsdl>Foo.wsdl</soap:wsdl>
+</soap:binding.soap>

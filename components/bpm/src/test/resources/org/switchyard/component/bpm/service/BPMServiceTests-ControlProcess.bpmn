@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:g="http://www.jboss.org/drools/flow/gpd" xmlns:tns="http://www.jboss.org/drools" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" id="Definition" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.jboss.org/drools" typeLanguage="http://www.java.com/javaTypes">
+  <process id="ControlProcess" tns:packageName="org.switchyard.component.bpm" name="ControlProcess" isExecutable="true" processType="Private">
+    <startEvent id="_1" name="StartProcess">
+      <outgoing>_1-_5</outgoing>
+    </startEvent>
+    <endEvent id="_3" name="EndProcess">
+      <incoming>_4-_3</incoming>
+      <terminateEventDefinition id="TerminateEventDefinition_1"/>
+    </endEvent>
+    <task id="_4" tns:taskName="SwitchYard Service Task" name="CallService">
+      <incoming>_5-_4</incoming>
+      <outgoing>_4-_3</outgoing>
+      <ioSpecification id="InputOutputSpecification_1">
+        <dataInput id="_4_ServiceNameInput" name="ServiceName"/>
+        <inputSet id="InputSet_1">
+          <dataInputRefs>_4_ServiceNameInput</dataInputRefs>
+        </inputSet>
+        <outputSet id="OutputSet_1"/>
+      </ioSpecification>
+      <dataInputAssociation id="DataInputAssociation_1">
+        <targetRef>_4_ServiceNameInput</targetRef>
+        <assignment id="Assignment_1">
+          <from xsi:type="tFormalExpression" id="FormalExpression_1">CallService</from>
+          <to xsi:type="tFormalExpression" id="FormalExpression_2">_4_ServiceNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+    </task>
+    <intermediateCatchEvent id="_5" name="Message">
+      <incoming>_1-_5</incoming>
+      <outgoing>_5-_4</outgoing>
+      <signalEventDefinition id="SignalEventDefinition_1" signalRef="test"/>
+    </intermediateCatchEvent>
+    <sequenceFlow id="_4-_3" sourceRef="_4" targetRef="_3"/>
+    <sequenceFlow id="_5-_4" sourceRef="_5" targetRef="_4"/>
+    <sequenceFlow id="_1-_5" sourceRef="_1" targetRef="_5"/>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_Process_1" bpmnElement="ControlProcess">
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="_1">
+        <dc:Bounds height="48.0" width="48.0" x="16.0" y="16.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="_3">
+        <dc:Bounds height="48.0" width="48.0" x="335.0" y="16.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_1" bpmnElement="_4">
+        <dc:Bounds height="48.0" width="127.0" x="176.0" y="16.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_IntermediateCatchEvent_1" bpmnElement="_5">
+        <dc:Bounds height="48.0" width="48.0" x="96.0" y="16.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_1" bpmnElement="_4-_3" sourceElement="BPMNShape_Task_1" targetElement="BPMNShape_EndEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="303.0" y="40.0"/>
+        <di:waypoint xsi:type="dc:Point" x="335.0" y="40.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_2" bpmnElement="_5-_4" sourceElement="BPMNShape_IntermediateCatchEvent_1" targetElement="BPMNShape_Task_1">
+        <di:waypoint xsi:type="dc:Point" x="144.0" y="40.0"/>
+        <di:waypoint xsi:type="dc:Point" x="176.0" y="40.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_3" bpmnElement="_1-_5" sourceElement="BPMNShape_StartEvent_1" targetElement="BPMNShape_IntermediateCatchEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="64.0" y="40.0"/>
+        <di:waypoint xsi:type="dc:Point" x="96.0" y="40.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

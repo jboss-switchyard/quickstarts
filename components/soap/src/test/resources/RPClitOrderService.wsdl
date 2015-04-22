@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions 
+    targetNamespace="urn:switchyard-component-soap:test-ws:1.0" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:tns="urn:switchyard-component-soap:test-ws:1.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    
+  <types>
+    <xsd:schema 
+        targetNamespace="urn:switchyard-component-soap:test-ws:1.0" 
+        xmlns:tns="urn:switchyard-component-soap:test-ws:1.0" 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="orderId" type="xs:string"/>
+        <xs:element name="itemId" type="xs:string"/>
+        <xs:element name="quantity" type="xs:int"/>
+        <xs:element name="orderAck" type="tns:orderAck"/>
+        <xs:complexType name="orderAck">
+            <xs:sequence>
+                <xs:element name="orderId" type="xs:string"/>
+                <xs:element name="accepted" type="xs:boolean"/>
+                <xs:element name="status" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xsd:schema>
+  </types>
+  
+  <message name="submitOrderRequest">
+    <part name="orderId" type="tns:orderId"/>
+    <part name="itemId" type="tns:itemId"/>
+    <part name="quantity" type="tns:quantity"/>
+  </message>
+  <message name="submitOrderResponse">
+    <part name="return" type="tns:orderAck"/>
+  </message>
+  
+  <portType name="OrderServiceRPC">
+    <operation name="submitOrder">
+      <input message="tns:submitOrderRequest"/>
+      <output message="tns:submitOrderResponse"/>
+    </operation>
+  </portType>
+  
+  <binding name="OrderServiceRPCBinding" type="tns:OrderServiceRPC">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+    <operation name="submitOrder">
+      <soap:operation soapAction="urn:switchyard-component-soap:test-ws:1.0"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  
+  <service name="OrderServiceRPC">
+    <port name="OrderServiceRPCPort" binding="tns:OrderServiceRPCBinding">
+      <soap:address location="http://localhost:18001/OrderServiceRPC"/>
+    </port>
+  </service>
+</definitions>

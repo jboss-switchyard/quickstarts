@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<definitions
+  targetNamespace="urn:switchyard-metadata-wsdl"
+  name="HelloWebService"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:tns="urn:switchyard-metadata-wsdl"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:ns2="urn:switchyard-metadata-interface">
+  <import location='HelloWebServiceImportInterface.wsdl' namespace='urn:switchyard-metadata-interface'/>
+</definitions>
+

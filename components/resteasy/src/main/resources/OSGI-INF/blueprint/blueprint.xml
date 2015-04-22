@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+  
+    <reference id="httpService" interface="org.osgi.service.http.HttpService"/>
+    
+    <bean id="RESTEasyResourcePublisher" class="org.switchyard.component.resteasy.osgi.OsgiRESTEasyResourcePublisher">
+        <property name="httpService" ref="httpService"/>
+    </bean>
+    <service interface="org.switchyard.component.resteasy.resource.ResourcePublisher" ref="RESTEasyResourcePublisher"/>
+
+    <bean id="RESTEasyMethodInvokerFactory" class="org.switchyard.component.resteasy.osgi.OsgiMethodInvokerFactory"/>
+    <service interface="org.switchyard.component.resteasy.util.MethodInvokerFactory" ref="RESTEasyMethodInvokerFactory"/>
+
+</blueprint>

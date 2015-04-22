@@ -1,0 +1,12 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:test:unwrapped">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <urn:submit>
+         <!--A Comment-->
+         <invoice>
+            <amount>100.00</amount>
+            <daysOut>50</daysOut>
+         </invoice>
+      </urn:submit>
+   </soapenv:Body>
+</soapenv:Envelope>

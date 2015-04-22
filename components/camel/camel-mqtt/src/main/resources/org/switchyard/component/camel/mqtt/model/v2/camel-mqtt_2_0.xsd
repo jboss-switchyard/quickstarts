@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="urn:switchyard-component-camel-mqtt:config:2.0"
+    xmlns:tns="urn:switchyard-component-camel-mqtt:config:2.0"
+    xmlns:switchyard="urn:switchyard-config:switchyard:2.0"
+    elementFormDefault="qualified">
+
+    <import namespace="urn:switchyard-config:switchyard:2.0"/>
+    <include schemaLocation="camel-common_2_0.xsd" />
+
+    <element name="binding.mqtt" type="tns:CamelMqttBindingType" substitutionGroup="switchyard:binding.switchyard"/>
+    <complexType name="CamelMqttBindingType">
+        <complexContent>
+            <extension base="tns:BaseCamelBinding">
+                <sequence>
+                    <element name="host" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="localAddress" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="connectAttemptsMax" type="switchyard:propInteger" minOccurs="0" maxOccurs="1" />
+                    <element name="reconnectAttemptsMax" type="switchyard:propInteger" minOccurs="0" maxOccurs="1" />
+                    <element name="reconnectDelay" type="switchyard:propInteger" minOccurs="0" maxOccurs="1" />
+                    <element name="reconnectBackOffMultiplier" type="switchyard:propDouble" minOccurs="0" maxOccurs="1" />
+                    <element name="reconnectDelayMax" type="switchyard:propInteger" minOccurs="0" maxOccurs="1" />
+                    <element name="userName" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="password" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="qualityOfService" minOccurs="0" maxOccurs="1">
+                        <simpleType>
+                            <restriction base="string">
+                                <enumeration value="AtMostOnce"/>
+                                <enumeration value="AtLeastOnce"/>
+                                <enumeration value="ExactlyOnce"/>
+                            </restriction>
+                        </simpleType>
+                    </element>
+                    <element name="subscribeTopicName" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="publishTopicName" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="byDefaultRetain" type="switchyard:propBoolean" minOccurs="0" maxOccurs="1" />
+                    <element name="mqttTopicPropertyName" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="mqttRetainPropertyName" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="mqttQosPropertyName" type="string" minOccurs="0" maxOccurs="1" />
+                    <element name="connectWaitInSeconds" type="switchyard:propInteger" minOccurs="0" maxOccurs="1" />
+                    <element name="disconnectWaitInSeconds" type="switchyard:propInteger" minOccurs="0" maxOccurs="1" />
+                    <element name="sendWaitInSeconds" type="switchyard:propInteger" minOccurs="0" maxOccurs="1" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

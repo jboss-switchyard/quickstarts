@@ -1,0 +1,18 @@
+<infinispan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:infinispan:config:5.2 http://www.infinispan.org/schemas/infinispan-config-5.2.xsd"
+	xmlns="urn:infinispan:config:5.2">
+	
+	<global>
+	   <globalJmxStatistics allowDuplicateDomains="true"/>
+	   <transport distributedSyncTimeout="60000"/>
+	</global>
+	
+	 <namedCache name="switchyard">
+	   <invocationBatching/>
+	   <clustering mode="repl">
+	       <sync/>
+	   </clustering>
+	   <locking isolationLevel="REPEATABLE_READ"/>
+     </namedCache>
+
+</infinispan>

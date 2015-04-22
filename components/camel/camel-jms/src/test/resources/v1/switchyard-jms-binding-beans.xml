@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<switchyard xmlns="urn:switchyard-config:switchyard:1.1"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:jms="urn:switchyard-component-camel-jms:config:1.1">
+
+    <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.1">
+        <sca:service name="camelTest" promote="SimpleCamelService">
+            <jms:binding.jms>
+                <jms:topic>esb_in_topic</jms:topic>
+                <jms:connectionFactory>connFactory</jms:connectionFactory>
+                <jms:username>camel</jms:username>
+                <jms:password>isMyFriend</jms:password>
+                <jms:clientId>esb_in</jms:clientId>
+                <jms:durableSubscriptionName>esb_in_sub</jms:durableSubscriptionName>
+                <jms:concurrentConsumers>5</jms:concurrentConsumers>
+                <jms:maxConcurrentConsumers>15</jms:maxConcurrentConsumers>
+                <jms:disableReplyTo>true</jms:disableReplyTo>
+                <jms:preserveMessageQos>true</jms:preserveMessageQos>
+                <jms:deliveryPersistent>false</jms:deliveryPersistent>
+                <jms:priority>9</jms:priority>
+                <jms:explicitQosEnabled>true</jms:explicitQosEnabled>
+                <jms:replyTo>esb_out</jms:replyTo>
+                <jms:replyToType>Shared</jms:replyToType>
+                <jms:requestTimeout>300</jms:requestTimeout>
+                <jms:selector>DEST='ESB'</jms:selector>
+                <jms:timeToLive>3600</jms:timeToLive>
+                <jms:transacted>true</jms:transacted>
+                <jms:acknowledgementModeName>AUTO_ACKNOWLEDGE</jms:acknowledgementModeName>
+                <jms:acknowledgementMode>-1</jms:acknowledgementMode>
+            </jms:binding.jms>
+        </sca:service>
+    </sca:composite>
+
+</switchyard>
