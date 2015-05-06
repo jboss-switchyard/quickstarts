@@ -18,8 +18,7 @@ EAP
 
 2. Create an application user:
 
-        ${AS}/bin/add-user.sh 
-        realm=ApplicationRealm UserName=guest Password=guestp.1 Group=guest
+        ${AS}/bin/add-user.sh -a --user guest --password guestp.1 --group guest
 
 3. Build and deploy the quickstart
 
@@ -38,14 +37,13 @@ EAP
 
 Wildfly
 ----------
-1. Start EAP in standalone-full mode:
+1. Start Wildfly in standalone-full mode:
 
         ${AS}/bin/standalone.sh --server-config=standalone-full.xml
 
 2. Create an application user:
 
-        ${AS}/bin/add-user.sh
-        realm=ApplicationRealm UserName=guest Password=guestp.1 Group=guest
+        ${AS}/bin/add-user.sh -a --user guest --password guestp.1 --group guest
 
 3. Build and deploy the quickstart
 

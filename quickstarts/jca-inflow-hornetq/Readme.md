@@ -22,8 +22,7 @@ EAP
 
 2. Create an application user:
 
-        ${AS}/bin/add-user.sh
-        realm=ApplicationRealm user=guest password=guestp.1 group=guest
+        ${AS}/bin/add-user.sh -a --user guest --password guestp.1 --group guest
 
 3. Build and deploy the quickstart
 
@@ -48,8 +47,7 @@ Wildfly
 
 2. Create an application user:
 
-        ${AS}/bin/add-user.sh
-        realm=ApplicationRealm user=guest password=guestp.1 group=guest
+        ${AS}/bin/add-user.sh -a --user guest --password guestp.1 --group guest
 
 3. Build and deploy the quickstart
 

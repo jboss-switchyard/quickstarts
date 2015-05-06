@@ -13,9 +13,7 @@ EAP
 
 1. Create an application user:
 
-        ${AS}/bin/add-user.sh 
-
-        realm=ApplicationRealm Username=kermit Password=the-frog-1 group=friend
+        ${AS}/bin/add-user.sh -a --user kermit --password the-frog-1 --group friend
 
 2. Start EAP in standalone mode:
 
@@ -75,13 +73,11 @@ Wildfly
 
 1. Create an application user:
 
-        ${WILDFLY}/bin/add-user.sh
-
-        realm=ApplicationRealm Username=kermit Password=the-frog-1 group=friend
+        ${AS}/bin/add-user.sh -a --user kermit --password the-frog-1 --group friend
 
 2. Start Wildfly in standalone mode :
 
-        ${WILDFLY}/bin/standalone.sh
+        ${AS}/bin/standalone.sh
 
 3. Build and deploy the demo :
 

@@ -36,7 +36,7 @@ Wildfly
 
 1. Start Wildfly in standalone mode :
 
-        ${WILDFLY}/bin/standalone.sh
+        ${AS}/bin/standalone.sh
 
 2. Build and deploy the demo :
 

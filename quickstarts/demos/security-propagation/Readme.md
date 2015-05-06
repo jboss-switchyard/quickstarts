@@ -17,10 +17,7 @@ EAP
 
 1. Create an application user:
 
-        ${AS}/bin/add-user.sh
-	User : kermit
-        Password : the-frog-1
- 	Group : friend	
+        ${AS}/bin/add-user.sh -a --user kermit --password the-frog-1 --group friend
 
 2. Start JBoss AS in standalone mode:
 
@@ -47,10 +44,7 @@ Wildfly
 
 1. Create an application user:
 
-        ${WILDFLY}/bin/add-user.sh 
-        User : kermit
-        Password : the-frog-1
-        Group : friend
+        ${AS}/bin/add-user.sh -a --user kermit --password the-frog-1 --group friend
 
 2. Edit the standalone.xml placed on ${WILDFLY_HOME}/standalone/configuration
 
@@ -69,7 +63,7 @@ Wildfly
 
 3. Start Wildfly in standalone mode :
     
-        ${WILDFLY}/bin/standalone.sh
+        ${AS}/bin/standalone.sh
 
 4. Build and deploy the demo : 
 

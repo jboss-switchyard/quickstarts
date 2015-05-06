@@ -37,7 +37,7 @@ EAP
 
 Wildfly
 ----------
-1. Start EAP in standalone mode:
+1. Start Wildfly in standalone mode:
 
         ${AS}/bin/standalone.sh
 
