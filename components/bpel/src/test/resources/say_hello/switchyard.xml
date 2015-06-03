@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+             xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+             xmlns:trfm="urn:switchyard-config:transform:1.0"
+             xmlns:bean="urn:switchyard-component-bean:config:1.0"
+             xmlns:bpel="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+             xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+             xmlns:sh="http://www.jboss.org/bpel/examples"
+             targetNamespace="urn:bpel:test:1.0"
+             name="sayhello">
+     <sca:composite name="sayhello" targetNamespace="urn:bpel:test:1.0">
+        <sca:service name="SayHelloService" promote="SayHelloService">
+            <binding.soap xmlns="urn:switchyard-component-soap:config:1.0">
+                <wsdl>SayHelloArtifacts.wsdl</wsdl>
+                <socketAddr>:18001</socketAddr>
+            </binding.soap>
+         </sca:service>
+
+         <sca:component name="SayHelloService">
+             <bpel:implementation.bpel process="sh:SayHello" />
+                                 
+             <sca:service name="SayHelloService">
+                 <sca:interface.wsdl interface="SayHelloArtifacts.wsdl#wsdl.porttype(SayHello)"/>
+             </sca:service>
+             <sca:property name="Greeting" value="Hello "/>
+         </sca:component>
+     </sca:composite>
+</switchyard>

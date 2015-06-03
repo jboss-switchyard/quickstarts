@@ -1,0 +1,211 @@
+<?xml version="1.0"?>
+<!--
+ - Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<project name="SwitchYard WildFly Installer" default="install" basedir=".">
+    <!--  The following -D properties can be used to control install behavior:
+             o WILDFLY_PATH = path to WILDFLY install - prevents input prompt
+     -->
+     
+    <property file="installer.properties"/>
+    
+    <target name="get-jboss-path-question" unless="WILDFLY_PATH">
+        <input message="Enter the path to the root of your WildFly installation: " 
+            addproperty="WILDFLY_PATH_ENTERED"/>
+            
+        <condition property="WILDFLY_PATH_CHECK" value="${WILDFLY_PATH_ENTERED}">
+            <and>
+                <isset property="WILDFLY_PATH_ENTERED"/>
+                <not>
+                    <matches string="${WILDFLY_PATH_ENTERED}" pattern="^$"/>
+                </not>
+            </and>
+        </condition>
+    </target>
+    
+    <target name="get-jboss-path" depends="get-jboss-path-question" if="WILDFLY_PATH_CHECK">
+        <pathconvert targetos="unix" property="WILDFLY_PATH" setonempty="false">
+            <path>
+                <pathelement location="${WILDFLY_PATH_CHECK}"/>
+            </path>
+        </pathconvert>
+    </target>
+    
+    <target name="install" 
+        description="Install SwitchYard into JBoss (optionally specified by WILDFLY_PATH)" 
+        depends="get-jboss-path">
+        
+        <property name="WILDFLY_PATH" value="${basedir}/${as.version}"/>
+        <property name="QUICKSTART_PATH" value="${WILDFLY_PATH}"/>
+        <property name="INSTALL_PATH" value="${WILDFLY_PATH}"/>
+        
+        <condition property="isWILDFLY">
+           <available file="${WILDFLY_PATH}/jboss-modules.jar"/>
+        </condition>
+        
+        <fail message="The specified path '${WILDFLY_PATH}' is not a path to a valid WildFly installation."
+              unless="isWILDFLY"/>
+        
+        <condition property="quickstartResourcesAlreadyInstalled">
+            <available file="quickstarts" filepath="${QUICKSTART_PATH}"/>
+        </condition>
+        
+        <condition property="switchyardResourcesAlreadyInstalled">
+            <or>
+                <available file="switchyard" filepath="${INSTALL_PATH}/modules/system/layers/soa/org"/>
+            </or>
+        </condition>
+        
+        <antcall target="unzipSwitchyardResources">
+            <param name="WILDFLY_PATH" value="${WILDFLY_PATH}"/>
+        </antcall>
+        
+        <antcall target="unzipQuickstartResources">
+            <param name="WILDFLY_PATH" value="${WILDFLY_PATH}"/>
+        </antcall>
+    </target>
+    
+    <target name="unzipSwitchyardResources" unless="switchyardResourcesAlreadyInstalled">
+        <!-- Install into the WILDFLY install.... -->
+        <unzip src="res/switchyard-wildfly-bundle.zip" dest="${INSTALL_PATH}" overwrite="true">
+            <patternset>
+                <include name="standalone/**"/>
+                <include name="modules/**"/>
+                <exclude name="modules/system/layers/base/org/jboss/as/webservices/**"/>
+                <exclude name="modules/system/layers/base/org/jboss/ws/**"/>
+            </patternset>
+        </unzip>
+        <xslt style="res/standalone.xsl" 
+            basedir="${WILDFLY_PATH}/standalone/configuration" 
+            destdir="${WILDFLY_PATH}/standalone/configuration"
+            includes="standalone.xml,standalone-full.xml,standalone-full-ha.xml,standalone-ha.xml"/>
+        <xslt style="res/domain.xsl" 
+            basedir="${WILDFLY_PATH}/domain/configuration" 
+            destdir="${WILDFLY_PATH}/domain/configuration" 
+            includes="domain.xml"/>
+        <move overwrite="true" todir="${INSTALL_PATH}/domain/configuration">
+            <filelist dir="${WILDFLY_PATH}/domain/configuration">
+                <file name="domain.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
+            <filelist dir="${WILDFLY_PATH}/standalone/configuration">
+                <file name="standalone.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
+            <filelist dir="${WILDFLY_PATH}/standalone/configuration">
+                <file name="standalone-full.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
+            <filelist dir="${WILDFLY_PATH}/standalone/configuration">
+                <file name="standalone-ha.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <!-- Allow this move to fail without error in case of 7.1.0.Beta1 -->
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration" failonerror="false">
+            <filelist dir="${WILDFLY_PATH}/standalone/configuration">
+                <file name="standalone-full-ha.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <!-- Apply second style sheet to add cache-container -->
+        <xslt style="res/standalone-ha.xsl" force="true" basedir="${WILDFLY_PATH}/standalone/configuration" destdir="${WILDFLY_PATH}/standalone/configuration" includes="standalone-full-ha.xml,standalone-ha.xml"/>
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
+            <filelist dir="${WILDFLY_PATH}/standalone/configuration">
+                <file name="standalone-ha.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration" failonerror="false">
+            <filelist dir="${WILDFLY_PATH}/standalone/configuration">
+                <file name="standalone-full-ha.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+    </target>
+    <target name="unzipQuickstartResources" unless="quickstartResourcesAlreadyInstalled">
+        <!-- Install SwitchYard stuff into this directory.... -->
+        <unzip src="res/switchyard-wildfly-bundle.zip" dest="${QUICKSTART_PATH}" overwrite="true">
+            <patternset>
+                <include name="quickstarts/**"/>
+            </patternset>
+        </unzip>
+    </target>
+    
+    <!-- #################################################################
+         #######                   Tools Targets                   #######
+         ################################################################# -->
+    <target name="download-sy-tools-check">
+        <condition property="sy.tools.not.available">
+            <not>
+                <available file="res/switchyard-tools.zip"/>
+            </not>
+        </condition>
+    </target>
+    
+    <target name="download-sy-tools" depends="download-sy-tools-check" if="sy.tools.not.available">
+        <echo>Downloading SwitchYard Tools Bundle ...</echo>
+        <get src="${switchyard.tools.url}" dest="res/switchyard-tools.zip"/>
+    </target>
+    
+    <!-- #################################################################
+         #######                   BPEL Console                    #######
+         ################################################################# -->
+    <target name="install-bpel-console" 
+        description="Install BPEL Console to SwitchYard Runtime"
+        depends="download-bpel-console, get-jboss-path">
+        
+        <condition property="BPELConsoleAlreadyInstalled">
+            <or>
+                <available file="switchyard-bpel-console.war" filepath="${WILDFLY_PATH}/standalone/deployments"/>
+            </or>
+        </condition>
+        
+        <copy todir="${WILDFLY_PATH}/standalone/deployments" 
+            overwrite="true" 
+            file="res/switchyard-tools-${tools.version}/switchyard-bpel-console-server.war"/>
+        
+        <copy todir="${WILDFLY_PATH}/standalone/deployments/switchyard-bpel-console.war">
+            <fileset dir="res/switchyard-tools-${tools.version}/switchyard-bpel-console.war"/>
+        </copy>
+        
+        <touch file="${WILDFLY_PATH}/standalone/deployments/switchyard-bpel-console.war.dodeploy"/>
+    </target>
+    
+    <target name="download-bpel-console" 
+        depends="download-bpel-console-check, extract-sy-tools-bpel-console" 
+        if="bpel.console.not.available">
+    </target>
+    
+    <target name="download-bpel-console-check">
+        <condition property="bpel.console.not.available">
+            <and>
+                <not>
+                    <available file="res/switchyard-tools-${tools.version}/switchyard-bpel-console-server.war"/>
+                </not>
+                <isset property="installBPELConsole"/>
+            </and>
+        </condition>
+    </target>
+    
+    <target name="extract-sy-tools-bpel-console" depends="download-sy-tools">
+        <unzip src="res/switchyard-tools.zip" dest="res/" overwrite="true"/>
+    </target>
+    
+</project>

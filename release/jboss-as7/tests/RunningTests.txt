@@ -1,0 +1,25 @@
+The test cases in this project are designed to be executed during packaging of a
+distribution (e.g. as7 standalone dist), but they can be run out of your IDE
+(e.g. Run As->JUnit Test) when your test runner is configured with the
+following:
+
+ * VM arguments: (e.g. using -D)
+   * jboss.home=<path to switchyard jboss installation>
+     (e.g. ~/test/switchyard/switchyard-1.0-SNAPSHOT/jboss-eap-6.1)
+   * module.path=<path to switchyard jboss installation>/modules
+     (e.g. ~/test/switchyard/switchyard-1.0-SNAPSHOT/jboss-eap-6.1/modules)
+   * server-config=standalone-full.xml
+   * arquillian.xml=<path to arquillian config file>
+     (e.g. ~/src/git/switchyard/release/jboss-as7/standalone/dist/src/test/resources/arquillian.xml)
+
+   And to enable debugging of the container: (optional)
+   * jboss.options="-agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n -Xmx512m -XX:MaxPermSize=128m"
+
+ * Environment variables:
+   * JBOSS_HOME=<path to switchyard jboss installation>
+     (e.g. ~/test/switchyard/switchyard-1.0-SNAPSHOT/jboss-eap-6.1)
+   * SWITCHYARD_VERSION=<version> (e.g. 1.0.0-SNAPSHOT)
+
+In addition to the above, you will also need to enable the "dev-test" profile
+in your IDE (defined in the project's pom).  (This provides as7 container
+support when running the tests.)

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<switchyard 
+    xmlns="urn:switchyard-config:switchyard:1.0"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+    xmlns:jca="urn:switchyard-component-jca:config:1.0" 
+    xmlns:bean="urn:switchyard-component-bean:config:1.0">
+
+    <sca:composite name="JCAJMSTest" targetNamespace="urn:jca:test:1.0">
+        <sca:service name="JCAJMSTransactionService" promote="TransactionComponent/JCAJMSTransactionService">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <operationSelector.regex xmlns="urn:switchyard-config:switchyard:1.0" expression="onMessage.*"/>
+               <inboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <activationSpec>
+                       <property name="destinationType" value="javax.jms.Queue"/>
+                       <property name="destination" value="queue/TestQueue"/>
+                   </activationSpec>
+               </inboundConnection>
+               <inboundInteraction>
+                   <listener>javax.jms.MessageListener</listener>
+                   <endpoint type="org.switchyard.component.jca.endpoint.JMSEndpoint" />
+                   <transacted>true</transacted>
+               </inboundInteraction>
+            </binding.jca>
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <operationSelector.regex xmlns="urn:switchyard-config:switchyard:1.0" expression="onMessage.*"/>
+               <inboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <activationSpec>
+                       <property name="destinationType" value="javax.jms.Queue"/>
+                       <property name="destination" value="queue/NonTransactedTestQueue"/>
+                   </activationSpec>
+               </inboundConnection>
+               <inboundInteraction>
+                   <listener>javax.jms.MessageListener</listener>
+                   <endpoint type="org.switchyard.component.jca.endpoint.JMSEndpoint" />
+                   <transacted>false</transacted>
+               </inboundInteraction>
+            </binding.jca>
+        </sca:service>
+    
+        <!-- Reference binding example -->
+        <sca:reference name="JCAJMSReference" promote="JCAReferenceComponent/JCAJMSReference" multiplicity="1..1">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <jca:contextMapper class="org.switchyard.test.jca.MyJMSContextMapper"/>
+               <jca:messageComposer class="org.switchyard.test.jca.MyJMSMessageComposer"/>
+               <outboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <connection jndiName="java:/JmsXA"/>
+               </outboundConnection>
+               <outboundInteraction>
+                   <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                       <property name="destination" value="ResultQueue"/>
+                       <jca:property name="transacted" value="true"/>
+                   </processor>
+               </outboundInteraction>
+            </binding.jca>
+        </sca:reference>
+        <sca:reference name="JCAJMSReferenceText" promote="JCAReferenceComponent/JCAJMSReferenceText" multiplicity="1..1">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <jca:contextMapper class="org.switchyard.test.jca.MyJMSContextMapper"/>
+               <jca:messageComposer class="org.switchyard.test.jca.MyJMSMessageComposer"/>
+               <outboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <connection jndiName="java:/JmsXA"/>
+               </outboundConnection>
+               <outboundInteraction>
+                   <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                       <property name="destination" value="ResultQueue"/>
+                       <property name="messageType" value="Text"/>
+                       <property name="jndiPropertiesFileName" value="jndi.properties"/>
+                       <property name="destinationJndiPropertiesFileName" value="destination-jndi.properties"/>
+                   </processor>
+               </outboundInteraction>
+            </binding.jca>
+        </sca:reference>
+        <sca:reference name="JCAJMSReferencePhysicalName" promote="JCAReferenceComponent/JCAJMSReferencePhysicalName" multiplicity="1..1">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <jca:contextMapper class="org.switchyard.test.jca.MyJMSContextMapper"/>
+               <jca:messageComposer class="org.switchyard.test.jca.MyJMSMessageComposer"/>
+               <outboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <connection jndiName="java:/JmsXA"/>
+               </outboundConnection>
+               <outboundInteraction>
+                   <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                       <property name="destinationType" value="javax.jms.Queue"/>
+                       <property name="destination" value="ResultPhysicalNameQueue_physical"/>
+                       <property name="messageType" value="Text"/>
+                   </processor>
+               </outboundInteraction>
+            </binding.jca>
+        </sca:reference>
+        <sca:reference name="CamelJCAJMSReference" promote="CamelComponent/CamelJCAJMSReference" multiplicity="1..1">
+            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
+               <contextMapper includes=".*"/>
+               <outboundConnection>
+                   <resourceAdapter name="hornetq-ra.rar"/>
+                   <connection jndiName="java:/JmsXA"/>
+               </outboundConnection>
+               <outboundInteraction>
+                   <processor type="org.switchyard.component.jca.processor.JMSProcessor">
+                       <property name="destination" value="ResultQueue"/>
+                   </processor>
+               </outboundInteraction>
+            </binding.jca>
+        </sca:reference>
+        
+        <sca:component name="TransactionComponent">
+            <bean:implementation.bean class="org.switchyard.test.jca.JCAJMSTransactionServiceImpl"/>
+            <sca:service name="JCAJMSTransactionService">
+                <sca:interface.java interface="org.switchyard.test.jca.JCAJMSTransactionService"/>
+            </sca:service>
+            <sca:reference name="JCAJMSReferenceService">
+                <sca:interface.java interface="org.switchyard.test.jca.JCAJMSReferenceService"/>
+            </sca:reference>
+            <sca:reference name="JCAJMSCamelService">
+                <sca:interface.java interface="org.switchyard.test.jca.JCAJMSReferenceService"/>
+            </sca:reference>
+        </sca:component>
+
+        <sca:component name="JCAReferenceComponent">
+            <bean:implementation.bean class="org.switchyard.test.jca.JCAJMSReferenceServiceImpl"/>
+            <sca:service name="JCAJMSReferenceService">
+                <sca:interface.java interface="org.switchyard.test.jca.JCAJMSReferenceService"/>
+            </sca:service>
+            <sca:reference name="JCAJMSReference">
+                <sca:interface.java interface="org.switchyard.test.jca.JCAJMSReference"/>
+            </sca:reference>
+            <sca:reference name="JCAJMSReferenceText">
+                <sca:interface.java interface="org.switchyard.test.jca.JCAJMSReferenceText"/>
+            </sca:reference>
+            <sca:reference name="JCAJMSReferencePhysicalName">
+                <sca:interface.java interface="org.switchyard.test.jca.JCAJMSReferencePhysicalName"/>
+            </sca:reference>
+        </sca:component>
+        
+        <sca:component name="CamelComponent">
+            <implementation.camel xmlns="urn:switchyard-component-camel:config:1.0">
+                <xml path="camel-route.xml"/>
+            </implementation.camel>
+            <sca:service name="JCAJMSCamelService">
+                <sca:interface.java interface="org.switchyard.test.jca.JCAJMSReferenceService"/>
+            </sca:service>
+            <sca:reference name="CamelJCAJMSReference">
+                <sca:interface.java interface="org.switchyard.test.jca.JCAJMSReference"/>
+            </sca:reference>
+        </sca:component>
+    </sca:composite>
+<!-- 
+    <domain>
+        <properties>
+          <property name="org.switchyard.handlers.messageTrace.enabled" value="true"/>
+        </properties>
+    </domain>
+ -->
+</switchyard>

@@ -1,0 +1,4 @@
+TorqueBox components.
+
+For now, you need to manually build these components.  They are not part of the main build because they require
+Maven 3 and TorqueBox (or one of its dependencies e.g. ruby - need to narrow down) to be installed and configured.

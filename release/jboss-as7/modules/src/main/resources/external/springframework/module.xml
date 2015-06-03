@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<module xmlns="urn:jboss:module:1.0" name="org.springframework">
+
+    <resources>
+        <resource-root path="spring-aop-${version.org.springframework}.jar"/>
+        <resource-root path="spring-beans-${version.org.springframework}.jar"/>
+        <resource-root path="spring-core-${version.org.springframework}.jar"/>
+        <resource-root path="spring-context-${version.org.springframework}.jar"/>
+        <resource-root path="spring-expression-${version.org.springframework}.jar"/>
+        <resource-root path="spring-jms-${version.org.springframework}.jar"/>
+        <resource-root path="spring-jdbc-${version.org.springframework}.jar"/>
+        <resource-root path="spring-tx-${version.org.springframework}.jar"/>
+        <resource-root path="spring-orm-${version.org.springframework}.jar"/>
+        <resource-root path="spring-jdbc-${version.org.springframework}.jar"/>
+    </resources>
+
+    <dependencies>
+        <module name="org.apache.commons.logging"/>
+        <module name="javax.persistence.api"/>
+        <module name="javax.jms.api"/>
+        <module name="javax.api"/>
+    </dependencies>
+</module>

@@ -1,0 +1,5 @@
+<orders:submitOrder xmlns:orders="urn:switchyard-component-soap:test-ws:1.0">
+    <orderId>PO-121212-XYZ</orderId>
+    <itemId>BUTTER</itemId>
+    <quantity>200</quantity>
+</orders:submitOrder>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:file="urn:switchyard-component-camel-file:config:1.0">
+
+    <sca:composite name="fileTest" targetNamespace="urn:file-file:test:1.0">
+        <sca:reference name="test" multiplicity="0..1" promote="test/test">
+            <file:binding.file>
+                <file:directory>/input/directory</file:directory>
+                <file:autoCreate>false</file:autoCreate>
+                <file:produce>
+                    <file:fileExist>Override</file:fileExist>
+                    <file:tempPrefix>prefix_</file:tempPrefix>
+                    <file:keepLastModified>false</file:keepLastModified>
+                    <file:eagerDeleteTargetFile>true</file:eagerDeleteTargetFile>
+                    <file:doneFileName>processed</file:doneFileName>
+                </file:produce>
+            </file:binding.file>
+        </sca:reference>
+    </sca:composite>
+
+</switchyard>

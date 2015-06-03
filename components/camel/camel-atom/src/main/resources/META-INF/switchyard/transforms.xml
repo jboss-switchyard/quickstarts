@@ -1,0 +1,3 @@
+<transforms xmlns="urn:switchyard-config:switchyard:1.1">
+    <transform.java xmlns="urn:switchyard-config:transform:1.1" class="org.switchyard.component.camel.atom.transformer.AtomTransforms" from="java:org.apache.abdera.parser.stax.FOMEntry" to="java:java.lang.String"/>
+</transforms>

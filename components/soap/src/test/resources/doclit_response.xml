@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+      <ns2:orderAck xmlns:ns2="urn:switchyard-component-soap:test-ws:1.0">
+         <orderId>PO-19838-XYZ</orderId>
+         <accepted>true</accepted>
+         <status>Order Accepted</status>
+      </ns2:orderAck>

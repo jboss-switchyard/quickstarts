@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<switchyard xmlns="urn:switchyard-config:switchyard:2.0"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:mqtt="urn:switchyard-component-camel-mqtt:config:2.0">
+
+    <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
+        <sca:service name="camelTest" promote="SimpleCamelSer2vice">
+            <mqtt:binding.mqtt name="Garfield">
+                <mqtt:host>tcp://127.0.0.1:1883</mqtt:host>
+                <mqtt:localAddress>tcp://127.0.0.1:1883</mqtt:localAddress>
+                <mqtt:connectAttemptsMax>10</mqtt:connectAttemptsMax>
+                <mqtt:reconnectAttemptsMax>10</mqtt:reconnectAttemptsMax>
+                <mqtt:reconnectDelay>10</mqtt:reconnectDelay>
+                <mqtt:reconnectBackOffMultiplier>5.0</mqtt:reconnectBackOffMultiplier>
+                <mqtt:reconnectDelayMax>100</mqtt:reconnectDelayMax>
+                <mqtt:userName>karaf</mqtt:userName>
+                <mqtt:password>karaf</mqtt:password>
+                <mqtt:qualityOfService>ExactlyOnce</mqtt:qualityOfService>
+                <mqtt:subscribeTopicName>camel/mqtt/test</mqtt:subscribeTopicName>
+                <mqtt:publishTopicName>camel/mqtt/test</mqtt:publishTopicName>
+                <mqtt:byDefaultRetain>true</mqtt:byDefaultRetain>
+                <mqtt:mqttTopicPropertyName>MQTT_TOPIC</mqtt:mqttTopicPropertyName>
+                <mqtt:mqttRetainPropertyName>MQTT_RETAIN</mqtt:mqttRetainPropertyName>
+                <mqtt:mqttQosPropertyName>MQTT_QOS</mqtt:mqttQosPropertyName>
+                <mqtt:connectWaitInSeconds>10</mqtt:connectWaitInSeconds>
+                <mqtt:disconnectWaitInSeconds>10</mqtt:disconnectWaitInSeconds>
+                <mqtt:sendWaitInSeconds>10</mqtt:sendWaitInSeconds>
+            </mqtt:binding.mqtt>
+        </sca:service>
+    </sca:composite>
+
+</switchyard>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+
+<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.bpel">
+
+    <resources>
+        <resource-root path="switchyard-component-bpel-${project.version}.jar"/>
+        <resource-root path="engine-${version.riftsaw.engine}.jar"/>
+        <resource-root path="riftsaw-agents-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-api-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-compiler-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-dao-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-epr-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-obj-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-ql-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-runtime-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-schemas-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-bpel-store-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-dao-jpa-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-dao-jpa-hibernate-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-jacob-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-scheduler-simple-${version.riftsaw.ode}.jar"/>
+        <resource-root path="riftsaw-utils-${version.riftsaw.ode}.jar"/>
+        <resource-root path="activity-monitor-model-${version.activity.monitor.model}.jar"/>
+
+        <!--  RiftSaw console components -->
+        <resource-root path="gwt-console-rpc-${version.riftsaw.console}.jar"/>
+		<resource-root path="gwt-console-server-integration-${version.riftsaw.console}.jar"/>
+		<resource-root path="riftsaw-bpaf-${version.riftsaw.engine}.jar"/>
+		<resource-root path="riftsaw-bpel2svg-${version.riftsaw.engine}.jar"/>
+		<resource-root path="riftsaw-console-integration-${version.riftsaw.engine}.jar"/>
+		<resource-root path="overlord-commons-services-${version.overlord-commons}.jar"/>
+        <!-- END of RiftSaw console components -->
+        
+		<!-- Keep this as a local dependency, as it is an older version that ODE requires -->        
+        <resource-root path="xmlbeans-${version.org.apache.xmlbeans}.jar"/>
+    </resources>
+
+    <dependencies>
+        <module name="org.jboss.as.jpa"/>
+        <module name="org.jboss.vfs"/>
+
+        <module name="org.hibernate"/>
+        <module name="org.hibernate.validator" services="import" />
+        <module name="org.hibernate.envers" services="import" />
+        
+        <module name="javax.api"/>
+        <module name="javax.transaction.api"/>
+        <module name="javax.persistence.api"/>
+        <module name="javax.xml.soap.api"/>
+        <module name="javax.wsdl4j.api"/>
+
+        <module name="org.switchyard.api"/>
+        <module name="org.switchyard.common"/>
+        <module name="org.switchyard.component.common"/>
+        <module name="org.switchyard.config"/>
+        <module name="org.switchyard.deploy"/>
+
+        <module name="org.apache.commons.collections"/>
+        <module name="org.apache.commons.lang"/>
+        <module name="org.apache.commons.logging"/>
+        <module name="org.jboss.logging"/>
+
+        <module name="org.apache.xerces"/>
+        <module name="org.apache.xalan"/>
+        <module name="org.javassist"/>
+        <module name="org.dom4j"/>
+        
+        <module name="com.h2database.h2"/>
+
+        <!-- required for the jndi registration-->
+        <module name="org.jboss.as.naming" />
+        <module name="org.jboss.as.server" />
+        <module name="org.jboss.msc" />
+
+		    <!-- Required by bpel2svg module -->
+        <module name="org.apache.xmlgraphics" />
+        <module name="org.codehaus.jettison" />
+        
+        <module name="org.jaxen"/>
+        <module name="net.sourceforge.saxon" services="import" export="false"/>
+
+        <!-- Required for clustering feature -->
+        <module name="org.infinispan" />
+    </dependencies>
+
+</module>

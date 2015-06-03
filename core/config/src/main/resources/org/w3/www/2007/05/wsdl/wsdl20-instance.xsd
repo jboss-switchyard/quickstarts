@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xs:schema PUBLIC "-//W3C//DTD XMLSCHEMA 200102//EN" "http://www.w3.org/2001/XMLSchema.dtd">
+<!-- 
+   W3C XML Schema defined in the Web Services Description (WSDL)
+    Version 2.0 specification
+     http://www.w3.org/TR/wsdl20
+
+   Copyright © 2005 World Wide Web Consortium,
+
+   (Massachusetts Institute of Technology, European Research Consortium for
+   Informatics and Mathematics, Keio University). All Rights Reserved. This
+   work is distributed under the W3C® Software License [1] in the hope that
+   it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+   [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+
+   $Id: wsdl20-instance.xsd,v 1.1 2007/05/17 16:13:03 plehegar Exp $
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdli="http://www.w3.org/ns/wsdl-instance" targetNamespace="http://www.w3.org/ns/wsdl-instance" elementFormDefault="qualified" finalDefault="" blockDefault="" attributeFormDefault="unqualified">
+
+  <xs:attribute name="wsdlLocation">
+    <xs:annotation>
+      <xs:documentation>
+      This attribute can be used to provide some hints on where
+      additional WSDL information for a given namespace can be
+      found in order to help with QName resolution
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+      <xs:list itemType="xs:anyURI"/>
+    </xs:simpleType>
+  </xs:attribute>
+
+</xs:schema>

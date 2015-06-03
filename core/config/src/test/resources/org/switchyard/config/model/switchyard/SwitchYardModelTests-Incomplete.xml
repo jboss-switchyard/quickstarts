@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+            xmlns:sy="urn:switchyard-config:switchyard:1.0"
+            xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+            xmlns:bean="urn:switchyard-config:test-bean:1.0"
+            xmlns:java="urn:switchyard-config:test-java:1.0"
+            xmlns:smooks="urn:switchyard-config:test-smooks:1.0"
+            xmlns:vjava="urn:switchyard-config:test-validate-java:1.0"
+            xmlns:vxml="urn:switchyard-config:test-validate-xml:1.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="
+                   urn:switchyard-config:test-bean:1.0 ../composite/test/bean/bean.xsd
+                   urn:switchyard-config:test-java:1.0 test/java/java.xsd
+                   urn:switchyard-config:test-smooks:1.0 test/smooks/smooks.xsd
+                   urn:switchyard-config:test-validate-java:1.0 test/validate/java/java.xsd
+                   urn:switchyard-config:test-validate-xml:1.0 test/validate/xml/xml.xsd"
+            name="m1app">
+    <sca:composite name="m1app"  targetNamespace="urn:m1app:example:1.0">
+        <sca:component name="SimpleService">
+            <bean:implementation.bean class="org.switchyard.example.m1app.SimpleBean"/>
+            <sca:service name="SimpleService" requires="clientAuthentication" sy:security="theSecurityName">
+                <sca:interface.java interface="org.switchyard.example.m1app.SimpleService"/>
+            </sca:service>
+            <sca:reference name="anotherService" requires="clientAuthentication" sy:security="theSecurityName">
+                <sca:interface.java interface="org.switchyard.example.m1app.AnotherService"/>
+            </sca:reference>
+        </sca:component>
+        <sca:component name="AnotherService">
+            <bean:implementation.bean class="org.switchyard.example.m1app.AnotherBean"/>
+            <sca:service name="AnotherService">
+                <sca:interface.java interface="org.switchyard.example.m1app.AnotherService"/>
+            </sca:service>
+        </sca:component>
+    </sca:composite>
+    <transforms>
+        <java:transform.java from="msgA" to="msgB" class="org.examples.transform.AtoBTransform"/>
+        <smooks:transform.smooks from="msgC" to="msgD">
+            <smooks:config>${smooksConfig}</smooks:config>
+        </smooks:transform.smooks>
+    </transforms>
+    <validates>
+        <vjava:validate.java name="urn:switchyard-config:test-validate-java-a:1.0" class="org.examples.validate.AValidate"/>
+        <vxml:validate.xml name="urn:switchyard-config:test-validate-xml-a:1.0" schemaType="XML_SCHEMA" schemaFile="schema.xsd"/>
+    </validates>
+    <domain name="TestDomain">
+        <transforms>
+            <java:transform.java from="msgD" to="msgA" class="org.examples.transform.DtoATransform"/>
+        </transforms>
+        <validates>
+            <vjava:validate.java name="urn:switchyard-config:test-validate-java-b:1.0" class="org.examples.validate.BValidate"/>
+        </validates>
+        <properties>
+            <property name="foo" value="bar"/>
+            <property name="tuna" value="fish"/>
+            <property name="userName" value="${user.name}"/>
+            <property name="osName" value="${os.name}"/>
+            <property name="whoIsWill" value="iam"/>
+            <property name="smooksConfig" value="stuff"/>
+            <property name="soapServiceName" value="MyWebService"/>
+            <property name="soapWsdlName" value="service"/>
+        </properties>
+        <securities>
+            <security callbackHandler="java.lang.Object" name="theSecurityName" rolesAllowed="administrator, user" runAs="leader" securityDomain="theSecurityDomain">
+                <properties>
+                    <property name="will" value="${whoIsWill}"/>
+                </properties>
+            </security>
+        </securities>
+    </domain>
+    <artifacts>
+        <artifact name="OrderService" url="http://localhost:8080/guvnorsoa/rest/packages/OrderService"/>
+    </artifacts>
+</switchyard>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+
+<module xmlns="urn:jboss:module:1.0" name="org.switchyard.component.soap">
+
+    <resources>
+        <resource-root path="switchyard-component-soap-${project.version}.jar"/>
+    </resources>
+
+    <dependencies>
+        <!-- Needed for @Resource annotations -->
+        <module name="javax.annotation.api"/>
+        <module name="javax.api"/>
+        <module name="javax.mail.api"/>
+        <module name="javax.servlet.api"/>
+        <module name="javax.wsdl4j.api"/>
+        <module name="org.apache.cxf" export="true"/>
+        <module name="org.apache.cxf.impl" export="true"/>
+        <module name="org.apache.ws.security" export="true"/>
+        <module name="org.jboss.logging"/>
+        <module name="org.jboss.as.webservices" export="true"/>
+        <module name="org.jboss.ws.api" export="false"/>
+        <module name="org.jboss.ws.spi" services="import" export="true"/>
+        <module name="org.jboss.ws.cxf.jbossws-cxf-server" export="true"/>
+        <module name="org.switchyard.api"/>
+        <module name="org.switchyard.common"/>
+        <module name="org.switchyard.config"/>
+        <module name="org.switchyard.deploy"/>
+        <module name="org.switchyard.component.common"/>
+        <module name="org.switchyard.component.soap.ws-impl"/>
+        <module name="org.switchyard.component.soap.saaj-impl"/>
+        <module name="org.switchyard.security" export="true"/>
+        <module name="org.springframework.spring" optional="true"/>
+    </dependencies>
+</module>

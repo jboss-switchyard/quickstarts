@@ -1,0 +1,8 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:exam="http://www.jboss.org/bpel/examples">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <exam:sayHello>
+         <exam:input>Fred</exam:input>
+      </exam:sayHello>
+   </soapenv:Body>
+</soapenv:Envelope>

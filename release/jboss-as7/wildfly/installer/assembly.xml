@@ -1,0 +1,68 @@
+<!--
+ - Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    <id>SwitchyardWildFlyInstaller</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <files>
+        <file>
+            <filtered>true</filtered>
+            <source>scripts/installer.properties</source>
+            <destName>installer.properties</destName>
+            <outputDirectory>${installer.root.dir}</outputDirectory>
+        </file>
+        <file>
+            <source>scripts/installer.ant.xml</source>
+            <destName>build.xml</destName>
+            <outputDirectory>${installer.root.dir}/</outputDirectory>
+        </file>
+        <file>
+            <source>${bundle.dir}/xsl/standalone.xsl</source>
+            <outputDirectory>${installer.root.dir}/res</outputDirectory>
+        </file>
+        <file>
+            <source>${bundle.dir}/xsl/standalone-ha.xsl</source>
+            <outputDirectory>${installer.root.dir}/res</outputDirectory>
+        </file>
+        <file>
+            <source>${bundle.dir}/xsl/domain.xsl</source>
+            <outputDirectory>${installer.root.dir}/res</outputDirectory>
+        </file>
+    </files>
+
+    <fileSets>
+        <fileSet>
+            <directory>docs</directory>
+            <outputDirectory>${installer.root.dir}</outputDirectory>
+        </fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>org.switchyard:switchyard-wildfly-bundle</include>
+            </includes>
+            <outputDirectory>${installer.root.dir}/res</outputDirectory>
+            <outputFileNameMapping>switchyard-wildfly-bundle.zip</outputFileNameMapping>
+        </dependencySet>
+    </dependencySets>
+
+</assembly>

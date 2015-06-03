@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2005,2010. All Rights Reserved. 
+     OASIS trademark, IPR and other policies apply.  -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"  
+  xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+  elementFormDefault="qualified"
+  targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912">  
+	
+	<include schemaLocation="sca-core-1.1-cd06.xsd"/>
+	<element name="implementation.spring" type="sca:SpringImplementation" substitutionGroup="sca:implementation"/>
+	<complexType name="SpringImplementation">
+		<complexContent>
+			<extension base="sca:Implementation">
+				<sequence>
+					<any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+				<attribute name="location" type="anyURI" use="required"/>
+			</extension>
+		</complexContent>
+	</complexType>
+</schema>

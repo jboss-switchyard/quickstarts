@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<plugin name="SwitchYard"
+        displayName="SwitchYard"
+        version="1.0"
+        description="Monitoring of SwitchYard Deployments"
+        package="org.switchyard.rhq.plugin"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="urn:xmlns:rhq-plugin"
+        xmlns:c="urn:xmlns:rhq-configuration">
+
+   <depends plugin="JBossAS7" useClasses="true"/>
+
+   <service name="Deployments"
+            discovery="SwitchYardDiscoveryComponent"
+            class="SwitchYardResourceComponent"
+            description="Container for SwitchYard Deployments"
+            singleton="true"
+            classLoader="instance">
+
+      <runs-inside>
+         <parent-resource-type name="JBossAS7 Standalone Server" plugin="JBossAS7"/>
+         <parent-resource-type name="Managed Server" plugin="JBossAS7"/>
+      </runs-inside>
+      <operation name="reset" displayName="Reset Metrics"
+                 description="Reset the metrics for this service."/>
+      <metric property="SuccessCount" displayName="Success Count"
+              description="The number of successful invocations"
+              displayType="summary"
+              measurementType="dynamic"/>
+      <metric property="FaultCount" displayName="Fault Count"
+              description="The number of invocations resulting in faults"
+              displayType="summary"
+              measurementType="dynamic"/>
+      <metric property="TotalCount" displayName="Total Count"
+              description="The total number of invocations"
+              displayType="summary"
+              measurementType="dynamic"/>
+      <metric property="TotalProcessingTime" displayName="Total Processing Time"
+              description="The total processing time for all invocations"
+              displayType="summary"
+              measurementType="dynamic"/>
+      <metric property="AverageProcessingTime" displayName="Average Processing Time"
+              description="The average processing time for an invocation"
+              displayType="summary"
+              measurementType="dynamic"/>
+      <metric property="MinProcessingTime" displayName="Minimum Processing Time"
+              description="The minimum processing time for an invocation"
+              displayType="summary"
+              measurementType="dynamic"/>
+      <metric property="MaxProcessingTime" displayName="Maximum Processing Time"
+              description="The maximum processing time for an invocation"
+              displayType="summary"
+              measurementType="dynamic"/>
+
+      <service name="Application"
+               description="A SwitchYard Application deployed into the container"
+               discovery="ApplicationDiscoveryComponent"
+               class="ApplicationResourceComponent">
+         <service name="Service"
+                  description="A SwitchYard Service within an Application"
+                  discovery="ServiceDiscoveryComponent"
+                  class="ServiceResourceComponent">
+            <operation name="setThrottling" displayName="Configure throttling"
+                 description="Configure throttling for this service.">
+                 <parameters>
+	                 <c:simple-property name="enabled" displayName="Enable Throttling"
+	                     description="Should throttling be enabled or disabled?"
+	                     type="boolean" required="false"/>
+	                 <c:simple-property name="maxRequests" displayName="Maximum Requests"
+	                     description="Maximum Requests in Time Period"
+	                     type="integer" required="false"/>
+                 </parameters>
+            </operation>
+            <operation name="reset" displayName="Reset Metrics"
+                 description="Reset the metrics for this service."/>
+
+            <metric property="throttlingEnabled" displayName="Is throttling enabled."
+                    description="Is throttling enabled for this service?"
+                    dataType="trait"/>
+            <metric property="TimePeriod" displayName="Get Time Period"
+                    description="The throttling time period."
+                    dataType="trait"/>
+            <metric property="MaxRequests" displayName="Get Max Requests"
+                    description="The maximum requests within the time period."
+                    dataType="trait"/>
+            <metric property="SuccessCount" displayName="Success Count"
+                    description="The number of successful invocations"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="FaultCount" displayName="Fault Count"
+                    description="The number of invocations resulting in faults"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="TotalCount" displayName="Total Count"
+                    description="The total number of invocations"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="TotalProcessingTime" displayName="Total Processing Time"
+                    description="The total processing time for all invocations"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="AverageProcessingTime" displayName="Average Processing Time"
+                    description="The average processing time for an invocation"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="MinProcessingTime" displayName="Minimum Processing Time"
+                    description="The minimum processing time for an invocation"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="MaxProcessingTime" displayName="Maximum Processing Time"
+                    description="The maximum processing time for an invocation"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+
+            <service name="Service Operations"
+                     description="Operations for the SwitchYard Service"
+                     discovery="ServiceOperationDiscoveryComponent"
+                     class="ServiceOperationResourceComponent">
+               <metric property="SuccessCount" displayName="Success Count"
+                       description="The number of successful invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="FaultCount" displayName="Fault Count"
+                       description="The number of invocations resulting in faults"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="TotalCount" displayName="Total Count"
+                       description="The total number of invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="TotalProcessingTime" displayName="Total Processing Time"
+                       description="The total processing time for all invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="AverageProcessingTime" displayName="Average Processing Time"
+                       description="The average processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="MinProcessingTime" displayName="Minimum Processing Time"
+                       description="The minimum processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="MaxProcessingTime" displayName="Maximum Processing Time"
+                       description="The maximum processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+            </service>
+            <service name="Service Bindings"
+                     description="Bindings for the SwitchYard Service"
+                     discovery="ServiceBindingDiscoveryComponent"
+                     class="ServiceBindingResourceComponent">
+               <operation name="start" displayName="Start"
+                          description="Start the binding."/>
+               <operation name="stop" displayName="Stop"
+                          description="Stop the binding."/>
+
+               <metric property="State"
+                       description="Get the lifecycle state of the binding."
+                       displayType="summary"
+                       dataType="trait"/>
+               <metric property="SuccessCount" displayName="Success Count"
+                       description="The number of successful invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="FaultCount" displayName="Fault Count"
+                       description="The number of invocations resulting in faults"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="TotalCount" displayName="Total Count"
+                       description="The total number of invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="TotalProcessingTime" displayName="Total Processing Time"
+                       description="The total processing time for all invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="AverageProcessingTime" displayName="Average Processing Time"
+                       description="The average processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="MinProcessingTime" displayName="Minimum Processing Time"
+                       description="The minimum processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="MaxProcessingTime" displayName="Maximum Processing Time"
+                       description="The maximum processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+            </service>
+         </service>
+
+         <service name="Reference"
+                  description="A Reference within a SwitchYard Application"
+                  discovery="ReferenceDiscoveryComponent"
+                  class="ReferenceResourceComponent">
+            <operation name="reset" displayName="Reset Metrics"
+                       description="Reset the metrics for this service."/>
+
+            <metric property="SuccessCount" displayName="Success Count"
+                    description="The number of successful invocations"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="FaultCount" displayName="Fault Count"
+                    description="The number of invocations resulting in faults"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="TotalCount" displayName="Total Count"
+                    description="The total number of invocations"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="TotalProcessingTime" displayName="Total Processing Time"
+                    description="The total processing time for all invocations"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="AverageProcessingTime" displayName="Average Processing Time"
+                    description="The average processing time for an invocation"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="MinProcessingTime" displayName="Minimum Processing Time"
+                    description="The minimum processing time for an invocation"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="MaxProcessingTime" displayName="Maximum Processing Time"
+                    description="The maximum processing time for an invocation"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            
+            <service name="Reference Operations"
+                     description="Operations for the SwitchYard Reference"
+                     discovery="ReferenceOperationDiscoveryComponent"
+                     class="ReferenceOperationResourceComponent">
+               <metric property="SuccessCount" displayName="Success Count"
+                       description="The number of successful invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="FaultCount" displayName="Fault Count"
+                       description="The number of invocations resulting in faults"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="TotalCount" displayName="Total Count"
+                       description="The total number of invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="TotalProcessingTime" displayName="Total Processing Time"
+                       description="The total processing time for all invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="AverageProcessingTime" displayName="Average Processing Time"
+                       description="The average processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="MinProcessingTime" displayName="Minimum Processing Time"
+                       description="The minimum processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="MaxProcessingTime" displayName="Maximum Processing Time"
+                       description="The maximum processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+            </service>
+            <service name="Reference Bindings"
+                     description="Bindings for the SwitchYard Reference"
+                     discovery="ReferenceBindingDiscoveryComponent"
+                     class="ReferenceBindingResourceComponent">
+               <operation name="start" displayName="Start"
+                          description="Start the binding."/>
+               <operation name="stop" displayName="Stop"
+                          description="Stop the binding."/>
+
+               <metric property="State"
+                       description="Get the lifecycle state of the binding."
+                       displayType="summary"
+                       dataType="trait"/>
+               <metric property="SuccessCount" displayName="Success Count"
+                       description="The number of successful invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="FaultCount" displayName="Fault Count"
+                       description="The number of invocations resulting in faults"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="TotalCount" displayName="Total Count"
+                       description="The total number of invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="TotalProcessingTime" displayName="Total Processing Time"
+                       description="The total processing time for all invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="AverageProcessingTime" displayName="Average Processing Time"
+                       description="The average processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="MinProcessingTime" displayName="Minimum Processing Time"
+                       description="The minimum processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="MaxProcessingTime" displayName="Maximum Processing Time"
+                       description="The maximum processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+            </service>
+         </service>
+         
+         <service name="Component Service"
+                  description="A Component Service within an Application"
+                  discovery="ComponentServiceDiscoveryComponent"
+                  class="ComponentServiceResourceComponent">
+            <operation name="reset" displayName="Reset Metrics"
+                       description="Reset the metrics for this service."/>
+
+            <metric property="SuccessCount" displayName="Success Count"
+                    description="The number of successful invocations"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="FaultCount" displayName="Fault Count"
+                    description="The number of invocations resulting in faults"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="TotalCount" displayName="Total Count"
+                    description="The total number of invocations"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="TotalProcessingTime" displayName="Total Processing Time"
+                    description="The total processing time for all invocations"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="AverageProcessingTime" displayName="Average Processing Time"
+                    description="The average processing time for an invocation"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="MinProcessingTime" displayName="Minimum Processing Time"
+                    description="The minimum processing time for an invocation"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            <metric property="MaxProcessingTime" displayName="Maximum Processing Time"
+                    description="The maximum processing time for an invocation"
+                    displayType="summary"
+                    measurementType="dynamic"/>
+            
+            <service name="Component Service Operations"
+                     description="Operations for the SwitchYard Component Service"
+                     discovery="ComponentServiceOperationDiscoveryComponent"
+                     class="ComponentServiceOperationResourceComponent">
+               <metric property="SuccessCount" displayName="Success Count"
+                       description="The number of successful invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="FaultCount" displayName="Fault Count"
+                       description="The number of invocations resulting in faults"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="TotalCount" displayName="Total Count"
+                       description="The total number of invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="TotalProcessingTime" displayName="Total Processing Time"
+                       description="The total processing time for all invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="AverageProcessingTime" displayName="Average Processing Time"
+                       description="The average processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="MinProcessingTime" displayName="Minimum Processing Time"
+                       description="The minimum processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="MaxProcessingTime" displayName="Maximum Processing Time"
+                       description="The maximum processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+            </service>
+            <service name="Component Reference"
+                     description="References for the SwitchYard Component Service"
+                     discovery="ComponentReferenceDiscoveryComponent"
+                     class="ComponentReferenceResourceComponent">
+
+               <metric property="SuccessCount" displayName="Success Count"
+                       description="The number of successful invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="FaultCount" displayName="Fault Count"
+                       description="The number of invocations resulting in faults"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="TotalCount" displayName="Total Count"
+                       description="The total number of invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="TotalProcessingTime" displayName="Total Processing Time"
+                       description="The total processing time for all invocations"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="AverageProcessingTime" displayName="Average Processing Time"
+                       description="The average processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="MinProcessingTime" displayName="Minimum Processing Time"
+                       description="The minimum processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+               <metric property="MaxProcessingTime" displayName="Maximum Processing Time"
+                       description="The maximum processing time for an invocation"
+                       displayType="summary"
+                       measurementType="dynamic"/>
+            </service>
+         </service>
+      </service>
+    </service>
+
+</plugin>

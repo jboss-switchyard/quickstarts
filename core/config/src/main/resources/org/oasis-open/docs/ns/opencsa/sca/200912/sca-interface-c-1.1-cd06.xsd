@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		Copyright(C) OASIS(R) 2007,2010. All Rights Reserved. OASIS trademark,
+		IPR and other policies apply.
+	-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+	xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+	elementFormDefault="qualified">
+
+	<include schemaLocation="sca-core-1.1-cd06.xsd" />
+
+	<element name="interface.c" type="sca:CInterface"
+		substitutionGroup="sca:interface" />
+
+	<complexType name="CInterface">
+		<complexContent>
+			<extension base="sca:Interface">
+				<sequence>
+					<element name="function" type="sca:CFunction" minOccurs="0"
+						maxOccurs="unbounded" />
+					<element name="callbackFunction" type="sca:CFunction"
+						minOccurs="0" maxOccurs="unbounded" />
+					<any namespace="##other" processContents="lax" minOccurs="0"
+						maxOccurs="unbounded" />
+				</sequence>
+				<attribute name="header" type="string" use="required" />
+				<attribute name="callbackHeader" type="string" use="optional" />
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="CFunction">
+		<sequence>
+			<choice minOccurs="0" maxOccurs="unbounded">
+				<element ref="sca:requires"/>
+				<element ref="sca:policySetAttachment"/>
+			</choice>
+			<any namespace="##other" processContents="lax" minOccurs="0"
+				maxOccurs="unbounded" />
+		</sequence>
+		<attribute name="name" type="NCName" use="required" />
+		<attribute name="requires" type="sca:listOfQNames" use="optional" />
+		<attribute name="policySets" type="sca:listOfQNames" use="optional" />
+		<attribute name="oneWay" type="boolean" use="optional" />
+		<attribute name="exclude" type="boolean" use="optional" />
+		<attribute name="input" type="NCName" use="optional" />
+		<attribute name="output" type="NCName" use="optional" />
+		<anyAttribute namespace="##other" processContents="lax" />
+	</complexType>
+
+</schema>

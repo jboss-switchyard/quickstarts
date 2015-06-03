@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0"
+	name="ReferenceInvokerTest" targetNamespace="urn:bean:tests">
+	<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+		name="ReferenceInvokerTest" targetNamespace="urn:bean:tests">
+		<component name="InvokerService">
+			<implementation.bean xmlns="urn:switchyard-component-bean:config:1.0"
+				class="org.switchyard.component.bean.invoker.ReferenceInvokerBean" />
+			<service name="InvokerService">
+				<interface.java
+					interface="org.switchyard.component.bean.invoker.InvokerServiceContract" />
+			</service>
+			<reference name="ReferenceA">
+				<interface.java
+                    interface="org.switchyard.component.bean.invoker.InvokerReferenceContract" />
+			</reference>
+			<reference name="ReferenceB">
+                <interface.java
+                    interface="org.switchyard.component.bean.invoker.InvokerReferenceContract" />
+            </reference>
+		</component>
+	</composite>
+</switchyard>

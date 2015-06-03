@@ -1,0 +1,270 @@
+<?xml version="1.0"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<project name="SwitchYard EAP Installer" default="install" basedir=".">
+    <!--  The following -D properties can be used to control install behavior:
+             o EAP_PATH = path to EAP install - prevents input prompt
+     -->
+     
+    <property file="installer.properties"/>
+
+    <target name="check-java-version">
+        <condition property="xsltFactoryClass" value="com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl">
+          <or>
+            <equals arg1="1.6" arg2="${ant.java.version}"/>
+            <equals arg1="1.7" arg2="${ant.java.version}"/>
+            <equals arg1="1.8" arg2="${ant.java.version}"/>
+          </or>
+        </condition>
+
+	<fail unless="xsltFactoryClass" message="Please use either Java 6 or 7 to install."/>
+    </target>
+    
+    <target name="get-jboss-path-question" unless="EAP_PATH">
+        <input message="Enter the path to the root of your JBoss EAP installation: " 
+            addproperty="EAP_PATH_ENTERED"/>
+            
+        <condition property="EAP_PATH_CHECK" value="${EAP_PATH_ENTERED}">
+            <and>
+                <isset property="EAP_PATH_ENTERED"/>
+                <not>
+                    <matches string="${EAP_PATH_ENTERED}" pattern="^$"/>
+                </not>
+            </and>
+        </condition>
+    </target>
+    
+    <target name="get-jboss-path" depends="get-jboss-path-question" if="EAP_PATH_CHECK">
+        <pathconvert targetos="unix" property="EAP_PATH" setonempty="false">
+            <path>
+                <pathelement location="${EAP_PATH_CHECK}"/>
+            </path>
+        </pathconvert>
+    </target>
+    
+    <target name="install" 
+        description="Install SwitchYard into JBoss (optionally specified by EAP_PATH)" 
+        depends="get-jboss-path,check-java-version">
+        
+        <property name="EAP_PATH" value="${basedir}/jboss-${server}-${as.version.major}"/>
+        <property name="QUICKSTART_PATH" value="${EAP_PATH}"/>
+        <property name="INSTALL_PATH" value="${EAP_PATH}"/>
+        
+        <condition property="isEAP">
+           <available file="${EAP_PATH}/jboss-modules.jar"/>
+        </condition>
+        
+        <fail message="The specified path '${EAP_PATH}' is not a path to a valid JBoss EAP installation."
+              unless="isEAP"/>
+        
+        <condition property="quickstartResourcesAlreadyInstalled">
+            <available file="quickstarts" filepath="${QUICKSTART_PATH}"/>
+        </condition>
+        
+        <condition property="switchyardResourcesAlreadyInstalled">
+            <or>
+                <available file="switchyard" filepath="${INSTALL_PATH}/modules/org"/>
+                <available file="switchyard" filepath="${INSTALL_PATH}/modules/system/layers/soa/org"/>
+            </or>
+        </condition>
+        
+        <antcall target="unzipSwitchyardResources">
+            <param name="EAP_PATH" value="${EAP_PATH}"/>
+        </antcall>
+        
+        <antcall target="unzipQuickstartResources">
+            <param name="EAP_PATH" value="${EAP_PATH}"/>
+        </antcall>
+    </target>
+    
+    <target name="unzipSwitchyardResources" unless="switchyardResourcesAlreadyInstalled">
+        <!-- Install into the EAP install.... -->
+        <unzip src="res/switchyard-as7-bundle.zip" dest="${INSTALL_PATH}" overwrite="true">
+            <patternset>
+                <include name="standalone/**"/>
+                <include name="modules/**"/>
+            </patternset>
+        </unzip>
+        <xslt style="res/standalone.xsl" 
+            basedir="${EAP_PATH}/standalone/configuration" 
+            destdir="${EAP_PATH}/standalone/configuration"
+            includes="standalone.xml,standalone-full.xml,standalone-full-ha.xml,standalone-ha.xml">
+            <factory name="${xsltFactoryClass}"/>
+        </xslt>
+        <xslt style="res/domain.xsl" 
+            basedir="${EAP_PATH}/domain/configuration" 
+            destdir="${EAP_PATH}/domain/configuration" 
+            includes="domain.xml">
+            <factory name="${xsltFactoryClass}"/>
+        </xslt>
+        <move overwrite="true" todir="${INSTALL_PATH}/domain/configuration">
+            <filelist dir="${EAP_PATH}/domain/configuration">
+                <file name="domain.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
+            <filelist dir="${EAP_PATH}/standalone/configuration">
+                <file name="standalone.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
+            <filelist dir="${EAP_PATH}/standalone/configuration">
+                <file name="standalone-full.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
+            <filelist dir="${EAP_PATH}/standalone/configuration">
+                <file name="standalone-ha.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <!-- Allow this move to fail without error in case of 7.1.0.Beta1 -->
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration" failonerror="false">
+            <filelist dir="${EAP_PATH}/standalone/configuration">
+                <file name="standalone-full-ha.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <!-- Apply second style sheet to add cache-container -->
+        <xslt style="res/standalone-ha.xsl" force="true" basedir="${EAP_PATH}/standalone/configuration" destdir="${EAP_PATH}/standalone/configuration" includes="standalone-full-ha.xml,standalone-ha.xml">
+            <factory name="${xsltFactoryClass}"/>
+        </xslt>
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration">
+            <filelist dir="${EAP_PATH}/standalone/configuration">
+                <file name="standalone-ha.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+        <!-- Allow this move to fail without error in case of 7.1.0.Beta1 -->
+        <move overwrite="true" todir="${INSTALL_PATH}/standalone/configuration" failonerror="false">
+            <filelist dir="${EAP_PATH}/standalone/configuration">
+                <file name="standalone-full-ha.html"/>
+            </filelist>
+            <mapper type="regexp" from="^(.*)\.html$$" to="\1.xml"/>
+        </move>
+    </target>
+    <target name="unzipQuickstartResources" unless="quickstartResourcesAlreadyInstalled">
+        <!-- Install SwitchYard stuff into this directory.... -->
+        <unzip src="res/switchyard-as7-bundle.zip" dest="${QUICKSTART_PATH}" overwrite="true">
+            <patternset>
+                <include name="quickstarts/**"/>
+            </patternset>
+        </unzip>
+    </target>
+    
+    <!-- #################################################################
+         #######                   Tools Targets                   #######
+         ################################################################# -->
+    <target name="download-sy-tools-check">
+        <condition property="sy.tools.not.available">
+            <not>
+                <available file="res/switchyard-tools.zip"/>
+            </not>
+        </condition>
+    </target>
+    
+    <target name="download-sy-tools" depends="download-sy-tools-check" if="sy.tools.not.available">
+        <echo>Downloading SwitchYard Tools Bundle ...</echo>
+        <get src="${switchyard.tools.url}" dest="res/switchyard-tools.zip"/>
+    </target>
+    
+    <!-- #################################################################
+         #######                   BPEL Console                    #######
+         ################################################################# -->
+    <target name="install-bpel-console" 
+        description="Install BPEL Console to SwitchYard Runtime"
+        depends="download-overlord-commons, download-bpel-console, get-jboss-path">
+        
+        <condition property="BPELConsoleAlreadyInstalled">
+            <or>
+                <available file="switchyard-bpel-console.war" filepath="${EAP_PATH}/standalone/deployments"/>
+            </or>
+        </condition>
+        
+        <copy todir="${EAP_PATH}/standalone/deployments" 
+            overwrite="true" 
+            file="res/switchyard-tools-${tools.version}/switchyard-bpel-console-server.war"/>
+        
+        <copy todir="${EAP_PATH}/standalone/deployments/switchyard-bpel-console.war">
+            <fileset dir="res/switchyard-tools-${tools.version}/switchyard-bpel-console.war"/>
+        </copy>
+        
+        <touch file="${EAP_PATH}/standalone/deployments/switchyard-bpel-console.war.dodeploy"/>
+
+        <copy todir="${EAP_PATH}/standalone/configuration">
+            <fileset dir="res/switchyard-tools-${tools.version}/configuration"/>
+        </copy>
+
+		<ant antfile="build.xml" target="install"
+				dir="res/overlord-commons" >
+			<property name="overlord-commons.appserver.dir" value="${EAP_PATH}" />
+			<property name="overlord-commons.idp.file" value="${basedir}/res/overlord-commons/overlord-commons-idp-eap6.war" />
+			<property name="overlord-commons.services.file" value="${basedir}/res/overlord-commons/overlord-commons-services.jar" />
+			<property name="overlord-commons.auth.file" value="${basedir}/res/overlord-commons/overlord-commons-auth.jar" />
+			<property name="overlord-commons.auth.jboss7.file" value="${basedir}/res/overlord-commons/overlord-commons-auth-jboss7.jar" />
+			<property name="overlord-commons.auth.tomcat7.file" value="${basedir}/res/overlord-commons/overlord-commons-auth-tomcat7.jar" />
+		    <property name="overlord-commons.ant.jar" value="${basedir}/res/overlord-commons/overlord-commons-ant.jar" />
+			<!-- Temporary workaround - version needs to be correct in the called ant script -->
+			<property name="overlord-commons.version" value="2.0.2.Final" />
+			
+		</ant>
+
+    </target>
+    
+    <target name="download-bpel-console" 
+        depends="download-bpel-console-check, extract-sy-tools-bpel-console" 
+        if="bpel.console.not.available">
+    </target>
+    
+    <target name="download-bpel-console-check">
+        <condition property="bpel.console.not.available">
+            <not>
+                <available file="res/switchyard-tools-${tools.version}/switchyard-bpel-console-server.war"/>
+            </not>
+        </condition>
+    </target>
+    
+    <target name="extract-sy-tools-bpel-console" depends="download-sy-tools">
+        <unzip src="res/switchyard-tools.zip" dest="res/" overwrite="true"/>
+    </target>
+    
+    
+    <target name="download-overlord-commons-check">
+        <condition property="overlord-commons.not.available">
+            <not>
+                <available file="res/overlord-commons-installer.jar"/>
+            </not>
+        </condition>
+    </target>
+    
+    <target name="download-overlord-commons" depends="download-overlord-commons-check" if="overlord-commons.not.available">
+        <echo>Downloading Overlord Commons Installer ...</echo>
+        <get src="${overlord-commons-installer.url}" dest="res/overlord-commons-installer.jar"/>
+
+        <echo>Extracting Overlord Commons Installer ...</echo>
+        <unjar src="res/overlord-commons-installer.jar" dest="res/overlord-commons" overwrite="true"/>
+
+        <echo>Retrieve Overlord Commons Artifacts ...</echo>
+        <get src="${overlord-commons-idp-eap6.url}" dest="res/overlord-commons/overlord-commons-idp-eap6.war"/>
+        <get src="${overlord-commons-services.url}" dest="res/overlord-commons/overlord-commons-services.jar"/>
+        <get src="${overlord-commons-auth.url}" dest="res/overlord-commons/overlord-commons-auth.jar"/>
+        <get src="${overlord-commons-auth-jboss7.url}" dest="res/overlord-commons/overlord-commons-auth-jboss7.jar"/>
+        <get src="${overlord-commons-auth-tomcat7.url}" dest="res/overlord-commons/overlord-commons-auth-tomcat7.jar"/>
+        <get src="${overlord-commons-ant.url}" dest="res/overlord-commons/overlord-commons-ant.jar"/>
+    </target>
+    
+</project>

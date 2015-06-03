@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:switchyard-config:test-validate-xml:1.0"
+        xmlns:vxml="urn:switchyard-config:test-validate-xml:1.0"
+        xmlns:swyd="urn:switchyard-config:switchyard:1.0"
+        elementFormDefault="qualified">
+
+    <import namespace="urn:switchyard-config:switchyard:1.0"/>
+
+    <element name="validate.xml" type="vxml:XmlValidateType" substitutionGroup="swyd:validate"/>
+    <complexType name="XmlValidateType">
+        <complexContent>
+            <extension base="swyd:ValidateType">
+                <attribute name="schemaType" type="vxml:XmlSchemaType" use="required"/>
+                <attribute name="schemaFile" type="string" use="required"/>
+                <attribute name="failOnWarning" type="string" use="optional"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="XmlSchemaType">
+        <restriction base="string">
+            <enumeration value="DTD">
+                <annotation>
+                    <documentation xml:lang="en">
+                        DTD.
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="XML_SCHEMA">
+                <annotation>
+                    <documentation xml:lang="en">
+                        W3C XML Schema.
+                    </documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="RELAX_NG">
+                <annotation>
+                    <documentation xml:lang="en">
+                        RELAX NG.
+                    </documentation>
+                </annotation>
+            </enumeration>
+        </restriction>
+    </simpleType>
+
+</schema>

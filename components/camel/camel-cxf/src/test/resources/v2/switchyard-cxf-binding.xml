@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2014 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<switchyard xmlns="urn:switchyard-config:switchyard:2.0"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:cxf="urn:switchyard-component-camel-cxf:config:2.0">
+
+    <sca:composite name="cxfTest" targetNamespace="urn:cxf-core:test:2.0">
+        <sca:service name="cxfTest" promote="SimpleCxfService">
+            <cxf:binding.cxf>
+                <cxf:additionalUriParameters>
+                    <cxf:parameter name="properties.foo" value="bar"/>
+                </cxf:additionalUriParameters>
+                <cxf:cxfURI>http://localhost:8080/testWS</cxf:cxfURI>
+                <cxf:wsdlURL>http://localhost:8080/testWS?wsdl</cxf:wsdlURL>
+                <cxf:serviceClass>org.switchyard.component.camel.cxf.HelloWorldService</cxf:serviceClass>
+                <cxf:serviceName>{org.foo}Service</cxf:serviceName>
+                <cxf:portName>{org.foo}Port</cxf:portName>
+                <cxf:dataFormat>PAYLOAD</cxf:dataFormat>
+                <cxf:wrapped>true</cxf:wrapped>
+                <cxf:wrappedStyle>true</cxf:wrappedStyle>
+                <cxf:setDefaultBus>true</cxf:setDefaultBus>
+                <cxf:loggingFeatureEnabled>false</cxf:loggingFeatureEnabled>
+                <cxf:defaultOperationName>opName</cxf:defaultOperationName>
+                <cxf:defaultOperationNamespace>org.foo</cxf:defaultOperationNamespace>
+                <cxf:synchronous>true</cxf:synchronous>
+                <cxf:publishedEndpointUrl>scheme://form</cxf:publishedEndpointUrl>
+                <cxf:allowStreaming>false</cxf:allowStreaming>
+                <cxf:skipFaultLogging>false</cxf:skipFaultLogging>
+            </cxf:binding.cxf>
+        </sca:service>
+    </sca:composite>
+</switchyard>

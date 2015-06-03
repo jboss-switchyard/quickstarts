@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+- Copyright 2015 Red Hat Inc. and/or its affiliates and other contributors.
+-
+- Licensed under the Apache License, Version 2.0 (the "License")
+- you may not use this file except in compliance with the License.
+- You may obtain a copy of the License at
+- http://www.apache.org/licenses/LICENSE-2.0
+- Unless required by applicable law or agreed to in writing, software
+- distributed under the License is distributed on an "AS IS" BASIS,
+- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- See the License for the specific language governing permissions and
+- limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.switchyard</groupId>
+        <artifactId>switchyard-container-parent</artifactId>
+        <version>2.1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>switchyard-wildfly-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>SwitchYard: Wildfly Standalone Parent</name>
+    <description>SwitchYard Wildfly Standalone Parent</description>
+    <properties>
+        <version.wildfly>8.0.0.Final</version.wildfly>
+        <!-- Required for the module.xml file generation. -->
+        <version.io.netty>3.6.6.Final</version.io.netty>
+        <!-- Overridden version settings. -->
+    </properties>
+    <modules>
+        <module>extension</module>
+        <module>modules</module>
+        <module>bundle</module>
+        <!-- Installer is available even if the dist test fails -->
+        <module>installer</module>
+        <module>dist</module>
+    </modules>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.wildfly</groupId>
+                <artifactId>wildfly-parent</artifactId>
+                <type>pom</type>
+                <scope>import</scope>
+                <version>${version.wildfly}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wildfly</groupId>
+                <artifactId>wildfly-dist</artifactId>
+                <type>zip</type>
+                <version>${version.wildfly}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty</artifactId>
+                <version>${version.io.netty}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${version.org.apache.httpcomponents.httpclient}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${version.org.apache.httpcomponents.httpcore}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

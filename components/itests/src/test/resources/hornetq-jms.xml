@@ -1,0 +1,24 @@
+<configuration xmlns="urn:hornetq">
+
+    <connection-factory name="ConnectionFactory">
+        <connectors>
+            <connector-ref connector-name="invm-connector"/>
+        </connectors>
+
+        <entries>
+            <entry name="ConnectionFactory"/>
+        </entries>
+    </connection-factory>
+
+    <queue name="GreetingServiceQueue">
+        <entry name="GreetingServiceQueue"/>
+        <durable>false</durable>
+    </queue>
+
+<!--
+    <queue name="StoreQueue">
+        <entry name="StoreQueue"/>
+        <durable>false</durable>
+    </queue>
+-->
+</configuration>

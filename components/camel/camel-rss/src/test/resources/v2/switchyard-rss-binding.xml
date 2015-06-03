@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+
+<switchyard xmlns="urn:switchyard-config:switchyard:2.0"
+    xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+    xmlns:rss="urn:switchyard-component-camel-rss:config:2.0">
+
+    <sca:composite name="camelTest" targetNamespace="urn:camel-core:test:1.0">
+        <sca:service name="camelTest" promote="SimpleCamelService">
+            <rss:binding.rss>
+                <rss:feedURI>file:///dev/null</rss:feedURI>
+                <rss:splitEntries>true</rss:splitEntries>
+                <rss:filter>true</rss:filter>
+                <rss:lastUpdate>2011-01-01T12:00:00</rss:lastUpdate>
+                <rss:throttleEntries>true</rss:throttleEntries>
+                <rss:feedHeader>true</rss:feedHeader>
+                <rss:sortEntries>true</rss:sortEntries>
+                <rss:consume>
+                    <rss:initialDelay>20000</rss:initialDelay>
+                    <rss:delay>15000</rss:delay>
+                    <rss:useFixedDelay>true</rss:useFixedDelay>
+                </rss:consume>
+            </rss:binding.rss>
+        </sca:service>
+    </sca:composite>
+</switchyard>

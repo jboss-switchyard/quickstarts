@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions
+targetNamespace="http://example.com/loan-approval/risk2Assessment/"
+xmlns:ens="http://example.com/loan-approval/xsd/error-messages/"
+xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+xmlns:tns="http://example.com/loan-approval/risk2Assessment/"
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:types>
+		<xsd:schema targetNamespace="http://example.com/loan-approval/xsd/error-messages/">
+		  <xsd:element name="integer" type="xsd:integer" />
+		</xsd:schema>
+        <xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+                targetNamespace="http://example.com/loan-approval/risk2Assessment/" 
+                xmlns="http://www.w3.org/2001/XMLSchema">
+
+	        <element name="check">
+	            <complexType>
+	                <sequence>
+						<element name="firstName" type="xsd:string" />
+						<element name="name" type="xsd:string" />
+						<element name="amount" type="xsd:integer" />
+	                 </sequence>
+	            </complexType>
+	        </element>
+	         
+	        <element name="checkResponse">
+	            <complexType>
+	                <sequence>
+	                    <element name="level" type="string"/>
+	                 </sequence>
+	            </complexType>
+	        </element>
+         </xsd:schema>
+	</wsdl:types>
+	
+	<wsdl:message name="checkMessage">
+		<wsdl:part name="parameter" element="tns:check" />
+	</wsdl:message>
+
+	<wsdl:message name="checkResponseMessage">
+		<wsdl:part name="parameter" element="tns:checkResponse" />
+	</wsdl:message>
+
+	<wsdl:message name="errorMessage">
+		<wsdl:part name="errorCode" element="ens:integer" />
+	</wsdl:message>
+	
+	<wsdl:portType name="risk2AssessmentPT">
+		<wsdl:operation name="check">
+			<wsdl:input message="tns:checkMessage" />
+	<!--
+			<wsdl:output message="tns:checkResponseMessage" />
+	-->
+			<wsdl:fault name="loanProcessFault"
+					message="tns:errorMessage" />
+		</wsdl:operation>
+	</wsdl:portType>
+	
+	<plnk:partnerLinkType name="risk2AssessmentLT">
+		<plnk:role name="assessor" portType="tns:risk2AssessmentPT" />
+	</plnk:partnerLinkType>
+	
+    <wsdl:binding name="risk2Assessor_Binding" type="tns:risk2AssessmentPT">
+    	<soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http" />
+    	<wsdl:operation name="check">
+    		<soap:operation
+    			soapAction="http://example.com/loan-approval/wsdl/check" />
+    		<wsdl:input>
+    			<soap:body use="literal"
+    				namespace="http://example.com/loan-approval/wsdl/" />
+    		</wsdl:input>
+    		<wsdl:output>
+    			<soap:body use="literal"
+    				namespace="http://example.com/loan-approval/wsdl/" />
+    		</wsdl:output>
+    		<wsdl:fault name="loanProcessFault">
+    			<soap:fault use="literal" name="loanProcessFault" />
+    		</wsdl:fault>
+    	</wsdl:operation>
+    </wsdl:binding>
+    
+    <wsdl:service name="risk2Assessor">
+    	<wsdl:port name="risk2Assessor_Port" binding="tns:risk2Assessor_Binding">
+    		<soap:address location="http://127.0.0.1:8080/Quickstart_bpel_loan_approval/RiskAssessment" />
+    	</wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

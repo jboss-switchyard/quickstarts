@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright(C) OASIS(R) 2005,2010. All Rights Reserved.
+     OASIS trademark, IPR and other policies apply.  -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+        targetNamespace="http://docs.oasis-open.org/ns/opencsa/sca/200912" 
+        xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+        elementFormDefault="qualified">
+
+   <include schemaLocation="sca-core-1.1-cd06.xsd"/>
+
+   <complexType name="JMSBinding">
+      <complexContent>
+         <extension base="sca:Binding">
+            <sequence>
+               <element name="destination" type="sca:JMSDestination"
+                        minOccurs="0"/> 
+               <choice minOccurs="0" maxOccurs="1"> 
+                  <element name="connectionFactory" 
+                           type="sca:JMSConnectionFactory"/> 
+                  <element name="activationSpec" type="sca:JMSActivationSpec"/> 
+               </choice>     
+               <element name="response" type="sca:JMSResponse" minOccurs="0"/>
+               <element name="headers" type="sca:JMSHeaders" minOccurs="0"/>
+               <element name="messageSelection" type="sca:JMSMessageSelection"
+                        minOccurs="0"/>
+               <element name="resourceAdapter" type="sca:JMSResourceAdapter" 
+                        minOccurs="0"/>
+               <element name="operationProperties" 
+                        type="sca:JMSOperationProperties" 
+                        minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="sca:extensions" minOccurs="0" maxOccurs="1"/>
+            </sequence>
+            <attribute name="correlationScheme" type="QName"
+                       default="sca:messageID"/>
+            <attribute name="initialContextFactory" type="anyURI"/>
+            <attribute name="jndiURL" type="anyURI"/>
+         </extension>
+      </complexContent>
+   </complexType>
+
+   <simpleType name="JMSCreateResource">
+      <restriction base="string">
+         <enumeration value="always"/>
+         <enumeration value="never"/>
+         <enumeration value="ifNotExist"/>
+      </restriction>
+   </simpleType>
+
+   <complexType name="JMSDestination">
+      <sequence>
+         <element name="property" type="sca:BindingProperty" 
+                  minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+      <attribute name="jndiName" type="anyURI"/>
+      <attribute name="type" use="optional" default="queue">
+         <simpleType>
+            <restriction base="string">
+               <enumeration value="queue"/>
+               <enumeration value="topic"/>
+            </restriction>
+         </simpleType>
+      </attribute>
+      <attribute name="create" type="sca:JMSCreateResource" 
+                 use="optional" default="ifNotExist"/>
+   </complexType>
+
+   <complexType name="JMSConnectionFactory">
+      <sequence>          <element name="property" type="sca:BindingProperty" 
+                  minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+      <attribute name="jndiName" type="anyURI"/>
+      <attribute name="create" type="sca:JMSCreateResource" 
+                 use="optional" default="ifNotExist"/>
+   </complexType>
+
+   <complexType name="JMSActivationSpec">
+      <sequence>
+         <element name="property" type="sca:BindingProperty" 
+                  minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+      <attribute name="jndiName" type="anyURI"/>
+      <attribute name="create" type="sca:JMSCreateResource"
+                 use="optional" default="ifNotExist"/>
+   </complexType>
+
+   <complexType name="JMSResponse">
+      <sequence>
+         <element ref="sca:wireFormat" minOccurs="0" maxOccurs="1"/>
+         <element name="destination" type="sca:JMSDestination" minOccurs="0"/>
+         <choice minOccurs="0"> 
+            <element name="connectionFactory" type="sca:JMSConnectionFactory"/> 
+            <element name="activationSpec" type="sca:JMSActivationSpec"/> 
+         </choice> 
+      </sequence>
+   </complexType>
+
+   <complexType name="JMSHeaders">
+      <sequence>
+         <element name="property" type="sca:JMSUserProperty" 
+                  minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+      <attribute name="type" type="string"/>
+      <attribute name="deliveryMode" default="persistent">
+         <simpleType>
+            <restriction base="string">
+               <enumeration value="persistent"/>
+               <enumeration value="nonpersistent"/>
+            </restriction>
+         </simpleType>
+      </attribute>
+      <attribute name="timeToLive" type="long" default="0"/>
+      <attribute name="priority" default="4">
+         <simpleType>
+            <restriction base="string">
+               <enumeration value="0"/>
+               <enumeration value="1"/>
+               <enumeration value="2"/>
+               <enumeration value="3"/>
+               <enumeration value="4"/>
+               <enumeration value="5"/>
+               <enumeration value="6"/>
+               <enumeration value="7"/>
+               <enumeration value="8"/>
+               <enumeration value="9"/>
+            </restriction>
+         </simpleType>
+      </attribute>
+   </complexType>
+
+   <complexType name="JMSMessageSelection"> 
+      <sequence> 
+         <element name="property" type="sca:BindingProperty" 
+                  minOccurs="0" maxOccurs="unbounded"/> 
+      </sequence> 
+      <attribute name="selector" type="string"/> 
+   </complexType>
+
+   <complexType name="JMSResourceAdapter">
+      <sequence>
+         <element name="property" type="sca:BindingProperty" 
+                  minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+      <attribute name="name" type="string" use="required"/>
+   </complexType>
+
+   <complexType name="JMSOperationProperties">
+      <sequence>
+         <element name="property" type="sca:BindingProperty" 
+                  minOccurs="0" maxOccurs="unbounded"/>
+         <element name="headers" type="sca:JMSHeaders" minOccurs="0"/>
+      </sequence>
+      <attribute name="name" type="string" use="required"/>
+      <attribute name="selectedOperation" type="string"/>
+   </complexType>
+
+   <complexType name="BindingProperty">
+      <simpleContent>
+         <extension base="string">
+            <attribute name="name" type="NMTOKEN" use="required"/>
+            <attribute name="type" type="string" use="optional"
+                       default="xs:string"/>
+         </extension>
+      </simpleContent>
+   </complexType>
+
+   <simpleType name="JMSUserPropertyType">
+      <restriction base="string">
+         <enumeration value="boolean"/>
+         <enumeration value="byte"/>
+         <enumeration value="short"/>
+         <enumeration value="int"/>
+         <enumeration value="long"/>
+         <enumeration value="float"/>
+         <enumeration value="double"/>
+         <enumeration value="String"/>
+         <enumeration value="xs:string"/>
+      </restriction>
+   </simpleType>
+
+   <complexType name="JMSUserProperty">
+      <simpleContent>
+         <extension base="string">
+            <attribute name="name" type="NMTOKEN" use="required"/>
+            <attribute name="type" type="sca:JMSUserPropertyType"
+                       use="optional" default="String"/>
+         </extension>
+      </simpleContent>
+   </complexType>
+
+   <complexType name="JMSDefaultWireFormatType">
+      <complexContent>
+         <extension base="sca:WireFormatType"/>
+      </complexContent>
+   </complexType>
+
+   <complexType name="JMSDefaultOperationSelectorType">
+      <complexContent>
+         <extension base="sca:OperationSelectorType"/>
+      </complexContent>
+   </complexType>
+
+   <element name="binding.jms" type="sca:JMSBinding" 
+            substitutionGroup="sca:binding"/>
+
+   <element name="wireFormat.jmsDefault" 
+            type="sca:JMSDefaultWireFormatType"
+            substitutionGroup="sca:wireFormat"/>
+
+   <element name="operationSelector.jmsDefault"
+            type="sca:JMSDefaultOperationSelectorType"
+            substitutionGroup="sca:operationSelector"/>
+</schema>

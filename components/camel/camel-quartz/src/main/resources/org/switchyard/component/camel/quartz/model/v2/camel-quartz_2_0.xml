@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:binding.quartz xmlns:tns="urn:switchyard-component-camel-quartz:config:2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:switchyard-component-camel-quartz:config:2.0 camel-quartz_2_0.xsd ">
+  <tns:name>tns:name</tns:name>
+</tns:binding.quartz>

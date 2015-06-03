@@ -1,0 +1,12 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><processInstanceId xmlns="urn:switchyard-component-bpm:bpm:1.0">4</processInstanceId></SOAP-ENV:Header><soap:Body><ns2:loanResponse xmlns:ns2="urn:switchyard-quickstart-demo:library:1.0">
+    <ns2:loan>
+        <id>4</id>
+        <approved>true</approved>
+        <notes>Happy reading! Remaining copies: 5</notes>
+        <ns2:book>
+            <isbn>978-1-4000-5-80-2</isbn>
+            <title>The Zombie Survival Guide</title>
+            <synopsis>Complete Protection from the Living Dead</synopsis>
+        </ns2:book>
+    </ns2:loan>
+</ns2:loanResponse></soap:Body></soap:Envelope>

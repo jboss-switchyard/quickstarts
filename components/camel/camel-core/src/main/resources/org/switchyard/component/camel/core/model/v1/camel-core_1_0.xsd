@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors.
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License");
+ - you may not use this file except in compliance with the License.
+ - You may obtain a copy of the License at
+ - http://www.apache.org/licenses/LICENSE-2.0
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS,
+ - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ - See the License for the specific language governing permissions and
+ - limitations under the License.
+ -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="urn:switchyard-component-camel-core:config:1.0"
+        xmlns:tns="urn:switchyard-component-camel-core:config:1.0"
+        xmlns:switchyard="urn:switchyard-config:switchyard:1.0"
+        elementFormDefault="qualified">
+
+    <import namespace="urn:switchyard-config:switchyard:1.0"/>
+
+    <include schemaLocation="camel-common_1_0.xsd" />
+
+    <!-- camel:binding.xxx -->
+    <element name="binding.uri" type="tns:CamelBindingType" substitutionGroup="switchyard:binding.switchyard"/>
+    <complexType name="CamelBindingType">
+        <complexContent>
+            <extension base="tns:BaseCamelBinding">
+                <attribute name="configURI" type="string"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="binding.direct" type="tns:CamelDirectBindingType" substitutionGroup="switchyard:binding.switchyard"/>
+    <complexType name="CamelDirectBindingType" >
+        <complexContent>
+            <extension base="tns:BaseCamelBinding">
+                <sequence>
+                    <element name="name" type="string"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="binding.timer" type="tns:CamelTimerBindingType" substitutionGroup="switchyard:binding.switchyard"/>
+    <complexType name="CamelTimerBindingType" >
+        <complexContent>
+            <extension base="tns:BaseCamelBinding">
+                <sequence>
+                    <element name="name" type="string"/>
+                    <element name="time" type="dateTime" minOccurs="0" maxOccurs="1"/>
+                    <element name="pattern" type="string" minOccurs="0" maxOccurs="1"/>
+                    <element name="period" type="switchyard:propLong" minOccurs="0" maxOccurs="1"/>
+                    <element name="delay" type="switchyard:propLong" minOccurs="0" maxOccurs="1"/>
+                    <element name="fixedRate" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    <element name="daemon" type="boolean" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="binding.seda" type="tns:CamelSedaBindingType" substitutionGroup="switchyard:binding.switchyard"/>
+    <complexType name="CamelSedaBindingType" >
+        <complexContent>
+            <extension base="tns:BaseCamelBinding">
+                <sequence>
+                    <element name="name" type="string"/>
+                    <element name="size" type="switchyard:propInteger"/>
+                    <element name="concurrentConsumers" type="switchyard:propInteger"/>
+                    <element name="waitForTaskToComplete" type="string"/>
+                    <element name="timeout" type="switchyard:propLong"/>
+                    <element name="multipleConsumers" type="boolean"/>
+                    <element name="limitConcurrentConsumers" type="boolean"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="binding.mock" type="tns:CamelMockBindingType" substitutionGroup="switchyard:binding.switchyard"/>
+    <complexType name="CamelMockBindingType" >
+        <complexContent>
+            <extension base="tns:BaseCamelBinding">
+                <sequence>
+                    <element name="name" type="string"/>
+                    <element name="reportGroup" type="switchyard:propInteger" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

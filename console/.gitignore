@@ -1,0 +1,12 @@
+.idea
+.project
+.settings
+.classpath
+overlays
+target/
+.gwt/
+*.iml
+*.ipr
+*.iws
+.checkstyle
+.fbExcludeFilterFile

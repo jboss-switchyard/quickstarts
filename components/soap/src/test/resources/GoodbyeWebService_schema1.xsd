@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="urn:switchyard-component-soap:test-ws:1.0" xmlns:tns="urn:switchyard-component-soap:test-ws:1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="sayGoodbye" type="tns:sayGoodbye"/>
+
+  <xs:element name="sayGoodbyeResponse" type="tns:sayGoodbyeResponse"/>
+
+  <xs:complexType name="sayGoodbye">
+    <xs:sequence>
+      <xs:element name="arg0" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="sayGoodbyeResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+

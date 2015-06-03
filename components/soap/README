@@ -1,0 +1,39 @@
+SOAP Component for SwitchYard
+=============================
+A barebone implementation that provides the following features:
+
+a) Allows SwitchYard services to be exposed as a WebService.
+b) Allows SwitchYard services to invoke externally/internally hosted WebServices.
+c) Uses pure JAX-WS Dispatch and Provider APIs.
+
+Test
+-----
+Includes these usecases:
+
+1. Invoke a oneway WebService
+2. Invoke a request-response WebService
+3. Invoke the request-response WebService with improper data
+4. Invoke the request-response WebService to test InboundHandler's multi-threading capability
+
+|-----------------------------------------------------------------|
+|                           SOAPGateway                           |
+| |-----------------------------| |-----------------------------| |
+| |          Outbound           | |          Inbound            | |
+| | |------------| |----------| | | |----------| |------------| | |
+| | | Decomposer | | Composer | | | | Composer | | Decomposer | | |
+| | |------------| |----------| | | |----------| |------------| | |
+| |-----------------------------| |-----------------------------| |
+|-----------------------------------------------------------------|
+
+SwitchYard Request --> Outbound --> Decomposer --> WebService
+WebService Response --> Outbound --> Composer --> SwitchYard Service
+
+WebService Client Request --> Inbound --> Composer --> SwitchYard Service
+SwitchYard Response --> Inbound --> Decomposer --> WebService Client
+
+Features to be added
+--------------------
+Deployment support on other Containers like JBossWeb/JBossWS
+WS-Security (SOAP Header processing, HTTP Header/Properties processing)
+Throttling on Outbound side
+

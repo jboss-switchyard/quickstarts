@@ -1,0 +1,80 @@
+<process name="loan2ApprovalProcess" targetNamespace="http://example.com/loan2-approval/loan2Service/"
+		xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+		xmlns:lns="http://example.com/loan2-approval/loan2Service/"
+		xmlns:ans="http://example.com/loan-approval/risk2Assessment/"
+		suppressJoinFailure="yes">
+
+   <import importType="http://schemas.xmlsoap.org/wsdl/" location="loan2ServicePT.wsdl"
+      			namespace="http://example.com/loan2-approval/loan2Service/" />
+   <import importType="http://schemas.xmlsoap.org/wsdl/" location="risk2AssessmentPT.wsdl"
+      			namespace="http://example.com/loan-approval/risk2Assessment/" />
+
+   <partnerLinks>
+      <partnerLink name="customer" partnerLinkType="lns:loan2PartnerLT" myRole="loan2Service" />
+      <partnerLink name="assessor" partnerLinkType="ans:risk2AssessmentLT" partnerRole="assessor" />
+   </partnerLinks>
+
+   <variables>
+      <variable name="request" messageType="lns:requestMessage" />
+      <variable name="requestResponse" messageType="lns:requestResponseMessage" />
+      <variable name="check" messageType="ans:checkMessage" />
+      <variable name="checkResponse" messageType="ans:checkResponseMessage" />
+      <variable name="faultResponse" messageType="lns:errorMessage" />
+   </variables>
+
+   <faultHandlers>
+      <catch faultName="ans:loan2ProcessFault" faultVariable="error"
+						faultMessageType="ans:errorMessage">
+		<sequence>
+	        <assign validate="no" name="CopyFaultValue">
+	            <copy>
+	                <from variable="error" part="errorCode"></from>
+	                <to variable="faultResponse" part="errorCode"></to>
+	            </copy>
+	        </assign>
+	         <reply partnerLink="customer" portType="lns:loan2ServicePT" operation="request" variable="faultResponse"
+	            			faultName="lns:unableToHandleRequest" />
+	     </sequence>
+      </catch>
+   </faultHandlers>
+
+   <sequence>
+      <receive partnerLink="customer" portType="lns:loan2ServicePT"
+				operation="request" variable="request" createInstance="yes" />
+
+        <assign validate="no" name="AssignName">
+            <copy>
+                <from><literal>
+        <check xmlns="http://example.com/loan-approval/risk2Assessment/">
+		   <firstName></firstName>
+		   <name></name>
+		   <amount>1000</amount>
+		</check>
+</literal></from>
+                <to variable="check" part="parameter"></to>
+            </copy>
+            <copy>
+                <from variable="request" part="parameter" query="/request/amount" />
+                <to variable="check" part="parameter" query="/check/amount" />
+            </copy>
+        </assign>
+        
+      <invoke partnerLink="assessor" portType="lns:risk2AssessmentPT" operation="check" 
+	inputVariable="check"/>
+
+
+        <assign validate="no" name="AssignName">
+            <copy>
+                <from><literal><tns:RequestResponse xmlns:tns="http://example.com/loan2-approval/loan2Service/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <tns:accept>yes</tns:accept>
+</tns:RequestResponse>
+</literal></from>
+                <to variable="requestResponse" part="parameter"></to>
+            </copy>
+        </assign>
+
+      <reply partnerLink="customer" portType="lns:loan2ServicePT"
+							operation="request" variable="requestResponse"/>
+   </sequence>
+
+</process>

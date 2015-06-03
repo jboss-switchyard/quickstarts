@@ -1,0 +1,13 @@
+.project
+.classpath
+.settings/
+target/
+.checkstyle
+*.iml
+*.ipr
+*.iws
+.DS_Store
+transaction.log
+.fbExcludeFilterFile
+.factorypath
+.idea

@@ -1,0 +1,10 @@
+<rest:binding.rest xmlns:rest="urn:switchyard-component-resteasy:config:1.1">
+    <rest:interfaces>org.switchyard.quickstarts.rest.binding.OrderResource,org.switchyard.quickstarts.rest.binding.TestResource</rest:interfaces>
+    <rest:address>http://localhost:8080/</rest:address>
+    <rest:proxy>
+        <rest:host>host</rest:host>
+        <rest:port>8090</rest:port>
+        <rest:user>Beal</rest:user>
+        <rest:password>conjecture</rest:password>
+    </rest:proxy>
+</rest:binding.rest>

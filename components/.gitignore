@@ -1,0 +1,17 @@
+.project
+.classpath
+.settings/
+.bpmn/
+target/
+bin/
+.checkstyle
+*.iml
+*.ipr
+*.iws
+.DS_Store
+jca/transaction.log
+transaction.log.*
+itests/transaction.log
+.idea
+.fbExcludeFilterFile
+.factorypath

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="urn:switchyard-component-soap:test-ws:1.0" xmlns:tns="urn:switchyard-component-soap:test-ws:1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="sayHelloFrench" type="tns:sayHelloFrench"/>
+
+  <xs:element name="sayHelloResponseFrench" type="tns:sayHelloResponseFrench"/>
+
+  <xs:complexType name="sayHelloFrench">
+    <xs:sequence>
+      <xs:element name="arg0" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="sayHelloResponseFrench">
+    <xs:sequence>
+      <xs:element name="return" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+
