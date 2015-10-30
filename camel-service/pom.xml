@@ -17,14 +17,14 @@
     <parent>
         <groupId>org.switchyard.quickstarts</groupId>
         <artifactId>switchyard-quickstart-parent</artifactId>
-        <version>1.1.1-p12</version>
+        <version>1.1.1-p13</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>switchyard-quickstart-camel-service</artifactId>
     <name>Quickstart : Camel Service</name>
     <packaging>jar</packaging>
     <properties>
-        <switchyard.version>1.1.1-p12</switchyard.version>
+        <switchyard.version>1.1.1-p13</switchyard.version>
     </properties>
     <dependencies>
         <dependency>
