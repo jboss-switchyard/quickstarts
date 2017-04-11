@@ -5,4 +5,5 @@ if (outcome != success) of /subsystem=xts:read-resource
 /subsystem=xts:add(url="http://${jboss.bind.address:127.0.0.1}:8080/ws-c11/ActivationService")
 end-if
 /subsystem=switchyard/module=org.switchyard.component.bpel:write-attribute(name=properties, value={bpel.xts.enable => true})
+/subsystem=switchyard/module=org.switchyard.component.sca:write-attribute(name=properties, value={cache-name => switchyard, bridge-remote-transaction => true})
 :reload

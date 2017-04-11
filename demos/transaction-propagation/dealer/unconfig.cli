@@ -5,4 +5,5 @@ if (outcome == success) of /extension=org.jboss.as.xts:read-resource
     /extension=org.jboss.as.xts:remove
 end-if
 /subsystem=switchyard/module=org.switchyard.component.bpel:undefine-attribute(name=properties)
+/subsystem=switchyard/module=org.switchyard.component.sca:write-attribute(name=properties, value={cache-name => switchyard, bridge-remote-transaction => false})
 :reload
