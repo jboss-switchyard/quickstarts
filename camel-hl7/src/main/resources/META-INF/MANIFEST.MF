@@ -1,2 +1,2 @@
-Dependencies: org.apache.mina, org.apache.camel.mina2, org.apache.camel.hl7
+Dependencies: org.apache.mina.core, org.apache.camel.component.mina2, org.apache.camel.component.hl7
 
